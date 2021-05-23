@@ -11,11 +11,6 @@ class data_frame {
 public:
     data_frame(size_t nr) : nrows(nr) {} 
 
-    data_frame(const std::vector<std::string>& rn) : nrows(rn.size()) {
-        set_row_names(rn);
-        return;
-    }
-
     // Standard getters and setters.
     size_t ncol() const {
         return columns.size();
@@ -25,7 +20,7 @@ public:
         return nrows;
     }
 
-    std::shared_ptr<vector> column(const std::string& name) {
+    std::shared_ptr<vector> get_column(const std::string& name) {
         return columns[name];
     }
 
@@ -37,6 +32,26 @@ public:
     void remove_column(const std::string& name) {
         columns.erase(name);
         return;
+    }
+
+    bool has_column(const std::string& name) {
+        return columns.find(name) != columns.end();
+    }
+
+    // Specialist methods for row names.
+    bool get_row_names (std::vector<std::string>& rn) const {
+        rn.clear();
+        if (is_named) {
+            rn.reserve(nrows);
+            for (const auto& x : row_names) {
+                rn[x.second] = x.first;
+            }
+        }
+        return is_named;
+    }
+
+    bool has_row_name (const std::string& name) const {
+        return is_named && row_names.find(name) != row_names.end();
     }
 
     void set_row_names(const std::vector<std::string>& rn) {
