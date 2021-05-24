@@ -33,7 +33,7 @@ public:
 
     size_t ncol() const { return ncols; }
 
-    const T* get_row(size_t r, T* buffer, size_t start=0, size_t end=-1, void * workspace=NULL) const {
+    const T* get_row(size_t r, T* buffer, size_t start=0, size_t end=-1, workspace * wrk=NULL) const {
         auto it = values.begin() + r + start * nrows;
         end = std::min(end, ncols);
         for (size_t i = start; i < end; ++i, ++buffer, it += nrows) {
@@ -42,7 +42,7 @@ public:
         return buffer;
     }
 
-    const T* get_column(size_t c, T* buffer, size_t start=0, size_t end=-1, void * workspace=NULL) const {
+    const T* get_column(size_t c, T* buffer, size_t start=0, size_t end=-1, workspace* wrk=NULL) const {
         auto it = values.begin() + c * nrows;
         if constexpr(std::is_convertible<decltype(values.begin()), const T*>::value) {
             return it + start;
@@ -69,7 +69,7 @@ public:
         return;
     }
 
-    void* create_workspace() const {
+    workspace* create_workspace() const {
         return NULL;
     }
 

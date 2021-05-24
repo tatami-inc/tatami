@@ -2,6 +2,7 @@
 #define MATRIX_H
 
 #include "../utils/types.hpp"
+#include "../utils/workspace.hpp"
 
 namespace bioc {
 
@@ -13,7 +14,7 @@ public:
 
     virtual size_t ncol() const = 0;
 
-    virtual void * create_workspace() const = 0;
+    virtual workspace* create_workspace() const = 0;
 
     virtual content_type type() const { return _unknown; }
 
