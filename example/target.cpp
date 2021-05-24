@@ -3,12 +3,12 @@
 #include <iostream>
 #include "vector/standard_vector.hpp"
 #include "data_frame/data_frame.hpp"
-#include "matrix/dense_matrix.hpp"
+#include "matrix/DenseMatrix.hpp"
 #include "summarized_experiment/summarized_experiment.hpp"
 
 using int32_deque = bioc::standard_vector<double, std::deque<int32_t> >;
 using double_deque = bioc::standard_vector<double, std::deque<double> >;
-using double_deque_dense = bioc::dense_matrix<double, std::deque<double> >;
+using double_deque_dense = bioc::DenseMatrix<double, std::deque<double> >;
 
 template<typename T>
 inline T lshift (char x, int shift) {
