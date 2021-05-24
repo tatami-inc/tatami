@@ -13,7 +13,19 @@ class DenseMatrix : public typed_matrix<T> {
 public: 
     DenseMatrix(size_t nr, size_t nc) : nrows(nr), ncols(nc), values(nr * nc) {}
 
-    DenseMatrix(size_t nr, size_t nc, V&& source) : nrows(nr), ncols(nc), values(source) {}
+    DenseMatrix(size_t nr, size_t nc, const V& source) : nrows(nr), ncols(nc), values(source) {
+        if (nrows * ncols != values.size()) {
+            throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
+        }
+        return;
+    }
+
+    DenseMatrix(size_t nr, size_t nc, V&& source) : nrows(nr), ncols(nc), values(source) {
+        if (nrows * ncols != values.size()) {
+            throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
+        }
+        return;
+    }
 
     ~DenseMatrix() {}
 

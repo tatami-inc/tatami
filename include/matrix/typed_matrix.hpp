@@ -14,17 +14,7 @@ public:
 
     virtual const T* get_column(size_t, T*, size_t=0, size_t=-1, void * work=NULL) const = 0;
 
-    enum element_type { _double, _int32_t, _string };
-
-    element_type type() const {
-        if constexpr(std::is_same<T, double>::value) {
-            return _double;
-        } else if constexpr(std::is_same<T, int32_t>::value) {
-            return _int32_t;
-        } else if constexpr(std::is_same<T, std::string>::value) {
-            return _string;
-        }
-    }
+    content_type type() const { return determine_content_type<T>(); }
 };
 
 using numeric_matrix = typed_matrix<double>;
