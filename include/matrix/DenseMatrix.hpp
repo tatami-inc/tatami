@@ -8,7 +8,7 @@
 
 namespace bioc {
 
-template<typename T, class V = std::vector<T> >
+template<bool ROW, typename T, class V = std::vector<T> >
 class DenseMatrix : public typed_matrix<T> {
 public: 
     DenseMatrix(size_t nr, size_t nc) : nrows(nr), ncols(nc), values(nr * nc) {}
@@ -34,38 +34,36 @@ public:
     size_t ncol() const { return ncols; }
 
     const T* get_row(size_t r, T* buffer, size_t start=0, size_t end=-1, workspace * wrk=NULL) const {
-        auto it = values.begin() + r + start * nrows;
-        end = std::min(end, ncols);
-        for (size_t i = start; i < end; ++i, ++buffer, it += nrows) {
-            *buffer = *it; 
+        if constexpr(ROW) {
+            return get_primary(r, buffer, start, end, wrk, ncols);
+        } else {
+            return get_secondary(r, buffer, start, end, wrk, ncols, nrows);
         }
-        return buffer;
     }
 
     const T* get_column(size_t c, T* buffer, size_t start=0, size_t end=-1, workspace* wrk=NULL) const {
-        auto it = values.begin() + c * nrows;
-        if constexpr(std::is_convertible<decltype(values.begin()), const T*>::value) {
-            return it + start;
+        if constexpr(ROW) {
+            return get_secondary(c, buffer, start, end, wrk, nrows, ncols);
         } else {
-            end = std::min(end, nrows);
-            std::copy(it + start, it + end, buffer);
-            return buffer;
+            return get_primary(c, buffer, start, end, wrk, nrows);
         }
     }
 
     void set_row(size_t r, const T* buffer, size_t start=0, size_t end=-1) {
-        auto it = values.begin() + r + start * nrows;
-        end = std::min(end, ncols);
-        for (size_t i = start; i < end; ++i, ++buffer, it += nrows) {
-            *it = *buffer; 
+        if constexpr(ROW) {
+            set_primary(r, buffer, start, end, ncols);
+        } else {
+            set_secondary(r, buffer, start, end, ncols, nrows);
         }
         return;
     }
 
     void set_column(size_t c, const T* buffer, size_t start=0, size_t end=-1) {
-        auto it = values.begin() + c * nrows;
-        end = std::min(end, nrows);
-        std::copy(buffer, buffer + end - start, it + start);
+        if constexpr(ROW) {
+            set_secondary(c, buffer, start, end, nrows, ncols);
+        } else {
+            set_primary(c, buffer, start, end, nrows);
+        }
         return;
     }
 
@@ -76,7 +74,49 @@ public:
 private: 
     size_t nrows, ncols;
     V values;
+
+    const T* get_primary(size_t c, T* buffer, size_t start, size_t end, workspace* wrk, size_t dim_secondary) const {
+        auto it = values.begin() + c * dim_secondary;
+        if constexpr(std::is_convertible<decltype(values.begin()), const T*>::value) {
+            return it + start;
+        } else {
+            end = std::min(end, dim_secondary);
+            std::copy(it + start, it + end, buffer);
+            return buffer;
+        }
+    }
+
+    const T* get_secondary(size_t r, T* buffer, size_t start, size_t end, workspace * wrk, size_t dim_primary, size_t dim_secondary) const {
+        auto it = values.begin() + r + start * dim_secondary;
+        end = std::min(end, dim_primary);
+        for (size_t i = start; i < end; ++i, ++buffer, it+=dim_secondary) {
+            *buffer = *it; 
+        }
+        return buffer;
+    }
+
+    void set_primary(size_t c, const T* buffer, size_t start, size_t end, size_t dim_secondary) {
+        auto it = values.begin() + c * dim_secondary;
+        end = std::min(end, dim_secondary);
+        std::copy(buffer, buffer + end - start, it + start);
+        return;
+    }
+
+    void set_secondary(size_t r, const T* buffer, size_t start, size_t end, size_t dim_primary, size_t dim_secondary) {
+        auto it = values.begin() + r + start * dim_secondary;
+        end = std::min(end, dim_primary);
+        for (size_t i = start; i < end; ++i, ++buffer, it += dim_secondary) {
+            *it = *buffer; 
+        }
+        return;
+    }
 };
+
+template<typename T, class V = std::vector<T> >
+using DenseColumnMatrix = DenseMatrix<false, T, V>;
+
+template<typename T, class V = std::vector<T> >
+using DenseRowMatrix = DenseMatrix<true, T, V>;
 
 }
 
