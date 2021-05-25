@@ -23,6 +23,14 @@ public:
 
     virtual sparse_range get_sparse_column(size_t, T*, IDX*, size_t=0, size_t=-1, workspace* work=NULL) const = 0;
 
+    sparse_range get_sparse_row(size_t i, T* out_values, IDX* out_indices, workspace* work) const {
+        return get_sparse_row(i, out_values, out_indices, 0, this->ncol(), work);
+    }
+
+    sparse_range get_sparse_column(size_t i, T* out_values, IDX* out_indices, workspace* work) const {
+        return get_sparse_column(i, out_values, out_indices, 0, this->nrow(), work);
+    }
+
     bool is_sparse() const { return true; }
 };
 
