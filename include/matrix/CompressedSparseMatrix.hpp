@@ -2,6 +2,7 @@
 #define COMPRESSED_SPARSE_MATRIX_H
 
 #include "sparse_matrix.hpp"
+#include "../utils/is_contiguous.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -218,16 +219,16 @@ private:
         auto obtained = get_primary_dimension(i, first, last, otherdim);
         typename sparse_matrix<T>::sparse_range output(obtained.second);
 
-        if constexpr(std::is_convertible<decltype(values.begin()), const T*>::value) {
-            output.value = values.begin() + obtained.first;
+        if constexpr(has_data<T, U>::value) {
+            output.value = values.data() + obtained.first;
         } else {
             auto vIt = values.begin() + obtained.first;
             std::copy(vIt, vIt + obtained.second, out_values);
             output.value = out_values;
         }
 
-        if constexpr(std::is_convertible<decltype(indices.begin()), const IDX*>::value) {
-            output.index = indices.begin() + obtained.first;
+        if constexpr(has_data<IDX, V>::value) {
+            output.index = indices.data() + obtained.first;
         } else {
             auto iIt = indices.begin() + obtained.first;
             std::copy(iIt, iIt + obtained.second, out_indices);

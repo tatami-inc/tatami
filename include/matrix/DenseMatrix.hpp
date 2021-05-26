@@ -2,6 +2,7 @@
 #define DENSE_MATRIX_H
 
 #include "typed_matrix.hpp"
+#include "../utils/is_contiguous.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -76,12 +77,12 @@ private:
     V values;
 
     const T* get_primary(size_t c, T* buffer, size_t start, size_t end, workspace* wrk, size_t dim_secondary) const {
-        auto it = values.begin() + c * dim_secondary;
-        if constexpr(std::is_convertible<decltype(values.begin()), const T*>::value) {
-            return it + start;
+        size_t shift = c * dim_secondary;
+        if constexpr(has_data<T, V>::value) {
+            return values.data() + shift + start;
         } else {
             end = std::min(end, dim_secondary);
-            std::copy(it + start, it + end, buffer);
+            std::copy(values.begin() + start, values.begin() + end, buffer);
             return buffer;
         }
     }
