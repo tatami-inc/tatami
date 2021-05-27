@@ -1,8 +1,9 @@
 #ifndef COMPRESSED_SPARSE_MATRIX_H
 #define COMPRESSED_SPARSE_MATRIX_H
 
-#include "sparse_matrix.hpp"
+#include "typed_matrix.hpp"
 #include "../utils/is_contiguous.hpp"
+#include "../utils/sparse_range.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -10,7 +11,7 @@
 namespace bioc {
 
 template<bool ROW, typename T, typename IDX, class U = std::vector<T>, class V = std::vector<IDX>, class W = std::vector<size_t> >
-class CompressedSparseMatrix : public sparse_matrix<T> {
+class CompressedSparseMatrix : public typed_matrix<T, IDX> {
 public: 
     CompressedSparseMatrix(size_t nr, size_t nc, const U& vals, const V& idx, const W& ptr, bool check=true) : nrows(nr), ncols(nc), values(vals), indices(idx), indptrs(ptr) {
         check_values(check); 
@@ -48,7 +49,7 @@ public:
         return out_values;
     }
     
-    typename sparse_matrix<T>::sparse_range get_sparse_row(size_t i, T* out_values, IDX* out_indices, size_t first=0, size_t last=-1, workspace* work=NULL) const {
+    sparse_range<T, IDX> get_sparse_row(size_t i, T* out_values, IDX* out_indices, size_t first=0, size_t last=-1, workspace* work=NULL) const {
         last = std::min(last, this->ncols);
         if constexpr(ROW) {
             return get_primary_dimension_raw(i, first, last, this->ncols, out_values, out_indices);
@@ -57,7 +58,7 @@ public:
         }
     }
 
-    typename sparse_matrix<T>::sparse_range get_sparse_column(size_t i, T* out_values, IDX* out_indices, size_t first=0, size_t last=-1, workspace* work=NULL) const {
+    sparse_range<T, IDX> get_sparse_column(size_t i, T* out_values, IDX* out_indices, size_t first=0, size_t last=-1, workspace* work=NULL) const {
         last = std::min(last, this->nrows);
         if constexpr(ROW) {
             return get_secondary_dimension_raw(i, first, last, work, out_values, out_indices); 
@@ -141,6 +142,8 @@ public:
         return output;
     }
 
+    bool is_sparse() { return true; }
+
 private:
     size_t nrows, ncols;
     U values;
@@ -215,9 +218,9 @@ private:
         return std::make_pair(iIt - indices.begin(), eIt - iIt);
     }
 
-    typename sparse_matrix<T>::sparse_range get_primary_dimension_raw(size_t i, size_t first, size_t last, size_t otherdim, T* out_values, IDX* out_indices) const {
+    sparse_range<T, IDX> get_primary_dimension_raw(size_t i, size_t first, size_t last, size_t otherdim, T* out_values, IDX* out_indices) const {
         auto obtained = get_primary_dimension(i, first, last, otherdim);
-        typename sparse_matrix<T>::sparse_range output(obtained.second);
+        sparse_range<T, IDX> output(obtained.second);
 
         if constexpr(has_data<T, U>::value) {
             output.value = values.data() + obtained.first;
@@ -291,12 +294,12 @@ private:
         }
     };
 
-    typename sparse_matrix<T>::sparse_range get_secondary_dimension_raw(IDX i, size_t first, size_t last, workspace* work, T* out_values, IDX* out_indices) const {
+    sparse_range<T, IDX> get_secondary_dimension_raw(IDX i, size_t first, size_t last, workspace* work, T* out_values, IDX* out_indices) const {
         raw_store store;
         store.out_values = out_values;
         store.out_indices = out_indices;
         get_secondary_dimension(i, first, last, work, store);
-        return typename sparse_matrix<T>::sparse_range(store.n, out_values, out_indices);
+        return sparse_range<T, IDX>(store.n, out_values, out_indices);
     }
 
     struct expanded_store {
