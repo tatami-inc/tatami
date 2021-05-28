@@ -38,13 +38,15 @@ public:
         if constexpr(ROW) {
             return get_primary(r, buffer, start, end, wrk, ncols);
         } else {
-            return get_secondary(r, buffer, start, end, wrk, ncols, nrows);
+            get_secondary(r, buffer, start, end, wrk, ncols, nrows);
+            return buffer;
         }
     }
 
     const T* get_column(size_t c, T* buffer, size_t start=0, size_t end=-1, workspace* wrk=NULL) const {
         if constexpr(ROW) {
-            return get_secondary(c, buffer, start, end, wrk, nrows, ncols);
+            get_secondary(c, buffer, start, end, wrk, nrows, ncols);
+            return buffer;
         } else {
             return get_primary(c, buffer, start, end, wrk, nrows);
         }
@@ -87,13 +89,13 @@ private:
         }
     }
 
-    const T* get_secondary(size_t r, T* buffer, size_t start, size_t end, workspace * wrk, size_t dim_primary, size_t dim_secondary) const {
+    void get_secondary(size_t r, T* buffer, size_t start, size_t end, workspace * wrk, size_t dim_primary, size_t dim_secondary) const {
         auto it = values.begin() + r + start * dim_secondary;
         end = std::min(end, dim_primary);
         for (size_t i = start; i < end; ++i, ++buffer, it+=dim_secondary) {
             *buffer = *it; 
         }
-        return buffer;
+        return;
     }
 
     void set_primary(size_t c, const T* buffer, size_t start, size_t end, size_t dim_secondary) {
