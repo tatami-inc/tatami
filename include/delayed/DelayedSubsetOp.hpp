@@ -1,56 +1,63 @@
 #ifndef DELAYED_SUBSET_OP
 #define DELAYED_SUBSET_OP
 
+#include "../matrix/typed_matrix.hpp"
 #include <algorithm>
+#include <memory>
 
 namespace bioc {
 
-template<typename T, int MARGIN, class V = std::vector<size_t> >
+template<typename T, int MARGIN, class V = std::vector<size_t>, typename IDX = int>
 class DelayedSubsetOp : public typed_matrix<T, IDX> {
 public:
-    DelayedSubsetOp(std::shared_ptr<const typed_matrix<X, IDX> > p, const V& idx) : mat(p), indices(idx) {}
+    DelayedSubsetOp(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : mat(p), indices(idx) {}
 
-    DelayedSubsetOp(std::shared_ptr<const typed_matrix<X, IDX> > p, V&& idx) : mat(p), indices(idx) {}
+    DelayedSubsetOp(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : mat(p), indices(idx) {}
 
     ~DelayedSubsetOp() {}
 
     const T* get_row(size_t r, T* buffer, size_t start=0, size_t end=-1, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
-            end = std::min(end, this->ncol);
-            return subset_expanded(r, buffer, start, end, work);
+            end = std::min(end, this->ncol());
+            subset_expanded<true>(r, buffer, start, end, work);
+            return buffer;
         } else {
-            return mat->get_row(r, buffer, start, end, work);
+            return mat->get_row(indices[r], buffer, start, end, work);
         }
     }
 
     const T* get_column(size_t c, T* buffer, size_t start=0, size_t end=-1, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
-            return mat->get_column(c, buffer, start, end, work);
+            return mat->get_column(indices[c], buffer, start, end, work);
         } else {
-            end = std::min(end, this->nrow);
-            return subset_expanded(r, buffer, start, end, work);
+            end = std::min(end, this->nrow());
+            subset_expanded<false>(c, buffer, start, end, work);
+            return buffer;
         }
-        return buffer;
     }
 
     sparse_range<T, IDX> get_sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start=0, size_t end=-1, workspace* work=NULL) const {
-        auto raw = mat.get_sparse_row(r, out_values, out_indices, start, end, work);
-        for (size_t i = 0; i < raw.number; ++i) {
-            out_values[i] = operation(r, i, raw.value[i]);
+        if constexpr(MARGIN==1) {
+            end = std::min(end, this->ncol());
+            auto total = subset_sparse<true>(r, out_values, out_indices, start, end, work);
+            return sparse_range<T, IDX>(total, out_values, out_indices);
+        } else {
+            return mat->get_sparse_row(indices[r], out_values, out_indices, start, end, work);
         }
-        return sparse_range<T, IDX>(raw.number, out_values, raw.index);
     }
 
     sparse_range<T, IDX> get_sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start=0, size_t end=-1, workspace* work=NULL) const {
-        auto raw = mat.get_sparse_column(c, out_values, out_indices, start, end, work);
-        for (size_t i = 0; i < raw.number; ++i) {
-            out_values[i] = operation(i, c, raw.value[i]);
+        if constexpr(MARGIN==1) {
+            return mat->get_sparse_column(indices[c], out_values, out_indices, start, end, work);
+        } else {
+            end = std::min(end, this->nrow());
+            auto total = subset_sparse<false>(c, out_values, out_indices, start, end, work);
+            return sparse_range<T, IDX>(total, out_values, out_indices);
         }
-        return sparse_range<T, IDX>(raw.number, out_values, raw.index);
     }
 
     size_t nrow() const {
-        if constexpr(MARGIN==1) {
+        if constexpr(MARGIN==0) {
             return indices.size();
         } else {
             return mat->nrow();
@@ -58,7 +65,7 @@ public:
     }
     
     size_t ncol() const {
-        if constexpr(MARGIN==1) {
+        if constexpr(MARGIN==0) {
             return mat->ncol();
         } else {
             return indices.size();
@@ -73,11 +80,11 @@ public:
         return mat->is_sparse();
     }
 public:
-    std::shared_ptr<typed_matrix<T, IDX> > mat;
+    std::shared_ptr<const typed_matrix<T, IDX> > mat;
     V indices;
 
     template<bool ROW>
-    const T* subset_expanded(size_t r, T* buffer, size_t start, size_t end, workspace* work) const {
+    void subset_expanded(size_t r, T* buffer, size_t start, size_t end, workspace* work) const {
         while (start < end) {
             auto previdx = indices[start];
             ++start;
@@ -100,14 +107,12 @@ public:
             }
             buffer += n;
         }
-        return buffer;
+        return;
     }
 
     template<bool ROW>
-    sparse_range<T, IDX> subset_sparse(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work) const {
-        sparse_range<T, IDX> output(0, out_values, out_indices);
-        auto& total = output.number;
-
+    size_t subset_sparse(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work) const {
+        size_t total = 0;
         while (start < end) {
             auto original = start;
             auto previdx = indices[start];
@@ -138,7 +143,7 @@ public:
             out_values += range.number;
         }
 
-        return output;
+        return total;
     }
 };
 
