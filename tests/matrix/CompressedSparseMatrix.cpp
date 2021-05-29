@@ -3,7 +3,9 @@
 #include "matrix/CompressedSparseMatrix.hpp"
 #include "matrix/DenseMatrix.hpp"
 
-#include "data.h"
+#include "../utils/load_sparse.h"
+#include "../utils/data.h"
+#include "../utils/TestCore.h"
 #include <vector>
 #include <memory>
 
@@ -19,59 +21,23 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
     EXPECT_EQ(mat.type(), bioc::_double);
 }
 
-class SparseTestCore : public ::testing::Test {
+class SparseTestCore : public TestCore {
 protected:
-    void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        // Pretend this is row major for the time being.
-        dense = std::unique_ptr<bioc::numeric_matrix>(new bioc::DenseRowMatrix<double>(nr, nc, source));
-
-        // Filling the sparse row matrix.
-        std::vector<double> values;
-        std::vector<int> indices;
-        std::vector<size_t> indptr;
-
-        auto sIt = source.begin();
-        indptr.resize(nr+1);
-        for (size_t i = 0; i < nr; ++i) {
-            indptr[i+1] = indptr[i];
-            for (size_t j = 0; j < nc; ++j, ++sIt) {
-                if (*sIt != 0) {
-                    values.push_back(*sIt);
-                    indices.push_back(j);
-                    ++indptr[i+1];
-                }
-            }
-        }
-        sparse_row = std::unique_ptr<bioc::typed_matrix<double, int> >(new bioc::CompressedSparseRowMatrix<double, int>(nr, nc, values, indices, indptr));
-
-        // Filling the sparse column matrix.
-        values.clear();
-        indices.clear();
-        indptr.clear();
-
-        indptr.resize(nc+1);
-        for (size_t i = 0; i < nc; ++i) {
-            indptr[i+1] = indptr[i];
-            auto sIt = source.begin() + i;
-            for (size_t j = 0; j < nr; ++j, sIt+=nc) {
-                if (*sIt != 0) {
-                    values.push_back(*sIt);
-                    indices.push_back(j);
-                    ++indptr[i+1];
-                }
-            }
-        }
-        sparse_column = std::unique_ptr<bioc::typed_matrix<double, int> >(new bioc::CompressedSparseColumnMatrix<double, int>(nr, nc, values, indices, indptr));
-
-        NR = sparse_column->nrow();
-        NC = sparse_column->ncol();
-
-        return;
-    }
-
+    size_t NR, NC;
     std::unique_ptr<bioc::numeric_matrix> dense;
     std::unique_ptr<bioc::typed_matrix<double, int> > sparse_row, sparse_column;
     std::unique_ptr<bioc::workspace> work_dense, work_sparse_row, work_sparse_column;
+
+protected:
+    void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
+        dense = std::unique_ptr<bioc::numeric_matrix>(new bioc::DenseRowMatrix<double>(nr, nc, source));
+        sparse_row = load_matrix_as_sparse_row_matrix(nr, nc, source);
+        sparse_column = load_matrix_as_sparse_column_matrix(nr, nc, source);
+
+        NR = sparse_column->nrow();
+        NC = sparse_column->ncol();
+        return;
+    }
 
     void create_workspaces() {
         work_dense.reset(dense->create_workspace());
@@ -79,60 +45,6 @@ protected:
         work_sparse_row.reset(sparse_row->create_workspace());
         return;
     }
-
-    std::vector<double> expected;
-    void fill_expected(const double* ptr, const size_t dim) {
-        if (ptr!=expected.data()){ 
-            std::copy(ptr, ptr + std::min(dim, last) - first, expected.begin());
-        }
-        return;
-    }
-
-    std::vector<double> output;
-    void fill_output(const double* ptr, const size_t dim) {
-        if (ptr!=output.data()) {
-            std::copy(ptr, ptr + std::min(dim, last) - first , output.begin());
-        }
-        return;
-    }
-
-    void set_sizes(size_t n) {
-        output.resize(n);
-        outidx.resize(n);
-        outval.resize(n);
-        expected.resize(n);
-        return;
-    }
-
-    void wipe_output() {
-        std::fill(output.begin(), output.end(), 123);
-        return;
-    }
-
-    void wipe_expected() {
-        std::fill(expected.begin(), expected.end(), 123);
-        return;
-    }
-
-    std::vector<int> outidx;
-    std::vector<double> outval;
-
-    void wipe_sparse_buffers() {
-        std::fill(outval.begin(), outval.end(), 123);
-        std::fill(outidx.begin(), outidx.end(), 456);
-        return;
-    }
-
-    void fill_sparse_output(const bioc::sparse_range<double, int>& info, size_t dim) {
-        std::fill(output.begin(), output.begin() + std::min(dim, last) - first, 0);
-        for (size_t i = 0; i < info.number; ++i) {
-            output[info.index[i] - first] = info.value[i];
-        }
-        return;
-    }
-
-    size_t NR, NC;
-    size_t first, last;
 };
 
 class SparseTest : public SparseTestCore {
@@ -150,7 +62,6 @@ TEST_F(SparseTest, FullColumnAccess) {
     set_sizes(NR);
 
     // Column access without workspaces.
-    create_workspaces();
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();
         fill_expected(dense->get_column(i, expected.data()), NR);
@@ -418,7 +329,6 @@ TEST_F(SparseTest, FullRowAccess) {
     set_sizes(NC);
 
     // Row access without workspaces.
-    create_workspaces();
     for (size_t i = 0; i < NR; ++i) {
         wipe_expected();
         fill_expected(dense->get_row(i, expected.data()), NC);
