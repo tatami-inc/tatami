@@ -19,6 +19,7 @@ add_executable(
     libtest 
     matrix/DenseMatrix.cpp
     matrix/CompressedSparseMatrix.cpp
+    matrix/data_sparse.cpp
 )
 
 target_link_libraries(
