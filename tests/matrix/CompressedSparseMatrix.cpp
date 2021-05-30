@@ -59,6 +59,10 @@ TEST_F(SparseTest, FullColumnAccess) {
     EXPECT_EQ(NC, sparse_ncol);
     EXPECT_EQ(NR, sparse_nrow);
 
+    EXPECT_FALSE(dense->is_sparse());
+    EXPECT_TRUE(sparse_column->is_sparse());
+    EXPECT_TRUE(sparse_row->is_sparse());
+
     // Column access without workspaces.
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();
@@ -89,6 +93,9 @@ TEST_F(SparseTest, FullColumnAccess) {
 
     // Column access with workspaces.
     create_workspaces(false);
+    std::vector<size_t> old_offset_row = dynamic_cast<bioc::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->get_offsets();
+    EXPECT_EQ(work_sparse_column.get(), nullptr);
+
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();
         fill_expected(dense->get_column(i, expected.data(), work_dense.get()));
@@ -109,6 +116,9 @@ TEST_F(SparseTest, FullColumnAccess) {
         fill_sparse_output(sparse_row->get_sparse_column(i, outval.data(), outidx.data(), work_sparse_row.get()));
         EXPECT_EQ(output, expected);
     }
+
+    std::vector<size_t> new_offset_row = dynamic_cast<bioc::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->get_offsets();
+    EXPECT_NE(old_offset_row, new_offset_row); // actually has an effect on the offsets.
 
     // Column access with workspaces and reverse order.
     create_workspaces(false);
@@ -349,6 +359,9 @@ TEST_F(SparseTest, FullRowAccess) {
 
     // Row access with workspaces.
     create_workspaces(true);
+    std::vector<size_t> old_offset_column = dynamic_cast<bioc::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->get_offsets();
+    EXPECT_EQ(work_sparse_row.get(), nullptr);
+
     for (size_t i = 0; i < NR; ++i) {
         wipe_expected();
         fill_expected(dense->get_row(i, expected.data(), work_dense.get()));
@@ -369,6 +382,9 @@ TEST_F(SparseTest, FullRowAccess) {
         fill_sparse_output(sparse_row->get_sparse_row(i, outval.data(), outidx.data(), work_sparse_row.get()));
         EXPECT_EQ(output, expected);
     }
+
+    std::vector<size_t> new_offset_column = dynamic_cast<bioc::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->get_offsets();
+    EXPECT_NE(old_offset_column, new_offset_column); // actually has an effect on the offsets.
 
     // Row access with workspaces and reverse order.
     create_workspaces(true);
