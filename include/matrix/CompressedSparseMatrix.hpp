@@ -39,7 +39,7 @@ public:
         }
     }
 
-    bool is_sparse() { return true; }
+    bool is_sparse() const { return true; }
 
 public:
     const T* get_row(size_t i, T* out_values, size_t first, size_t last, workspace* work=NULL) const {
