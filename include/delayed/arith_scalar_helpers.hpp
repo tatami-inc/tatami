@@ -1,60 +1,58 @@
-#ifndef DELAYED_ARITH_SCALAR_HELPER_H
-#define DELAYED_ARITH_SCALAR_HELPER_H
-
-#include "DelayedIsometricOp.hpp"
+#ifndef DELAYED_ARITH_TCALAR_HELPER_H
+#define DELAYED_ARITH_TCALAR_HELPER_H
 
 namespace bioc {
 
-template<typename T, typename X = T, typename S = T>
+template<typename T>
 struct DelayedAddScalarHelper {
-    DelayedAddScalarHelper(S s) : scalar(s) {}
-    T operator()(size_t i, size_t c, X val) const { 
+    DelayedAddScalarHelper(T s) : scalar(s) {}
+    T operator()(size_t i, size_t c, T val) const { 
         return val + scalar; 
     }
-    bool sparse() const { return scalar == 0; } 
+    static const bool sparse = false;
 private:
-    const S scalar;
+    const T scalar;
 };
 
-template<typename T, typename X = T, typename S = T>
+template<typename T>
 struct DelayedMultiplyScalarHelper { 
-    DelayedMultiplyScalarHelper(S s) : scalar(s) {}
-    T operator()(size_t i, size_t c, X val) const { 
+    DelayedMultiplyScalarHelper(T s) : scalar(s) {}
+    T operator()(size_t i, size_t c, T val) const { 
         return val * scalar; 
     }
-    bool sparse() const { return true; }
+    static const bool sparse = true;
 private:
-    const S scalar;
+    const T scalar;
 };
 
-template<typename T, bool RIGHT, typename X = T, typename S = T>
+template<typename T, bool RIGHT>
 struct DelayedSubtractScalarHelper {
-    DelayedSubtractScalarHelper(S s) : scalar(s) {}
-    T operator()(size_t i, size_t c, X val) const { 
+    DelayedSubtractScalarHelper(T s) : scalar(s) {}
+    T operator()(size_t i, size_t c, T val) const { 
         if constexpr(RIGHT) {
             return val - scalar; 
         } else {
             return scalar - val;
         }
     }
-    bool sparse() const { return scalar == 0; } 
+    static const bool sparse = false;
 private:
-    const S scalar;
+    const T scalar;
 };
 
-template<typename T, bool RIGHT, typename X = T, typename S = T>
+template<typename T, bool RIGHT>
 struct DelayedDivideScalarHelper { 
-    DelayedDivideScalarHelper(S s) : scalar(s) {}
-    T operator()(size_t i, size_t c, X val) const { 
+    DelayedDivideScalarHelper(T s) : scalar(s) {}
+    T operator()(size_t i, size_t c, T val) const { 
         if constexpr(RIGHT) {
             return val / scalar; 
         } else {
             return scalar / val;
         }
     }
-    bool sparse() const { return true; } 
+    static const bool sparse = true;
 private:
-    const S scalar;
+    const T scalar;
 };
 
 }
