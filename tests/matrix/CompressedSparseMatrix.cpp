@@ -79,6 +79,7 @@ TEST_F(SparseTest, FullColumnAccess) {
         wipe_sparse_buffers();
         auto x = sparse_column->get_sparse_column(i, outval.data(), outidx.data());
         fill_sparse_output(x);
+        EXPECT_TRUE(x.number < NR);
         EXPECT_EQ(output, expected);
         EXPECT_FALSE(outval.data()==x.value); // points to internal data.
         EXPECT_FALSE(outidx.data()==x.index);
@@ -86,6 +87,7 @@ TEST_F(SparseTest, FullColumnAccess) {
         wipe_sparse_buffers();
         auto y = sparse_row->get_sparse_column(i, outval.data(), outidx.data());
         fill_sparse_output(y);
+        EXPECT_TRUE(y.number < NR);
         EXPECT_EQ(output, expected);
         EXPECT_TRUE(outval.data()==y.value); // points to buffer.
         EXPECT_TRUE(outidx.data()==y.index);
@@ -345,6 +347,7 @@ TEST_F(SparseTest, FullRowAccess) {
         wipe_sparse_buffers();
         auto x = sparse_column->get_sparse_row(i, outval.data(), outidx.data());
         fill_sparse_output(x);
+        EXPECT_TRUE(x.number < NC);
         EXPECT_EQ(output, expected);
         EXPECT_TRUE(outval.data()==x.value); // points to buffer.
         EXPECT_TRUE(outidx.data()==x.index);
@@ -352,6 +355,7 @@ TEST_F(SparseTest, FullRowAccess) {
         wipe_sparse_buffers();
         auto y = sparse_row->get_sparse_row(i, outval.data(), outidx.data());
         fill_sparse_output(y);
+        EXPECT_TRUE(y.number < NC);
         EXPECT_EQ(output, expected);
         EXPECT_FALSE(outval.data()==y.value); // points to internal data.
         EXPECT_FALSE(outidx.data()==y.index);
