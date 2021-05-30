@@ -20,6 +20,8 @@ add_executable(
     matrix/DenseMatrix.cpp
     matrix/CompressedSparseMatrix.cpp
     delayed/DelayedSubsetOp.cpp
+    delayed/arith_scalar_helper.cpp
+    delayed/arith_vector_helper.cpp
     utils/data_sparse.cpp
 )
 
