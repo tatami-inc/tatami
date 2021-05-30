@@ -22,6 +22,7 @@ add_executable(
     delayed/DelayedSubsetOp.cpp
     delayed/arith_scalar_helper.cpp
     delayed/arith_vector_helper.cpp
+    delayed/math_helper.cpp
     utils/data_sparse.cpp
 )
 

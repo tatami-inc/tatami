@@ -6,6 +6,15 @@
 namespace bioc {
 
 template<typename T>
+struct DelayedAbsHelper {
+    DelayedAbsHelper() {};
+    T operator()(size_t i, size_t c, T val) const {
+        return std::abs(val);
+    }
+    static const bool sparse = true;
+};
+
+template<typename T>
 struct DelayedLogHelper {
     DelayedLogHelper() : log_base(1) {}
     DelayedLogHelper(double base) : log_base(std::log(base)) {}
