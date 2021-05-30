@@ -15,12 +15,15 @@ protected:
     size_t first = 0, last = 0;
 
 protected:
-    void set_sizes(size_t n) {
+    size_t set_sizes(size_t f, size_t l) {
+        first = f;
+        last = l;
+        size_t n = l - f;
         output.resize(n);
         outidx.resize(n);
         outval.resize(n);
         expected.resize(n);
-        return;
+        return n;
     }
 
     // Buffer handling utilities.
@@ -34,16 +37,16 @@ protected:
         return;
     }
 
-    void fill_expected(const double* ptr, const size_t dim) {
+    void fill_expected(const double* ptr) {
         if (ptr!=expected.data()){ 
-            std::copy(ptr, ptr + std::min(dim, last) - first, expected.begin());
+            std::copy(ptr, ptr + last - first, expected.begin());
         }
         return;
     }
 
-    void fill_output(const double* ptr, const size_t dim) {
+    void fill_output(const double* ptr) {
         if (ptr!=output.data()) {
-            std::copy(ptr, ptr + std::min(dim, last) - first , output.begin());
+            std::copy(ptr, ptr + last - first , output.begin());
         }
         return;
     }
@@ -55,8 +58,8 @@ protected:
         return;
     }
 
-    void fill_sparse_output(const bioc::sparse_range<double, int>& info, size_t dim) {
-        std::fill(output.begin(), output.begin() + std::min(dim, last) - first, 0);
+    void fill_sparse_output(const bioc::sparse_range<double, int>& info) {
+        std::fill(output.begin(), output.begin() + last - first, 0);
         for (size_t i = 0; i < info.number; ++i) {
             output[info.index[i] - first] = info.value[i];
         }
