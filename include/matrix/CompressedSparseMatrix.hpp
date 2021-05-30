@@ -69,61 +69,36 @@ public:
 
     struct compressed_sparse_workspace : public workspace {
     public:
-        compressed_sparse_workspace(const V& idx, const W& idp) : indices(idx), indptrs(idp), 
-            offsets(idp), prev_i(0), prev_first(0), prev_last(indptrs.size() - 1) {}
+        compressed_sparse_workspace(const V& idx, const W& idp) : indices(idx), 
+                                                                  indptrs(idp), 
+                                                                  offsets(idp), 
+                                                                  previous(indptrs.size() - 1) {} 
 
         void update_indices(IDX i, size_t first, size_t last) {
-            /* If left/right slice are not equal to what is stored, we reset the indices,
-             * so that the code below will know to recompute them. It's too much effort
-             * to try to figure out exactly which columns need recomputing; just do them all.
-             */
-            if (first != prev_first || last != prev_last) {
-                std::copy(indptrs.begin(), indptrs.end(), offsets.begin());
-                prev_i = 0;
-                prev_first = 0;
-                prev_last = indptrs.size() - 1;
-            }
+            for (size_t current = first; current < last; ++current) {
+                auto& prev_i = previous[current];
+                if (i == prev_i) {
+                    continue;
+                }
 
-            // No change necessary.
-            if (i == prev_i) { 
-                return; 
-            } 
-
-            auto pIt = indptrs.begin() + first;
-            if (i == prev_i + 1) {
-                ++pIt; // points to the first-past-the-end element, at any given 'c'.
-                for (size_t c = first; c < last; ++c, ++pIt) {
-                    auto& curdex = offsets[c];
-                    if (curdex != *pIt && indices[curdex] < i) { 
+                auto& curdex = offsets[current];
+                if (i == prev_i + 1) {
+                    if (curdex != indptrs[current+1] && indices[curdex] < i) { 
                         ++curdex;
                     }
-                }
-            } else if (i + 1 == prev_i) {
-                for (size_t c = first; c < last; ++c, ++pIt) {
-                    auto& curdex = offsets[c];
-                    if (curdex != *pIt && indices[curdex-1] >= i) {
+                } else if (i + 1 == prev_i) {
+                    if (curdex != indptrs[current] && indices[curdex-1] >= i) {
                         --curdex;
                     }
+                } else if (i > prev_i) {
+                    curdex = std::lower_bound(indices.begin() + curdex, indices.begin() + indptrs[current+1], i) - indices.begin();
+                } else if (i < prev_i) { 
+                    curdex = std::lower_bound(indices.begin() + indptrs[current], indices.begin() + curdex, i) - indices.begin();
                 }
 
-            } else { 
-                if (i > prev_i) {
-                    ++pIt; // points to the first-past-the-end element, at any given 'c'.
-                    for (size_t c = first; c < last; ++c, ++pIt) { 
-                        auto& curdex = offsets[c];
-                        curdex = std::lower_bound(indices.begin() + curdex, indices.begin() + *pIt, i) - indices.begin();
-                    }
-                } else { 
-                    for (size_t c = first; c < last; ++c, ++pIt) {
-                        auto& curdex = offsets[c];
-                        curdex = std::lower_bound(indices.begin() + *pIt, indices.begin() + curdex, i) - indices.begin();
-                    }
-                }
+                prev_i = i;
             }
 
-            prev_i = i;
-            prev_first = first;
-            prev_last = last;
             return;
         }
 
@@ -134,7 +109,7 @@ public:
         const V& indices;
         const W& indptrs; 
         W offsets;
-        size_t prev_i, prev_first, prev_last;
+        std::vector<size_t> previous;
     };
 
     workspace* create_workspace () const {
