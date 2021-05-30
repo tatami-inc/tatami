@@ -17,9 +17,8 @@ public:
     ~DelayedSubsetOp() {}
 
 public:
-    const T* get_row(size_t r, T* buffer, size_t start=0, size_t end=-1, workspace* work=NULL) const {
+    const T* get_row(size_t r, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
-            end = std::min(end, this->ncol());
             subset_expanded<true>(r, buffer, start, end, work);
             return buffer;
         } else {
@@ -27,11 +26,10 @@ public:
         }
     }
 
-    const T* get_column(size_t c, T* buffer, size_t start=0, size_t end=-1, workspace* work=NULL) const {
+    const T* get_column(size_t c, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
             return mat->get_column(indices[c], buffer, start, end, work);
         } else {
-            end = std::min(end, this->nrow());
             subset_expanded<false>(c, buffer, start, end, work);
             return buffer;
         }
@@ -42,9 +40,8 @@ public:
     using typed_matrix<T, IDX>::get_row;
 
 public:
-    sparse_range<T, IDX> get_sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start=0, size_t end=-1, workspace* work=NULL) const {
+    sparse_range<T, IDX> get_sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
-            end = std::min(end, this->ncol());
             auto total = subset_sparse<true>(r, out_values, out_indices, start, end, work);
             return sparse_range<T, IDX>(total, out_values, out_indices);
         } else {
@@ -52,11 +49,10 @@ public:
         }
     }
 
-    sparse_range<T, IDX> get_sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start=0, size_t end=-1, workspace* work=NULL) const {
+    sparse_range<T, IDX> get_sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
             return mat->get_sparse_column(indices[c], out_values, out_indices, start, end, work);
         } else {
-            end = std::min(end, this->nrow());
             auto total = subset_sparse<false>(c, out_values, out_indices, start, end, work);
             return sparse_range<T, IDX>(total, out_values, out_indices);
         }

@@ -36,18 +36,18 @@ public:
     size_t ncol() const { return ncols; }
 
 public:
-    const T* get_row(size_t r, T* buffer, size_t start=0, size_t end=-1, workspace * wrk=NULL) const {
+    const T* get_row(size_t r, T* buffer, size_t start, size_t end, workspace * wrk=NULL) const {
         if constexpr(ROW) {
             return get_primary(r, buffer, start, end, wrk, ncols);
         } else {
-            get_secondary(r, buffer, start, end, wrk, ncols, nrows);
+            get_secondary(r, buffer, start, end, wrk, nrows);
             return buffer;
         }
     }
 
-    const T* get_column(size_t c, T* buffer, size_t start=0, size_t end=-1, workspace* wrk=NULL) const {
+    const T* get_column(size_t c, T* buffer, size_t start, size_t end, workspace* wrk=NULL) const {
         if constexpr(ROW) {
-            get_secondary(c, buffer, start, end, wrk, nrows, ncols);
+            get_secondary(c, buffer, start, end, wrk, ncols);
             return buffer;
         } else {
             return get_primary(c, buffer, start, end, wrk, nrows);
@@ -57,25 +57,6 @@ public:
     using typed_matrix<T, IDX>::get_row;
 
     using typed_matrix<T, IDX>::get_column;
-
-public:
-    void set_row(size_t r, const T* buffer, size_t start=0, size_t end=-1) {
-        if constexpr(ROW) {
-            set_primary(r, buffer, start, end, ncols);
-        } else {
-            set_secondary(r, buffer, start, end, ncols, nrows);
-        }
-        return;
-    }
-
-    void set_column(size_t c, const T* buffer, size_t start=0, size_t end=-1) {
-        if constexpr(ROW) {
-            set_secondary(c, buffer, start, end, nrows, ncols);
-        } else {
-            set_primary(c, buffer, start, end, nrows);
-        }
-        return;
-    }
 
 private: 
     size_t nrows, ncols;
@@ -92,27 +73,10 @@ private:
         }
     }
 
-    void get_secondary(size_t r, T* buffer, size_t start, size_t end, workspace * wrk, size_t dim_primary, size_t dim_secondary) const {
+    void get_secondary(size_t r, T* buffer, size_t start, size_t end, workspace * wrk, size_t dim_secondary) const {
         auto it = values.begin() + r + start * dim_secondary;
-        end = std::min(end, dim_primary);
         for (size_t i = start; i < end; ++i, ++buffer, it+=dim_secondary) {
             *buffer = *it; 
-        }
-        return;
-    }
-
-    void set_primary(size_t c, const T* buffer, size_t start, size_t end, size_t dim_secondary) {
-        auto it = values.begin() + c * dim_secondary;
-        end = std::min(end, dim_secondary);
-        std::copy(buffer, buffer + end - start, it + start);
-        return;
-    }
-
-    void set_secondary(size_t r, const T* buffer, size_t start, size_t end, size_t dim_primary, size_t dim_secondary) {
-        auto it = values.begin() + r + start * dim_secondary;
-        end = std::min(end, dim_primary);
-        for (size_t i = start; i < end; ++i, ++buffer, it += dim_secondary) {
-            *it = *buffer; 
         }
         return;
     }

@@ -42,8 +42,7 @@ public:
     bool is_sparse() { return true; }
 
 public:
-    const T* get_row(size_t i, T* out_values, size_t first=0, size_t last=-1, workspace* work=NULL) const {
-        last = std::min(last, this->ncols);
+    const T* get_row(size_t i, T* out_values, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
             get_primary_dimension_expanded(i, first, last, this->ncols, out_values, 0);
         } else {
@@ -52,8 +51,7 @@ public:
         return out_values;
     }
 
-    const T* get_column(size_t i, T* out_values, size_t first=0, size_t last=-1, workspace* work=NULL) const {
-        last = std::min(last, this->nrows);
+    const T* get_column(size_t i, T* out_values, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
             get_secondary_dimension_expanded(i, first, last, work, out_values, 0);
         } else {
@@ -67,8 +65,7 @@ public:
     using typed_matrix<T, IDX>::get_column;
 
 public:
-    sparse_range<T, IDX> get_sparse_row(size_t i, T* out_values, IDX* out_indices, size_t first=0, size_t last=-1, workspace* work=NULL) const {
-        last = std::min(last, this->ncols);
+    sparse_range<T, IDX> get_sparse_row(size_t i, T* out_values, IDX* out_indices, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
             return get_primary_dimension_raw(i, first, last, this->ncols, out_values, out_indices);
         } else {
@@ -76,8 +73,7 @@ public:
         }
     }
 
-    sparse_range<T, IDX> get_sparse_column(size_t i, T* out_values, IDX* out_indices, size_t first=0, size_t last=-1, workspace* work=NULL) const {
-        last = std::min(last, this->nrows);
+    sparse_range<T, IDX> get_sparse_column(size_t i, T* out_values, IDX* out_indices, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
             return get_secondary_dimension_raw(i, first, last, work, out_values, out_indices); 
         } else {
