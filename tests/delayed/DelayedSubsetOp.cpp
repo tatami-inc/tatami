@@ -24,9 +24,9 @@ protected:
         return;
     }
 
-    void create_workspaces() {
-        work_dense.reset(dense->create_workspace());
-        work_sparse.reset(sparse->create_workspace());
+    void create_workspaces(bool row) {
+        work_dense.reset(dense->create_workspace(row));
+        work_sparse.reset(sparse->create_workspace(row));
         return;
     }
 };
@@ -52,7 +52,7 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
     EXPECT_EQ(sub.size(), dense_subbed.nrow());
     EXPECT_EQ(dense->ncol(), dense_subbed.ncol());
 
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_output();
         fill_output(sparse_subbed.get_column(i, output.data()), sub.size());
@@ -98,7 +98,7 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
     auto dense_subbed = bioc::DelayedSubsetOp<double, 0>(dense, sub);
     auto sparse_subbed = bioc::DelayedSubsetOp<double, 0>(sparse, sub);
 
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         first = i % sub.size();
         last = first + LEN;
@@ -146,7 +146,7 @@ TEST_F(SubsetTest, SubsetRowFullRowAccess) {
     last = NC;
     set_sizes(NC);
 
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < sub.size(); ++i) {
         wipe_output();
         fill_output(sparse_subbed.get_row(i, output.data()), sub.size());
@@ -190,7 +190,7 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
     EXPECT_EQ(sub.size(), dense_subbed.ncol());
     EXPECT_EQ(dense->nrow(), dense_subbed.nrow());
 
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_output();
         fill_output(sparse_subbed.get_row(i, output.data()), sub.size());
@@ -236,7 +236,7 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
     auto dense_subbed = bioc::DelayedSubsetOp<double, 1>(dense, sub);
     auto sparse_subbed = bioc::DelayedSubsetOp<double, 1>(sparse, sub);
 
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         first = i % sub.size();
         last = first + LEN;
@@ -284,7 +284,7 @@ TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
     last = NC;
     set_sizes(NC);
 
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < sub.size(); ++i) {
         wipe_output();
         fill_output(sparse_subbed.get_column(i, output.data()), sub.size());

@@ -14,7 +14,7 @@ public:
 
     virtual size_t ncol() const = 0;
 
-    virtual workspace* create_workspace() const = 0;
+    virtual workspace* create_workspace(bool) const { return NULL; }
 
     virtual content_type type() const { return _unknown; }
 

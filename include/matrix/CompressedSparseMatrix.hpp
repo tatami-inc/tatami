@@ -25,10 +25,23 @@ public:
 
     ~CompressedSparseMatrix() {}
 
+public:
     size_t nrow() const { return nrows; }
 
     size_t ncol() const { return ncols; }
 
+    workspace* create_workspace (bool row) const {
+        if (row == ROW) {
+            return NULL;
+        } else {
+            workspace* output = new compressed_sparse_workspace(indices, indptrs);
+            return output;
+        }
+    }
+
+    bool is_sparse() { return true; }
+
+public:
     const T* get_row(size_t i, T* out_values, size_t first=0, size_t last=-1, workspace* work=NULL) const {
         last = std::min(last, this->ncols);
         if constexpr(ROW) {
@@ -48,7 +61,12 @@ public:
         }
         return out_values;
     }
-    
+
+    using typed_matrix<T, IDX>::get_row;
+
+    using typed_matrix<T, IDX>::get_column;
+
+public:
     sparse_range<T, IDX> get_sparse_row(size_t i, T* out_values, IDX* out_indices, size_t first=0, size_t last=-1, workspace* work=NULL) const {
         last = std::min(last, this->ncols);
         if constexpr(ROW) {
@@ -67,6 +85,11 @@ public:
         }
     }
 
+    using typed_matrix<T, IDX>::get_sparse_row;
+
+    using typed_matrix<T, IDX>::get_sparse_column;
+
+public:
     struct compressed_sparse_workspace : public workspace {
     public:
         compressed_sparse_workspace(const V& idx, const W& idp) : indices(idx), 
@@ -111,13 +134,6 @@ public:
         W offsets;
         std::vector<size_t> previous;
     };
-
-    workspace* create_workspace () const {
-        workspace* output = new compressed_sparse_workspace(indices, indptrs);
-        return output;
-    }
-
-    bool is_sparse() { return true; }
 
 private:
     size_t nrows, ncols;

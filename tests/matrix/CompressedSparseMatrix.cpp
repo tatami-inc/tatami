@@ -39,10 +39,10 @@ protected:
         return;
     }
 
-    void create_workspaces() {
-        work_dense.reset(dense->create_workspace());
-        work_sparse_column.reset(sparse_column->create_workspace());
-        work_sparse_row.reset(sparse_row->create_workspace());
+    void create_workspaces(bool row) {
+        work_dense.reset(dense->create_workspace(row));
+        work_sparse_column.reset(sparse_column->create_workspace(row));
+        work_sparse_row.reset(sparse_row->create_workspace(row));
         return;
     }
 };
@@ -90,7 +90,7 @@ TEST_F(SparseTest, FullColumnAccess) {
     }
 
     // Column access with workspaces.
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();
         fill_expected(dense->get_column(i, expected.data(), work_dense.get()), NR);
@@ -113,7 +113,7 @@ TEST_F(SparseTest, FullColumnAccess) {
     }
 
     // Column access with workspaces and reverse order.
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();
         fill_expected(dense->get_column(NC - i - 1, expected.data(), work_dense.get()), NR);
@@ -136,7 +136,7 @@ TEST_F(SparseTest, FullColumnAccess) {
     }
 
     // Column access with workspaces and jump forward.
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < NC; i+=2) {
         wipe_expected();
         fill_expected(dense->get_column(i, expected.data(), work_dense.get()), NR);
@@ -159,7 +159,7 @@ TEST_F(SparseTest, FullColumnAccess) {
     }
 
     // Column access with workspaces and jump backward.
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < NC; i+=3) {
         wipe_expected();
         fill_expected(dense->get_column(NC - i - 1, expected.data(), work_dense.get()), NR);
@@ -209,7 +209,7 @@ TEST_F(SparseTest, SlicedColumnAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();
         fill_expected(dense->get_column(i, expected.data(), first, last, work_dense.get()), NR);
@@ -263,7 +263,7 @@ TEST_F(SparseTest, SlicedColumnAccess) {
     }
 
     first = 0;
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < NC; ++i) {
         last = first + LEN;
 
@@ -295,7 +295,7 @@ TEST_F(SparseTest, SlicedColumnAccess) {
     set_sizes(LEN);
 
     first = 0;
-    create_workspaces();
+    create_workspaces(false);
     for (size_t i = 0; i < NC; i+=3) {
         last = first + LEN;
 
@@ -357,7 +357,7 @@ TEST_F(SparseTest, FullRowAccess) {
     }
 
     // Row access with workspaces.
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < NR; ++i) {
         wipe_expected();
         fill_expected(dense->get_row(i, expected.data(), work_dense.get()), NC);
@@ -380,7 +380,7 @@ TEST_F(SparseTest, FullRowAccess) {
     }
 
     // Row access with workspaces and reverse order.
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < NR; ++i) {
         wipe_expected();
         fill_expected(dense->get_row(NR - i - 1, expected.data(), work_dense.get()), NC);
@@ -403,7 +403,7 @@ TEST_F(SparseTest, FullRowAccess) {
     }
 
     // Row access with workspaces and jump forward.
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < NR; i+=2) {
         wipe_expected();
         fill_expected(dense->get_row(i, expected.data(), work_dense.get()), NC);
@@ -426,7 +426,7 @@ TEST_F(SparseTest, FullRowAccess) {
     }
 
     // Row access with workspaces and jump backward.
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < NR; i+=3) {
         wipe_expected();
         fill_expected(dense->get_row(NR - i - 1, expected.data(), work_dense.get()), NC);
@@ -476,7 +476,7 @@ TEST_F(SparseTest, SlicedRowAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < NR; ++i) {
         wipe_expected();
         fill_expected(dense->get_row(i, expected.data(), first, last, work_dense.get()), NC);
@@ -530,7 +530,7 @@ TEST_F(SparseTest, SlicedRowAccess) {
     }
 
     first = 0;
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < NR; ++i) {
         last = first + LEN;
 
@@ -562,7 +562,7 @@ TEST_F(SparseTest, SlicedRowAccess) {
     set_sizes(LEN);
 
     first = 0;
-    create_workspaces();
+    create_workspaces(true);
     for (size_t i = 0; i < NR; i+=3) {
         last = first + LEN;
 

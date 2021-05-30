@@ -9,8 +9,8 @@
 
 namespace bioc {
 
-template<bool ROW, typename T, class V = std::vector<T> >
-class DenseMatrix : public typed_matrix<T> {
+template<bool ROW, typename T, class V = std::vector<T>, typename IDX = int>
+class DenseMatrix : public typed_matrix<T, IDX> {
 public: 
     DenseMatrix(size_t nr, size_t nc) : nrows(nr), ncols(nc), values(nr * nc) {}
 
@@ -30,10 +30,12 @@ public:
 
     ~DenseMatrix() {}
 
+public:
     size_t nrow() const { return nrows; }
 
     size_t ncol() const { return ncols; }
 
+public:
     const T* get_row(size_t r, T* buffer, size_t start=0, size_t end=-1, workspace * wrk=NULL) const {
         if constexpr(ROW) {
             return get_primary(r, buffer, start, end, wrk, ncols);
@@ -52,6 +54,11 @@ public:
         }
     }
 
+    using typed_matrix<T, IDX>::get_row;
+
+    using typed_matrix<T, IDX>::get_column;
+
+public:
     void set_row(size_t r, const T* buffer, size_t start=0, size_t end=-1) {
         if constexpr(ROW) {
             set_primary(r, buffer, start, end, ncols);
@@ -68,10 +75,6 @@ public:
             set_primary(c, buffer, start, end, nrows);
         }
         return;
-    }
-
-    workspace* create_workspace() const {
-        return NULL;
     }
 
 private: 
