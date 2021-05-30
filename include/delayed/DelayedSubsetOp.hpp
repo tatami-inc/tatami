@@ -16,6 +16,7 @@ public:
 
     ~DelayedSubsetOp() {}
 
+public:
     const T* get_row(size_t r, T* buffer, size_t start=0, size_t end=-1, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
             end = std::min(end, this->ncol());
@@ -36,6 +37,11 @@ public:
         }
     }
 
+    using typed_matrix<T, IDX>::get_column;
+
+    using typed_matrix<T, IDX>::get_row;
+
+public:
     sparse_range<T, IDX> get_sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start=0, size_t end=-1, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
             end = std::min(end, this->ncol());
@@ -56,6 +62,11 @@ public:
         }
     }
 
+    using typed_matrix<T, IDX>::get_sparse_column;
+
+    using typed_matrix<T, IDX>::get_sparse_row;
+
+public:
     size_t nrow() const {
         if constexpr(MARGIN==0) {
             return indices.size();
@@ -79,23 +90,25 @@ public:
     bool is_sparse() const {
         return mat->is_sparse();
     }
-public:
+
+private:
     std::shared_ptr<const typed_matrix<T, IDX> > mat;
     V indices;
 
     template<bool ROW>
     void subset_expanded(size_t r, T* buffer, size_t start, size_t end, workspace* work) const {
         while (start < end) {
+            auto original = start;
             auto previdx = indices[start];
             ++start;
-            size_t n = 1;
             while (start < end && indices[start] == previdx + 1) {
                 previdx = indices[start];
                 ++start;
-                ++n;
             }
 
             const T* ptr = NULL;
+            size_t n = start - original;
+            previdx = indices[original];
             if constexpr(ROW) {
                 ptr = mat->get_row(r, buffer, previdx, previdx + n, work);
             } else {
@@ -117,13 +130,13 @@ public:
             auto original = start;
             auto previdx = indices[start];
             ++start;
-
             while (start < end && indices[start] == previdx + 1) {
                 previdx = indices[start];
                 ++start;
             }
 
             size_t n = start - original;
+            previdx = indices[original];
             sparse_range<T, IDX> range;
             if constexpr(ROW) {
                 range = mat->get_sparse_row(r, out_values, out_indices, previdx, previdx + n, work);
