@@ -39,7 +39,7 @@ public:
      *
      * @return Pointer to the values of row `r`, starting from the value in the `first` column and containing `last - first` valid entries.
      */
-    virtual const T* get_row(size_t r, T* buffer, size_t first, size_t last, workspace* work=NULL) const = 0;
+    virtual const T* row(size_t r, T* buffer, size_t first, size_t last, workspace* work=NULL) const = 0;
 
     /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
@@ -56,7 +56,7 @@ public:
      *
      * @return Pointer to the values of column `c`, starting from the value in the `first` row and containing `last - first` valid entries.
      */
-    virtual const T* get_column(size_t c, T* buffer, size_t first, size_t last, workspace* work=NULL) const = 0;
+    virtual const T* column(size_t c, T* buffer, size_t first, size_t last, workspace* work=NULL) const = 0;
 
     /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
@@ -71,8 +71,8 @@ public:
      *
      * @return Pointer to the values of row `r`.
      */
-    const T* get_row(size_t r, T* buffer, workspace* work=NULL) const {
-        return get_row(r, buffer, 0, this->ncol(), work);
+    const T* row(size_t r, T* buffer, workspace* work=NULL) const {
+        return row(r, buffer, 0, this->ncol(), work);
     }
 
     /**
@@ -88,8 +88,8 @@ public:
      *
      * @return Pointer to the values of column `c`.
      */
-    const T* get_column(size_t c, T* buffer, workspace* work=NULL) const {
-        return get_column(c, buffer, 0, this->nrow(), work);
+    const T* column(size_t c, T* buffer, workspace* work=NULL) const {
+        return column(c, buffer, 0, this->nrow(), work);
     }
 
     /**
@@ -110,8 +110,8 @@ public:
      * @return A `sparse_range` object containing the number of non-zero elements in `r` from column `first` up to `last`.
      * This also contains pointers to their column indices and values.
      */
-    virtual sparse_range<T, IDX> get_sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
-        const T* val = get_row(r, vbuffer, start, end, work);
+    virtual sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
+        const T* val = row(r, vbuffer, start, end, work);
         for (size_t i = start; i < end; ++i) {
             ibuffer[i - start] = i;
         }
@@ -136,8 +136,8 @@ public:
      * @return A `sparse_range` object containing the number of non-zero elements in `c` from column `first` up to `last`.
      * This also contains pointers to their row indices and values.
      */
-    virtual sparse_range<T, IDX> get_sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
-        const T* val = get_column(c, vbuffer, start, end, work);
+    virtual sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
+        const T* val = column(c, vbuffer, start, end, work);
         for (size_t i = start; i < end; ++i) {
             ibuffer[i - start] = i;
         }
@@ -160,8 +160,8 @@ public:
      * @return A `sparse_range` object containing the number of non-zero elements in `r`.
      * This also contains pointers to their column indices and values.
      */
-    sparse_range<T, IDX> get_sparse_row(size_t r, T* vbuffer, IDX* ibuffer, workspace* work=NULL) const {
-        return get_sparse_row(r, vbuffer, ibuffer, 0, this->ncol(), work);
+    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, workspace* work=NULL) const {
+        return sparse_row(r, vbuffer, ibuffer, 0, this->ncol(), work);
     }
 
     /**
@@ -180,8 +180,8 @@ public:
      * @return A `sparse_range` object containing the number of non-zero elements in `c`.
      * This also contains pointers to their row indices and values.
      */
-    sparse_range<T, IDX> get_sparse_column(size_t c, T* vbuffer, IDX* ibuffer, workspace* work=NULL) const {
-        return get_sparse_column(c, vbuffer, ibuffer, 0, this->nrow(), work);
+    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, workspace* work=NULL) const {
+        return sparse_column(c, vbuffer, ibuffer, 0, this->nrow(), work);
     }
 
     /**

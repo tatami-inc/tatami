@@ -17,7 +17,7 @@ namespace tatami {
  * @brief Delayed subsetting of a matrix.
  *
  * Implements delayed subsetting (i.e., slicing) on the rows or columns of a matrix.
- * This operation is "delayed" in that it is only evaluated on request, e.g., with `get_row()` or friends.
+ * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
  *
  * @tparam T Type of matrix value.
  * @tparam MARGIN Dimension along which the addition is to occur.
@@ -43,50 +43,50 @@ public:
     ~DelayedSubsetOp() {}
 
 public:
-    const T* get_row(size_t r, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
+    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
             subset_expanded<true>(r, buffer, start, end, work);
             return buffer;
         } else {
-            return mat->get_row(indices[r], buffer, start, end, work);
+            return mat->row(indices[r], buffer, start, end, work);
         }
     }
 
-    const T* get_column(size_t c, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
+    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
-            return mat->get_column(indices[c], buffer, start, end, work);
+            return mat->column(indices[c], buffer, start, end, work);
         } else {
             subset_expanded<false>(c, buffer, start, end, work);
             return buffer;
         }
     }
 
-    using typed_matrix<T, IDX>::get_column;
+    using typed_matrix<T, IDX>::column;
 
-    using typed_matrix<T, IDX>::get_row;
+    using typed_matrix<T, IDX>::row;
 
 public:
-    sparse_range<T, IDX> get_sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
             auto total = subset_sparse<true>(r, out_values, out_indices, start, end, work);
             return sparse_range<T, IDX>(total, out_values, out_indices);
         } else {
-            return mat->get_sparse_row(indices[r], out_values, out_indices, start, end, work);
+            return mat->sparse_row(indices[r], out_values, out_indices, start, end, work);
         }
     }
 
-    sparse_range<T, IDX> get_sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=NULL) const {
         if constexpr(MARGIN==1) {
-            return mat->get_sparse_column(indices[c], out_values, out_indices, start, end, work);
+            return mat->sparse_column(indices[c], out_values, out_indices, start, end, work);
         } else {
             auto total = subset_sparse<false>(c, out_values, out_indices, start, end, work);
             return sparse_range<T, IDX>(total, out_values, out_indices);
         }
     }
 
-    using typed_matrix<T, IDX>::get_sparse_column;
+    using typed_matrix<T, IDX>::sparse_column;
 
-    using typed_matrix<T, IDX>::get_sparse_row;
+    using typed_matrix<T, IDX>::sparse_row;
 
 public:
     /**
@@ -144,9 +144,9 @@ private:
             size_t n = start - original;
             previdx = indices[original];
             if constexpr(ROW) {
-                ptr = mat->get_row(r, buffer, previdx, previdx + n, work);
+                ptr = mat->row(r, buffer, previdx, previdx + n, work);
             } else {
-                ptr = mat->get_column(r, buffer, previdx, previdx + n, work);
+                ptr = mat->column(r, buffer, previdx, previdx + n, work);
             }
 
             if (ptr != buffer) {
@@ -173,9 +173,9 @@ private:
             previdx = indices[original];
             sparse_range<T, IDX> range;
             if constexpr(ROW) {
-                range = mat->get_sparse_row(r, out_values, out_indices, previdx, previdx + n, work);
+                range = mat->sparse_row(r, out_values, out_indices, previdx, previdx + n, work);
             } else {
-                range = mat->get_sparse_column(r, out_values, out_indices, previdx, previdx + n, work);
+                range = mat->sparse_column(r, out_values, out_indices, previdx, previdx + n, work);
             }
 
             if (out_values != range.value) {

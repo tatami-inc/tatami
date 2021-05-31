@@ -13,7 +13,7 @@ namespace tatami {
  * @brief Delayed isometric operations on a matrix.
  *
  * Implements any operation that preserves the shape of the matrix and operates on each matrix value independently.
- * This operation is "delayed" in that it is only evaluated on request, e.g., with `get_row()` or friends.
+ * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
  *
  * @tparam T Type of matrix value.
  * @tparam OP Functor class implementing the operation.
@@ -38,36 +38,36 @@ public:
     ~DelayedIsometricOp() {}
 
 public:
-    const T* get_row(size_t r, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
-        const T* raw = mat->get_row(r, buffer, start, end, work);
+    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
+        const T* raw = mat->row(r, buffer, start, end, work);
         for (size_t i = start; i < end; ++i, ++raw) {
             buffer[i - start] = operation(r, i, *raw);
         }
         return buffer;
     }
 
-    const T* get_column(size_t c, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
-        const T* raw = mat->get_column(c, buffer, start, end, work);
+    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
+        const T* raw = mat->column(c, buffer, start, end, work);
         for (size_t i = start; i < end; ++i, ++raw) {
             buffer[i - start] = operation(i, c, *raw);
         }
         return buffer;
     }
 
-    using typed_matrix<T, IDX>::get_column;
+    using typed_matrix<T, IDX>::column;
 
-    using typed_matrix<T, IDX>::get_row;
+    using typed_matrix<T, IDX>::row;
 
 public:
-    sparse_range<T, IDX> get_sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
         if (OP::sparse) {
-            auto raw = mat->get_sparse_row(r, vbuffer, ibuffer, start, end, work);
+            auto raw = mat->sparse_row(r, vbuffer, ibuffer, start, end, work);
             for (size_t i = 0; i < raw.number; ++i) {
                 vbuffer[i] = operation(r, raw.index[i], raw.value[i]);
             }
             return sparse_range<T, IDX>(raw.number, vbuffer, raw.index);
         } else {
-            auto ptr = mat->get_row(r, vbuffer, start, end, work);
+            auto ptr = mat->row(r, vbuffer, start, end, work);
             auto original_values = vbuffer;
             auto original_indices = ibuffer;
             for (size_t i = start; i < end; ++i, ++vbuffer, ++ibuffer, ++ptr) {
@@ -78,15 +78,15 @@ public:
         }
     }
 
-    sparse_range<T, IDX> get_sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
         if (OP::sparse) {
-            auto raw = mat->get_sparse_column(c, vbuffer, ibuffer, start, end, work);
+            auto raw = mat->sparse_column(c, vbuffer, ibuffer, start, end, work);
             for (size_t i = 0; i < raw.number; ++i) {
                 vbuffer[i] = operation(raw.index[i], c, raw.value[i]);
             }
             return sparse_range<T, IDX>(raw.number, vbuffer, raw.index);
         } else {
-            auto ptr = mat->get_column(c, vbuffer, start, end, work);
+            auto ptr = mat->column(c, vbuffer, start, end, work);
             auto original_values = vbuffer;
             auto original_indices = ibuffer;
             for (size_t i = start; i < end; ++i, ++vbuffer, ++ibuffer, ++ptr) {
@@ -97,9 +97,9 @@ public:
         }
     }
 
-    using typed_matrix<T, IDX>::get_sparse_column;
+    using typed_matrix<T, IDX>::sparse_column;
 
-    using typed_matrix<T, IDX>::get_sparse_row;
+    using typed_matrix<T, IDX>::sparse_row;
 
 public:
     size_t nrow() const {

@@ -22,7 +22,7 @@ inline std::shared_ptr<typed_matrix<T, IDX>*> simplify_matrix(std::shared_ptr<co
             std::vector<size_t> indptrs(NC + 1);
 
             for (size_t c = 0; c < NR; ++c, optr+=NC) {
-                auto range = incoming->get_sparse_row(c, buffer_v.data(), buffer_i.data());
+                auto range = incoming->sparse_row(c, buffer_v.data(), buffer_i.data());
                 for (size_t i = 0; i < range.number; ++i) {
                     buffer_v.push_back(range.value[i]);
                     buffer_i.push_back(range.index[i]);
@@ -35,7 +35,7 @@ inline std::shared_ptr<typed_matrix<T, IDX>*> simplify_matrix(std::shared_ptr<co
             std::vector<T> output(NR * NC);
             auto optr = output.data();
             for (size_t r = 0; r < NR; ++r, optr+=NC) {
-                auto ptr = incoming->get_row(r, optr);
+                auto ptr = incoming->row(r, optr);
                 if (ptr != optr) {
                     std::copy(ptr, ptr + NC, optr);
                 }
@@ -50,7 +50,7 @@ inline std::shared_ptr<typed_matrix<T, IDX>*> simplify_matrix(std::shared_ptr<co
             std::vector<size_t> indptrs(NC + 1);
 
             for (size_t c = 0; c < NC; ++c, optr+=NR) {
-                auto range = incoming->get_sparse_column(c, buffer_v.data(), buffer_i.data());
+                auto range = incoming->sparse_column(c, buffer_v.data(), buffer_i.data());
                 for (size_t i = 0; i < range.number; ++i) {
                     buffer_v.push_back(range.value[i]);
                     buffer_i.push_back(range.index[i]);
@@ -63,7 +63,7 @@ inline std::shared_ptr<typed_matrix<T, IDX>*> simplify_matrix(std::shared_ptr<co
             std::vector<T> output(NR * NC);
             auto optr = output.data();
             for (size_t c = 0; c < NC; ++c, optr+=NR) {
-                auto ptr = incoming->get_column(c, optr);
+                auto ptr = incoming->column(c, optr);
                 if (ptr != optr) {
                     std::copy(ptr, ptr + NR, optr);
                 }

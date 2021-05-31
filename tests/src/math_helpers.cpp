@@ -53,17 +53,17 @@ TEST_F(MathTest, AbsByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = std::abs(expected[j]); 
         }
 
         wipe_output();
-        fill_output(sparse_mod->get_column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod->get_column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -87,17 +87,17 @@ TEST_F(MathTest, SqrtByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = std::sqrt(std::abs(expected[j])); 
         }
 
         wipe_output();
-        fill_output(sparse_mod->get_column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod->get_column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -125,17 +125,17 @@ TEST_F(MathTest, LogByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = std::log(std::abs(expected[j]) + 5);
         }
 
         wipe_output();
-        fill_output(sparse_mod->get_column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod->get_column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 
@@ -149,17 +149,17 @@ TEST_F(MathTest, LogByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = std::log(std::abs(expected[j]) + 5)/std::log(2);
         }
 
         wipe_output();
-        fill_output(sparse_mod2->get_column(i, output.data()));
+        fill_output(sparse_mod2->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2->get_column(i, output.data()));
+        fill_output(dense_mod2->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -183,17 +183,17 @@ TEST_F(MathTest, Log1pByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = std::log1p(std::abs(expected[j]));
         }
 
         wipe_output();
-        fill_output(sparse_mod->get_column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod->get_column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 
@@ -207,17 +207,17 @@ TEST_F(MathTest, Log1pByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = std::log1p(std::abs(expected[j]))/std::log(2);
         }
 
         wipe_output();
-        fill_output(sparse_mod2->get_column(i, output.data()));
+        fill_output(sparse_mod2->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2->get_column(i, output.data()));
+        fill_output(dense_mod2->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -237,17 +237,17 @@ TEST_F(MathTest, ExpByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = std::exp(expected[j]); 
         }
 
         wipe_output();
-        fill_output(sparse_mod->get_column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod->get_column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -267,17 +267,17 @@ TEST_F(MathTest, RoundByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = std::round(expected[j]); 
         }
 
         wipe_output();
-        fill_output(sparse_mod->get_column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod->get_column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }

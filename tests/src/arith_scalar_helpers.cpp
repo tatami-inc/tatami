@@ -56,17 +56,17 @@ TEST_F(ArithScalarTest, AdditionByColumn) {
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] += 5;
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -86,17 +86,17 @@ TEST_F(ArithScalarTest, SubtractionByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] -= 5;
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 
@@ -107,17 +107,17 @@ TEST_F(ArithScalarTest, SubtractionByColumn) {
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = 0.7 - expected[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod2.get_column(i, output.data(), first, last));
+        fill_output(sparse_mod2.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.get_column(i, output.data(), first, last));
+        fill_output(dense_mod2.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
     }
 }
@@ -136,17 +136,17 @@ TEST_F(ArithScalarTest, MultiplicationByColumn) {
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] *= 5;
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -167,17 +167,17 @@ TEST_F(ArithScalarTest, DivisionByColumn) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] /= 5;
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 
@@ -192,17 +192,17 @@ TEST_F(ArithScalarTest, DivisionByColumn) {
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] = 0.7 / std::exp(expected[j]);
         }
 
         wipe_output();
-        fill_output(sparse_mod2.get_column(i, output.data(), first, last));
+        fill_output(sparse_mod2.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.get_column(i, output.data(), first, last));
+        fill_output(dense_mod2.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
     }
 }

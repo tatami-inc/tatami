@@ -67,33 +67,33 @@ public:
     int preferred_dimension() const { return (ROW ? 0 : 1); }
 
 public:
-    const T* get_row(size_t r, T* buffer, size_t start, size_t end, workspace * wrk=NULL) const {
+    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace * wrk=NULL) const {
         if constexpr(ROW) {
-            return get_primary(r, buffer, start, end, wrk, ncols);
+            return primary(r, buffer, start, end, wrk, ncols);
         } else {
-            get_secondary(r, buffer, start, end, wrk, nrows);
+            secondary(r, buffer, start, end, wrk, nrows);
             return buffer;
         }
     }
 
-    const T* get_column(size_t c, T* buffer, size_t start, size_t end, workspace* wrk=NULL) const {
+    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace* wrk=NULL) const {
         if constexpr(ROW) {
-            get_secondary(c, buffer, start, end, wrk, ncols);
+            secondary(c, buffer, start, end, wrk, ncols);
             return buffer;
         } else {
-            return get_primary(c, buffer, start, end, wrk, nrows);
+            return primary(c, buffer, start, end, wrk, nrows);
         }
     }
 
-    using typed_matrix<T, IDX>::get_row;
+    using typed_matrix<T, IDX>::row;
 
-    using typed_matrix<T, IDX>::get_column;
+    using typed_matrix<T, IDX>::column;
 
 private: 
     size_t nrows, ncols;
     V values;
 
-    const T* get_primary(size_t c, T* buffer, size_t start, size_t end, workspace* wrk, size_t dim_secondary) const {
+    const T* primary(size_t c, T* buffer, size_t start, size_t end, workspace* wrk, size_t dim_secondary) const {
         size_t shift = c * dim_secondary;
         if constexpr(has_data<T, V>::value) {
             return values.data() + shift + start;
@@ -104,7 +104,7 @@ private:
         }
     }
 
-    void get_secondary(size_t r, T* buffer, size_t start, size_t end, workspace * wrk, size_t dim_secondary) const {
+    void secondary(size_t r, T* buffer, size_t start, size_t end, workspace * wrk, size_t dim_secondary) const {
         auto it = values.begin() + r + start * dim_secondary;
         for (size_t i = start; i < end; ++i, ++buffer, it+=dim_secondary) {
             *buffer = *it; 
@@ -118,7 +118,7 @@ private:
  * See `tatami::DenseMatrix` for details on the template parameters.
  */
 template<typename T, class V = std::vector<T>, typename IDX = int>
-using DenseColumnMatrix = DenseMatrix<false, T, V, iDX>;
+using DenseColumnMatrix = DenseMatrix<false, T, V, IDX>;
 
 /**
  * Row-major matrix.

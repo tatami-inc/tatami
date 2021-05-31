@@ -7,13 +7,16 @@
 #include <numeric>
 
 TEST(DenseMatrix, Construction) {
-    tatami::DenseColumnMatrix<double> mat(10, 20);
+    std::vector<double> contents(200);
+    double counter = -105;
+    for (auto& i : contents) { i = counter++; }
+    tatami::DenseColumnMatrix<double> mat(10, 20, contents);
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
     EXPECT_EQ(mat.type(), tatami::_double);
 
     // Checks run properly.
-    std::vector<double> contents;
+    contents.clear();
     EXPECT_ANY_THROW({
         tatami::DenseColumnMatrix<double> mat(10, 20, contents);
     });

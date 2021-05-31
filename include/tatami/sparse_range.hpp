@@ -14,7 +14,7 @@ namespace tatami {
  *
  * More specifically, this class defines a range of sparse (i.e., "non-zero") values, e.g., along a slice of a row or column.
  * The aim is to hold (pointers to) the values and row/column indices, as well as the number of non-zero values within this range.
- * This is most commonly returned by `typed_matrix::get_sparse_row()` and `typed_matrix::get_sparse_column()` methods.
+ * This is most commonly returned by `typed_matrix::sparse_row()` and `typed_matrix::get_sparse_column()` methods.
  *
  * @tparam T Type of value.
  * @tparam IDX Type of index.

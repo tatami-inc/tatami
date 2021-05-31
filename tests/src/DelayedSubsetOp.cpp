@@ -56,11 +56,11 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_output();
-        fill_output(sparse_subbed.get_column(i, output.data()));
+        fill_output(sparse_subbed.column(i, output.data()));
 
         // Reference extraction, the simple way.
         wipe_expected();
-        auto X = sparse->get_column(i, buffer_full.data());
+        auto X = sparse->column(i, buffer_full.data());
         auto eIt = expected.begin();
         for (auto s : sub) {
             (*eIt) = X[s];
@@ -70,21 +70,21 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.get_column(i, output.data()));
+        fill_output(dense_subbed.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -105,11 +105,11 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
         set_sizes(first, std::min(first + LEN, sub.size()));
 
         wipe_output();
-        fill_output(sparse_subbed.get_column(i, output.data(), first, last));
+        fill_output(sparse_subbed.column(i, output.data(), first, last));
 
         // Reference extraction, the simple way.
         wipe_expected();
-        auto X = sparse->get_column(i, buffer_full.data());
+        auto X = sparse->column(i, buffer_full.data());
         auto eIt = expected.begin();
         for (auto s = first; s < last; ++s) {
             (*eIt) = X[sub[s]];
@@ -119,17 +119,17 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.get_column(i, output.data(), first, last));
+        fill_output(dense_subbed.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_column(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);        
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         first += 13;
@@ -150,29 +150,29 @@ TEST_F(SubsetTest, SubsetRowFullRowAccess) {
     create_workspaces(true);
     for (size_t i = 0; i < sub.size(); ++i) {
         wipe_output();
-        fill_output(sparse_subbed.get_row(i, output.data()));
+        fill_output(sparse_subbed.row(i, output.data()));
 
         wipe_expected();
-        fill_expected(sparse->get_row(sub[i], expected.data()));
+        fill_expected(sparse->row(sub[i], expected.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.get_row(i, output.data()));
+        fill_output(dense_subbed.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -192,11 +192,11 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
     create_workspaces(true);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_output();
-        fill_output(sparse_subbed.get_row(i, output.data()));
+        fill_output(sparse_subbed.row(i, output.data()));
 
         // Reference extraction, the simple way.
         wipe_expected();
-        auto X = sparse->get_row(i, buffer_full.data());
+        auto X = sparse->row(i, buffer_full.data());
         auto eIt = expected.begin();
         for (auto s : sub) {
             (*eIt) = X[s];
@@ -206,21 +206,21 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.get_row(i, output.data()));
+        fill_output(dense_subbed.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -240,11 +240,11 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
         set_sizes(first, std::min(first + LEN, sub.size()));
 
         wipe_output();
-        fill_output(sparse_subbed.get_row(i, output.data(), first, last));
+        fill_output(sparse_subbed.row(i, output.data(), first, last));
 
         // Reference extraction, the simple way.
         wipe_expected();
-        auto X = sparse->get_row(i, buffer_full.data());
+        auto X = sparse->row(i, buffer_full.data());
         auto eIt = expected.begin();
         for (auto s = first; s < last && s < sub.size(); ++s) {
             (*eIt) = X[sub[s]];
@@ -254,17 +254,17 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.get_row(i, output.data(), first, last));
+        fill_output(dense_subbed.row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_row(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);        
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         first += 11;
@@ -285,29 +285,29 @@ TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
     create_workspaces(false);
     for (size_t i = 0; i < sub.size(); ++i) {
         wipe_output();
-        fill_output(sparse_subbed.get_column(i, output.data()));
+        fill_output(sparse_subbed.column(i, output.data()));
 
         wipe_expected();
-        fill_expected(sparse->get_column(sub[i], expected.data()));
+        fill_expected(sparse->column(sub[i], expected.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.get_column(i, output.data()));
+        fill_output(dense_subbed.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }

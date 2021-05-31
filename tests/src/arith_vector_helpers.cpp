@@ -70,32 +70,32 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] += vec[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -105,32 +105,32 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data(), first, last));
+        fill_expected(sparse->column(i, expected.data(), first, last));
         for (size_t j = 0; j < last - first; ++j) {
             expected[j] += vec[first + j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data(), first, last));
+        fill_output(sparse_mod.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data(), first, last));
+        fill_output(dense_mod.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), first, last, work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -140,32 +140,32 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
 
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data()));
+        fill_expected(sparse->row(i, expected.data()));
         for (size_t j = 0; j < dense->ncol(); ++j) {
             expected[j] += vec[i];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data()));
+        fill_output(sparse_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
         
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data()));
+        fill_output(dense_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -182,32 +182,32 @@ TEST_F(ArithVectorTest, AdditionAlongColumns) {
     create_workspaces(true);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data()));
+        fill_expected(sparse->row(i, expected.data()));
         for (size_t j = 0; j < dense->ncol(); ++j) {
             expected[j] += vec[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data()));
+        fill_output(sparse_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data()));
+        fill_output(dense_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -217,32 +217,32 @@ TEST_F(ArithVectorTest, AdditionAlongColumns) {
     create_workspaces(true);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data(), first, last));
+        fill_expected(sparse->row(i, expected.data(), first, last));
         for (size_t j = 0; j < last - first; ++j) {
             expected[j] += vec[first + j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data(), first, last));
+        fill_output(sparse_mod.row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data(), first, last));
+        fill_output(dense_mod.row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), first, last, work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -252,32 +252,32 @@ TEST_F(ArithVectorTest, AdditionAlongColumns) {
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] += vec[i];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
         
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -303,32 +303,32 @@ TEST_F(ArithVectorTest, SubtractionAlongRows) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] -= vec[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -341,32 +341,32 @@ TEST_F(ArithVectorTest, SubtractionAlongRows) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data(), first, last));
+        fill_expected(sparse->column(i, expected.data(), first, last));
         for (size_t j = 0; j < last - first; ++j) {
             expected[j] = vec[first + j] - expected[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod2.get_column(i, output.data(), first, last));
+        fill_output(sparse_mod2.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod2.get_column(i, output.data(), first, last));
+        fill_output(dense_mod2.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod2.get_sparse_column(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_mod2.sparse_column(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod2.get_sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod2.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.get_column(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod2.column(i, outval.data(), first, last, work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -376,32 +376,32 @@ TEST_F(ArithVectorTest, SubtractionAlongRows) {
 
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data()));
+        fill_expected(sparse->row(i, expected.data()));
         for (size_t j = 0; j < dense->ncol(); ++j) {
             expected[j] -= vec[i];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data()));
+        fill_output(sparse_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
         
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data()));
+        fill_output(dense_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -418,32 +418,32 @@ TEST_F(ArithVectorTest, SubtractionAlongColumns) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data()));
+        fill_expected(sparse->row(i, expected.data()));
         for (size_t j = 0; j < dense->ncol(); ++j) {
             expected[j] -= vec[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data()));
+        fill_output(sparse_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data()));
+        fill_output(dense_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -457,32 +457,32 @@ TEST_F(ArithVectorTest, SubtractionAlongColumns) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data(), first, last));
+        fill_expected(sparse->row(i, expected.data(), first, last));
         for (size_t j = 0; j < last - first; ++j) {
             expected[j] = vec[first + j] - expected[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod2.get_row(i, output.data(), first, last));
+        fill_output(sparse_mod2.row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod2.get_row(i, output.data(), first, last));
+        fill_output(dense_mod2.row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod2.get_sparse_row(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_mod2.sparse_row(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod2.get_sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod2.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.get_row(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod2.row(i, outval.data(), first, last, work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -492,32 +492,32 @@ TEST_F(ArithVectorTest, SubtractionAlongColumns) {
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] -= vec[i];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
         
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -543,32 +543,32 @@ TEST_F(ArithVectorTest, MultiplicationAlongRows) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] *= vec[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -578,32 +578,32 @@ TEST_F(ArithVectorTest, MultiplicationAlongRows) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data(), first, last));
+        fill_expected(sparse->column(i, expected.data(), first, last));
         for (size_t j = 0; j < last - first; ++j) {
             expected[j] *= vec[first + j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data(), first, last));
+        fill_output(sparse_mod.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data(), first, last));
+        fill_output(dense_mod.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), first, last, work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -613,32 +613,32 @@ TEST_F(ArithVectorTest, MultiplicationAlongRows) {
 
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data()));
+        fill_expected(sparse->row(i, expected.data()));
         for (size_t j = 0; j < dense->ncol(); ++j) {
             expected[j] *= vec[i];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data()));
+        fill_output(sparse_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
         
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data()));
+        fill_output(dense_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -655,32 +655,32 @@ TEST_F(ArithVectorTest, MultiplicationAlongColumns) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data()));
+        fill_expected(sparse->row(i, expected.data()));
         for (size_t j = 0; j < dense->ncol(); ++j) {
             expected[j] *= vec[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data()));
+        fill_output(sparse_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data()));
+        fill_output(dense_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -690,32 +690,32 @@ TEST_F(ArithVectorTest, MultiplicationAlongColumns) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data(), first, last));
+        fill_expected(sparse->row(i, expected.data(), first, last));
         for (size_t j = 0; j < last - first; ++j) {
             expected[j] *= vec[j + first];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data(), first, last));
+        fill_output(sparse_mod.row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data(), first, last));
+        fill_output(dense_mod.row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), first, last, work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -725,32 +725,32 @@ TEST_F(ArithVectorTest, MultiplicationAlongColumns) {
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] *= vec[i];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
         
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -777,32 +777,32 @@ TEST_F(ArithVectorTest, DivisionAlongRows) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] /= vec[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -820,32 +820,32 @@ TEST_F(ArithVectorTest, DivisionAlongRows) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data(), first, last));
+        fill_expected(sparse->column(i, expected.data(), first, last));
         for (size_t j = 0; j < last - first; ++j) {
             expected[j] = vec[j + first] / std::exp(expected[j]);
         }
 
         wipe_output();
-        fill_output(sparse_mod2.get_column(i, output.data(), first, last));
+        fill_output(sparse_mod2.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod2.get_column(i, output.data(), first, last));
+        fill_output(dense_mod2.column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod2.get_sparse_column(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_mod2.sparse_column(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod2.get_sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod2.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.get_column(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod2.column(i, outval.data(), first, last, work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -855,32 +855,32 @@ TEST_F(ArithVectorTest, DivisionAlongRows) {
 
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data()));
+        fill_expected(sparse->row(i, expected.data()));
         for (size_t j = 0; j < dense->ncol(); ++j) {
             expected[j] /= vec[i];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data()));
+        fill_output(sparse_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
         
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data()));
+        fill_output(dense_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -897,32 +897,32 @@ TEST_F(ArithVectorTest, DivisionAlongColumns) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data()));
+        fill_expected(sparse->row(i, expected.data()));
         for (size_t j = 0; j < dense->ncol(); ++j) {
             expected[j] /= vec[j];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_row(i, output.data()));
+        fill_output(sparse_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_row(i, output.data()));
+        fill_output(dense_mod.row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -940,32 +940,32 @@ TEST_F(ArithVectorTest, DivisionAlongColumns) {
     create_workspaces(false);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_row(i, expected.data(), first, last));
+        fill_expected(sparse->row(i, expected.data(), first, last));
         for (size_t j = 0; j < last - first; ++j) {
             expected[j] = vec[j + first] / std::exp(expected[j]);
         }
 
         wipe_output();
-        fill_output(sparse_mod2.get_row(i, output.data(), first, last));
+        fill_output(sparse_mod2.row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod2.get_row(i, output.data(), first, last));
+        fill_output(dense_mod2.row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod2.get_sparse_row(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_mod2.sparse_row(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod2.get_sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod2.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.get_row(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod2.row(i, outval.data(), first, last, work_dense.get()));
         EXPECT_EQ(output, expected);
     }
     
@@ -975,32 +975,32 @@ TEST_F(ArithVectorTest, DivisionAlongColumns) {
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->get_column(i, expected.data()));
+        fill_expected(sparse->column(i, expected.data()));
         for (size_t j = 0; j < dense->nrow(); ++j) {
             expected[j] /= vec[i];
         }
 
         wipe_output();
-        fill_output(sparse_mod.get_column(i, output.data()));
+        fill_output(sparse_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
         
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_mod.get_column(i, output.data()));
+        fill_output(dense_mod.column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.get_sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.get_column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }

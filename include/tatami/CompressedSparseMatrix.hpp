@@ -104,61 +104,61 @@ public:
     int preferred_dimension() const { return (ROW ? 0 : 1); }
 
 public:
-    const T* get_row(size_t r, T* buffer, size_t first, size_t last, workspace* work=NULL) const {
+    const T* row(size_t r, T* buffer, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
-            get_primary_dimension_expanded(r, first, last, this->ncols, buffer, 0);
+            primary_dimension_expanded(r, first, last, this->ncols, buffer, 0);
         } else {
-            get_secondary_dimension_expanded(r, first, last, work, buffer, 0);
+            secondary_dimension_expanded(r, first, last, work, buffer, 0);
         }
         return buffer;
     }
 
-    const T* get_column(size_t c, T* buffer, size_t first, size_t last, workspace* work=NULL) const {
+    const T* column(size_t c, T* buffer, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
-            get_secondary_dimension_expanded(c, first, last, work, buffer, 0);
+            secondary_dimension_expanded(c, first, last, work, buffer, 0);
         } else {
-            get_primary_dimension_expanded(c, first, last, this->nrows, buffer, 0);
+            primary_dimension_expanded(c, first, last, this->nrows, buffer, 0);
         }
         return buffer;
     }
 
-    using typed_matrix<T, IDX>::get_row;
+    using typed_matrix<T, IDX>::row;
 
-    using typed_matrix<T, IDX>::get_column;
+    using typed_matrix<T, IDX>::column;
 
 public:
     /**
-     * @copydoc typed_matrix::get_sparse_row()
+     * @copydoc typed_matrix::sparse_row()
      */
-    sparse_range<T, IDX> get_sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
-            return get_primary_dimension_raw(r, first, last, this->ncols, vbuffer, ibuffer);
+            return primary_dimension_raw(r, first, last, this->ncols, vbuffer, ibuffer);
         } else {
-            return get_secondary_dimension_raw(r, first, last, work, vbuffer, ibuffer); 
+            return secondary_dimension_raw(r, first, last, work, vbuffer, ibuffer); 
         }
     }
 
     /**
-     * @copydoc typed_matrix::get_sparse_column()
+     * @copydoc typed_matrix::sparse_column()
      */
-    sparse_range<T, IDX> get_sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
-            return get_secondary_dimension_raw(c, first, last, work, vbuffer, ibuffer); 
+            return secondary_dimension_raw(c, first, last, work, vbuffer, ibuffer); 
         } else {
-            return get_primary_dimension_raw(c, first, last, this->nrows, vbuffer, ibuffer);
+            return primary_dimension_raw(c, first, last, this->nrows, vbuffer, ibuffer);
         }
     }
 
-    using typed_matrix<T, IDX>::get_sparse_row;
+    using typed_matrix<T, IDX>::sparse_row;
 
-    using typed_matrix<T, IDX>::get_sparse_column;
+    using typed_matrix<T, IDX>::sparse_column;
 
 public:
     struct compressed_sparse_workspace : public workspace {
     public:
         compressed_sparse_workspace(const V& idx, const W& idp) : indices(idx), 
                                                                   indptrs(idp), 
-                                                                  offsets(idp), 
+                                                                  curptrs(idp), 
                                                                   previous(indptrs.size() - 1) {} 
 
         void update_indices(IDX i, size_t first, size_t last) {
@@ -168,7 +168,7 @@ public:
                     continue;
                 }
 
-                auto& curdex = offsets[current];
+                auto& curdex = curptrs[current];
                 if (i == prev_i + 1) {
                     if (curdex != indptrs[current+1] && indices[curdex] < i) { 
                         ++curdex;
@@ -189,13 +189,13 @@ public:
             return;
         }
 
-        const W& get_offsets() const { 
-            return offsets;
+        const W& offsets() const { 
+            return curptrs;
         }
     private:
         const V& indices;
         const W& indptrs; 
-        W offsets;
+        W curptrs;
         std::vector<size_t> previous;
     };
 
@@ -256,7 +256,7 @@ private:
         return;
     }
 
-    std::pair<size_t, size_t> get_primary_dimension(size_t i, size_t first, size_t last, size_t otherdim) const {
+    std::pair<size_t, size_t> primary_dimension(size_t i, size_t first, size_t last, size_t otherdim) const {
         const auto pstart = indptrs[i];
         auto iIt = indices.begin() + pstart, 
              eIt = indices.begin() + indptrs[i + 1]; 
@@ -273,8 +273,8 @@ private:
         return std::make_pair(iIt - indices.begin(), eIt - iIt);
     }
 
-    sparse_range<T, IDX> get_primary_dimension_raw(size_t i, size_t first, size_t last, size_t otherdim, T* out_values, IDX* out_indices) const {
-        auto obtained = get_primary_dimension(i, first, last, otherdim);
+    sparse_range<T, IDX> primary_dimension_raw(size_t i, size_t first, size_t last, size_t otherdim, T* out_values, IDX* out_indices) const {
+        auto obtained = primary_dimension(i, first, last, otherdim);
         sparse_range<T, IDX> output(obtained.second);
 
         if constexpr(has_data<T, U>::value) {
@@ -296,9 +296,9 @@ private:
         return output;
     }
 
-    void get_primary_dimension_expanded(size_t i, size_t first, size_t last, size_t otherdim, T* out_values, T empty) const {
+    void primary_dimension_expanded(size_t i, size_t first, size_t last, size_t otherdim, T* out_values, T empty) const {
         std::fill(out_values, out_values + (last - first), empty);
-        auto obtained = get_primary_dimension(i, first, last, otherdim);
+        auto obtained = primary_dimension(i, first, last, otherdim);
         auto vIt = values.begin() + obtained.first;
         auto iIt = indices.begin() + obtained.first;
         for (size_t x = 0; x < obtained.second; ++x, ++vIt, ++iIt) {
@@ -308,7 +308,7 @@ private:
     }
 
     template<class STORE>
-    void get_secondary_dimension(IDX i, size_t first, size_t last, workspace* work, STORE& output) const {
+    void secondary_dimension(IDX i, size_t first, size_t last, workspace* work, STORE& output) const {
         if (work == NULL) {
             for (size_t c = first; c < last; ++c) { 
                 auto start = indices.begin() + indptrs[c];
@@ -322,7 +322,7 @@ private:
         } else {
             compressed_sparse_workspace& worker = *(dynamic_cast<compressed_sparse_workspace*>(work));
             worker.update_indices(i, first, last);
-            auto& new_indptrs = worker.get_offsets();
+            auto& new_indptrs = worker.offsets();
 
             auto pIt = indptrs.begin() + first + 1; // Points to first-past-the-end for each 'c'.
             for (size_t c = first; c < last; ++c, ++pIt) { 
@@ -349,11 +349,11 @@ private:
         }
     };
 
-    sparse_range<T, IDX> get_secondary_dimension_raw(IDX i, size_t first, size_t last, workspace* work, T* out_values, IDX* out_indices) const {
+    sparse_range<T, IDX> secondary_dimension_raw(IDX i, size_t first, size_t last, workspace* work, T* out_values, IDX* out_indices) const {
         raw_store store;
         store.out_values = out_values;
         store.out_indices = out_indices;
-        get_secondary_dimension(i, first, last, work, store);
+        secondary_dimension(i, first, last, work, store);
         return sparse_range<T, IDX>(store.n, out_values, out_indices);
     }
 
@@ -366,12 +366,12 @@ private:
         }
     };
 
-    void get_secondary_dimension_expanded(IDX i, size_t first, size_t last, workspace* work, T* out_values, T empty) const {
+    void secondary_dimension_expanded(IDX i, size_t first, size_t last, workspace* work, T* out_values, T empty) const {
         std::fill(out_values, out_values + (last - first), empty);
         expanded_store store;
         store.out_values = out_values;
         store.first = first;
-        get_secondary_dimension(i, first, last, work, store);
+        secondary_dimension(i, first, last, work, store);
         return;
     }
 };
