@@ -5,13 +5,39 @@
 #include <algorithm>
 #include <memory>
 
+/**
+ * @file DelayedSubsetOp.hpp
+ *
+ * Delayed subsetting, equivalent to the `DelayedSubset` class in the **DelayedArray** package.
+ */
+
 namespace tatami {
 
+/**
+ * @brief Delayed subsetting of a matrix.
+ *
+ * Implements delayed subsetting (i.e., slicing) on the rows or columns of a matrix.
+ * This operation is "delayed" in that it is only evaluated on request, e.g., with `get_row()` or friends.
+ *
+ * @tparam T Type of matrix value.
+ * @tparam MARGIN Dimension along which the addition is to occur.
+ * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
+ * @tparam V Vector containing the subset indices.
+ * @tparam IDX Type of index value.
+ */
 template<typename T, int MARGIN, class V = std::vector<size_t>, typename IDX = int>
 class DelayedSubsetOp : public typed_matrix<T, IDX> {
 public:
+    /**
+     * @param p Pointer to the underlying (pre-subset) matrix.
+     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
+     */
     DelayedSubsetOp(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : mat(p), indices(idx) {}
 
+    /**
+     * @param p Pointer to the underlying (pre-subset) matrix.
+     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
+     */
     DelayedSubsetOp(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : mat(p), indices(idx) {}
 
     ~DelayedSubsetOp() {}
@@ -63,6 +89,9 @@ public:
     using typed_matrix<T, IDX>::get_sparse_row;
 
 public:
+    /**
+     * @return Number of rows after any subsetting is applied.
+     */
     size_t nrow() const {
         if constexpr(MARGIN==0) {
             return indices.size();
@@ -71,6 +100,9 @@ public:
         }
     }
     
+    /**
+     * @return Number of columns after any subsetting is applied.
+     */
     size_t ncol() const {
         if constexpr(MARGIN==0) {
             return mat->ncol();
@@ -79,10 +111,16 @@ public:
         }
     }
 
+    /**
+     * @return A null pointer or a pointer to a `workspace` object, depending on the underlying (pre-subsetted) matrix.
+     */
     workspace* create_workspace() const {
         return mat->create_workspace();
     }
 
+    /**
+     * @return The sparsity status of the underlying (pre-subsetted) matrix.
+     */
     bool is_sparse() const {
         return mat->is_sparse();
     }
