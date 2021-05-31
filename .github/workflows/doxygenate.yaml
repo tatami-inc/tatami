@@ -13,7 +13,7 @@ jobs:
     - name: Doxygen Action
       uses: mattnotmitt/doxygen-action@v1.1.0
       with:
-        working-directory: include/tatami
+        working-directory: docs/
     - name: GH Pages Deployment
       uses: JamesIves/github-pages-deploy-action@3.6.1
       with:
