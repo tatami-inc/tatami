@@ -1,0 +1,9 @@
+<map id="tatami::matrix" name="tatami::matrix">
+<area shape="rect" id="node1" title="Virtual class for all matrices." alt="" coords="5,159,104,185"/>
+<area shape="rect" id="node2" href="$classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,118,289,159"/>
+<area shape="rect" id="node7" href="$classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type." alt="" coords="152,183,289,225"/>
+<area shape="rect" id="node3" href="$classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation." alt="" coords="337,5,516,61"/>
+<area shape="rect" id="node4" href="$classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix." alt="" coords="345,85,509,126"/>
+<area shape="rect" id="node5" href="$classtatami_1_1DelayedSubsetOp.html" title="Delayed subsetting of a matrix." alt="" coords="343,150,511,191"/>
+<area shape="rect" id="node6" href="$classtatami_1_1DenseMatrix.html" title="Dense matrix representation." alt="" coords="359,215,495,257"/>
+</map>
