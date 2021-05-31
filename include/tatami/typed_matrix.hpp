@@ -1,11 +1,11 @@
-#ifndef TYPED_MATRIX_H
-#define TYPED_MATRIX_H
+#ifndef TATAMI_TYPED_MATRIX_H
+#define TATAMI_TYPED_MATRIX_H
 
 #include "matrix.hpp"
-#include "../utils/sparse_range.hpp"
-#include "../utils/workspace.hpp"
+#include "sparse_range.hpp"
+#include "workspace.hpp"
 
-namespace bioc {
+namespace tatami {
 
 template <typename T, typename IDX = int>
 class typed_matrix : public matrix {

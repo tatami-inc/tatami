@@ -1,9 +1,9 @@
-#ifndef MATH_HELPERS_H
-#define MATH_HELPERS_H
+#ifndef TATAMI_MATH_HELPERS_H
+#define TATAMI_MATH_HELPERS_H
 
 #include <cmath>
 
-namespace bioc {
+namespace tatami {
 
 template<typename T>
 struct DelayedAbsHelper {

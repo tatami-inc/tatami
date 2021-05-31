@@ -1,9 +1,9 @@
-#ifndef DELAYED_ARITH_SCALAR_HELPER_H
-#define DELAYED_ARITH_SCALAR_HELPER_H
+#ifndef TATMI_ARITH_VECTOR_HELPER_H
+#define TATMI_ARITH_VECTOR_HELPER_H
 
 #include <vector>
 
-namespace bioc {
+namespace tatami {
 
 template<typename T, int MARGIN = 0, class V = std::vector<T> >
 struct DelayedAddVectorHelper {

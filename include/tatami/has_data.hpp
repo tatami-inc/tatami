@@ -1,10 +1,10 @@
-#ifndef IS_CONTIGUOUS_H
-#define IS_CONTIGUOUS_H
+#ifndef TATAMI_HAS_DATA_H
+#define TATAMI_HAS_DATA_H
 
 #include <type_traits>
 #include <utility>
 
-namespace bioc {
+namespace tatami {
 
 // Default to false.
 template<typename T, class V, typename = int>

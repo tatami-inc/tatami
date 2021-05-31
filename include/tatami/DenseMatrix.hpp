@@ -1,13 +1,13 @@
-#ifndef DENSE_MATRIX_H
-#define DENSE_MATRIX_H
+#ifndef TATAMI_DENSE_MATRIX_H
+#define TATAMI_DENSE_MATRIX_H
 
 #include "typed_matrix.hpp"
-#include "../utils/is_contiguous.hpp"
+#include "has_data.hpp"
 
 #include <vector>
 #include <algorithm>
 
-namespace bioc {
+namespace tatami {
 
 template<bool ROW, typename T, class V = std::vector<T>, typename IDX = int>
 class DenseMatrix : public typed_matrix<T, IDX> {

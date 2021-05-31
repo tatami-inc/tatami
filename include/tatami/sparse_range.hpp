@@ -1,7 +1,7 @@
-#ifndef SPARSE_RANGE_H
-#define SPARSE_RANGE_H
+#ifndef TATAMI_SPARSE_RANGE_H
+#define TATAMI_SPARSE_RANGE_H
 
-namespace bioc {
+namespace tatami {
 
 template <typename T, typename IDX>
 struct sparse_range {

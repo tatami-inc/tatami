@@ -1,7 +1,7 @@
-#ifndef TYPES_H
-#define TYPES_H
+#ifndef TATAMI_TYPES_H
+#define TATAMI_TYPES_H
 
-namespace bioc {
+namespace tatami {
 
 enum content_type { _unknown, _double, _int32_t, _std_string };
 

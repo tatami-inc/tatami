@@ -1,10 +1,10 @@
-#ifndef MATRIX_H
-#define MATRIX_H
+#ifndef TATAMI_MATRIX_H
+#define TATAMI_MATRIX_H
 
-#include "../utils/types.hpp"
-#include "../utils/workspace.hpp"
+#include "types.hpp"
+#include "workspace.hpp"
 
-namespace bioc {
+namespace tatami {
 
 class matrix {
 public:

@@ -1,11 +1,11 @@
-#ifndef DELAYED_SUBSET_OP
-#define DELAYED_SUBSET_OP
+#ifndef TATAMI_DELAYED_SUBSET_OP
+#define TATAMI_DELAYED_SUBSET_OP
 
-#include "../matrix/typed_matrix.hpp"
+#include "typed_matrix.hpp"
 #include <algorithm>
 #include <memory>
 
-namespace bioc {
+namespace tatami {
 
 template<typename T, int MARGIN, class V = std::vector<size_t>, typename IDX = int>
 class DelayedSubsetOp : public typed_matrix<T, IDX> {

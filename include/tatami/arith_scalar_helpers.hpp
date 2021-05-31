@@ -1,7 +1,7 @@
-#ifndef DELAYED_ARITH_TCALAR_HELPER_H
-#define DELAYED_ARITH_TCALAR_HELPER_H
+#ifndef TATAMI_ARITH_SCALAR_HELPERS_H
+#define TATAMI_ARITH_SCALAR_HELPERS_H
 
-namespace bioc {
+namespace tatami {
 
 template<typename T>
 struct DelayedAddScalarHelper {

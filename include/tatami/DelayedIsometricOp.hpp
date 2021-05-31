@@ -1,9 +1,9 @@
-#ifndef DELAYED_ISOMETRIC_OP_H
-#define DELAYED_ISOMETRIC_OP_H
+#ifndef TATAMI_DELAYED_ISOMETRIC_OP_H
+#define TATAMI_DELAYED_ISOMETRIC_OP_H
 
-#include "../utils/types.hpp"
+#include "types.hpp"
 
-namespace bioc {
+namespace tatami {
 
 template<typename T, class OP, typename IDX = int>
 class DelayedIsometricOp : public typed_matrix<T, IDX> {

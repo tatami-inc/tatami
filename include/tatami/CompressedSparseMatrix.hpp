@@ -1,14 +1,14 @@
-#ifndef COMPRESSED_SPARSE_MATRIX_H
-#define COMPRESSED_SPARSE_MATRIX_H
+#ifndef TATAMI_COMPRESSED_SPARSE_MATRIX_H
+#define TATAMI_COMPRESSED_SPARSE_MATRIX_H
 
 #include "typed_matrix.hpp"
-#include "../utils/is_contiguous.hpp"
-#include "../utils/sparse_range.hpp"
+#include "has_data.hpp"
+#include "sparse_range.hpp"
 
 #include <vector>
 #include <algorithm>
 
-namespace bioc {
+namespace tatami {
 
 template<bool ROW, typename T, typename IDX, class U = std::vector<T>, class V = std::vector<IDX>, class W = std::vector<size_t> >
 class CompressedSparseMatrix : public typed_matrix<T, IDX> {
