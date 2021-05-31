@@ -1,10 +1,24 @@
 #ifndef TATAMI_TYPES_H
 #define TATAMI_TYPES_H
 
+/**
+ * @file types.hpp
+ *
+ * Helper functions focusing on the types of the matrix values.
+ */
+
 namespace tatami {
 
+/**
+ * Available content types.
+ */
 enum content_type { _unknown, _double, _int32_t, _std_string };
 
+/**
+ * @tparam T The type.
+ *
+ * @return A `content_type` corresponding to `T`.
+ */
 template<typename T> 
 content_type determine_content_type() {
     if constexpr(std::is_same<T, double>::value) {

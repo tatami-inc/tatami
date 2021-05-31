@@ -8,16 +8,59 @@
 #include <vector>
 #include <algorithm>
 
+/**
+ * @file CompressedSparseMatrix.hpp
+ *
+ * Compressed sparse matrix representation, with `typedef`s for the usual row and column formats.
+ */
+
 namespace tatami {
 
-template<bool ROW, typename T, typename IDX, class U = std::vector<T>, class V = std::vector<IDX>, class W = std::vector<size_t> >
+/**
+ * @brief Compressed sparse matrix representation.
+ *
+ * @tparam ROW Whether this is a compressed sparse row representation.
+ * If `false`, a compressed sparse column representation is used instead.
+ * @tparam T Type of the matrix values.
+ * @tparam IDX Type of the row/column indices.
+ * @tparam U Vector class used to store the matrix values internally.
+ * This does not necessarily have to contain `T`, as long as the type is convertible to `T`.
+ * @tparam V Vector class used to store the row/column indices internally.
+ * This does not necessarily have to contain `IDX`, as long as the type is convertible to `IDX`.
+ * @tparam W Vector class used to store the column/row index pointers.
+ */
+template<bool ROW, typename T, typename IDX = int, class U = std::vector<T>, class V = std::vector<IDX>, class W = std::vector<size_t> >
 class CompressedSparseMatrix : public typed_matrix<T, IDX> {
-public: 
+public:
+    /**
+     * @param nr Number of rows.
+     * @param nc Number of columns.
+     * @param vals Vector of non-zero elements.
+     * @param idx Vector of row indices (if `ROW=false`) or column indices (if `ROW=true`) for the non-zero elements.
+     * @param ptr Vector of index pointers.
+     * @param check Should the input vectors be checked for validity?
+     *
+     * If `check=true`, the constructor will check that `vals` and `idx` have the same length;
+     * `ptr` is ordered with first and last values set to 0 and the number of non-zero elements, respectively;
+     * and `idx` is ordered within each interval defined by successive elements of `ptr`.
+     */
     CompressedSparseMatrix(size_t nr, size_t nc, const U& vals, const V& idx, const W& ptr, bool check=true) : nrows(nr), ncols(nc), values(vals), indices(idx), indptrs(ptr) {
         check_values(check); 
         return;
     }
 
+    /**
+     * @param nr Number of rows.
+     * @param nc Number of columns.
+     * @param vals Vector of non-zero elements.
+     * @param idx Vector of row indices (if `ROW=false`) or column indices (if `ROW=true`) for the non-zero elements.
+     * @param ptr Vector of index pointers.
+     * @param check Should the input vectors be checked for validity?
+     *
+     * If `check=true`, the constructor will check that `vals` and `idx` have the same length;
+     * `ptr` is ordered with first and last values set to 0 and the number of non-zero elements, respectively;
+     * and `idx` is ordered within each interval defined by successive elements of `ptr`.
+     */
     CompressedSparseMatrix(size_t nr, size_t nc, U&& vals, V&& idx, W&& ptr, bool check=true) : nrows(nr), ncols(nc), values(vals), indices(idx), indptrs(ptr) {
         check_values(check); 
         return;
@@ -30,6 +73,12 @@ public:
 
     size_t ncol() const { return ncols; }
 
+    /**
+     * @return If `row == ROW`, a null pointer as no workspace is required for extraction along the preferred dimension.
+     * Otherwise, a pointer to a `workspace` object is returned.
+     *
+     * @param row Should a workspace be created for row-wise extraction?
+     */
     workspace* create_workspace (bool row) const {
         if (row == ROW) {
             return NULL;
@@ -39,27 +88,33 @@ public:
         }
     }
 
+    /**
+     * @return `true`.
+     */
     bool is_sparse() const { return true; }
 
+    /**
+     * @return 0 if `ROW = true`, otherwise returns 1.
+     */
     int preferred_dimension() const { return (ROW ? 0 : 1); }
 
 public:
-    const T* get_row(size_t i, T* out_values, size_t first, size_t last, workspace* work=NULL) const {
+    const T* get_row(size_t r, T* buffer, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
-            get_primary_dimension_expanded(i, first, last, this->ncols, out_values, 0);
+            get_primary_dimension_expanded(r, first, last, this->ncols, buffer, 0);
         } else {
-            get_secondary_dimension_expanded(i, first, last, work, out_values, 0);
+            get_secondary_dimension_expanded(r, first, last, work, buffer, 0);
         }
-        return out_values;
+        return buffer;
     }
 
-    const T* get_column(size_t i, T* out_values, size_t first, size_t last, workspace* work=NULL) const {
+    const T* get_column(size_t c, T* buffer, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
-            get_secondary_dimension_expanded(i, first, last, work, out_values, 0);
+            get_secondary_dimension_expanded(c, first, last, work, buffer, 0);
         } else {
-            get_primary_dimension_expanded(i, first, last, this->nrows, out_values, 0);
+            get_primary_dimension_expanded(c, first, last, this->nrows, buffer, 0);
         }
-        return out_values;
+        return buffer;
     }
 
     using typed_matrix<T, IDX>::get_row;
@@ -67,19 +122,25 @@ public:
     using typed_matrix<T, IDX>::get_column;
 
 public:
-    sparse_range<T, IDX> get_sparse_row(size_t i, T* out_values, IDX* out_indices, size_t first, size_t last, workspace* work=NULL) const {
+    /**
+     * @copydoc typed_matrix::get_sparse_row()
+     */
+    sparse_range<T, IDX> get_sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
-            return get_primary_dimension_raw(i, first, last, this->ncols, out_values, out_indices);
+            return get_primary_dimension_raw(r, first, last, this->ncols, vbuffer, ibuffer);
         } else {
-            return get_secondary_dimension_raw(i, first, last, work, out_values, out_indices); 
+            return get_secondary_dimension_raw(r, first, last, work, vbuffer, ibuffer); 
         }
     }
 
-    sparse_range<T, IDX> get_sparse_column(size_t i, T* out_values, IDX* out_indices, size_t first, size_t last, workspace* work=NULL) const {
+    /**
+     * @copydoc typed_matrix::get_sparse_column()
+     */
+    sparse_range<T, IDX> get_sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {
-            return get_secondary_dimension_raw(i, first, last, work, out_values, out_indices); 
+            return get_secondary_dimension_raw(c, first, last, work, vbuffer, ibuffer); 
         } else {
-            return get_primary_dimension_raw(i, first, last, this->nrows, out_values, out_indices);
+            return get_primary_dimension_raw(c, first, last, this->nrows, vbuffer, ibuffer);
         }
     }
 
@@ -310,9 +371,17 @@ private:
     }
 };
 
+/**
+ * Compressed sparse column matrix.
+ * See `tatami::CompressedSparseMatrix` for details on the template parameters.
+ */
 template<typename T, typename IDX, class U = std::vector<T>, class V = std::vector<IDX>, class W = std::vector<size_t> >
 using CompressedSparseColumnMatrix = CompressedSparseMatrix<false, T, IDX, U, V, W>;
 
+/**
+ * Compressed sparse row matrix.
+ * See `tatami::CompressedSparseMatrix` for details on the template parameters.
+ */
 template<typename T, typename IDX, class U = std::vector<T>, class V = std::vector<IDX>, class W = std::vector<size_t> >
 using CompressedSparseRowMatrix = CompressedSparseMatrix<true, T, IDX, U, V, W>;
 
