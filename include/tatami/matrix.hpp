@@ -1,7 +1,7 @@
 #ifndef TATAMI_MATRIX_H
 #define TATAMI_MATRIX_H
 
-#include "types.hpp"
+#include "content_type.hpp"
 #include "workspace.hpp"
 
 /**

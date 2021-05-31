@@ -1,8 +1,8 @@
-#ifndef TATAMI_TYPES_H
-#define TATAMI_TYPES_H
+#ifndef TATAMI_CONTENT_TYPE_H
+#define TATAMI_CONTENT_TYPE_H
 
 /**
- * @file types.hpp
+ * @file content_type.hpp
  *
  * Helper functions focusing on the types of the matrix values.
  */

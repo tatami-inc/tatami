@@ -1,8 +1,6 @@
 #ifndef TATAMI_DELAYED_ISOMETRIC_OP_H
 #define TATAMI_DELAYED_ISOMETRIC_OP_H
 
-#include "types.hpp"
-
 /**
  * @file DelayedIsometricOp.hpp
  *
