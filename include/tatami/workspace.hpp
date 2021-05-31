@@ -12,7 +12,7 @@ namespace tatami {
 /**
  * @brief Virtual workspace class.
  *
- * Instances of this class cannot be constructed; it is only provided as a base class for `create_workspace()` methods to return appropriate objects.
+ * Instances of this class cannot be constructed; it is only provided as a base class for `workspace()` methods to return appropriate objects.
  */
 class workspace {
 public:

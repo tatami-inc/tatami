@@ -15,7 +15,7 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
     std::vector<size_t> indptr(21);
 
     tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr);
-    EXPECT_TRUE(mat.is_sparse());
+    EXPECT_TRUE(mat.sparse());
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
     EXPECT_EQ(mat.type(), tatami::_double);
@@ -40,9 +40,9 @@ protected:
     }
 
     void create_workspaces(bool row) {
-        work_dense.reset(dense->create_workspace(row));
-        work_sparse_column.reset(sparse_column->create_workspace(row));
-        work_sparse_row.reset(sparse_row->create_workspace(row));
+        work_dense.reset(dense->new_workspace(row));
+        work_sparse_column.reset(sparse_column->new_workspace(row));
+        work_sparse_row.reset(sparse_row->new_workspace(row));
         return;
     }
 };
@@ -59,14 +59,14 @@ TEST_F(SparseTest, FullColumnAccess) {
     EXPECT_EQ(NC, sparse_ncol);
     EXPECT_EQ(NR, sparse_nrow);
 
-    EXPECT_FALSE(dense->is_sparse());
-    EXPECT_TRUE(sparse_column->is_sparse());
-    EXPECT_TRUE(sparse_row->is_sparse());
+    EXPECT_FALSE(dense->sparse());
+    EXPECT_TRUE(sparse_column->sparse());
+    EXPECT_TRUE(sparse_row->sparse());
 
-    EXPECT_EQ(sparse_column->preferred_dimension(), 1);
-    EXPECT_EQ(sparse_row->preferred_dimension(), 0);
+    EXPECT_FALSE(sparse_column->prefer_rows());
+    EXPECT_TRUE(sparse_row->prefer_rows());
 
-    // Column access without workspaces.
+    // Column access without create_workspaces.
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();
         fill_expected(dense->column(i, expected.data()));
@@ -96,7 +96,7 @@ TEST_F(SparseTest, FullColumnAccess) {
         EXPECT_TRUE(outidx.data()==y.index);
     }
 
-    // Column access with workspaces.
+    // Column access with create_workspaces.
     create_workspaces(false);
     std::vector<size_t> old_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->offsets();
     EXPECT_EQ(work_sparse_column.get(), nullptr);
@@ -125,7 +125,7 @@ TEST_F(SparseTest, FullColumnAccess) {
     std::vector<size_t> new_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->offsets();
     EXPECT_NE(old_offset_row, new_offset_row); // actually has an effect on the offsets.
 
-    // Column access with workspaces and reverse order.
+    // Column access with create_workspaces and reverse order.
     create_workspaces(false);
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();
@@ -148,7 +148,7 @@ TEST_F(SparseTest, FullColumnAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    // Column access with workspaces and jump forward.
+    // Column access with create_workspaces and jump forward.
     create_workspaces(false);
     for (size_t i = 0; i < NC; i+=2) {
         wipe_expected();
@@ -171,7 +171,7 @@ TEST_F(SparseTest, FullColumnAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    // Column access with workspaces and jump backward.
+    // Column access with create_workspaces and jump backward.
     create_workspaces(false);
     for (size_t i = 0; i < NC; i+=3) {
         wipe_expected();
@@ -200,7 +200,7 @@ TEST_F(SparseTest, SlicedColumnAccess) {
     last = NR / 2;
     set_sizes(first, last);
 
-    // Constant slicing, with and without workspaces.
+    // Constant slicing, with and without create_workspaces.
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();
         fill_expected(dense->column(i, expected.data(), first, last));
@@ -244,7 +244,7 @@ TEST_F(SparseTest, SlicedColumnAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    // Variable restriction, with and without workspaces.
+    // Variable restriction, with and without create_workspaces.
     first = 0;
     size_t LEN = 5;
     for (size_t i = 0; i < NC; ++i) {
@@ -301,7 +301,7 @@ TEST_F(SparseTest, SlicedColumnAccess) {
         first %= NR;
     }
 
-    // Variable restriction, with workspaces and jumps.
+    // Variable restriction, with create_workspaces and jumps.
     first = 0;
     create_workspaces(false);
     for (size_t i = 0; i < NC; i+=3) {
@@ -334,7 +334,7 @@ TEST_F(SparseTest, SlicedColumnAccess) {
 TEST_F(SparseTest, FullRowAccess) {
     set_sizes(0, NC);
 
-    // Row access without workspaces.
+    // Row access without create_workspaces.
     for (size_t i = 0; i < NR; ++i) {
         wipe_expected();
         fill_expected(dense->row(i, expected.data()));
@@ -364,7 +364,7 @@ TEST_F(SparseTest, FullRowAccess) {
         EXPECT_FALSE(outidx.data()==y.index);
     }
 
-    // Row access with workspaces.
+    // Row access with create_workspaces.
     create_workspaces(true);
     std::vector<size_t> old_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->offsets();
     EXPECT_EQ(work_sparse_row.get(), nullptr);
@@ -393,7 +393,7 @@ TEST_F(SparseTest, FullRowAccess) {
     std::vector<size_t> new_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->offsets();
     EXPECT_NE(old_offset_column, new_offset_column); // actually has an effect on the offsets.
 
-    // Row access with workspaces and reverse order.
+    // Row access with create_workspaces and reverse order.
     create_workspaces(true);
     for (size_t i = 0; i < NR; ++i) {
         wipe_expected();
@@ -416,7 +416,7 @@ TEST_F(SparseTest, FullRowAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    // Row access with workspaces and jump forward.
+    // Row access with create_workspaces and jump forward.
     create_workspaces(true);
     for (size_t i = 0; i < NR; i+=2) {
         wipe_expected();
@@ -439,7 +439,7 @@ TEST_F(SparseTest, FullRowAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    // Row access with workspaces and jump backward.
+    // Row access with create_workspaces and jump backward.
     create_workspaces(true);
     for (size_t i = 0; i < NR; i+=3) {
         wipe_expected();
@@ -468,7 +468,7 @@ TEST_F(SparseTest, SlicedRowAccess) {
     last = NC / 2;
     set_sizes(first, last);
 
-    // Constant slicing, with and without workspaces.
+    // Constant slicing, with and without create_workspaces.
     for (size_t i = 0; i < NR; ++i) {
         wipe_expected();
         fill_expected(dense->row(i, expected.data(), first, last));
@@ -512,7 +512,7 @@ TEST_F(SparseTest, SlicedRowAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    // Variable restriction, with and without workspaces.
+    // Variable restriction, with and without create_workspaces.
     size_t LEN = 5;
     first = 0;
     for (size_t i = 0; i < NR; ++i) {
@@ -569,7 +569,7 @@ TEST_F(SparseTest, SlicedRowAccess) {
         first %= NC;
     }
 
-    // Variable restriction, with workspaces and jumps.
+    // Variable restriction, with create_workspaces and jumps.
     LEN = 10;
     first = 0;
     create_workspaces(true);

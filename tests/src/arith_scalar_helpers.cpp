@@ -25,8 +25,8 @@ protected:
     }
 
     void create_workspaces(bool row) {
-        work_dense.reset(dense->create_workspace(row));
-        work_sparse.reset(sparse->create_workspace(row));
+        work_dense.reset(dense->new_workspace(row));
+        work_sparse.reset(sparse->new_workspace(row));
         return;
     }
 };
@@ -47,8 +47,8 @@ TEST_F(ArithScalarTest, AdditionByColumn) {
     auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
     auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
-    EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_FALSE(sparse_mod.is_sparse());
+    EXPECT_FALSE(dense_mod.sparse());
+    EXPECT_FALSE(sparse_mod.sparse());
     EXPECT_EQ(dense->nrow(), dense_mod.nrow());
     EXPECT_EQ(dense->ncol(), dense_mod.ncol());
 
@@ -76,8 +76,8 @@ TEST_F(ArithScalarTest, SubtractionByColumn) {
     auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
     auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
-    EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_FALSE(sparse_mod.is_sparse());
+    EXPECT_FALSE(dense_mod.sparse());
+    EXPECT_FALSE(sparse_mod.sparse());
     EXPECT_EQ(dense->nrow(), dense_mod.nrow());
     EXPECT_EQ(dense->ncol(), dense_mod.ncol());
 
@@ -129,8 +129,8 @@ TEST_F(ArithScalarTest, MultiplicationByColumn) {
 
     EXPECT_EQ(dense->nrow(), dense_mod.nrow());
     EXPECT_EQ(dense->ncol(), dense_mod.ncol());
-    EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_FALSE(dense_mod.sparse());
+    EXPECT_TRUE(sparse_mod.sparse());
 
     set_sizes(0, dense->nrow());
 
@@ -156,8 +156,8 @@ TEST_F(ArithScalarTest, DivisionByColumn) {
     auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
     auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
-    EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_FALSE(dense_mod.sparse());
+    EXPECT_TRUE(sparse_mod.sparse());
     EXPECT_EQ(dense->nrow(), dense_mod.nrow());
     EXPECT_EQ(dense->ncol(), dense_mod.ncol());
 

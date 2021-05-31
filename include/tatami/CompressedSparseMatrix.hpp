@@ -84,7 +84,7 @@ public:
      *
      * @param row Should a workspace be created for row-wise extraction?
      */
-    workspace* create_workspace (bool row) const {
+    workspace* new_workspace (bool row) const {
         if (row == ROW) {
             return NULL;
         } else {
@@ -96,12 +96,12 @@ public:
     /**
      * @return `true`.
      */
-    bool is_sparse() const { return true; }
+    bool sparse() const { return true; }
 
     /**
-     * @return 0 if `ROW = true`, otherwise returns 1.
+     * @return `true` if `ROW = true` (for `CompressedSparseRowMatrix` objects), otherwise returns `false` (for `CompressedSparseColumnMatrix` objects).
      */
-    int preferred_dimension() const { return (ROW ? 0 : 1); }
+    bool prefer_rows() const { return ROW; }
 
 public:
     const T* row(size_t r, T* buffer, size_t first, size_t last, workspace* work=NULL) const {

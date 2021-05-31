@@ -90,7 +90,7 @@ inline std::shared_ptr<typed_matrix<T, IDX>*> simplify_matrix(std::shared_ptr<co
 }
 
 /**
- * This overload automatically sets the output row-format and sparsity (`sparse`) based on `tatami::matrix::preferred_dimension()` and `tatami::matrix::is_sparse()`, respectively.
+ * This overload automatically sets the output row-format and sparsity (`sparse`) based on `tatami::matrix::prefer_rows()` and `tatami::matrix::sparse()`, respectively.
  *
  * @tparam T Type of the values in the matrix.
  * @tparam IDX Type of index values.
@@ -101,7 +101,7 @@ inline std::shared_ptr<typed_matrix<T, IDX>*> simplify_matrix(std::shared_ptr<co
  */
 template <typename T, int IDX>
 inline std::shared_ptr<typed_matrix<T, IDX>*> simplify_matrix(std::shared_ptr<const typed_matrix<T, IDX>*> incoming) {
-    return simplify_matrix(incoming, incoming->preferred_dimension(), incoming->is_sparse());
+    return simplify_matrix(incoming, incoming->prefer_rows(), incoming->sparse());
 }
 
 }

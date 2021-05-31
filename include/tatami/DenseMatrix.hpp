@@ -62,9 +62,9 @@ public:
     size_t ncol() const { return ncols; }
 
     /**
-     * @return 0 if `ROW = true`, otherwise returns 1.
+     * @return `true` if `ROW = true` (for row-major matrices), otherwise returns `false` (for column-major matrices).
      */
-    int preferred_dimension() const { return (ROW ? 0 : 1); }
+    bool prefer_rows() const { return ROW; }
 
 public:
     const T* row(size_t r, T* buffer, size_t start, size_t end, workspace * wrk=NULL) const {

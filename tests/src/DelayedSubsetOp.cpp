@@ -24,9 +24,9 @@ protected:
         return;
     }
 
-    void create_workspaces(bool row) {
-        work_dense.reset(dense->create_workspace(row));
-        work_sparse.reset(sparse->create_workspace(row));
+    void create_create_workspaces(bool row) {
+        work_dense.reset(dense->new_workspace(row));
+        work_sparse.reset(sparse->new_workspace(row));
         return;
     }
 };
@@ -50,10 +50,10 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
     EXPECT_EQ(sub.size(), dense_subbed.nrow());
     EXPECT_EQ(dense->ncol(), dense_subbed.ncol());
 
-    EXPECT_EQ(dense->preferred_dimension(), 0);
-    EXPECT_EQ(sparse->preferred_dimension(), 1);
+    EXPECT_TRUE(dense->prefer_rows());
+    EXPECT_FALSE(sparse->prefer_rows());
 
-    create_workspaces(false);
+    create_create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_output();
         fill_output(sparse_subbed.column(i, output.data()));
@@ -100,7 +100,7 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
     size_t LEN = 6;
     size_t first = 0;
 
-    create_workspaces(false);
+    create_create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         set_sizes(first, std::min(first + LEN, sub.size()));
 
@@ -147,7 +147,7 @@ TEST_F(SubsetTest, SubsetRowFullRowAccess) {
 
     set_sizes(0, dense->ncol());
 
-    create_workspaces(true);
+    create_create_workspaces(true);
     for (size_t i = 0; i < sub.size(); ++i) {
         wipe_output();
         fill_output(sparse_subbed.row(i, output.data()));
@@ -189,7 +189,7 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
     EXPECT_EQ(sub.size(), dense_subbed.ncol());
     EXPECT_EQ(dense->nrow(), dense_subbed.nrow());
 
-    create_workspaces(true);
+    create_create_workspaces(true);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_output();
         fill_output(sparse_subbed.row(i, output.data()));
@@ -234,7 +234,7 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
     auto dense_subbed = tatami::DelayedSubsetOp<double, 1>(dense, sub);
     auto sparse_subbed = tatami::DelayedSubsetOp<double, 1>(sparse, sub);
 
-    create_workspaces(true);
+    create_create_workspaces(true);
     first = 0;
     for (size_t i = 0; i < dense->nrow(); ++i) {
         set_sizes(first, std::min(first + LEN, sub.size()));
@@ -282,7 +282,7 @@ TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
 
     set_sizes(0, sparse->nrow());
 
-    create_workspaces(false);
+    create_create_workspaces(false);
     for (size_t i = 0; i < sub.size(); ++i) {
         wipe_output();
         fill_output(sparse_subbed.column(i, output.data()));

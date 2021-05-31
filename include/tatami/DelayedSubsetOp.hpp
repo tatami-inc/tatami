@@ -114,15 +114,15 @@ public:
     /**
      * @return A null pointer or a pointer to a `workspace` object, depending on the underlying (pre-subsetted) matrix.
      */
-    workspace* create_workspace() const {
-        return mat->create_workspace();
+    workspace* new_workspace() const {
+        return mat->new_workspace();
     }
 
     /**
      * @return The sparsity status of the underlying (pre-subsetted) matrix.
      */
-    bool is_sparse() const {
-        return mat->is_sparse();
+    bool sparse() const {
+        return mat->sparse();
     }
 
 private:

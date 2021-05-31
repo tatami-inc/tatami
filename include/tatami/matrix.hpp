@@ -35,7 +35,7 @@ public:
      * @return A pointer to a workspace for row or column extraction, or a null pointer if no workspace is required.
      * Defaults to returning a null pointer if no specialized method is provided in derived classes.
      */
-    virtual workspace* create_workspace(bool row) const { return NULL; }
+    virtual workspace* new_workspace(bool row) const { return NULL; }
 
     /**
      * @return A `content_type` specifying the type of the values in the matrix.
@@ -47,14 +47,14 @@ public:
      * @return Is this matrix sparse?
      * Defaults to `false` if no specialized method is provided in derived classes.
      */
-    virtual bool is_sparse() const { return false; }
+    virtual bool sparse() const { return false; }
 
     /**
      * @return The preferred dimension for extracting values.
-     * If 0, row-wise extraction is preferred; if 1, column-wise extraction is preferred.
-     * Defaults to 1 if no specialized method is provided in derived classes.
+     * If `true`, row-wise extraction is preferred; if `false`, column-wise extraction is preferred.
+     * Defaults to `false` if no specialized method is provided in derived classes.
      */
-    virtual int preferred_dimension() const { return 1; }
+    virtual bool prefer_rows() const { return false; }
 };
 
 }

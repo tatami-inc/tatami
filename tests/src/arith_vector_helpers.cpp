@@ -25,8 +25,8 @@ protected:
     }
 
     void create_workspaces(bool row) {
-        work_dense.reset(dense->create_workspace(row));
-        work_sparse.reset(sparse->create_workspace(row));
+        work_dense.reset(dense->new_workspace(row));
+        work_sparse.reset(sparse->new_workspace(row));
         return;
     }
 
@@ -56,13 +56,13 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
     auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
     auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
-    EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_FALSE(sparse_mod.is_sparse());
+    EXPECT_FALSE(dense_mod.sparse());
+    EXPECT_FALSE(sparse_mod.sparse());
     EXPECT_EQ(dense->nrow(), dense_mod.nrow());
     EXPECT_EQ(dense->ncol(), dense_mod.ncol());
 
-    EXPECT_EQ(dense->preferred_dimension(), 0);
-    EXPECT_EQ(sparse->preferred_dimension(), 1);
+    EXPECT_TRUE(dense->prefer_rows());
+    EXPECT_FALSE(sparse->prefer_rows());
 
     // Works in full.
     set_sizes(0, dense->nrow());
@@ -292,8 +292,8 @@ TEST_F(ArithVectorTest, SubtractionAlongRows) {
     auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
     auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
-    EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_FALSE(sparse_mod.is_sparse());
+    EXPECT_FALSE(dense_mod.sparse());
+    EXPECT_FALSE(sparse_mod.sparse());
     EXPECT_EQ(dense->nrow(), dense_mod.nrow());
     EXPECT_EQ(dense->ncol(), dense_mod.ncol());
 
@@ -532,8 +532,8 @@ TEST_F(ArithVectorTest, MultiplicationAlongRows) {
     auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
     auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
-    EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_FALSE(dense_mod.sparse());
+    EXPECT_TRUE(sparse_mod.sparse());
 
     // Works in full.
     set_sizes(0, dense->nrow());
@@ -765,9 +765,9 @@ TEST_F(ArithVectorTest, DivisionAlongRows) {
     auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
     auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
-    EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_TRUE(sparse->is_sparse());
-    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_FALSE(dense_mod.sparse());
+    EXPECT_TRUE(sparse->sparse());
+    EXPECT_TRUE(sparse_mod.sparse());
 
     // Works in full.
     set_sizes(0, dense->nrow());

@@ -113,22 +113,22 @@ public:
     /**
      * @return A null pointer or a pointer to a `workspace` object, depending on the underlying (pre-operation) matrix.
      */
-    workspace* create_workspace(bool row) const {
-        return mat->create_workspace(row);
+    workspace* new_workspace(bool row) const {
+        return mat->new_workspace(row);
     }
 
     /**
      * @return `true` if both the underlying (pre-operation) matrix is sparse and the operation preserves sparsity.
      * Otherwise returns `false`.
      */
-    bool is_sparse() const {
-        return mat->is_sparse() && OP::sparse;
+    bool sparse() const {
+        return mat->sparse() && OP::sparse;
     }
 
     /**
-     * @return 0 if row-wise extraction is preferred by the underlying (pre-operation) matrix, otherwise returns 1.
+     * @return `true` if row-wise extraction is preferred by the underlying (pre-operation) matrix, otherwise returns `false`.
      */
-    int preferred_dimension() const { return mat->preferred_dimension(); }
+    bool prefer_rows() const { return mat->prefer_rows(); }
 
 protected:
     std::shared_ptr<const typed_matrix<T, IDX> > mat;
