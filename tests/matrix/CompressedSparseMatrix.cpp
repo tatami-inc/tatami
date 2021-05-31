@@ -63,6 +63,9 @@ TEST_F(SparseTest, FullColumnAccess) {
     EXPECT_TRUE(sparse_column->is_sparse());
     EXPECT_TRUE(sparse_row->is_sparse());
 
+    EXPECT_EQ(sparse_column->preferred_dimension(), 1);
+    EXPECT_EQ(sparse_row->preferred_dimension(), 0);
+
     // Column access without workspaces.
     for (size_t i = 0; i < NC; ++i) {
         wipe_expected();

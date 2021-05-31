@@ -35,6 +35,8 @@ public:
 
     size_t ncol() const { return ncols; }
 
+    int preferred_dimension() const { return (ROW ? 0 : 1); }
+
 public:
     const T* get_row(size_t r, T* buffer, size_t start, size_t end, workspace * wrk=NULL) const {
         if constexpr(ROW) {

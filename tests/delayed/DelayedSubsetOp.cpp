@@ -50,6 +50,9 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
     EXPECT_EQ(sub.size(), dense_subbed.nrow());
     EXPECT_EQ(dense->ncol(), dense_subbed.ncol());
 
+    EXPECT_EQ(dense->preferred_dimension(), 0);
+    EXPECT_EQ(sparse->preferred_dimension(), 1);
+
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_output();

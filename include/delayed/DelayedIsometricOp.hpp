@@ -94,6 +94,9 @@ public:
     bool is_sparse() const {
         return mat->is_sparse() && OP::sparse;
     }
+
+    int preferred_dimension() const { return mat->preferred_dimension(); }
+
 protected:
     std::shared_ptr<const typed_matrix<T, IDX> > mat;
     OP operation;

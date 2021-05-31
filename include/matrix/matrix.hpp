@@ -19,6 +19,8 @@ public:
     virtual content_type type() const { return _unknown; }
 
     virtual bool is_sparse() const { return false; }
+
+    virtual int preferred_dimension() const { return 1; }
 };
 
 }

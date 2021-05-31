@@ -41,6 +41,8 @@ public:
 
     bool is_sparse() const { return true; }
 
+    int preferred_dimension() const { return (ROW ? 0 : 1); }
+
 public:
     const T* get_row(size_t i, T* out_values, size_t first, size_t last, workspace* work=NULL) const {
         if constexpr(ROW) {

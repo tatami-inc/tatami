@@ -61,6 +61,9 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
     EXPECT_EQ(dense->nrow(), dense_mod.nrow());
     EXPECT_EQ(dense->ncol(), dense_mod.ncol());
 
+    EXPECT_EQ(dense->preferred_dimension(), 0);
+    EXPECT_EQ(sparse->preferred_dimension(), 1);
+
     // Works in full.
     set_sizes(0, dense->nrow());
 
