@@ -1,13 +1,13 @@
 <map id="/github/workspace/include/tatami/CompressedSparseMatrix.hpp" name="/github/workspace/include/tatami/CompressedSparseMatrix.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="258,5,497,47"/>
-<area shape="rect" id="node2" href="$typed__matrix_8hpp.html" title=" " alt="" coords="113,95,231,121"/>
-<area shape="rect" id="node6" href="$sparse__range_8hpp_source.html" title=" " alt="" coords="199,169,323,196"/>
-<area shape="rect" id="node7" href="$has__data_8hpp_source.html" title=" " alt="" coords="328,95,427,121"/>
-<area shape="rect" id="node10" title=" " alt="" coords="451,95,509,121"/>
-<area shape="rect" id="node11" title=" " alt="" coords="533,95,608,121"/>
-<area shape="rect" id="node3" href="$matrix_8hpp.html" title=" " alt="" coords="42,169,123,196"/>
-<area shape="rect" id="node5" href="$workspace_8hpp.html" title=" " alt="" coords="107,244,216,271"/>
-<area shape="rect" id="node4" href="$types_8hpp.html" title=" " alt="" coords="5,244,83,271"/>
-<area shape="rect" id="node8" title=" " alt="" coords="347,169,429,196"/>
-<area shape="rect" id="node9" title=" " alt="" coords="454,169,506,196"/>
+<area shape="rect" id="node1" title=" " alt="" coords="301,5,539,47"/>
+<area shape="rect" id="node2" href="$typed__matrix_8hpp.html" title=" " alt="" coords="155,95,274,121"/>
+<area shape="rect" id="node6" href="$sparse__range_8hpp_source.html" title=" " alt="" coords="242,169,366,196"/>
+<area shape="rect" id="node7" href="$has__data_8hpp_source.html" title=" " alt="" coords="371,95,469,121"/>
+<area shape="rect" id="node10" title=" " alt="" coords="493,95,552,121"/>
+<area shape="rect" id="node11" title=" " alt="" coords="576,95,651,121"/>
+<area shape="rect" id="node3" href="$matrix_8hpp.html" title=" " alt="" coords="85,169,166,196"/>
+<area shape="rect" id="node5" href="$workspace_8hpp.html" title=" " alt="" coords="149,244,259,271"/>
+<area shape="rect" id="node4" href="$content__type_8hpp.html" title=" " alt="" coords="5,244,125,271"/>
+<area shape="rect" id="node8" title=" " alt="" coords="389,169,472,196"/>
+<area shape="rect" id="node9" title=" " alt="" coords="497,169,549,196"/>
 </map>

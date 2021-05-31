@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['compressedsparsematrix_52',['CompressedSparseMatrix',['../classtatami_1_1CompressedSparseMatrix.html',1,'tatami']]]
+  ['compressedsparsematrix_53',['CompressedSparseMatrix',['../classtatami_1_1CompressedSparseMatrix.html',1,'tatami']]]
 ];

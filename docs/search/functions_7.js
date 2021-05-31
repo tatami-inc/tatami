@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['sparse_5frange_111',['sparse_range',['../structtatami_1_1sparse__range.html#a6fc4a1524db6c70d0a88c22f58d26830',1,'tatami::sparse_range::sparse_range(size_t n, const T *v=NULL, const IDX *i=NULL)'],['../structtatami_1_1sparse__range.html#ae5013efde75037161170d091214fbde3',1,'tatami::sparse_range::sparse_range()']]]
+  ['type_115',['type',['../classtatami_1_1matrix.html#a87916134acf03c2813465ff3fab98ab3',1,'tatami::matrix::type()'],['../classtatami_1_1typed__matrix.html#abf879b09180a61660d8eacd2cfc035ac',1,'tatami::typed_matrix::type()']]]
 ];

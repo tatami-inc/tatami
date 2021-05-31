@@ -1,6 +1,6 @@
-<map id="/github/workspace/include/tatami/workspace.hpp" name="/github/workspace/include/tatami/workspace.hpp">
+<map id="/github/workspace/include/tatami/content_type.hpp" name="/github/workspace/include/tatami/content_type.hpp">
 <area shape="rect" id="node1" title=" " alt="" coords="236,5,409,47"/>
-<area shape="rect" id="node2" href="$matrix_8hpp.html" title=" " alt="" coords="299,95,472,136"/>
+<area shape="rect" id="node2" href="$matrix_8hpp.html" title=" " alt="" coords="236,95,409,136"/>
 <area shape="rect" id="node3" href="$typed__matrix_8hpp.html" title=" " alt="" coords="236,184,409,225"/>
 <area shape="rect" id="node4" href="$CompressedSparseMatrix_8hpp.html" title=" " alt="" coords="203,273,442,315"/>
 <area shape="rect" id="node7" href="$DelayedSubsetOp_8hpp.html" title=" " alt="" coords="467,273,661,315"/>

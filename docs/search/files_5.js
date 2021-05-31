@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['workspace_2ehpp_85',['workspace.hpp',['../workspace_8hpp.html',1,'']]]
+  ['typed_5fmatrix_2ehpp_86',['typed_matrix.hpp',['../typed__matrix_8hpp.html',1,'']]]
 ];
