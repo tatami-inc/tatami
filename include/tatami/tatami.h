@@ -6,4 +6,8 @@
 #include "DelayedIsometricOp.hpp"
 #include "DelayedSubsetOp.hpp"
 
+#define TATAMI_VERSION_MAJOR 0
+#define TATAMI_VERSION_MINOR 99
+#define TATAMI_VERSION_PATCH 0
+
 #endif
