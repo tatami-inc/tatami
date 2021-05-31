@@ -3,10 +3,11 @@
 
 #include <vector>
 #include <memory>
-#include "matrix/CompressedSparseMatrix.hpp"
+
+#include "tatami/CompressedSparseMatrix.hpp"
 
 template<typename V>
-inline std::unique_ptr<bioc::typed_matrix<double, int> > load_matrix_as_sparse_row_matrix(size_t nr, size_t nc, const V& source) {
+inline std::unique_ptr<tatami::typed_matrix<double, int> > load_matrix_as_sparse_row_matrix(size_t nr, size_t nc, const V& source) {
     // Filling the sparse row matrix.
     std::vector<double> values;
     std::vector<int> indices;
@@ -24,11 +25,11 @@ inline std::unique_ptr<bioc::typed_matrix<double, int> > load_matrix_as_sparse_r
             }
         }
     }
-    return std::unique_ptr<bioc::typed_matrix<double, int> >(new bioc::CompressedSparseRowMatrix<double, int>(nr, nc, values, indices, indptr));
+    return std::unique_ptr<tatami::typed_matrix<double, int> >(new tatami::CompressedSparseRowMatrix<double, int>(nr, nc, values, indices, indptr));
 }
 
 template<typename V>
-inline std::unique_ptr<bioc::typed_matrix<double, int> > load_matrix_as_sparse_column_matrix(size_t nr, size_t nc, const V& source) {
+inline std::unique_ptr<tatami::typed_matrix<double, int> > load_matrix_as_sparse_column_matrix(size_t nr, size_t nc, const V& source) {
     std::vector<double> values;
     std::vector<int> indices;
     std::vector<size_t> indptr;
@@ -46,7 +47,7 @@ inline std::unique_ptr<bioc::typed_matrix<double, int> > load_matrix_as_sparse_c
         }
     }
 
-    return std::unique_ptr<bioc::typed_matrix<double, int> >(new bioc::CompressedSparseColumnMatrix<double, int>(nr, nc, values, indices, indptr));
+    return std::unique_ptr<tatami::typed_matrix<double, int> >(new tatami::CompressedSparseColumnMatrix<double, int>(nr, nc, values, indices, indptr));
 }
 
 #endif

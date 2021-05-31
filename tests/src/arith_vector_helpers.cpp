@@ -1,25 +1,25 @@
 #include <gtest/gtest.h>
 
-#include "matrix/CompressedSparseMatrix.hpp"
-#include "matrix/DenseMatrix.hpp"
-#include "delayed/DelayedIsometricOp.hpp"
+#include "tatami/CompressedSparseMatrix.hpp"
+#include "tatami/DenseMatrix.hpp"
+#include "tatami/DelayedIsometricOp.hpp"
 
-#include "../utils/data.h"
-#include "../utils/load_sparse.h"
-#include "../utils/TestCore.h"
+#include "data.h"
+#include "load_sparse.h"
+#include "TestCore.h"
 
 #include <vector>
 #include <memory>
 
 class ArithVectorTestCore : public TestCore {
 protected:
-    std::shared_ptr<bioc::numeric_matrix> dense;
-    std::shared_ptr<bioc::typed_matrix<double, int> > sparse;
-    std::unique_ptr<bioc::workspace> work_dense, work_sparse;
+    std::shared_ptr<tatami::numeric_matrix> dense;
+    std::shared_ptr<tatami::typed_matrix<double, int> > sparse;
+    std::unique_ptr<tatami::workspace> work_dense, work_sparse;
 
 protected:
     void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        dense = std::shared_ptr<bioc::numeric_matrix>(new bioc::DenseRowMatrix<double>(nr, nc, source));
+        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
         sparse = load_matrix_as_sparse_column_matrix(nr, nc, source);
         return;
     }
@@ -52,9 +52,9 @@ protected:
 
 TEST_F(ArithVectorTest, AdditionAlongRows) {
     auto vec = create_vector(dense->nrow(), 0.2);
-    bioc::DelayedAddVectorHelper<double> op(vec);
-    auto dense_mod = bioc::DelayedIsometricOp<double, decltype(op)>(dense, op);
-    auto sparse_mod = bioc::DelayedIsometricOp<double, decltype(op)>(sparse, op);
+    tatami::DelayedAddVectorHelper<double> op(vec);
+    auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
+    auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
     EXPECT_FALSE(sparse_mod.is_sparse());
@@ -172,9 +172,9 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
 
 TEST_F(ArithVectorTest, AdditionAlongColumns) {
     auto vec = create_vector(dense->ncol(), -10.7);
-    bioc::DelayedAddVectorHelper<double, 1> op(vec);
-    auto dense_mod = bioc::DelayedIsometricOp<double, decltype(op)>(dense, op);
-    auto sparse_mod = bioc::DelayedIsometricOp<double, decltype(op)>(sparse, op);
+    tatami::DelayedAddVectorHelper<double, 1> op(vec);
+    auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
+    auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
     // Works in full.
     set_sizes(0, dense->ncol());
@@ -288,9 +288,9 @@ TEST_F(ArithVectorTest, AdditionAlongColumns) {
 
 TEST_F(ArithVectorTest, SubtractionAlongRows) {
     auto vec = create_vector(dense->nrow(), -1.2);
-    bioc::DelayedSubtractVectorHelper<double, true> op(vec);
-    auto dense_mod = bioc::DelayedIsometricOp<double, decltype(op)>(dense, op);
-    auto sparse_mod = bioc::DelayedIsometricOp<double, decltype(op)>(sparse, op);
+    tatami::DelayedSubtractVectorHelper<double, true> op(vec);
+    auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
+    auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
     EXPECT_FALSE(sparse_mod.is_sparse());
@@ -334,9 +334,9 @@ TEST_F(ArithVectorTest, SubtractionAlongRows) {
 
     // Works in a slice.
     set_sizes(dense->nrow()/6, dense->nrow()/2);
-    bioc::DelayedSubtractVectorHelper<double, false> op2(vec);
-    auto dense_mod2 = bioc::DelayedIsometricOp<double, decltype(op2)>(dense, op2);
-    auto sparse_mod2 = bioc::DelayedIsometricOp<double, decltype(op2)>(sparse, op2);
+    tatami::DelayedSubtractVectorHelper<double, false> op2(vec);
+    auto dense_mod2 = tatami::DelayedIsometricOp<double, decltype(op2)>(dense, op2);
+    auto sparse_mod2 = tatami::DelayedIsometricOp<double, decltype(op2)>(sparse, op2);
 
     create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
@@ -408,9 +408,9 @@ TEST_F(ArithVectorTest, SubtractionAlongRows) {
 
 TEST_F(ArithVectorTest, SubtractionAlongColumns) {
     auto vec = create_vector(dense->ncol(), 24.1);
-    bioc::DelayedSubtractVectorHelper<double, true, 1> op(vec);
-    auto dense_mod = bioc::DelayedIsometricOp<double, decltype(op)>(dense, op);
-    auto sparse_mod = bioc::DelayedIsometricOp<double, decltype(op)>(sparse, op);
+    tatami::DelayedSubtractVectorHelper<double, true, 1> op(vec);
+    auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
+    auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
     // Works in full.
     set_sizes(0, dense->ncol());
@@ -448,9 +448,9 @@ TEST_F(ArithVectorTest, SubtractionAlongColumns) {
     }
 
     // Works in a slice.
-    bioc::DelayedSubtractVectorHelper<double, false, 1> op2(vec);
-    auto dense_mod2 = bioc::DelayedIsometricOp<double, decltype(op2)>(dense, op2);
-    auto sparse_mod2 = bioc::DelayedIsometricOp<double, decltype(op2)>(sparse, op2);
+    tatami::DelayedSubtractVectorHelper<double, false, 1> op2(vec);
+    auto dense_mod2 = tatami::DelayedIsometricOp<double, decltype(op2)>(dense, op2);
+    auto sparse_mod2 = tatami::DelayedIsometricOp<double, decltype(op2)>(sparse, op2);
 
     set_sizes(dense->ncol()/6, dense->ncol()/2);
 
@@ -528,9 +528,9 @@ TEST_F(ArithVectorTest, SubtractionAlongColumns) {
 
 TEST_F(ArithVectorTest, MultiplicationAlongRows) {
     auto vec = create_vector(dense->nrow(), 0.1);
-    bioc::DelayedMultiplyVectorHelper<double> op(vec);
-    auto dense_mod = bioc::DelayedIsometricOp<double, decltype(op)>(dense, op);
-    auto sparse_mod = bioc::DelayedIsometricOp<double, decltype(op)>(sparse, op);
+    tatami::DelayedMultiplyVectorHelper<double> op(vec);
+    auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
+    auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
     EXPECT_TRUE(sparse_mod.is_sparse());
@@ -645,9 +645,9 @@ TEST_F(ArithVectorTest, MultiplicationAlongRows) {
 
 TEST_F(ArithVectorTest, MultiplicationAlongColumns) {
     auto vec = create_vector(dense->ncol(), -10.5);
-    bioc::DelayedMultiplyVectorHelper<double, 1> op(vec);
-    auto dense_mod = bioc::DelayedIsometricOp<double, decltype(op)>(dense, op);
-    auto sparse_mod = bioc::DelayedIsometricOp<double, decltype(op)>(sparse, op);
+    tatami::DelayedMultiplyVectorHelper<double, 1> op(vec);
+    auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
+    auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
     // Works in full.
     set_sizes(0, dense->ncol());
@@ -761,9 +761,9 @@ TEST_F(ArithVectorTest, MultiplicationAlongColumns) {
 
 TEST_F(ArithVectorTest, DivisionAlongRows) {
     auto vec = create_vector(dense->nrow(), 1.2);
-    bioc::DelayedDivideVectorHelper<double, true> op(vec);
-    auto dense_mod = bioc::DelayedIsometricOp<double, decltype(op)>(dense, op);
-    auto sparse_mod = bioc::DelayedIsometricOp<double, decltype(op)>(sparse, op);
+    tatami::DelayedDivideVectorHelper<double, true> op(vec);
+    auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
+    auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
     EXPECT_TRUE(sparse->is_sparse());
@@ -807,13 +807,13 @@ TEST_F(ArithVectorTest, DivisionAlongRows) {
     }
 
     // Works in a slice. Some shenanigans involved to avoid division by zero.
-    bioc::DelayedExpHelper<double> op2a;
-    auto dense_mod2a = std::shared_ptr<bioc::typed_matrix<double> >(new bioc::DelayedIsometricOp<double, decltype(op2a)>(dense, op2a));
-    auto sparse_mod2a = std::shared_ptr<bioc::typed_matrix<double> >(new bioc::DelayedIsometricOp<double, decltype(op2a)>(sparse, op2a));
+    tatami::DelayedExpHelper<double> op2a;
+    auto dense_mod2a = std::shared_ptr<tatami::typed_matrix<double> >(new tatami::DelayedIsometricOp<double, decltype(op2a)>(dense, op2a));
+    auto sparse_mod2a = std::shared_ptr<tatami::typed_matrix<double> >(new tatami::DelayedIsometricOp<double, decltype(op2a)>(sparse, op2a));
 
-    bioc::DelayedDivideVectorHelper<double, false> op2(vec);
-    auto dense_mod2 = bioc::DelayedIsometricOp<double, decltype(op2)>(dense_mod2a, op2);
-    auto sparse_mod2 = bioc::DelayedIsometricOp<double, decltype(op2)>(sparse_mod2a, op2);
+    tatami::DelayedDivideVectorHelper<double, false> op2(vec);
+    auto dense_mod2 = tatami::DelayedIsometricOp<double, decltype(op2)>(dense_mod2a, op2);
+    auto sparse_mod2 = tatami::DelayedIsometricOp<double, decltype(op2)>(sparse_mod2a, op2);
 
     set_sizes(dense->nrow()/10, dense->nrow()/2);
 
@@ -887,9 +887,9 @@ TEST_F(ArithVectorTest, DivisionAlongRows) {
 
 TEST_F(ArithVectorTest, DivisionAlongColumns) {
     auto vec = create_vector(dense->ncol(), -10.2);
-    bioc::DelayedDivideVectorHelper<double, true, 1> op(vec);
-    auto dense_mod = bioc::DelayedIsometricOp<double, decltype(op)>(dense, op);
-    auto sparse_mod = bioc::DelayedIsometricOp<double, decltype(op)>(sparse, op);
+    tatami::DelayedDivideVectorHelper<double, true, 1> op(vec);
+    auto dense_mod = tatami::DelayedIsometricOp<double, decltype(op)>(dense, op);
+    auto sparse_mod = tatami::DelayedIsometricOp<double, decltype(op)>(sparse, op);
 
     // Works in full.
     set_sizes(0, dense->ncol());
@@ -927,13 +927,13 @@ TEST_F(ArithVectorTest, DivisionAlongColumns) {
     }
 
     // Works in a slice. Some shenanigans involved to avoid division by zero.
-    bioc::DelayedExpHelper<double> op2a;
-    auto dense_mod2a = std::shared_ptr<bioc::typed_matrix<double> >(new bioc::DelayedIsometricOp<double, decltype(op2a)>(dense, op2a));
-    auto sparse_mod2a = std::shared_ptr<bioc::typed_matrix<double> >(new bioc::DelayedIsometricOp<double, decltype(op2a)>(sparse, op2a));
+    tatami::DelayedExpHelper<double> op2a;
+    auto dense_mod2a = std::shared_ptr<tatami::typed_matrix<double> >(new tatami::DelayedIsometricOp<double, decltype(op2a)>(dense, op2a));
+    auto sparse_mod2a = std::shared_ptr<tatami::typed_matrix<double> >(new tatami::DelayedIsometricOp<double, decltype(op2a)>(sparse, op2a));
 
-    bioc::DelayedDivideVectorHelper<double, false, 1> op2(vec);
-    auto dense_mod2 = bioc::DelayedIsometricOp<double, decltype(op2)>(dense_mod2a, op2);
-    auto sparse_mod2 = bioc::DelayedIsometricOp<double, decltype(op2)>(sparse_mod2a, op2);
+    tatami::DelayedDivideVectorHelper<double, false, 1> op2(vec);
+    auto dense_mod2 = tatami::DelayedIsometricOp<double, decltype(op2)>(dense_mod2a, op2);
+    auto sparse_mod2 = tatami::DelayedIsometricOp<double, decltype(op2)>(sparse_mod2a, op2);
 
     set_sizes(dense->ncol()/4, dense->ncol()/2);
 

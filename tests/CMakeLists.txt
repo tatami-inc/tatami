@@ -17,13 +17,13 @@ enable_testing()
 
 add_executable(
     libtest 
-    matrix/DenseMatrix.cpp
-    matrix/CompressedSparseMatrix.cpp
-    delayed/DelayedSubsetOp.cpp
-    delayed/arith_scalar_helper.cpp
-    delayed/arith_vector_helper.cpp
-    delayed/math_helper.cpp
-    utils/data_sparse.cpp
+    src/DenseMatrix.cpp
+    src/CompressedSparseMatrix.cpp
+    src/DelayedSubsetOp.cpp
+    src/arith_scalar_helpers.cpp
+    src/arith_vector_helpers.cpp
+    src/math_helpers.cpp
+    src/data_sparse.cpp
 )
 
 target_link_libraries(

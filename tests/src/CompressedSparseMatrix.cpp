@@ -1,11 +1,11 @@
 #include <gtest/gtest.h>
 
-#include "matrix/CompressedSparseMatrix.hpp"
-#include "matrix/DenseMatrix.hpp"
+#include "tatami/CompressedSparseMatrix.hpp"
+#include "tatami/DenseMatrix.hpp"
 
-#include "../utils/load_sparse.h"
-#include "../utils/data.h"
-#include "../utils/TestCore.h"
+#include "load_sparse.h"
+#include "data.h"
+#include "TestCore.h"
 #include <vector>
 #include <memory>
 
@@ -14,23 +14,23 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
     std::vector<int> indices;
     std::vector<size_t> indptr(21);
 
-    bioc::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr);
+    tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr);
     EXPECT_TRUE(mat.is_sparse());
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
-    EXPECT_EQ(mat.type(), bioc::_double);
+    EXPECT_EQ(mat.type(), tatami::_double);
 }
 
 class SparseTestCore : public TestCore {
 protected:
     size_t NR, NC;
-    std::unique_ptr<bioc::numeric_matrix> dense;
-    std::unique_ptr<bioc::typed_matrix<double, int> > sparse_row, sparse_column;
-    std::unique_ptr<bioc::workspace> work_dense, work_sparse_row, work_sparse_column;
+    std::unique_ptr<tatami::numeric_matrix> dense;
+    std::unique_ptr<tatami::typed_matrix<double, int> > sparse_row, sparse_column;
+    std::unique_ptr<tatami::workspace> work_dense, work_sparse_row, work_sparse_column;
 
 protected:
     void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        dense = std::unique_ptr<bioc::numeric_matrix>(new bioc::DenseRowMatrix<double>(nr, nc, source));
+        dense = std::unique_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
         sparse_row = load_matrix_as_sparse_row_matrix(nr, nc, source);
         sparse_column = load_matrix_as_sparse_column_matrix(nr, nc, source);
 
@@ -98,7 +98,7 @@ TEST_F(SparseTest, FullColumnAccess) {
 
     // Column access with workspaces.
     create_workspaces(false);
-    std::vector<size_t> old_offset_row = dynamic_cast<bioc::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->get_offsets();
+    std::vector<size_t> old_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->get_offsets();
     EXPECT_EQ(work_sparse_column.get(), nullptr);
 
     for (size_t i = 0; i < NC; ++i) {
@@ -122,7 +122,7 @@ TEST_F(SparseTest, FullColumnAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    std::vector<size_t> new_offset_row = dynamic_cast<bioc::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->get_offsets();
+    std::vector<size_t> new_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->get_offsets();
     EXPECT_NE(old_offset_row, new_offset_row); // actually has an effect on the offsets.
 
     // Column access with workspaces and reverse order.
@@ -366,7 +366,7 @@ TEST_F(SparseTest, FullRowAccess) {
 
     // Row access with workspaces.
     create_workspaces(true);
-    std::vector<size_t> old_offset_column = dynamic_cast<bioc::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->get_offsets();
+    std::vector<size_t> old_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->get_offsets();
     EXPECT_EQ(work_sparse_row.get(), nullptr);
 
     for (size_t i = 0; i < NR; ++i) {
@@ -390,7 +390,7 @@ TEST_F(SparseTest, FullRowAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    std::vector<size_t> new_offset_column = dynamic_cast<bioc::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->get_offsets();
+    std::vector<size_t> new_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->get_offsets();
     EXPECT_NE(old_offset_column, new_offset_column); // actually has an effect on the offsets.
 
     // Row access with workspaces and reverse order.

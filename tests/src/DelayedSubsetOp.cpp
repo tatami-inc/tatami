@@ -1,25 +1,25 @@
 #include <gtest/gtest.h>
 
-#include "matrix/CompressedSparseMatrix.hpp"
-#include "matrix/DenseMatrix.hpp"
-#include "delayed/DelayedSubsetOp.hpp"
+#include "tatami/CompressedSparseMatrix.hpp"
+#include "tatami/DenseMatrix.hpp"
+#include "tatami/DelayedSubsetOp.hpp"
 
-#include "../utils/data.h"
-#include "../utils/load_sparse.h"
-#include "../utils/TestCore.h"
+#include "data.h"
+#include "load_sparse.h"
+#include "TestCore.h"
 
 #include <vector>
 #include <memory>
 
 class SubsetTestCore : public TestCore {
 protected:
-    std::shared_ptr<bioc::numeric_matrix> dense;
-    std::shared_ptr<bioc::typed_matrix<double, int> > sparse;
-    std::unique_ptr<bioc::workspace> work_dense, work_sparse;
+    std::shared_ptr<tatami::numeric_matrix> dense;
+    std::shared_ptr<tatami::typed_matrix<double, int> > sparse;
+    std::unique_ptr<tatami::workspace> work_dense, work_sparse;
 
 protected:
     void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        dense = std::shared_ptr<bioc::numeric_matrix>(new bioc::DenseRowMatrix<double>(nr, nc, source));
+        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
         sparse = load_matrix_as_sparse_column_matrix(nr, nc, source);
         return;
     }
@@ -43,8 +43,8 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
     std::vector<size_t> sub = { 0, 3, 3, 13, 5, 2, 19, 4, 6, 11, 19, 8 };
     std::vector<double> buffer_full(dense->nrow());
 
-    auto dense_subbed = bioc::DelayedSubsetOp<double, 0>(dense, sub);
-    auto sparse_subbed = bioc::DelayedSubsetOp<double, 0>(sparse, sub);
+    auto dense_subbed = tatami::DelayedSubsetOp<double, 0>(dense, sub);
+    auto sparse_subbed = tatami::DelayedSubsetOp<double, 0>(sparse, sub);
 
     set_sizes(0, sub.size());
     EXPECT_EQ(sub.size(), dense_subbed.nrow());
@@ -94,8 +94,8 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
     std::vector<size_t> sub = { 17, 18, 11, 18, 15, 17, 13, 18, 11, 9, 6, 3, 6, 18, 1 };
     std::vector<double> buffer_full(dense->nrow());
 
-    auto dense_subbed = bioc::DelayedSubsetOp<double, 0>(dense, sub);
-    auto sparse_subbed = bioc::DelayedSubsetOp<double, 0>(sparse, sub);
+    auto dense_subbed = tatami::DelayedSubsetOp<double, 0>(dense, sub);
+    auto sparse_subbed = tatami::DelayedSubsetOp<double, 0>(sparse, sub);
 
     size_t LEN = 6;
     size_t first = 0;
@@ -142,8 +142,8 @@ TEST_F(SubsetTest, SubsetRowFullRowAccess) {
     std::vector<size_t> sub = { 13, 4, 17, 0, 17, 1, 19, 6, 1 };
     std::vector<double> buffer_full(dense->nrow());
 
-    auto dense_subbed = bioc::DelayedSubsetOp<double, 0>(dense, sub);
-    auto sparse_subbed = bioc::DelayedSubsetOp<double, 0>(sparse, sub);
+    auto dense_subbed = tatami::DelayedSubsetOp<double, 0>(dense, sub);
+    auto sparse_subbed = tatami::DelayedSubsetOp<double, 0>(sparse, sub);
 
     set_sizes(0, dense->ncol());
 
@@ -182,8 +182,8 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
     std::vector<size_t> sub = { 3, 9, 1, 0, 9, 5, 8, 3, 1, 8, 7 };
     std::vector<double> buffer_full(dense->ncol());
 
-    auto dense_subbed = bioc::DelayedSubsetOp<double, 1>(dense, sub);
-    auto sparse_subbed = bioc::DelayedSubsetOp<double, 1>(sparse, sub);
+    auto dense_subbed = tatami::DelayedSubsetOp<double, 1>(dense, sub);
+    auto sparse_subbed = tatami::DelayedSubsetOp<double, 1>(sparse, sub);
 
     set_sizes(0, sub.size());
     EXPECT_EQ(sub.size(), dense_subbed.ncol());
@@ -231,8 +231,8 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
     size_t LEN = 7;
     std::vector<double> buffer_full(dense->ncol());
 
-    auto dense_subbed = bioc::DelayedSubsetOp<double, 1>(dense, sub);
-    auto sparse_subbed = bioc::DelayedSubsetOp<double, 1>(sparse, sub);
+    auto dense_subbed = tatami::DelayedSubsetOp<double, 1>(dense, sub);
+    auto sparse_subbed = tatami::DelayedSubsetOp<double, 1>(sparse, sub);
 
     create_workspaces(true);
     first = 0;
@@ -277,8 +277,8 @@ TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
     std::vector<size_t> sub = { 7, 8, 0, 5, 1, 4, 1 };
     std::vector<double> buffer_full(dense->ncol());
 
-    auto dense_subbed = bioc::DelayedSubsetOp<double, 1>(dense, sub);
-    auto sparse_subbed = bioc::DelayedSubsetOp<double, 1>(sparse, sub);
+    auto dense_subbed = tatami::DelayedSubsetOp<double, 1>(dense, sub);
+    auto sparse_subbed = tatami::DelayedSubsetOp<double, 1>(sparse, sub);
 
     set_sizes(0, sparse->nrow());
 

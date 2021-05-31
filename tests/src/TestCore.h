@@ -1,6 +1,8 @@
 #ifndef TEST_CORE_H 
 #define TEST_CORE_H 
 
+#include <gtest/gtest.h>
+
 #include <vector>
 #include <algorithm>
 
@@ -58,7 +60,7 @@ protected:
         return;
     }
 
-    void fill_sparse_output(const bioc::sparse_range<double, int>& info) {
+    void fill_sparse_output(const tatami::sparse_range<double, int>& info) {
         std::fill(output.begin(), output.begin() + last - first, 0);
         for (size_t i = 0; i < info.number; ++i) {
             output[info.index[i] - first] = info.value[i];
