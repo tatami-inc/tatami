@@ -1,9 +1,9 @@
 <map id="/github/workspace/include/tatami/matrix.hpp" name="/github/workspace/include/tatami/matrix.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="236,5,409,47"/>
-<area shape="rect" id="node2" href="$typed__matrix_8hpp.html" title=" " alt="" coords="236,95,409,136"/>
-<area shape="rect" id="node3" href="$CompressedSparseMatrix_8hpp.html" title=" " alt="" coords="203,184,442,225"/>
-<area shape="rect" id="node6" href="$DelayedSubsetOp_8hpp.html" title=" " alt="" coords="467,184,661,225"/>
-<area shape="rect" id="node7" href="$DenseMatrix_8hpp.html" title=" " alt="" coords="5,184,179,225"/>
-<area shape="rect" id="node4" href="$simplify__matrix_8hpp.html" title=" " alt="" coords="20,273,196,315"/>
-<area shape="rect" id="node5" href="$tatami_8h_source.html" title=" " alt="" coords="236,273,409,315"/>
+<area shape="rect" id="node1" title=" " alt="" coords="269,5,442,47"/>
+<area shape="rect" id="node2" href="$typed__matrix_8hpp.html" title=" " alt="" coords="269,95,442,136"/>
+<area shape="rect" id="node3" href="$CompressedSparseMatrix_8hpp.html" title=" " alt="" coords="5,184,244,225"/>
+<area shape="rect" id="node6" href="$DelayedSubsetOp_8hpp.html" title=" " alt="" coords="393,273,587,315"/>
+<area shape="rect" id="node7" href="$DenseMatrix_8hpp.html" title=" " alt="" coords="269,184,442,225"/>
+<area shape="rect" id="node4" href="$simplify__matrix_8hpp.html" title=" " alt="" coords="142,273,318,315"/>
+<area shape="rect" id="node5" href="$tatami_8h_source.html" title=" " alt="" coords="206,363,379,404"/>
 </map>

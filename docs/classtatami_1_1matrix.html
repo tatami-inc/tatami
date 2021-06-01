@@ -99,8 +99,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a460aca32225635cc6e2ee6ef5e59bb0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a433c79bdee72c01d00b169d236464964"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1matrix.html#a433c79bdee72c01d00b169d236464964">ncol</a> () const =0</td></tr>
 <tr class="separator:a433c79bdee72c01d00b169d236464964"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90134a9ae6cddd05b2c7f2a3bedae93e"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="classtatami_1_1workspace.html">workspace</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1matrix.html#a90134a9ae6cddd05b2c7f2a3bedae93e">new_workspace</a> (bool row) const</td></tr>
-<tr class="separator:a90134a9ae6cddd05b2c7f2a3bedae93e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8b1bee41464d6a4be31bbe4b9a948ef4"><td class="memItemLeft" align="right" valign="top">virtual workspace_ptr&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1matrix.html#a8b1bee41464d6a4be31bbe4b9a948ef4">new_workspace</a> (bool row) const</td></tr>
+<tr class="separator:a8b1bee41464d6a4be31bbe4b9a948ef4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87916134acf03c2813465ff3fab98ab3"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="content__type_8hpp.html#aac79d5f0dc4bb45282e5a68cb2962dc5">content_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1matrix.html#a87916134acf03c2813465ff3fab98ab3">type</a> () const</td></tr>
 <tr class="separator:a87916134acf03c2813465ff3fab98ab3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad4d53813c32de8561a2cff905fe4a501"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1matrix.html#ad4d53813c32de8561a2cff905fe4a501">sparse</a> () const</td></tr>
@@ -139,8 +139,8 @@ Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a90134a9ae6cddd05b2c7f2a3bedae93e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a90134a9ae6cddd05b2c7f2a3bedae93e">&#9670;&nbsp;</a></span>new_workspace()</h2>
+<a id="a8b1bee41464d6a4be31bbe4b9a948ef4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8b1bee41464d6a4be31bbe4b9a948ef4">&#9670;&nbsp;</a></span>new_workspace()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -149,7 +149,7 @@ Public Member Functions</h2></td></tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual <a class="el" href="classtatami_1_1workspace.html">workspace</a>* tatami::matrix::new_workspace </td>
+          <td class="memname">virtual workspace_ptr tatami::matrix::new_workspace </td>
           <td>(</td>
           <td class="paramtype">bool&#160;</td>
           <td class="paramname"><em>row</em></td><td>)</td>
@@ -168,9 +168,9 @@ Public Member Functions</h2></td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a workspace for row or column extraction, or a null pointer if no workspace is required. Defaults to returning a null pointer if no specialized method is provided in derived classes. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>workspace</code> for row or column extraction, or a null pointer if no workspace is required. Defaults to returning a null pointer if no specialized method is provided in derived classes. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classtatami_1_1DelayedIsometricOp.html#ac47698589d695b52e79acaa25652e2d2">tatami::DelayedIsometricOp&lt; T, OP, IDX &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a0b95eabce728a646eab71307e7c6745b">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classtatami_1_1DelayedIsometricOp.html#a5a45ecb87de256e32dbfaf2a5c684967">tatami::DelayedIsometricOp&lt; T, OP, IDX &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a34fb99302a8e322ccb9453d036ce9ccc">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
 
 </div>
 </div>
