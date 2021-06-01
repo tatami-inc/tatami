@@ -15,7 +15,7 @@ class ArithVectorTestCore : public TestCore {
 protected:
     std::shared_ptr<tatami::numeric_matrix> dense;
     std::shared_ptr<tatami::typed_matrix<double, int> > sparse;
-    std::unique_ptr<tatami::workspace> work_dense, work_sparse;
+    std::shared_ptr<tatami::workspace> work_dense, work_sparse;
 
 protected:
     void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
@@ -25,8 +25,8 @@ protected:
     }
 
     void create_workspaces(bool row) {
-        work_dense.reset(dense->new_workspace(row));
-        work_sparse.reset(sparse->new_workspace(row));
+        work_dense = dense->new_workspace(row);
+        work_sparse = sparse->new_workspace(row);
         return;
     }
 
@@ -91,11 +91,11 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -126,11 +126,11 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), first, last, work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -161,11 +161,11 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -203,11 +203,11 @@ TEST_F(ArithVectorTest, AdditionAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -238,11 +238,11 @@ TEST_F(ArithVectorTest, AdditionAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), first, last, work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -273,11 +273,11 @@ TEST_F(ArithVectorTest, AdditionAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -324,11 +324,11 @@ TEST_F(ArithVectorTest, SubtractionAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -362,11 +362,11 @@ TEST_F(ArithVectorTest, SubtractionAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod2.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod2.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.column(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod2.column(i, outval.data(), first, last, work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -397,11 +397,11 @@ TEST_F(ArithVectorTest, SubtractionAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -439,11 +439,11 @@ TEST_F(ArithVectorTest, SubtractionAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -478,11 +478,11 @@ TEST_F(ArithVectorTest, SubtractionAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod2.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod2.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.row(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod2.row(i, outval.data(), first, last, work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -513,11 +513,11 @@ TEST_F(ArithVectorTest, SubtractionAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -564,11 +564,11 @@ TEST_F(ArithVectorTest, MultiplicationAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -599,11 +599,11 @@ TEST_F(ArithVectorTest, MultiplicationAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), first, last, work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -634,11 +634,11 @@ TEST_F(ArithVectorTest, MultiplicationAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -676,11 +676,11 @@ TEST_F(ArithVectorTest, MultiplicationAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -711,11 +711,11 @@ TEST_F(ArithVectorTest, MultiplicationAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), first, last, work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -746,11 +746,11 @@ TEST_F(ArithVectorTest, MultiplicationAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -798,11 +798,11 @@ TEST_F(ArithVectorTest, DivisionAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -841,11 +841,11 @@ TEST_F(ArithVectorTest, DivisionAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod2.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod2.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.column(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod2.column(i, outval.data(), first, last, work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -876,11 +876,11 @@ TEST_F(ArithVectorTest, DivisionAlongRows) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -918,11 +918,11 @@ TEST_F(ArithVectorTest, DivisionAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 
@@ -961,11 +961,11 @@ TEST_F(ArithVectorTest, DivisionAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod2.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_mod2.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.row(i, outval.data(), first, last, work_dense.get()));
+        fill_output(dense_mod2.row(i, outval.data(), first, last, work_dense));
         EXPECT_EQ(output, expected);
     }
     
@@ -996,11 +996,11 @@ TEST_F(ArithVectorTest, DivisionAlongColumns) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_mod.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_mod.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }

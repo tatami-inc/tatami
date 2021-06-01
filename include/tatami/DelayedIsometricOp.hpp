@@ -38,7 +38,7 @@ public:
     ~DelayedIsometricOp() {}
 
 public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
+    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace_ptr work=nullptr) const {
         const T* raw = mat->row(r, buffer, start, end, work);
         for (size_t i = start; i < end; ++i, ++raw) {
             buffer[i - start] = operation(r, i, *raw);
@@ -46,7 +46,7 @@ public:
         return buffer;
     }
 
-    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace* work=NULL) const {
+    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace_ptr work=nullptr) const {
         const T* raw = mat->column(c, buffer, start, end, work);
         for (size_t i = start; i < end; ++i, ++raw) {
             buffer[i - start] = operation(i, c, *raw);
@@ -59,7 +59,7 @@ public:
     using typed_matrix<T, IDX>::row;
 
 public:
-    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace_ptr work=nullptr) const {
         if (OP::sparse) {
             auto raw = mat->sparse_row(r, vbuffer, ibuffer, start, end, work);
             for (size_t i = 0; i < raw.number; ++i) {
@@ -78,7 +78,7 @@ public:
         }
     }
 
-    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace_ptr work=nullptr) const {
         if (OP::sparse) {
             auto raw = mat->sparse_column(c, vbuffer, ibuffer, start, end, work);
             for (size_t i = 0; i < raw.number; ++i) {
@@ -111,9 +111,9 @@ public:
     }
 
     /**
-     * @return A null pointer or a pointer to a `workspace` object, depending on the underlying (pre-operation) matrix.
+     * @return A null pointer or a shared pointer to a `workspace` object, depending on the underlying (pre-operation) matrix.
      */
-    workspace* new_workspace(bool row) const {
+    workspace_ptr new_workspace(bool row) const {
         return mat->new_workspace(row);
     }
 

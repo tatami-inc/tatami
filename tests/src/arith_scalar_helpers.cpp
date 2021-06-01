@@ -15,18 +15,10 @@ class ArithScalarTestCore : public TestCore {
 protected:
     std::shared_ptr<tatami::numeric_matrix> dense;
     std::shared_ptr<tatami::typed_matrix<double, int> > sparse;
-    std::unique_ptr<tatami::workspace> work_dense, work_sparse;
-
 protected:
     void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
         dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
         sparse = load_matrix_as_sparse_column_matrix(nr, nc, source);
-        return;
-    }
-
-    void create_workspaces(bool row) {
-        work_dense.reset(dense->new_workspace(row));
-        work_sparse.reset(sparse->new_workspace(row));
         return;
     }
 };
@@ -83,7 +75,6 @@ TEST_F(ArithScalarTest, SubtractionByColumn) {
 
     set_sizes(0, dense->nrow());
 
-    create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
         fill_expected(sparse->column(i, expected.data()));
@@ -164,7 +155,6 @@ TEST_F(ArithScalarTest, DivisionByColumn) {
     // Works in full.
     set_sizes(0, dense->nrow());
 
-    create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
         fill_expected(sparse->column(i, expected.data()));

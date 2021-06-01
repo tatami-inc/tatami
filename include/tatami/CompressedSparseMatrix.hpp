@@ -80,16 +80,15 @@ public:
 
     /**
      * @return If `row == ROW`, a null pointer as no workspace is required for extraction along the preferred dimension.
-     * Otherwise, a pointer to a `workspace` object is returned.
+     * Otherwise, a shared pointer to a `workspace` object is returned.
      *
      * @param row Should a workspace be created for row-wise extraction?
      */
-    workspace* new_workspace (bool row) const {
+    workspace_ptr new_workspace (bool row) const {
         if (row == ROW) {
-            return NULL;
+            return nullptr;
         } else {
-            workspace* output = new compressed_sparse_workspace(indices, indptrs);
-            return output;
+            return std::shared_ptr<workspace>(new compressed_sparse_workspace(indices, indptrs));
         }
     }
 
@@ -104,7 +103,7 @@ public:
     bool prefer_rows() const { return ROW; }
 
 public:
-    const T* row(size_t r, T* buffer, size_t first, size_t last, workspace* work=NULL) const {
+    const T* row(size_t r, T* buffer, size_t first, size_t last, workspace_ptr work=nullptr) const {
         if constexpr(ROW) {
             primary_dimension_expanded(r, first, last, this->ncols, buffer, 0);
         } else {
@@ -113,7 +112,7 @@ public:
         return buffer;
     }
 
-    const T* column(size_t c, T* buffer, size_t first, size_t last, workspace* work=NULL) const {
+    const T* column(size_t c, T* buffer, size_t first, size_t last, workspace_ptr work=nullptr) const {
         if constexpr(ROW) {
             secondary_dimension_expanded(c, first, last, work, buffer, 0);
         } else {
@@ -130,7 +129,7 @@ public:
     /**
      * @copydoc typed_matrix::sparse_row()
      */
-    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace_ptr work=nullptr) const {
         if constexpr(ROW) {
             return primary_dimension_raw(r, first, last, this->ncols, vbuffer, ibuffer);
         } else {
@@ -141,7 +140,7 @@ public:
     /**
      * @copydoc typed_matrix::sparse_column()
      */
-    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=NULL) const {
+    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace_ptr work=nullptr) const {
         if constexpr(ROW) {
             return secondary_dimension_raw(c, first, last, work, vbuffer, ibuffer); 
         } else {
@@ -308,8 +307,8 @@ private:
     }
 
     template<class STORE>
-    void secondary_dimension(IDX i, size_t first, size_t last, workspace* work, STORE& output) const {
-        if (work == NULL) {
+    void secondary_dimension(IDX i, size_t first, size_t last, workspace_ptr work, STORE& output) const {
+        if (work == nullptr) {
             for (size_t c = first; c < last; ++c) { 
                 auto start = indices.begin() + indptrs[c];
                 auto end = indices.begin() + indptrs[c+1];
@@ -320,7 +319,7 @@ private:
                 }
             }
         } else {
-            compressed_sparse_workspace& worker = *(dynamic_cast<compressed_sparse_workspace*>(work));
+            compressed_sparse_workspace& worker = *(dynamic_cast<compressed_sparse_workspace*>(work.get()));
             worker.update_indices(i, first, last);
             auto& new_indptrs = worker.offsets();
 
@@ -349,7 +348,7 @@ private:
         }
     };
 
-    sparse_range<T, IDX> secondary_dimension_raw(IDX i, size_t first, size_t last, workspace* work, T* out_values, IDX* out_indices) const {
+    sparse_range<T, IDX> secondary_dimension_raw(IDX i, size_t first, size_t last, workspace_ptr work, T* out_values, IDX* out_indices) const {
         raw_store store;
         store.out_values = out_values;
         store.out_indices = out_indices;
@@ -366,7 +365,7 @@ private:
         }
     };
 
-    void secondary_dimension_expanded(IDX i, size_t first, size_t last, workspace* work, T* out_values, T empty) const {
+    void secondary_dimension_expanded(IDX i, size_t first, size_t last, workspace_ptr work, T* out_values, T empty) const {
         std::fill(out_values, out_values + (last - first), empty);
         expanded_store store;
         store.out_values = out_values;

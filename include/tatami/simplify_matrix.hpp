@@ -20,14 +20,14 @@ namespace tatami {
  * @tparam T Type of the values in the matrix.
  * @tparam IDX Type of index values.
  *
- * @param incoming Pointer to a `typed_matrix`, possibly containing delayed operations.
+ * @param incoming Pointer to a `tatami::typed_matrix`, possibly containing delayed operations.
  * @param row Whether the output matrix should be in a row-based format (i.e., row-major dense or compressed sparse row).
  * @param sparse Whether the output matrix should be sparse.
  *
- * @return A pointer to a new `DenseMatrix` or `CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
+ * @return A pointer to a new `tatami::DenseMatrix` or `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
  */
 template <typename T, int IDX>
-inline std::shared_ptr<typed_matrix<T, IDX>*> simplify_matrix(std::shared_ptr<const typed_matrix<T, IDX>*> incoming, bool row, bool sparse) {
+inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<const typed_matrix<T, IDX> > incoming, bool row, bool sparse) {
     size_t NR = incoming->nrow();
     size_t NC = incoming->ncol();
 

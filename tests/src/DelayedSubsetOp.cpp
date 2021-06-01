@@ -15,7 +15,7 @@ class SubsetTestCore : public TestCore {
 protected:
     std::shared_ptr<tatami::numeric_matrix> dense;
     std::shared_ptr<tatami::typed_matrix<double, int> > sparse;
-    std::unique_ptr<tatami::workspace> work_dense, work_sparse;
+    std::shared_ptr<tatami::workspace> work_dense, work_sparse;
 
 protected:
     void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
@@ -25,8 +25,8 @@ protected:
     }
 
     void create_create_workspaces(bool row) {
-        work_dense.reset(dense->new_workspace(row));
-        work_sparse.reset(sparse->new_workspace(row));
+        work_dense = dense->new_workspace(row);
+        work_sparse = sparse->new_workspace(row);
         return;
     }
 };
@@ -80,11 +80,11 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -129,7 +129,7 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         first += 13;
@@ -168,11 +168,11 @@ TEST_F(SubsetTest, SubsetRowFullRowAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -216,11 +216,11 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed.row(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }
@@ -264,7 +264,7 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse));
         EXPECT_EQ(output, expected);
 
         first += 11;
@@ -303,11 +303,11 @@ TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed.column(i, outval.data(), work_dense));
         EXPECT_EQ(output, expected);
     }
 }

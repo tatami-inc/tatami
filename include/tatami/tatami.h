@@ -6,6 +6,9 @@
 #include "DelayedIsometricOp.hpp"
 #include "DelayedSubsetOp.hpp"
 
+#include "compress_sparse_triplets.hpp"
+#include "simplify_matrix.hpp"
+
 #define TATAMI_VERSION_MAJOR 0
 #define TATAMI_VERSION_MINOR 99
 #define TATAMI_VERSION_PATCH 0
