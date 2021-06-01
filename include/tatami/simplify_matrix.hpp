@@ -26,7 +26,7 @@ namespace tatami {
  *
  * @return A pointer to a new `tatami::DenseMatrix` or `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
  */
-template <typename T, int IDX>
+template <typename T, typename IDX>
 inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<const typed_matrix<T, IDX> > incoming, bool row, bool sparse) {
     size_t NR = incoming->nrow();
     size_t NC = incoming->ncol();
@@ -37,15 +37,15 @@ inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<co
             std::deque<IDX> buffer_i;
             std::vector<size_t> indptrs(NC + 1);
 
-            for (size_t c = 0; c < NR; ++c, optr+=NC) {
-                auto range = incoming->sparse_row(c, buffer_v.data(), buffer_i.data());
+            for (size_t r = 0; r < NR; ++r) {
+                auto range = incoming->sparse_row(r, buffer_v.data(), buffer_i.data());
                 for (size_t i = 0; i < range.number; ++i) {
                     buffer_v.push_back(range.value[i]);
                     buffer_i.push_back(range.index[i]);
                 }
-                indptrs[c+1] = indptrs[c] + range.number;
+                indptrs[r+1] = indptrs[r] + range.number;
             }
-            return std::shared_ptr<typed_matrix<T, IDX>*>(new CompressedSparseRowMatrix(NR, NC, std::move(buffer_v), std::move(buffer_i), std::move(indptrs)));
+            return std::shared_ptr<typed_matrix<T, IDX> >(new CompressedSparseRowMatrix<T, IDX>(NR, NC, std::move(buffer_v), std::move(buffer_i), std::move(indptrs)));
 
         } else {
             std::vector<T> output(NR * NC);
@@ -56,7 +56,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<co
                     std::copy(ptr, ptr + NC, optr);
                 }
             }
-            return std::shared_ptr<typed_matrix<T, IDX>*>(new DenseRowMatrix(NR, NC, std::move(output)));
+            return std::shared_ptr<typed_matrix<T, IDX> >(new DenseRowMatrix<T, IDX>(NR, NC, std::move(output)));
         }
 
     } else {
@@ -65,7 +65,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<co
             std::deque<IDX> buffer_i;
             std::vector<size_t> indptrs(NC + 1);
 
-            for (size_t c = 0; c < NC; ++c, optr+=NR) {
+            for (size_t c = 0; c < NC; ++c) {
                 auto range = incoming->sparse_column(c, buffer_v.data(), buffer_i.data());
                 for (size_t i = 0; i < range.number; ++i) {
                     buffer_v.push_back(range.value[i]);
@@ -73,7 +73,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<co
                 }
                 indptrs[c+1] = indptrs[c] + range.number;
             }
-            return std::shared_ptr<typed_matrix<T, IDX>*>(new CompressedSparseColumnMatrix(NR, NC, std::move(buffer_v), std::move(buffer_i), std::move(indptrs)));
+            return std::shared_ptr<typed_matrix<T, IDX> >(new CompressedSparseColumnMatrix<T, IDX>(NR, NC, std::move(buffer_v), std::move(buffer_i), std::move(indptrs)));
 
         } else {
             std::vector<T> output(NR * NC);
@@ -84,7 +84,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<co
                     std::copy(ptr, ptr + NR, optr);
                 }
             }
-            return std::shared_ptr<typed_matrix<T, IDX>*>(new DenseColumnMatrix(NR, NC, std::move(output)));
+            return std::shared_ptr<typed_matrix<T, IDX> >(new DenseColumnMatrix<T, IDX>(NR, NC, std::move(output)));
         }
     }
 }
@@ -99,8 +99,8 @@ inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<co
  *
  * @return A pointer to a new `tatami::DenseMatrix` or `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
  */
-template <typename T, int IDX>
-inline std::shared_ptr<typed_matrix<T, IDX>*> simplify_matrix(std::shared_ptr<const typed_matrix<T, IDX>*> incoming) {
+template <typename T, typename IDX>
+inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<const typed_matrix<T, IDX> > incoming) {
     return simplify_matrix(incoming, incoming->prefer_rows(), incoming->sparse());
 }
 

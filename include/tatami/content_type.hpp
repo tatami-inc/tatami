@@ -1,6 +1,10 @@
 #ifndef TATAMI_CONTENT_TYPE_H
 #define TATAMI_CONTENT_TYPE_H
 
+#include <type_traits>
+#include <cstdint>
+#include <string>
+
 /**
  * @file content_type.hpp
  *
