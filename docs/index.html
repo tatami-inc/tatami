@@ -95,8 +95,8 @@ $(function() {
 <p>We use templating to define the type of values returned by the interface. This includes the type of the data (most typically <code>double</code>) as well as the type of row/column indices (default <code>int</code>, but one could imagine using, e.g., <code>size_t</code>). It is worth noting that the storage type does not need to be the same as the interface type. For example, developers could store a matrix of small counts as <code>uint16_t</code> while returning <code>double</code>s for compatibility with downstream mathematical code.</p>
 <p>Matrix classes named with <code>snake_case</code> are virtual and intended for use as interfaces - these cannot be directly constructed. Matrix classes named with <code>CamelCase</code> correspond to actual matrix representations and can be explicitly constructed. All other functions or non-matrix classes use <code>snake_case</code>.</p>
 <h1>Documentation</h1>
-<p>The `gallery` contains worked examples for common operations based on row/column traversals.</p>
-<p>The `include` documentation contains further instructions on use, particularly for extensions.</p>
+<p>The <a href="https://github.com/LTLA/tatami/tree/master/gallery">gallery</a> contains worked examples for common operations based on row/column traversals.</p>
+<p>The <a href="https://github.com/LTLA/tatami/tree/master/include"><code>include</code></a> subdirectory contains further instructions on use, particularly for extensions.</p>
 <p>The <a href="https://ltla.github.io/tatami">reference documentation</a> for the API is generated automatically with Doxygen.</p>
 <h1>TODO</h1>
 <ul>

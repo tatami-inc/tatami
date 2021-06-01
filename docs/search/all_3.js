@@ -1,6 +1,4 @@
 var searchData=
 [
-  ['math_5fhelpers_2ehpp_35',['math_helpers.hpp',['../math__helpers_8hpp.html',1,'']]],
-  ['matrix_36',['matrix',['../classtatami_1_1matrix.html',1,'tatami']]],
-  ['matrix_2ehpp_37',['matrix.hpp',['../matrix_8hpp.html',1,'']]]
+  ['index_35',['index',['../structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826',1,'tatami::sparse_range']]]
 ];

@@ -77,21 +77,26 @@ $(function() {
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
 <div class="line"><a name="l00023"></a><span class="lineno"><a class="line" href="structtatami_1_1sparse__range.html">   23</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structtatami_1_1sparse__range.html">sparse_range</a> {</div>
-<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="structtatami_1_1sparse__range.html#a6fc4a1524db6c70d0a88c22f58d26830">   29</a></span>&#160;    <a class="code" href="structtatami_1_1sparse__range.html#a6fc4a1524db6c70d0a88c22f58d26830">sparse_range</a>(<span class="keywordtype">size_t</span> n, <span class="keyword">const</span> T* v=NULL, <span class="keyword">const</span> IDX* i=NULL) : number(n), value(v), index(i) {}</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="structtatami_1_1sparse__range.html#a6fc4a1524db6c70d0a88c22f58d26830">   29</a></span>&#160;    <a class="code" href="structtatami_1_1sparse__range.html#a6fc4a1524db6c70d0a88c22f58d26830">sparse_range</a>(<span class="keywordtype">size_t</span> n, <span class="keyword">const</span> T* v=NULL, <span class="keyword">const</span> IDX* i=NULL) : <a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>(n), <a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>(v), <a class="code" href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">index</a>(i) {}</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structtatami_1_1sparse__range.html#ae5013efde75037161170d091214fbde3">   34</a></span>&#160;    <a class="code" href="structtatami_1_1sparse__range.html#ae5013efde75037161170d091214fbde3">sparse_range</a>() {}</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keywordtype">size_t</span> number = 0;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">const</span> T* value = NULL;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">const</span> IDX* index = NULL;</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;};</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">   39</a></span>&#160;    <span class="keywordtype">size_t</span> <a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a> = 0;</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;}</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">   45</a></span>&#160;    <span class="keyword">const</span> T* <a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a> = NULL;</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
+<div class="line"><a name="l00051"></a><span class="lineno"><a class="line" href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">   51</a></span>&#160;    <span class="keyword">const</span> IDX* <a class="code" href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">index</a> = NULL;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;};</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;}</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160; </div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html"><div class="ttname"><a href="structtatami_1_1sparse__range.html">tatami::sparse_range</a></div><div class="ttdoc">A range of sparse values.</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:23</div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html_a6fc4a1524db6c70d0a88c22f58d26830"><div class="ttname"><a href="structtatami_1_1sparse__range.html#a6fc4a1524db6c70d0a88c22f58d26830">tatami::sparse_range::sparse_range</a></div><div class="ttdeci">sparse_range(size_t n, const T *v=NULL, const IDX *i=NULL)</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:29</div></div>
+<div class="ttc" id="astructtatami_1_1sparse__range_html_ab90aaa9698db7de4df68e5adac8f7826"><div class="ttname"><a href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">tatami::sparse_range::index</a></div><div class="ttdeci">const IDX * index</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:51</div></div>
+<div class="ttc" id="astructtatami_1_1sparse__range_html_ad23d530e0181196804b761942c73d2c2"><div class="ttname"><a href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">tatami::sparse_range::value</a></div><div class="ttdeci">const T * value</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:45</div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html_ae5013efde75037161170d091214fbde3"><div class="ttname"><a href="structtatami_1_1sparse__range.html#ae5013efde75037161170d091214fbde3">tatami::sparse_range::sparse_range</a></div><div class="ttdeci">sparse_range()</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:34</div></div>
+<div class="ttc" id="astructtatami_1_1sparse__range_html_aeb4182a21d74e82d1cb0fb4fd1aaa962"><div class="ttname"><a href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">tatami::sparse_range::number</a></div><div class="ttdeci">size_t number</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:39</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
