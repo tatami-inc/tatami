@@ -1,8 +1,19 @@
 # Gallery of `tatami` examples
 
-Each file is a standalone example containing copious explanations in the comments.
-Each can be compiled easily with the usual `gcc` or `clang` invocations, e.g.:
+## `colsums.cpp`
+
+Use column (and eventually also row) extraction methods for a typical `tatami::numeric_matrix` to compute the column sums.
 
 ```sh
 g++ -std=c++1z -I../include colsums.cpp
 ```
+
+## `parallel.cpp`
+
+Compute row sums in parallel with OpenMP.
+
+```sh
+g++ -std=c++1z -I../include -fopenmp parallel.cpp
+```
+
+

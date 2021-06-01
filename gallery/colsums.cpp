@@ -110,14 +110,13 @@ std::vector<double> colsums_sparse(std::shared_ptr<tatami::numeric_matrix> p) {
 
 /* ATTEMPT 4:
  *
- * tatami matrices have the capability to report which dimension they prefer to
- * iterate over. For example, row-major matrices will prefer to perform
- * iterations over the rows rather than the columns, as the former is more
- * cache-friendly. In such cases, we can write yet another code path to
- * support row-based extraction and compute column sums by adding each row onto
- * a running sum. Again, this is only possible for certain calculations; if we
- * really need an entire column's values at once, there's really no way around
- * calling column().
+ * tatami matrices can report which dimension they prefer to iterate over. For
+ * example, row-major matrices will prefer to perform iterations over the rows
+ * rather than the columns, as the former is more cache-friendly. In such
+ * cases, we can write yet another code path to support row-based extraction
+ * and compute column sums by adding each row onto a running sum. Again, this
+ * is only possible for certain calculations; if we really need an entire
+ * column's values at once, there's really no way around calling column().
  */
 std::vector<double> colsums_preferred(std::shared_ptr<tatami::numeric_matrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
@@ -131,12 +130,12 @@ std::vector<double> colsums_preferred(std::shared_ptr<tatami::numeric_matrix> p)
 
         for (size_t i = 0; i < NR; ++i) {
             if (p->sparse()) {
-                auto range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk);
+                auto range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk);
                 for (size_t j = 0; j < range.number; ++j) {
                     output[range.index[j]] += range.value[j];
                 }
             } else {
-                auto ptr = p->column(i, buffer.data(), wrk);
+                auto ptr = p->row(i, buffer.data(), wrk);
                 for (size_t j = 0; j < NC; ++j) {
                     output[j] += ptr[j];
                 }
