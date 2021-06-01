@@ -16,4 +16,10 @@ Compute row sums in parallel with OpenMP.
 g++ -std=c++1z -I../include -fopenmp parallel.cpp
 ```
 
+## `char2double.cpp`
 
+Store integers as `char` to save memory, but return them as `double`s for compatibility with downstream code.
+
+```sh
+g++ -std=c++1z -I../include char2double.cpp
+```
