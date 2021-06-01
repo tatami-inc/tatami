@@ -23,6 +23,9 @@ protected:
     workspace() {}
 };
 
+/**
+ * Shared pointer to a `workspace` instance.
+ */
 typedef std::shared_ptr<workspace> workspace_ptr; 
 
 }

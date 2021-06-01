@@ -130,7 +130,7 @@ public:
      */
     bool prefer_rows() const { return mat->prefer_rows(); }
 
-protected:
+private:
     std::shared_ptr<const typed_matrix<T, IDX> > mat;
     OP operation;
 };

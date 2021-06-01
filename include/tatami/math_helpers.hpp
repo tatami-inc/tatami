@@ -19,7 +19,7 @@ template<typename T>
 struct DelayedAbsHelper {
     /**
      * @param r Row index, ignored.
-     * @param r Column index, ignored.
+     * @param c Column index, ignored.
      * @param val Matrix value.
      *
      * @return Absolute value of `val`.
@@ -56,7 +56,7 @@ struct DelayedLogHelper {
      *
      * @return Logarithm of `val` with the specified base.
      */
-    T operator()(size_t i, size_t c, T val) const {
+    T operator()(size_t r, size_t c, T val) const {
         return std::log(val)/log_base;
     }
 
@@ -80,7 +80,7 @@ struct DelayedSqrtHelper {
      *
      * @return Square root of `val`.
      */
-    T operator()(size_t i, size_t c, T val) const {
+    T operator()(size_t r, size_t c, T val) const {
         return std::sqrt(val);
     }
 
@@ -107,12 +107,12 @@ struct DelayedLog1pHelper {
 
     /**
      * @param r Row index, ignored.
-     * @param r Column index, ignored.
+     * @param c Column index, ignored.
      * @param val Matrix value.
      *
      * @return Logarithm of `val + 1` with the specified base.
      */
-    T operator()(size_t i, size_t c, T val) const {
+    T operator()(size_t r, size_t c, T val) const {
         return std::log1p(val)/log_base;
     }
 
@@ -131,12 +131,12 @@ template<typename T>
 struct DelayedRoundHelper {
     /**
      * @param r Row index, ignored.
-     * @param r Column index, ignored.
+     * @param c Column index, ignored.
      * @param val Matrix value.
      *
      * @return `val` rounded to the closest integer value.
      */
-    T operator()(size_t i, size_t c, T val) const {
+    T operator()(size_t r, size_t c, T val) const {
         return std::round(val);
     }
 
@@ -158,7 +158,7 @@ struct DelayedExpHelper {
      *
      * @return `e` to the power of `val`.
      */
-    T operator()(size_t i, size_t c, T val) const {
+    T operator()(size_t r, size_t c, T val) const {
         return std::exp(val);
     }
 

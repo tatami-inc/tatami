@@ -33,8 +33,21 @@ struct sparse_range {
      */
     sparse_range() {}
 
+    /**
+     * Number of non-zero elements.
+     */
     size_t number = 0;
+
+    /**
+     * Pointer to the values of the non-zero elements.
+     * Has at least `number` addressible entries. 
+     */
     const T* value = NULL;
+
+    /**
+     * Pointer to the (row/column) indices of the non-zero elements.
+     * Has at least `number` addressible entries. 
+     */
     const IDX* index = NULL;
 };
 

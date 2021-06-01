@@ -110,12 +110,12 @@ public:
      * @return A `sparse_range` object containing the number of non-zero elements in `r` from column `first` up to `last`.
      * This also contains pointers to their column indices and values.
      */
-    virtual sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace_ptr work=nullptr) const {
-        const T* val = row(r, vbuffer, start, end, work);
-        for (size_t i = start; i < end; ++i) {
-            ibuffer[i - start] = i;
+    virtual sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace_ptr work=nullptr) const {
+        const T* val = row(r, vbuffer, first, last, work);
+        for (size_t i = first; i < last; ++i) {
+            ibuffer[i - first] = i;
         }
-        return sparse_range(end - start, vbuffer, ibuffer); 
+        return sparse_range(last - first, vbuffer, ibuffer); 
     }
 
     /**
@@ -136,12 +136,12 @@ public:
      * @return A `sparse_range` object containing the number of non-zero elements in `c` from column `first` up to `last`.
      * This also contains pointers to their row indices and values.
      */
-    virtual sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace_ptr work=nullptr) const {
-        const T* val = column(c, vbuffer, start, end, work);
-        for (size_t i = start; i < end; ++i) {
-            ibuffer[i - start] = i;
+    virtual sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace_ptr work=nullptr) const {
+        const T* val = column(c, vbuffer, first, last, work);
+        for (size_t i = first; i < last; ++i) {
+            ibuffer[i - first] = i;
         }
-        return sparse_range(end - start, vbuffer, ibuffer); 
+        return sparse_range(last - first, vbuffer, ibuffer); 
     }
 
     /**
@@ -191,6 +191,9 @@ public:
     content_type type() const { return determine_content_type<T>(); }
 };
 
+/**
+ * A convenient shorthand for the most common use case of double-precision matrices.
+ */
 using numeric_matrix = typed_matrix<double>;
 
 }

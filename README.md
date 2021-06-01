@@ -74,9 +74,9 @@ All other functions or non-matrix classes use `snake_case`.
 
 ## Documentation
 
-The [`gallery`](gallery/README.md) contains worked examples for common operations based on row/column traversals.
+The [gallery](https://github.com/LTLA/tatami/tree/master/gallery) contains worked examples for common operations based on row/column traversals.
 
-The [`include`](include/README.md) documentation contains further instructions on use, particularly for extensions.
+The [`include`](https://github.com/LTLA/tatami/tree/master/include) subdirectory contains further instructions on use, particularly for extensions.
 
 The [reference documentation](https://ltla.github.io/tatami) for the API is generated automatically with Doxygen.
 
