@@ -1,11 +1,8 @@
 #include <gtest/gtest.h>
 
-#include "tatami/CompressedSparseMatrix.hpp"
-#include "tatami/DenseMatrix.hpp"
-#include "tatami/DelayedSubsetOp.hpp"
-
-#include "data.h"
-#include "load_sparse.h"
+#include "tatami/tatami.h"
+#include "../data.h"
+#include "../load_sparse.h"
 #include "TestCore.h"
 
 #include <vector>

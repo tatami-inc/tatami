@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "tatami/DenseMatrix.hpp"
-
+#include "tatami/tatami.h"
 #include <vector>
 #include <deque>
 #include <numeric>

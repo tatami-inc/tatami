@@ -4,7 +4,7 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/CompressedSparseMatrix.hpp"
+#include "tatami/tatami.h"
 
 template<typename V>
 inline std::unique_ptr<tatami::typed_matrix<double, int> > load_matrix_as_sparse_row_matrix(size_t nr, size_t nc, const V& source) {
