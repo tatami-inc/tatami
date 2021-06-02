@@ -80,8 +80,7 @@ $(function() {
 </div><!-- fragment --><p>The key data structure is a shared pointer to a <code>typed_matrix</code> class. This is most commonly a <code>numeric_matrix</code>, where the values are specified as <code>double</code>s and the row/column indices are specified as <code>int</code>s. Here, we fill up a dense row-major matrix:</p>
 <div class="fragment"><div class="line">std::vector&lt;double&gt; vals(50);</div>
 <div class="line">std::iota(vals.begin(), vals.end(), 0.0);</div>
-<div class="line">std::shared_ptr&lt;tatami::numeric_matrix&gt; mat(<span class="keyword">new</span> <a class="code" href="classtatami_1_1DenseMatrix.html">tatami::DenseRowMatrix&lt;double&gt;</a>(10, 5, vals));</div>
-<div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:31</div></div>
+<div class="line">std::shared_ptr&lt;tatami::numeric_matrix&gt; mat(<span class="keyword">new</span> tatami::DenseRowMatrix&lt;double&gt;(10, 5, vals));</div>
 </div><!-- fragment --><p>We can then call a variety of methods without worrying about the exact class of the matrix referenced by <code>mat</code>. For example, to get the number of rows and columns:</p>
 <div class="fragment"><div class="line"><span class="keywordtype">size_t</span> NR = mat-&gt;nrow(), NC = mat-&gt;ncol();</div>
 </div><!-- fragment --><p>To extract a row or column, we use the <code>column()</code> method to pull out a dense vector. This requires the caller to supply a buffer though it may not actually be used if the values are already contiguous in memory in the underlying representation.</p>
