@@ -9,6 +9,8 @@
 #include "base/compress_sparse_triplets.hpp"
 #include "base/simplify_matrix.hpp"
 
+#include "stats/sums.hpp"
+
 #define TATAMI_VERSION_MAJOR 0
 #define TATAMI_VERSION_MINOR 99
 #define TATAMI_VERSION_PATCH 0

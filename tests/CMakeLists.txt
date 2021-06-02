@@ -24,6 +24,7 @@ add_executable(
     src/base/arith_scalar_helpers.cpp
     src/base/math_helpers.cpp
     src/base/compress_sparse_triplets.cpp
+    src/stats/sums.cpp
     src/data_sparse.cpp
 )
 
