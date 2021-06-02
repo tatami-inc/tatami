@@ -82,47 +82,47 @@ $(function() {
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> ROW, <span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
 <div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="sums_8hpp.html#a04ac49dc109bba2628b241f1bb3d96e6">   27</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="sums_8hpp.html#a04ac49dc109bba2628b241f1bb3d96e6">sums</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">size_t</span> NR = p-&gt;<a class="code" href="classtatami_1_1matrix.html#a460aca32225635cc6e2ee6ef5e59bb0a">nrow</a>(), NC = p-&gt;<a class="code" href="classtatami_1_1matrix.html#a433c79bdee72c01d00b169d236464964">ncol</a>();</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keywordtype">size_t</span> dim = (ROW ? NC : NR);</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    std::vector&lt;T&gt; buffer(dim);</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    std::vector&lt;T&gt; obuffer(ROW ? NR : NC);</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">auto</span> output = obuffer.begin();</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="comment">// Deciding whether or not to perform row-wise extraction.</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keywordflow">if</span> (p-&gt;<a class="code" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">prefer_rows</a>()) {</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keyword">auto</span> wrk = p-&gt;<a class="code" href="classtatami_1_1matrix.html#a8b1bee41464d6a4be31bbe4b9a948ef4">new_workspace</a>(<span class="keyword">true</span>);</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160; </div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        <span class="keywordflow">if</span> (p-&gt;<a class="code" href="classtatami_1_1matrix.html#ad4d53813c32de8561a2cff905fe4a501">sparse</a>()) {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            std::vector&lt;IDX&gt; ibuffer(dim);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; NR; ++i) {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                <span class="keyword">auto</span> range = p-&gt;<a class="code" href="classtatami_1_1typed__matrix.html#a87988c38d19b6f47e4b0a0c8509e80c0">sparse_row</a>(i, buffer.data(), ibuffer.data(), wrk);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                <span class="keywordflow">if</span> constexpr(ROW) {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                    *output = std::accumulate(range.value, range.value + range.number, <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0));</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                    ++output;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; range.number; ++j, ++range.index, ++range.value) {</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                        *(output + *range.index) += *range.value;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                    }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                }</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;            }</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; NR; ++i) {</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                <span class="keyword">auto</span> ptr = p-&gt;<a class="code" href="classtatami_1_1typed__matrix.html#a3a43808a16186d06ad7cda1b93dd1041">row</a>(i, buffer.data(), wrk);</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                <span class="keywordflow">if</span> constexpr(ROW) {</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                    *output = std::accumulate(ptr, ptr + NC, <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0));</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                    ++output;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                    <span class="keyword">auto</span> copy = output;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; NC; ++j, ++copy, ++ptr) {</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                        *copy += *ptr;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                    }</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            }</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;        }</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    std::vector&lt;T&gt; obuffer(ROW ? NR : NC);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">auto</span> output = obuffer.begin();</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="comment">// Deciding whether or not to perform row-wise extraction.</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;    <span class="keywordflow">if</span> (p-&gt;<a class="code" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">prefer_rows</a>()) {</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;        std::vector&lt;T&gt; buffer(NC);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keyword">auto</span> wrk = p-&gt;<a class="code" href="classtatami_1_1matrix.html#a8b1bee41464d6a4be31bbe4b9a948ef4">new_workspace</a>(<span class="keyword">true</span>);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keywordflow">if</span> (p-&gt;<a class="code" href="classtatami_1_1matrix.html#ad4d53813c32de8561a2cff905fe4a501">sparse</a>()) {</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            std::vector&lt;IDX&gt; ibuffer(NC);</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; NR; ++i) {</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                <span class="keyword">auto</span> range = p-&gt;<a class="code" href="classtatami_1_1typed__matrix.html#a87988c38d19b6f47e4b0a0c8509e80c0">sparse_row</a>(i, buffer.data(), ibuffer.data(), wrk);</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;                <span class="keywordflow">if</span> constexpr(ROW) {</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;                    *output = std::accumulate(range.value, range.value + range.number, <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0));</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                    ++output;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;                    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; range.number; ++j, ++range.index, ++range.value) {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                        *(output + *range.index) += *range.value;</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                    }</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                }</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; NR; ++i) {</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                <span class="keyword">auto</span> ptr = p-&gt;<a class="code" href="classtatami_1_1typed__matrix.html#a3a43808a16186d06ad7cda1b93dd1041">row</a>(i, buffer.data(), wrk);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                <span class="keywordflow">if</span> constexpr(ROW) {</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                    *output = std::accumulate(ptr, ptr + NC, <span class="keyword">static_cast&lt;</span>T<span class="keyword">&gt;</span>(0));</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                    ++output;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                    <span class="keyword">auto</span> copy = output;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; NC; ++j, ++copy, ++ptr) {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                        *copy += *ptr;</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                    }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;                }</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            }</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        }</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        std::vector&lt;T&gt; buffer(NR);</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        <span class="keyword">auto</span> wrk = p-&gt;<a class="code" href="classtatami_1_1matrix.html#a8b1bee41464d6a4be31bbe4b9a948ef4">new_workspace</a>(<span class="keyword">false</span>);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">if</span> (p-&gt;<a class="code" href="classtatami_1_1matrix.html#ad4d53813c32de8561a2cff905fe4a501">sparse</a>()) {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            std::vector&lt;IDX&gt; ibuffer(dim);</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            std::vector&lt;IDX&gt; ibuffer(NR);</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; NC; ++i) {</div>
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                <span class="keyword">auto</span> range = p-&gt;<a class="code" href="classtatami_1_1typed__matrix.html#ad10ae8f2be7db76371241314aa917741">sparse_column</a>(i, buffer.data(), ibuffer.data(), wrk);</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                <span class="keywordflow">if</span> constexpr(ROW) {</div>
@@ -154,22 +154,22 @@ $(function() {
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;}</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="sums_8hpp.html#a83da113bded0543253e3cc938f0f3989">  109</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="sums_8hpp.html#a83da113bded0543253e3cc938f0f3989">colsums</a>(std::shared_ptr&lt;<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a> &gt; p) {</div>
+<div class="line"><a name="l00109"></a><span class="lineno"><a class="line" href="sums_8hpp.html#a6d919d152f6b891127aa3902bc798f05">  109</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="sums_8hpp.html#a6d919d152f6b891127aa3902bc798f05">column_sums</a>(std::shared_ptr&lt;<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a> &gt; p) {</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    <span class="keywordflow">return</span> sums&lt;false, T, IDX&gt;(p);</div>
 <div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;}</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160; </div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="sums_8hpp.html#a0a0841b29d601c41167bd11d5f810870">  122</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="sums_8hpp.html#a83da113bded0543253e3cc938f0f3989">colsums</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
+<div class="line"><a name="l00122"></a><span class="lineno"><a class="line" href="sums_8hpp.html#a6470ff650776c05933e64027c4ec3984">  122</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="sums_8hpp.html#a6d919d152f6b891127aa3902bc798f05">column_sums</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="keywordflow">return</span> sums&lt;false, T, IDX&gt;(p);</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;}</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00135"></a><span class="lineno"><a class="line" href="sums_8hpp.html#a6b039a51c6db75c4019d75736da7f70b">  135</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="sums_8hpp.html#a6b039a51c6db75c4019d75736da7f70b">rowsums</a>(std::shared_ptr&lt;<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a> &gt; p) {</div>
+<div class="line"><a name="l00135"></a><span class="lineno"><a class="line" href="sums_8hpp.html#a96821d52e86751bbda581b6f49467e7c">  135</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="sums_8hpp.html#a96821d52e86751bbda581b6f49467e7c">row_sums</a>(std::shared_ptr&lt;<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a> &gt; p) {</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    <span class="keywordflow">return</span> sums&lt;true, T, IDX&gt;(p);</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;}</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="sums_8hpp.html#a8f41782edd127286e3a1af692b5b9bde">  148</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="sums_8hpp.html#a6b039a51c6db75c4019d75736da7f70b">rowsums</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
+<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="sums_8hpp.html#a26c5bd24910735738b5f99122868f363">  148</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="sums_8hpp.html#a96821d52e86751bbda581b6f49467e7c">row_sums</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordflow">return</span> sums&lt;true, T, IDX&gt;(p);</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;}</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
@@ -187,8 +187,8 @@ $(function() {
 <div class="ttc" id="aclasstatami_1_1typed__matrix_html_a87988c38d19b6f47e4b0a0c8509e80c0"><div class="ttname"><a href="classtatami_1_1typed__matrix.html#a87988c38d19b6f47e4b0a0c8509e80c0">tatami::typed_matrix::sparse_row</a></div><div class="ttdeci">virtual sparse_range&lt; T, IDX &gt; sparse_row(size_t r, T *vbuffer, IDX *ibuffer, size_t first, size_t last, workspace_ptr work=nullptr) const</div><div class="ttdef"><b>Definition:</b> typed_matrix.hpp:113</div></div>
 <div class="ttc" id="aclasstatami_1_1typed__matrix_html_ad10ae8f2be7db76371241314aa917741"><div class="ttname"><a href="classtatami_1_1typed__matrix.html#ad10ae8f2be7db76371241314aa917741">tatami::typed_matrix::sparse_column</a></div><div class="ttdeci">virtual sparse_range&lt; T, IDX &gt; sparse_column(size_t c, T *vbuffer, IDX *ibuffer, size_t first, size_t last, workspace_ptr work=nullptr) const</div><div class="ttdef"><b>Definition:</b> typed_matrix.hpp:139</div></div>
 <div class="ttc" id="asums_8hpp_html_a04ac49dc109bba2628b241f1bb3d96e6"><div class="ttname"><a href="sums_8hpp.html#a04ac49dc109bba2628b241f1bb3d96e6">tatami::sums</a></div><div class="ttdeci">std::vector&lt; T &gt; sums(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> sums.hpp:27</div></div>
-<div class="ttc" id="asums_8hpp_html_a6b039a51c6db75c4019d75736da7f70b"><div class="ttname"><a href="sums_8hpp.html#a6b039a51c6db75c4019d75736da7f70b">tatami::rowsums</a></div><div class="ttdeci">std::vector&lt; T &gt; rowsums(std::shared_ptr&lt; const typed_matrix&lt; T, IDX &gt; &gt; p)</div><div class="ttdef"><b>Definition:</b> sums.hpp:135</div></div>
-<div class="ttc" id="asums_8hpp_html_a83da113bded0543253e3cc938f0f3989"><div class="ttname"><a href="sums_8hpp.html#a83da113bded0543253e3cc938f0f3989">tatami::colsums</a></div><div class="ttdeci">std::vector&lt; T &gt; colsums(std::shared_ptr&lt; const typed_matrix&lt; T, IDX &gt; &gt; p)</div><div class="ttdef"><b>Definition:</b> sums.hpp:109</div></div>
+<div class="ttc" id="asums_8hpp_html_a6d919d152f6b891127aa3902bc798f05"><div class="ttname"><a href="sums_8hpp.html#a6d919d152f6b891127aa3902bc798f05">tatami::column_sums</a></div><div class="ttdeci">std::vector&lt; T &gt; column_sums(std::shared_ptr&lt; const typed_matrix&lt; T, IDX &gt; &gt; p)</div><div class="ttdef"><b>Definition:</b> sums.hpp:109</div></div>
+<div class="ttc" id="asums_8hpp_html_a96821d52e86751bbda581b6f49467e7c"><div class="ttname"><a href="sums_8hpp.html#a96821d52e86751bbda581b6f49467e7c">tatami::row_sums</a></div><div class="ttdeci">std::vector&lt; T &gt; row_sums(std::shared_ptr&lt; const typed_matrix&lt; T, IDX &gt; &gt; p)</div><div class="ttdef"><b>Definition:</b> sums.hpp:135</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
