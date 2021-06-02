@@ -10,6 +10,7 @@
 #include "base/simplify_matrix.hpp"
 
 #include "stats/sums.hpp"
+#include "stats/variances.hpp"
 
 #define TATAMI_VERSION_MAJOR 0
 #define TATAMI_VERSION_MINOR 99
