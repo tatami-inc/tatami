@@ -1,0 +1,13 @@
+var searchData=
+[
+  ['colsums_3',['colsums',['../sums_8hpp.html#a0a0841b29d601c41167bd11d5f810870',1,'tatami::colsums(const typed_matrix&lt; T, IDX &gt; *p)'],['../sums_8hpp.html#a83da113bded0543253e3cc938f0f3989',1,'tatami::colsums(std::shared_ptr&lt; const typed_matrix&lt; T, IDX &gt; &gt; p)']]],
+  ['column_4',['column',['../classtatami_1_1CompressedSparseMatrix.html#a77f833f1193862cea6254a949a2d66a3',1,'tatami::CompressedSparseMatrix::column()'],['../classtatami_1_1DelayedIsometricOp.html#a4b07070782cadcab4e16bf2ab4fe0c9a',1,'tatami::DelayedIsometricOp::column()'],['../classtatami_1_1DelayedSubsetOp.html#a2fa546e2f81f4721e9054ae4ce4068bf',1,'tatami::DelayedSubsetOp::column()'],['../classtatami_1_1DenseMatrix.html#ad4e60e5eb349c10665cd64bc5b1d3576',1,'tatami::DenseMatrix::column()'],['../classtatami_1_1typed__matrix.html#a73b22473084e78366943f20cd932e33b',1,'tatami::typed_matrix::column(size_t c, T *buffer, size_t first, size_t last, workspace_ptr work=nullptr) const =0'],['../classtatami_1_1typed__matrix.html#a81c5df068d6e0e1c686ac720ac5f5174',1,'tatami::typed_matrix::column(size_t c, T *buffer, workspace_ptr work=nullptr) const']]],
+  ['compress_5fsparse_5ftriplets_5',['compress_sparse_triplets',['../compress__sparse__triplets_8hpp.html#a1dd727510bf01fe4e8c90e49f73470cb',1,'tatami']]],
+  ['compress_5fsparse_5ftriplets_2ehpp_6',['compress_sparse_triplets.hpp',['../compress__sparse__triplets_8hpp.html',1,'']]],
+  ['compressedsparsecolumnmatrix_7',['CompressedSparseColumnMatrix',['../CompressedSparseMatrix_8hpp.html#a3d1338ade036e38b6d363a6c8a704a2b',1,'tatami']]],
+  ['compressedsparsematrix_8',['CompressedSparseMatrix',['../classtatami_1_1CompressedSparseMatrix.html#a77329784fa6f7bae110adf4f923bde14',1,'tatami::CompressedSparseMatrix::CompressedSparseMatrix(size_t nr, size_t nc, const U &amp;vals, const V &amp;idx, const W &amp;ptr, bool check=true)'],['../classtatami_1_1CompressedSparseMatrix.html#ad4bcc3bd0fb8b4ef52778d1e029fbcbb',1,'tatami::CompressedSparseMatrix::CompressedSparseMatrix(size_t nr, size_t nc, U &amp;&amp;vals, V &amp;&amp;idx, W &amp;&amp;ptr, bool check=true)'],['../classtatami_1_1CompressedSparseMatrix.html',1,'tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;']]],
+  ['compressedsparsematrix_2ehpp_9',['CompressedSparseMatrix.hpp',['../CompressedSparseMatrix_8hpp.html',1,'']]],
+  ['compressedsparserowmatrix_10',['CompressedSparseRowMatrix',['../CompressedSparseMatrix_8hpp.html#a33a0b775b994304c942e990fe12e793e',1,'tatami']]],
+  ['content_5ftype_11',['content_type',['../content__type_8hpp.html#aac79d5f0dc4bb45282e5a68cb2962dc5',1,'tatami']]],
+  ['content_5ftype_2ehpp_12',['content_type.hpp',['../content__type_8hpp.html',1,'']]]
+];

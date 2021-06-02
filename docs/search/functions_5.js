@@ -1,0 +1,5 @@
+var searchData=
+[
+  ['row_125',['row',['../classtatami_1_1CompressedSparseMatrix.html#a9fdc610ee5504f9fab9d02e1aff4be06',1,'tatami::CompressedSparseMatrix::row()'],['../classtatami_1_1DelayedIsometricOp.html#ae5d7ffaddc009cc88bf6d7d14fef0bbf',1,'tatami::DelayedIsometricOp::row()'],['../classtatami_1_1DelayedSubsetOp.html#a9167c20643d8227a5f8326dd59f1411b',1,'tatami::DelayedSubsetOp::row()'],['../classtatami_1_1DenseMatrix.html#ae4f73141ae5491411b09317b7098cb45',1,'tatami::DenseMatrix::row()'],['../classtatami_1_1typed__matrix.html#a3a43808a16186d06ad7cda1b93dd1041',1,'tatami::typed_matrix::row(size_t r, T *buffer, size_t first, size_t last, workspace_ptr work=nullptr) const =0'],['../classtatami_1_1typed__matrix.html#af8fea476c618670e7cd15b78b4bde088',1,'tatami::typed_matrix::row(size_t r, T *buffer, workspace_ptr work=nullptr) const']]],
+  ['rowsums_126',['rowsums',['../sums_8hpp.html#a6b039a51c6db75c4019d75736da7f70b',1,'tatami::rowsums(std::shared_ptr&lt; const typed_matrix&lt; T, IDX &gt; &gt; p)'],['../sums_8hpp.html#a8f41782edd127286e3a1af692b5b9bde',1,'tatami::rowsums(const typed_matrix&lt; T, IDX &gt; *p)']]]
+];
