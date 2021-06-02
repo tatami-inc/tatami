@@ -20,9 +20,10 @@ add_executable(
     src/base/DenseMatrix.cpp
     src/base/CompressedSparseMatrix.cpp
     src/base/DelayedSubsetOp.cpp
-    src/base/arith_scalar_helpers.cpp
     src/base/arith_vector_helpers.cpp
+    src/base/arith_scalar_helpers.cpp
     src/base/math_helpers.cpp
+    src/base/compress_sparse_triplets.cpp
     src/data_sparse.cpp
 )
 

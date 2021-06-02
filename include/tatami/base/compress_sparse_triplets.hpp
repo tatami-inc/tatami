@@ -14,10 +14,10 @@
 namespace tatami {
 
 /**
- * @tparam U Random-access container for the values.
- * @tparam V Random access container for the indices.
  * @tparam ROW Whether to compress into a row-based format, e.g., for `tatami::CompressedSparseRowMatrix` construction.
  * If `false`, compression to a column-based format is performed instead.
+ * @tparam U Random-access container for the values.
+ * @tparam V Random access container for the indices.
  *
  * @param nr Number of rows.
  * @param nc Number of columns.
@@ -31,7 +31,7 @@ namespace tatami {
  * @return `rows`, `cols` and `values` are sorted in-place by the row and column indices (if `ROW = true`) or by the column and row indices (if `ROW = false`).
  * A vector of index pointers is returned with length `nr + 1` (if `ROW = true`) or `nc + 1` (if `ROW = false`).
  */
-template <class U, class V, bool ROW = false>
+template <bool ROW, class U, class V>
 std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V& rows, V& cols) {
     const size_t N = rows.size();
     if (N != cols.size() || values.size() != N) { 
