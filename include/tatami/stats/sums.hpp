@@ -26,17 +26,16 @@ namespace tatami {
 template<bool ROW, typename T, typename IDX>
 inline std::vector<T> sums(const typed_matrix<T, IDX>* p) {
     size_t NR = p->nrow(), NC = p->ncol();
-    size_t dim = (ROW ? NC : NR);
-    std::vector<T> buffer(dim);
     std::vector<T> obuffer(ROW ? NR : NC);
     auto output = obuffer.begin();
 
     // Deciding whether or not to perform row-wise extraction.
     if (p->prefer_rows()) {
+        std::vector<T> buffer(NC);
         auto wrk = p->new_workspace(true);
 
         if (p->sparse()) {
-            std::vector<IDX> ibuffer(dim);
+            std::vector<IDX> ibuffer(NC);
             for (size_t i = 0; i < NR; ++i) {
                 auto range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk);
                 if constexpr(ROW) {
@@ -63,10 +62,11 @@ inline std::vector<T> sums(const typed_matrix<T, IDX>* p) {
             }
         }
     } else {
+        std::vector<T> buffer(NR);
         auto wrk = p->new_workspace(false);
 
         if (p->sparse()) {
-            std::vector<IDX> ibuffer(dim);
+            std::vector<IDX> ibuffer(NR);
             for (size_t i = 0; i < NC; ++i) {
                 auto range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk);
                 if constexpr(ROW) {
@@ -106,7 +106,7 @@ inline std::vector<T> sums(const typed_matrix<T, IDX>* p) {
  * @return A vector of length equal to the number of columns, containing the column sums.
  */
 template<typename T, typename IDX>
-inline std::vector<T> colsums(std::shared_ptr<const typed_matrix<T, IDX> > p) {
+inline std::vector<T> column_sums(std::shared_ptr<const typed_matrix<T, IDX> > p) {
     return sums<false, T, IDX>(p);
 }
 
@@ -119,7 +119,7 @@ inline std::vector<T> colsums(std::shared_ptr<const typed_matrix<T, IDX> > p) {
  * @return A vector of length equal to the number of columns, containing the column sums.
  */
 template<typename T, typename IDX>
-inline std::vector<T> colsums(const typed_matrix<T, IDX>* p) {
+inline std::vector<T> column_sums(const typed_matrix<T, IDX>* p) {
     return sums<false, T, IDX>(p);
 }
 
@@ -132,7 +132,7 @@ inline std::vector<T> colsums(const typed_matrix<T, IDX>* p) {
  * @return A vector of length equal to the number of rows, containing the row sums.
  */
 template<typename T, typename IDX>
-inline std::vector<T> rowsums(std::shared_ptr<const typed_matrix<T, IDX> > p) {
+inline std::vector<T> row_sums(std::shared_ptr<const typed_matrix<T, IDX> > p) {
     return sums<true, T, IDX>(p);
 }
 
@@ -145,7 +145,7 @@ inline std::vector<T> rowsums(std::shared_ptr<const typed_matrix<T, IDX> > p) {
  * @return A vector of length equal to the number of rows, containing the row sums.
  */
 template<typename T, typename IDX>
-inline std::vector<T> rowsums(const typed_matrix<T, IDX>* p) {
+inline std::vector<T> row_sums(const typed_matrix<T, IDX>* p) {
     return sums<true, T, IDX>(p);
 }
 
