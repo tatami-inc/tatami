@@ -33,8 +33,8 @@ inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<co
 
     if (row) {
         if (sparse) {
-            std::deque<T> buffer_v;
-            std::deque<IDX> buffer_i;
+            std::vector<T> buffer_v;
+            std::vector<IDX> buffer_i;
             std::vector<size_t> indptrs(NC + 1);
 
             for (size_t r = 0; r < NR; ++r) {
@@ -61,8 +61,8 @@ inline std::shared_ptr<typed_matrix<T, IDX> > simplify_matrix(std::shared_ptr<co
 
     } else {
         if (sparse) {
-            std::deque<T> buffer_v;
-            std::deque<IDX> buffer_i;
+            std::vector<T> buffer_v;
+            std::vector<IDX> buffer_i;
             std::vector<size_t> indptrs(NC + 1);
 
             for (size_t c = 0; c < NC; ++c) {
