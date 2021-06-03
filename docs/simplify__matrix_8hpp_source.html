@@ -89,8 +89,8 @@ $(function() {
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keywordflow">if</span> (row) {</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="keywordflow">if</span> (sparse) {</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            std::deque&lt;T&gt; buffer_v;</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            std::deque&lt;IDX&gt; buffer_i;</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;            std::vector&lt;T&gt; buffer_v;</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            std::vector&lt;IDX&gt; buffer_i;</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;            std::vector&lt;size_t&gt; indptrs(NC + 1);</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160; </div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> r = 0; r &lt; NR; ++r) {</div>
@@ -117,8 +117,8 @@ $(function() {
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keywordflow">if</span> (sparse) {</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            std::deque&lt;T&gt; buffer_v;</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            std::deque&lt;IDX&gt; buffer_i;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;            std::vector&lt;T&gt; buffer_v;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            std::vector&lt;IDX&gt; buffer_i;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;            std::vector&lt;size_t&gt; indptrs(NC + 1);</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> c = 0; c &lt; NC; ++c) {</div>
@@ -155,7 +155,7 @@ $(function() {
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aCompressedSparseMatrix_8hpp_html"><div class="ttname"><a href="CompressedSparseMatrix_8hpp.html">CompressedSparseMatrix.hpp</a></div></div>
 <div class="ttc" id="aDenseMatrix_8hpp_html"><div class="ttname"><a href="DenseMatrix_8hpp.html">DenseMatrix.hpp</a></div></div>
-<div class="ttc" id="aclasstatami_1_1CompressedSparseMatrix_html"><div class="ttname"><a href="classtatami_1_1CompressedSparseMatrix.html">tatami::CompressedSparseMatrix</a></div><div class="ttdoc">Compressed sparse matrix representation.</div><div class="ttdef"><b>Definition:</b> CompressedSparseMatrix.hpp:38</div></div>
+<div class="ttc" id="aclasstatami_1_1CompressedSparseMatrix_html"><div class="ttname"><a href="classtatami_1_1CompressedSparseMatrix.html">tatami::CompressedSparseMatrix</a></div><div class="ttdoc">Compressed sparse matrix representation.</div><div class="ttdef"><b>Definition:</b> CompressedSparseMatrix.hpp:39</div></div>
 <div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:31</div></div>
 <div class="ttc" id="aclasstatami_1_1typed__matrix_html"><div class="ttname"><a href="classtatami_1_1typed__matrix.html">tatami::typed_matrix</a></div><div class="ttdoc">Virtual class for a matrix with a defined type.</div><div class="ttdef"><b>Definition:</b> typed_matrix.hpp:23</div></div>
 <div class="ttc" id="asimplify__matrix_8hpp_html_a76b7817407c28376f5d896951bb6bf98"><div class="ttname"><a href="simplify__matrix_8hpp.html#a76b7817407c28376f5d896951bb6bf98">tatami::simplify_matrix</a></div><div class="ttdeci">std::shared_ptr&lt; typed_matrix&lt; T, IDX &gt; &gt; simplify_matrix(std::shared_ptr&lt; const typed_matrix&lt; T, IDX &gt; &gt; incoming, bool row, bool sparse)</div><div class="ttdef"><b>Definition:</b> simplify_matrix.hpp:30</div></div>

@@ -95,9 +95,9 @@ $(function() {
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; dim; ++i) {</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            <a class="code" href="structtatami_1_1sparse__range.html">tatami::sparse_range&lt;T, IDX&gt;</a> range;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordflow">if</span> (ROW) {</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                range = p-&gt;sparse_row(i, buffer.data(), ibuffer.data(), wrk);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;                range = p-&gt;sparse_row(i, buffer.data(), ibuffer.data(), wrk.get());</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                range = p-&gt;sparse_column(i, buffer.data(), ibuffer.data(), wrk);</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;                range = p-&gt;sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;            }</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> mean = std::accumulate(range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>, range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a> + range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>, 0.0)/otherdim;</div>
@@ -111,9 +111,9 @@ $(function() {
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; dim; ++i) {</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            <span class="keyword">const</span> T* ptr;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keywordflow">if</span> (ROW) {</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                ptr = p-&gt;row(i, buffer.data(), wrk);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                ptr = p-&gt;row(i, buffer.data(), wrk.get());</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                ptr = p-&gt;column(i, buffer.data(), wrk);</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                ptr = p-&gt;column(i, buffer.data(), wrk.get());</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;            }</div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;            <span class="keyword">const</span> <span class="keywordtype">double</span> mean = std::accumulate(ptr, ptr + otherdim, 0.0)/otherdim;</div>
@@ -148,9 +148,9 @@ $(function() {
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; otherdim; ++i) {</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;            <a class="code" href="structtatami_1_1sparse__range.html">tatami::sparse_range&lt;T, IDX&gt;</a> range;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;            <span class="keywordflow">if</span> (!ROW) {</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                range = p-&gt;sparse_row(i, buffer.data(), ibuffer.data(), wrk);</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                range = p-&gt;sparse_row(i, buffer.data(), ibuffer.data(), wrk.get());</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                range = p-&gt;sparse_column(i, buffer.data(), ibuffer.data(), wrk);</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                range = p-&gt;sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            }</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160; </div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;            <span class="keyword">auto</span> sIt = output.begin();</div>
@@ -185,9 +185,9 @@ $(function() {
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; otherdim; ++i) {</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            <span class="keyword">const</span> T* ptr;</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            <span class="keywordflow">if</span> (!ROW) {</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                ptr = p-&gt;row(i, buffer.data(), wrk);</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                ptr = p-&gt;row(i, buffer.data(), wrk.get());</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                ptr = p-&gt;column(i, buffer.data(), wrk);</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                ptr = p-&gt;column(i, buffer.data(), wrk.get());</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;            }</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;            <span class="keyword">auto</span> oIt = output.begin();</div>
@@ -213,35 +213,25 @@ $(function() {
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    }</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;}</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00165"></a><span class="lineno"><a class="line" href="variances_8hpp.html#a701681666bf8a6d93ae7275d1aec3eb5">  165</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="variances_8hpp.html#afc7d2d40f6fb32feba94183167ff4062">column_variances</a>(std::shared_ptr&lt;<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a> &gt; p) {</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keywordflow">return</span> column_variances&lt;T, IDX&gt;(p.get());</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;}</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00181"></a><span class="lineno"><a class="line" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">  181</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">row_variances</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keywordflow">if</span> (p-&gt;<a class="code" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">prefer_rows</a>()) {</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;        <span class="keywordflow">return</span> direct_variances&lt;true, T, IDX&gt;(p);</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <span class="keywordflow">return</span> running_variances&lt;true, T, IDX&gt;(p);</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    }</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;}</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="variances_8hpp.html#afc9460939ba0f50c13d884b3aab5799a">  193</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">row_variances</a>(std::shared_ptr&lt;<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a> &gt; p) {</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordflow">return</span> row_variances&lt;T, IDX&gt;(p.get());</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;}</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160; </div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;}</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160; </div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
+<div class="line"><a name="l00173"></a><span class="lineno"><a class="line" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">  173</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">row_variances</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keywordflow">if</span> (p-&gt;<a class="code" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">prefer_rows</a>()) {</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        <span class="keywordflow">return</span> direct_variances&lt;true, T, IDX&gt;(p);</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;        <span class="keywordflow">return</span> running_variances&lt;true, T, IDX&gt;(p);</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    }</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;}</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160; </div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;}</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1matrix_html_ad080e53326aca6016a2bee8d19a0fea7"><div class="ttname"><a href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">tatami::matrix::prefer_rows</a></div><div class="ttdeci">virtual bool prefer_rows() const</div><div class="ttdef"><b>Definition:</b> matrix.hpp:57</div></div>
 <div class="ttc" id="aclasstatami_1_1typed__matrix_html"><div class="ttname"><a href="classtatami_1_1typed__matrix.html">tatami::typed_matrix</a></div><div class="ttdoc">Virtual class for a matrix with a defined type.</div><div class="ttdef"><b>Definition:</b> typed_matrix.hpp:23</div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html"><div class="ttname"><a href="structtatami_1_1sparse__range.html">tatami::sparse_range</a></div><div class="ttdoc">A range of sparse values.</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:23</div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html_ab90aaa9698db7de4df68e5adac8f7826"><div class="ttname"><a href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">tatami::sparse_range::index</a></div><div class="ttdeci">const IDX * index</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:51</div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html_ad23d530e0181196804b761942c73d2c2"><div class="ttname"><a href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">tatami::sparse_range::value</a></div><div class="ttdeci">const T * value</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:45</div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html_aeb4182a21d74e82d1cb0fb4fd1aaa962"><div class="ttname"><a href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">tatami::sparse_range::number</a></div><div class="ttdeci">size_t number</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:39</div></div>
-<div class="ttc" id="avariances_8hpp_html_a57e979cfc34700068fd5b2355e41e93c"><div class="ttname"><a href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">tatami::row_variances</a></div><div class="ttdeci">std::vector&lt; T &gt; row_variances(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> variances.hpp:181</div></div>
+<div class="ttc" id="avariances_8hpp_html_a57e979cfc34700068fd5b2355e41e93c"><div class="ttname"><a href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">tatami::row_variances</a></div><div class="ttdeci">std::vector&lt; T &gt; row_variances(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> variances.hpp:173</div></div>
 <div class="ttc" id="avariances_8hpp_html_afc7d2d40f6fb32feba94183167ff4062"><div class="ttname"><a href="variances_8hpp.html#afc7d2d40f6fb32feba94183167ff4062">tatami::column_variances</a></div><div class="ttdeci">std::vector&lt; T &gt; column_variances(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> variances.hpp:153</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

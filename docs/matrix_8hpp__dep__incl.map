@@ -1,11 +1,13 @@
 <map id="/github/workspace/include/tatami/base/matrix.hpp" name="/github/workspace/include/tatami/base/matrix.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="546,5,719,47"/>
-<area shape="rect" id="node2" href="$typed__matrix_8hpp.html" title=" " alt="" coords="535,95,730,136"/>
-<area shape="rect" id="node3" href="$CompressedSparseMatrix_8hpp.html" title=" " alt="" coords="5,184,276,225"/>
-<area shape="rect" id="node6" href="$DelayedSubsetOp_8hpp.html" title=" " alt="" coords="519,184,746,225"/>
-<area shape="rect" id="node7" href="$DenseMatrix_8hpp.html" title=" " alt="" coords="301,184,495,225"/>
-<area shape="rect" id="node8" href="$sums_8hpp.html" title=" " alt="" coords="547,273,721,315"/>
-<area shape="rect" id="node9" href="$variances_8hpp.html" title=" " alt="" coords="745,273,923,315"/>
-<area shape="rect" id="node4" href="$simplify__matrix_8hpp.html" title=" " alt="" coords="214,273,422,315"/>
-<area shape="rect" id="node5" href="$tatami_8h_source.html" title=" " alt="" coords="398,363,571,404"/>
+<area shape="rect" id="node1" title=" " alt="" coords="679,5,853,47"/>
+<area shape="rect" id="node2" href="$typed__matrix_8hpp.html" title=" " alt="" coords="669,95,863,136"/>
+<area shape="rect" id="node3" href="$CompressedSparseMatrix_8hpp.html" title=" " alt="" coords="139,184,409,225"/>
+<area shape="rect" id="node6" href="$DelayedIsometricOp_8hpp.html" title=" " alt="" coords="5,273,244,315"/>
+<area shape="rect" id="node7" href="$DelayedSubsetOp_8hpp.html" title=" " alt="" coords="653,184,879,225"/>
+<area shape="rect" id="node8" href="$DenseMatrix_8hpp.html" title=" " alt="" coords="434,184,629,225"/>
+<area shape="rect" id="node9" href="$medians_8hpp_source.html" title=" " alt="" coords="903,184,1077,225"/>
+<area shape="rect" id="node10" href="$sums_8hpp.html" title=" " alt="" coords="831,273,1005,315"/>
+<area shape="rect" id="node11" href="$variances_8hpp.html" title=" " alt="" coords="1059,273,1238,315"/>
+<area shape="rect" id="node4" href="$simplify__matrix_8hpp.html" title=" " alt="" coords="385,273,593,315"/>
+<area shape="rect" id="node5" href="$tatami_8h_source.html" title=" " alt="" coords="543,363,717,404"/>
 </map>

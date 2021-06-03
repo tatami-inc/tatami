@@ -119,21 +119,15 @@ template&lt;bool ROW, typename T , typename IDX &gt; </td></tr>
 <tr class="memitem:afc7d2d40f6fb32feba94183167ff4062"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
 <tr class="memitem:afc7d2d40f6fb32feba94183167ff4062"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#afc7d2d40f6fb32feba94183167ff4062">tatami::column_variances</a> (const typed_matrix&lt; T, IDX &gt; *p)</td></tr>
 <tr class="separator:afc7d2d40f6fb32feba94183167ff4062"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a701681666bf8a6d93ae7275d1aec3eb5"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a701681666bf8a6d93ae7275d1aec3eb5"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#a701681666bf8a6d93ae7275d1aec3eb5">tatami::column_variances</a> (std::shared_ptr&lt; const typed_matrix&lt; T, IDX &gt; &gt; p)</td></tr>
-<tr class="separator:a701681666bf8a6d93ae7275d1aec3eb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a57e979cfc34700068fd5b2355e41e93c"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
 <tr class="memitem:a57e979cfc34700068fd5b2355e41e93c"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">tatami::row_variances</a> (const typed_matrix&lt; T, IDX &gt; *p)</td></tr>
 <tr class="separator:a57e979cfc34700068fd5b2355e41e93c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc9460939ba0f50c13d884b3aab5799a"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:afc9460939ba0f50c13d884b3aab5799a"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#afc9460939ba0f50c13d884b3aab5799a">tatami::row_variances</a> (std::shared_ptr&lt; const typed_matrix&lt; T, IDX &gt; &gt; p)</td></tr>
-<tr class="separator:afc9460939ba0f50c13d884b3aab5799a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Compute row and column variances from a <code><a class="el" href="classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type.">tatami::typed_matrix</a></code>. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
 <a id="afc7d2d40f6fb32feba94183167ff4062"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc7d2d40f6fb32feba94183167ff4062">&#9670;&nbsp;</a></span>column_variances() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#afc7d2d40f6fb32feba94183167ff4062">&#9670;&nbsp;</a></span>column_variances()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -157,51 +151,6 @@ template&lt;typename T , typename IDX &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This uses the usual algorithm for matrices where <code><a class="el" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">tatami::matrix::prefer_rows()</a></code> is false, otherwise it uses Welford's algorithm. As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be numeric. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type.">tatami::typed_matrix</a></code>.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A vector of length equal to the number of columns, containing the column variances. </dd></dl>
-
-</div>
-</div>
-<a id="a701681666bf8a6d93ae7275d1aec3eb5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a701681666bf8a6d93ae7275d1aec3eb5">&#9670;&nbsp;</a></span>column_variances() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename IDX &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;T&gt; tatami::column_variances </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p></p>
 <p>This uses the usual algorithm for matrices where <code><a class="el" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">tatami::matrix::prefer_rows()</a></code> is false, otherwise it uses Welford's algorithm. As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
@@ -221,7 +170,7 @@ template&lt;typename T , typename IDX &gt; </div>
 </div>
 </div>
 <a id="a57e979cfc34700068fd5b2355e41e93c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a57e979cfc34700068fd5b2355e41e93c">&#9670;&nbsp;</a></span>row_variances() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a57e979cfc34700068fd5b2355e41e93c">&#9670;&nbsp;</a></span>row_variances()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -245,51 +194,6 @@ template&lt;typename T , typename IDX &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This uses the usual algorithm for matrices where <code><a class="el" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">tatami::matrix::prefer_rows()</a></code> is true, otherwise it uses Welford's algorithm. As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be numeric. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type.">tatami::typed_matrix</a></code>.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A vector of length equal to the number of rows, containing the row variances. </dd></dl>
-
-</div>
-</div>
-<a id="afc9460939ba0f50c13d884b3aab5799a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc9460939ba0f50c13d884b3aab5799a">&#9670;&nbsp;</a></span>row_variances() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename IDX &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;T&gt; tatami::row_variances </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p></p>
 <p>This uses the usual algorithm for matrices where <code><a class="el" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">tatami::matrix::prefer_rows()</a></code> is true, otherwise it uses Welford's algorithm. As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
