@@ -77,11 +77,11 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.column(i, outval.data(), work_dense));
+        fill_output(dense_subbed.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -126,7 +126,7 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         first += 13;
@@ -165,11 +165,11 @@ TEST_F(SubsetTest, SubsetRowFullRowAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.row(i, outval.data(), work_dense));
+        fill_output(dense_subbed.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -213,11 +213,11 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.row(i, outval.data(), work_dense));
+        fill_output(dense_subbed.row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -261,7 +261,7 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse));
+        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         first += 11;
@@ -300,11 +300,11 @@ TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse));
+        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.column(i, outval.data(), work_dense));
+        fill_output(dense_subbed.column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }

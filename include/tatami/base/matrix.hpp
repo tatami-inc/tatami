@@ -35,7 +35,7 @@ public:
      * @return A shared pointer to a `workspace` for row or column extraction, or a null pointer if no workspace is required.
      * Defaults to returning a null pointer if no specialized method is provided in derived classes.
      */
-    virtual workspace_ptr new_workspace(bool row) const { return nullptr; }
+    virtual std::shared_ptr<workspace> new_workspace(bool row) const { return nullptr; }
 
     /**
      * @return A `content_type` specifying the type of the values in the matrix.

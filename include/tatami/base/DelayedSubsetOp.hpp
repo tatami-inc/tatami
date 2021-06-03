@@ -43,7 +43,7 @@ public:
     ~DelayedSubsetOp() {}
 
 public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, const workspace_ptr& work=nullptr) const {
+    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
         if constexpr(MARGIN==1) {
             subset_expanded<true>(r, buffer, start, end, work);
             return buffer;
@@ -52,7 +52,7 @@ public:
         }
     }
 
-    const T* column(size_t c, T* buffer, size_t start, size_t end, const workspace_ptr& work=nullptr) const {
+    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
         if constexpr(MARGIN==1) {
             return mat->column(indices[c], buffer, start, end, work);
         } else {
@@ -66,7 +66,7 @@ public:
     using typed_matrix<T, IDX>::row;
 
 public:
-    sparse_range<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, const workspace_ptr& work=nullptr) const {
+    sparse_range<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr) const {
         if constexpr(MARGIN==1) {
             auto total = subset_sparse<true>(r, out_values, out_indices, start, end, work);
             return sparse_range<T, IDX>(total, out_values, out_indices);
@@ -75,7 +75,7 @@ public:
         }
     }
 
-    sparse_range<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, const workspace_ptr& work=nullptr) const {
+    sparse_range<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr) const {
         if constexpr(MARGIN==1) {
             return mat->sparse_column(indices[c], out_values, out_indices, start, end, work);
         } else {
@@ -114,7 +114,7 @@ public:
     /**
      * @return A null pointer or a shared pointer to a `workspace` object, depending on the underlying (pre-subsetted) matrix.
      */
-    workspace_ptr new_workspace() const {
+    std::shared_ptr<workspace> new_workspace() const {
         return mat->new_workspace();
     }
 
@@ -130,7 +130,7 @@ private:
     V indices;
 
     template<bool ROW>
-    void subset_expanded(size_t r, T* buffer, size_t start, size_t end, const workspace_ptr& work) const {
+    void subset_expanded(size_t r, T* buffer, size_t start, size_t end, workspace* work) const {
         while (start < end) {
             auto original = start;
             auto previdx = indices[start];
@@ -158,7 +158,7 @@ private:
     }
 
     template<bool ROW>
-    size_t subset_sparse(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, const workspace_ptr& work) const {
+    size_t subset_sparse(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work) const {
         size_t total = 0;
         while (start < end) {
             auto original = start;

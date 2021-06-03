@@ -29,9 +29,9 @@ inline std::vector<double> direct_variances(const typed_matrix<T, IDX>* p) {
         for (size_t i = 0; i < dim; ++i) {
             tatami::sparse_range<T, IDX> range;
             if (ROW) {
-                range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk);
+                range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk.get());
             } else {
-                range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk);
+                range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());
             }
 
             const double mean = std::accumulate(range.value, range.value + range.number, 0.0)/otherdim;
@@ -45,9 +45,9 @@ inline std::vector<double> direct_variances(const typed_matrix<T, IDX>* p) {
         for (size_t i = 0; i < dim; ++i) {
             const T* ptr;
             if (ROW) {
-                ptr = p->row(i, buffer.data(), wrk);
+                ptr = p->row(i, buffer.data(), wrk.get());
             } else {
-                ptr = p->column(i, buffer.data(), wrk);
+                ptr = p->column(i, buffer.data(), wrk.get());
             }
 
             const double mean = std::accumulate(ptr, ptr + otherdim, 0.0)/otherdim;
@@ -82,9 +82,9 @@ inline std::vector<double> running_variances(const typed_matrix<T, IDX>* p) {
         for (size_t i = 0; i < otherdim; ++i) {
             tatami::sparse_range<T, IDX> range;
             if (!ROW) {
-                range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk);
+                range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk.get());
             } else {
-                range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk);
+                range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());
             }
 
             auto sIt = output.begin();
@@ -119,9 +119,9 @@ inline std::vector<double> running_variances(const typed_matrix<T, IDX>* p) {
         for (size_t i = 0; i < otherdim; ++i) {
             const T* ptr;
             if (!ROW) {
-                ptr = p->row(i, buffer.data(), wrk);
+                ptr = p->row(i, buffer.data(), wrk.get());
             } else {
-                ptr = p->column(i, buffer.data(), wrk);
+                ptr = p->column(i, buffer.data(), wrk.get());
             }
 
             auto oIt = output.begin();
@@ -159,14 +159,6 @@ inline std::vector<T> column_variances(const typed_matrix<T, IDX>* p) {
 }
 
 /**
- * @copydoc column_variances()
- */
-template<typename T, typename IDX>
-inline std::vector<T> column_variances(std::shared_ptr<const typed_matrix<T, IDX> > p) {
-    return column_variances<T, IDX>(p.get());
-}
-
-/**
  * This uses the usual algorithm for matrices where `tatami::matrix::prefer_rows()` is true, otherwise it uses Welford's algorithm.
  * As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.
  *
@@ -184,14 +176,6 @@ inline std::vector<T> row_variances(const typed_matrix<T, IDX>* p) {
     } else {
         return running_variances<true, T, IDX>(p);
     }
-}
-
-/**
- * @copydoc row_variances()
- */
-template<typename T, typename IDX>
-inline std::vector<T> row_variances(std::shared_ptr<const typed_matrix<T, IDX> > p) {
-    return row_variances<T, IDX>(p.get());
 }
 
 }
