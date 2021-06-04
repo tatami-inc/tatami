@@ -21,8 +21,8 @@ namespace tatami {
  *
  * @return The `direct()` or `running()` methods in `stat` are invoked to fill up the store with the relevant row- or column-wise statistics.
  */
-template<int MARGIN, typename T, typename IDX, class STAT>
-inline void apply(const typed_matrix<T, IDX>* p, STAT& stat) {
+template<int MARGIN, typename T, typename IDX, template<typename,bool,bool> class STAT>
+inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p) {
     size_t NR = p->nrow(), NC = p->ncol();
 
     /* One might question why we use MARGIN in the template if we just convert
@@ -38,13 +38,14 @@ inline void apply(const typed_matrix<T, IDX>* p, STAT& stat) {
     /* If we support running calculations AND the preference 
      * is not consistent with the margin, we give it a shot.
      */
-    if constexpr(STAT::runnable) {
+    if constexpr(STAT<T, false, true>::runnable || STAT<T, true, true>::runnable) {
         if (p->prefer_rows() != ROW){
             std::vector<T> obuffer(dim);
             auto wrk = p->new_workspace(!ROW);
 
-            if constexpr(STAT::sparse) {
+            if constexpr(STAT<T, true, true>::sparse) {
                 if (p->sparse()) {
+                    STAT<T, true, true> stat(dim);
                     std::vector<IDX> ibuffer(dim);
                     for (size_t i = 0; i < otherdim; ++i) {
                         if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
@@ -55,28 +56,32 @@ inline void apply(const typed_matrix<T, IDX>* p, STAT& stat) {
                             stat.running(range);
                         }
                     }
-                    return;
+                    return stat.yield();
                 }
             }
 
-            for (size_t i = 0; i < otherdim; ++i) {
-                if constexpr(ROW) { // flipped around, see above.
-                    auto ptr = p->column(i, obuffer.data(), wrk.get());
-                    stat.running(ptr);
-                } else {
-                    auto ptr = p->row(i, obuffer.data(), wrk.get());
-                    stat.running(ptr);
+            if constexpr(STAT<T, false, true>::runnable) {
+                STAT<T, false, true> stat(dim);
+                for (size_t i = 0; i < otherdim; ++i) {
+                    if constexpr(ROW) { // flipped around, see above.
+                        auto ptr = p->column(i, obuffer.data(), wrk.get());
+                        stat.running(ptr);
+                    } else {
+                        auto ptr = p->row(i, obuffer.data(), wrk.get());
+                        stat.running(ptr);
+                    }
                 }
+                return stat.yield();
             }
-            return;
         }
     }
 
     std::vector<T> obuffer(otherdim);
     auto wrk = p->new_workspace(ROW);
 
-    if constexpr(STAT::sparse) {
+    if constexpr(STAT<T, true, false>::sparse) {
         if (p->sparse()) {
+            STAT<T, true, false> stat(dim);
             std::vector<IDX> ibuffer(otherdim);
             for (size_t i = 0; i < dim; ++i) {
                 if constexpr(ROW) {
@@ -87,10 +92,11 @@ inline void apply(const typed_matrix<T, IDX>* p, STAT& stat) {
                     stat.direct(i, range, otherdim);
                 }
             }
-            return;
+            return stat.yield();
         }
     }
 
+    STAT<T, false, false> stat(dim);
     for (size_t i = 0; i < dim; ++i) {
         if constexpr(ROW) {
             auto ptr = p->row(i, obuffer.data(), wrk.get());
@@ -100,7 +106,7 @@ inline void apply(const typed_matrix<T, IDX>* p, STAT& stat) {
             stat.direct(i, ptr, otherdim);
         }
     }
-    return;
+    return stat.yield();
 }
 
 }

@@ -24,6 +24,7 @@ TEST(ComputingDimsums, RowSums) {
     auto sparse_column = load_matrix_as_sparse_column_matrix(sparse_nrow, sparse_ncol, sparse_matrix);
 
     auto ref = tatami::row_sums(dense_row.get());
+    EXPECT_EQ(ref.size(), sparse_nrow);
     EXPECT_EQ(ref, tatami::row_sums(dense_column.get()));
     EXPECT_EQ(ref, tatami::row_sums(sparse_row.get()));
     EXPECT_EQ(ref, tatami::row_sums(sparse_column.get()));
@@ -36,6 +37,7 @@ TEST(ComputingDimsums, ColumnSums) {
     auto sparse_column = load_matrix_as_sparse_column_matrix(sparse_nrow, sparse_ncol, sparse_matrix);
 
     auto ref = tatami::column_sums(dense_row.get());
+    EXPECT_EQ(ref.size(), sparse_ncol);
     EXPECT_EQ(ref, tatami::column_sums(dense_column.get()));
     EXPECT_EQ(ref, tatami::column_sums(sparse_row.get()));
     EXPECT_EQ(ref, tatami::column_sums(sparse_column.get()));

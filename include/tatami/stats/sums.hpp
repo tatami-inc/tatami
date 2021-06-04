@@ -14,25 +14,29 @@
 
 namespace tatami {
 
-template<typename T> 
+template<typename T, bool SPARSE, bool RUNNABLE> 
 struct StatsSumHelper {
     StatsSumHelper(size_t n) : store(n) {}
 
-    static const bool sparse = true;
-    static const bool runnable = true;
+    static const bool sparse = SPARSE;
+    static const bool runnable = RUNNABLE;
+    typedef std::vector<T> value;
 
     void direct(size_t i, const T* ptr, size_t dim) {
+        static_assert(!SPARSE && !RUNNABLE);
         store[i] = std::accumulate(ptr, ptr + dim, static_cast<T>(0));
         return;
     }
 
     template<typename IDX>
     void direct(size_t i, const sparse_range<T, IDX>& range, size_t dim) {
+        static_assert(SPARSE && !RUNNABLE);
         store[i] = std::accumulate(range.value, range.value + range.number, static_cast<T>(0));
         return;
     }
 
     void running(const T* ptr) {
+        static_assert(!SPARSE && RUNNABLE);
         for (auto sIt = store.begin(); sIt != store.end(); ++sIt, ++ptr) {
             *sIt += *ptr;
         }
@@ -41,6 +45,7 @@ struct StatsSumHelper {
 
     template<typename IDX>
     void running(const sparse_range<T, IDX>& range) {
+        static_assert(SPARSE && RUNNABLE);
         auto vptr = range.value;
         auto iptr = range.index;
         for (size_t j = 0; j < range.number; ++j, ++iptr, ++vptr) {
@@ -49,11 +54,11 @@ struct StatsSumHelper {
         return;
     }
 
-    std::vector<T> yield() {
+    value yield() {
         return store;
     }
 private:
-    std::vector<T> store;
+    value store;
 };
 
 /**
@@ -66,9 +71,7 @@ private:
  */
 template<typename T, typename IDX>
 inline std::vector<T> column_sums(const typed_matrix<T, IDX>* p) {
-    StatsSumHelper<T> stats(p->ncol());
-    apply<1, T, IDX>(p, stats);
-    return stats.yield();
+    return apply<1, T, IDX, StatsSumHelper>(p);
 }
 
 /**
@@ -81,9 +84,7 @@ inline std::vector<T> column_sums(const typed_matrix<T, IDX>* p) {
  */
 template<typename T, typename IDX>
 inline std::vector<T> row_sums(const typed_matrix<T, IDX>* p) {
-    StatsSumHelper<T> stats(p->nrow());
-    apply<0, T, IDX>(p, stats);
-    return stats.yield();
+    return apply<0, T, IDX, StatsSumHelper>(p);
 }
 
 }
