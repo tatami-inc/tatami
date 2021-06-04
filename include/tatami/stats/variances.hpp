@@ -4,6 +4,7 @@
 #include "../base/typed_matrix.hpp"
 #include <vector>
 #include <algorithm>
+#include <limits>
 
 /**
  * @file variances.hpp
@@ -13,130 +14,105 @@
 
 namespace tatami {
 
-template<bool ROW, typename T, typename IDX>
-inline std::vector<double> direct_variances(const typed_matrix<T, IDX>* p) {
-    size_t NR = p->nrow(), NC = p->ncol();
-    size_t dim = ROW ? NR : NC;
-    size_t otherdim = ROW ? NC : NR;
+template<typename T, bool SPARSE, bool RUNNABLE> 
+struct StatsVarianceHelper {
+    StatsVarianceHelper(size_t n, size_t d) : store(n), running_mean(RUNNABLE ? n : 0), running_nnzero(RUNNABLE && SPARSE ? n : 1), dim(d) {}
 
-    std::vector<double> output(dim);
-    std::vector<T> buffer(otherdim);
-    auto wrk = p->new_workspace(ROW);
+    static const bool sparse = SPARSE;
+    static const bool runnable = RUNNABLE;
+    typedef std::vector<T> value;
 
-    if (p->sparse()) {
-        std::vector<IDX> ibuffer(otherdim);
-
-        for (size_t i = 0; i < dim; ++i) {
-            tatami::sparse_range<T, IDX> range;
-            if (ROW) {
-                range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk.get());
-            } else {
-                range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());
-            }
-
-            const double mean = std::accumulate(range.value, range.value + range.number, 0.0)/otherdim;
-            double& out = output[i];
-            for (size_t j = 0; j < range.number; ++j) {
-                out += (range.value[j] - mean) * (range.value[j] - mean);
-            }
-            out += mean * mean * (otherdim - range.number);
+    void direct(size_t i, const T* ptr) {
+        static_assert(!SPARSE && !RUNNABLE);
+        const double mean = std::accumulate(ptr, ptr + dim, 0.0)/dim;
+        double& out = store[i];
+        for (size_t j = 0; j < dim; ++j, ++ptr) {
+            out += (*ptr - mean) * (*ptr - mean);
         }
-    } else {
-        for (size_t i = 0; i < dim; ++i) {
-            const T* ptr;
-            if (ROW) {
-                ptr = p->row(i, buffer.data(), wrk.get());
-            } else {
-                ptr = p->column(i, buffer.data(), wrk.get());
-            }
-
-            const double mean = std::accumulate(ptr, ptr + otherdim, 0.0)/otherdim;
-            double& out = output[i];
-            for (size_t j = 0; j < otherdim; ++j, ++ptr) {
-                out += (*ptr - mean) * (*ptr - mean);
-            }
-        }
+        return;
     }
 
-    return output;
-}
-
-// Using Welford's algorithm to compute the variance in the 'other' dimension.
-// which should be much more cache-friendly for large matrices. We run through
-// only non-zero counts when circumstances allow for it.
-template<bool ROW, typename T, typename IDX>
-inline std::vector<double> running_variances(const typed_matrix<T, IDX>* p) {
-    size_t NR = p->nrow(), NC = p->ncol();
-    size_t dim = ROW ? NR : NC;
-    size_t otherdim = ROW ? NC : NR;
-
-    std::vector<double> output(dim);
-    std::vector<double> running_mean(dim);
-    std::vector<T> buffer(dim);
-    auto wrk = p->new_workspace(!ROW);
-
-    if (p->sparse()) {
-        std::vector<IDX> ibuffer(dim);
-        std::vector<double> running_nzero(dim);
-
-        for (size_t i = 0; i < otherdim; ++i) {
-            tatami::sparse_range<T, IDX> range;
-            if (!ROW) {
-                range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk.get());
-            } else {
-                range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());
-            }
-
-            auto sIt = output.begin();
-            auto mIt = running_mean.begin();
-            auto nzIt = running_nzero.begin();
-
-            for (size_t j = 0; j < range.number; ++j) {
-                auto ri = range.index[j];
-                auto& curM = *(mIt + ri);
-                auto& curS = *(sIt + ri);
-                auto& curNZ = *(nzIt + ri);
-                ++curNZ;
-                const auto& curval = range.value[j];
-                
-                const double delta = curval - curM;
-                curM += delta / curNZ;
-                curS += delta * (curval - curM);
-            }        
+    template<typename IDX>
+    void direct(size_t i, const sparse_range<T, IDX>& range) {
+        static_assert(SPARSE && !RUNNABLE);
+        const double mean = std::accumulate(range.value, range.value + range.number, 0.0)/dim;
+        double& out = store[i];
+        for (size_t j = 0; j < range.number; ++j) {
+            out += (range.value[j] - mean) * (range.value[j] - mean);
         }
+        out += mean * mean * (dim - range.number);
+        return;
+    }
 
-        auto sIt = output.begin();
+    /* Using Welford's algorithm to compute the variance in the 'other' dimension.
+     * which should be much more cache-friendly for large matrices. We run through
+     * only non-zero counts when circumstances allow for it.
+     */
+    void running(const T* ptr) {
+        static_assert(!SPARSE && RUNNABLE);
         auto mIt = running_mean.begin();
-        auto nzIt = running_nzero.begin();
-        for (size_t i = 0; i < dim; ++i, ++mIt, ++sIt, ++nzIt) {
-            const double curNZ = *nzIt;
-            const double ratio = curNZ / otherdim;
-            auto& curM = *mIt;
-            *sIt += curM * curM * ratio * (otherdim - curNZ);
-            curM *= ratio;
-        }
-    } else {
-        for (size_t i = 0; i < otherdim; ++i) {
-            const T* ptr;
-            if (!ROW) {
-                ptr = p->row(i, buffer.data(), wrk.get());
-            } else {
-                ptr = p->column(i, buffer.data(), wrk.get());
-            }
+        auto& counter = running_nnzero[0];
+        ++counter;
 
-            auto oIt = output.begin();
-            auto mIt = running_mean.begin();
-            for (size_t j = 0; j < dim; ++j, ++ptr, ++oIt, ++mIt) {
-                const double delta=*ptr - *mIt;
-                *mIt += delta/(i+1);
-                *oIt += delta*(*ptr - *mIt);
-            }
+        for (auto sIt = store.begin(); sIt < store.end(); ++sIt, ++ptr, ++mIt) {
+            const double delta=*ptr - *mIt;
+            *mIt += delta/counter;
+            *sIt += delta*(*ptr - *mIt);
         }
+        return;
     }
 
-    return output;
-}
+    template<typename IDX>
+    void running(sparse_range<T, IDX> range) {
+        static_assert(SPARSE && RUNNABLE);
+        auto sIt = store.begin();
+        auto mIt = running_mean.begin();
+        auto nzIt = running_nnzero.begin();
 
+        for (size_t j = 0; j < range.number; ++j, ++range.index, ++range.value) {
+            auto ri = *range.index;
+            auto& curM = *(mIt + ri);
+            auto& curS = *(sIt + ri);
+            auto& curNZ = *(nzIt + ri);
+            ++curNZ;
+
+            const auto& curval = *range.value;
+            const double delta = curval - curM;
+            curM += delta / curNZ;
+            curS += delta * (curval - curM);
+        }
+
+        return;
+    }
+
+    value yield() {
+        if constexpr(SPARSE && RUNNABLE) {
+            auto mIt = running_mean.begin();
+            auto nzIt = running_nnzero.begin();
+            for (auto sIt = store.begin(); sIt != store.end(); ++mIt, ++sIt, ++nzIt) {
+                const double curNZ = *nzIt;
+                const double ratio = curNZ / dim;
+                auto& curM = *mIt;
+                *sIt += curM * curM * ratio * (dim - curNZ);
+                curM *= ratio;
+            }
+        }
+
+        if (dim > 1) {
+            for (auto& s : store) {
+                s /= dim - 1;
+            }
+        } else {
+            std::fill(store.begin(), store.end(), std::numeric_limits<double>::quiet_NaN());
+        }
+        return store;
+    }
+private:
+    value store;
+    std::vector<double> running_mean;
+    std::vector<int> running_nnzero;
+    size_t dim;
+};
 
 /**
  * This uses the usual algorithm for matrices where `tatami::matrix::prefer_rows()` is false, otherwise it uses Welford's algorithm.
@@ -151,11 +127,7 @@ inline std::vector<double> running_variances(const typed_matrix<T, IDX>* p) {
  */
 template<typename T, typename IDX>
 inline std::vector<T> column_variances(const typed_matrix<T, IDX>* p) {
-    if (p->prefer_rows()) {
-        return running_variances<false, T, IDX>(p);
-    } else {
-        return direct_variances<false, T, IDX>(p);
-    }
+    return apply<1, T, IDX, StatsVarianceHelper>(p);
 }
 
 /**
@@ -171,11 +143,7 @@ inline std::vector<T> column_variances(const typed_matrix<T, IDX>* p) {
  */
 template<typename T, typename IDX>
 inline std::vector<T> row_variances(const typed_matrix<T, IDX>* p) {
-    if (p->prefer_rows()) {
-        return direct_variances<true, T, IDX>(p);
-    } else {
-        return running_variances<true, T, IDX>(p);
-    }
+    return apply<0, T, IDX, StatsVarianceHelper>(p);
 }
 
 }

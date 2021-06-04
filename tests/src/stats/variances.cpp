@@ -21,7 +21,7 @@ template<class L, class R>
 void compare_double_vectors (const L& left, const R& right) {
     ASSERT_EQ(left.size(), right.size());
     for (size_t i = 0; i < left.size(); ++i) {
-        ASSERT_FLOAT_EQ(left[i], right[i]);
+        EXPECT_FLOAT_EQ(left[i], right[i]);
     }
     return;
 }
@@ -33,6 +33,7 @@ TEST(ComputingDimVariances, RowVariances) {
     auto sparse_column = load_matrix_as_sparse_column_matrix(sparse_nrow, sparse_ncol, sparse_matrix);
 
     auto ref = tatami::row_variances(dense_row.get());
+    EXPECT_EQ(ref.size(), sparse_nrow);
     compare_double_vectors(ref, tatami::row_variances(dense_column.get()));
     compare_double_vectors(ref, tatami::row_variances(sparse_row.get()));
     compare_double_vectors(ref, tatami::row_variances(sparse_column.get()));
@@ -45,7 +46,21 @@ TEST(ComputingDimVariances, ColumnVariances) {
     auto sparse_column = load_matrix_as_sparse_column_matrix(sparse_nrow, sparse_ncol, sparse_matrix);
 
     auto ref = tatami::column_variances(dense_row.get());
+    EXPECT_EQ(ref.size(), sparse_ncol);
     compare_double_vectors(ref, tatami::column_variances(dense_column.get()));
     compare_double_vectors(ref, tatami::column_variances(sparse_row.get()));
     compare_double_vectors(ref, tatami::column_variances(sparse_column.get()));
+}
+
+TEST(ComputingDimVariances, RowVariancesNaN) {
+    auto copy = sparse_matrix;
+    copy.resize(0);
+    auto dense = std::unique_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, 0, copy));
+
+    auto cref = tatami::column_variances(dense.get());
+    EXPECT_EQ(cref.size(), 0);
+    
+    auto rref = tatami::row_variances(dense.get());
+    EXPECT_TRUE(std::isnan(rref.front()));
+    EXPECT_TRUE(std::isnan(rref.back()));
 }
