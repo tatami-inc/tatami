@@ -73,6 +73,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="typed__matrix_8hpp_source.html">../base/typed_matrix.hpp</a>&quot;</code><br />
+<code>#include &quot;apply.hpp&quot;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -80,18 +81,19 @@ Include dependency graph for sums.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="sums_8hpp__incl.png" border="0" usemap="#a_2github_2workspace_2include_2tatami_2stats_2sums_8hpp" alt=""/></div>
 <map name="a_2github_2workspace_2include_2tatami_2stats_2sums_8hpp" id="a_2github_2workspace_2include_2tatami_2stats_2sums_8hpp">
-<area shape="rect" title=" " alt="" coords="349,5,523,47"/>
-<area shape="rect" href="typed__matrix_8hpp.html" title=" " alt="" coords="222,95,383,121"/>
-<area shape="rect" title=" " alt="" coords="407,95,465,121"/>
-<area shape="rect" title=" " alt="" coords="489,95,564,121"/>
-<area shape="rect" href="matrix_8hpp.html" title=" " alt="" coords="183,169,265,196"/>
-<area shape="rect" href="workspace_8hpp.html" title=" " alt="" coords="248,244,357,271"/>
-<area shape="rect" href="sparse__range_8hpp_source.html" title=" " alt="" coords="341,169,465,196"/>
-<area shape="rect" href="content__type_8hpp.html" title=" " alt="" coords="97,244,217,271"/>
-<area shape="rect" title=" " alt="" coords="5,319,88,345"/>
-<area shape="rect" title=" " alt="" coords="112,319,173,345"/>
-<area shape="rect" title=" " alt="" coords="198,319,253,345"/>
-<area shape="rect" title=" " alt="" coords="277,319,345,345"/>
+<area shape="rect" title=" " alt="" coords="300,5,473,47"/>
+<area shape="rect" href="typed__matrix_8hpp.html" title=" " alt="" coords="222,169,383,196"/>
+<area shape="rect" href="apply_8hpp_source.html" title=" " alt="" coords="303,95,379,121"/>
+<area shape="rect" title=" " alt="" coords="404,95,463,121"/>
+<area shape="rect" title=" " alt="" coords="487,95,561,121"/>
+<area shape="rect" href="matrix_8hpp.html" title=" " alt="" coords="183,244,265,271"/>
+<area shape="rect" href="workspace_8hpp.html" title=" " alt="" coords="248,319,357,345"/>
+<area shape="rect" href="sparse__range_8hpp_source.html" title=" " alt="" coords="341,244,465,271"/>
+<area shape="rect" href="content__type_8hpp.html" title=" " alt="" coords="97,319,217,345"/>
+<area shape="rect" title=" " alt="" coords="5,393,88,420"/>
+<area shape="rect" title=" " alt="" coords="112,393,173,420"/>
+<area shape="rect" title=" " alt="" coords="198,393,253,420"/>
+<area shape="rect" title=" " alt="" coords="277,393,345,420"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -108,9 +110,6 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a04ac49dc109bba2628b241f1bb3d96e6"><td class="memTemplParams" colspan="2">template&lt;bool ROW, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a04ac49dc109bba2628b241f1bb3d96e6"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="sums_8hpp.html#a04ac49dc109bba2628b241f1bb3d96e6">tatami::sums</a> (const typed_matrix&lt; T, IDX &gt; *p)</td></tr>
-<tr class="separator:a04ac49dc109bba2628b241f1bb3d96e6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18fd23c3fcfdce81235923f53b92f57e"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
 <tr class="memitem:a18fd23c3fcfdce81235923f53b92f57e"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>tatami::column_sums</b> (const typed_matrix&lt; T, IDX &gt; *p)</td></tr>
 <tr class="separator:a18fd23c3fcfdce81235923f53b92f57e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -230,49 +229,6 @@ template&lt;typename T , typename IDX &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A vector of length equal to the number of rows, containing the row sums. </dd></dl>
-
-</div>
-</div>
-<a id="a04ac49dc109bba2628b241f1bb3d96e6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a04ac49dc109bba2628b241f1bb3d96e6">&#9670;&nbsp;</a></span>sums()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;bool ROW, typename T , typename IDX &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt;T&gt; tatami::sums </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; *&#160;</td>
-          <td class="paramname"><em>p</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">ROW</td><td>Whether to compute the row sums. If false, computes the column sums instead. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be summable. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type.">tatami::typed_matrix</a></code>.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A vector of length equal to the number of rows (if <code>ROW = true</code>) or columns (if <code>ROW = false</code>), containing the row or column sums respectively. </dd></dl>
 
 </div>
 </div>
