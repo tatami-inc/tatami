@@ -45,7 +45,7 @@ inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p
 
             if constexpr(STAT<T, true, true>::sparse) {
                 if (p->sparse()) {
-                    STAT<T, true, true> stat(dim);
+                    STAT<T, true, true> stat(dim, otherdim);
                     std::vector<IDX> ibuffer(dim);
                     for (size_t i = 0; i < otherdim; ++i) {
                         if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
@@ -61,7 +61,7 @@ inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p
             }
 
             if constexpr(STAT<T, false, true>::runnable) {
-                STAT<T, false, true> stat(dim);
+                STAT<T, false, true> stat(dim, otherdim);
                 for (size_t i = 0; i < otherdim; ++i) {
                     if constexpr(ROW) { // flipped around, see above.
                         auto ptr = p->column(i, obuffer.data(), wrk.get());
@@ -81,29 +81,29 @@ inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p
 
     if constexpr(STAT<T, true, false>::sparse) {
         if (p->sparse()) {
-            STAT<T, true, false> stat(dim);
+            STAT<T, true, false> stat(dim, otherdim);
             std::vector<IDX> ibuffer(otherdim);
             for (size_t i = 0; i < dim; ++i) {
                 if constexpr(ROW) {
                     auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.direct(i, range, otherdim);
+                    stat.direct(i, range);
                 } else {
                     auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.direct(i, range, otherdim);
+                    stat.direct(i, range);
                 }
             }
             return stat.yield();
         }
     }
 
-    STAT<T, false, false> stat(dim);
+    STAT<T, false, false> stat(dim, otherdim);
     for (size_t i = 0; i < dim; ++i) {
         if constexpr(ROW) {
             auto ptr = p->row(i, obuffer.data(), wrk.get());
-            stat.direct(i, ptr, otherdim);
+            stat.direct(i, ptr);
         } else {
             auto ptr = p->column(i, obuffer.data(), wrk.get());
-            stat.direct(i, ptr, otherdim);
+            stat.direct(i, ptr);
         }
     }
     return stat.yield();

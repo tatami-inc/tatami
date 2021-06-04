@@ -16,20 +16,20 @@ namespace tatami {
 
 template<typename T, bool SPARSE, bool RUNNABLE> 
 struct StatsSumHelper {
-    StatsSumHelper(size_t n) : store(n) {}
+    StatsSumHelper(size_t n, size_t d) : store(n), dim(d) {}
 
     static const bool sparse = SPARSE;
     static const bool runnable = RUNNABLE;
     typedef std::vector<T> value;
 
-    void direct(size_t i, const T* ptr, size_t dim) {
+    void direct(size_t i, const T* ptr) {
         static_assert(!SPARSE && !RUNNABLE);
         store[i] = std::accumulate(ptr, ptr + dim, static_cast<T>(0));
         return;
     }
 
     template<typename IDX>
-    void direct(size_t i, const sparse_range<T, IDX>& range, size_t dim) {
+    void direct(size_t i, const sparse_range<T, IDX>& range) {
         static_assert(SPARSE && !RUNNABLE);
         store[i] = std::accumulate(range.value, range.value + range.number, static_cast<T>(0));
         return;
@@ -44,12 +44,10 @@ struct StatsSumHelper {
     }
 
     template<typename IDX>
-    void running(const sparse_range<T, IDX>& range) {
+    void running(sparse_range<T, IDX> range) {
         static_assert(SPARSE && RUNNABLE);
-        auto vptr = range.value;
-        auto iptr = range.index;
-        for (size_t j = 0; j < range.number; ++j, ++iptr, ++vptr) {
-            store[*iptr] += *vptr;
+        for (size_t j = 0; j < range.number; ++j, ++range.index, ++range.value) {
+            store[*range.index] += *range.value;
         }
         return;
     }
@@ -59,6 +57,7 @@ struct StatsSumHelper {
     }
 private:
     value store;
+    size_t dim;
 };
 
 /**
