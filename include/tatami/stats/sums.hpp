@@ -22,20 +22,20 @@ struct StatsSumHelper {
     static const bool runnable = RUNNABLE;
     typedef std::vector<T> value;
 
-    void direct(size_t i, const T* ptr) {
+    void direct(size_t i, const T* ptr, T* buffer) {
         static_assert(!SPARSE && !RUNNABLE);
         store[i] = std::accumulate(ptr, ptr + dim, static_cast<T>(0));
         return;
     }
 
     template<typename IDX>
-    void direct(size_t i, const sparse_range<T, IDX>& range) {
+    void direct(size_t i, const sparse_range<T, IDX>& range, T* vbuffer, IDX* ibuffer) {
         static_assert(SPARSE && !RUNNABLE);
         store[i] = std::accumulate(range.value, range.value + range.number, static_cast<T>(0));
         return;
     }
 
-    void running(const T* ptr) {
+    void running(const T* ptr, T* buffer) {
         static_assert(!SPARSE && RUNNABLE);
         for (auto sIt = store.begin(); sIt != store.end(); ++sIt, ++ptr) {
             *sIt += *ptr;
@@ -44,7 +44,7 @@ struct StatsSumHelper {
     }
 
     template<typename IDX>
-    void running(sparse_range<T, IDX> range) {
+    void running(sparse_range<T, IDX> range, T* vbuffer, IDX* ibuffer) {
         static_assert(SPARSE && RUNNABLE);
         for (size_t j = 0; j < range.number; ++j, ++range.index, ++range.value) {
             store[*range.index] += *range.value;

@@ -22,7 +22,7 @@ struct StatsVarianceHelper {
     static const bool runnable = RUNNABLE;
     typedef std::vector<T> value;
 
-    void direct(size_t i, const T* ptr) {
+    void direct(size_t i, const T* ptr, T* buffer) {
         static_assert(!SPARSE && !RUNNABLE);
         const double mean = std::accumulate(ptr, ptr + dim, 0.0)/dim;
         double& out = store[i];
@@ -33,7 +33,7 @@ struct StatsVarianceHelper {
     }
 
     template<typename IDX>
-    void direct(size_t i, const sparse_range<T, IDX>& range) {
+    void direct(size_t i, const sparse_range<T, IDX>& range, T* vbuffer, IDX* ibuffer) {
         static_assert(SPARSE && !RUNNABLE);
         const double mean = std::accumulate(range.value, range.value + range.number, 0.0)/dim;
         double& out = store[i];
@@ -48,7 +48,7 @@ struct StatsVarianceHelper {
      * which should be much more cache-friendly for large matrices. We run through
      * only non-zero counts when circumstances allow for it.
      */
-    void running(const T* ptr) {
+    void running(const T* ptr, T* buffer) {
         static_assert(!SPARSE && RUNNABLE);
         auto mIt = running_mean.begin();
         auto& counter = running_nnzero[0];
@@ -63,7 +63,7 @@ struct StatsVarianceHelper {
     }
 
     template<typename IDX>
-    void running(sparse_range<T, IDX> range) {
+    void running(sparse_range<T, IDX> range, T* vbuffer, IDX* ibuffer) {
         static_assert(SPARSE && RUNNABLE);
         auto sIt = store.begin();
         auto mIt = running_mean.begin();

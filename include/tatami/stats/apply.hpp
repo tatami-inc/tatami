@@ -50,10 +50,10 @@ inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p
                     for (size_t i = 0; i < otherdim; ++i) {
                         if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
                             auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                            stat.running(range);
+                            stat.running(range, obuffer.data(), ibuffer.data());
                         } else {
                             auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                            stat.running(range);
+                            stat.running(range, obuffer.data(), ibuffer.data());
                         }
                     }
                     return stat.yield();
@@ -65,10 +65,10 @@ inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p
                 for (size_t i = 0; i < otherdim; ++i) {
                     if constexpr(ROW) { // flipped around, see above.
                         auto ptr = p->column(i, obuffer.data(), wrk.get());
-                        stat.running(ptr);
+                        stat.running(ptr, obuffer.data());
                     } else {
                         auto ptr = p->row(i, obuffer.data(), wrk.get());
-                        stat.running(ptr);
+                        stat.running(ptr, obuffer.data());
                     }
                 }
                 return stat.yield();
@@ -86,10 +86,10 @@ inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p
             for (size_t i = 0; i < dim; ++i) {
                 if constexpr(ROW) {
                     auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.direct(i, range);
+                    stat.direct(i, range, obuffer.data(), ibuffer.data());
                 } else {
                     auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.direct(i, range);
+                    stat.direct(i, range, obuffer.data(), ibuffer.data());
                 }
             }
             return stat.yield();
@@ -100,10 +100,10 @@ inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p
     for (size_t i = 0; i < dim; ++i) {
         if constexpr(ROW) {
             auto ptr = p->row(i, obuffer.data(), wrk.get());
-            stat.direct(i, ptr);
+            stat.direct(i, ptr, obuffer.data());
         } else {
             auto ptr = p->column(i, obuffer.data(), wrk.get());
-            stat.direct(i, ptr);
+            stat.direct(i, ptr, obuffer.data());
         }
     }
     return stat.yield();
