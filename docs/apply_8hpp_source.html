@@ -106,10 +106,10 @@ $(function() {
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; otherdim; ++i) {</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                        <span class="keywordflow">if</span> constexpr(ROW) { <span class="comment">// flipped around; remember, we&#39;re trying to get the preferred dimension.</span></div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;                            <span class="keyword">auto</span> range = p-&gt;sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                            stat.running(range);</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                            stat.running(range, obuffer.data(), ibuffer.data());</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                        } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;                            <span class="keyword">auto</span> range = p-&gt;sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                            stat.running(range);</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                            stat.running(range, obuffer.data(), ibuffer.data());</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                        }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                    }</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                    <span class="keywordflow">return</span> stat.yield();</div>
@@ -121,10 +121,10 @@ $(function() {
 <div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;                <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; otherdim; ++i) {</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                    <span class="keywordflow">if</span> constexpr(ROW) { <span class="comment">// flipped around, see above.</span></div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                        <span class="keyword">auto</span> ptr = p-&gt;column(i, obuffer.data(), wrk.get());</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                        stat.running(ptr);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                        stat.running(ptr, obuffer.data());</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                        <span class="keyword">auto</span> ptr = p-&gt;row(i, obuffer.data(), wrk.get());</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                        stat.running(ptr);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                        stat.running(ptr, obuffer.data());</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                    }</div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;                }</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                <span class="keywordflow">return</span> stat.yield();</div>
@@ -142,10 +142,10 @@ $(function() {
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; dim; ++i) {</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                <span class="keywordflow">if</span> constexpr(ROW) {</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                    <span class="keyword">auto</span> range = p-&gt;sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                    stat.direct(i, range);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;                    stat.direct(i, range, obuffer.data(), ibuffer.data());</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;                } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                    <span class="keyword">auto</span> range = p-&gt;sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                    stat.direct(i, range);</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                    stat.direct(i, range, obuffer.data(), ibuffer.data());</div>
 <div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;                }</div>
 <div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            }</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;            <span class="keywordflow">return</span> stat.yield();</div>
@@ -156,10 +156,10 @@ $(function() {
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; dim; ++i) {</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordflow">if</span> constexpr(ROW) {</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            <span class="keyword">auto</span> ptr = p-&gt;row(i, obuffer.data(), wrk.get());</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            stat.direct(i, ptr);</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            stat.direct(i, ptr, obuffer.data());</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;        } <span class="keywordflow">else</span> {</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            <span class="keyword">auto</span> ptr = p-&gt;column(i, obuffer.data(), wrk.get());</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            stat.direct(i, ptr);</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            stat.direct(i, ptr, obuffer.data());</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        }</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;    }</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;    <span class="keywordflow">return</span> stat.yield();</div>
