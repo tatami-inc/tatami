@@ -1,131 +1,114 @@
-#ifndef TATAMI_MEDIANS_HPP
-#define TATAMI_MEDIANS_HPP
+#ifndef TATAMI_STATS_MEDIANS_HPP
+#define TATAMI_STATS_MEDIANS_HPP
 
 #include "../base/typed_matrix.hpp"
+#include "apply.hpp"
 #include <vector>
 #include <algorithm>
+#include <limits>
 
 /**
- * @file sums.hpp
+ * @file medians.hpp
  *
- * Compute row and column sums from a `tatami::typed_matrix`.
+ * Compute row and column medians from a `tatami::typed_matrix`.
  */
 
 namespace tatami {
 
-template<class IT>
-inline void compute_median(IT start, IT end, size_t halfway, bool is_even) {
-    // At some point, I found two nth_element calls to be faster than partial_sort.
-    std::nth_element(start, start + halfway, end);
-    double medtmp = *(start + halfway);
-    if (is_even) {
-        std::nth_element(start, start + halfway - 1, end);
-        return (medtmp + *(buffer + halfway - 1))/2;
-    } else {
-        return medtmp;
+template<typename T, bool SPARSE, bool RUNNABLE> 
+struct StatsMedianHelper {
+    StatsMedianHelper(size_t n, size_t d) : store(n), dim(d), halfway(dim/2), is_even(dim%2==0) {}
+
+    static const bool sparse = SPARSE;
+    static const bool runnable = false;
+    typedef std::vector<double> value;
+
+    void direct(size_t i, const T* ptr, T* buffer) {
+        if (dim == 0) {
+            store[i] = std::numeric_limits<double>::quiet_NaN();
+            return;
+        }
+        if (ptr != buffer) {
+            std::copy(ptr, ptr + dim, buffer);
+        }
+
+        // At some point, I found two nth_element calls to be faster than partial_sort.
+        std::nth_element(buffer, buffer + halfway, buffer + dim);
+        double medtmp = *(buffer + halfway);
+        if (is_even) {
+            std::nth_element(buffer, buffer + halfway - 1, buffer + dim);
+            store[i] = (medtmp + *(buffer + halfway - 1))/2;
+        } else {
+            store[i] = medtmp;
+        }
+        return;
     }
-}
 
-template<bool ROW, typename T, typename IDX>
-inline std::vector<double> sums(const typed_matrix<T, IDX>* p) {
-    size_t NR = p->nrow(), NC = p->ncol();
-    size_t dim = ROW ? NR : NC;
-    size_t otherdim = ROW ? NC : NR;
-
-    const bool is_even = otherdim%%2==0;
-    const size_t halfway = static_cast<size_t>(otherdim/2);
-    std::vector<double> output(dim);
-
-    // Deciding whether or not to perform row-wise extraction.
-    std::vector<T> buffer(NC);
-    auto wrk = p->new_workspace(ROW);
-
-    if (p->sparse()) {
-        std::vector<IDX> ibuffer(otherdim);
-        for (size_t i = 0; i < dim; ++i) {
-            const T* ptr = NULL;
-            size_t n = 0;
-
-            if constexpr(ROW) {
-                auto range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk);
-                n = range.number;
-                ptr = range.value;
-            } else {
-                auto range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk);
-                n = range.number;
-                ptr = range.value;
+    template<typename IDX>
+    void direct(size_t i, const sparse_range<T, IDX>& range, T* vbuffer, IDX* ibuffer) {
+        if (range.number == dim) {
+            direct(i, range.value, vbuffer);
+        } else if (range.number * 2 < dim) {
+            // zero is the median.
+        } else {
+            if (range.value != vbuffer) {
+                std::copy(range.value, range.value + range.number, vbuffer);
             }
-           
-            if (n == otherdim) {
-                output[i] = compute_median(buffer.begin(), buffer.begin() + otherdim, halfway, is_even);
-            } else if (n*2 < otherdim) {
-                // zero is the median.
-            } else {
-                if (ptr != buffer.data()) {
-                    std::copy(ptr, ptr + n, buffer.begin());
-                }
-                std::sort(buffer.begin(), buffer.begin() + n);
 
-                size_t zeropos = std::lower_bound(buffer.begin(), buffer.begin() + n, 0) - buffer.begin();
-                size_t nzero = otherdim - n;
+            auto vend = vbuffer + range.number;
+            std::sort(vbuffer, vend);
+            size_t zeropos = std::lower_bound(vbuffer, vend, 0) - vbuffer;
+            size_t nzero = dim - range.number;
 
-                if (!is_even) {
-                    if (zeropos > halfway) {
-                        output[i] = buffer[halfway];
-                    } else if (halfway >= zeropos + nzero) {
-                        output[i] = buffer[halfway - nzero];
-                    } else {
-                        ; // zero is the median.
-                    }
+            if (!is_even) {
+                if (zeropos > halfway) {
+                    store[i] = vbuffer[halfway];
+                } else if (halfway >= zeropos + nzero) {
+                    store[i] = vbuffer[halfway - nzero];
                 } else {
-                    double& tmp = output[i];
-                    if (zeropos > halfway) {
-                        tmp = buffer[halfway] + buffer[halfway - 1];
-                    } else if (zeropos == halfway) {
-                        // guaranteed to be at least 1 zero.
-                        tmp += buffer[halfway - 1];
-                    } else if (zeropos < halfway && zeropos + nzero > halfway) {
-                        ; // zero is the median.
-                    } else if (zeropos + nzero == halfway) {
-                        // guaranteed to be at least 1 zero.
-                        tmp += buffer[halfway - nzero];
-                    } else {
-                        tmp = buffer[halfway - nzero] + buffer[halfway - nzero - 1];
-                    }
-                    tmp /= 2;
+                    ; // zero is the median.
                 }
-            }
-        }
-    } else {
-        for (size_t i = 0; i < dim; ++i) {
-            const T* ptr = NULL;
-            if constexpr(ROW) {
-                ptr = p->row(i, buffer.data(), wrk);
             } else {
-                ptr = p->column(i, buffer.data(), wrk);
+                double& tmp = store[i];
+                if (zeropos > halfway) {
+                    tmp = vbuffer[halfway] + vbuffer[halfway - 1];
+                } else if (zeropos == halfway) {
+                    // guaranteed to be at least 1 zero.
+                    tmp += vbuffer[halfway - 1];
+                } else if (zeropos < halfway && zeropos + nzero > halfway) {
+                    ; // zero is the median.
+                } else if (zeropos + nzero == halfway) {
+                    // guaranteed to be at least 1 zero.
+                    tmp += vbuffer[halfway - nzero];
+                } else {
+                    tmp = vbuffer[halfway - nzero] + vbuffer[halfway - nzero - 1];
+                }
+                tmp /= 2;
             }
-
-            if (ptr != buffer.data()) {
-                std::copy(ptr, ptr + otherdim, buffer.begin());
-            }
-            output[i] = compute_median(buffer.begin(), buffer.begin() + otherdim, halfway, is_even);
         }
+        return;
     }
 
-    return obuffer;
-}
+    value yield() {
+        return store;
+    }
+private:
+    value store;
+    size_t dim, halfway;
+    bool is_even;
+};
 
 /**
- * @tparam T Type of the matrix value, should be summable.
+ * @tparam T Type of the matrix value.
  * @tparam IDX Type of the row/column indices.
  *
- * @param p Pointer to a `tatami::typed_matrix`.
+ * @param p Shared pointer to a `tatami::typed_matrix`.
  *
- * @return A vector of length equal to the number of columns, containing the column sums.
+ * @return A vector of length equal to the number of columns, containing the column medians.
  */
 template<typename T, typename IDX>
-inline std::vector<T> column_sums(std::shared_ptr<const typed_matrix<T, IDX> > p) {
-    return sums<false, T, IDX>(p);
+inline std::vector<T> column_medians(const typed_matrix<T, IDX>* p) {
+    return apply<1, T, IDX, StatsMedianHelper>(p);
 }
 
 /**
@@ -134,37 +117,11 @@ inline std::vector<T> column_sums(std::shared_ptr<const typed_matrix<T, IDX> > p
  *
  * @param p Shared pointer to a `tatami::typed_matrix`.
  *
- * @return A vector of length equal to the number of columns, containing the column sums.
+ * @return A vector of length equal to the number of rows, containing the row medians.
  */
 template<typename T, typename IDX>
-inline std::vector<T> column_sums(const typed_matrix<T, IDX>* p) {
-    return sums<false, T, IDX>(p);
-}
-
-/**
- * @tparam T Type of the matrix value, should be summable.
- * @tparam IDX Type of the row/column indices.
- *
- * @param p Pointer to a `tatami::typed_matrix`.
- *
- * @return A vector of length equal to the number of rows, containing the row sums.
- */
-template<typename T, typename IDX>
-inline std::vector<T> row_sums(std::shared_ptr<const typed_matrix<T, IDX> > p) {
-    return sums<true, T, IDX>(p);
-}
-
-/**
- * @tparam T Type of the matrix value, should be summable.
- * @tparam IDX Type of the row/column indices.
- *
- * @param p Shared pointer to a `tatami::typed_matrix`.
- *
- * @return A vector of length equal to the number of rows, containing the row sums.
- */
-template<typename T, typename IDX>
-inline std::vector<T> row_sums(const typed_matrix<T, IDX>* p) {
-    return sums<true, T, IDX>(p);
+inline std::vector<T> row_medians(const typed_matrix<T, IDX>* p) {
+    return apply<0, T, IDX, StatsMedianHelper>(p);
 }
 
 }
