@@ -27,7 +27,7 @@ namespace tatami {
  * Methods should be available for `size()`, `begin()` and `end()`.
  * If a method is available for `data()` that returns a `const T*`, it will also be used.
  */
-template<bool ROW, typename T, class V = std::vector<T>, typename IDX = int>
+template<bool ROW, typename T, typename IDX = int, class V = std::vector<T> >
 class DenseMatrix : public typed_matrix<T, IDX> {
 public: 
     /**
@@ -117,15 +117,15 @@ private:
  * Column-major matrix.
  * See `tatami::DenseMatrix` for details on the template parameters.
  */
-template<typename T, class V = std::vector<T>, typename IDX = int>
-using DenseColumnMatrix = DenseMatrix<false, T, V, IDX>;
+template<typename T, typename IDX = int, class V = std::vector<T> >
+using DenseColumnMatrix = DenseMatrix<false, T, IDX, V>;
 
 /**
  * Row-major matrix.
  * See `tatami::DenseMatrix` for details on the template parameters.
  */
-template<typename T, class V = std::vector<T>, typename IDX = int>
-using DenseRowMatrix = DenseMatrix<true, T, V, IDX>;
+template<typename T, typename IDX = int, class V = std::vector<T> >
+using DenseRowMatrix = DenseMatrix<true, T, IDX, V>;
 
 }
 

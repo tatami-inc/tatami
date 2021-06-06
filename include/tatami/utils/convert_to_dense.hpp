@@ -39,7 +39,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_dense(const typed_matri
                 std::copy(ptr, ptr + NC, optr);
             }
         }
-        return std::shared_ptr<typed_matrix<T, IDX> >(new DenseRowMatrix<T, decltype(output), IDX>(NR, NC, std::move(output)));
+        return std::shared_ptr<typed_matrix<T, IDX> >(new DenseRowMatrix<T, IDX>(NR, NC, std::move(output)));
 
     } else {
         auto wrk = incoming->new_workspace(false);
@@ -49,7 +49,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_dense(const typed_matri
                 std::copy(ptr, ptr + NR, optr);
             }
         }
-        return std::shared_ptr<typed_matrix<T, IDX> >(new DenseColumnMatrix<T, decltype(output), IDX>(NR, NC, std::move(output)));
+        return std::shared_ptr<typed_matrix<T, IDX> >(new DenseColumnMatrix<T, IDX>(NR, NC, std::move(output)));
     }
 }
 

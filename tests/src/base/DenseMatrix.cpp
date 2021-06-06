@@ -26,8 +26,8 @@ TEST(DenseMatrix, Construction) {
 
     std::deque<double> more_contents(200);
     std::iota(more_contents.begin(), more_contents.end(), 1);
-    tatami::DenseColumnMatrix<double, std::deque<double> > mat2(10, 20, more_contents);
+    tatami::DenseColumnMatrix<double, int, std::deque<double> > mat2(10, 20, more_contents);
     EXPECT_EQ(more_contents.size(), 200);
 
-    tatami::DenseColumnMatrix<double, std::deque<double> > mat3(20, 10, std::move(more_contents)); // can't run many tests for state of more_contents here.
+    tatami::DenseColumnMatrix<double, int, std::deque<double> > mat3(20, 10, std::move(more_contents)); // can't run many tests for state of more_contents here.
 }
