@@ -13,7 +13,7 @@ var searchData=
   ['delayedmultiplyvectorhelper_82',['DelayedMultiplyVectorHelper',['../structtatami_1_1DelayedMultiplyVectorHelper.html',1,'tatami']]],
   ['delayedroundhelper_83',['DelayedRoundHelper',['../structtatami_1_1DelayedRoundHelper.html',1,'tatami']]],
   ['delayedsqrthelper_84',['DelayedSqrtHelper',['../structtatami_1_1DelayedSqrtHelper.html',1,'tatami']]],
-  ['delayedsubsetop_85',['DelayedSubsetOp',['../classtatami_1_1DelayedSubsetOp.html',1,'tatami']]],
+  ['delayedsubset_85',['DelayedSubset',['../classtatami_1_1DelayedSubset.html',1,'tatami']]],
   ['delayedsubtractscalarhelper_86',['DelayedSubtractScalarHelper',['../structtatami_1_1DelayedSubtractScalarHelper.html',1,'tatami']]],
   ['delayedsubtractvectorhelper_87',['DelayedSubtractVectorHelper',['../structtatami_1_1DelayedSubtractVectorHelper.html',1,'tatami']]],
   ['densematrix_88',['DenseMatrix',['../classtatami_1_1DenseMatrix.html',1,'tatami']]]
