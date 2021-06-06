@@ -2,8 +2,11 @@
 #define TATAMI_VARS_HPP
 
 #include "../base/typed_matrix.hpp"
+#include "apply.hpp"
+
 #include <vector>
-#include <algorithm>
+#include <cmath>
+#include <numeric>
 #include <limits>
 
 /**

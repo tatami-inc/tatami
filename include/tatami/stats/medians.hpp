@@ -3,6 +3,8 @@
 
 #include "../base/typed_matrix.hpp"
 #include "apply.hpp"
+
+#include <cmath>
 #include <vector>
 #include <algorithm>
 #include <limits>
