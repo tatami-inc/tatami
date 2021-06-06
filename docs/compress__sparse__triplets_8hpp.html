@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: /github/workspace/include/tatami/base/compress_sparse_triplets.hpp File Reference</title>
+<title>tatami: /github/workspace/include/tatami/utils/compress_sparse_triplets.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,7 +62,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_39c0bd3ce98d619180024a8dc32ab235.html">tatami</a></li><li class="navelem"><a class="el" href="dir_99e0a432c036b87b012afc919a69cee1.html">base</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_d44c64559bbebec7f509842c48db8b23.html">include</a></li><li class="navelem"><a class="el" href="dir_39c0bd3ce98d619180024a8dc32ab235.html">tatami</a></li><li class="navelem"><a class="el" href="dir_e1bae37070f882b22760e795c2be10e8.html">utils</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -78,21 +78,12 @@ $(function() {
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for compress_sparse_triplets.hpp:</div>
 <div class="dyncontent">
-<div class="center"><img src="compress__sparse__triplets_8hpp__incl.png" border="0" usemap="#a_2github_2workspace_2include_2tatami_2base_2compress__sparse__triplets_8hpp" alt=""/></div>
-<map name="a_2github_2workspace_2include_2tatami_2base_2compress__sparse__triplets_8hpp" id="a_2github_2workspace_2include_2tatami_2base_2compress__sparse__triplets_8hpp">
-<area shape="rect" title=" " alt="" coords="25,5,226,61"/>
+<div class="center"><img src="compress__sparse__triplets_8hpp__incl.png" border="0" usemap="#a_2github_2workspace_2include_2tatami_2utils_2compress__sparse__triplets_8hpp" alt=""/></div>
+<map name="a_2github_2workspace_2include_2tatami_2utils_2compress__sparse__triplets_8hpp" id="a_2github_2workspace_2include_2tatami_2utils_2compress__sparse__triplets_8hpp">
+<area shape="rect" title=" " alt="" coords="39,5,212,61"/>
 <area shape="rect" title=" " alt="" coords="5,109,64,136"/>
 <area shape="rect" title=" " alt="" coords="88,109,163,136"/>
 <area shape="rect" title=" " alt="" coords="187,109,255,136"/>
-</map>
-</div>
-</div><div class="textblock"><div class="dynheader">
-This graph shows which files directly or indirectly include this file:</div>
-<div class="dyncontent">
-<div class="center"><img src="compress__sparse__triplets_8hpp__dep__incl.png" border="0" usemap="#a_2github_2workspace_2include_2tatami_2base_2compress__sparse__triplets_8hppdep" alt=""/></div>
-<map name="a_2github_2workspace_2include_2tatami_2base_2compress__sparse__triplets_8hppdep" id="a_2github_2workspace_2include_2tatami_2base_2compress__sparse__triplets_8hppdep">
-<area shape="rect" title=" " alt="" coords="5,5,207,61"/>
-<area shape="rect" href="tatami_8h_source.html" title=" " alt="" coords="19,109,193,151"/>
 </map>
 </div>
 </div>
@@ -154,7 +145,7 @@ template&lt;bool ROW, class U , class V &gt; </div>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">ROW</td><td>Whether to compress into a row-based format, e.g., for <code>tatami::CompressedSparseRowMatrix</code> construction. If <code>false</code>, compression to a column-based format is performed instead. </td></tr>
+    <tr><td class="paramname">ROW</td><td>Whether to create a compressed sparse row format. If <code>false</code>, the compressed sparse column format is used instead. </td></tr>
     <tr><td class="paramname">U</td><td>Random-access container for the values. </td></tr>
     <tr><td class="paramname">V</td><td>Random access container for the indices.</td></tr>
   </table>

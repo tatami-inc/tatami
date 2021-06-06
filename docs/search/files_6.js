@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['variances_2ehpp_106',['variances.hpp',['../variances_8hpp.html',1,'']]]
+  ['variances_2ehpp_109',['variances.hpp',['../variances_8hpp.html',1,'']]]
 ];
