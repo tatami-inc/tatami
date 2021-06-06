@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['densecolumnmatrix_153',['DenseColumnMatrix',['../DenseMatrix_8hpp.html#aff4ef8149a407d4cc8674845a5088089',1,'tatami']]],
-  ['denserowmatrix_154',['DenseRowMatrix',['../DenseMatrix_8hpp.html#a69a801376f3d8c686b54616a13fbc28b',1,'tatami']]]
+  ['densecolumnmatrix_153',['DenseColumnMatrix',['../DenseMatrix_8hpp.html#a1c118308300d626e53436a9540dd8bd9',1,'tatami']]],
+  ['denserowmatrix_154',['DenseRowMatrix',['../DenseMatrix_8hpp.html#ad4db75262ca90f85a4278b90f844cffd',1,'tatami']]]
 ];

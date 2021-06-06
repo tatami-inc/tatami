@@ -113,32 +113,32 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix&lt; ROW, T, V, IDX &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dense matrix representation.  <a href="classtatami_1_1DenseMatrix.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:aff4ef8149a407d4cc8674845a5088089"><td class="memTemplParams" colspan="2">template&lt;typename T , class V  = std::vector&lt;T&gt;, typename IDX  = int&gt; </td></tr>
-<tr class="memitem:aff4ef8149a407d4cc8674845a5088089"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="DenseMatrix_8hpp.html#aff4ef8149a407d4cc8674845a5088089">tatami::DenseColumnMatrix</a> = DenseMatrix&lt; false, T, V, IDX &gt;</td></tr>
-<tr class="separator:aff4ef8149a407d4cc8674845a5088089"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69a801376f3d8c686b54616a13fbc28b"><td class="memTemplParams" colspan="2">template&lt;typename T , class V  = std::vector&lt;T&gt;, typename IDX  = int&gt; </td></tr>
-<tr class="memitem:a69a801376f3d8c686b54616a13fbc28b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="DenseMatrix_8hpp.html#a69a801376f3d8c686b54616a13fbc28b">tatami::DenseRowMatrix</a> = DenseMatrix&lt; true, T, V, IDX &gt;</td></tr>
-<tr class="separator:a69a801376f3d8c686b54616a13fbc28b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1c118308300d626e53436a9540dd8bd9"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX  = int, class V  = std::vector&lt;T&gt;&gt; </td></tr>
+<tr class="memitem:a1c118308300d626e53436a9540dd8bd9"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="DenseMatrix_8hpp.html#a1c118308300d626e53436a9540dd8bd9">tatami::DenseColumnMatrix</a> = DenseMatrix&lt; false, T, IDX, V &gt;</td></tr>
+<tr class="separator:a1c118308300d626e53436a9540dd8bd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4db75262ca90f85a4278b90f844cffd"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX  = int, class V  = std::vector&lt;T&gt;&gt; </td></tr>
+<tr class="memitem:ad4db75262ca90f85a4278b90f844cffd"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="DenseMatrix_8hpp.html#ad4db75262ca90f85a4278b90f844cffd">tatami::DenseRowMatrix</a> = DenseMatrix&lt; true, T, IDX, V &gt;</td></tr>
+<tr class="separator:ad4db75262ca90f85a4278b90f844cffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dense matrix representation, with <code>typedef</code>s for the usual row- and column-major formats. </p>
 </div><h2 class="groupheader">Typedef Documentation</h2>
-<a id="aff4ef8149a407d4cc8674845a5088089"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aff4ef8149a407d4cc8674845a5088089">&#9670;&nbsp;</a></span>DenseColumnMatrix</h2>
+<a id="a1c118308300d626e53436a9540dd8bd9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1c118308300d626e53436a9540dd8bd9">&#9670;&nbsp;</a></span>DenseColumnMatrix</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , class V  = std::vector&lt;T&gt;, typename IDX  = int&gt; </div>
+template&lt;typename T , typename IDX  = int, class V  = std::vector&lt;T&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="DenseMatrix_8hpp.html#aff4ef8149a407d4cc8674845a5088089">tatami::DenseColumnMatrix</a> = typedef DenseMatrix&lt;false, T, V, IDX&gt;</td>
+          <td class="memname">using <a class="el" href="DenseMatrix_8hpp.html#a1c118308300d626e53436a9540dd8bd9">tatami::DenseColumnMatrix</a> = typedef DenseMatrix&lt;false, T, IDX, V&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -146,16 +146,16 @@ template&lt;typename T , class V  = std::vector&lt;T&gt;, typename IDX  = int&gt
 
 </div>
 </div>
-<a id="a69a801376f3d8c686b54616a13fbc28b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69a801376f3d8c686b54616a13fbc28b">&#9670;&nbsp;</a></span>DenseRowMatrix</h2>
+<a id="ad4db75262ca90f85a4278b90f844cffd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4db75262ca90f85a4278b90f844cffd">&#9670;&nbsp;</a></span>DenseRowMatrix</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , class V  = std::vector&lt;T&gt;, typename IDX  = int&gt; </div>
+template&lt;typename T , typename IDX  = int, class V  = std::vector&lt;T&gt;&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="DenseMatrix_8hpp.html#a69a801376f3d8c686b54616a13fbc28b">tatami::DenseRowMatrix</a> = typedef DenseMatrix&lt;true, T, V, IDX&gt;</td>
+          <td class="memname">using <a class="el" href="DenseMatrix_8hpp.html#ad4db75262ca90f85a4278b90f844cffd">tatami::DenseRowMatrix</a> = typedef DenseMatrix&lt;true, T, IDX, V&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
