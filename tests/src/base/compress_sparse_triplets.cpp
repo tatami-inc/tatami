@@ -1,11 +1,13 @@
 #include <gtest/gtest.h>
 
-#include "tatami/tatami.h"
-#include "../data.h"
-#include "../load_sparse.h"
-
 #include <vector>
 #include <algorithm>
+
+#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/utils/compress_sparse_triplets.hpp"
+#include "tatami/utils/convert_to_sparse.hpp"
+
+#include "../data/data.h"
 
 template<class V, class U>
 void permuter(U& values, V& rows, V& cols, U& values2, V& rows2, V& cols2) {
@@ -29,7 +31,8 @@ void permuter(U& values, V& rows, V& cols, U& values2, V& rows2, V& cols2) {
 
 
 TEST(compress_sparse_triplets, CompressionByColumn) {
-    auto sparse = load_matrix_as_sparse_column_matrix(sparse_nrow, sparse_ncol, sparse_matrix);
+    tatami::DenseRowMatrix<double> dense(sparse_nrow, sparse_ncol, sparse_matrix);
+    auto sparse = tatami::convert_to_sparse(&dense, false);
 
     std::vector<int> rows, cols;
     std::vector<double> values;
@@ -60,7 +63,8 @@ TEST(compress_sparse_triplets, CompressionByColumn) {
 }
 
 TEST(compress_sparse_triplets, CompressionByRow) {
-    auto sparse = load_matrix_as_sparse_column_matrix(sparse_nrow, sparse_ncol, sparse_matrix);
+    tatami::DenseRowMatrix<double> dense(sparse_nrow, sparse_ncol, sparse_matrix);
+    auto sparse = tatami::convert_to_sparse(&dense, true);
 
     std::vector<int> rows, cols;
     std::vector<double> values;

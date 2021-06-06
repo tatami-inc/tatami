@@ -1,9 +1,10 @@
 #include <gtest/gtest.h>
 
-#include "tatami/tatami.h"
 #include <vector>
 #include <deque>
 #include <numeric>
+
+#include "tatami/base/DenseMatrix.hpp"
 
 TEST(DenseMatrix, Construction) {
     std::vector<double> contents(200);

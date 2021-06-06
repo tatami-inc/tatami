@@ -1,12 +1,14 @@
 #include <gtest/gtest.h>
 
-#include "tatami/tatami.h"
-#include "../data.h"
-#include "../load_sparse.h"
-#include "TestCore.h"
-
 #include <vector>
 #include <memory>
+
+#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/DelayedSubsetOp.hpp"
+#include "tatami/utils/convert_to_sparse.hpp"
+
+#include "../data/data.h"
+#include "TestCore.h"
 
 class SubsetTestCore : public TestCore {
 protected:
@@ -17,7 +19,7 @@ protected:
 protected:
     void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
         dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
-        sparse = load_matrix_as_sparse_column_matrix(nr, nc, source);
+        sparse = tatami::convert_to_sparse(dense.get(), false); // column-major.
         return;
     }
 

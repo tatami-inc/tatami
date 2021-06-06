@@ -27,8 +27,8 @@ add_executable(
     src/stats/sums.cpp
     src/stats/variances.cpp
     src/stats/medians.cpp
-    src/data_sparse.cpp
-    src/data_triangular.cpp
+    src/data/data_sparse.cpp
+    src/data/data_triangular.cpp
 )
 
 target_link_libraries(
