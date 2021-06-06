@@ -14,8 +14,8 @@
 namespace tatami {
 
 /**
- * @tparam ROW Whether to compress into a row-based format, e.g., for `tatami::CompressedSparseRowMatrix` construction.
- * If `false`, compression to a column-based format is performed instead.
+ * @tparam ROW Whether to create a compressed sparse row format.
+ * If `false`, the compressed sparse column format is used instead.
  * @tparam U Random-access container for the values.
  * @tparam V Random access container for the indices.
  *
