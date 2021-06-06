@@ -1,12 +1,12 @@
-#ifndef TATAMI_DELAYED_SUBSET_OP
-#define TATAMI_DELAYED_SUBSET_OP
+#ifndef TATAMI_DELAYED_SUBSET
+#define TATAMI_DELAYED_SUBSET
 
 #include "typed_matrix.hpp"
 #include <algorithm>
 #include <memory>
 
 /**
- * @file DelayedSubsetOp.hpp
+ * @file DelayedSubset.hpp
  *
  * Delayed subsetting, equivalent to the `DelayedSubset` class in the **DelayedArray** package.
  */
@@ -19,28 +19,28 @@ namespace tatami {
  * Implements delayed subsetting (i.e., slicing) on the rows or columns of a matrix.
  * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
  *
- * @tparam T Type of matrix value.
  * @tparam MARGIN Dimension along which the addition is to occur.
  * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
+ * @tparam T Type of matrix value.
  * @tparam V Vector containing the subset indices.
  * @tparam IDX Type of index value.
  */
-template<typename T, int MARGIN, class V = std::vector<size_t>, typename IDX = int>
-class DelayedSubsetOp : public typed_matrix<T, IDX> {
+template<int MARGIN, typename T, typename IDX = int, class V = std::vector<size_t> >
+class DelayedSubset : public typed_matrix<T, IDX> {
 public:
     /**
      * @param p Pointer to the underlying (pre-subset) matrix.
      * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
      */
-    DelayedSubsetOp(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : mat(p), indices(idx) {}
+    DelayedSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : mat(p), indices(idx) {}
 
     /**
      * @param p Pointer to the underlying (pre-subset) matrix.
      * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
      */
-    DelayedSubsetOp(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : mat(p), indices(idx) {}
+    DelayedSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : mat(p), indices(idx) {}
 
-    ~DelayedSubsetOp() {}
+    ~DelayedSubset() {}
 
 public:
     const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
