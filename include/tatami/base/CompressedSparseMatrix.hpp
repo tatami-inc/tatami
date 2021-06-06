@@ -130,7 +130,8 @@ public:
     /**
      * @copydoc typed_matrix::sparse_row()
      */
-    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=nullptr) const {
+    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=nullptr, bool sorted=true) const {
+        // It's always sorted anyway, no need to pass along 'sorted'.
         if constexpr(ROW) {
             return primary_dimension_raw(r, first, last, this->ncols, vbuffer, ibuffer);
         } else {
@@ -141,7 +142,8 @@ public:
     /**
      * @copydoc typed_matrix::sparse_column()
      */
-    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=nullptr) const {
+    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=nullptr, bool sorted=true) const {
+        // It's always sorted anyway, no need to pass along 'sorted'.
         if constexpr(ROW) {
             return secondary_dimension_raw(c, first, last, work, vbuffer, ibuffer); 
         } else {

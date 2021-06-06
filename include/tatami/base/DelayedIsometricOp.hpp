@@ -62,9 +62,9 @@ public:
     using typed_matrix<T, IDX>::row;
 
 public:
-    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=nullptr) const {
+    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
         if (OP::sparse) {
-            auto raw = mat->sparse_row(r, vbuffer, ibuffer, start, end, work);
+            auto raw = mat->sparse_row(r, vbuffer, ibuffer, start, end, work, sorted);
             for (size_t i = 0; i < raw.number; ++i) {
                 vbuffer[i] = operation(r, raw.index[i], raw.value[i]);
             }
@@ -81,9 +81,9 @@ public:
         }
     }
 
-    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=nullptr) const {
+    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
         if (OP::sparse) {
-            auto raw = mat->sparse_column(c, vbuffer, ibuffer, start, end, work);
+            auto raw = mat->sparse_column(c, vbuffer, ibuffer, start, end, work, sorted);
             for (size_t i = 0; i < raw.number; ++i) {
                 vbuffer[i] = operation(raw.index[i], c, raw.value[i]);
             }

@@ -66,20 +66,20 @@ public:
     using typed_matrix<T, IDX>::row;
 
 public:
-    sparse_range<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr) const {
+    sparse_range<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
         if constexpr(MARGIN==1) {
-            auto total = subset_sparse<true>(r, out_values, out_indices, start, end, work);
+            auto total = subset_sparse<true>(r, out_values, out_indices, start, end, work, sorted);
             return sparse_range<T, IDX>(total, out_values, out_indices);
         } else {
-            return mat->sparse_row(indices[r], out_values, out_indices, start, end, work);
+            return mat->sparse_row(indices[r], out_values, out_indices, start, end, work, sorted);
         }
     }
 
-    sparse_range<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr) const {
+    sparse_range<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
         if constexpr(MARGIN==1) {
-            return mat->sparse_column(indices[c], out_values, out_indices, start, end, work);
+            return mat->sparse_column(indices[c], out_values, out_indices, start, end, work, sorted);
         } else {
-            auto total = subset_sparse<false>(c, out_values, out_indices, start, end, work);
+            auto total = subset_sparse<false>(c, out_values, out_indices, start, end, work, sorted);
             return sparse_range<T, IDX>(total, out_values, out_indices);
         }
     }
@@ -158,7 +158,7 @@ private:
     }
 
     template<bool ROW>
-    size_t subset_sparse(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work) const {
+    size_t subset_sparse(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work, bool sorted) const {
         size_t total = 0;
         while (start < end) {
             auto original = start;
@@ -173,9 +173,9 @@ private:
             previdx = indices[original];
             sparse_range<T, IDX> range;
             if constexpr(ROW) {
-                range = mat->sparse_row(r, out_values, out_indices, previdx, previdx + n, work);
+                range = mat->sparse_row(r, out_values, out_indices, previdx, previdx + n, work, sorted);
             } else {
-                range = mat->sparse_column(r, out_values, out_indices, previdx, previdx + n, work);
+                range = mat->sparse_column(r, out_values, out_indices, previdx, previdx + n, work, sorted);
             }
 
             if (out_values != range.value) {
