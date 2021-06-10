@@ -99,7 +99,7 @@ private:
             return values.data() + shift + start;
         } else {
             end = std::min(end, dim_secondary);
-            std::copy(values.begin() + start, values.begin() + end, buffer);
+            std::copy(values.begin() + shift + start, values.begin() + shift + end, buffer);
             return buffer;
         }
     }
