@@ -23,7 +23,7 @@ namespace tatami {
  * This should accept the row index, column index and value, and return the modified value after applying the operation. 
  * @tparam IDX Type of index value.
  */
-template<typename T, class OP, typename IDX = int>
+template<typename T, typename IDX, class OP>
 class DelayedIsometricOp : public typed_matrix<T, IDX> {
 public:
     /**
@@ -36,7 +36,19 @@ public:
      * @param p Pointer to the underlying matrix.
      * @param op Instance of the functor class.
      */
+    DelayedIsometricOp(std::shared_ptr<typed_matrix<T, IDX> > p, const OP& op) : mat(p), operation(op) {}
+
+    /**
+     * @param p Pointer to the underlying matrix.
+     * @param op Instance of the functor class.
+     */
     DelayedIsometricOp(std::shared_ptr<const typed_matrix<T, IDX> > p, OP&& op) : mat(p), operation(op) {}
+
+    /**
+     * @param p Pointer to the underlying matrix.
+     * @param op Instance of the functor class.
+     */
+    DelayedIsometricOp(std::shared_ptr<typed_matrix<T, IDX> > p, OP&& op) : mat(p), operation(op) {}
 
     ~DelayedIsometricOp() {}
 
@@ -141,7 +153,9 @@ private:
 }
 
 #include "arith_scalar_helpers.hpp"
+
 #include "arith_vector_helpers.hpp"
+
 #include "math_helpers.hpp"
 
 #endif

@@ -177,7 +177,7 @@ public:
 /**
  * A convenient shorthand for the most common use case of double-precision matrices.
  */
-using numeric_matrix = typed_matrix<double>;
+using numeric_matrix = typed_matrix<double, int>;
 
 }
 
