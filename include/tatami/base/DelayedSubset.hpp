@@ -25,7 +25,7 @@ namespace tatami {
  * @tparam V Vector containing the subset indices.
  * @tparam IDX Type of index value.
  */
-template<int MARGIN, typename T, typename IDX = int, class V = std::vector<size_t> >
+template<int MARGIN, typename T, typename IDX, class V>
 class DelayedSubset : public typed_matrix<T, IDX> {
 public:
     /**
@@ -35,13 +35,21 @@ public:
     DelayedSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : mat(p), indices(idx) {}
 
     /**
-     * @param p Pointer to the underlying (pre-subset) matrix.
-     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
+     * @copydoc DelayedSubset
+     */
+    DelayedSubset(std::shared_ptr<typed_matrix<T, IDX> > p, const V& idx) : mat(p), indices(idx) {}
+
+    /**
+     * @copydoc DelayedSubset
      */
     DelayedSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : mat(p), indices(idx) {}
 
-    ~DelayedSubset() {}
+    /**
+     * @copydoc DelayedSubset
+     */
+    DelayedSubset(std::shared_ptr<typed_matrix<T, IDX> > p, V&& idx) : mat(p), indices(idx) {}
 
+    ~DelayedSubset() {}
 public:
     const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
         if constexpr(MARGIN==1) {
@@ -192,6 +200,61 @@ private:
 
         return total;
     }
+};
+
+// Separate classes defined to allow template deduction.
+template<typename T, typename IDX, class V>
+class DelayedRowSubset : public DelayedSubset<0, T, IDX, V> {
+public:
+    /**
+     * @param p Pointer to the underlying (pre-subset) matrix.
+     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
+     */
+    DelayedRowSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : DelayedSubset<0, T, IDX, V>(p, idx) {}
+
+    /**
+     * @copydoc DelayedRowSubset
+     */
+    DelayedRowSubset(std::shared_ptr<typed_matrix<T, IDX> > p, const V& idx) : DelayedSubset<0, T, IDX, V>(p, idx) {}
+
+    /**
+     * @copydoc DelayedRowSubset
+     */
+    DelayedRowSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : DelayedSubset<0, T, IDX, V>(p, std::forward<V>(idx)) {}
+
+    /**
+     * @copydoc DelayedRowSubset
+     */
+    DelayedRowSubset(std::shared_ptr<typed_matrix<T, IDX> > p, V&& idx) : DelayedSubset<0, T, IDX, V>(p, std::forward<V>(idx)) {}
+
+    ~DelayedRowSubset() {}
+};
+
+template<typename T, typename IDX, class V>
+class DelayedColumnSubset : public DelayedSubset<1, T, IDX, V> {
+public:
+    /**
+     * @param p Pointer to the underlying (pre-subset) matrix.
+     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
+     */
+    DelayedColumnSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : DelayedSubset<1, T, IDX, V>(p, idx) {}
+
+    /**
+     * @copydoc DelayedColumnSubset
+     */
+    DelayedColumnSubset(std::shared_ptr<typed_matrix<T, IDX> > p, const V& idx) : DelayedSubset<1, T, IDX, V>(p, idx) {}
+
+    /**
+     * @copydoc DelayedColumnSubset
+     */
+    DelayedColumnSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : DelayedSubset<1, T, IDX, V>(p, std::forward<V>(idx)) {}
+
+    /**
+     * @copydoc DelayedColumnSubset
+     */
+    DelayedColumnSubset(std::shared_ptr<typed_matrix<T, IDX> > p, V&& idx) : DelayedSubset<1, T, IDX, V>(p, std::forward<V>(idx)) {}
+
+    ~DelayedColumnSubset() {}
 };
 
 }
