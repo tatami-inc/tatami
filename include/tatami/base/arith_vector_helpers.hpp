@@ -23,11 +23,11 @@ namespace tatami {
  * If 1, each element of the vector is assumed to correspond to a column instead.
  * @tparam V Class of the vector holding the values to be added.
  */
-template<typename T = double, int MARGIN = 0, class V = std::vector<T> >
+template<int MARGIN, typename T = double, class V = std::vector<T> >
 struct DelayedAddVectorHelper {
     /**
      * @param v Vector of values to be added.
-     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
+     * This should be of length equal to the number of rows in the matrix if `MARGIN = 0`, otherwise it should be of length equal to the number of columns.
      */
     DelayedAddVectorHelper(V v) : vec(std::move(v)) {}
 
@@ -55,6 +55,15 @@ private:
 };
 
 /**
+ * A `make_*` helper function to enable partial template deduction of supplied types.
+ * See the `tatami::DelayedAddVectorHelper` documentation for more details on the arguments.
+ */
+template<int MARGIN, typename T = double, class V = std::vector<T> >
+DelayedAddVectorHelper<MARGIN, T, V> make_DelayedAddVectorHelper(V v) {
+    return DelayedAddVectorHelper<MARGIN, T, V>(std::move(v));
+}
+
+/**
  * @brief Subtract a vector from the rows/columns of a matrix, or vice versa.
  *
  * This should be used as the `OP` in the `DelayedIsometricOp` class.
@@ -67,11 +76,11 @@ private:
  * If 1, each element of the vector is assumed to correspond to a column instead.
  * @tparam V Class of the vector holding the values to use in the subtraction.
  */
-template<typename T = double, bool RIGHT = true, int MARGIN = 0, class V = std::vector<T> >
+template<bool RIGHT, int MARGIN, typename T = double,  class V = std::vector<T> >
 struct DelayedSubtractVectorHelper {
     /**
      * @param v Vector of values to use for subtraction.
-     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
+     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number of columns.
      */
     DelayedSubtractVectorHelper(V v) : vec(std::move(v)) {}
 
@@ -108,6 +117,15 @@ private:
 };
 
 /**
+ * A `make_*` helper function to enable partial template deduction of supplied types.
+ * See the `tatami::DelayedSubtractVectorHelper` documentation for more details on the arguments.
+ */
+template<bool RIGHT, int MARGIN, typename T = double, class V = std::vector<T> >
+DelayedSubtractVectorHelper<RIGHT, MARGIN, T, V> make_DelayedSubtractVectorHelper(V v) {
+    return DelayedSubtractVectorHelper<RIGHT, MARGIN, T, V>(std::move(v));
+}
+
+/**
  * @brief Multiply a vector along the rows or columns of a matrix.
  *
  * This should be used as the `OP` in the `DelayedIsometricOp` class.
@@ -118,19 +136,13 @@ private:
  * If 1, each element of the vector is assumed to correspond to a column instead.
  * @tparam V Class of the vector holding the values to use for multiplication
  */
-template<typename T = double, int MARGIN = 0, class V = std::vector<T> >
+template<int MARGIN, typename T = double, class V = std::vector<T> >
 struct DelayedMultiplyVectorHelper {
     /**
      * @param v Vector of values to use for multiplication.
-     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
+     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number of columns.
      */
     DelayedMultiplyVectorHelper(V v) : vec(std::move(v)) {}
-
-    /**
-     * @param v Vector of values to use for multiplication.
-     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
-     */
-    DelayedMultiplyVectorHelper(const V& v) : vec(v) {}
 
     /**
      * @param r Row index.
@@ -156,6 +168,15 @@ private:
 };
 
 /**
+ * A `make_*` helper function to enable partial template deduction of supplied types.
+ * See the `tatami::DelayedMultiplyVectorHelper` documentation for more details on the arguments.
+ */
+template<int MARGIN, typename T = double, class V = std::vector<T> >
+DelayedMultiplyVectorHelper<MARGIN, T, V> make_DelayedMultiplyVectorHelper(V v) {
+    return DelayedMultiplyVectorHelper<MARGIN, T, V>(std::move(v));
+}
+
+/**
  * @brief Divide the rows/columns of a matrix by a vector, or vice versa.
  *
  * This should be used as the `OP` in the `DelayedIsometricOp` class.
@@ -168,11 +189,11 @@ private:
  * If 1, each element of the vector is assumed to correspond to a column instead.
  * @tparam V Class of the vector holding the values to use in the division.
  */
-template<typename T = double, bool RIGHT = true, int MARGIN = 0, class V = std::vector<T> >
+template<bool RIGHT, int MARGIN, typename T = double, class V = std::vector<T> >
 struct DelayedDivideVectorHelper {
     /**
      * @param v Vector of values to use for division.
-     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
+     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number of columns.
      */
     DelayedDivideVectorHelper(V v) : vec(std::move(v)) {}
 
@@ -208,6 +229,16 @@ struct DelayedDivideVectorHelper {
 private:
     const V vec;
 };
+
+/**
+ * A `make_*` helper function to enable partial template deduction of supplied types.
+ * See the `tatami::DelayedDivideVectorHelper` documentation for more details on the arguments.
+ */
+template<bool RIGHT, int MARGIN, typename T = double, class V = std::vector<T> >
+DelayedDivideVectorHelper<RIGHT, MARGIN, T, V> make_DelayedDivideVectorHelper(V v) {
+    return DelayedDivideVectorHelper<RIGHT, MARGIN, T, V>(std::move(v));
+}
+
 
 }
 
