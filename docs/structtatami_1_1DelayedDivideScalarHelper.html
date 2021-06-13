@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::DelayedDivideScalarHelper&lt; T, RIGHT &gt; Struct Template Reference</title>
+<title>tatami: tatami::DelayedDivideScalarHelper&lt; RIGHT, T &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,7 +71,7 @@ $(function() {
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structtatami_1_1DelayedDivideScalarHelper-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tatami::DelayedDivideScalarHelper&lt; T, RIGHT &gt; Struct Template Reference</div>  </div>
+<div class="title">tatami::DelayedDivideScalarHelper&lt; RIGHT, T &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -82,19 +82,19 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa3ee3af0852e386dface84358726b2dd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#aa3ee3af0852e386dface84358726b2dd">DelayedDivideScalarHelper</a> (T s)</td></tr>
-<tr class="separator:aa3ee3af0852e386dface84358726b2dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9a1d304e02619b3bc7dfc2282445e37d"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#a9a1d304e02619b3bc7dfc2282445e37d">operator()</a> (size_t r, size_t c, T val) const</td></tr>
-<tr class="separator:a9a1d304e02619b3bc7dfc2282445e37d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a32dc69c234baba7c77f03a9ac41766fd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#a32dc69c234baba7c77f03a9ac41766fd">DelayedDivideScalarHelper</a> (T s)</td></tr>
+<tr class="separator:a32dc69c234baba7c77f03a9ac41766fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a819a3adf111e3067178e92a6f7b2c8c5"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#a819a3adf111e3067178e92a6f7b2c8c5">operator()</a> (size_t r, size_t c, T val) const</td></tr>
+<tr class="separator:a819a3adf111e3067178e92a6f7b2c8c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a0305c50253577715149a58333ffeac9c"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#a0305c50253577715149a58333ffeac9c">sparse</a> = true</td></tr>
-<tr class="separator:a0305c50253577715149a58333ffeac9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f9882e33a8dc933074eb16b00cd17fa"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#a1f9882e33a8dc933074eb16b00cd17fa">sparse</a> = true</td></tr>
+<tr class="separator:a1f9882e33a8dc933074eb16b00cd17fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename T = double, bool RIGHT = true&gt;<br />
-struct tatami::DelayedDivideScalarHelper&lt; T, RIGHT &gt;</h3>
+<div class="textblock"><h3>template&lt;bool RIGHT, typename T = double&gt;<br />
+struct tatami::DelayedDivideScalarHelper&lt; RIGHT, T &gt;</h3>
 
 <p>Divide a scalar from all values of a matrix, or vice versa. </p>
 <p>This should be used as the <code>OP</code> in the <code><a class="el" href="classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix.">DelayedIsometricOp</a></code> class.</p>
@@ -106,19 +106,19 @@ struct tatami::DelayedDivideScalarHelper&lt; T, RIGHT &gt;</h3>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aa3ee3af0852e386dface84358726b2dd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa3ee3af0852e386dface84358726b2dd">&#9670;&nbsp;</a></span>DelayedDivideScalarHelper()</h2>
+<a id="a32dc69c234baba7c77f03a9ac41766fd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a32dc69c234baba7c77f03a9ac41766fd">&#9670;&nbsp;</a></span>DelayedDivideScalarHelper()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, bool RIGHT = true&gt; </div>
+template&lt;bool RIGHT, typename T  = double&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; T, RIGHT &gt;::<a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">DelayedDivideScalarHelper</a> </td>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; RIGHT, T &gt;::<a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">DelayedDivideScalarHelper</a> </td>
           <td>(</td>
           <td class="paramtype">T&#160;</td>
           <td class="paramname"><em>s</em></td><td>)</td>
@@ -141,19 +141,19 @@ template&lt;typename T  = double, bool RIGHT = true&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a9a1d304e02619b3bc7dfc2282445e37d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9a1d304e02619b3bc7dfc2282445e37d">&#9670;&nbsp;</a></span>operator()()</h2>
+<a id="a819a3adf111e3067178e92a6f7b2c8c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a819a3adf111e3067178e92a6f7b2c8c5">&#9670;&nbsp;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, bool RIGHT = true&gt; </div>
+template&lt;bool RIGHT, typename T  = double&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">T <a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; T, RIGHT &gt;::operator() </td>
+          <td class="memname">T <a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; RIGHT, T &gt;::operator() </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>r</em>, </td>
@@ -196,19 +196,19 @@ template&lt;typename T  = double, bool RIGHT = true&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a0305c50253577715149a58333ffeac9c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0305c50253577715149a58333ffeac9c">&#9670;&nbsp;</a></span>sparse</h2>
+<a id="a1f9882e33a8dc933074eb16b00cd17fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f9882e33a8dc933074eb16b00cd17fa">&#9670;&nbsp;</a></span>sparse</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, bool RIGHT = true&gt; </div>
+template&lt;bool RIGHT, typename T  = double&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; T, RIGHT &gt;::sparse = true</td>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; RIGHT, T &gt;::sparse = true</td>
         </tr>
       </table>
   </td>

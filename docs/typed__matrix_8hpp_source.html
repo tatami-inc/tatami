@@ -121,13 +121,16 @@ $(function() {
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    }</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160; </div>
 <div class="line"><a name="l00174"></a><span class="lineno"><a class="line" href="classtatami_1_1typed__matrix.html#abf879b09180a61660d8eacd2cfc035ac">  174</a></span>&#160;    <a class="code" href="content__type_8hpp.html#aac79d5f0dc4bb45282e5a68cb2962dc5">content_type</a> <a class="code" href="classtatami_1_1typed__matrix.html#abf879b09180a61660d8eacd2cfc035ac">type</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> determine_content_type&lt;T&gt;(); }</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;};</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
-<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="typed__matrix_8hpp.html#a5b1e4064bdc526365d29e54ae5e96df2">  180</a></span>&#160;<span class="keyword">using</span> <a class="code" href="classtatami_1_1typed__matrix.html">numeric_matrix</a> = <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;double, int&gt;</a>;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;}</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160; </div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160; </div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keyword">typedef</span> T value;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keyword">typedef</span> IDX index;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;};</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160; </div>
+<div class="line"><a name="l00183"></a><span class="lineno"><a class="line" href="typed__matrix_8hpp.html#a5b1e4064bdc526365d29e54ae5e96df2">  183</a></span>&#160;<span class="keyword">using</span> <a class="code" href="classtatami_1_1typed__matrix.html">numeric_matrix</a> = <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;double, int&gt;</a>;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160; </div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;}</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1matrix_html"><div class="ttname"><a href="classtatami_1_1matrix.html">tatami::matrix</a></div><div class="ttdoc">Virtual class for all matrices.</div><div class="ttdef"><b>Definition:</b> matrix.hpp:18</div></div>
 <div class="ttc" id="aclasstatami_1_1matrix_html_a433c79bdee72c01d00b169d236464964"><div class="ttname"><a href="classtatami_1_1matrix.html#a433c79bdee72c01d00b169d236464964">tatami::matrix::ncol</a></div><div class="ttdeci">virtual size_t ncol() const =0</div></div>
 <div class="ttc" id="aclasstatami_1_1matrix_html_a460aca32225635cc6e2ee6ef5e59bb0a"><div class="ttname"><a href="classtatami_1_1matrix.html#a460aca32225635cc6e2ee6ef5e59bb0a">tatami::matrix::nrow</a></div><div class="ttdeci">virtual size_t nrow() const =0</div></div>

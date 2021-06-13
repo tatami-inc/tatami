@@ -1,11 +1,9 @@
 <map id="tatami::matrix" name="tatami::matrix">
-<area shape="rect" id="node1" title="Virtual class for all matrices." alt="" coords="5,223,104,249"/>
+<area shape="rect" id="node1" title="Virtual class for all matrices." alt="" coords="5,157,104,184"/>
 <area shape="rect" id="node2" href="$classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,85,289,126"/>
-<area shape="rect" id="node5" href="$classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,215,289,257"/>
+<area shape="rect" id="node5" href="$classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,150,289,191"/>
 <area shape="rect" id="node3" href="$classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation." alt="" coords="337,5,516,61"/>
 <area shape="rect" id="node4" href="$classtatami_1_1DenseMatrix.html" title="Dense matrix representation." alt="" coords="359,85,495,126"/>
-<area shape="rect" id="node6" href="$classtatami_1_1DelayedSubset.html" title=" " alt="" coords="351,150,502,191"/>
-<area shape="rect" id="node7" href="$classtatami_1_1DelayedSubset.html" title=" " alt="" coords="351,215,502,257"/>
-<area shape="rect" id="node8" href="$classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix." alt="" coords="345,281,509,322"/>
-<area shape="rect" id="node9" href="$classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix." alt="" coords="348,346,505,387"/>
+<area shape="rect" id="node6" href="$classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix." alt="" coords="345,150,509,191"/>
+<area shape="rect" id="node7" href="$classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix." alt="" coords="348,215,505,257"/>
 </map>

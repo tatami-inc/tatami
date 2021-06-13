@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::DelayedMultiplyVectorHelper&lt; T, MARGIN, V &gt; Struct Template Reference</title>
+<title>tatami: tatami::DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,7 +71,7 @@ $(function() {
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structtatami_1_1DelayedMultiplyVectorHelper-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tatami::DelayedMultiplyVectorHelper&lt; T, MARGIN, V &gt; Struct Template Reference</div>  </div>
+<div class="title">tatami::DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -82,21 +82,19 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a3e7902c9ba83560eabcacb2bc42ba8dc"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html#a3e7902c9ba83560eabcacb2bc42ba8dc">DelayedMultiplyVectorHelper</a> (V v)</td></tr>
-<tr class="separator:a3e7902c9ba83560eabcacb2bc42ba8dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a71ec69b8293928cf2afebca52f954497"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html#a71ec69b8293928cf2afebca52f954497">DelayedMultiplyVectorHelper</a> (const V &amp;v)</td></tr>
-<tr class="separator:a71ec69b8293928cf2afebca52f954497"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab044a647f55343c9968a0b4312f2f36d"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html#ab044a647f55343c9968a0b4312f2f36d">operator()</a> (size_t r, size_t c, T val) const</td></tr>
-<tr class="separator:ab044a647f55343c9968a0b4312f2f36d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a264178e8902ffd7b728816ca0968e73d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html#a264178e8902ffd7b728816ca0968e73d">DelayedMultiplyVectorHelper</a> (V v)</td></tr>
+<tr class="separator:a264178e8902ffd7b728816ca0968e73d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac64849c5578ccfbb1262020421448f07"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html#ac64849c5578ccfbb1262020421448f07">operator()</a> (size_t r, size_t c, T val) const</td></tr>
+<tr class="separator:ac64849c5578ccfbb1262020421448f07"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a6d53503d9069de46129677f3d4f4a504"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html#a6d53503d9069de46129677f3d4f4a504">sparse</a> = true</td></tr>
-<tr class="separator:a6d53503d9069de46129677f3d4f4a504"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad4c41ebe75887ae8cd4fc62f66a7a023"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html#ad4c41ebe75887ae8cd4fc62f66a7a023">sparse</a> = true</td></tr>
+<tr class="separator:ad4c41ebe75887ae8cd4fc62f66a7a023"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename T = double, int MARGIN = 0, class V = std::vector&lt;T&gt;&gt;<br />
-struct tatami::DelayedMultiplyVectorHelper&lt; T, MARGIN, V &gt;</h3>
+<div class="textblock"><h3>template&lt;int MARGIN, typename T = double, class V = std::vector&lt;T&gt;&gt;<br />
+struct tatami::DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt;</h3>
 
 <p>Multiply a vector along the rows or columns of a matrix. </p>
 <p>This should be used as the <code>OP</code> in the <code><a class="el" href="classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix.">DelayedIsometricOp</a></code> class.</p>
@@ -109,19 +107,19 @@ struct tatami::DelayedMultiplyVectorHelper&lt; T, MARGIN, V &gt;</h3>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a3e7902c9ba83560eabcacb2bc42ba8dc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3e7902c9ba83560eabcacb2bc42ba8dc">&#9670;&nbsp;</a></span>DelayedMultiplyVectorHelper() <span class="overload">[1/2]</span></h2>
+<a id="a264178e8902ffd7b728816ca0968e73d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a264178e8902ffd7b728816ca0968e73d">&#9670;&nbsp;</a></span>DelayedMultiplyVectorHelper()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, int MARGIN = 0, class V  = std::vector&lt;T&gt;&gt; </div>
+template&lt;int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">tatami::DelayedMultiplyVectorHelper</a>&lt; T, MARGIN, V &gt;::<a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">DelayedMultiplyVectorHelper</a> </td>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">tatami::DelayedMultiplyVectorHelper</a>&lt; MARGIN, T, V &gt;::<a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">DelayedMultiplyVectorHelper</a> </td>
           <td>(</td>
           <td class="paramtype">V&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
@@ -136,41 +134,7 @@ template&lt;typename T  = double, int MARGIN = 0, class V  = std::vector&lt;T&gt
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">v</td><td>Vector of values to use for multiplication. This should be of length equal to the number of rows if <code>MARGIN = 0</code>, otherwise it should be of length equal to the number columns. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a71ec69b8293928cf2afebca52f954497"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a71ec69b8293928cf2afebca52f954497">&#9670;&nbsp;</a></span>DelayedMultiplyVectorHelper() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double, int MARGIN = 0, class V  = std::vector&lt;T&gt;&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">tatami::DelayedMultiplyVectorHelper</a>&lt; T, MARGIN, V &gt;::<a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">DelayedMultiplyVectorHelper</a> </td>
-          <td>(</td>
-          <td class="paramtype">const V &amp;&#160;</td>
-          <td class="paramname"><em>v</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">v</td><td>Vector of values to use for multiplication. This should be of length equal to the number of rows if <code>MARGIN = 0</code>, otherwise it should be of length equal to the number columns. </td></tr>
+    <tr><td class="paramname">v</td><td>Vector of values to use for multiplication. This should be of length equal to the number of rows if <code>MARGIN = 0</code>, otherwise it should be of length equal to the number of columns. </td></tr>
   </table>
   </dd>
 </dl>
@@ -178,19 +142,19 @@ template&lt;typename T  = double, int MARGIN = 0, class V  = std::vector&lt;T&gt
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="ab044a647f55343c9968a0b4312f2f36d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab044a647f55343c9968a0b4312f2f36d">&#9670;&nbsp;</a></span>operator()()</h2>
+<a id="ac64849c5578ccfbb1262020421448f07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac64849c5578ccfbb1262020421448f07">&#9670;&nbsp;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, int MARGIN = 0, class V  = std::vector&lt;T&gt;&gt; </div>
+template&lt;int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">T <a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">tatami::DelayedMultiplyVectorHelper</a>&lt; T, MARGIN, V &gt;::operator() </td>
+          <td class="memname">T <a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">tatami::DelayedMultiplyVectorHelper</a>&lt; MARGIN, T, V &gt;::operator() </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>r</em>, </td>
@@ -232,19 +196,19 @@ template&lt;typename T  = double, int MARGIN = 0, class V  = std::vector&lt;T&gt
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a6d53503d9069de46129677f3d4f4a504"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6d53503d9069de46129677f3d4f4a504">&#9670;&nbsp;</a></span>sparse</h2>
+<a id="ad4c41ebe75887ae8cd4fc62f66a7a023"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad4c41ebe75887ae8cd4fc62f66a7a023">&#9670;&nbsp;</a></span>sparse</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, int MARGIN = 0, class V  = std::vector&lt;T&gt;&gt; </div>
+template&lt;int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">tatami::DelayedMultiplyVectorHelper</a>&lt; T, MARGIN, V &gt;::sparse = true</td>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">tatami::DelayedMultiplyVectorHelper</a>&lt; MARGIN, T, V &gt;::sparse = true</td>
         </tr>
       </table>
   </td>

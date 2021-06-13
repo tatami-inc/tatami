@@ -77,7 +77,7 @@ $(function() {
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160; </div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="keyword">namespace </span>tatami {</div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
 <div class="line"><a name="l00019"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedAbsHelper.html">   19</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structtatami_1_1DelayedAbsHelper.html">DelayedAbsHelper</a> {</div>
 <div class="line"><a name="l00027"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedAbsHelper.html#ae1f88bd02c562b770648f23cc2711470">   27</a></span>&#160;    T <a class="code" href="structtatami_1_1DelayedAbsHelper.html#ae1f88bd02c562b770648f23cc2711470">operator()</a>(<span class="keywordtype">size_t</span> r, <span class="keywordtype">size_t</span> c, T val)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;        <span class="keywordflow">return</span> std::abs(val);</div>
@@ -86,7 +86,7 @@ $(function() {
 <div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedAbsHelper.html#a7c56ff7a264d88dc0e98db8bfe5a674d">   34</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="structtatami_1_1DelayedAbsHelper.html#a7c56ff7a264d88dc0e98db8bfe5a674d">sparse</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;};</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
 <div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedLogHelper.html">   41</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structtatami_1_1DelayedLogHelper.html">DelayedLogHelper</a> {</div>
 <div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedLogHelper.html#aad43deb006798a17b736adf7cbaa60ef">   45</a></span>&#160;    <a class="code" href="structtatami_1_1DelayedLogHelper.html#aad43deb006798a17b736adf7cbaa60ef">DelayedLogHelper</a>() : log_base(1) {}</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160; </div>
@@ -101,7 +101,7 @@ $(function() {
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> log_base;</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;};</div>
 <div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160; </div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
 <div class="line"><a name="l00075"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedSqrtHelper.html">   75</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structtatami_1_1DelayedSqrtHelper.html">DelayedSqrtHelper</a> {</div>
 <div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedSqrtHelper.html#ae0941c96f07180027d17918d6a8df941">   83</a></span>&#160;    T <a class="code" href="structtatami_1_1DelayedSqrtHelper.html#ae0941c96f07180027d17918d6a8df941">operator()</a>(<span class="keywordtype">size_t</span> r, <span class="keywordtype">size_t</span> c, T val)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">return</span> std::sqrt(val);</div>
@@ -110,7 +110,7 @@ $(function() {
 <div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedSqrtHelper.html#a4406c7f093fb85d78e8e9fdf4cabb090">   90</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="structtatami_1_1DelayedSqrtHelper.html#a4406c7f093fb85d78e8e9fdf4cabb090">sparse</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;};</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
 <div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedLog1pHelper.html">   97</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structtatami_1_1DelayedLog1pHelper.html">DelayedLog1pHelper</a> {</div>
 <div class="line"><a name="l00101"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedLog1pHelper.html#a54be07a933d88fa1bfcd54d383a6b327">  101</a></span>&#160;    <a class="code" href="structtatami_1_1DelayedLog1pHelper.html#a54be07a933d88fa1bfcd54d383a6b327">DelayedLog1pHelper</a>() : log_base(1) {}</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
@@ -125,7 +125,7 @@ $(function() {
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">double</span> log_base;</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;};</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
 <div class="line"><a name="l00131"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedRoundHelper.html">  131</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structtatami_1_1DelayedRoundHelper.html">DelayedRoundHelper</a> {</div>
 <div class="line"><a name="l00139"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedRoundHelper.html#aa6c9c7ab1d87872d51473361f25bb284">  139</a></span>&#160;    T <a class="code" href="structtatami_1_1DelayedRoundHelper.html#aa6c9c7ab1d87872d51473361f25bb284">operator()</a>(<span class="keywordtype">size_t</span> r, <span class="keywordtype">size_t</span> c, T val)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keywordflow">return</span> std::round(val);</div>
@@ -134,7 +134,7 @@ $(function() {
 <div class="line"><a name="l00146"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedRoundHelper.html#a73f893050225e966d4e02c0aeddaad5c">  146</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="structtatami_1_1DelayedRoundHelper.html#a73f893050225e966d4e02c0aeddaad5c">sparse</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;};</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160; </div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
 <div class="line"><a name="l00153"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedExpHelper.html">  153</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structtatami_1_1DelayedExpHelper.html">DelayedExpHelper</a> {</div>
 <div class="line"><a name="l00161"></a><span class="lineno"><a class="line" href="structtatami_1_1DelayedExpHelper.html#affeefc01a2a66d3704aef703e040d653">  161</a></span>&#160;    T <a class="code" href="structtatami_1_1DelayedExpHelper.html#affeefc01a2a66d3704aef703e040d653">operator()</a>(<span class="keywordtype">size_t</span> r, <span class="keywordtype">size_t</span> c, T val)<span class="keyword"> const </span>{</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        <span class="keywordflow">return</span> std::exp(val);</div>

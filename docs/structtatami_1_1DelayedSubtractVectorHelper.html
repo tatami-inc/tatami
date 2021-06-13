@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::DelayedSubtractVectorHelper&lt; T, RIGHT, MARGIN, V &gt; Struct Template Reference</title>
+<title>tatami: tatami::DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,7 +71,7 @@ $(function() {
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structtatami_1_1DelayedSubtractVectorHelper-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">tatami::DelayedSubtractVectorHelper&lt; T, RIGHT, MARGIN, V &gt; Struct Template Reference</div>  </div>
+<div class="title">tatami::DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -82,19 +82,19 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ac53077c826c4ba0fe1773863c40f7d4f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html#ac53077c826c4ba0fe1773863c40f7d4f">DelayedSubtractVectorHelper</a> (V v)</td></tr>
-<tr class="separator:ac53077c826c4ba0fe1773863c40f7d4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af8db92066671d69154e90c701f65ac2d"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html#af8db92066671d69154e90c701f65ac2d">operator()</a> (size_t r, size_t c, T val) const</td></tr>
-<tr class="separator:af8db92066671d69154e90c701f65ac2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9f4a928250416796f4ead2b451d0701"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html#ad9f4a928250416796f4ead2b451d0701">DelayedSubtractVectorHelper</a> (V v)</td></tr>
+<tr class="separator:ad9f4a928250416796f4ead2b451d0701"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7b4833df07f470bcbb7bf82c9c5efbe"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html#af7b4833df07f470bcbb7bf82c9c5efbe">operator()</a> (size_t r, size_t c, T val) const</td></tr>
+<tr class="separator:af7b4833df07f470bcbb7bf82c9c5efbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:ab62c0aa42bc006aa0823b2f8a06a60d1"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html#ab62c0aa42bc006aa0823b2f8a06a60d1">sparse</a> = false</td></tr>
-<tr class="separator:ab62c0aa42bc006aa0823b2f8a06a60d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2326aff63bc94b97d0dd8bede042c725"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html#a2326aff63bc94b97d0dd8bede042c725">sparse</a> = false</td></tr>
+<tr class="separator:a2326aff63bc94b97d0dd8bede042c725"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename T = double, bool RIGHT = true, int MARGIN = 0, class V = std::vector&lt;T&gt;&gt;<br />
-struct tatami::DelayedSubtractVectorHelper&lt; T, RIGHT, MARGIN, V &gt;</h3>
+<div class="textblock"><h3>template&lt;bool RIGHT, int MARGIN, typename T = double, class V = std::vector&lt;T&gt;&gt;<br />
+struct tatami::DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</h3>
 
 <p>Subtract a vector from the rows/columns of a matrix, or vice versa. </p>
 <p>This should be used as the <code>OP</code> in the <code><a class="el" href="classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix.">DelayedIsometricOp</a></code> class.</p>
@@ -108,19 +108,19 @@ struct tatami::DelayedSubtractVectorHelper&lt; T, RIGHT, MARGIN, V &gt;</h3>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ac53077c826c4ba0fe1773863c40f7d4f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac53077c826c4ba0fe1773863c40f7d4f">&#9670;&nbsp;</a></span>DelayedSubtractVectorHelper()</h2>
+<a id="ad9f4a928250416796f4ead2b451d0701"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad9f4a928250416796f4ead2b451d0701">&#9670;&nbsp;</a></span>DelayedSubtractVectorHelper()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, bool RIGHT = true, int MARGIN = 0, class V  = std::vector&lt;T&gt;&gt; </div>
+template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">tatami::DelayedSubtractVectorHelper</a>&lt; T, RIGHT, MARGIN, V &gt;::<a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">DelayedSubtractVectorHelper</a> </td>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">tatami::DelayedSubtractVectorHelper</a>&lt; RIGHT, MARGIN, T, V &gt;::<a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">DelayedSubtractVectorHelper</a> </td>
           <td>(</td>
           <td class="paramtype">V&#160;</td>
           <td class="paramname"><em>v</em></td><td>)</td>
@@ -135,7 +135,7 @@ template&lt;typename T  = double, bool RIGHT = true, int MARGIN = 0, class V  = 
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">v</td><td>Vector of values to use for subtraction. This should be of length equal to the number of rows if <code>MARGIN = 0</code>, otherwise it should be of length equal to the number columns. </td></tr>
+    <tr><td class="paramname">v</td><td>Vector of values to use for subtraction. This should be of length equal to the number of rows if <code>MARGIN = 0</code>, otherwise it should be of length equal to the number of columns. </td></tr>
   </table>
   </dd>
 </dl>
@@ -143,19 +143,19 @@ template&lt;typename T  = double, bool RIGHT = true, int MARGIN = 0, class V  = 
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="af8db92066671d69154e90c701f65ac2d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af8db92066671d69154e90c701f65ac2d">&#9670;&nbsp;</a></span>operator()()</h2>
+<a id="af7b4833df07f470bcbb7bf82c9c5efbe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af7b4833df07f470bcbb7bf82c9c5efbe">&#9670;&nbsp;</a></span>operator()()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, bool RIGHT = true, int MARGIN = 0, class V  = std::vector&lt;T&gt;&gt; </div>
+template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">T <a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">tatami::DelayedSubtractVectorHelper</a>&lt; T, RIGHT, MARGIN, V &gt;::operator() </td>
+          <td class="memname">T <a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">tatami::DelayedSubtractVectorHelper</a>&lt; RIGHT, MARGIN, T, V &gt;::operator() </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>r</em>, </td>
@@ -197,19 +197,19 @@ template&lt;typename T  = double, bool RIGHT = true, int MARGIN = 0, class V  = 
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="ab62c0aa42bc006aa0823b2f8a06a60d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab62c0aa42bc006aa0823b2f8a06a60d1">&#9670;&nbsp;</a></span>sparse</h2>
+<a id="a2326aff63bc94b97d0dd8bede042c725"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2326aff63bc94b97d0dd8bede042c725">&#9670;&nbsp;</a></span>sparse</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, bool RIGHT = true, int MARGIN = 0, class V  = std::vector&lt;T&gt;&gt; </div>
+template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">tatami::DelayedSubtractVectorHelper</a>&lt; T, RIGHT, MARGIN, V &gt;::sparse = false</td>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">tatami::DelayedSubtractVectorHelper</a>&lt; RIGHT, MARGIN, T, V &gt;::sparse = false</td>
         </tr>
       </table>
   </td>

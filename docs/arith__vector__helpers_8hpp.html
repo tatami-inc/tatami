@@ -67,7 +67,8 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a>  </div>
+<a href="#nested-classes">Classes</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">arith_vector_helpers.hpp File Reference</div>  </div>
 </div><!--header-->
@@ -97,22 +98,122 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedAddVectorHelper.html">tatami::DelayedAddVectorHelper&lt; T, MARGIN, V &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedAddVectorHelper.html">tatami::DelayedAddVectorHelper&lt; MARGIN, T, V &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a vector along the rows or columns of a matrix.  <a href="structtatami_1_1DelayedAddVectorHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">tatami::DelayedSubtractVectorHelper&lt; T, RIGHT, MARGIN, V &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html">tatami::DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subtract a vector from the rows/columns of a matrix, or vice versa.  <a href="structtatami_1_1DelayedSubtractVectorHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">tatami::DelayedMultiplyVectorHelper&lt; T, MARGIN, V &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html">tatami::DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Multiply a vector along the rows or columns of a matrix.  <a href="structtatami_1_1DelayedMultiplyVectorHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideVectorHelper.html">tatami::DelayedDivideVectorHelper&lt; T, RIGHT, MARGIN, V &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideVectorHelper.html">tatami::DelayedDivideVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide the rows/columns of a matrix by a vector, or vice versa.  <a href="structtatami_1_1DelayedDivideVectorHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:aab7caaa0d2bad4b765846b62b344b5d3"><td class="memTemplParams" colspan="2">template&lt;int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </td></tr>
+<tr class="memitem:aab7caaa0d2bad4b765846b62b344b5d3"><td class="memTemplItemLeft" align="right" valign="top">DelayedAddVectorHelper&lt; MARGIN, T, V &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="arith__vector__helpers_8hpp.html#aab7caaa0d2bad4b765846b62b344b5d3">tatami::make_DelayedAddVectorHelper</a> (V v)</td></tr>
+<tr class="separator:aab7caaa0d2bad4b765846b62b344b5d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9c7f75368ccdeef11137081b2d698fcf"><td class="memTemplParams" colspan="2">template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </td></tr>
+<tr class="memitem:a9c7f75368ccdeef11137081b2d698fcf"><td class="memTemplItemLeft" align="right" valign="top">DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="arith__vector__helpers_8hpp.html#a9c7f75368ccdeef11137081b2d698fcf">tatami::make_DelayedSubtractVectorHelper</a> (V v)</td></tr>
+<tr class="separator:a9c7f75368ccdeef11137081b2d698fcf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7fb56f2213f17500196d0b2b1848cac"><td class="memTemplParams" colspan="2">template&lt;int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </td></tr>
+<tr class="memitem:ae7fb56f2213f17500196d0b2b1848cac"><td class="memTemplItemLeft" align="right" valign="top">DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="arith__vector__helpers_8hpp.html#ae7fb56f2213f17500196d0b2b1848cac">tatami::make_DelayedMultiplyVectorHelper</a> (V v)</td></tr>
+<tr class="separator:ae7fb56f2213f17500196d0b2b1848cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f94d5c5091d1562009de09061781090"><td class="memTemplParams" colspan="2">template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </td></tr>
+<tr class="memitem:a3f94d5c5091d1562009de09061781090"><td class="memTemplItemLeft" align="right" valign="top">DelayedDivideVectorHelper&lt; RIGHT, MARGIN, T, V &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="arith__vector__helpers_8hpp.html#a3f94d5c5091d1562009de09061781090">tatami::make_DelayedDivideVectorHelper</a> (V v)</td></tr>
+<tr class="separator:a3f94d5c5091d1562009de09061781090"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Helper functions focusing on arithmetic operations with a vector parallel to the rows or columns, to be used as the <code>OP</code> in the <code>DelayedIsometricOp</code> class. </p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="aab7caaa0d2bad4b765846b62b344b5d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aab7caaa0d2bad4b765846b62b344b5d3">&#9670;&nbsp;</a></span>make_DelayedAddVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">DelayedAddVectorHelper&lt;MARGIN, T, V&gt; tatami::make_DelayedAddVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">V&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types. See the <code><a class="el" href="structtatami_1_1DelayedAddVectorHelper.html" title="Add a vector along the rows or columns of a matrix.">tatami::DelayedAddVectorHelper</a></code> documentation for more details on the arguments. </p>
+
+</div>
+</div>
+<a id="a3f94d5c5091d1562009de09061781090"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3f94d5c5091d1562009de09061781090">&#9670;&nbsp;</a></span>make_DelayedDivideVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">DelayedDivideVectorHelper&lt;RIGHT, MARGIN, T, V&gt; tatami::make_DelayedDivideVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">V&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types. See the <code><a class="el" href="structtatami_1_1DelayedDivideVectorHelper.html" title="Divide the rows/columns of a matrix by a vector, or vice versa.">tatami::DelayedDivideVectorHelper</a></code> documentation for more details on the arguments. </p>
+
+</div>
+</div>
+<a id="ae7fb56f2213f17500196d0b2b1848cac"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7fb56f2213f17500196d0b2b1848cac">&#9670;&nbsp;</a></span>make_DelayedMultiplyVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">DelayedMultiplyVectorHelper&lt;MARGIN, T, V&gt; tatami::make_DelayedMultiplyVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">V&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types. See the <code><a class="el" href="structtatami_1_1DelayedMultiplyVectorHelper.html" title="Multiply a vector along the rows or columns of a matrix.">tatami::DelayedMultiplyVectorHelper</a></code> documentation for more details on the arguments. </p>
+
+</div>
+</div>
+<a id="a9c7f75368ccdeef11137081b2d698fcf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9c7f75368ccdeef11137081b2d698fcf">&#9670;&nbsp;</a></span>make_DelayedSubtractVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">DelayedSubtractVectorHelper&lt;RIGHT, MARGIN, T, V&gt; tatami::make_DelayedSubtractVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">V&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types. See the <code><a class="el" href="structtatami_1_1DelayedSubtractVectorHelper.html" title="Subtract a vector from the rows/columns of a matrix, or vice versa.">tatami::DelayedSubtractVectorHelper</a></code> documentation for more details on the arguments. </p>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
