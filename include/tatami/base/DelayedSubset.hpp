@@ -32,22 +32,7 @@ public:
      * @param p Pointer to the underlying (pre-subset) matrix.
      * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
      */
-    DelayedSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : mat(p), indices(idx) {}
-
-    /**
-     * @copydoc DelayedSubset
-     */
-    DelayedSubset(std::shared_ptr<typed_matrix<T, IDX> > p, const V& idx) : mat(p), indices(idx) {}
-
-    /**
-     * @copydoc DelayedSubset
-     */
-    DelayedSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : mat(p), indices(idx) {}
-
-    /**
-     * @copydoc DelayedSubset
-     */
-    DelayedSubset(std::shared_ptr<typed_matrix<T, IDX> > p, V&& idx) : mat(p), indices(idx) {}
+    DelayedSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, V idx) : mat(p), indices(std::move(idx)) {}
 
     ~DelayedSubset() {}
 public:

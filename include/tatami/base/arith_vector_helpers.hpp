@@ -29,13 +29,7 @@ struct DelayedAddVectorHelper {
      * @param v Vector of values to be added.
      * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
      */
-    DelayedAddVectorHelper(V&& v) : vec(v) {}
-
-    /**
-     * @param v Vector of values to be added.
-     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
-     */
-    DelayedAddVectorHelper(const V& v) : vec(v) {}
+    DelayedAddVectorHelper(V v) : vec(std::move(v)) {}
 
     /**
      * @param r Row index.
@@ -79,13 +73,7 @@ struct DelayedSubtractVectorHelper {
      * @param v Vector of values to use for subtraction.
      * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
      */
-    DelayedSubtractVectorHelper(V&& v) : vec(v) {}
-
-    /**
-     * @param v Vector of values to use for subtraction.
-     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
-     */
-    DelayedSubtractVectorHelper(const V& v) : vec(v) {}
+    DelayedSubtractVectorHelper(V v) : vec(std::move(v)) {}
 
     /**
      * @param r Row index.
@@ -136,7 +124,7 @@ struct DelayedMultiplyVectorHelper {
      * @param v Vector of values to use for multiplication.
      * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
      */
-    DelayedMultiplyVectorHelper(V&& v) : vec(v) {}
+    DelayedMultiplyVectorHelper(V v) : vec(std::move(v)) {}
 
     /**
      * @param v Vector of values to use for multiplication.
@@ -186,13 +174,7 @@ struct DelayedDivideVectorHelper {
      * @param v Vector of values to use for division.
      * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
      */
-    DelayedDivideVectorHelper(V&& v) : vec(v) {}
-
-    /**
-     * @param v Vector of values to use for division.
-     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number columns.
-     */
-    DelayedDivideVectorHelper(const V& v) : vec(v) {}
+    DelayedDivideVectorHelper(V v) : vec(std::move(v)) {}
 
     /**
      * @param r Row index.

@@ -30,25 +30,7 @@ public:
      * @param p Pointer to the underlying matrix.
      * @param op Instance of the functor class.
      */
-    DelayedIsometricOp(std::shared_ptr<const typed_matrix<T, IDX> > p, const OP& op) : mat(p), operation(op) {}
-
-    /**
-     * @param p Pointer to the underlying matrix.
-     * @param op Instance of the functor class.
-     */
-    DelayedIsometricOp(std::shared_ptr<typed_matrix<T, IDX> > p, const OP& op) : mat(p), operation(op) {}
-
-    /**
-     * @param p Pointer to the underlying matrix.
-     * @param op Instance of the functor class.
-     */
-    DelayedIsometricOp(std::shared_ptr<const typed_matrix<T, IDX> > p, OP&& op) : mat(p), operation(op) {}
-
-    /**
-     * @param p Pointer to the underlying matrix.
-     * @param op Instance of the functor class.
-     */
-    DelayedIsometricOp(std::shared_ptr<typed_matrix<T, IDX> > p, OP&& op) : mat(p), operation(op) {}
+    DelayedIsometricOp(std::shared_ptr<const typed_matrix<T, IDX> > p, OP op) : mat(p), operation(std::move(op)) {}
 
     ~DelayedIsometricOp() {}
 
