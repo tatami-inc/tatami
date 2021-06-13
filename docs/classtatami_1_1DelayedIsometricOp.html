@@ -101,14 +101,8 @@ Collaboration diagram for tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4c6f7c3dbf39cb271f88ef8b720c7bd6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html#a4c6f7c3dbf39cb271f88ef8b720c7bd6">DelayedIsometricOp</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, const OP &amp;op)</td></tr>
-<tr class="separator:a4c6f7c3dbf39cb271f88ef8b720c7bd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4bc02a228617fe67745700cbe9178429"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html#a4bc02a228617fe67745700cbe9178429">DelayedIsometricOp</a> (std::shared_ptr&lt; <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, const OP &amp;op)</td></tr>
-<tr class="separator:a4bc02a228617fe67745700cbe9178429"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb81f7b3d005fcf49e1660e7f527c7e1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html#adb81f7b3d005fcf49e1660e7f527c7e1">DelayedIsometricOp</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, OP &amp;&amp;op)</td></tr>
-<tr class="separator:adb81f7b3d005fcf49e1660e7f527c7e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2c8de580f7d225dfe451155a15a4819b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html#a2c8de580f7d225dfe451155a15a4819b">DelayedIsometricOp</a> (std::shared_ptr&lt; <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, OP &amp;&amp;op)</td></tr>
-<tr class="separator:a2c8de580f7d225dfe451155a15a4819b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b49cc20f2fcf3dfcd274d3d1e19b82b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html#a6b49cc20f2fcf3dfcd274d3d1e19b82b">DelayedIsometricOp</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, OP op)</td></tr>
+<tr class="separator:a6b49cc20f2fcf3dfcd274d3d1e19b82b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9fb764f8eb8457884519f3c9cce5945e"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html#a9fb764f8eb8457884519f3c9cce5945e">row</a> (size_t r, T *buffer, size_t start, size_t end, <a class="el" href="classtatami_1_1workspace.html">workspace</a> *work=nullptr) const</td></tr>
 <tr class="separator:a9fb764f8eb8457884519f3c9cce5945e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad41206c6087c4745a211f6be776c0e12"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html#ad41206c6087c4745a211f6be776c0e12">column</a> (size_t c, T *buffer, size_t start, size_t end, <a class="el" href="classtatami_1_1workspace.html">workspace</a> *work=nullptr) const</td></tr>
@@ -154,8 +148,8 @@ class tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</h3>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4c6f7c3dbf39cb271f88ef8b720c7bd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4c6f7c3dbf39cb271f88ef8b720c7bd6">&#9670;&nbsp;</a></span>DelayedIsometricOp() <span class="overload">[1/4]</span></h2>
+<a id="a6b49cc20f2fcf3dfcd274d3d1e19b82b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b49cc20f2fcf3dfcd274d3d1e19b82b">&#9670;&nbsp;</a></span>DelayedIsometricOp()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -174,142 +168,7 @@ template&lt;typename T , typename IDX , class OP &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const OP &amp;&#160;</td>
-          <td class="paramname"><em>op</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the underlying matrix. </td></tr>
-    <tr><td class="paramname">op</td><td>Instance of the functor class. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a4bc02a228617fe67745700cbe9178429"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4bc02a228617fe67745700cbe9178429">&#9670;&nbsp;</a></span>DelayedIsometricOp() <span class="overload">[2/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename IDX , class OP &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedIsometricOp.html">tatami::DelayedIsometricOp</a>&lt; T, IDX, OP &gt;::<a class="el" href="classtatami_1_1DelayedIsometricOp.html">DelayedIsometricOp</a> </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const OP &amp;&#160;</td>
-          <td class="paramname"><em>op</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the underlying matrix. </td></tr>
-    <tr><td class="paramname">op</td><td>Instance of the functor class. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="adb81f7b3d005fcf49e1660e7f527c7e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adb81f7b3d005fcf49e1660e7f527c7e1">&#9670;&nbsp;</a></span>DelayedIsometricOp() <span class="overload">[3/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename IDX , class OP &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedIsometricOp.html">tatami::DelayedIsometricOp</a>&lt; T, IDX, OP &gt;::<a class="el" href="classtatami_1_1DelayedIsometricOp.html">DelayedIsometricOp</a> </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">OP &amp;&amp;&#160;</td>
-          <td class="paramname"><em>op</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the underlying matrix. </td></tr>
-    <tr><td class="paramname">op</td><td>Instance of the functor class. </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a2c8de580f7d225dfe451155a15a4819b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2c8de580f7d225dfe451155a15a4819b">&#9670;&nbsp;</a></span>DelayedIsometricOp() <span class="overload">[4/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename IDX , class OP &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedIsometricOp.html">tatami::DelayedIsometricOp</a>&lt; T, IDX, OP &gt;::<a class="el" href="classtatami_1_1DelayedIsometricOp.html">DelayedIsometricOp</a> </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">OP &amp;&amp;&#160;</td>
+          <td class="paramtype">OP&#160;</td>
           <td class="paramname"><em>op</em>&#160;</td>
         </tr>
         <tr>

@@ -101,14 +101,8 @@ Collaboration diagram for tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;:</div
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a85e7cfbaeb6f29ccc17f56d61698fefe"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a85e7cfbaeb6f29ccc17f56d61698fefe">DelayedSubset</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, const V &amp;idx)</td></tr>
-<tr class="separator:a85e7cfbaeb6f29ccc17f56d61698fefe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6e85d12fa3f4a496136528fc7f22ba46"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a6e85d12fa3f4a496136528fc7f22ba46">DelayedSubset</a> (std::shared_ptr&lt; <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, const V &amp;idx)</td></tr>
-<tr class="separator:a6e85d12fa3f4a496136528fc7f22ba46"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1b8131acc8e79f867152530488e9b1e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#af1b8131acc8e79f867152530488e9b1e">DelayedSubset</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, V &amp;&amp;idx)</td></tr>
-<tr class="separator:af1b8131acc8e79f867152530488e9b1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a66f3017cadcc7960c10fa633b16a0d60"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a66f3017cadcc7960c10fa633b16a0d60">DelayedSubset</a> (std::shared_ptr&lt; <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, V &amp;&amp;idx)</td></tr>
-<tr class="separator:a66f3017cadcc7960c10fa633b16a0d60"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b9c523e652102e6b7af8f040feabe51"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a6b9c523e652102e6b7af8f040feabe51">DelayedSubset</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt; p, V idx)</td></tr>
+<tr class="separator:a6b9c523e652102e6b7af8f040feabe51"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a63b55c1050f842f225c0a6a82151bd88"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a63b55c1050f842f225c0a6a82151bd88">row</a> (size_t r, T *buffer, size_t start, size_t end, <a class="el" href="classtatami_1_1workspace.html">workspace</a> *work=nullptr) const</td></tr>
 <tr class="separator:a63b55c1050f842f225c0a6a82151bd88"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a315f88d036d2fdb0c83cadc4c8ded337"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a315f88d036d2fdb0c83cadc4c8ded337">column</a> (size_t c, T *buffer, size_t start, size_t end, <a class="el" href="classtatami_1_1workspace.html">workspace</a> *work=nullptr) const</td></tr>
@@ -158,8 +152,8 @@ class tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</h3>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a85e7cfbaeb6f29ccc17f56d61698fefe"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a85e7cfbaeb6f29ccc17f56d61698fefe">&#9670;&nbsp;</a></span>DelayedSubset() <span class="overload">[1/4]</span></h2>
+<a id="a6b9c523e652102e6b7af8f040feabe51"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b9c523e652102e6b7af8f040feabe51">&#9670;&nbsp;</a></span>DelayedSubset()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -178,7 +172,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const V &amp;&#160;</td>
+          <td class="paramtype">V&#160;</td>
           <td class="paramname"><em>idx</em>&#160;</td>
         </tr>
         <tr>
@@ -193,147 +187,6 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the underlying (pre-subset) matrix. </td></tr>
-    <tr><td class="paramname">idx</td><td>Vector of 0-based indices to use for subsetting on the rows (if <code>MARGIN = 0</code>) or columns (if <code>MARGIN = 1</code>). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a6e85d12fa3f4a496136528fc7f22ba46"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6e85d12fa3f4a496136528fc7f22ba46">&#9670;&nbsp;</a></span>DelayedSubset() <span class="overload">[2/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::<a class="el" href="classtatami_1_1DelayedSubset.html">DelayedSubset</a> </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const V &amp;&#160;</td>
-          <td class="paramname"><em>idx</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p></p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the underlying (pre-subset) matrix. </td></tr>
-    <tr><td class="paramname">idx</td><td>Vector of 0-based indices to use for subsetting on the rows (if <code>MARGIN = 0</code>) or columns (if <code>MARGIN = 1</code>). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="af1b8131acc8e79f867152530488e9b1e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af1b8131acc8e79f867152530488e9b1e">&#9670;&nbsp;</a></span>DelayedSubset() <span class="overload">[3/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::<a class="el" href="classtatami_1_1DelayedSubset.html">DelayedSubset</a> </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">V &amp;&amp;&#160;</td>
-          <td class="paramname"><em>idx</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p></p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the underlying (pre-subset) matrix. </td></tr>
-    <tr><td class="paramname">idx</td><td>Vector of 0-based indices to use for subsetting on the rows (if <code>MARGIN = 0</code>) or columns (if <code>MARGIN = 1</code>). </td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a id="a66f3017cadcc7960c10fa633b16a0d60"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a66f3017cadcc7960c10fa633b16a0d60">&#9670;&nbsp;</a></span>DelayedSubset() <span class="overload">[4/4]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::<a class="el" href="classtatami_1_1DelayedSubset.html">DelayedSubset</a> </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">V &amp;&amp;&#160;</td>
-          <td class="paramname"><em>idx</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p></p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">p</td><td>Pointer to the underlying (pre-subset) matrix. </td></tr>
