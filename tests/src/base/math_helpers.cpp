@@ -29,9 +29,9 @@ protected:
 };
 
 TEST_F(MathTest, AbsByColumn) {
-    tatami::DelayedAbsHelper<double> op;
-    auto dense_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense, op});
-    auto sparse_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse, op});
+    tatami::DelayedAbsHelper op;
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_TRUE(sparse_mod->sparse());
@@ -58,13 +58,13 @@ TEST_F(MathTest, AbsByColumn) {
 }
 
 TEST_F(MathTest, SqrtByColumn) {
-    tatami::DelayedAbsHelper<double> op0;
-    auto dense_mod0 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense, op0});
-    auto sparse_mod0 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse, op0});
+    tatami::DelayedAbsHelper op0;
+    auto dense_mod0 = tatami::make_DelayedIsometricOp(dense, op0);
+    auto sparse_mod0 = tatami::make_DelayedIsometricOp(sparse, op0);
 
-    tatami::DelayedSqrtHelper<double> op;
-    auto dense_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense_mod0, op});
-    auto sparse_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse_mod0, op});
+    tatami::DelayedSqrtHelper op;
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense_mod0, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse_mod0, op);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_TRUE(sparse_mod->sparse());
@@ -91,17 +91,17 @@ TEST_F(MathTest, SqrtByColumn) {
 }
 
 TEST_F(MathTest, LogByColumn) {
-    tatami::DelayedAbsHelper<double> op0;
-    auto dense_mod0 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense, op0});
-    auto sparse_mod0 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse, op0});
+    tatami::DelayedAbsHelper op0;
+    auto dense_mod0 = tatami::make_DelayedIsometricOp(dense, op0);
+    auto sparse_mod0 = tatami::make_DelayedIsometricOp(sparse, op0);
 
     tatami::DelayedAddScalarHelper<double> op1(5);
-    auto dense_mod1 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense_mod0, op1});
-    auto sparse_mod1 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse_mod0, op1});
+    auto dense_mod1 = tatami::make_DelayedIsometricOp(dense_mod0, op1);
+    auto sparse_mod1 = tatami::make_DelayedIsometricOp(sparse_mod0, op1);
 
-    tatami::DelayedLogHelper<double> op;
-    auto dense_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense_mod1, op});
-    auto sparse_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse_mod1, op});
+    tatami::DelayedLogHelper op;
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense_mod1, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse_mod1, op);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_FALSE(sparse_mod->sparse());
@@ -127,9 +127,9 @@ TEST_F(MathTest, LogByColumn) {
     }
 
     // Trying with another base.
-    tatami::DelayedLogHelper<double> op2(2);
-    auto dense_mod2 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense_mod1, op2});
-    auto sparse_mod2 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse_mod1, op2});
+    tatami::DelayedLogHelper op2(2);
+    auto dense_mod2 = tatami::make_DelayedIsometricOp(dense_mod1, op2);
+    auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse_mod1, op2);
 
     set_sizes(0, dense->nrow());
 
@@ -151,13 +151,13 @@ TEST_F(MathTest, LogByColumn) {
 }
 
 TEST_F(MathTest, Log1pByColumn) {
-    tatami::DelayedAbsHelper<double> op0;
-    auto dense_mod0 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense, op0});
-    auto sparse_mod0 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse, op0});
+    tatami::DelayedAbsHelper op0;
+    auto dense_mod0 = tatami::make_DelayedIsometricOp(dense, op0);
+    auto sparse_mod0 = tatami::make_DelayedIsometricOp(sparse, op0);
 
-    tatami::DelayedLog1pHelper<double> op;
-    auto dense_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense_mod0, op});
-    auto sparse_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse_mod0, op});
+    tatami::DelayedLog1pHelper op;
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense_mod0, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse_mod0, op);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_TRUE(sparse_mod->sparse());
@@ -183,9 +183,9 @@ TEST_F(MathTest, Log1pByColumn) {
     }
 
     // Trying with another base.
-    tatami::DelayedLog1pHelper<double> op2(2);
-    auto dense_mod2 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense_mod0, op2});
-    auto sparse_mod2 = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse_mod0, op2});
+    tatami::DelayedLog1pHelper op2(2);
+    auto dense_mod2 = tatami::make_DelayedIsometricOp(dense_mod0, op2);
+    auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse_mod0, op2);
 
     set_sizes(0, dense->nrow());
 
@@ -207,9 +207,9 @@ TEST_F(MathTest, Log1pByColumn) {
 }
 
 TEST_F(MathTest, ExpByColumn) {
-    tatami::DelayedExpHelper<double> op;
-    auto dense_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense, op});
-    auto sparse_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse, op});
+    tatami::DelayedExpHelper op;
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_FALSE(sparse_mod->sparse());
@@ -236,9 +236,9 @@ TEST_F(MathTest, ExpByColumn) {
 }
 
 TEST_F(MathTest, RoundByColumn) {
-    tatami::DelayedRoundHelper<double> op;
-    auto dense_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense, op});
-    auto sparse_mod = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse, op});
+    tatami::DelayedRoundHelper op;
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_TRUE(sparse_mod->sparse());

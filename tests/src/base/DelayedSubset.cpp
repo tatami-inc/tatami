@@ -42,12 +42,12 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
     std::vector<size_t> sub = { 0, 3, 3, 13, 5, 2, 19, 4, 6, 11, 19, 8 };
     std::vector<double> buffer_full(dense->nrow());
 
-    auto dense_subbed = tatami::DelayedRowSubset(dense, sub);
-    auto sparse_subbed = tatami::DelayedRowSubset(sparse, sub);
+    auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
 
     set_sizes(0, sub.size());
-    EXPECT_EQ(sub.size(), dense_subbed.nrow());
-    EXPECT_EQ(dense->ncol(), dense_subbed.ncol());
+    EXPECT_EQ(sub.size(), dense_subbed->nrow());
+    EXPECT_EQ(dense->ncol(), dense_subbed->ncol());
 
     EXPECT_TRUE(dense->prefer_rows());
     EXPECT_FALSE(sparse->prefer_rows());
@@ -55,7 +55,7 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
     create_create_workspaces(false);
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_output();
-        fill_output(sparse_subbed.column(i, output.data()));
+        fill_output(sparse_subbed->column(i, output.data()));
 
         // Reference extraction, the simple way.
         wipe_expected();
@@ -69,21 +69,21 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.column(i, output.data()));
+        fill_output(dense_subbed->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_subbed->sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed->column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -93,8 +93,8 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
     std::vector<size_t> sub = { 17, 18, 11, 18, 15, 17, 13, 18, 11, 9, 6, 3, 6, 18, 1 };
     std::vector<double> buffer_full(dense->nrow());
 
-    auto dense_subbed = tatami::DelayedRowSubset(dense, sub);
-    auto sparse_subbed = tatami::DelayedRowSubset(sparse, sub);
+    auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
 
     size_t LEN = 6;
     size_t first = 0;
@@ -104,7 +104,7 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
         set_sizes(first, std::min(first + LEN, sub.size()));
 
         wipe_output();
-        fill_output(sparse_subbed.column(i, output.data(), first, last));
+        fill_output(sparse_subbed->column(i, output.data(), first, last));
 
         // Reference extraction, the simple way.
         wipe_expected();
@@ -118,17 +118,17 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.column(i, output.data(), first, last));
+        fill_output(dense_subbed->column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_subbed->sparse_column(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);        
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_subbed->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         first += 13;
@@ -141,15 +141,15 @@ TEST_F(SubsetTest, SubsetRowFullRowAccess) {
     std::vector<size_t> sub = { 13, 4, 17, 0, 17, 1, 19, 6, 1 };
     std::vector<double> buffer_full(dense->nrow());
 
-    auto dense_subbed = tatami::DelayedRowSubset(dense, sub);
-    auto sparse_subbed = tatami::DelayedRowSubset(sparse, sub);
+    auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
 
     set_sizes(0, dense->ncol());
 
     create_create_workspaces(true);
     for (size_t i = 0; i < sub.size(); ++i) {
         wipe_output();
-        fill_output(sparse_subbed.row(i, output.data()));
+        fill_output(sparse_subbed->row(i, output.data()));
 
         wipe_expected();
         fill_expected(sparse->row(sub[i], expected.data()));
@@ -157,21 +157,21 @@ TEST_F(SubsetTest, SubsetRowFullRowAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.row(i, output.data()));
+        fill_output(dense_subbed->row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_subbed->sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed->row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -181,17 +181,17 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
     std::vector<size_t> sub = { 3, 9, 1, 0, 9, 5, 8, 3, 1, 8, 7 };
     std::vector<double> buffer_full(dense->ncol());
 
-    auto dense_subbed = tatami::DelayedColumnSubset(dense, sub);
-    auto sparse_subbed = tatami::DelayedColumnSubset(sparse, sub);
+    auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<1>(sparse, sub);
 
     set_sizes(0, sub.size());
-    EXPECT_EQ(sub.size(), dense_subbed.ncol());
-    EXPECT_EQ(dense->nrow(), dense_subbed.nrow());
+    EXPECT_EQ(sub.size(), dense_subbed->ncol());
+    EXPECT_EQ(dense->nrow(), dense_subbed->nrow());
 
     create_create_workspaces(true);
     for (size_t i = 0; i < dense->nrow(); ++i) {
         wipe_output();
-        fill_output(sparse_subbed.row(i, output.data()));
+        fill_output(sparse_subbed->row(i, output.data()));
 
         // Reference extraction, the simple way.
         wipe_expected();
@@ -205,21 +205,21 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.row(i, output.data()));
+        fill_output(dense_subbed->row(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_subbed->sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.row(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed->row(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -230,8 +230,8 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
     size_t LEN = 7;
     std::vector<double> buffer_full(dense->ncol());
 
-    auto dense_subbed = tatami::DelayedColumnSubset(dense, sub);
-    auto sparse_subbed = tatami::DelayedColumnSubset(sparse, sub);
+    auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<1>(sparse, sub);
 
     create_create_workspaces(true);
     first = 0;
@@ -239,7 +239,7 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
         set_sizes(first, std::min(first + LEN, sub.size()));
 
         wipe_output();
-        fill_output(sparse_subbed.row(i, output.data(), first, last));
+        fill_output(sparse_subbed->row(i, output.data(), first, last));
 
         // Reference extraction, the simple way.
         wipe_expected();
@@ -253,17 +253,17 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.row(i, output.data(), first, last));
+        fill_output(dense_subbed->row(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), first, last));
+        fill_sparse_output(sparse_subbed->sparse_row(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);        
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
+        fill_sparse_output(sparse_subbed->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         first += 11;
@@ -276,15 +276,15 @@ TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
     std::vector<size_t> sub = { 7, 8, 0, 5, 1, 4, 1 };
     std::vector<double> buffer_full(dense->ncol());
 
-    auto dense_subbed = tatami::DelayedColumnSubset(dense, sub);
-    auto sparse_subbed = tatami::DelayedColumnSubset(sparse, sub);
+    auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<1>(sparse, sub);
 
     set_sizes(0, sparse->nrow());
 
     create_create_workspaces(false);
     for (size_t i = 0; i < sub.size(); ++i) {
         wipe_output();
-        fill_output(sparse_subbed.column(i, output.data()));
+        fill_output(sparse_subbed->column(i, output.data()));
 
         wipe_expected();
         fill_expected(sparse->column(sub[i], expected.data()));
@@ -292,21 +292,21 @@ TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
 
         // Same result regardless of the backend.
         wipe_output();
-        fill_output(dense_subbed.column(i, output.data()));
+        fill_output(dense_subbed->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         // Works in sparse mode as well.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data()));
+        fill_sparse_output(sparse_subbed->sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         // Passes along the workspace.
         wipe_output();
-        fill_sparse_output(sparse_subbed.sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
+        fill_sparse_output(sparse_subbed->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_subbed.column(i, outval.data(), work_dense.get()));
+        fill_output(dense_subbed->column(i, outval.data(), work_dense.get()));
         EXPECT_EQ(output, expected);
     }
 }

@@ -34,13 +34,13 @@ protected:
 
 TEST_F(ArithScalarTest, AdditionByColumn) {
     tatami::DelayedAddScalarHelper<double> op(5);
-    auto dense_mod = tatami::DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::DelayedIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod.sparse());
-    EXPECT_FALSE(sparse_mod.sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod.nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod.ncol());
+    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
+    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
     set_sizes(0, dense->nrow());
 
@@ -52,24 +52,24 @@ TEST_F(ArithScalarTest, AdditionByColumn) {
         }
 
         wipe_output();
-        fill_output(sparse_mod.column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }
 
 TEST_F(ArithScalarTest, SubtractionByColumn) {
-    tatami::DelayedSubtractScalarHelper<double, true> op(5);
-    auto dense_mod = tatami::DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::DelayedIsometricOp(sparse, op);
+    tatami::DelayedSubtractScalarHelper<true, double> op(5);
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod.sparse());
-    EXPECT_FALSE(sparse_mod.sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod.nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod.ncol());
+    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
+    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
     set_sizes(0, dense->nrow());
 
@@ -81,18 +81,18 @@ TEST_F(ArithScalarTest, SubtractionByColumn) {
         }
 
         wipe_output();
-        fill_output(sparse_mod.column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 
     // Trying the other side.
-    tatami::DelayedSubtractScalarHelper<double, false> op2(0.7);
-    auto dense_mod2 = tatami::DelayedIsometricOp(dense, op2);
-    auto sparse_mod2 = tatami::DelayedIsometricOp(sparse, op2);
+    tatami::DelayedSubtractScalarHelper<false> op2(0.7);
+    auto dense_mod2 = tatami::make_DelayedIsometricOp(dense, op2);
+    auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse, op2);
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
@@ -102,24 +102,24 @@ TEST_F(ArithScalarTest, SubtractionByColumn) {
         }
 
         wipe_output();
-        fill_output(sparse_mod2.column(i, output.data(), first, last));
+        fill_output(sparse_mod2->column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.column(i, output.data(), first, last));
+        fill_output(dense_mod2->column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
     }
 }
 
 TEST_F(ArithScalarTest, MultiplicationByColumn) {
     tatami::DelayedMultiplyScalarHelper<double> op(5);
-    auto dense_mod = tatami::DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::DelayedIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
 
-    EXPECT_EQ(dense->nrow(), dense_mod.nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod.ncol());
-    EXPECT_FALSE(dense_mod.sparse());
-    EXPECT_TRUE(sparse_mod.sparse());
+    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
+    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_TRUE(sparse_mod->sparse());
 
     set_sizes(0, dense->nrow());
 
@@ -131,24 +131,24 @@ TEST_F(ArithScalarTest, MultiplicationByColumn) {
         }
 
         wipe_output();
-        fill_output(sparse_mod.column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 }
 
 TEST_F(ArithScalarTest, DivisionByColumn) {
-    tatami::DelayedDivideScalarHelper<double, true> op(5);
-    auto dense_mod = tatami::DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::DelayedIsometricOp(sparse, op);
+    tatami::DelayedDivideScalarHelper<true> op(5);
+    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
+    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod.sparse());
-    EXPECT_TRUE(sparse_mod.sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod.nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod.ncol());
+    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
+    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
     // Works in full.
     set_sizes(0, dense->nrow());
@@ -161,22 +161,22 @@ TEST_F(ArithScalarTest, DivisionByColumn) {
         }
 
         wipe_output();
-        fill_output(sparse_mod.column(i, output.data()));
+        fill_output(sparse_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod.column(i, output.data()));
+        fill_output(dense_mod->column(i, output.data()));
         EXPECT_EQ(output, expected);
     }
 
     // Works in the other direction. Some shenanigans involved to avoid division by zero.
     tatami::DelayedExpHelper<double> op2a;
-    auto dense_mod2a = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{dense, op2a});
-    auto sparse_mod2a = std::shared_ptr<tatami::numeric_matrix>(new tatami::DelayedIsometricOp{sparse, op2a});
+    auto dense_mod2a = tatami::make_DelayedIsometricOp(dense, op2a);
+    auto sparse_mod2a = tatami::make_DelayedIsometricOp(sparse, op2a);
 
-    tatami::DelayedDivideScalarHelper<double, false> op2(0.7);
-    auto dense_mod2 = tatami::DelayedIsometricOp(dense_mod2a, op2);
-    auto sparse_mod2 = tatami::DelayedIsometricOp(sparse_mod2a, op2);
+    tatami::DelayedDivideScalarHelper<false> op2(0.7);
+    auto dense_mod2 = tatami::make_DelayedIsometricOp(dense_mod2a, op2);
+    auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse_mod2a, op2);
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
         wipe_expected();
@@ -186,11 +186,11 @@ TEST_F(ArithScalarTest, DivisionByColumn) {
         }
 
         wipe_output();
-        fill_output(sparse_mod2.column(i, output.data(), first, last));
+        fill_output(sparse_mod2->column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(dense_mod2.column(i, output.data(), first, last));
+        fill_output(dense_mod2->column(i, output.data(), first, last));
         EXPECT_EQ(output, expected);
     }
 }
