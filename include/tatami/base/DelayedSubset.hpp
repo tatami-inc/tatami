@@ -19,7 +19,7 @@ namespace tatami {
  * Implements delayed subsetting (i.e., slicing) on the rows or columns of a matrix.
  * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
  *
- * @tparam MARGIN Dimension along which the addition is to occur.
+ * @tparam MARGIN Dimension along which the subsetting is to occur.
  * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
  * @tparam T Type of matrix value.
  * @tparam V Vector containing the subset indices.
@@ -118,6 +118,13 @@ public:
         return mat->sparse();
     }
 
+    /**
+     * @return Whether the underlying (pre-subsetted) matrix prefers row access.
+     */
+    bool prefer_rows() const {
+        return mat->prefer_rows();
+    }
+
 private:
     std::shared_ptr<const typed_matrix<T, IDX> > mat;
     V indices;
@@ -190,13 +197,15 @@ private:
 /**
  * A `make_*` helper function to enable partial template deduction of supplied types.
  *
- * @tparam MARGIN Dimension along which the addition is to occur.
+ * @tparam MARGIN Dimension along which the subsetting is to occur.
  * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
  * @tparam MAT A specialized `typed_matrix`, to be automatically deducted.
  * @tparam V Vector containing the subset indices, to be automatically deducted.
  *
  * @param p Pointer to a `typed_matrix`.
  * @param idx Instance of the index vector.
+ *
+ * @return A pointer to a `DelayedSubset` instance.
  */
 template<int MARGIN, class MAT, class V>
 std::shared_ptr<MAT> make_DelayedSubset(std::shared_ptr<MAT> p, V idx) {
