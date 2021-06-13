@@ -91,7 +91,7 @@ private:
  * @tparam RIGHT Should the scalar be subtracted from the matrix value?
  * If `false`, the matrix value is subtracted from the scalar.
  */
-template<typename T = double, bool RIGHT = true>
+template<bool RIGHT, typename T = double>
 struct DelayedSubtractScalarHelper {
     /**
      * @param s Scalar value to be subtracted from the matrix, or to subtract from the matrix.
@@ -132,7 +132,7 @@ private:
  * @tparam RIGHT Should the matrix value be divided by the scalar?
  * If `false`, the scalar is divided by the matrix value.
  */
-template<typename T = double, bool RIGHT = true>
+template<bool RIGHT, typename T = double>
 struct DelayedDivideScalarHelper { 
     /**
      * @param s Scalar value to use in the division.
