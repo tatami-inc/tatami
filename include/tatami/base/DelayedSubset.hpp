@@ -187,60 +187,26 @@ private:
     }
 };
 
-// Separate classes defined to allow template deduction.
-template<typename T, typename IDX, class V>
-class DelayedRowSubset : public DelayedSubset<0, T, IDX, V> {
-public:
-    /**
-     * @param p Pointer to the underlying (pre-subset) matrix.
-     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
-     */
-    DelayedRowSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : DelayedSubset<0, T, IDX, V>(p, idx) {}
-
-    /**
-     * @copydoc DelayedRowSubset
-     */
-    DelayedRowSubset(std::shared_ptr<typed_matrix<T, IDX> > p, const V& idx) : DelayedSubset<0, T, IDX, V>(p, idx) {}
-
-    /**
-     * @copydoc DelayedRowSubset
-     */
-    DelayedRowSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : DelayedSubset<0, T, IDX, V>(p, std::forward<V>(idx)) {}
-
-    /**
-     * @copydoc DelayedRowSubset
-     */
-    DelayedRowSubset(std::shared_ptr<typed_matrix<T, IDX> > p, V&& idx) : DelayedSubset<0, T, IDX, V>(p, std::forward<V>(idx)) {}
-
-    ~DelayedRowSubset() {}
-};
-
-template<typename T, typename IDX, class V>
-class DelayedColumnSubset : public DelayedSubset<1, T, IDX, V> {
-public:
-    /**
-     * @param p Pointer to the underlying (pre-subset) matrix.
-     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
-     */
-    DelayedColumnSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, const V& idx) : DelayedSubset<1, T, IDX, V>(p, idx) {}
-
-    /**
-     * @copydoc DelayedColumnSubset
-     */
-    DelayedColumnSubset(std::shared_ptr<typed_matrix<T, IDX> > p, const V& idx) : DelayedSubset<1, T, IDX, V>(p, idx) {}
-
-    /**
-     * @copydoc DelayedColumnSubset
-     */
-    DelayedColumnSubset(std::shared_ptr<const typed_matrix<T, IDX> > p, V&& idx) : DelayedSubset<1, T, IDX, V>(p, std::forward<V>(idx)) {}
-
-    /**
-     * @copydoc DelayedColumnSubset
-     */
-    DelayedColumnSubset(std::shared_ptr<typed_matrix<T, IDX> > p, V&& idx) : DelayedSubset<1, T, IDX, V>(p, std::forward<V>(idx)) {}
-
-    ~DelayedColumnSubset() {}
-};
+/**
+ * A `make_*` helper function to enable partial template deduction of supplied types.
+ *
+ * @tparam MARGIN Dimension along which the addition is to occur.
+ * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
+ * @tparam MAT A specialized `typed_matrix`, to be automatically deducted.
+ * @tparam V Vector containing the subset indices, to be automatically deducted.
+ *
+ * @param p Pointer to a `typed_matrix`.
+ * @param idx Instance of the index vector.
+ */
+template<int MARGIN, class MAT, class V>
+std::shared_ptr<MAT> make_DelayedSubset(std::shared_ptr<MAT> p, V idx) {
+    return std::shared_ptr<MAT>(
+        new DelayedSubset<MARGIN, typename MAT::value, typename MAT::index, typename std::remove_reference<V>::type>(
+            p,
+            std::move(idx)
+        )
+    );
+}
 
 }
 

@@ -172,6 +172,9 @@ public:
      * This is derived from `T` by default, see `determine_content_type()`.
      */
     content_type type() const { return determine_content_type<T>(); }
+
+    typedef T value;
+    typedef IDX index;
 };
 
 /**

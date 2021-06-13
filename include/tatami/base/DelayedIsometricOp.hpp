@@ -132,6 +132,25 @@ private:
     OP operation;
 };
 
+/**
+ * A `make_*` helper function to enable partial template deduction of supplied types.
+ *
+ * @tparam MAT A specialized `typed_matrix`, to be automatically deducted.
+ * @tparam OP Helper class defining the operation.
+ *
+ * @param p Pointer to a `typed_matrix`.
+ * @param op Instance of the operation helper class.
+ */
+template<class MAT, class OP>
+std::shared_ptr<MAT> make_DelayedIsometricOp(std::shared_ptr<MAT> p, OP op) {
+    return std::shared_ptr<MAT>(
+        new DelayedIsometricOp<typename MAT::value, typename MAT::index, typename std::remove_reference<OP>::type>(
+            p,
+            std::move(op)
+        )
+    );
+}
+
 }
 
 #include "arith_scalar_helpers.hpp"
