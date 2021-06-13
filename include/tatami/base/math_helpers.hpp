@@ -15,7 +15,7 @@ namespace tatami {
 /**
  * @brief Take the absolute value of a matrix entry.
  */
-template<typename T>
+template<typename T = double>
 struct DelayedAbsHelper {
     /**
      * @param r Row index, ignored.
@@ -37,7 +37,7 @@ struct DelayedAbsHelper {
 /**
  * @brief Take the logarithm of a matrix entry.
  */
-template<typename T>
+template<typename T = double>
 struct DelayedLogHelper {
     /**
      * Defaults to the natural log.
@@ -71,7 +71,7 @@ private:
 /**
  * @brief Take the square root of a matrix entry.
  */
-template<typename T>
+template<typename T = double>
 struct DelayedSqrtHelper {
     /**
      * @param r Row index, ignored.
@@ -93,7 +93,7 @@ struct DelayedSqrtHelper {
 /**
  * @brief Take the logarithm of a matrix entry plus 1.
  */
-template<typename T>
+template<typename T = double>
 struct DelayedLog1pHelper {
     /**
      * Defaults to the natural log.
@@ -127,7 +127,7 @@ private:
 /**
  * @brief Round a matrix entry to the nearest integer.
  */
-template<typename T>
+template<typename T = double>
 struct DelayedRoundHelper {
     /**
      * @param r Row index, ignored.
@@ -149,7 +149,7 @@ struct DelayedRoundHelper {
 /**
  * @brief Use a matrix entry as an exponent.
  */
-template<typename T>
+template<typename T = double>
 struct DelayedExpHelper {
     /**
      * @param r Row index, ignored.
