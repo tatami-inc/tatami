@@ -130,6 +130,7 @@ public:
 private:
     std::shared_ptr<const typed_matrix<T, IDX> > mat;
     OP operation;
+    static_assert(std::is_same<T, decltype(operation(0, 0, 0))>::value);
 };
 
 /**
