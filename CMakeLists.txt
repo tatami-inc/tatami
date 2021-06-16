@@ -11,4 +11,9 @@ add_library(tatami INTERFACE)
 
 target_include_directories(tatami INTERFACE include/)
 
-add_subdirectory(tests)
+if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    include(CTest)
+    if(BUILD_TESTING)
+        add_subdirectory(tests)
+    endif() 
+endif()
