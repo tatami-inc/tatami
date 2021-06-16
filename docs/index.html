@@ -94,11 +94,35 @@ $(function() {
 <p>For performance-critical sections, it may be desirable to customize the client code based on properties of the matrix. <b>tatami</b> offers the <code>sparse()</code> and <code>prefer_rows()</code> methods that indicate whether a matrix is sparse and if it prefers extraction on the rows (e.g., for row-major matrices). This allows client developers to design special code paths to take advantage of these properties - the <a href="gallery/colsums.cpp"><code>colsums.cpp</code></a> example is particularly demonstrative.</p>
 <p>We use templating to define the type of values returned by the interface. This includes the type of the data (most typically <code>double</code>) as well as the type of row/column indices (default <code>int</code>, but one could imagine using, e.g., <code>size_t</code>). It is worth noting that the storage type does not need to be the same as the interface type. For example, developers could store a matrix of small counts as <code>uint16_t</code> while returning <code>double</code>s for compatibility with downstream mathematical code.</p>
 <p>Matrix classes named with <code>snake_case</code> are virtual and intended for use as interfaces - these cannot be directly constructed. Matrix classes named with <code>CamelCase</code> correspond to actual matrix representations and can be explicitly constructed. All other functions or non-matrix classes use <code>snake_case</code>.</p>
+<h1>Including <b>tatami</b> in a project</h1>
+<p>If you're already using CMake, then you just need to add something like this to your <code>CMakeLists.txt</code>:</p>
+<div class="fragment"><div class="line">include(FetchContent)</div>
+<div class="line"> </div>
+<div class="line">FetchContent_Declare(</div>
+<div class="line">  tatami</div>
+<div class="line">  GIT_REPOSITORY https://github.com/LTLA/tatami</div>
+<div class="line">  GIT_TAG master # or any version of interest </div>
+<div class="line">)</div>
+<div class="line"> </div>
+<div class="line">FetchContent_MakeAvailable(tatami)</div>
+</div><!-- fragment --><p>Then it's a simple matter to use the library in the build for your executable or library:</p>
+<div class="fragment"><div class="line"># For executables:</div>
+<div class="line">target_link_libraries(myexe tatami)</div>
+<div class="line"> </div>
+<div class="line"># For libaries</div>
+<div class="line">target_link_libraries(mylib INTERFACE tatami)</div>
+</div><!-- fragment --><p>If you're not using CMake, the simple approach is to just copy the files - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>.</p>
 <h1>Documentation</h1>
 <p>The <a href="https://github.com/LTLA/tatami/tree/master/gallery">gallery</a> contains worked examples for common operations based on row/column traversals.</p>
 <p>The <a href="https://github.com/LTLA/tatami/tree/master/include"><code>include</code></a> subdirectory contains further instructions on use, particularly for extensions.</p>
 <p>The <a href="https://ltla.github.io/tatami">reference documentation</a> for the API is generated automatically with Doxygen.</p>
-<h1>TODO</h1>
+<h1>Running unit tests</h1>
+<p>We use the <a href="https://github.com/google/googletest">GoogleTest</a> unit testing framework. Anyone who is curious can build and execute the tests themselves with:</p>
+<div class="fragment"><div class="line">cmake -S . -B build</div>
+<div class="line">cmake --build build</div>
+<div class="line">cd build</div>
+<div class="line">make tests</div>
+</div><!-- fragment --><h1>TODO</h1>
 <ul>
 <li>Add bindings for TileDB. </li>
 </ul>
