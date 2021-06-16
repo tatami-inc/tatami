@@ -72,6 +72,34 @@ Matrix classes named with `snake_case` are virtual and intended for use as inter
 Matrix classes named with `CamelCase` correspond to actual matrix representations and can be explicitly constructed.
 All other functions or non-matrix classes use `snake_case`.
 
+## Including **tatami** in a project
+
+If you're already using CMake, then you just need to add something like this to your `CMakeLists.txt`:
+
+```
+include(FetchContent)
+
+FetchContent_Declare(
+  tatami
+  GIT_REPOSITORY https://github.com/LTLA/tatami
+  GIT_TAG master # or any version of interest 
+)
+
+FetchContent_MakeAvailable(tatami)
+```
+
+Then it's a simple matter to use the library in the build for your executable or library:
+
+```
+# For executables:
+target_link_libraries(myexe tatami)
+
+# For libaries
+target_link_libraries(mylib INTERFACE tatami)
+```
+
+If you're not using CMake, the simple approach is to just copy the files - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
+
 ## Documentation
 
 The [gallery](https://github.com/LTLA/tatami/tree/master/gallery) contains worked examples for common operations based on row/column traversals.
@@ -79,6 +107,18 @@ The [gallery](https://github.com/LTLA/tatami/tree/master/gallery) contains worke
 The [`include`](https://github.com/LTLA/tatami/tree/master/include) subdirectory contains further instructions on use, particularly for extensions.
 
 The [reference documentation](https://ltla.github.io/tatami) for the API is generated automatically with Doxygen.
+
+## Running unit tests
+
+We use the [GoogleTest](https://github.com/google/googletest) unit testing framework.
+Anyone who is curious can build and execute the tests themselves with:
+
+```sh
+cmake -S . -B build
+cmake --build build
+cd build
+make tests
+```
 
 ## TODO
 
