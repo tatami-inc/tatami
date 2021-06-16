@@ -1,9 +1,0 @@
-*.swp
-CMakeCache.txt
-CMakeFiles/
-CTestTestfile.cmake
-Makefile
-_deps/
-build/
-lib/
-*.cmake
