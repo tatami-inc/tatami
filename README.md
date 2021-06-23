@@ -3,12 +3,12 @@
 ## Overview
 
 **tatami** is a spiritual successor to the [**beachmat** C++ API](https://github.com/LTLA/beachmat) that provides read access to different matrix representations.
-Specifically, applications can use **tatami** to read rows and/or columns of a matrix without any knowledge of its specific representation.
-This allows application developers to write a single piece of code that will work seamlessly with different matrix inputs, even if the matrix representation varies at run-time.
+Specifically, applications can use **tatami** to read rows and/or columns of a matrix without any knowledge of the specific matrix representation.
+This allows application developers to write a single piece of code that will work seamlessly with different inputs, even if the underlying representation varies at run-time.
 
 **tatami** (and **beachmat** before it) is motivated by analyses of processed genomics data, where matrices are typically interpreted as a collection of row- or column-wise vectors.
 Many applications involve looping over rows or columns to compute some statistic or summary - for example, testing for differential expression within each row of the matrix.
-**tatami** is largely designed around optimizing this access pattern, and no support is provided for more complex operations.
+**tatami** is largely designed around optimizing this access pattern.
 
 Representations currently supported by **tatami** include:
 
@@ -77,7 +77,7 @@ Matrix classes named with `CamelCase` correspond to actual matrix representation
 All other functions or non-matrix classes use `snake_case`.
 
 **tatami** does not support more complex operations like decompositions or matrix algebra.
-For this, we typically use [**Eigen**](https://eigen.tuxfamily.org/), which trades the diversity of representations for a much more comprehensive suite of operations.
+For this we typically use [**Eigen**](https://eigen.tuxfamily.org/), effectively trading the diversity of representations for a much more comprehensive suite of operations.
 A frequent pattern is to use **tatami** to load and preprocess the input data into a smaller submatrix that can be cheaply copied into an `Eigen::MatrixXd` for further work.
 
 ## Including **tatami** in a project
