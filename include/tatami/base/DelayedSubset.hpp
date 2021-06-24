@@ -105,10 +105,12 @@ public:
     }
 
     /**
+     * @param row Should a workspace be created for row-wise extraction?
+     *
      * @return A null pointer or a shared pointer to a `workspace` object, depending on the underlying (pre-subsetted) matrix.
      */
-    std::shared_ptr<workspace> new_workspace() const {
-        return mat->new_workspace();
+    std::shared_ptr<workspace> new_workspace(bool row) const {
+        return mat->new_workspace(row);
     }
 
     /**
