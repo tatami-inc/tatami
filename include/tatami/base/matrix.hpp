@@ -55,6 +55,23 @@ public:
      * Defaults to `false` if no specialized method is provided in derived classes.
      */
     virtual bool prefer_rows() const { return false; }
+
+    /**
+     * @return A `pair` containing the number of matrix elements that prefer row-level access (`first`) or column-level access (`second`).
+     *
+     * This method is useful for determining the return value of `prefer_rows()` in combined matrices consisting of both row- and column-preferred submatrices.
+     * In such cases, the net preference can be determined based on the combined size of the submatrices for each preference.
+     *
+     * For simpler matrices, the return value contains the total size of the matrix in one of the `double`s and zero in the other.
+     */
+    virtual std::pair<double, double> dimension_preference () const {
+        double size = static_cast<double>(nrow()) * static_cast<double>(ncol());
+        if (prefer_rows()) {
+            return std::make_pair(size, 0.0);
+        } else {
+            return std::make_pair(0.0, size);
+        }
+    }
 };
 
 }
