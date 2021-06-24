@@ -1,11 +1,12 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classtatami_1_1matrix.html" title="Virtual class for all matrices." alt="" coords="5,189,104,216"/>
+<area shape="rect" id="node1" href="$classtatami_1_1matrix.html" title="Virtual class for all matrices." alt="" coords="5,223,104,249"/>
 <area shape="rect" id="node2" href="$classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,85,289,126"/>
-<area shape="rect" id="node5" href="$classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,182,289,223"/>
-<area shape="rect" id="node9" href="$classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type." alt="" coords="152,247,289,289"/>
+<area shape="rect" id="node5" href="$classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,215,289,257"/>
+<area shape="rect" id="node10" href="$classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type." alt="" coords="152,281,289,322"/>
 <area shape="rect" id="node3" href="$classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation." alt="" coords="340,5,519,61"/>
 <area shape="rect" id="node4" href="$classtatami_1_1DenseMatrix.html" title="Dense matrix representation." alt="" coords="361,85,497,126"/>
 <area shape="rect" id="node6" href="$classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix." alt="" coords="347,150,511,191"/>
 <area shape="rect" id="node7" href="$classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix." alt="" coords="351,215,508,257"/>
 <area shape="rect" id="node8" href="$classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block." alt="" coords="337,281,521,322"/>
+<area shape="rect" id="node9" href="$classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix." alt="" coords="344,346,515,387"/>
 </map>

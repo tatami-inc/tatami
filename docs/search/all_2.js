@@ -20,9 +20,12 @@ var searchData=
   ['delayedsubsetblock_2ehpp_36',['DelayedSubsetBlock.hpp',['../DelayedSubsetBlock_8hpp.html',1,'']]],
   ['delayedsubtractscalarhelper_37',['DelayedSubtractScalarHelper',['../structtatami_1_1DelayedSubtractScalarHelper.html#abf2792fab8a48f9a89ee50ad6c6d8da3',1,'tatami::DelayedSubtractScalarHelper::DelayedSubtractScalarHelper()'],['../structtatami_1_1DelayedSubtractScalarHelper.html',1,'tatami::DelayedSubtractScalarHelper&lt; RIGHT, T &gt;']]],
   ['delayedsubtractvectorhelper_38',['DelayedSubtractVectorHelper',['../structtatami_1_1DelayedSubtractVectorHelper.html#ad9f4a928250416796f4ead2b451d0701',1,'tatami::DelayedSubtractVectorHelper::DelayedSubtractVectorHelper()'],['../structtatami_1_1DelayedSubtractVectorHelper.html',1,'tatami::DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;']]],
-  ['densecolumnmatrix_39',['DenseColumnMatrix',['../DenseMatrix_8hpp.html#a1c118308300d626e53436a9540dd8bd9',1,'tatami']]],
-  ['densematrix_40',['DenseMatrix',['../classtatami_1_1DenseMatrix.html#a520c63dd6f58dc7daaca05cbff960cae',1,'tatami::DenseMatrix::DenseMatrix(size_t nr, size_t nc, const V &amp;source)'],['../classtatami_1_1DenseMatrix.html#ab89adaca1dccbcce13c745191f506ba1',1,'tatami::DenseMatrix::DenseMatrix(size_t nr, size_t nc, V &amp;&amp;source)'],['../classtatami_1_1DenseMatrix.html',1,'tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;']]],
-  ['densematrix_2ehpp_41',['DenseMatrix.hpp',['../DenseMatrix_8hpp.html',1,'']]],
-  ['denserowmatrix_42',['DenseRowMatrix',['../DenseMatrix_8hpp.html#ad4db75262ca90f85a4278b90f844cffd',1,'tatami']]],
-  ['determine_5fcontent_5ftype_43',['determine_content_type',['../content__type_8hpp.html#af847372557a0468c6c2b96e6d6a2a8a3',1,'tatami']]]
+  ['delayedtranspose_39',['DelayedTranspose',['../classtatami_1_1DelayedTranspose.html#a639f0367cd1aff9ad5f3f163fb5f68ad',1,'tatami::DelayedTranspose::DelayedTranspose()'],['../classtatami_1_1DelayedTranspose.html',1,'tatami::DelayedTranspose&lt; T, IDX &gt;']]],
+  ['delayedtranspose_2ehpp_40',['DelayedTranspose.hpp',['../DelayedTranspose_8hpp.html',1,'']]],
+  ['densecolumnmatrix_41',['DenseColumnMatrix',['../DenseMatrix_8hpp.html#a1c118308300d626e53436a9540dd8bd9',1,'tatami']]],
+  ['densematrix_42',['DenseMatrix',['../classtatami_1_1DenseMatrix.html#a520c63dd6f58dc7daaca05cbff960cae',1,'tatami::DenseMatrix::DenseMatrix(size_t nr, size_t nc, const V &amp;source)'],['../classtatami_1_1DenseMatrix.html#ab89adaca1dccbcce13c745191f506ba1',1,'tatami::DenseMatrix::DenseMatrix(size_t nr, size_t nc, V &amp;&amp;source)'],['../classtatami_1_1DenseMatrix.html',1,'tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;']]],
+  ['densematrix_2ehpp_43',['DenseMatrix.hpp',['../DenseMatrix_8hpp.html',1,'']]],
+  ['denserowmatrix_44',['DenseRowMatrix',['../DenseMatrix_8hpp.html#ad4db75262ca90f85a4278b90f844cffd',1,'tatami']]],
+  ['determine_5fcontent_5ftype_45',['determine_content_type',['../content__type_8hpp.html#af847372557a0468c6c2b96e6d6a2a8a3',1,'tatami']]],
+  ['dimension_5fpreference_46',['dimension_preference',['../classtatami_1_1matrix.html#a7ae4ee4bc1590684f1e66b7661b8c966',1,'tatami::matrix']]]
 ];

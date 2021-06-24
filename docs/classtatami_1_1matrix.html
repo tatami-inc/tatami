@@ -83,14 +83,15 @@ Inheritance diagram for tatami::matrix:</div>
 <div class="dyncontent">
 <div class="center"><img src="classtatami_1_1matrix__inherit__graph.png" border="0" usemap="#atatami_1_1matrix_inherit__map" alt="Inheritance graph"/></div>
 <map name="atatami_1_1matrix_inherit__map" id="atatami_1_1matrix_inherit__map">
-<area shape="rect" title="Virtual class for all matrices." alt="" coords="5,189,104,216"/>
+<area shape="rect" title="Virtual class for all matrices." alt="" coords="5,223,104,249"/>
 <area shape="rect" href="classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,85,289,126"/>
-<area shape="rect" href="classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,182,289,223"/>
+<area shape="rect" href="classtatami_1_1typed__matrix.html" title=" " alt="" coords="152,215,289,257"/>
 <area shape="rect" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation." alt="" coords="340,5,519,61"/>
 <area shape="rect" href="classtatami_1_1DenseMatrix.html" title="Dense matrix representation." alt="" coords="361,85,497,126"/>
 <area shape="rect" href="classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix." alt="" coords="347,150,511,191"/>
 <area shape="rect" href="classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix." alt="" coords="351,215,508,257"/>
 <area shape="rect" href="classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block." alt="" coords="337,281,521,322"/>
+<area shape="rect" href="classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix." alt="" coords="344,346,515,387"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -108,10 +109,40 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad4d53813c32de8561a2cff905fe4a501"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad080e53326aca6016a2bee8d19a0fea7"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">prefer_rows</a> () const</td></tr>
 <tr class="separator:ad080e53326aca6016a2bee8d19a0fea7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ae4ee4bc1590684f1e66b7661b8c966"><td class="memItemLeft" align="right" valign="top">virtual std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1matrix.html#a7ae4ee4bc1590684f1e66b7661b8c966">dimension_preference</a> () const</td></tr>
+<tr class="separator:a7ae4ee4bc1590684f1e66b7661b8c966"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Virtual class for all matrices. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a7ae4ee4bc1590684f1e66b7661b8c966"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7ae4ee4bc1590684f1e66b7661b8c966">&#9670;&nbsp;</a></span>dimension_preference()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::pair&lt;double, double&gt; tatami::matrix::dimension_preference </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A <code>pair</code> containing the number of matrix elements that prefer row-level access (<code>first</code>) or column-level access (<code>second</code>).</dd></dl>
+<p>This method is useful for determining the return value of <code><a class="el" href="classtatami_1_1matrix.html#ad080e53326aca6016a2bee8d19a0fea7">prefer_rows()</a></code> in combined matrices consisting of both row- and column-preferred submatrices. In such cases, the net preference can be determined based on the combined size of the submatrices for each preference.</p>
+<p>For simpler matrices, the return value contains the total size of the matrix in one of the <code>double</code>s and zero in the other. </p>
+
+</div>
+</div>
 <a id="a433c79bdee72c01d00b169d236464964"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a433c79bdee72c01d00b169d236464964">&#9670;&nbsp;</a></span>ncol()</h2>
 
@@ -136,7 +167,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Number of columns. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a2aeb481069a05d0fc07da5243b4de981">tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#abb010d4a45c1a06dfb53003025a1bdca">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#a452bca17a80a3c0813fd17af9a31b954">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a6871fd77991469c12276bd76c01bec59">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a2aeb481069a05d0fc07da5243b4de981">tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a29552de098bd2374ae99ef0e223d8973">tatami::DelayedTranspose&lt; T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#abb010d4a45c1a06dfb53003025a1bdca">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#a452bca17a80a3c0813fd17af9a31b954">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a6871fd77991469c12276bd76c01bec59">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
 
 </div>
 </div>
@@ -171,7 +202,7 @@ Public Member Functions</h2></td></tr>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>workspace</code> for row or column extraction, or a null pointer if no workspace is required. Defaults to returning a null pointer if no specialized method is provided in derived classes. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classtatami_1_1DelayedIsometricOp.html#a825d8775cf38df919230278d2a01dafe">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a4a8d6c020e43a41251485c24569d1d42">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classtatami_1_1DelayedTranspose.html#a34bd41a71cb68fb98697076a4119f33f">tatami::DelayedTranspose&lt; T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a16678309e2836a7f2d5d60f79ab34322">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a70a2c0615bf80ce0d7f09fe2561fa69e">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#a825d8775cf38df919230278d2a01dafe">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a4a8d6c020e43a41251485c24569d1d42">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
 
 </div>
 </div>
@@ -199,7 +230,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Number of rows. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a8a036df3d67b81cb8b513343da4fd762">tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ac129143b74bc85931ecbc0171e1306e5">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a0b1e46c7058a68bf99d22e1abbfae180">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#afff7ed215617739acaa9571b43df40db">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a5c8cbee3334cbc3f860c1b328e254f7d">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a8a036df3d67b81cb8b513343da4fd762">tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#afb9f6fb4d51c4741d1c7ae60dd068a26">tatami::DelayedTranspose&lt; T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ac129143b74bc85931ecbc0171e1306e5">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a0b1e46c7058a68bf99d22e1abbfae180">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#afff7ed215617739acaa9571b43df40db">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a5c8cbee3334cbc3f860c1b328e254f7d">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
 
 </div>
 </div>
@@ -227,7 +258,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>The preferred dimension for extracting values. If <code>true</code>, row-wise extraction is preferred; if <code>false</code>, column-wise extraction is preferred. Defaults to <code>false</code> if no specialized method is provided in derived classes. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a94ddae4be909726ce775a3dfb1fd0ea5">tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#af3d355b674d02c73923828549714d1d2">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#ad6a41e31f7986bcac03d1386f57fed55">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#aac7d662db8f3b0da5431b3035a903e1e">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a87ffed12dc9ca20382addba5b6bc944b">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a94ddae4be909726ce775a3dfb1fd0ea5">tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a13a4810d7d36b07df67b4d0e758d200a">tatami::DelayedTranspose&lt; T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#af3d355b674d02c73923828549714d1d2">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#ad6a41e31f7986bcac03d1386f57fed55">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#aac7d662db8f3b0da5431b3035a903e1e">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a87ffed12dc9ca20382addba5b6bc944b">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
 
 </div>
 </div>
@@ -255,7 +286,7 @@ Public Member Functions</h2></td></tr>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Is this matrix sparse? Defaults to <code>false</code> if no specialized method is provided in derived classes. </dd></dl>
 
-<p>Reimplemented in <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a7cccf979a422cfca026faeb2eff55b16">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#ad1871b601a312da4fe488be870b6b0c8">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#a7993cbcf05de154adb696169a7fa4003">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a6054f2b91d0d98facd1ee30ac314f153">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
+<p>Reimplemented in <a class="el" href="classtatami_1_1DelayedTranspose.html#ad22bbe789d72c8dcc1b2d6ff7e4881c7">tatami::DelayedTranspose&lt; T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a7cccf979a422cfca026faeb2eff55b16">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#ad1871b601a312da4fe488be870b6b0c8">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#a7993cbcf05de154adb696169a7fa4003">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, and <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a6054f2b91d0d98facd1ee30ac314f153">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>.</p>
 
 </div>
 </div>
