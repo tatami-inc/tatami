@@ -2,7 +2,6 @@
 #define TATAMI_DELAYED_TRANSPOSE
 
 #include "typed_matrix.hpp"
-#include <algorithm>
 #include <memory>
 
 /**
@@ -28,7 +27,7 @@ public:
     /**
      * @param p Pointer to the underlying (pre-transpose) matrix.
      */
-    DelayedTranspose(std::shared_ptr<const typed_matrix<T, IDX> > p) : mat(p) {}
+    DelayedTranspose(std::shared_ptr<const typed_matrix<T, IDX> > p) : mat(std::move(p)) {}
 
     ~DelayedTranspose() {}
 public:
@@ -90,8 +89,10 @@ public:
      * @return Whether the underlying (pre-subsetted) matrix prefers row access.
      */
     bool prefer_rows() const {
-        return mat->prefer_rows();
+        return !mat->prefer_rows();
     }
+private:
+    std::shared_ptr<const typed_matrix<T, IDX> > mat;
 };
 
 /**
@@ -103,10 +104,10 @@ public:
  *
  * @return A pointer to a `DelayedTranspose` instance.
  */
-template<int MARGIN, class MAT, class V>
+template<class MAT>
 std::shared_ptr<MAT> make_DelayedTranspose(std::shared_ptr<MAT> p) {
     return std::shared_ptr<MAT>(
-        new DelayedTranspose<typename MAT::value, typename MAT::index>(p)
+        new DelayedTranspose<typename MAT::value, typename MAT::index>(std::move(p))
     );
 }
 
