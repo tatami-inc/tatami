@@ -99,7 +99,7 @@ public:
         for (size_t i = first; i < last; ++i) {
             ibuffer[i - first] = i;
         }
-        return sparse_range(last - first, vbuffer, ibuffer); 
+        return sparse_range(last - first, val, ibuffer); 
     }
 
     /**
@@ -132,7 +132,7 @@ public:
         for (size_t i = first; i < last; ++i) {
             ibuffer[i - first] = i;
         }
-        return sparse_range(last - first, vbuffer, ibuffer); 
+        return sparse_range(last - first, val, ibuffer); 
     }
 
     /**
