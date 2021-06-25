@@ -7,5 +7,5 @@ var searchData=
   ['make_5fdelayedsubset_159',['make_DelayedSubset',['../DelayedSubset_8hpp.html#a4473d783d29c4cf969b4294922b3b081',1,'tatami']]],
   ['make_5fdelayedsubsetblock_160',['make_DelayedSubsetBlock',['../DelayedSubsetBlock_8hpp.html#ac57f538400a283e093b91b415a18ecda',1,'tatami']]],
   ['make_5fdelayedsubtractvectorhelper_161',['make_DelayedSubtractVectorHelper',['../arith__vector__helpers_8hpp.html#a9c7f75368ccdeef11137081b2d698fcf',1,'tatami']]],
-  ['make_5fdelayedtranspose_162',['make_DelayedTranspose',['../DelayedTranspose_8hpp.html#ac776ea0f9828f7f6f389aaa41c14649b',1,'tatami']]]
+  ['make_5fdelayedtranspose_162',['make_DelayedTranspose',['../DelayedTranspose_8hpp.html#a22624c4d027f123a484db188bd2af996',1,'tatami']]]
 ];
