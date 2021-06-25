@@ -119,14 +119,14 @@ TEST_F(TransposeTest, FullSparseAccess) {
     set_sizes(0, tsparse->nrow());
     for (size_t i = 0; i < tsparse->ncol(); ++i) {
         wipe_expected();
-        fill_expected(sparse->row(i, expected.data()));
+        fill_expected(sparse->sparse_row(i, outval.data(), outidx.data()));
 
         wipe_output();
-        fill_output(tsparse->column(i, output.data()));
+        fill_output(tsparse->sparse_column(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(tsparse->column(i, output.data(), wrk.get()));
+        fill_output(tsparse->sparse_column(i, outval.data(), outidx.data(), wrk.get()));
         EXPECT_EQ(output, expected);
     }
 
@@ -134,14 +134,14 @@ TEST_F(TransposeTest, FullSparseAccess) {
     set_sizes(0, tsparse->ncol());
     for (size_t i = 0; i < tsparse->nrow(); ++i) {
         wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
+        fill_expected(sparse->sparse_column(i, outval.data(), outidx.data()));
 
         wipe_output();
-        fill_output(tsparse->row(i, output.data()));
+        fill_output(tsparse->sparse_row(i, outval.data(), outidx.data()));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(tsparse->row(i, output.data(), wrk.get()));
+        fill_output(tsparse->sparse_row(i, outval.data(), outidx.data(), wrk.get()));
         EXPECT_EQ(output, expected);
     }
 }
@@ -156,14 +156,14 @@ TEST_F(TransposeTest, SubsetSparseAccess) {
         set_sizes(first, std::min(first + LEN, tsparse->nrow()));
 
         wipe_expected();
-        fill_expected(sparse->row(i, expected.data(), first, last));
+        fill_expected(sparse->sparse_row(i, outval.data(), outidx.data(), first, last));
 
         wipe_output();
-        fill_output(tsparse->column(i, output.data(), first, last));
+        fill_output(tsparse->sparse_column(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(tsparse->column(i, output.data(), first, last, wrk.get()));
+        fill_output(tsparse->sparse_column(i, outval.data(), outidx.data(), first, last, wrk.get()));
         EXPECT_EQ(output, expected);
 
         first += 3;
@@ -176,14 +176,14 @@ TEST_F(TransposeTest, SubsetSparseAccess) {
         set_sizes(first, std::min(first + LEN, tsparse->ncol()));
 
         wipe_expected();
-        fill_expected(sparse->column(i, expected.data(), first, last));
+        fill_expected(sparse->sparse_column(i, outval.data(), outidx.data(), first, last));
 
         wipe_output();
-        fill_output(tsparse->row(i, output.data(), first, last));
+        fill_output(tsparse->sparse_row(i, outval.data(), outidx.data(), first, last));
         EXPECT_EQ(output, expected);
 
         wipe_output();
-        fill_output(tsparse->row(i, output.data(), first, last, wrk.get()));
+        fill_output(tsparse->sparse_row(i, outval.data(), outidx.data(), first, last, wrk.get()));
         EXPECT_EQ(output, expected);
 
         first += 3;
