@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <random>
 
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/utils/compress_sparse_triplets.hpp"
@@ -14,7 +15,8 @@ void permuter(U& values, V& rows, V& cols, U& values2, V& rows2, V& cols2) {
     // Creating a shuffling permutator.
     std::vector<int> permutation(rows.size());
     std::iota(permutation.begin(), permutation.end(), 0);
-    std::random_shuffle(permutation.begin(), permutation.end());
+    std::mt19937_64 engine;
+    std::shuffle(permutation.begin(), permutation.end(), engine);
 
     rows2.reserve(rows.size());
     cols2.reserve(rows.size());

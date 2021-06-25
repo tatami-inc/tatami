@@ -61,11 +61,25 @@ protected:
     }
 
     void fill_sparse_output(const tatami::sparse_range<double, int>& info) {
-        std::fill(output.begin(), output.begin() + last - first, 0);
+        fill_sparse_output(info, output);
+        return;
+    }
+
+    void fill_sparse_output(const tatami::sparse_range<double, int>& info, std::vector<double>& tmp) {
+        std::fill(tmp.begin(), tmp.begin() + last - first, 0);
         for (size_t i = 0; i < info.number; ++i) {
-            output[info.index[i] - first] = info.value[i];
+            tmp[info.index[i] - first] = info.value[i];
         }
         return;
+    }
+
+    void fill_output(const tatami::sparse_range<double, int>& info) {
+        fill_sparse_output(info, output);
+        return;
+    }
+
+    void fill_expected(const tatami::sparse_range<double, int>& info) {
+        fill_sparse_output(info, expected);
     }
 };
 
