@@ -1,11 +1,11 @@
-<map id="/github/workspace/include/tatami/base/typed_matrix.hpp" name="/github/workspace/include/tatami/base/typed_matrix.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="205,5,400,47"/>
-<area shape="rect" id="node2" href="$matrix_8hpp.html" title=" " alt="" coords="183,95,265,121"/>
-<area shape="rect" id="node7" href="$workspace_8hpp.html" title=" " alt="" coords="248,169,357,196"/>
-<area shape="rect" id="node9" href="$sparse__range_8hpp_source.html" title=" " alt="" coords="341,95,465,121"/>
-<area shape="rect" id="node3" href="$content__type_8hpp.html" title=" " alt="" coords="97,169,217,196"/>
-<area shape="rect" id="node4" title=" " alt="" coords="5,244,88,271"/>
-<area shape="rect" id="node5" title=" " alt="" coords="112,244,173,271"/>
-<area shape="rect" id="node6" title=" " alt="" coords="198,244,253,271"/>
-<area shape="rect" id="node8" title=" " alt="" coords="277,244,345,271"/>
+<map id="tatami/base/typed_matrix.hpp" name="tatami/base/typed_matrix.hpp">
+<area shape="rect" id="node1" title=" " alt="" coords="207,5,398,32"/>
+<area shape="rect" id="node2" href="$matrix_8hpp.html" title=" " alt="" coords="183,80,265,107"/>
+<area shape="rect" id="node7" href="$workspace_8hpp.html" title=" " alt="" coords="248,155,357,181"/>
+<area shape="rect" id="node9" href="$sparse__range_8hpp_source.html" title=" " alt="" coords="341,80,465,107"/>
+<area shape="rect" id="node3" href="$content__type_8hpp.html" title=" " alt="" coords="97,155,217,181"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,229,88,256"/>
+<area shape="rect" id="node5" title=" " alt="" coords="112,229,173,256"/>
+<area shape="rect" id="node6" title=" " alt="" coords="198,229,253,256"/>
+<area shape="rect" id="node8" title=" " alt="" coords="277,229,345,256"/>
 </map>
