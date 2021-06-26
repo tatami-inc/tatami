@@ -1,5 +1,8 @@
 # A C++ API for all sorts of matrices 
 
+![Unit tests](https://github.com/LTLA/tatami/actions/workflows/run-tests.yaml/badge.svg)
+![Documentation](https://github.com/LTLA/tatami/actions/workflows/doxygenate.yaml/badge.svg)
+
 ## Overview
 
 **tatami** is a spiritual successor to the [**beachmat** C++ API](https://github.com/LTLA/beachmat) that provides read access to different matrix representations.
