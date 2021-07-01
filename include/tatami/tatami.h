@@ -4,13 +4,17 @@
 #include "base/DenseMatrix.hpp"
 #include "base/CompressedSparseMatrix.hpp"
 #include "base/DelayedIsometricOp.hpp"
-#include "base/DelayedSubsetOp.hpp"
+#include "base/DelayedSubset.hpp"
+#include "base/DelayedBind.hpp"
+#include "base/DelayedTranspose.hpp"
 
-#include "base/compress_sparse_triplets.hpp"
-#include "base/simplify_matrix.hpp"
+#include "utils/compress_sparse_triplets.hpp"
+#include "utils/convert_to_sparse.hpp"
+#include "utils/convert_to_dense.hpp"
 
 #include "stats/sums.hpp"
 #include "stats/variances.hpp"
+#include "stats/medians.hpp"
 
 #define TATAMI_VERSION_MAJOR 0
 #define TATAMI_VERSION_MINOR 99
