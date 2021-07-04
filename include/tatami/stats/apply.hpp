@@ -21,8 +21,8 @@ namespace tatami {
  *
  * @return The `direct()` or `running()` methods in `stat` are invoked to fill up the store with the relevant row- or column-wise statistics.
  */
-template<int MARGIN, typename T, typename IDX, template<typename,bool,bool> class STAT>
-inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p) {
+template<int MARGIN, typename T, typename IDX, class STAT>
+inline typename std::vector<typename STAT::value> apply(const typed_matrix<T, IDX>* p) {
     size_t NR = p->nrow(), NC = p->ncol();
 
     /* One might question why we use MARGIN in the template if we just convert
@@ -38,75 +38,74 @@ inline typename STAT<T, false, false>::value apply(const typed_matrix<T, IDX>* p
     /* If we support running calculations AND the preference 
      * is not consistent with the margin, we give it a shot.
      */
-    if constexpr(STAT<T, false, true>::runnable || STAT<T, true, true>::runnable) {
+    if constexpr(STAT::supports_running) {
         if (p->prefer_rows() != ROW){
             std::vector<T> obuffer(dim);
             auto wrk = p->new_workspace(!ROW);
 
-            if constexpr(STAT<T, true, true>::sparse) {
+            if constexpr(STAT::supports_sparse) {
                 if (p->sparse()) {
-                    STAT<T, true, true> stat(dim, otherdim);
+                    typename STAT::Sparse stat(dim);
                     std::vector<IDX> ibuffer(dim);
                     for (size_t i = 0; i < otherdim; ++i) {
                         if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
                             auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                            stat.running(range, obuffer.data(), ibuffer.data());
+                            stat.add(range, obuffer.data(), ibuffer.data());
                         } else {
                             auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                            stat.running(range, obuffer.data(), ibuffer.data());
+                            stat.add(range, obuffer.data(), ibuffer.data());
                         }
                     }
-                    return stat.yield();
+                    stat.finish();
+                    return stat.statistics();
                 }
             }
 
-            if constexpr(STAT<T, false, true>::runnable) {
-                STAT<T, false, true> stat(dim, otherdim);
-                for (size_t i = 0; i < otherdim; ++i) {
-                    if constexpr(ROW) { // flipped around, see above.
-                        auto ptr = p->column(i, obuffer.data(), wrk.get());
-                        stat.running(ptr, obuffer.data());
-                    } else {
-                        auto ptr = p->row(i, obuffer.data(), wrk.get());
-                        stat.running(ptr, obuffer.data());
-                    }
+            typename STAT::Dense stat(dim);
+            for (size_t i = 0; i < otherdim; ++i) {
+                if constexpr(ROW) { // flipped around, see above.
+                    auto ptr = p->column(i, obuffer.data(), wrk.get());
+                    stat.add(ptr, obuffer.data());
+                } else {
+                    auto ptr = p->row(i, obuffer.data(), wrk.get());
+                    stat.add(ptr, obuffer.data());
                 }
-                return stat.yield();
             }
+            stat.finish();
+            return stat.statistics();
         }
     }
 
+    std::vector<double> output(dim);
     std::vector<T> obuffer(otherdim);
     auto wrk = p->new_workspace(ROW);
 
-    if constexpr(STAT<T, true, false>::sparse) {
+    if constexpr(STAT::supports_sparse) {
         if (p->sparse()) {
-            STAT<T, true, false> stat(dim, otherdim);
             std::vector<IDX> ibuffer(otherdim);
             for (size_t i = 0; i < dim; ++i) {
                 if constexpr(ROW) {
                     auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.direct(i, range, obuffer.data(), ibuffer.data());
+                    output[i] = STAT::compute(range, otherdim, obuffer.data(), ibuffer.data());
                 } else {
                     auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.direct(i, range, obuffer.data(), ibuffer.data());
+                    output[i] = STAT::compute(range, otherdim, obuffer.data(), ibuffer.data());
                 }
             }
-            return stat.yield();
+            return output;
         }
     }
 
-    STAT<T, false, false> stat(dim, otherdim);
     for (size_t i = 0; i < dim; ++i) {
         if constexpr(ROW) {
             auto ptr = p->row(i, obuffer.data(), wrk.get());
-            stat.direct(i, ptr, obuffer.data());
+            output[i] = STAT::compute(ptr, otherdim, obuffer.data());
         } else {
             auto ptr = p->column(i, obuffer.data(), wrk.get());
-            stat.direct(i, ptr, obuffer.data());
+            output[i] = STAT::compute(ptr, otherdim, obuffer.data());
         }
     }
-    return stat.yield();
+    return output;
 }
 
 }

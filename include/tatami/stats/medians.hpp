@@ -17,61 +17,104 @@
 
 namespace tatami {
 
-template<typename T, bool SPARSE, bool RUNNABLE> 
-struct StatsMedianHelper {
-    StatsMedianHelper(size_t n, size_t d) : store(n), dim(d), halfway(dim/2), is_even(dim%2==0) {}
+namespace stats {
 
-    static const bool sparse = SPARSE;
-    static const bool runnable = false;
-    typedef std::vector<double> value;
+/**
+ * @brief Helper to compute the median along each dimension.
+ */
+struct MedianHelper {
+    /**
+     * Type of the computed statistic.
+     */
+    typedef double value;
 
-    void direct(size_t i, const T* ptr, T* buffer) {
-        if (dim == 0) {
-            store[i] = std::numeric_limits<double>::quiet_NaN();
-            return;
+    /**
+     * This statistic can be computed from sparse inputs.
+     */
+    static const bool supports_sparse = true;
+
+    /**
+     * This statistic cannot be computed in a running manner.
+     */
+    static const bool supports_running = false;
+
+public:
+    /**
+     * Compute the median along a vector.
+     *
+     * @tparam T Type of the input data.
+     *
+     * @param ptr Pointer to an array of values of length `n`.
+     * @param n Size of the array.
+     * @param buffer Pointer to an array with `n` addressible elements, to be used as a workspace.
+     *
+     * @return The median of values in `[ptr, ptr + n)`.
+     */
+    template<typename T = double>
+    static double compute(const T* ptr, size_t n, T* buffer) {
+        if (n == 0) {
+            return std::numeric_limits<double>::quiet_NaN();
         }
         if (ptr != buffer) {
-            std::copy(ptr, ptr + dim, buffer);
+            std::copy(ptr, ptr + n, buffer);
         }
+
+        size_t halfway = n / 2;
+        bool is_even = (n % 2 == 0);
 
         // At some point, I found two nth_element calls to be faster than partial_sort.
-        std::nth_element(buffer, buffer + halfway, buffer + dim);
+        std::nth_element(buffer, buffer + halfway, buffer + n);
         double medtmp = *(buffer + halfway);
         if (is_even) {
-            std::nth_element(buffer, buffer + halfway - 1, buffer + dim);
-            store[i] = (medtmp + *(buffer + halfway - 1))/2;
+            std::nth_element(buffer, buffer + halfway - 1, buffer + n);
+            return (medtmp + *(buffer + halfway - 1))/2;
         } else {
-            store[i] = medtmp;
+            return medtmp;
         }
-        return;
     }
 
-    template<typename IDX>
-    void direct(size_t i, const sparse_range<T, IDX>& range, T* vbuffer, IDX* ibuffer) {
-        if (range.number == dim) {
-            direct(i, range.value, vbuffer);
-        } else if (range.number * 2 < dim) {
-            // zero is the median.
+    /**
+     * Compute the median along a sparse vector.
+     * This achieves faster processing by only sorting the non-zero elements.
+     *
+     * @tparam T Type of the input data.
+     * @tparam IDX Type of the indices.
+     *
+     * @param range A `sparse_range` object specifying the number and values of all non-zero indices.
+     * @param n Total length of the vector, including zero values.
+     * @param vbuffer,ibuffer Pointer to arrays with `range.number` addressible elements, to be used as a workspace.
+     *
+     * @return The median of values in the vector.
+     */
+    template<typename T = double, typename IDX = int>
+    static double compute(const sparse_range<T, IDX>& range, size_t n, T* vbuffer, IDX* ibuffer) {
+        if (range.number == n) {
+            return compute(range.value, n, vbuffer);
+        } else if (range.number * 2 < n) {
+            return 0; // zero is the median if there are too many zeroes.
         } else {
             if (range.value != vbuffer) {
                 std::copy(range.value, range.value + range.number, vbuffer);
             }
 
+            size_t halfway = n / 2;
+            bool is_even = (n % 2 == 0);
+
             auto vend = vbuffer + range.number;
             std::sort(vbuffer, vend);
             size_t zeropos = std::lower_bound(vbuffer, vend, 0) - vbuffer;
-            size_t nzero = dim - range.number;
+            size_t nzero = n - range.number;
 
             if (!is_even) {
                 if (zeropos > halfway) {
-                    store[i] = vbuffer[halfway];
+                    return vbuffer[halfway];
                 } else if (halfway >= zeropos + nzero) {
-                    store[i] = vbuffer[halfway - nzero];
+                    return vbuffer[halfway - nzero];
                 } else {
-                    ; // zero is the median.
+                    return 0; // zero is the median.
                 }
             } else {
-                double& tmp = store[i];
+                double tmp = 0;
                 if (zeropos > halfway) {
                     tmp = vbuffer[halfway] + vbuffer[halfway - 1];
                 } else if (zeropos == halfway) {
@@ -85,20 +128,13 @@ struct StatsMedianHelper {
                 } else {
                     tmp = vbuffer[halfway - nzero] + vbuffer[halfway - nzero - 1];
                 }
-                tmp /= 2;
+                return tmp / 2;
             }
         }
-        return;
     }
-
-    value yield() {
-        return store;
-    }
-private:
-    value store;
-    size_t dim, halfway;
-    bool is_even;
 };
+
+}
 
 /**
  * @tparam T Type of the matrix value.
@@ -110,7 +146,7 @@ private:
  */
 template<typename T, typename IDX>
 inline std::vector<T> column_medians(const typed_matrix<T, IDX>* p) {
-    return apply<1, T, IDX, StatsMedianHelper>(p);
+    return apply<1, T, IDX, stats::MedianHelper>(p);
 }
 
 /**
@@ -123,7 +159,7 @@ inline std::vector<T> column_medians(const typed_matrix<T, IDX>* p) {
  */
 template<typename T, typename IDX>
 inline std::vector<T> row_medians(const typed_matrix<T, IDX>* p) {
-    return apply<0, T, IDX, StatsMedianHelper>(p);
+    return apply<0, T, IDX, stats::MedianHelper>(p);
 }
 
 }

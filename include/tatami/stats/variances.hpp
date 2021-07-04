@@ -17,105 +17,304 @@
 
 namespace tatami {
 
-template<typename T, bool SPARSE, bool RUNNABLE> 
-struct StatsVarianceHelper {
-    StatsVarianceHelper(size_t n, size_t d) : store(n), running_mean(RUNNABLE ? n : 0), running_nnzero(RUNNABLE && SPARSE ? n : 1), dim(d) {}
+namespace stats {
 
-    static const bool sparse = SPARSE;
-    static const bool runnable = RUNNABLE;
-    typedef std::vector<T> value;
-
-    void direct(size_t i, const T* ptr, T* buffer) {
-        static_assert(!SPARSE && !RUNNABLE);
-        const double mean = std::accumulate(ptr, ptr + dim, 0.0)/dim;
-        double& out = store[i];
-        for (size_t j = 0; j < dim; ++j, ++ptr) {
-            out += (*ptr - mean) * (*ptr - mean);
-        }
-        return;
-    }
-
-    template<typename IDX>
-    void direct(size_t i, const sparse_range<T, IDX>& range, T* vbuffer, IDX* ibuffer) {
-        static_assert(SPARSE && !RUNNABLE);
-        const double mean = std::accumulate(range.value, range.value + range.number, 0.0)/dim;
-        double& out = store[i];
-        for (size_t j = 0; j < range.number; ++j) {
-            out += (range.value[j] - mean) * (range.value[j] - mean);
-        }
-        out += mean * mean * (dim - range.number);
-        return;
-    }
-
-    /* Using Welford's algorithm to compute the variance in the 'other' dimension.
-     * which should be much more cache-friendly for large matrices. We run through
-     * only non-zero counts when circumstances allow for it.
+/**
+ * @brief Helper to compute the variance along each dimension.
+ */
+struct VarianceHelper {
+public:
+    /**
+     * Type of the computed statistic.
      */
-    void running(const T* ptr, T* buffer) {
-        static_assert(!SPARSE && RUNNABLE);
-        auto mIt = running_mean.begin();
-        auto& counter = running_nnzero[0];
-        ++counter;
+    typedef double value;
 
-        for (auto sIt = store.begin(); sIt < store.end(); ++sIt, ++ptr, ++mIt) {
-            const double delta=*ptr - *mIt;
-            *mIt += delta/counter;
-            *sIt += delta*(*ptr - *mIt);
-        }
-        return;
+    /**
+     * This statistic can be computed from sparse inputs.
+     */
+    static const bool supports_sparse = true;
+
+    /**
+     * This statistic can be computed in a running manner.
+     */
+    static const bool supports_running = true;
+
+private:
+    static std::pair<double, double> both_NaN() {
+        return std::make_pair(
+            std::numeric_limits<double>::quiet_NaN(),
+            std::numeric_limits<double>::quiet_NaN()
+        );
     }
 
-    template<typename IDX>
-    void running(sparse_range<T, IDX> range, T* vbuffer, IDX* ibuffer) {
-        static_assert(SPARSE && RUNNABLE);
-        auto sIt = store.begin();
-        auto mIt = running_mean.begin();
-        auto nzIt = running_nnzero.begin();
-
-        for (size_t j = 0; j < range.number; ++j, ++range.index, ++range.value) {
-            auto ri = *range.index;
-            auto& curM = *(mIt + ri);
-            auto& curS = *(sIt + ri);
-            auto& curNZ = *(nzIt + ri);
-            ++curNZ;
-
-            const auto& curval = *range.value;
-            const double delta = curval - curM;
-            curM += delta / curNZ;
-            curS += delta * (curval - curM);
+    static double finish_variance(double var, size_t n) {
+        if (n > 1) {
+            return var / (n - 1);
+        } else {
+            return std::numeric_limits<double>::quiet_NaN();
         }
-
-        return;
     }
 
-    value yield() {
-        if constexpr(SPARSE && RUNNABLE) {
+public:
+    /**
+     * Compute the variance along a vector.
+     * We use the numerically stable calculation involvingof the sum of squared differences rather than taking the difference of squares.
+     *
+     * @tparam T Type of the input data.
+     *
+     * @param ptr Pointer to an array of values of length `n`.
+     * @param n Size of the array.
+     * @param buffer Unused, provided here for consistency only.
+     *
+     * @return The sample variance of values in `[ptr, ptr + n)`.
+     * If `n <= 1`, an NaN value is returned.
+     */
+    template<typename T = double>
+    static double compute(const T* ptr, size_t n, T* buffer = NULL) {
+        return compute_with_mean(ptr, n, buffer).second;
+    }
+
+    /**
+     * Compute the mean and variance along a vector.
+     * This avoids a redundant calculation of the mean as it is already computed as part of the variance calculation.
+     *
+     * @tparam T Type of the input data.
+     *
+     * @param ptr Pointer to an array of values of length `n`.
+     * @param n Size of the array, must be greater than 1.
+     * @param buffer Unused, provided here for consistency only.
+     *
+     * @return The sample mean and variance of values in `[ptr, ptr + n)`.
+     * If `n == 0`, the mean is set to NaN, and if `n < 2`, the variance is set to NaN.
+     */
+    template<typename T = double>
+    static std::pair<double, double> compute_with_mean(const T* ptr, size_t n, T* buffer = NULL) {
+        if (n < 1) {
+            return both_NaN();
+        }
+
+        double mean = std::accumulate(ptr, ptr + n, 0.0)/n;
+        double var = 0;
+        for (size_t j = 0; j < n; ++j, ++ptr) {
+            var += (*ptr - mean) * (*ptr - mean);
+        }
+
+        return std::make_pair(mean, finish_variance(var, n));
+    }
+
+public:
+    /**
+     * Compute the variance along a sparse vector.
+     * This achieves faster processing by only performing summations over non-zero elements.
+     *
+     * @tparam T Type of the input data.
+     * @tparam IDX Type of the indices.
+     *
+     * @param range A `sparse_range` object specifying the number and values of all non-zero indices.
+     * @param n Total length of the vector, including zero values.
+     * @param vbuffer,ibuffer Unused, provided here for consistency only.
+     *
+     * @return The sample variance of values in the vector.
+     */
+    template<typename T = double, typename IDX = int>
+    static double compute(const sparse_range<T, IDX>& range, size_t n, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        return compute_with_mean(range, n, vbuffer, ibuffer).second;
+    }
+
+    /**
+     * Compute the mean and variance along a sparse vector.
+     * Again, this avoids a redundant calculation of the mean.
+     *
+     * @tparam T Type of the input data.
+     * @tparam IDX Type of the indices.
+     *
+     * @param range A `sparse_range` object specifying the number and values of all non-zero indices.
+     * @param n Total length of the vector, including zero values.
+     * @param vbuffer,ibuffer Unused, provided here for consistency only.
+     *
+     * @return The sample mean and variance of values in the vector.
+     */
+    template<typename T = double, typename IDX = int>
+    static std::pair<double, double> compute_with_mean(const sparse_range<T, IDX>& range, size_t n, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        if (n < 1) {
+            return both_NaN();
+        }
+
+        double mean = std::accumulate(range.value, range.value + range.number, 0.0)/n;
+        double var = 0;
+        for (size_t j = 0; j < range.number; ++j) {
+            var += (range.value[j] - mean) * (range.value[j] - mean);
+        }
+        var += mean * mean * (n - range.number);
+
+        return std::make_pair(mean, finish_variance(var, n));
+    }
+
+private:
+    struct Common {
+    public:
+        Common(size_t n) : running_var(n), running_mean(n) {}
+
+        void finish0() {
+            if (dim > 1) {
+                for (auto& s : running_var) {
+                    s /= dim - 1;
+                }
+            } else {
+                if (dim == 0){
+                    std::fill(running_mean.begin(), running_mean.end(), std::numeric_limits<double>::quiet_NaN());
+                }
+                std::fill(running_var.begin(), running_var.end(), std::numeric_limits<double>::quiet_NaN());
+            }
+            return;
+        }
+    protected:
+        std::vector<double> running_var;
+        std::vector<double> running_mean;
+        size_t dim = 0;
+    };
+
+public:
+    /**
+     * @brief Helper to compute the running variance from dense inputs.
+     */
+    struct Dense : private Common {
+        /**
+         * @param n Number of parallel vectors for which to compute running statistics.
+         */
+        Dense(size_t n) : Common(n) {}
+
+        /**
+         * Add another vector to the running variance calculations.
+         * This uses Welford's algorithm to compute the running variance of each parallel vector.
+         * Each entry in the `ptr` array contains the latest values of the set of parallel vectors.
+         *
+         * @tparam T Type of the input data.
+         *
+         * @param ptr Pointer to an array of length equal to the number of parallel vectors.
+         * @param buffer Ignored.
+         */
+        template<typename T>
+        void add(const T* ptr, T* buffer = NULL) {
+            auto mIt = running_mean.begin();
+            ++dim;
+
+            for (auto sIt = running_var.begin(); sIt < running_var.end(); ++sIt, ++ptr, ++mIt) {
+                const double delta=*ptr - *mIt;
+                *mIt += delta/dim;
+                *sIt += delta*(*ptr - *mIt);
+            }
+            return;
+        }
+
+        /**
+         * Finish the running calculations.
+         */
+        void finish() {
+            finish0();
+            return;
+        }
+
+        /**
+         * Obtain the sample mean for each parallel vector. 
+         * This will contain NaN values if `add()` was not called at least once.
+         */
+        const std::vector<double>& means() {
+            return running_mean;
+        }
+
+        /**
+         * Obtain the sample variance for each parallel vector. 
+         * This will contain NaN values if `add()` was not called more than once.
+         */
+        const std::vector<double>& statistics() {
+            return running_var;
+        }
+    };
+
+    /**
+     * @brief Helper to compute the running variance from sparse inputs.
+     */
+    struct Sparse : private Common {
+        /**
+         * @param n Number of parallel vectors for which to compute running statistics.
+         */
+        Sparse(size_t n) : Common(n), running_nnzero(n) {}
+
+        /**
+         * Add another sparse vector to the running variance calculations.
+         * Again, we use Welford's methods, but only across the non-zero elements.
+         *
+         * @tparam T Type of the input data.
+         * @tparam IDX Type of the indices.
+         *
+         * @param range A `sparse_range` object identifying the non-zero elements in the sparse vector.
+         * @param vbuffer,ibuffer Ignored.
+         */
+        template<typename T, typename IDX>
+        void add(sparse_range<T, IDX> range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+            auto sIt = running_var.begin();
             auto mIt = running_mean.begin();
             auto nzIt = running_nnzero.begin();
-            for (auto sIt = store.begin(); sIt != store.end(); ++mIt, ++sIt, ++nzIt) {
-                const double curNZ = *nzIt;
-                const double ratio = curNZ / dim;
-                auto& curM = *mIt;
-                *sIt += curM * curM * ratio * (dim - curNZ);
-                curM *= ratio;
+            ++dim;
+
+            for (size_t j = 0; j < range.number; ++j, ++range.index, ++range.value) {
+                auto ri = *range.index;
+                auto& curM = *(mIt + ri);
+                auto& curS = *(sIt + ri);
+                auto& curNZ = *(nzIt + ri);
+                ++curNZ;
+
+                const auto& curval = *range.value;
+                const double delta = curval - curM;
+                curM += delta / curNZ;
+                curS += delta * (curval - curM);
             }
+
+            return;
         }
 
-        if (dim > 1) {
-            for (auto& s : store) {
-                s /= dim - 1;
+        /**
+         * Finish the running calculations.
+         */
+        void finish() {
+            if (dim) {
+                auto mIt = running_mean.begin();
+                auto nzIt = running_nnzero.begin();
+                for (auto sIt = running_var.begin(); sIt != running_var.end(); ++mIt, ++sIt, ++nzIt) {
+                    const double curNZ = *nzIt;
+                    const double ratio = curNZ / dim;
+                    auto& curM = *mIt;
+                    *sIt += curM * curM * ratio * (dim - curNZ);
+                    curM *= ratio;
+                }
             }
-        } else {
-            std::fill(store.begin(), store.end(), std::numeric_limits<double>::quiet_NaN());
+
+            finish0();
+            return;
         }
-        return store;
-    }
-private:
-    value store;
-    std::vector<double> running_mean;
-    std::vector<int> running_nnzero;
-    size_t dim;
+
+        /**
+         * Obtain the sample mean for each parallel vector. 
+         * This will contain NaN values if `add()` was not called at least once.
+         */
+        const std::vector<double>& means() {
+            return running_mean;
+        }
+
+        /**
+         * Obtain the sample variance for each parallel vector. 
+         * This will contain NaN values if `add()` was not called more than once.
+         */
+        const std::vector<double>& statistics() {
+            return running_var;
+        }
+    private:
+        std::vector<int> running_nnzero;
+    };
 };
+
+}
 
 /**
  * This uses the usual algorithm for matrices where `tatami::matrix::prefer_rows()` is false, otherwise it uses Welford's algorithm.
@@ -130,7 +329,7 @@ private:
  */
 template<typename T, typename IDX>
 inline std::vector<T> column_variances(const typed_matrix<T, IDX>* p) {
-    return apply<1, T, IDX, StatsVarianceHelper>(p);
+    return apply<1, T, IDX, stats::VarianceHelper>(p);
 }
 
 /**
@@ -146,7 +345,7 @@ inline std::vector<T> column_variances(const typed_matrix<T, IDX>* p) {
  */
 template<typename T, typename IDX>
 inline std::vector<T> row_variances(const typed_matrix<T, IDX>* p) {
-    return apply<0, T, IDX, StatsVarianceHelper>(p);
+    return apply<0, T, IDX, stats::VarianceHelper>(p);
 }
 
 }
