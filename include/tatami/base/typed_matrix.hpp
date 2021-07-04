@@ -173,7 +173,14 @@ public:
      */
     content_type type() const { return determine_content_type<T>(); }
 
+    /** 
+     * Type of the value to be returned by getters.
+     */
     typedef T value;
+
+    /** 
+     * Type of the index to be returned by the sparse getters.
+     */
     typedef IDX index;
 };
 

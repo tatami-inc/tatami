@@ -21,6 +21,8 @@ namespace tatami {
  *
  * @param incoming Pointer to a `tatami::typed_matrix`, possibly containing delayed operations.
  * @param row Whether the output matrix should be in compressed sparse row format.
+ * @param reserve The expected density of non-zero values in `incoming`.
+ * A slight overestimate will avoid reallocation of the temporary vectors.
  *
  * @return A pointer to a new `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
  */
