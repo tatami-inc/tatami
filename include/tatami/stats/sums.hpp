@@ -22,11 +22,6 @@ namespace stats {
 struct SumHelper {
 public:
     /**
-     * Type of the computed statistic.
-     */
-    typedef double value;
-
-    /**
      * This statistic can be computed from sparse inputs.
      */
     static const bool supports_sparse = true;
@@ -167,7 +162,7 @@ public:
  * @return A vector of length equal to the number of columns, containing the column sums.
  */
 template<typename T, typename IDX>
-inline std::vector<T> column_sums(const typed_matrix<T, IDX>* p) {
+inline std::vector<double> column_sums(const typed_matrix<T, IDX>* p) {
     return apply<1, T, IDX, stats::SumHelper>(p);
 }
 
@@ -180,7 +175,7 @@ inline std::vector<T> column_sums(const typed_matrix<T, IDX>* p) {
  * @return A vector of length equal to the number of rows, containing the row sums.
  */
 template<typename T, typename IDX>
-inline std::vector<T> row_sums(const typed_matrix<T, IDX>* p) {
+inline std::vector<double> row_sums(const typed_matrix<T, IDX>* p) {
     return apply<0, T, IDX, stats::SumHelper>(p);
 }
 

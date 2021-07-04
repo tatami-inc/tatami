@@ -24,11 +24,6 @@ namespace stats {
  */
 struct MedianHelper {
     /**
-     * Type of the computed statistic.
-     */
-    typedef double value;
-
-    /**
      * This statistic can be computed from sparse inputs.
      */
     static const bool supports_sparse = true;

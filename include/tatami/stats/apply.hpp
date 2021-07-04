@@ -19,10 +19,10 @@ namespace tatami {
  * @param p Pointer to a `tatami::typed_matrix`.
  * @param stat Instance of a statistics store.
  *
- * @return The `direct()` or `running()` methods in `stat` are invoked to fill up the store with the relevant row- or column-wise statistics.
+ * @return A vector of row- or column-wise statistics.
  */
 template<int MARGIN, typename T, typename IDX, class STAT>
-inline typename std::vector<typename STAT::value> apply(const typed_matrix<T, IDX>* p) {
+inline typename std::vector<double> apply(const typed_matrix<T, IDX>* p) {
     size_t NR = p->nrow(), NC = p->ncol();
 
     /* One might question why we use MARGIN in the template if we just convert
