@@ -79,7 +79,7 @@ $(function() {
 <div class="line"><a name="l00006"></a><span class="lineno">    6</span>&#160;<span class="keyword">namespace </span>tatami {</div>
 <div class="line"><a name="l00007"></a><span class="lineno">    7</span>&#160; </div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">template</span>&lt;<span class="keywordtype">int</span> MARGIN, <span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX, <span class="keyword">class</span> STAT&gt;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">inline</span> <span class="keyword">typename</span> std::vector&lt;typename STAT::value&gt; apply(<span class="keyword">const</span> typed_matrix&lt;T, IDX&gt;* p) {</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">inline</span> <span class="keyword">typename</span> std::vector&lt;double&gt; apply(<span class="keyword">const</span> typed_matrix&lt;T, IDX&gt;* p) {</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keywordtype">size_t</span> NR = p-&gt;nrow(), NC = p-&gt;ncol();</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="comment">/* One might question why we use MARGIN in the template if we just convert</span></div>

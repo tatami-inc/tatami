@@ -88,223 +88,220 @@ $(function() {
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html">   25</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html">VarianceHelper</a> {</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#a0cf3167f20ea137168018c021003b7c3">   30</a></span>&#160;    <span class="keyword">typedef</span> <span class="keywordtype">double</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#a0cf3167f20ea137168018c021003b7c3">value</a>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#ab0b04a6523a41a4dbe4d1291407d1800">   30</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#ab0b04a6523a41a4dbe4d1291407d1800">supports_sparse</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#ab0b04a6523a41a4dbe4d1291407d1800">   35</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#ab0b04a6523a41a4dbe4d1291407d1800">supports_sparse</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#aaaa1d606f19e7509a73acc00e1258b30">   35</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#aaaa1d606f19e7509a73acc00e1258b30">supports_running</a> = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#aaaa1d606f19e7509a73acc00e1258b30">   40</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#aaaa1d606f19e7509a73acc00e1258b30">supports_running</a> = <span class="keyword">true</span>;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">static</span> std::pair&lt;double, double&gt; both_NaN() {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;        <span class="keywordflow">return</span> std::make_pair(</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;            std::numeric_limits&lt;double&gt;::quiet_NaN(),</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;            std::numeric_limits&lt;double&gt;::quiet_NaN()</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        );</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">double</span> finish_variance(<span class="keywordtype">double</span> var, <span class="keywordtype">size_t</span> n) {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordflow">if</span> (n &gt; 1) {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            <span class="keywordflow">return</span> var / (n - 1);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            <span class="keywordflow">return</span> std::numeric_limits&lt;double&gt;::quiet_NaN();</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        }</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    }</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
-<div class="line"><a name="l00073"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#a8a2c4cc88aae68d6288e6ce5f510eee6">   73</a></span>&#160;    <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#a8a2c4cc88aae68d6288e6ce5f510eee6">compute</a>(<span class="keyword">const</span> T* ptr, <span class="keywordtype">size_t</span> n, T* buffer = NULL) {</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">compute_with_mean</a>(ptr, n, buffer).second;</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
-<div class="line"><a name="l00091"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">   91</a></span>&#160;    <span class="keyword">static</span> std::pair&lt;double, double&gt; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">compute_with_mean</a>(<span class="keyword">const</span> T* ptr, <span class="keywordtype">size_t</span> n, T* buffer = NULL) {</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordflow">if</span> (n &lt; 1) {</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;            <span class="keywordflow">return</span> both_NaN();</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;        }</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;        <span class="keywordtype">double</span> mean = std::accumulate(ptr, ptr + n, 0.0)/n;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordtype">double</span> var = 0;</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; n; ++j, ++ptr) {</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;            var += (*ptr - mean) * (*ptr - mean);</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;        }</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160; </div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;        <span class="keywordflow">return</span> std::make_pair(mean, finish_variance(var, n));</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    }</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>, <span class="keyword">typename</span> IDX = <span class="keywordtype">int</span>&gt;</div>
-<div class="line"><a name="l00120"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#acf772b134cacc3afb698dc8cf9662dc5">  120</a></span>&#160;    <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#acf772b134cacc3afb698dc8cf9662dc5">compute</a>(<span class="keyword">const</span> <a class="code" href="structtatami_1_1sparse__range.html">sparse_range&lt;T, IDX&gt;</a>&amp; range, <span class="keywordtype">size_t</span> n, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">compute_with_mean</a>(range, n, vbuffer, ibuffer).second;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    }</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>, <span class="keyword">typename</span> IDX = <span class="keywordtype">int</span>&gt;</div>
-<div class="line"><a name="l00138"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#a14d603e4c829ef53efb59945c31ce6a0">  138</a></span>&#160;    <span class="keyword">static</span> std::pair&lt;double, double&gt; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#a14d603e4c829ef53efb59945c31ce6a0">compute_with_mean</a>(<span class="keyword">const</span> <a class="code" href="structtatami_1_1sparse__range.html">sparse_range&lt;T, IDX&gt;</a>&amp; range, <span class="keywordtype">size_t</span> n, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordflow">if</span> (n &lt; 1) {</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;            <span class="keywordflow">return</span> both_NaN();</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        }</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160; </div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        <span class="keywordtype">double</span> mean = std::accumulate(range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>, range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a> + range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>, 0.0)/n;</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        <span class="keywordtype">double</span> var = 0;</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>; ++j) {</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;            var += (range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>[j] - mean) * (range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>[j] - mean);</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        }</div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;        var += mean * mean * (n - range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>);</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160; </div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;        <span class="keywordflow">return</span> std::make_pair(mean, finish_variance(var, n));</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    }</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="keyword">static</span> std::pair&lt;double, double&gt; both_NaN() {</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordflow">return</span> std::make_pair(</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            std::numeric_limits&lt;double&gt;::quiet_NaN(),</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            std::numeric_limits&lt;double&gt;::quiet_NaN()</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        );</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    }</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">double</span> finish_variance(<span class="keywordtype">double</span> var, <span class="keywordtype">size_t</span> n) {</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordflow">if</span> (n &gt; 1) {</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;            <span class="keywordflow">return</span> var / (n - 1);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;            <span class="keywordflow">return</span> std::numeric_limits&lt;double&gt;::quiet_NaN();</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        }</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    }</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
+<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#a8a2c4cc88aae68d6288e6ce5f510eee6">   68</a></span>&#160;    <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#a8a2c4cc88aae68d6288e6ce5f510eee6">compute</a>(<span class="keyword">const</span> T* ptr, <span class="keywordtype">size_t</span> n, T* buffer = NULL) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">compute_with_mean</a>(ptr, n, buffer).second;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    }</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
+<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">   86</a></span>&#160;    <span class="keyword">static</span> std::pair&lt;double, double&gt; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">compute_with_mean</a>(<span class="keyword">const</span> T* ptr, <span class="keywordtype">size_t</span> n, T* buffer = NULL) {</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordflow">if</span> (n &lt; 1) {</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;            <span class="keywordflow">return</span> both_NaN();</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        }</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160; </div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordtype">double</span> mean = std::accumulate(ptr, ptr + n, 0.0)/n;</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordtype">double</span> var = 0;</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; n; ++j, ++ptr) {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            var += (*ptr - mean) * (*ptr - mean);</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        }</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;        <span class="keywordflow">return</span> std::make_pair(mean, finish_variance(var, n));</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>, <span class="keyword">typename</span> IDX = <span class="keywordtype">int</span>&gt;</div>
+<div class="line"><a name="l00115"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#acf772b134cacc3afb698dc8cf9662dc5">  115</a></span>&#160;    <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#acf772b134cacc3afb698dc8cf9662dc5">compute</a>(<span class="keyword">const</span> <a class="code" href="structtatami_1_1sparse__range.html">sparse_range&lt;T, IDX&gt;</a>&amp; range, <span class="keywordtype">size_t</span> n, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">compute_with_mean</a>(range, n, vbuffer, ibuffer).second;</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;    }</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>, <span class="keyword">typename</span> IDX = <span class="keywordtype">int</span>&gt;</div>
+<div class="line"><a name="l00133"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper.html#a14d603e4c829ef53efb59945c31ce6a0">  133</a></span>&#160;    <span class="keyword">static</span> std::pair&lt;double, double&gt; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper.html#a14d603e4c829ef53efb59945c31ce6a0">compute_with_mean</a>(<span class="keyword">const</span> <a class="code" href="structtatami_1_1sparse__range.html">sparse_range&lt;T, IDX&gt;</a>&amp; range, <span class="keywordtype">size_t</span> n, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keywordflow">if</span> (n &lt; 1) {</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            <span class="keywordflow">return</span> both_NaN();</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        }</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="keywordtype">double</span> mean = std::accumulate(range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>, range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a> + range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>, 0.0)/n;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;        <span class="keywordtype">double</span> var = 0;</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>; ++j) {</div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;            var += (range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>[j] - mean) * (range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>[j] - mean);</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        }</div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        var += mean * mean * (n - range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>);</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160; </div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="keywordflow">return</span> std::make_pair(mean, finish_variance(var, n));</div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    }</div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="keyword">private</span>:</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keyword">struct </span>Common {</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;        Common(<span class="keywordtype">size_t</span> n) : running_var(n), running_mean(n) {}</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160; </div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keyword">struct </span>Common {</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;        Common(<span class="keywordtype">size_t</span> n) : running_var(n), running_mean(n) {}</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160; </div>
-<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;        <span class="keywordtype">void</span> finish0() {</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;            <span class="keywordflow">if</span> (dim &gt; 1) {</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; s : running_var) {</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                    s /= dim - 1;</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                }</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;                <span class="keywordflow">if</span> (dim == 0){</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                    std::fill(running_mean.begin(), running_mean.end(), std::numeric_limits&lt;double&gt;::quiet_NaN());</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;                }</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;                std::fill(running_var.begin(), running_var.end(), std::numeric_limits&lt;double&gt;::quiet_NaN());</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            }</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        }</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keyword">protected</span>:</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        std::vector&lt;double&gt; running_var;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;        std::vector&lt;double&gt; running_mean;</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;        <span class="keywordtype">size_t</span> dim = 0;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    };</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160; </div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="keyword">public</span>:</div>
-<div class="line"><a name="l00181"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html">  181</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html">Dense</a> : <span class="keyword">private</span> Common {</div>
-<div class="line"><a name="l00185"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a790d1bd77a49a78674bac6b90f97b71a">  185</a></span>&#160;        <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a790d1bd77a49a78674bac6b90f97b71a">Dense</a>(<span class="keywordtype">size_t</span> n) : Common(n) {}</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00198"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#ae1b71e75ca1ec96c5d351f50a7e37683">  198</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#ae1b71e75ca1ec96c5d351f50a7e37683">add</a>(<span class="keyword">const</span> T* ptr, T* buffer = NULL) {</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            <span class="keyword">auto</span> mIt = running_mean.begin();</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;            ++dim;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> sIt = running_var.begin(); sIt &lt; running_var.end(); ++sIt, ++ptr, ++mIt) {</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> delta=*ptr - *mIt;</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;                *mIt += delta/dim;</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;                *sIt += delta*(*ptr - *mIt);</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;            }</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;        }</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160; </div>
-<div class="line"><a name="l00213"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#aa6f9d6e93697ee528ba009d2bb2ad0a5">  213</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#aa6f9d6e93697ee528ba009d2bb2ad0a5">finish</a>() {</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;            finish0();</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;        }</div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160; </div>
-<div class="line"><a name="l00222"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a028be1ec55aeb6c626532ef68a35598b">  222</a></span>&#160;        <span class="keyword">const</span> std::vector&lt;double&gt;&amp; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a028be1ec55aeb6c626532ef68a35598b">means</a>() {</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;            <span class="keywordflow">return</span> running_mean;</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;        }</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160; </div>
-<div class="line"><a name="l00230"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a95a35e7f6aed6f9846a8eb513a0d9f83">  230</a></span>&#160;        <span class="keyword">const</span> std::vector&lt;double&gt;&amp; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a95a35e7f6aed6f9846a8eb513a0d9f83">statistics</a>() {</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;            <span class="keywordflow">return</span> running_var;</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;        }</div>
-<div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    };</div>
-<div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160; </div>
-<div class="line"><a name="l00238"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html">  238</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html">Sparse</a> : <span class="keyword">private</span> Common {</div>
-<div class="line"><a name="l00242"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a59c14ae16c7af63c8d968f7a3ab0e26d">  242</a></span>&#160;        <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a59c14ae16c7af63c8d968f7a3ab0e26d">Sparse</a>(<span class="keywordtype">size_t</span> n) : Common(n), running_nnzero(n) {}</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160; </div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00255"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#acb68863727c09d65deb38662a8c26cb5">  255</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#acb68863727c09d65deb38662a8c26cb5">add</a>(<a class="code" href="structtatami_1_1sparse__range.html">sparse_range&lt;T, IDX&gt;</a> range, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="keyword">auto</span> sIt = running_var.begin();</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;            <span class="keyword">auto</span> mIt = running_mean.begin();</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;            <span class="keyword">auto</span> nzIt = running_nnzero.begin();</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            ++dim;</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>; ++j, ++range.<a class="code" href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">index</a>, ++range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>) {</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;                <span class="keyword">auto</span> ri = *range.<a class="code" href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">index</a>;</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                <span class="keyword">auto</span>&amp; curM = *(mIt + ri);</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                <span class="keyword">auto</span>&amp; curS = *(sIt + ri);</div>
-<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                <span class="keyword">auto</span>&amp; curNZ = *(nzIt + ri);</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                ++curNZ;</div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160; </div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;                <span class="keyword">const</span> <span class="keyword">auto</span>&amp; curval = *range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> delta = curval - curM;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                curM += delta / curNZ;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                curS += delta * (curval - curM);</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            }</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160; </div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        }</div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
-<div class="line"><a name="l00280"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a171c70991ba55523439df387654c6f31">  280</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a171c70991ba55523439df387654c6f31">finish</a>() {</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;            <span class="keywordflow">if</span> (dim) {</div>
-<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                <span class="keyword">auto</span> mIt = running_mean.begin();</div>
-<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                <span class="keyword">auto</span> nzIt = running_nnzero.begin();</div>
-<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> sIt = running_var.begin(); sIt != running_var.end(); ++mIt, ++sIt, ++nzIt) {</div>
-<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">double</span> curNZ = *nzIt;</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">double</span> ratio = curNZ / dim;</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                    <span class="keyword">auto</span>&amp; curM = *mIt;</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                    *sIt += curM * curM * ratio * (dim - curNZ);</div>
-<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                    curM *= ratio;</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                }</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            }</div>
-<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160; </div>
-<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;            finish0();</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;        }</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160; </div>
-<div class="line"><a name="l00301"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#ae9fb6fe7b76c53b522140725d87c5a66">  301</a></span>&#160;        <span class="keyword">const</span> std::vector&lt;double&gt;&amp; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#ae9fb6fe7b76c53b522140725d87c5a66">means</a>() {</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;            <span class="keywordflow">return</span> running_mean;</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        }</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160; </div>
-<div class="line"><a name="l00309"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#adde7cb516d7241399b6b18aaa1a25420">  309</a></span>&#160;        <span class="keyword">const</span> std::vector&lt;double&gt;&amp; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#adde7cb516d7241399b6b18aaa1a25420">statistics</a>() {</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;            <span class="keywordflow">return</span> running_var;</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;        }</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        std::vector&lt;int&gt; running_nnzero;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    };</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;};</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160; </div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;}</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160; </div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00331"></a><span class="lineno"><a class="line" href="variances_8hpp.html#afc7d2d40f6fb32feba94183167ff4062">  331</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="variances_8hpp.html#afc7d2d40f6fb32feba94183167ff4062">column_variances</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="keywordflow">return</span> apply&lt;1, T, IDX, stats::VarianceHelper&gt;(p);</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;}</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160; </div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00347"></a><span class="lineno"><a class="line" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">  347</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">row_variances</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keywordflow">return</span> apply&lt;0, T, IDX, stats::VarianceHelper&gt;(p);</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;}</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160; </div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;}</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160; </div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;        <span class="keywordtype">void</span> finish0() {</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;            <span class="keywordflow">if</span> (dim &gt; 1) {</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; s : running_var) {</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;                    s /= dim - 1;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                }</div>
+<div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                <span class="keywordflow">if</span> (dim == 0){</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;                    std::fill(running_mean.begin(), running_mean.end(), std::numeric_limits&lt;double&gt;::quiet_NaN());</div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;                }</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                std::fill(running_var.begin(), running_var.end(), std::numeric_limits&lt;double&gt;::quiet_NaN());</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;            }</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        }</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keyword">protected</span>:</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        std::vector&lt;double&gt; running_var;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        std::vector&lt;double&gt; running_mean;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;        <span class="keywordtype">size_t</span> dim = 0;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    };</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html">  176</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html">Dense</a> : <span class="keyword">private</span> Common {</div>
+<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a790d1bd77a49a78674bac6b90f97b71a">  180</a></span>&#160;        <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a790d1bd77a49a78674bac6b90f97b71a">Dense</a>(<span class="keywordtype">size_t</span> n) : Common(n) {}</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160; </div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#ae1b71e75ca1ec96c5d351f50a7e37683">  193</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#ae1b71e75ca1ec96c5d351f50a7e37683">add</a>(<span class="keyword">const</span> T* ptr, T* buffer = NULL) {</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;            <span class="keyword">auto</span> mIt = running_mean.begin();</div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;            ++dim;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160; </div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;            <span class="keywordflow">for</span> (<span class="keyword">auto</span> sIt = running_var.begin(); sIt &lt; running_var.end(); ++sIt, ++ptr, ++mIt) {</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> delta=*ptr - *mIt;</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                *mIt += delta/dim;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;                *sIt += delta*(*ptr - *mIt);</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;            }</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        }</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160; </div>
+<div class="line"><a name="l00208"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#aa6f9d6e93697ee528ba009d2bb2ad0a5">  208</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#aa6f9d6e93697ee528ba009d2bb2ad0a5">finish</a>() {</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;            finish0();</div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;        }</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160; </div>
+<div class="line"><a name="l00217"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a028be1ec55aeb6c626532ef68a35598b">  217</a></span>&#160;        <span class="keyword">const</span> std::vector&lt;double&gt;&amp; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a028be1ec55aeb6c626532ef68a35598b">means</a>() {</div>
+<div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;            <span class="keywordflow">return</span> running_mean;</div>
+<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;        }</div>
+<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160; </div>
+<div class="line"><a name="l00225"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a95a35e7f6aed6f9846a8eb513a0d9f83">  225</a></span>&#160;        <span class="keyword">const</span> std::vector&lt;double&gt;&amp; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a95a35e7f6aed6f9846a8eb513a0d9f83">statistics</a>() {</div>
+<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;            <span class="keywordflow">return</span> running_var;</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        }</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    };</div>
+<div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160; </div>
+<div class="line"><a name="l00233"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html">  233</a></span>&#160;    <span class="keyword">struct </span><a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html">Sparse</a> : <span class="keyword">private</span> Common {</div>
+<div class="line"><a name="l00237"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a59c14ae16c7af63c8d968f7a3ab0e26d">  237</a></span>&#160;        <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a59c14ae16c7af63c8d968f7a3ab0e26d">Sparse</a>(<span class="keywordtype">size_t</span> n) : Common(n), running_nnzero(n) {}</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160; </div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
+<div class="line"><a name="l00250"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#acb68863727c09d65deb38662a8c26cb5">  250</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#acb68863727c09d65deb38662a8c26cb5">add</a>(<a class="code" href="structtatami_1_1sparse__range.html">sparse_range&lt;T, IDX&gt;</a> range, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;            <span class="keyword">auto</span> sIt = running_var.begin();</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;            <span class="keyword">auto</span> mIt = running_mean.begin();</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            <span class="keyword">auto</span> nzIt = running_nnzero.begin();</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            ++dim;</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>; ++j, ++range.<a class="code" href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">index</a>, ++range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>) {</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                <span class="keyword">auto</span> ri = *range.<a class="code" href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">index</a>;</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                <span class="keyword">auto</span>&amp; curM = *(mIt + ri);</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;                <span class="keyword">auto</span>&amp; curS = *(sIt + ri);</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                <span class="keyword">auto</span>&amp; curNZ = *(nzIt + ri);</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;                ++curNZ;</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160; </div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;                <span class="keyword">const</span> <span class="keyword">auto</span>&amp; curval = *range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">double</span> delta = curval - curM;</div>
+<div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;                curM += delta / curNZ;</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;                curS += delta * (curval - curM);</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;            }</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160; </div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        }</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
+<div class="line"><a name="l00275"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a171c70991ba55523439df387654c6f31">  275</a></span>&#160;        <span class="keywordtype">void</span> <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a171c70991ba55523439df387654c6f31">finish</a>() {</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;            <span class="keywordflow">if</span> (dim) {</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;                <span class="keyword">auto</span> mIt = running_mean.begin();</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;                <span class="keyword">auto</span> nzIt = running_nnzero.begin();</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                <span class="keywordflow">for</span> (<span class="keyword">auto</span> sIt = running_var.begin(); sIt != running_var.end(); ++mIt, ++sIt, ++nzIt) {</div>
+<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">double</span> curNZ = *nzIt;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">double</span> ratio = curNZ / dim;</div>
+<div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;                    <span class="keyword">auto</span>&amp; curM = *mIt;</div>
+<div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160;                    *sIt += curM * curM * ratio * (dim - curNZ);</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;                    curM *= ratio;</div>
+<div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;                }</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;            }</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160; </div>
+<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;            finish0();</div>
+<div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        }</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160; </div>
+<div class="line"><a name="l00296"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#ae9fb6fe7b76c53b522140725d87c5a66">  296</a></span>&#160;        <span class="keyword">const</span> std::vector&lt;double&gt;&amp; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#ae9fb6fe7b76c53b522140725d87c5a66">means</a>() {</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            <span class="keywordflow">return</span> running_mean;</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;        }</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160; </div>
+<div class="line"><a name="l00304"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#adde7cb516d7241399b6b18aaa1a25420">  304</a></span>&#160;        <span class="keyword">const</span> std::vector&lt;double&gt;&amp; <a class="code" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#adde7cb516d7241399b6b18aaa1a25420">statistics</a>() {</div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;            <span class="keywordflow">return</span> running_var;</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        }</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;        std::vector&lt;int&gt; running_nnzero;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    };</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;};</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;}</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160; </div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
+<div class="line"><a name="l00326"></a><span class="lineno"><a class="line" href="variances_8hpp.html#afc7d2d40f6fb32feba94183167ff4062">  326</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="variances_8hpp.html#afc7d2d40f6fb32feba94183167ff4062">column_variances</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="keywordflow">return</span> apply&lt;1, T, IDX, stats::VarianceHelper&gt;(p);</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;}</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160; </div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
+<div class="line"><a name="l00342"></a><span class="lineno"><a class="line" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">  342</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">row_variances</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    <span class="keywordflow">return</span> apply&lt;0, T, IDX, stats::VarianceHelper&gt;(p);</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;}</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160; </div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;}</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160; </div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1typed__matrix_html"><div class="ttname"><a href="classtatami_1_1typed__matrix.html">tatami::typed_matrix&lt; T, IDX &gt;</a></div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html"><div class="ttname"><a href="structtatami_1_1sparse__range.html">tatami::sparse_range</a></div><div class="ttdoc">A range of sparse values.</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:23</div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html_ab90aaa9698db7de4df68e5adac8f7826"><div class="ttname"><a href="structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826">tatami::sparse_range::index</a></div><div class="ttdeci">const IDX * index</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:51</div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html_ad23d530e0181196804b761942c73d2c2"><div class="ttname"><a href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">tatami::sparse_range::value</a></div><div class="ttdeci">const T * value</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:45</div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html_aeb4182a21d74e82d1cb0fb4fd1aaa962"><div class="ttname"><a href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">tatami::sparse_range::number</a></div><div class="ttdeci">size_t number</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:39</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html">tatami::stats::VarianceHelper::Dense</a></div><div class="ttdoc">Helper to compute the running variance from dense inputs.</div><div class="ttdef"><b>Definition:</b> variances.hpp:181</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_a028be1ec55aeb6c626532ef68a35598b"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a028be1ec55aeb6c626532ef68a35598b">tatami::stats::VarianceHelper::Dense::means</a></div><div class="ttdeci">const std::vector&lt; double &gt; &amp; means()</div><div class="ttdef"><b>Definition:</b> variances.hpp:222</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_a790d1bd77a49a78674bac6b90f97b71a"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a790d1bd77a49a78674bac6b90f97b71a">tatami::stats::VarianceHelper::Dense::Dense</a></div><div class="ttdeci">Dense(size_t n)</div><div class="ttdef"><b>Definition:</b> variances.hpp:185</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_a95a35e7f6aed6f9846a8eb513a0d9f83"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a95a35e7f6aed6f9846a8eb513a0d9f83">tatami::stats::VarianceHelper::Dense::statistics</a></div><div class="ttdeci">const std::vector&lt; double &gt; &amp; statistics()</div><div class="ttdef"><b>Definition:</b> variances.hpp:230</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_aa6f9d6e93697ee528ba009d2bb2ad0a5"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#aa6f9d6e93697ee528ba009d2bb2ad0a5">tatami::stats::VarianceHelper::Dense::finish</a></div><div class="ttdeci">void finish()</div><div class="ttdef"><b>Definition:</b> variances.hpp:213</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_ae1b71e75ca1ec96c5d351f50a7e37683"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#ae1b71e75ca1ec96c5d351f50a7e37683">tatami::stats::VarianceHelper::Dense::add</a></div><div class="ttdeci">void add(const T *ptr, T *buffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:198</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html">tatami::stats::VarianceHelper::Sparse</a></div><div class="ttdoc">Helper to compute the running variance from sparse inputs.</div><div class="ttdef"><b>Definition:</b> variances.hpp:238</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_a171c70991ba55523439df387654c6f31"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a171c70991ba55523439df387654c6f31">tatami::stats::VarianceHelper::Sparse::finish</a></div><div class="ttdeci">void finish()</div><div class="ttdef"><b>Definition:</b> variances.hpp:280</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_a59c14ae16c7af63c8d968f7a3ab0e26d"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a59c14ae16c7af63c8d968f7a3ab0e26d">tatami::stats::VarianceHelper::Sparse::Sparse</a></div><div class="ttdeci">Sparse(size_t n)</div><div class="ttdef"><b>Definition:</b> variances.hpp:242</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_acb68863727c09d65deb38662a8c26cb5"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#acb68863727c09d65deb38662a8c26cb5">tatami::stats::VarianceHelper::Sparse::add</a></div><div class="ttdeci">void add(sparse_range&lt; T, IDX &gt; range, T *vbuffer=NULL, IDX *ibuffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:255</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_adde7cb516d7241399b6b18aaa1a25420"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#adde7cb516d7241399b6b18aaa1a25420">tatami::stats::VarianceHelper::Sparse::statistics</a></div><div class="ttdeci">const std::vector&lt; double &gt; &amp; statistics()</div><div class="ttdef"><b>Definition:</b> variances.hpp:309</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_ae9fb6fe7b76c53b522140725d87c5a66"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#ae9fb6fe7b76c53b522140725d87c5a66">tatami::stats::VarianceHelper::Sparse::means</a></div><div class="ttdeci">const std::vector&lt; double &gt; &amp; means()</div><div class="ttdef"><b>Definition:</b> variances.hpp:301</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html">tatami::stats::VarianceHelper::Dense</a></div><div class="ttdoc">Helper to compute the running variance from dense inputs.</div><div class="ttdef"><b>Definition:</b> variances.hpp:176</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_a028be1ec55aeb6c626532ef68a35598b"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a028be1ec55aeb6c626532ef68a35598b">tatami::stats::VarianceHelper::Dense::means</a></div><div class="ttdeci">const std::vector&lt; double &gt; &amp; means()</div><div class="ttdef"><b>Definition:</b> variances.hpp:217</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_a790d1bd77a49a78674bac6b90f97b71a"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a790d1bd77a49a78674bac6b90f97b71a">tatami::stats::VarianceHelper::Dense::Dense</a></div><div class="ttdeci">Dense(size_t n)</div><div class="ttdef"><b>Definition:</b> variances.hpp:180</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_a95a35e7f6aed6f9846a8eb513a0d9f83"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a95a35e7f6aed6f9846a8eb513a0d9f83">tatami::stats::VarianceHelper::Dense::statistics</a></div><div class="ttdeci">const std::vector&lt; double &gt; &amp; statistics()</div><div class="ttdef"><b>Definition:</b> variances.hpp:225</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_aa6f9d6e93697ee528ba009d2bb2ad0a5"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#aa6f9d6e93697ee528ba009d2bb2ad0a5">tatami::stats::VarianceHelper::Dense::finish</a></div><div class="ttdeci">void finish()</div><div class="ttdef"><b>Definition:</b> variances.hpp:208</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Dense_html_ae1b71e75ca1ec96c5d351f50a7e37683"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#ae1b71e75ca1ec96c5d351f50a7e37683">tatami::stats::VarianceHelper::Dense::add</a></div><div class="ttdeci">void add(const T *ptr, T *buffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:193</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html">tatami::stats::VarianceHelper::Sparse</a></div><div class="ttdoc">Helper to compute the running variance from sparse inputs.</div><div class="ttdef"><b>Definition:</b> variances.hpp:233</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_a171c70991ba55523439df387654c6f31"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a171c70991ba55523439df387654c6f31">tatami::stats::VarianceHelper::Sparse::finish</a></div><div class="ttdeci">void finish()</div><div class="ttdef"><b>Definition:</b> variances.hpp:275</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_a59c14ae16c7af63c8d968f7a3ab0e26d"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a59c14ae16c7af63c8d968f7a3ab0e26d">tatami::stats::VarianceHelper::Sparse::Sparse</a></div><div class="ttdeci">Sparse(size_t n)</div><div class="ttdef"><b>Definition:</b> variances.hpp:237</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_acb68863727c09d65deb38662a8c26cb5"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#acb68863727c09d65deb38662a8c26cb5">tatami::stats::VarianceHelper::Sparse::add</a></div><div class="ttdeci">void add(sparse_range&lt; T, IDX &gt; range, T *vbuffer=NULL, IDX *ibuffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:250</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_adde7cb516d7241399b6b18aaa1a25420"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#adde7cb516d7241399b6b18aaa1a25420">tatami::stats::VarianceHelper::Sparse::statistics</a></div><div class="ttdeci">const std::vector&lt; double &gt; &amp; statistics()</div><div class="ttdef"><b>Definition:</b> variances.hpp:304</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_1_1Sparse_html_ae9fb6fe7b76c53b522140725d87c5a66"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#ae9fb6fe7b76c53b522140725d87c5a66">tatami::stats::VarianceHelper::Sparse::means</a></div><div class="ttdeci">const std::vector&lt; double &gt; &amp; means()</div><div class="ttdef"><b>Definition:</b> variances.hpp:296</div></div>
 <div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html">tatami::stats::VarianceHelper</a></div><div class="ttdoc">Helper to compute the variance along each dimension.</div><div class="ttdef"><b>Definition:</b> variances.hpp:25</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_a0cf3167f20ea137168018c021003b7c3"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#a0cf3167f20ea137168018c021003b7c3">tatami::stats::VarianceHelper::value</a></div><div class="ttdeci">double value</div><div class="ttdef"><b>Definition:</b> variances.hpp:30</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_a14d603e4c829ef53efb59945c31ce6a0"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#a14d603e4c829ef53efb59945c31ce6a0">tatami::stats::VarianceHelper::compute_with_mean</a></div><div class="ttdeci">static std::pair&lt; double, double &gt; compute_with_mean(const sparse_range&lt; T, IDX &gt; &amp;range, size_t n, T *vbuffer=NULL, IDX *ibuffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:138</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_a8a2c4cc88aae68d6288e6ce5f510eee6"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#a8a2c4cc88aae68d6288e6ce5f510eee6">tatami::stats::VarianceHelper::compute</a></div><div class="ttdeci">static double compute(const T *ptr, size_t n, T *buffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:73</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_aaaa1d606f19e7509a73acc00e1258b30"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#aaaa1d606f19e7509a73acc00e1258b30">tatami::stats::VarianceHelper::supports_running</a></div><div class="ttdeci">static const bool supports_running</div><div class="ttdef"><b>Definition:</b> variances.hpp:40</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_ab0b04a6523a41a4dbe4d1291407d1800"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#ab0b04a6523a41a4dbe4d1291407d1800">tatami::stats::VarianceHelper::supports_sparse</a></div><div class="ttdeci">static const bool supports_sparse</div><div class="ttdef"><b>Definition:</b> variances.hpp:35</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_ab266fe594cb1d464d9e118e972db98cb"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">tatami::stats::VarianceHelper::compute_with_mean</a></div><div class="ttdeci">static std::pair&lt; double, double &gt; compute_with_mean(const T *ptr, size_t n, T *buffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:91</div></div>
-<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_acf772b134cacc3afb698dc8cf9662dc5"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#acf772b134cacc3afb698dc8cf9662dc5">tatami::stats::VarianceHelper::compute</a></div><div class="ttdeci">static double compute(const sparse_range&lt; T, IDX &gt; &amp;range, size_t n, T *vbuffer=NULL, IDX *ibuffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:120</div></div>
-<div class="ttc" id="avariances_8hpp_html_a57e979cfc34700068fd5b2355e41e93c"><div class="ttname"><a href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">tatami::row_variances</a></div><div class="ttdeci">std::vector&lt; T &gt; row_variances(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> variances.hpp:347</div></div>
-<div class="ttc" id="avariances_8hpp_html_afc7d2d40f6fb32feba94183167ff4062"><div class="ttname"><a href="variances_8hpp.html#afc7d2d40f6fb32feba94183167ff4062">tatami::column_variances</a></div><div class="ttdeci">std::vector&lt; T &gt; column_variances(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> variances.hpp:331</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_a14d603e4c829ef53efb59945c31ce6a0"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#a14d603e4c829ef53efb59945c31ce6a0">tatami::stats::VarianceHelper::compute_with_mean</a></div><div class="ttdeci">static std::pair&lt; double, double &gt; compute_with_mean(const sparse_range&lt; T, IDX &gt; &amp;range, size_t n, T *vbuffer=NULL, IDX *ibuffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:133</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_a8a2c4cc88aae68d6288e6ce5f510eee6"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#a8a2c4cc88aae68d6288e6ce5f510eee6">tatami::stats::VarianceHelper::compute</a></div><div class="ttdeci">static double compute(const T *ptr, size_t n, T *buffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:68</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_aaaa1d606f19e7509a73acc00e1258b30"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#aaaa1d606f19e7509a73acc00e1258b30">tatami::stats::VarianceHelper::supports_running</a></div><div class="ttdeci">static const bool supports_running</div><div class="ttdef"><b>Definition:</b> variances.hpp:35</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_ab0b04a6523a41a4dbe4d1291407d1800"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#ab0b04a6523a41a4dbe4d1291407d1800">tatami::stats::VarianceHelper::supports_sparse</a></div><div class="ttdeci">static const bool supports_sparse</div><div class="ttdef"><b>Definition:</b> variances.hpp:30</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_ab266fe594cb1d464d9e118e972db98cb"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">tatami::stats::VarianceHelper::compute_with_mean</a></div><div class="ttdeci">static std::pair&lt; double, double &gt; compute_with_mean(const T *ptr, size_t n, T *buffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:86</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1VarianceHelper_html_acf772b134cacc3afb698dc8cf9662dc5"><div class="ttname"><a href="structtatami_1_1stats_1_1VarianceHelper.html#acf772b134cacc3afb698dc8cf9662dc5">tatami::stats::VarianceHelper::compute</a></div><div class="ttdeci">static double compute(const sparse_range&lt; T, IDX &gt; &amp;range, size_t n, T *vbuffer=NULL, IDX *ibuffer=NULL)</div><div class="ttdef"><b>Definition:</b> variances.hpp:115</div></div>
+<div class="ttc" id="avariances_8hpp_html_a57e979cfc34700068fd5b2355e41e93c"><div class="ttname"><a href="variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c">tatami::row_variances</a></div><div class="ttdeci">std::vector&lt; T &gt; row_variances(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> variances.hpp:342</div></div>
+<div class="ttc" id="avariances_8hpp_html_afc7d2d40f6fb32feba94183167ff4062"><div class="ttname"><a href="variances_8hpp.html#afc7d2d40f6fb32feba94183167ff4062">tatami::column_variances</a></div><div class="ttdeci">std::vector&lt; T &gt; column_variances(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> variances.hpp:326</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
