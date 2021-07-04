@@ -1,4 +1,7 @@
 var searchData=
 [
-  ['type_183',['type',['../classtatami_1_1matrix.html#a87916134acf03c2813465ff3fab98ab3',1,'tatami::matrix::type()'],['../classtatami_1_1typed__matrix.html#abf879b09180a61660d8eacd2cfc035ac',1,'tatami::typed_matrix::type()']]]
+  ['row_201',['row',['../classtatami_1_1CompressedSparseMatrix.html#aa435f86259fa7f72ae810f9ac7462193',1,'tatami::CompressedSparseMatrix::row()'],['../classtatami_1_1DelayedBind.html#ab17cbc153e66eb304075bfb72af4c525',1,'tatami::DelayedBind::row()'],['../classtatami_1_1DelayedIsometricOp.html#a9fb764f8eb8457884519f3c9cce5945e',1,'tatami::DelayedIsometricOp::row()'],['../classtatami_1_1DelayedSubset.html#a63b55c1050f842f225c0a6a82151bd88',1,'tatami::DelayedSubset::row()'],['../classtatami_1_1DelayedSubsetBlock.html#a6ad22edd9cb3239046823c7d1e2b3cfe',1,'tatami::DelayedSubsetBlock::row()'],['../classtatami_1_1DelayedTranspose.html#a84c80075e46faf9441841e1c1cca7698',1,'tatami::DelayedTranspose::row()'],['../classtatami_1_1DenseMatrix.html#a0c7fb3feb0114b99f1f462544ce547d1',1,'tatami::DenseMatrix::row()'],['../classtatami_1_1typed__matrix.html#a847586300593529aba1ff766a00f966d',1,'tatami::typed_matrix::row(size_t r, T *buffer, size_t first, size_t last, workspace *work=nullptr) const =0'],['../classtatami_1_1typed__matrix.html#a990d98d3065ba89ed74466e07e2069bd',1,'tatami::typed_matrix::row(size_t r, T *buffer, workspace *work=nullptr) const']]],
+  ['row_5fmedians_202',['row_medians',['../medians_8hpp.html#abde2ce85c97a9be3195b73116c35d16b',1,'tatami']]],
+  ['row_5fsums_203',['row_sums',['../sums_8hpp.html#a26c5bd24910735738b5f99122868f363',1,'tatami']]],
+  ['row_5fvariances_204',['row_variances',['../variances_8hpp.html#a57e979cfc34700068fd5b2355e41e93c',1,'tatami']]]
 ];

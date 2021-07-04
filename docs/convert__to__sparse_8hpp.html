@@ -218,7 +218,8 @@ template&lt;typename T , typename IDX &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type.">tatami::typed_matrix</a></code>, possibly containing delayed operations. </td></tr>
-    <tr><td class="paramname">row</td><td>Whether the output matrix should be in compressed sparse row format.</td></tr>
+    <tr><td class="paramname">row</td><td>Whether the output matrix should be in compressed sparse row format. </td></tr>
+    <tr><td class="paramname">reserve</td><td>The expected density of non-zero values in <code>incoming</code>. A slight overestimate will avoid reallocation of the temporary vectors.</td></tr>
   </table>
   </dd>
 </dl>

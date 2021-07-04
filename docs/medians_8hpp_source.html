@@ -84,105 +84,114 @@ $(function() {
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="keyword">namespace </span>tatami {</div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keywordtype">bool</span> SPARSE, <span class="keywordtype">bool</span> RUNNABLE&gt; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">struct </span>StatsMedianHelper {</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;    StatsMedianHelper(<span class="keywordtype">size_t</span> n, <span class="keywordtype">size_t</span> d) : store(n), dim(d), halfway(dim/2), is_even(dim%2==0) {}</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> sparse = SPARSE;</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> runnable = <span class="keyword">false</span>;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">typedef</span> std::vector&lt;double&gt; value;</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;    <span class="keywordtype">void</span> direct(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> T* ptr, T* buffer) {</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;        <span class="keywordflow">if</span> (dim == 0) {</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;            store[i] = std::numeric_limits&lt;double&gt;::quiet_NaN();</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;        }</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;        <span class="keywordflow">if</span> (ptr != buffer) {</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;            std::copy(ptr, ptr + dim, buffer);</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        }</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="comment">// At some point, I found two nth_element calls to be faster than partial_sort.</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        std::nth_element(buffer, buffer + halfway, buffer + dim);</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        <span class="keywordtype">double</span> medtmp = *(buffer + halfway);</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;        <span class="keywordflow">if</span> (is_even) {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;            std::nth_element(buffer, buffer + halfway - 1, buffer + dim);</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;            store[i] = (medtmp + *(buffer + halfway - 1))/2;</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;            store[i] = medtmp;</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        }</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    }</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> direct(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> sparse_range&lt;T, IDX&gt;&amp; range, T* vbuffer, IDX* ibuffer) {</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keywordflow">if</span> (range.number == dim) {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;            direct(i, range.value, vbuffer);</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (range.number * 2 &lt; dim) {</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;            <span class="comment">// zero is the median.</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keywordflow">if</span> (range.value != vbuffer) {</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                std::copy(range.value, range.value + range.number, vbuffer);</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            }</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;            <span class="keyword">auto</span> vend = vbuffer + range.number;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            std::sort(vbuffer, vend);</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;            <span class="keywordtype">size_t</span> zeropos = std::lower_bound(vbuffer, vend, 0) - vbuffer;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;            <span class="keywordtype">size_t</span> nzero = dim - range.number;</div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span>stats {</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1MedianHelper.html">   25</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structtatami_1_1stats_1_1MedianHelper.html">MedianHelper</a> {</div>
+<div class="line"><a name="l00029"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1MedianHelper.html#a280175566cf5d63793f571a2d455d7d7">   29</a></span>&#160;    <span class="keyword">typedef</span> <span class="keywordtype">double</span> <a class="code" href="structtatami_1_1stats_1_1MedianHelper.html#a280175566cf5d63793f571a2d455d7d7">value</a>;</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160; </div>
+<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1MedianHelper.html#aaaaf39d2e0cde72c2db6a1ef241084cb">   34</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="structtatami_1_1stats_1_1MedianHelper.html#aaaaf39d2e0cde72c2db6a1ef241084cb">supports_sparse</a> = <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1MedianHelper.html#a63aa826e0d7cf3e23b04c79946d69e31">   39</a></span>&#160;    <span class="keyword">static</span> <span class="keyword">const</span> <span class="keywordtype">bool</span> <a class="code" href="structtatami_1_1stats_1_1MedianHelper.html#a63aa826e0d7cf3e23b04c79946d69e31">supports_running</a> = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="keyword">public</span>:</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>&gt;</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1MedianHelper.html#ab86a2e01b55892f8adc71086af525410">   54</a></span>&#160;    <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="structtatami_1_1stats_1_1MedianHelper.html#ab86a2e01b55892f8adc71086af525410">compute</a>(<span class="keyword">const</span> T* ptr, <span class="keywordtype">size_t</span> n, T* buffer) {</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keywordflow">if</span> (n == 0) {</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            <span class="keywordflow">return</span> std::numeric_limits&lt;double&gt;::quiet_NaN();</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordflow">if</span> (ptr != buffer) {</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            std::copy(ptr, ptr + n, buffer);</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        }</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160; </div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        <span class="keywordtype">size_t</span> halfway = n / 2;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        <span class="keywordtype">bool</span> is_even = (n % 2 == 0);</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;            <span class="keywordflow">if</span> (!is_even) {</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;                <span class="keywordflow">if</span> (zeropos &gt; halfway) {</div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;                    store[i] = vbuffer[halfway];</div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (halfway &gt;= zeropos + nzero) {</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                    store[i] = vbuffer[halfway - nzero];</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                    ; <span class="comment">// zero is the median.</span></div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                }</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;                <span class="keywordtype">double</span>&amp; tmp = store[i];</div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;                <span class="keywordflow">if</span> (zeropos &gt; halfway) {</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                    tmp = vbuffer[halfway] + vbuffer[halfway - 1];</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (zeropos == halfway) {</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                    <span class="comment">// guaranteed to be at least 1 zero.</span></div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                    tmp += vbuffer[halfway - 1];</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (zeropos &lt; halfway &amp;&amp; zeropos + nzero &gt; halfway) {</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;                    ; <span class="comment">// zero is the median.</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (zeropos + nzero == halfway) {</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                    <span class="comment">// guaranteed to be at least 1 zero.</span></div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                    tmp += vbuffer[halfway - nzero];</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;                    tmp = vbuffer[halfway - nzero] + vbuffer[halfway - nzero - 1];</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                }</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                tmp /= 2;</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            }</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;    }</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160; </div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    value yield() {</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        <span class="keywordflow">return</span> store;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    }</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="keyword">private</span>:</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    value store;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="keywordtype">size_t</span> dim, halfway;</div>
-<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keywordtype">bool</span> is_even;</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;};</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="comment">// At some point, I found two nth_element calls to be faster than partial_sort.</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;        std::nth_element(buffer, buffer + halfway, buffer + n);</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        <span class="keywordtype">double</span> medtmp = *(buffer + halfway);</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;        <span class="keywordflow">if</span> (is_even) {</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;            std::nth_element(buffer, buffer + halfway - 1, buffer + n);</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;            <span class="keywordflow">return</span> (medtmp + *(buffer + halfway - 1))/2;</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;            <span class="keywordflow">return</span> medtmp;</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        }</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    }</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>, <span class="keyword">typename</span> IDX = <span class="keywordtype">int</span>&gt;</div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="structtatami_1_1stats_1_1MedianHelper.html#a13b30c9b05cd0948fac6f04eae0ef80b">   90</a></span>&#160;    <span class="keyword">static</span> <span class="keywordtype">double</span> <a class="code" href="structtatami_1_1stats_1_1MedianHelper.html#a13b30c9b05cd0948fac6f04eae0ef80b">compute</a>(<span class="keyword">const</span> <a class="code" href="structtatami_1_1sparse__range.html">sparse_range&lt;T, IDX&gt;</a>&amp; range, <span class="keywordtype">size_t</span> n, T* vbuffer, IDX* ibuffer) {</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        <span class="keywordflow">if</span> (range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a> == n) {</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;            <span class="keywordflow">return</span> <a class="code" href="structtatami_1_1stats_1_1MedianHelper.html#ab86a2e01b55892f8adc71086af525410">compute</a>(range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>, n, vbuffer);</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a> * 2 &lt; n) {</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;            <span class="keywordflow">return</span> 0; <span class="comment">// zero is the median if there are too many zeroes.</span></div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;            <span class="keywordflow">if</span> (range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a> != vbuffer) {</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;                std::copy(range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a>, range.<a class="code" href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">value</a> + range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>, vbuffer);</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;            }</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;            <span class="keywordtype">size_t</span> halfway = n / 2;</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;            <span class="keywordtype">bool</span> is_even = (n % 2 == 0);</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00112"></a><span class="lineno"><a class="line" href="medians_8hpp.html#acad52b0896f888b3afb122c724b6d665">  112</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="medians_8hpp.html#acad52b0896f888b3afb122c724b6d665">column_medians</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keywordflow">return</span> apply&lt;1, T, IDX, StatsMedianHelper&gt;(p);</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;}</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="medians_8hpp.html#abde2ce85c97a9be3195b73116c35d16b">  125</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="medians_8hpp.html#abde2ce85c97a9be3195b73116c35d16b">row_medians</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keywordflow">return</span> apply&lt;0, T, IDX, StatsMedianHelper&gt;(p);</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;}</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160; </div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;}</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;            <span class="keyword">auto</span> vend = vbuffer + range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>;</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;            std::sort(vbuffer, vend);</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;            <span class="keywordtype">size_t</span> zeropos = std::lower_bound(vbuffer, vend, 0) - vbuffer;</div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;            <span class="keywordtype">size_t</span> nzero = n - range.<a class="code" href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">number</a>;</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;            <span class="keywordflow">if</span> (!is_even) {</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;                <span class="keywordflow">if</span> (zeropos &gt; halfway) {</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                    <span class="keywordflow">return</span> vbuffer[halfway];</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (halfway &gt;= zeropos + nzero) {</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;                    <span class="keywordflow">return</span> vbuffer[halfway - nzero];</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                    <span class="keywordflow">return</span> 0; <span class="comment">// zero is the median.</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;                }</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                <span class="keywordtype">double</span> tmp = 0;</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;                <span class="keywordflow">if</span> (zeropos &gt; halfway) {</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;                    tmp = vbuffer[halfway] + vbuffer[halfway - 1];</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (zeropos == halfway) {</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;                    <span class="comment">// guaranteed to be at least 1 zero.</span></div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                    tmp += vbuffer[halfway - 1];</div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (zeropos &lt; halfway &amp;&amp; zeropos + nzero &gt; halfway) {</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;                    ; <span class="comment">// zero is the median.</span></div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;                } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (zeropos + nzero == halfway) {</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                    <span class="comment">// guaranteed to be at least 1 zero.</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                    tmp += vbuffer[halfway - nzero];</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                    tmp = vbuffer[halfway - nzero] + vbuffer[halfway - nzero - 1];</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                }</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;                <span class="keywordflow">return</span> tmp / 2;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;            }</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        }</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    }</div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;};</div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;}</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160; </div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
+<div class="line"><a name="l00148"></a><span class="lineno"><a class="line" href="medians_8hpp.html#acad52b0896f888b3afb122c724b6d665">  148</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="medians_8hpp.html#acad52b0896f888b3afb122c724b6d665">column_medians</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keywordflow">return</span> apply&lt;1, T, IDX, stats::MedianHelper&gt;(p);</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;}</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
+<div class="line"><a name="l00161"></a><span class="lineno"><a class="line" href="medians_8hpp.html#abde2ce85c97a9be3195b73116c35d16b">  161</a></span>&#160;<span class="keyword">inline</span> std::vector&lt;T&gt; <a class="code" href="medians_8hpp.html#abde2ce85c97a9be3195b73116c35d16b">row_medians</a>(<span class="keyword">const</span> <a class="code" href="classtatami_1_1typed__matrix.html">typed_matrix&lt;T, IDX&gt;</a>* p) {</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="keywordflow">return</span> apply&lt;0, T, IDX, stats::MedianHelper&gt;(p);</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;}</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;}</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160; </div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1typed__matrix_html"><div class="ttname"><a href="classtatami_1_1typed__matrix.html">tatami::typed_matrix&lt; T, IDX &gt;</a></div></div>
-<div class="ttc" id="amedians_8hpp_html_abde2ce85c97a9be3195b73116c35d16b"><div class="ttname"><a href="medians_8hpp.html#abde2ce85c97a9be3195b73116c35d16b">tatami::row_medians</a></div><div class="ttdeci">std::vector&lt; T &gt; row_medians(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> medians.hpp:125</div></div>
-<div class="ttc" id="amedians_8hpp_html_acad52b0896f888b3afb122c724b6d665"><div class="ttname"><a href="medians_8hpp.html#acad52b0896f888b3afb122c724b6d665">tatami::column_medians</a></div><div class="ttdeci">std::vector&lt; T &gt; column_medians(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> medians.hpp:112</div></div>
+<div class="ttc" id="amedians_8hpp_html_abde2ce85c97a9be3195b73116c35d16b"><div class="ttname"><a href="medians_8hpp.html#abde2ce85c97a9be3195b73116c35d16b">tatami::row_medians</a></div><div class="ttdeci">std::vector&lt; T &gt; row_medians(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> medians.hpp:161</div></div>
+<div class="ttc" id="amedians_8hpp_html_acad52b0896f888b3afb122c724b6d665"><div class="ttname"><a href="medians_8hpp.html#acad52b0896f888b3afb122c724b6d665">tatami::column_medians</a></div><div class="ttdeci">std::vector&lt; T &gt; column_medians(const typed_matrix&lt; T, IDX &gt; *p)</div><div class="ttdef"><b>Definition:</b> medians.hpp:148</div></div>
+<div class="ttc" id="astructtatami_1_1sparse__range_html"><div class="ttname"><a href="structtatami_1_1sparse__range.html">tatami::sparse_range</a></div><div class="ttdoc">A range of sparse values.</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:23</div></div>
+<div class="ttc" id="astructtatami_1_1sparse__range_html_ad23d530e0181196804b761942c73d2c2"><div class="ttname"><a href="structtatami_1_1sparse__range.html#ad23d530e0181196804b761942c73d2c2">tatami::sparse_range::value</a></div><div class="ttdeci">const T * value</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:45</div></div>
+<div class="ttc" id="astructtatami_1_1sparse__range_html_aeb4182a21d74e82d1cb0fb4fd1aaa962"><div class="ttname"><a href="structtatami_1_1sparse__range.html#aeb4182a21d74e82d1cb0fb4fd1aaa962">tatami::sparse_range::number</a></div><div class="ttdeci">size_t number</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:39</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1MedianHelper_html"><div class="ttname"><a href="structtatami_1_1stats_1_1MedianHelper.html">tatami::stats::MedianHelper</a></div><div class="ttdoc">Helper to compute the median along each dimension.</div><div class="ttdef"><b>Definition:</b> medians.hpp:25</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1MedianHelper_html_a13b30c9b05cd0948fac6f04eae0ef80b"><div class="ttname"><a href="structtatami_1_1stats_1_1MedianHelper.html#a13b30c9b05cd0948fac6f04eae0ef80b">tatami::stats::MedianHelper::compute</a></div><div class="ttdeci">static double compute(const sparse_range&lt; T, IDX &gt; &amp;range, size_t n, T *vbuffer, IDX *ibuffer)</div><div class="ttdef"><b>Definition:</b> medians.hpp:90</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1MedianHelper_html_a280175566cf5d63793f571a2d455d7d7"><div class="ttname"><a href="structtatami_1_1stats_1_1MedianHelper.html#a280175566cf5d63793f571a2d455d7d7">tatami::stats::MedianHelper::value</a></div><div class="ttdeci">double value</div><div class="ttdef"><b>Definition:</b> medians.hpp:29</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1MedianHelper_html_a63aa826e0d7cf3e23b04c79946d69e31"><div class="ttname"><a href="structtatami_1_1stats_1_1MedianHelper.html#a63aa826e0d7cf3e23b04c79946d69e31">tatami::stats::MedianHelper::supports_running</a></div><div class="ttdeci">static const bool supports_running</div><div class="ttdef"><b>Definition:</b> medians.hpp:39</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1MedianHelper_html_aaaaf39d2e0cde72c2db6a1ef241084cb"><div class="ttname"><a href="structtatami_1_1stats_1_1MedianHelper.html#aaaaf39d2e0cde72c2db6a1ef241084cb">tatami::stats::MedianHelper::supports_sparse</a></div><div class="ttdeci">static const bool supports_sparse</div><div class="ttdef"><b>Definition:</b> medians.hpp:34</div></div>
+<div class="ttc" id="astructtatami_1_1stats_1_1MedianHelper_html_ab86a2e01b55892f8adc71086af525410"><div class="ttname"><a href="structtatami_1_1stats_1_1MedianHelper.html#ab86a2e01b55892f8adc71086af525410">tatami::stats::MedianHelper::compute</a></div><div class="ttdeci">static double compute(const T *ptr, size_t n, T *buffer)</div><div class="ttdef"><b>Definition:</b> medians.hpp:54</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

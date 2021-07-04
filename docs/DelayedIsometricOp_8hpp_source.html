@@ -172,7 +172,7 @@ $(function() {
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;<span class="keyword">private</span>:</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    std::shared_ptr&lt;const typed_matrix&lt;T, IDX&gt; &gt; mat;</div>
 <div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    OP operation;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    static_assert(std::is_same&lt;T, decltype(operation(0, 0, 0))&gt;::value);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    static_assert(std::is_same&lt;T, decltype(operation(0, 0, 0))&gt;::<a class="code" href="classtatami_1_1typed__matrix.html#a9586bf720aae239231559488e9ce7cd4">value</a>);</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;};</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> MAT, <span class="keyword">class</span> OP&gt;</div>
@@ -209,6 +209,7 @@ $(function() {
 <div class="ttc" id="aclasstatami_1_1DelayedIsometricOp_html_ad41206c6087c4745a211f6be776c0e12"><div class="ttname"><a href="classtatami_1_1DelayedIsometricOp.html#ad41206c6087c4745a211f6be776c0e12">tatami::DelayedIsometricOp::column</a></div><div class="ttdeci">const T * column(size_t c, T *buffer, size_t start, size_t end, workspace *work=nullptr) const</div><div class="ttdef"><b>Definition:</b> DelayedIsometricOp.hpp:46</div></div>
 <div class="ttc" id="aclasstatami_1_1DelayedIsometricOp_html_afff7ed215617739acaa9571b43df40db"><div class="ttname"><a href="classtatami_1_1DelayedIsometricOp.html#afff7ed215617739acaa9571b43df40db">tatami::DelayedIsometricOp::nrow</a></div><div class="ttdeci">size_t nrow() const</div><div class="ttdef"><b>Definition:</b> DelayedIsometricOp.hpp:102</div></div>
 <div class="ttc" id="aclasstatami_1_1typed__matrix_html"><div class="ttname"><a href="classtatami_1_1typed__matrix.html">tatami::typed_matrix</a></div><div class="ttdoc">Virtual class for a matrix with a defined type.</div><div class="ttdef"><b>Definition:</b> typed_matrix.hpp:23</div></div>
+<div class="ttc" id="aclasstatami_1_1typed__matrix_html_a9586bf720aae239231559488e9ce7cd4"><div class="ttname"><a href="classtatami_1_1typed__matrix.html#a9586bf720aae239231559488e9ce7cd4">tatami::typed_matrix&lt; T, IDX &gt;::value</a></div><div class="ttdeci">T value</div><div class="ttdef"><b>Definition:</b> typed_matrix.hpp:179</div></div>
 <div class="ttc" id="aclasstatami_1_1workspace_html"><div class="ttname"><a href="classtatami_1_1workspace.html">tatami::workspace</a></div><div class="ttdoc">Virtual workspace class.</div><div class="ttdef"><b>Definition:</b> workspace.hpp:19</div></div>
 <div class="ttc" id="amath__helpers_8hpp_html"><div class="ttname"><a href="math__helpers_8hpp.html">math_helpers.hpp</a></div></div>
 <div class="ttc" id="astructtatami_1_1sparse__range_html"><div class="ttname"><a href="structtatami_1_1sparse__range.html">tatami::sparse_range</a></div><div class="ttdoc">A range of sparse values.</div><div class="ttdef"><b>Definition:</b> sparse_range.hpp:23</div></div>
