@@ -102,10 +102,8 @@ Collaboration diagram for tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, 
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a77329784fa6f7bae110adf4f923bde14"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a77329784fa6f7bae110adf4f923bde14">CompressedSparseMatrix</a> (size_t nr, size_t nc, const U &amp;vals, const V &amp;idx, const W &amp;ptr, bool check=true)</td></tr>
-<tr class="separator:a77329784fa6f7bae110adf4f923bde14"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4bcc3bd0fb8b4ef52778d1e029fbcbb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1CompressedSparseMatrix.html#ad4bcc3bd0fb8b4ef52778d1e029fbcbb">CompressedSparseMatrix</a> (size_t nr, size_t nc, U &amp;&amp;vals, V &amp;&amp;idx, W &amp;&amp;ptr, bool check=true)</td></tr>
-<tr class="separator:ad4bcc3bd0fb8b4ef52778d1e029fbcbb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d72d9e6a0cdc46315fd78f7f7edb78e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a3d72d9e6a0cdc46315fd78f7f7edb78e">CompressedSparseMatrix</a> (size_t nr, size_t nc, U vals, V idx, W ptr, bool check=true)</td></tr>
+<tr class="separator:a3d72d9e6a0cdc46315fd78f7f7edb78e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c8cbee3334cbc3f860c1b328e254f7d"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a5c8cbee3334cbc3f860c1b328e254f7d">nrow</a> () const</td></tr>
 <tr class="separator:a5c8cbee3334cbc3f860c1b328e254f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6871fd77991469c12276bd76c01bec59"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a6871fd77991469c12276bd76c01bec59">ncol</a> () const</td></tr>
@@ -168,8 +166,8 @@ class tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</h3>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a77329784fa6f7bae110adf4f923bde14"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a77329784fa6f7bae110adf4f923bde14">&#9670;&nbsp;</a></span>CompressedSparseMatrix() <span class="overload">[1/2]</span></h2>
+<a id="a3d72d9e6a0cdc46315fd78f7f7edb78e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d72d9e6a0cdc46315fd78f7f7edb78e">&#9670;&nbsp;</a></span>CompressedSparseMatrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -194,93 +192,19 @@ template&lt;bool ROW, typename T , typename IDX  = int, class U  = std::vector&l
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const U &amp;&#160;</td>
+          <td class="paramtype">U&#160;</td>
           <td class="paramname"><em>vals</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const V &amp;&#160;</td>
+          <td class="paramtype">V&#160;</td>
           <td class="paramname"><em>idx</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const W &amp;&#160;</td>
-          <td class="paramname"><em>ptr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>check</em> = <code>true</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">nr</td><td>Number of rows. </td></tr>
-    <tr><td class="paramname">nc</td><td>Number of columns. </td></tr>
-    <tr><td class="paramname">vals</td><td>Vector of non-zero elements. </td></tr>
-    <tr><td class="paramname">idx</td><td>Vector of row indices (if <code>ROW=false</code>) or column indices (if <code>ROW=true</code>) for the non-zero elements. </td></tr>
-    <tr><td class="paramname">ptr</td><td>Vector of index pointers. </td></tr>
-    <tr><td class="paramname">check</td><td>Should the input vectors be checked for validity?</td></tr>
-  </table>
-  </dd>
-</dl>
-<p>If <code>check=true</code>, the constructor will check that <code>vals</code> and <code>idx</code> have the same length; <code>ptr</code> is ordered with first and last values set to 0 and the number of non-zero elements, respectively; and <code>idx</code> is ordered within each interval defined by successive elements of <code>ptr</code>. </p>
-
-</div>
-</div>
-<a id="ad4bcc3bd0fb8b4ef52778d1e029fbcbb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad4bcc3bd0fb8b4ef52778d1e029fbcbb">&#9670;&nbsp;</a></span>CompressedSparseMatrix() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;bool ROW, typename T , typename IDX  = int, class U  = std::vector&lt;T&gt;, class V  = std::vector&lt;IDX&gt;, class W  = std::vector&lt;size_t&gt;&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1CompressedSparseMatrix.html">tatami::CompressedSparseMatrix</a>&lt; ROW, T, IDX, U, V, W &gt;::<a class="el" href="classtatami_1_1CompressedSparseMatrix.html">CompressedSparseMatrix</a> </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>nr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>nc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">U &amp;&amp;&#160;</td>
-          <td class="paramname"><em>vals</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">V &amp;&amp;&#160;</td>
-          <td class="paramname"><em>idx</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">W &amp;&amp;&#160;</td>
+          <td class="paramtype">W&#160;</td>
           <td class="paramname"><em>ptr</em>, </td>
         </tr>
         <tr>
