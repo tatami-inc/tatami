@@ -6,7 +6,8 @@
 #include <vector>
 #include <algorithm>
 
-class TestCore : public ::testing::Test {
+template<class BASE>
+class TestCore0 : public BASE {
 protected:
     std::vector<double> expected;
     std::vector<double> output;
@@ -82,5 +83,7 @@ protected:
         fill_sparse_output(info, expected);
     }
 };
+
+typedef TestCore0<::testing::Test> TestCore;
 
 #endif

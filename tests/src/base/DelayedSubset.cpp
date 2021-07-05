@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <tuple>
 
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/base/DelayedSubset.hpp"
@@ -10,7 +11,8 @@
 #include "../data/data.h"
 #include "TestCore.h"
 
-class SubsetTestCore : public TestCore {
+template<class PARAM> 
+class SubsetTest : public TestCore0<::testing::TestWithParam<PARAM> > {
 protected:
     std::shared_ptr<tatami::numeric_matrix> dense;
     std::shared_ptr<tatami::typed_matrix<double, int> > sparse;
@@ -22,18 +24,19 @@ protected:
         sparse = tatami::convert_to_sparse(dense.get(), false); // column-major.
         return;
     }
-};
 
-class SubsetTest : public SubsetTestCore {
-protected:
     void SetUp() {
         assemble(sparse_nrow, sparse_ncol, sparse_matrix);
     }
 };
 
-TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
-    // Column subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 0, 3, 3, 13, 5, 2, 19, 4, 6, 11, 19, 8 };
+/****************************************************
+ ****************************************************/
+
+class SubsetRowFullColumnAccessTest : public SubsetTest<std::vector<size_t> > {};
+
+TEST_P(SubsetRowFullColumnAccessTest, Access) {
+    std::vector<size_t> sub = GetParam();
     std::vector<double> buffer_full(dense->nrow());
 
     auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
@@ -84,22 +87,36 @@ TEST_F(SubsetTest, SubsetRowFullColumnAccess) {
     }
 }
 
-TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
-    // Column subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 17, 18, 11, 18, 15, 17, 13, 18, 11, 9, 6, 3, 6, 18, 1 };
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubset,
+    SubsetRowFullColumnAccessTest,
+    ::testing::Values(
+        std::vector<size_t>({ 0, 3, 3, 13, 5, 2, 19, 4, 6, 11, 19, 8 }), // with duplicates
+        std::vector<size_t>({ 1, 2, 3, 5, 9, 13, 17 }), // ordered, no duplicates
+        std::vector<size_t>({ 8, 9, 10, 11}) // consecutive
+    )
+);
+
+/****************************************************
+ ****************************************************/
+
+class SubsetRowSlicedColumnAccessTest : public SubsetTest<std::tuple<std::vector<size_t>, std::vector<size_t> > > {};
+
+TEST_P(SubsetRowSlicedColumnAccessTest, Access) {
+    std::vector<size_t> sub = std::get<0>(GetParam()); 
     std::vector<double> buffer_full(dense->nrow());
 
     auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
     auto sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
 
-    size_t LEN = 6;
-    size_t first = 0;
+    auto slice = std::get<1>(GetParam());
+    size_t FIRST = slice[0], LEN = slice[1], SHIFT = slice[2];
 
     work_dense = dense_subbed->new_workspace(false);
     work_sparse = sparse_subbed->new_workspace(false);
 
     for (size_t i = 0; i < dense->ncol(); ++i) {
-        set_sizes(first, std::min(first + LEN, sub.size()));
+        set_sizes(FIRST, std::min(FIRST + LEN, sub.size()));
 
         wipe_output();
         fill_output(sparse_subbed->column(i, output.data(), first, last));
@@ -129,14 +146,35 @@ TEST_F(SubsetTest, SubsetRowSlicedColumnAccess) {
         fill_sparse_output(sparse_subbed->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
-        first += 13;
-        first %= sub.size();
+        FIRST += SHIFT;
+        FIRST %= sub.size();
     }
 }
 
-TEST_F(SubsetTest, SubsetRowFullRowAccess) {
-    // Column subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 13, 4, 17, 0, 17, 1, 19, 6, 1 };
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubset,
+    SubsetRowSlicedColumnAccessTest,
+    ::testing::Combine(
+        ::testing::Values(
+            std::vector<size_t>({ 17, 18, 11, 18, 15, 17, 13, 18, 11, 9, 6, 3, 6, 18, 1 }), // with duplicates
+            std::vector<size_t>({ 2, 3, 5, 7, 9, 12, 13 }), // ordered, no duplicates
+            std::vector<size_t>({ 4, 5, 6, 7, 8, 9, 10 }) // consecutive
+        ),
+        ::testing::Values(
+            std::vector<size_t>({ 0, 6, 13 }), // start, length, shift
+            std::vector<size_t>({ 1, 7, 3 }),
+            std::vector<size_t>({ 3, 18, 0 })
+        )
+    )
+);
+
+/****************************************************
+ ****************************************************/
+
+class SubsetRowFullRowAccessTest : public SubsetTest<std::vector<size_t> > {};
+
+TEST_P(SubsetRowFullRowAccessTest, Access) {
+    std::vector<size_t> sub = GetParam();
     std::vector<double> buffer_full(dense->nrow());
 
     auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
@@ -176,9 +214,23 @@ TEST_F(SubsetTest, SubsetRowFullRowAccess) {
     }
 }
 
-TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
-    // Row subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 3, 9, 1, 0, 9, 5, 8, 3, 1, 8, 7 };
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubset,
+    SubsetRowFullRowAccessTest,
+    ::testing::Values(
+        std::vector<size_t>({ 13, 4, 17, 0, 17, 1, 19, 6, 1 }),
+        std::vector<size_t>({ 0, 5, 10, 12, 16, 18, 19 }),
+        std::vector<size_t>({ 15, 16, 17, 18, 19 }) // consecutive
+    )
+);
+
+/****************************************************
+ ****************************************************/
+
+class SubsetColumnFullRowAccessTest : public SubsetTest<std::vector<size_t> > {};
+
+TEST_P(SubsetColumnFullRowAccessTest, Access) {
+    std::vector<size_t> sub = GetParam();
     std::vector<double> buffer_full(dense->ncol());
 
     auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
@@ -226,10 +278,23 @@ TEST_F(SubsetTest, SubsetColumnFullRowAccess) {
     }
 }
 
-TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
-    // Row subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 2, 2, 4, 8, 0, 7, 3, 1, 1, 2, 7, 8, 9, 9, 4, 5, 8, 5, 6, 2, 0 };
-    size_t LEN = 7;
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubset,
+    SubsetColumnFullRowAccessTest,
+    ::testing::Values(
+        std::vector<size_t>({ 3, 9, 1, 0, 9, 5, 8, 3, 1, 8, 7 }),
+        std::vector<size_t>({ 0, 1, 2, 3, 5, 8 }),
+        std::vector<size_t>({ 2, 3, 4, 5 })
+    )
+);
+
+/****************************************************
+ ****************************************************/
+
+class SubsetColumnSlicedRowAccessTest : public SubsetTest<std::tuple<std::vector<size_t>, std::vector<size_t> > > {};
+
+TEST_P(SubsetColumnSlicedRowAccessTest, Access) {
+    std::vector<size_t> sub = std::get<0>(GetParam());
     std::vector<double> buffer_full(dense->ncol());
 
     auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
@@ -238,9 +303,11 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
     work_dense = dense_subbed->new_workspace(true);
     work_sparse = sparse_subbed->new_workspace(true);
 
-    first = 0;
+    auto slice = std::get<1>(GetParam());
+    size_t FIRST = slice[0], LEN = slice[1], SHIFT = slice[2];
+
     for (size_t i = 0; i < dense->nrow(); ++i) {
-        set_sizes(first, std::min(first + LEN, sub.size()));
+        set_sizes(FIRST, std::min(FIRST + LEN, sub.size()));
 
         wipe_output();
         fill_output(sparse_subbed->row(i, output.data(), first, last));
@@ -270,14 +337,35 @@ TEST_F(SubsetTest, SubsetColumnSlicedRowAccess) {
         fill_sparse_output(sparse_subbed->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
         EXPECT_EQ(output, expected);
 
-        first += 11;
+        first += SHIFT;
         first %= sub.size();
     }
 }
 
-TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
-    // Row subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 7, 8, 0, 5, 1, 4, 1 };
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubset,
+    SubsetColumnSlicedRowAccessTest,
+    ::testing::Combine(
+        ::testing::Values(
+            std::vector<size_t>({ 2, 2, 4, 8, 0, 7, 3, 1, 1, 2, 7, 8, 9, 9, 4, 5, 8, 5, 6, 2, 0 }),
+            std::vector<size_t>({ 2, 3, 5, 7, 9 }), // ordered, no duplicates
+            std::vector<size_t>({ 3, 4, 5, 6, 7, 8, 9 }) // consecutive
+        ),
+        ::testing::Values(
+            std::vector<size_t>({ 0, 6, 1 }), // start, length, shift
+            std::vector<size_t>({ 5, 5, 2 }),
+            std::vector<size_t>({ 3, 7, 0 })
+        )
+    )
+);
+
+/****************************************************
+ ****************************************************/
+
+class SubsetColumnFullColumnAccessTest : public SubsetTest<std::vector<size_t> > {};
+
+TEST_P(SubsetColumnFullColumnAccessTest, Access) {
+    auto sub = GetParam();
     std::vector<double> buffer_full(dense->ncol());
 
     auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
@@ -317,4 +405,12 @@ TEST_F(SubsetTest, SubsetColumnFullColumnAccess) {
     }
 }
 
-
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubset,
+    SubsetColumnFullColumnAccessTest,
+    ::testing::Values(
+        std::vector<size_t>({ 7, 8, 0, 5, 1, 4, 1 }),
+        std::vector<size_t>({ 1, 3, 5, 7 }),
+        std::vector<size_t>({ 3, 4, 5 })
+    )
+);
