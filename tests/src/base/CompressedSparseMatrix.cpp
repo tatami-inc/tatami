@@ -99,7 +99,7 @@ TEST_F(SparseTest, FullColumnAccess) {
 
     // Column access with create_workspaces.
     create_workspaces(false);
-    std::vector<size_t> old_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->latest_indptrs();
+    std::vector<size_t> old_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->current_indptrs;
     EXPECT_EQ(work_sparse_column.get(), nullptr);
 
     for (size_t i = 0; i < NC; ++i) {
@@ -123,7 +123,7 @@ TEST_F(SparseTest, FullColumnAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    std::vector<size_t> new_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->latest_indptrs();
+    std::vector<size_t> new_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->current_indptrs;
     EXPECT_NE(old_offset_row, new_offset_row); // actually has an effect on the latest indptrs.
 
     // Column access with create_workspaces and reverse order.
@@ -367,7 +367,7 @@ TEST_F(SparseTest, FullRowAccess) {
 
     // Row access with create_workspaces.
     create_workspaces(true);
-    std::vector<size_t> old_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->latest_indptrs();
+    std::vector<size_t> old_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->current_indptrs;
     EXPECT_EQ(work_sparse_row.get(), nullptr);
 
     for (size_t i = 0; i < NR; ++i) {
@@ -391,7 +391,7 @@ TEST_F(SparseTest, FullRowAccess) {
         EXPECT_EQ(output, expected);
     }
 
-    std::vector<size_t> new_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->latest_indptrs();
+    std::vector<size_t> new_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->current_indptrs;
     EXPECT_NE(old_offset_column, new_offset_column); // actually has an effect on the latest indptrs.
 
     // Row access with create_workspaces and reverse order.

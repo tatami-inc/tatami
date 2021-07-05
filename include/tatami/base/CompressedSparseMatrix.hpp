@@ -63,20 +63,6 @@ public:
     size_t ncol() const { return ncols; }
 
     /**
-     * @return If `row == ROW`, a null pointer as no workspace is required for extraction along the preferred dimension.
-     * Otherwise, a shared pointer to a `workspace` object is returned.
-     *
-     * @param row Should a workspace be created for row-wise extraction?
-     */
-    std::shared_ptr<workspace> new_workspace (bool row) const {
-        if (row == ROW) {
-            return nullptr;
-        } else {
-            return std::shared_ptr<workspace>(new compressed_sparse_workspace((ROW ? ncols : nrows), indices, indptrs));
-        }
-    }
-
-    /**
      * @return `true`.
      */
     bool sparse() const { return true; }
@@ -138,85 +124,6 @@ public:
 
     using typed_matrix<T, IDX>::sparse_column;
 
-public:
-    struct compressed_sparse_workspace : public workspace {
-    public:
-        compressed_sparse_workspace(size_t max, const V& idx, const W& idp) : 
-            indices(idx), 
-            indptrs(idp), 
-            max_index(max),
-            previous_request(indptrs.size() - 1),
-            current_indptrs(idp.begin(), idp.begin() + idp.size() - 1), // all but the last.
-            current_indices(indptrs.size() - 1)
-        {
-            /* Here, the general idea is to store a local copy of the actual
-             * row indices (for CSC matrices; column indices, for CSR matrices)
-             * so that we don't have to keep on doing cache-unfriendly look-ups
-             * for the indices based on the pointers that we do have. This assumes
-             * that the density is so low that updates to the local indices are
-             * rare relative to the number of comparisons to those same indices.
-             */
-            for (size_t i = 0; i < indptrs.size() - 1; ++i) {
-                current_indices[i] = (indptrs[i] < indptrs[i+1] ? indices[indptrs[i]] : max_index);
-            }
-            return;
-        } 
-
-        void update_indices(IDX i, size_t first, size_t last) {
-            for (size_t current = first; current < last; ++current) {
-                auto& prev_i = previous_request[current];
-                if (i == prev_i) {
-                    continue;
-                }
-
-                auto& curptr = current_indptrs[current];
-                auto& curdex = current_indices[current];
-
-                if (i == prev_i + 1) {
-                    if (curdex < i) { // if true, this implies that curptr < indptrs[current + 1], provided i < max_index.
-                        ++curptr;
-                        curdex = (curptr < indptrs[current + 1] ? indices[curptr] : max_index);
-                    }
-                } else if (i + 1 == prev_i) {
-                    if (curptr != indptrs[current] && indices[curptr - 1] >= i) {
-                        --curptr;
-                        curdex = indices[curptr];
-                    }
-                } else if (i > prev_i) {
-                    if (curdex < i) { // same implication as above.
-                        curptr = std::lower_bound(indices.begin() + curptr, indices.begin() + indptrs[current + 1], i) - indices.begin();
-                        curdex = (curptr < indptrs[current + 1] ? indices[curptr] : max_index);
-                    }
-                } else if (i < prev_i) { 
-                    if (curptr != indptrs[current]) {
-                        curptr = std::lower_bound(indices.begin() + indptrs[current], indices.begin() + curptr, i) - indices.begin();
-                        curdex = indices[curptr];
-                    }
-                }
-
-                prev_i = i;
-            }
-
-            return;
-        }
-
-        const auto& latest_indptrs() const { 
-            return current_indptrs;
-        }
-
-        const auto& latest_indices() const { 
-            return current_indices;
-        }
-    private:
-        const V& indices;
-        const W& indptrs; 
-        typename V::value_type max_index;
-
-        std::vector<size_t> previous_request; // the last request for each column.
-        std::vector<typename W::value_type> current_indptrs; // the current position of the pointer
-        std::vector<typename V::value_type> current_indices; // the current index being pointed to
-    };
-
 private:
     size_t nrows, ncols;
     U values;
@@ -274,6 +181,7 @@ private:
         return;
     }
 
+private:
     std::pair<size_t, size_t> primary_dimension(size_t i, size_t first, size_t last, size_t otherdim) const {
         const auto pstart = indptrs[i];
         auto iIt = indices.begin() + pstart, 
@@ -325,6 +233,55 @@ private:
         return;
     }
 
+public:
+    /**
+     * @return If `row == ROW`, a null pointer as no workspace is required for extraction along the preferred dimension.
+     * Otherwise, a shared pointer to a `workspace` object is returned.
+     *
+     * @param row Should a workspace be created for row-wise extraction?
+     */
+    std::shared_ptr<workspace> new_workspace (bool row) const {
+        if (row == ROW) {
+            return nullptr;
+        } else {
+            return std::shared_ptr<workspace>(new compressed_sparse_workspace(max_secondary_index(), indices, indptrs));
+        }
+    }
+
+    struct compressed_sparse_workspace : public workspace {
+        compressed_sparse_workspace(size_t max_index, const V& idx, const W& idp) : 
+            previous_request(idp.size() - 1),
+            current_indptrs(idp.begin(), idp.begin() + idp.size() - 1), // all but the last.
+            current_indices(idp.size() - 1)
+        {
+            /* Here, the general idea is to store a local copy of the actual
+             * row indices (for CSC matrices; column indices, for CSR matrices)
+             * so that we don't have to keep on doing cache-unfriendly look-ups
+             * for the indices based on the pointers that we do have. This assumes
+             * that the density is so low that updates to the local indices are
+             * rare relative to the number of comparisons to those same indices.
+             * Check out the `secondary_dimension()` function for how this is used.
+             */
+            for (size_t i = 0; i < idp.size() - 1; ++i) {
+                current_indices[i] = (idp[i] < idp[i+1] ? idx[idp[i]] : max_index);
+            }
+            return;
+        } 
+
+        std::vector<size_t> previous_request; // the last request for each column.
+        std::vector<typename W::value_type> current_indptrs; // the current position of the pointer
+        std::vector<typename V::value_type> current_indices; // the current index being pointed to
+    };
+
+private:
+    size_t max_secondary_index() const {
+        if constexpr(ROW) {
+            return ncols;
+        } else {
+            return nrows;
+        }
+    }
+
     template<class STORE>
     void secondary_dimension(IDX i, size_t first, size_t last, workspace* work, STORE& output) const {
         if (work == nullptr) {
@@ -339,19 +296,45 @@ private:
             }
         } else {
             compressed_sparse_workspace& worker = *(dynamic_cast<compressed_sparse_workspace*>(work));
-            worker.update_indices(i, first, last);
-            const auto& new_indptrs = worker.latest_indptrs();
-            const auto& new_indices = worker.latest_indices();
+            auto max_index = max_secondary_index();
 
-            for (size_t c = first; c < last; ++c) { 
-                if (new_indices[c] == i) { // assuming i < max_index, of course.
-                    output.add(c, values[new_indptrs[c]]);
+            for (size_t current = first; current < last; ++current) {
+                auto& prev_i = worker.previous_request[current];
+                auto& curptr = worker.current_indptrs[current];
+                auto& curdex = worker.current_indices[current];
+
+                if (i == prev_i + 1) {
+                    if (curdex < i) { // if true, this implies that curptr < indptrs[current + 1], provided i < max_index.
+                        ++curptr;
+                        curdex = (curptr < indptrs[current + 1] ? indices[curptr] : max_index);
+                    }
+                } else if (i + 1 == prev_i) {
+                    if (curptr != indptrs[current] && indices[curptr - 1] >= i) {
+                        --curptr;
+                        curdex = indices[curptr];
+                    }
+                } else if (i > prev_i) {
+                    if (curdex < i) { // same implication as above.
+                        curptr = std::lower_bound(indices.begin() + curptr, indices.begin() + indptrs[current + 1], i) - indices.begin();
+                        curdex = (curptr < indptrs[current + 1] ? indices[curptr] : max_index);
+                    }
+                } else if (i < prev_i) { 
+                    if (curptr != indptrs[current]) {
+                        curptr = std::lower_bound(indices.begin() + indptrs[current], indices.begin() + curptr, i) - indices.begin();
+                        curdex = indices[curptr];
+                    }
+                }
+
+                prev_i = i;
+                if (curdex == i) { // assuming i < max_index, of course.
+                    output.add(current, values[curptr]);
                 }
             }
         }
         return;
     }
 
+private:
     struct raw_store {
         T* out_values;
         IDX* out_indices;
