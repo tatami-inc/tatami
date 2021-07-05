@@ -50,24 +50,7 @@ public:
      * `ptr` is ordered with first and last values set to 0 and the number of non-zero elements, respectively;
      * and `idx` is ordered within each interval defined by successive elements of `ptr`.
      */
-    CompressedSparseMatrix(size_t nr, size_t nc, const U& vals, const V& idx, const W& ptr, bool check=true) : nrows(nr), ncols(nc), values(vals), indices(idx), indptrs(ptr) {
-        check_values(check); 
-        return;
-    }
-
-    /**
-     * @param nr Number of rows.
-     * @param nc Number of columns.
-     * @param vals Vector of non-zero elements.
-     * @param idx Vector of row indices (if `ROW=false`) or column indices (if `ROW=true`) for the non-zero elements.
-     * @param ptr Vector of index pointers.
-     * @param check Should the input vectors be checked for validity?
-     *
-     * If `check=true`, the constructor will check that `vals` and `idx` have the same length;
-     * `ptr` is ordered with first and last values set to 0 and the number of non-zero elements, respectively;
-     * and `idx` is ordered within each interval defined by successive elements of `ptr`.
-     */
-    CompressedSparseMatrix(size_t nr, size_t nc, U&& vals, V&& idx, W&& ptr, bool check=true) : nrows(nr), ncols(nc), values(vals), indices(idx), indptrs(ptr) {
+    CompressedSparseMatrix(size_t nr, size_t nc, U vals, V idx, W ptr, bool check=true) : nrows(nr), ncols(nc), values(std::move(vals)), indices(std::move(idx)), indptrs(std::move(ptr)) {
         check_values(check); 
         return;
     }
@@ -89,7 +72,7 @@ public:
         if (row == ROW) {
             return nullptr;
         } else {
-            return std::shared_ptr<workspace>(new compressed_sparse_workspace(indices, indptrs));
+            return std::shared_ptr<workspace>(new compressed_sparse_workspace((ROW ? ncols : nrows), indices, indptrs));
         }
     }
 
@@ -158,31 +141,57 @@ public:
 public:
     struct compressed_sparse_workspace : public workspace {
     public:
-        compressed_sparse_workspace(const V& idx, const W& idp) : indices(idx), 
-                                                                  indptrs(idp), 
-                                                                  curptrs(idp), 
-                                                                  previous(indptrs.size() - 1) {} 
+        compressed_sparse_workspace(size_t max, const V& idx, const W& idp) : 
+            indices(idx), 
+            indptrs(idp), 
+            max_index(max),
+            previous_request(indptrs.size() - 1),
+            current_indptrs(idp.begin(), idp.begin() + idp.size() - 1), // all but the last.
+            current_indices(indptrs.size() - 1)
+        {
+            /* Here, the general idea is to store a local copy of the actual
+             * row indices (for CSC matrices; column indices, for CSR matrices)
+             * so that we don't have to keep on doing cache-unfriendly look-ups
+             * for the indices based on the pointers that we do have. This assumes
+             * that the density is so low that updates to the local indices are
+             * rare relative to the number of comparisons to those same indices.
+             */
+            for (size_t i = 0; i < indptrs.size() - 1; ++i) {
+                current_indices[i] = (indptrs[i] < indptrs[i+1] ? indices[indptrs[i]] : max_index);
+            }
+            return;
+        } 
 
         void update_indices(IDX i, size_t first, size_t last) {
             for (size_t current = first; current < last; ++current) {
-                auto& prev_i = previous[current];
+                auto& prev_i = previous_request[current];
                 if (i == prev_i) {
                     continue;
                 }
 
-                auto& curdex = curptrs[current];
+                auto& curptr = current_indptrs[current];
+                auto& curdex = current_indices[current];
+
                 if (i == prev_i + 1) {
-                    if (curdex != indptrs[current+1] && indices[curdex] < i) { 
-                        ++curdex;
+                    if (curdex < i) { // if true, this implies that curptr < indptrs[current + 1], provided i < max_index.
+                        ++curptr;
+                        curdex = (curptr < indptrs[current + 1] ? indices[curptr] : max_index);
                     }
                 } else if (i + 1 == prev_i) {
-                    if (curdex != indptrs[current] && indices[curdex-1] >= i) {
-                        --curdex;
+                    if (curptr != indptrs[current] && indices[curptr - 1] >= i) {
+                        --curptr;
+                        curdex = indices[curptr];
                     }
                 } else if (i > prev_i) {
-                    curdex = std::lower_bound(indices.begin() + curdex, indices.begin() + indptrs[current+1], i) - indices.begin();
+                    if (curdex < i) { // same implication as above.
+                        curptr = std::lower_bound(indices.begin() + curptr, indices.begin() + indptrs[current + 1], i) - indices.begin();
+                        curdex = (curptr < indptrs[current + 1] ? indices[curptr] : max_index);
+                    }
                 } else if (i < prev_i) { 
-                    curdex = std::lower_bound(indices.begin() + indptrs[current], indices.begin() + curdex, i) - indices.begin();
+                    if (curptr != indptrs[current]) {
+                        curptr = std::lower_bound(indices.begin() + indptrs[current], indices.begin() + curptr, i) - indices.begin();
+                        curdex = indices[curptr];
+                    }
                 }
 
                 prev_i = i;
@@ -191,14 +200,21 @@ public:
             return;
         }
 
-        const W& offsets() const { 
-            return curptrs;
+        const auto& latest_indptrs() const { 
+            return current_indptrs;
+        }
+
+        const auto& latest_indices() const { 
+            return current_indices;
         }
     private:
         const V& indices;
         const W& indptrs; 
-        W curptrs;
-        std::vector<size_t> previous;
+        typename V::value_type max_index;
+
+        std::vector<size_t> previous_request; // the last request for each column.
+        std::vector<typename W::value_type> current_indptrs; // the current position of the pointer
+        std::vector<typename V::value_type> current_indices; // the current index being pointed to
     };
 
 private:
@@ -324,13 +340,12 @@ private:
         } else {
             compressed_sparse_workspace& worker = *(dynamic_cast<compressed_sparse_workspace*>(work));
             worker.update_indices(i, first, last);
-            auto& new_indptrs = worker.offsets();
+            const auto& new_indptrs = worker.latest_indptrs();
+            const auto& new_indices = worker.latest_indices();
 
-            auto pIt = indptrs.begin() + first + 1; // Points to first-past-the-end for each 'c'.
-            for (size_t c = first; c < last; ++c, ++pIt) { 
-                const int idex = new_indptrs[c];
-                if (idex != *pIt && indices[idex] == i) { 
-                    output.add(c, values[idex]);
+            for (size_t c = first; c < last; ++c) { 
+                if (new_indices[c] == i) { // assuming i < max_index, of course.
+                    output.add(c, values[new_indptrs[c]]);
                 }
             }
         }
@@ -344,9 +359,9 @@ private:
         void add(IDX i, T val) {
             ++n;
             *out_indices = i;
+            ++out_indices;
             *out_values = val;
             ++out_values;
-            ++out_indices;
             return;
         }
     };
