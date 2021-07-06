@@ -10,183 +10,148 @@
 #include "../data/data.h"
 #include "TestCore.h"
 
-class TransposeTest: public TestCore {
+template<class PARAM>
+class TransposeTest: public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense;
-    std::shared_ptr<tatami::typed_matrix<double, int> > sparse;
-    std::shared_ptr<tatami::workspace> work_dense, work_sparse;
+    std::shared_ptr<tatami::numeric_matrix> dense, sparse, tdense, tsparse;
 protected:
-    void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
-        sparse = tatami::convert_to_sparse(dense.get(), false); // column-major.
-    }
-
     void SetUp() {
-        assemble(sparse_nrow, sparse_ncol, sparse_matrix);
+        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        sparse = tatami::convert_to_sparse(dense.get(), false); // column-major.
+        tdense = tatami::make_DelayedTranspose(dense);
+        tsparse = tatami::make_DelayedTranspose(sparse);
     }
 };
 
-TEST_F(TransposeTest, FullDenseAccess) {
-    auto tdense = tatami::make_DelayedTranspose(dense);
+using TransposeFullTest = TransposeTest<int>;
+
+TEST_P(TransposeFullTest, RowAccess) {
     EXPECT_EQ(tdense->ncol(), dense->nrow());
     EXPECT_EQ(tdense->nrow(), dense->ncol());
     EXPECT_EQ(!tdense->prefer_rows(), dense->prefer_rows());
+    EXPECT_EQ(tdense->sparse(), dense->sparse());
+    EXPECT_EQ(tsparse->sparse(), sparse->sparse());
 
-    auto wrk = tdense->new_workspace(false);
-    set_sizes(0, tdense->nrow());
-    for (size_t i = 0; i < tdense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data()));
+    auto work_dense = tdense->new_workspace(false);
+    auto work_sparse = tsparse ->new_workspace(false);
 
-        wipe_output();
-        fill_output(tdense->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+    size_t JUMP = GetParam();
+    for (size_t i = 0; i < tdense->nrow(); i+=JUMP) {
+        auto expected = extract_dense<false>(dense.get(), i);
 
-        wipe_output();
-        fill_output(tdense->column(i, output.data(), wrk.get()));
-        EXPECT_EQ(output, expected);
-    }
+        auto outputD = extract_dense<true>(tdense.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-    wrk = tdense->new_workspace(true);
-    set_sizes(0, tdense->ncol());
-    for (size_t i = 0; i < tdense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data()));
+        auto outputDW = extract_dense<true>(tdense.get(), i, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(tdense->row(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<true>(tsparse.get(), i);
+        EXPECT_EQ(outputS, expected);
 
-        wipe_output();
-        fill_output(tdense->row(i, expected.data(), wrk.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<true>(tsparse.get(), i, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(TransposeTest, SubsetDenseAccess) {
-    auto tdense = tatami::make_DelayedTranspose(dense);
-    size_t LEN = 6;
-    size_t first = 2;
+TEST_P(TransposeFullTest, ColumnAccess) {
+    auto work_dense = tdense->new_workspace(false);
+    auto work_sparse = tsparse ->new_workspace(false);
 
-    auto wrk = tdense->new_workspace(false);
-    for (size_t i = 0; i < tdense->ncol(); ++i) {
-        set_sizes(first, std::min(first + LEN, tdense->nrow()));
+    size_t JUMP = GetParam();
+    for (size_t i = 0; i < tdense->ncol(); i+=JUMP) {
+        auto expected = extract_dense<true>(dense.get(), i);
 
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data(), first, last));
+        auto outputD = extract_dense<false>(tdense.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(tdense->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<false>(tdense.get(), i, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(tdense->column(i, output.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(tsparse.get(), i);
+        EXPECT_EQ(outputS, expected);
 
-        first += 3;
-        first %= tdense->nrow();
-    }
-
-    wrk = tdense->new_workspace(true);
-    LEN = 7;
-    first = 0;
-    for (size_t i = 0; i < tdense->nrow(); ++i) {
-        set_sizes(first, std::min(first + LEN, tdense->ncol()));
-
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data(), first, last));
-
-        wipe_output();
-        fill_output(tdense->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(tdense->row(i, output.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= tdense->ncol();
+        auto outputSW = extract_sparse<false>(tsparse.get(), i, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(TransposeTest, FullSparseAccess) {
-    auto tsparse = tatami::make_DelayedTranspose(sparse);
-    EXPECT_EQ(tsparse->ncol(), sparse->nrow());
-    EXPECT_EQ(tsparse->nrow(), sparse->ncol());
-    EXPECT_EQ(!tsparse->prefer_rows(), sparse->prefer_rows());
+INSTANTIATE_TEST_CASE_P(
+    TransposeTest,
+    TransposeFullTest,
+    ::testing::Values(1, 4) // jumps (to test workspace memory)
+);
 
-    auto wrk = tsparse->new_workspace(false);
-    set_sizes(0, tsparse->nrow());
-    for (size_t i = 0; i < tsparse->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->sparse_row(i, outval.data(), outidx.data()));
+using TransposeSubsetTest = TransposeTest<std::tuple<int, std::vector<size_t> > >;
 
-        wipe_output();
-        fill_output(tsparse->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+TEST_P(TransposeSubsetTest, RowAccess) {
+    auto param = GetParam();
+    size_t JUMP = std::get<0>(param);
+    auto vec = std::get<1>(param);
+    size_t FIRST = vec[0], LEN = vec[1], SHIFT = vec[2];
 
-        wipe_output();
-        fill_output(tsparse->sparse_column(i, outval.data(), outidx.data(), wrk.get()));
-        EXPECT_EQ(output, expected);
+    auto work_dense = tdense->new_workspace(false);
+    auto work_sparse = tsparse ->new_workspace(false);
+
+    for (size_t i = 0; i < tdense->nrow(); i+=JUMP, FIRST += SHIFT) {
+        auto interval_info = wrap_intervals(FIRST, FIRST + LEN, tdense->nrow());
+        size_t first = interval_info.first, last = interval_info.second;
+
+        auto expected = extract_dense<false>(dense.get(), i, first, last);
+
+        auto outputD = extract_dense<true>(tdense.get(), i, first, last);
+        EXPECT_EQ(outputD, expected);
+
+        auto outputDW = extract_dense<true>(tdense.get(), i, first, last, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
+
+        auto outputS = extract_sparse<true>(tsparse.get(), i, first, last);
+        EXPECT_EQ(outputS, expected);
+
+        auto outputSW = extract_sparse<true>(tsparse.get(), i, first, last, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
+}
 
-    wrk = tsparse->new_workspace(true);
-    set_sizes(0, tsparse->ncol());
-    for (size_t i = 0; i < tsparse->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->sparse_column(i, outval.data(), outidx.data()));
+TEST_P(TransposeSubsetTest, ColumnAccess) {
+    auto param = GetParam();
+    size_t JUMP = std::get<0>(param);
+    auto vec = std::get<1>(param);
+    size_t FIRST = vec[0], LEN = vec[1], SHIFT = vec[2];
 
-        wipe_output();
-        fill_output(tsparse->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+    auto work_dense = tdense->new_workspace(false);
+    auto work_sparse = tsparse ->new_workspace(false);
 
-        wipe_output();
-        fill_output(tsparse->sparse_row(i, outval.data(), outidx.data(), wrk.get()));
-        EXPECT_EQ(output, expected);
+    for (size_t i = 0; i < tdense->ncol(); i+=JUMP, FIRST += SHIFT) {
+        auto interval_info = wrap_intervals(FIRST, FIRST + LEN, tdense->nrow());
+        size_t first = interval_info.first, last = interval_info.second;
+
+        auto expected = extract_dense<true>(dense.get(), i, first, last);
+
+        auto outputD = extract_dense<false>(tdense.get(), i, first, last);
+        EXPECT_EQ(outputD, expected);
+
+        auto outputDW = extract_dense<false>(tdense.get(), i, first, last, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
+
+        auto outputS = extract_sparse<false>(tsparse.get(), i, first, last);
+        EXPECT_EQ(outputS, expected);
+
+        auto outputSW = extract_sparse<false>(tsparse.get(), i, first, last, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(TransposeTest, SubsetSparseAccess) {
-    auto tsparse = tatami::make_DelayedTranspose(sparse);
-    size_t LEN = 3;
-    size_t first = 1;
+INSTANTIATE_TEST_CASE_P(
+    TransposeTest,
+    TransposeSubsetTest,
+    ::testing::Combine(
+        ::testing::Values(1, 4), // jumps (to test workspace memory)
+        ::testing::Values(
+            std::vector<size_t>({ 0, 5, 3 }), // overlapping
+            std::vector<size_t>({ 1, 7, 7 }), // non-overlapping
+            std::vector<size_t>({ 5, 11, 0 }) // constant
+        )
+    )
+);
 
-    auto wrk = tsparse->new_workspace(false);
-    for (size_t i = 0; i < tsparse->ncol(); ++i) {
-        set_sizes(first, std::min(first + LEN, tsparse->nrow()));
 
-        wipe_expected();
-        fill_expected(sparse->sparse_row(i, outval.data(), outidx.data(), first, last));
-
-        wipe_output();
-        fill_output(tsparse->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(tsparse->sparse_column(i, outval.data(), outidx.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= tsparse->nrow();
-    }
-
-    LEN = 7;
-    first = 0;
-    for (size_t i = 0; i < tsparse->nrow(); ++i) {
-        set_sizes(first, std::min(first + LEN, tsparse->ncol()));
-
-        wipe_expected();
-        fill_expected(sparse->sparse_column(i, outval.data(), outidx.data(), first, last));
-
-        wipe_output();
-        fill_output(tsparse->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(tsparse->sparse_row(i, outval.data(), outidx.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= tsparse->ncol();
-    }
-}

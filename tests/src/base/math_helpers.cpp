@@ -10,25 +10,18 @@
 #include "../data/data.h"
 #include "TestCore.h"
 
-class MathTestCore : public TestCore {
+class MathTest : public TestCore<::testing::Test> {
 protected:
     std::shared_ptr<tatami::numeric_matrix> dense, sparse;
 protected:
-    void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
+    void SetUp() {
+        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse = tatami::convert_to_sparse(dense.get(), false); // column major.
         return;
     }
 };
 
-class MathTest : public MathTestCore {
-protected:
-    void SetUp() {
-        assemble(sparse_nrow, sparse_ncol, sparse_matrix);
-    }
-};
-
-TEST_F(MathTest, AbsByColumn) {
+TEST_F(MathTest, Abs) {
     tatami::DelayedAbsHelper op;
     auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
@@ -38,22 +31,17 @@ TEST_F(MathTest, AbsByColumn) {
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
-    set_sizes(0, dense->nrow());
-
+    // Most DelayedIsometricOp checks are checked in arith_vector_helpers,
+    // so we don't bother to do anything more complex here.
     for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] = std::abs(expected[j]); 
-        }
+        auto expected = extract_dense<false>(dense.get(), i);
+        for (auto& e : expected) { e = std::abs(e); }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputD = extract_dense<false>(dense_mod.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), i);
+        EXPECT_EQ(outputS, expected);
     }
 }
 
@@ -71,22 +59,15 @@ TEST_F(MathTest, SqrtByColumn) {
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
-    set_sizes(0, dense->nrow());
-
     for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] = std::sqrt(std::abs(expected[j])); 
-        }
+        auto expected = extract_dense<false>(dense.get(), i);
+        for (auto& e : expected) { e = std::sqrt(std::abs(e)); }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputD = extract_dense<false>(dense_mod.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), i);
+        EXPECT_EQ(outputS, expected);
     }
 }
 
@@ -94,8 +75,9 @@ TEST_F(MathTest, LogByColumn) {
     tatami::DelayedAbsHelper op0;
     auto dense_mod0 = tatami::make_DelayedIsometricOp(dense, op0);
     auto sparse_mod0 = tatami::make_DelayedIsometricOp(sparse, op0);
-
-    tatami::DelayedAddScalarHelper<double> op1(5);
+    
+    double CONSTANT = 5;
+    tatami::DelayedAddScalarHelper<double> op1(CONSTANT);
     auto dense_mod1 = tatami::make_DelayedIsometricOp(dense_mod0, op1);
     auto sparse_mod1 = tatami::make_DelayedIsometricOp(sparse_mod0, op1);
 
@@ -108,22 +90,15 @@ TEST_F(MathTest, LogByColumn) {
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
-    set_sizes(0, dense->nrow());
-
     for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] = std::log(std::abs(expected[j]) + 5);
-        }
+        auto expected = extract_dense<false>(dense.get(), i);
+        for (auto& e : expected) { e = std::log(std::abs(e) + CONSTANT); }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputD = extract_dense<false>(dense_mod.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), i);
+        EXPECT_EQ(outputS, expected);
     }
 
     // Trying with another base.
@@ -131,22 +106,17 @@ TEST_F(MathTest, LogByColumn) {
     auto dense_mod2 = tatami::make_DelayedIsometricOp(dense_mod1, op2);
     auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse_mod1, op2);
 
-    set_sizes(0, dense->nrow());
-
     for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
+        auto expected = extract_dense<false>(dense.get(), i);
         for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] = std::log(std::abs(expected[j]) + 5)/std::log(2);
+            expected[j] = std::log(std::abs(expected[j]) + CONSTANT)/std::log(2);
         }
 
-        wipe_output();
-        fill_output(sparse_mod2->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputD = extract_dense<false>(dense_mod2.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(dense_mod2->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod2.get(), i);
+        EXPECT_EQ(outputS, expected);
     }
 }
 
@@ -164,22 +134,15 @@ TEST_F(MathTest, Log1pByColumn) {
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
-    set_sizes(0, dense->nrow());
-
     for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] = std::log1p(std::abs(expected[j]));
-        }
+        auto expected = extract_dense<false>(dense.get(), i);
+        for (auto& e : expected) { e = std::log1p(std::abs(e)); }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputD = extract_dense<false>(dense_mod.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), i);
+        EXPECT_EQ(outputS, expected);
     }
 
     // Trying with another base.
@@ -187,22 +150,15 @@ TEST_F(MathTest, Log1pByColumn) {
     auto dense_mod2 = tatami::make_DelayedIsometricOp(dense_mod0, op2);
     auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse_mod0, op2);
 
-    set_sizes(0, dense->nrow());
-
     for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] = std::log1p(std::abs(expected[j]))/std::log(2);
-        }
+        auto expected = extract_dense<false>(dense.get(), i);
+        for (auto& e : expected) { e = std::log1p(std::abs(e))/std::log(2); }
 
-        wipe_output();
-        fill_output(sparse_mod2->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputD = extract_dense<false>(dense_mod2.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(dense_mod2->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod2.get(), i);
+        EXPECT_EQ(outputS, expected);
     }
 }
 
@@ -216,22 +172,15 @@ TEST_F(MathTest, ExpByColumn) {
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
-    set_sizes(0, dense->nrow());
-
     for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] = std::exp(expected[j]); 
-        }
+        auto expected = extract_dense<false>(dense.get(), i);
+        for (auto& e : expected) { e = std::exp(e); }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputD = extract_dense<false>(dense_mod.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), i);
+        EXPECT_EQ(outputS, expected);
     }
 }
 
@@ -245,23 +194,14 @@ TEST_F(MathTest, RoundByColumn) {
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
-    set_sizes(0, dense->nrow());
-
     for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] = std::round(expected[j]); 
-        }
+        auto expected = extract_dense<false>(dense.get(), i);
+        for (auto& e : expected) { e = std::round(e); }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputD = extract_dense<false>(dense_mod.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), i);
+        EXPECT_EQ(outputS, expected);
     }
 }
-
-

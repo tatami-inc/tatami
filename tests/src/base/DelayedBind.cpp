@@ -5,462 +5,246 @@
 
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/base/DelayedBind.hpp"
+#include "tatami/base/DelayedIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../data/data.h"
 #include "TestCore.h"
 
-class BindTest: public TestCore {
+const double MULT1 = 10, MULT2 = 1.5;
+
+template<class PARAM>
+class BindTest: public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense;
-    std::shared_ptr<tatami::typed_matrix<double, int> > sparse;
+    std::shared_ptr<tatami::numeric_matrix> dense, sparse, bound;
 protected:
-    void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
+    void SetUp() {
+        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse = tatami::convert_to_sparse(dense.get(), false); // column-major.
     }
 
-    void SetUp() {
-        assemble(sparse_nrow, sparse_ncol, sparse_matrix);
+    void extra_assemble(const PARAM& param) {
+        std::shared_ptr<tatami::numeric_matrix> one, two;
+
+        // Multiplying to make sure we're actually extracting from a different submatrix.
+        if (std::get<0>(param)) {
+            one = sparse;
+        } else {
+            one = dense;            
+        }
+        one = tatami::make_DelayedIsometricOp(one, tatami::DelayedMultiplyScalarHelper(MULT1));
+
+        if (std::get<1>(param)) {
+            two = sparse;
+        } else {
+            two = dense;            
+        }
+        two = tatami::make_DelayedIsometricOp(two, tatami::DelayedMultiplyScalarHelper(MULT2));
+
+        if (std::get<2>(param)) {
+            bound = tatami::make_DelayedBind<0>(std::vector{ one, two });
+        } else {
+            bound = tatami::make_DelayedBind<1>(std::vector{ one, two });
+        }
+
+        return;
+    }
+
+    std::vector<double> harvest_expected_row(size_t i, bool rbind) {
+        std::vector<double> expected;
+        if (rbind) {
+            const size_t NR = dense->nrow();
+            expected = this->template extract_dense<true>(dense.get(), i % NR);
+            for (auto& e : expected) { e *= (i < NR ? MULT1 : MULT2); }
+        } else {
+            expected = this->template extract_dense<true>(dense.get(), i);
+            auto expected2 = expected;
+            for (auto& e : expected) { e *= MULT1; }
+            for (auto& e : expected2) { e *= MULT2; }
+            expected.insert(expected.end(), expected2.begin(), expected2.end());
+        }
+        return expected;
+    }
+
+    std::vector<double> harvest_expected_column(size_t i, bool rbind) {
+        std::vector<double> expected;
+        if (rbind) {
+            expected = this->template extract_dense<false>(dense.get(), i);
+            auto expected2 = expected;
+            for (auto& e : expected) { e *= MULT1; }
+            for (auto& e : expected2) { e *= MULT2; }
+            expected.insert(expected.end(), expected2.begin(), expected2.end());
+        } else {
+            const size_t NC = dense->ncol();
+            expected = this->template extract_dense<false>(dense.get(), i % NC);
+            for (auto& e : expected) { e *= (i < NC ? MULT1 : MULT2); }
+        }
+        return expected;
     }
 };
 
-TEST_F(BindTest, RowBindFullDenseAccess) {
-    auto rbind = tatami::make_DelayedBind<0>(std::vector{dense, sparse});
-    EXPECT_EQ(rbind->ncol(), dense->ncol());
-    const size_t NR = dense->nrow();
-    EXPECT_EQ(rbind->nrow(), 2 * NR);
+/****************************
+ ****************************/
 
-    auto preference = rbind->dimension_preference();
-    EXPECT_EQ(preference.first, preference.second);
+using BindFullAccessTest = BindTest<std::tuple<bool, bool, bool, size_t> >;
 
-    // Column access.
-    auto wrk = rbind->new_workspace(false);
-    set_sizes(0, 2 * NR);
+TEST_P(BindFullAccessTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
-    for (size_t i = 0; i < rbind->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data()));
-
-        wipe_output();
-        fill_output(rbind->column(i, output.data()));
-        std::vector<double> ref(expected.begin(), expected.begin() + NR);
-        EXPECT_EQ(std::vector<double>(output.begin(), output.begin() + NR), ref);
-        EXPECT_EQ(std::vector<double>(output.begin() + NR, output.begin() + 2 * NR), ref);
-
-        auto output2 = output;
-        wipe_output();
-        fill_output(rbind->column(i, output.data(), wrk.get()));
-        EXPECT_EQ(output, output2);
+    size_t NR = dense->nrow();
+    size_t NC = dense->ncol();
+    if (std::get<2>(param)) {
+        EXPECT_EQ(bound->ncol(), dense->ncol());
+        EXPECT_EQ(bound->nrow(), 2 * NR);
+    } else {
+        EXPECT_EQ(bound->nrow(), dense->nrow());
+        EXPECT_EQ(bound->ncol(), 2 * NC);
     }
 
-    // Row access.
-    wrk = rbind->new_workspace(true);
-    set_sizes(0, rbind->ncol());
-    for (size_t i = 0; i < NR; ++i) {
-        wipe_expected();
-        fill_expected(dense->row(i % NR, expected.data()));
+    if (std::get<0>(param)!=std::get<1>(param)) {
+        // only true if we're combining dense (row major) with sparse (column-major).
+        auto preference = bound->dimension_preference();
+        EXPECT_EQ(preference.first, preference.second);
+    }
 
-        wipe_output();
-        fill_output(rbind->row(i, output.data()));
-        EXPECT_EQ(output, expected);
+    auto work_bound = bound->new_workspace(true);
 
-        wipe_output();
-        fill_output(rbind->row(i, expected.data(), wrk.get()));
-        EXPECT_EQ(output, expected);
+    for (size_t i = 0; i < bound->nrow(); i += std::get<3>(param)) {
+        auto expected = harvest_expected_row(i, std::get<2>(param));
+
+        auto outputD = extract_dense<true>(bound.get(), i);
+        EXPECT_EQ(outputD, expected);
+
+        auto outputDW = extract_dense<true>(bound.get(), i, work_bound.get());
+        EXPECT_EQ(outputDW, expected);
+
+        auto outputS = extract_sparse<true>(bound.get(), i);
+        EXPECT_EQ(outputS, expected);
+
+        auto outputSW = extract_sparse<true>(bound.get(), i, work_bound.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(BindTest, RowBindSubsetDenseAccess) {
-    auto rbind = tatami::make_DelayedBind<0>(std::vector{dense, sparse});
-    size_t LEN = 6;
-    size_t first = 2;
-    const size_t NR = dense->nrow();
+TEST_P(BindFullAccessTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
-    // Column access.
-    auto wrk = rbind->new_workspace(false);
-    for (size_t i = 0; i < rbind->ncol(); ++i) {
-        set_sizes(first, std::min(first + LEN, rbind->nrow()));
+    size_t NR = dense->nrow();
+    size_t NC = dense->ncol();
+    auto work_bound = bound->new_workspace(false);
 
-        wipe_expected();
-        if (first < NR) {
-            if (last <= NR) {
-                fill_expected(dense->column(i, expected.data(), first, last));
-            } else {
-                auto ptr1 = dense->column(i, expected.data(), first, NR);
-                if (expected.data() != ptr1) {
-                    std::copy(ptr1, ptr1 + NR - first, expected.data());
-                }
+    for (size_t i = 0; i < bound->ncol(); i += std::get<3>(param)) {
+        auto expected = harvest_expected_column(i, std::get<2>(param));
 
-                auto exp = expected.data() + NR - first;
-                auto ptr2 = dense->column(i, exp, 0, last - NR);
-                if (exp != ptr2) {
-                    std::copy(ptr2, ptr2 + last - NR, exp);
-                }
-            }
-        }  else {
-            fill_expected(dense->column(i, expected.data(), first - NR, last - NR));
-        }
+        auto outputD = extract_dense<false>(bound.get(), i);
+        EXPECT_EQ(outputD, expected);
 
-        wipe_output();
-        fill_output(rbind->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<false>(bound.get(), i, work_bound.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(rbind->column(i, output.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(bound.get(), i);
+        EXPECT_EQ(outputS, expected);
 
-        first += 3;
-        first %= rbind->nrow();
-    }
-
-    // Row access.
-    wrk = rbind->new_workspace(true);
-    LEN = 7;
-    first = 0;
-    for (size_t i = 0; i < rbind->nrow(); ++i) {
-        set_sizes(first, std::min(first + LEN, rbind->ncol()));
-
-        wipe_expected();
-        fill_expected(dense->row(i % NR, expected.data(), first, last));
-
-        wipe_output();
-        fill_output(rbind->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(rbind->row(i, output.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= rbind->ncol();
+        auto outputSW = extract_sparse<false>(bound.get(), i, work_bound.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(BindTest, RowBindFullSparseAccess) {
-    auto rbind = tatami::make_DelayedBind<0>(std::vector{dense, sparse});
-    const size_t NR = dense->nrow();
+INSTANTIATE_TEST_CASE_P(
+    DelayedBind,
+    BindFullAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // use dense or sparse for the first matrix.
+        ::testing::Values(true, false), // use dense or sparse for the second matrix.
+        ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(1, 3) // jump, to test the workspace's memory.
+    )
+);
 
-    auto wrk = rbind->new_workspace(false);
-    set_sizes(0, 2*NR);
-    for (size_t i = 0; i < rbind->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->sparse_column(i, outval.data(), outidx.data()));
+/****************************
+ ****************************/
 
-        wipe_output();
-        fill_output(rbind->sparse_column(i, outval.data(), outidx.data()));
+using BindSubsetAccessTest = BindTest<std::tuple<bool, bool, bool, size_t, std::vector<size_t> > >;
 
-        std::vector<double> ref(expected.begin(), expected.begin() + NR);
-        EXPECT_EQ(std::vector<double>(output.begin(), output.begin() + NR), ref);
-        EXPECT_EQ(std::vector<double>(output.begin() + NR, output.begin() + 2 * NR), ref);
+TEST_P(BindSubsetAccessTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
-        auto output2 = output;
-        wipe_output();
-        fill_output(rbind->sparse_column(i, outval.data(), outidx.data(), wrk.get()));
-        EXPECT_EQ(output, output2);
-    }
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
 
-    wrk = rbind->new_workspace(true);
-    set_sizes(0, rbind->ncol());
-    for (size_t i = 0; i < rbind->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->sparse_row(i % NR, outval.data(), outidx.data()));
+    auto work_bound = bound->new_workspace(true);
 
-        wipe_output();
-        fill_output(rbind->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+    for (size_t i = 0; i < bound->nrow(); i += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
+        size_t start = interval.first, end = interval.second;
 
-        wipe_output();
-        fill_output(rbind->sparse_row(i, outval.data(), outidx.data(), wrk.get()));
-        EXPECT_EQ(output, expected);
-    }
-}
+        auto expected_raw = harvest_expected_row(i, std::get<2>(param));
+        std::vector<double> expected(expected_raw.begin() + start, expected_raw.begin() + end);
 
-TEST_F(BindTest, RowBindSubsetSparseAccess) {
-    auto rbind = tatami::make_DelayedBind<0>(std::vector{dense, sparse});
-    size_t LEN = 7;
-    size_t first = 3;
-    const size_t NR = dense->nrow();
+        auto outputD = extract_dense<true>(bound.get(), i, start, end);
+        EXPECT_EQ(outputD, expected);
 
-    // Column access.
-    auto wrk = rbind->new_workspace(false);
-    for (size_t i = 0; i < rbind->ncol(); ++i) {
-        set_sizes(first, std::min(first + LEN, rbind->nrow()));
+        auto outputDW = extract_dense<true>(bound.get(), i, start, end, work_bound.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_expected();
-        if (first < NR) {
-            if (last <= NR) {
-                fill_expected(dense->sparse_column(i, outval.data(), outidx.data(), first, last));
-            } else {
-                auto range1 = dense->sparse_column(i, outval.data(), outidx.data(), first, NR);
-                for (size_t i = 0; i < range1.number; ++i) {
-                    expected[range1.index[i] - first] = range1.value[i];
-                }
+        auto outputS = extract_sparse<true>(bound.get(), i, start, end);
+        EXPECT_EQ(outputS, expected);
 
-                auto range2 = dense->sparse_column(i, outval.data(), outidx.data(), 0, last - NR);
-                for (size_t i = 0; i < range2.number; ++i) {
-                    expected[NR - first + range2.index[i]] = range2.value[i];
-                }
-            }
-        }  else {
-            auto range = dense->sparse_column(i, outval.data(), outidx.data(), first - NR, last - NR);
-            for (size_t i = 0; i < range.number; ++i) {
-                expected[range.index[i] - (first - NR)] = range.value[i];
-            }
-        }
-
-        wipe_output();
-        fill_output(rbind->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(rbind->sparse_column(i, outval.data(), outidx.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= rbind->nrow();
-    }
-
-    // Row access.
-    wrk = rbind->new_workspace(true);
-    LEN = 11;
-    first = 0;
-    for (size_t i = 0; i < rbind->nrow(); ++i) {
-        set_sizes(first, std::min(first + LEN, rbind->ncol()));
-
-        wipe_expected();
-        fill_expected(dense->sparse_row(i % NR, outval.data(), outidx.data(), first, last));
-
-        wipe_output();
-        fill_output(rbind->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(rbind->sparse_row(i, outval.data(), outidx.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= rbind->ncol();
+        auto outputSW = extract_sparse<true>(bound.get(), i, start, end, work_bound.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(BindTest, ColumnBindFullDenseAccess) {
-    auto cbind = tatami::make_DelayedBind<1>(std::vector{dense, sparse});
-    EXPECT_EQ(cbind->nrow(), dense->nrow());
-    const size_t NC = dense->ncol();
-    EXPECT_EQ(cbind->ncol(), 2 * NC);
+TEST_P(BindSubsetAccessTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
-    auto preference = cbind->dimension_preference();
-    EXPECT_EQ(preference.first, preference.second);
+    size_t NR = dense->nrow();
+    size_t NC = dense->ncol();
 
-    // Row access.
-    auto wrk = cbind->new_workspace(true);
-    set_sizes(0, 2 * NC);
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
 
-    for (size_t i = 0; i < cbind->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data()));
+    auto work_bound = bound->new_workspace(true);
 
-        wipe_output();
-        fill_output(cbind->row(i, output.data()));
-        std::vector<double> ref(expected.begin(), expected.begin() + NC);
-        EXPECT_EQ(std::vector<double>(output.begin(), output.begin() + NC), ref);
-        EXPECT_EQ(std::vector<double>(output.begin() + NC, output.begin() + 2 * NC), ref);
+    for (size_t i = 0; i < bound->ncol(); i += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
+        size_t start = interval.first, end = interval.second;
 
-        auto output2 = output;
-        wipe_output();
-        fill_output(cbind->row(i, output.data(), wrk.get()));
-        EXPECT_EQ(output, output2);
-    }
+        auto expected_raw = harvest_expected_column(i, std::get<2>(param));
+        std::vector<double> expected(expected_raw.begin() + start, expected_raw.begin() + end);
+      
+        auto outputD = extract_dense<false>(bound.get(), i, start, end);
+        EXPECT_EQ(outputD, expected);
 
-    // Column access.
-    wrk = cbind->new_workspace(false);
-    set_sizes(0, cbind->nrow());
-    for (size_t i = 0; i < NC; ++i) {
-        wipe_expected();
-        fill_expected(dense->column(i % NC, expected.data()));
+        auto outputDW = extract_dense<false>(bound.get(), i, start, end, work_bound.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(cbind->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(bound.get(), i, start, end);
+        EXPECT_EQ(outputS, expected);
 
-        wipe_output();
-        fill_output(cbind->column(i, expected.data(), wrk.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<false>(bound.get(), i, start, end, work_bound.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(BindTest, ColumnBindSubsetDenseAccess) {
-    auto cbind = tatami::make_DelayedBind<1>(std::vector{dense, sparse});
-    size_t LEN = 6;
-    size_t first = 2;
-    const size_t NC = dense->ncol();
-
-    // Row access.
-    auto wrk = cbind->new_workspace(true);
-    for (size_t i = 0; i < cbind->nrow(); ++i) {
-        set_sizes(first, std::min(first + LEN, cbind->ncol()));
-
-        wipe_expected();
-        if (first < NC) {
-            if (last <= NC) {
-                fill_expected(dense->row(i, expected.data(), first, last));
-            } else {
-                auto ptr1 = dense->row(i, expected.data(), first, NC);
-                if (expected.data() != ptr1) {
-                    std::copy(ptr1, ptr1 + NC - first, expected.data());
-                }
-
-                auto exp = expected.data() + NC - first;
-                auto ptr2 = dense->row(i, exp, 0, last - NC);
-                if (exp != ptr2) {
-                    std::copy(ptr2, ptr2 + last - NC, exp);
-                }
-            }
-        }  else {
-            fill_expected(dense->row(i, expected.data(), first - NC, last - NC));
-        }
-
-        wipe_output();
-        fill_output(cbind->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(cbind->row(i, output.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= cbind->ncol();
-    }
-
-    // Column access.
-    wrk = cbind->new_workspace(false);
-    LEN = 7;
-    first = 0;
-    for (size_t i = 0; i < cbind->nrow(); ++i) {
-        set_sizes(first, std::min(first + LEN, cbind->nrow()));
-
-        wipe_expected();
-        fill_expected(dense->column(i % NC, expected.data(), first, last));
-
-        wipe_output();
-        fill_output(cbind->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(cbind->column(i, output.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= cbind->nrow();
-    }
-}
-
-TEST_F(BindTest, ColumnBindFullSparseAccess) {
-    auto cbind = tatami::make_DelayedBind<1>(std::vector{dense, sparse});
-    const size_t NC = dense->ncol();
-
-    // Row access
-    auto wrk = cbind->new_workspace(true);
-    set_sizes(0, 2*NC);
-    for (size_t i = 0; i < cbind->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->sparse_row(i, outval.data(), outidx.data()));
-
-        wipe_output();
-        fill_output(cbind->sparse_row(i, outval.data(), outidx.data()));
-
-        std::vector<double> ref(expected.begin(), expected.begin() + NC);
-        EXPECT_EQ(std::vector<double>(output.begin(), output.begin() + NC), ref);
-        EXPECT_EQ(std::vector<double>(output.begin() + NC, output.begin() + 2 * NC), ref);
-
-        auto output2 = output;
-        wipe_output();
-        fill_output(cbind->sparse_row(i, outval.data(), outidx.data(), wrk.get()));
-        EXPECT_EQ(output, output2);
-    }
-
-    // Column access
-    wrk = cbind->new_workspace(false);
-    set_sizes(0, cbind->ncol());
-    for (size_t i = 0; i < cbind->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->sparse_column(i % NC, outval.data(), outidx.data()));
-
-        wipe_output();
-        fill_output(cbind->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(cbind->sparse_column(i, outval.data(), outidx.data(), wrk.get()));
-        EXPECT_EQ(output, expected);
-    }
-}
-
-TEST_F(BindTest, ColumnBindSubsetSparseAccess) {
-    auto cbind = tatami::make_DelayedBind<1>(std::vector{dense, sparse});
-    size_t LEN = 7;
-    size_t first = 3;
-    const size_t NC = dense->ncol();
-
-    // Row access.
-    auto wrk = cbind->new_workspace(true);
-    for (size_t i = 0; i < cbind->nrow(); ++i) {
-        set_sizes(first, std::min(first + LEN, cbind->ncol()));
-
-        wipe_expected();
-        if (first < NC) {
-            if (last <= NC) {
-                fill_expected(dense->sparse_row(i, outval.data(), outidx.data(), first, last));
-            } else {
-                auto range1 = dense->sparse_row(i, outval.data(), outidx.data(), first, NC);
-                for (size_t i = 0; i < range1.number; ++i) {
-                    expected[range1.index[i] - first] = range1.value[i];
-                }
-
-                auto range2 = dense->sparse_row(i, outval.data(), outidx.data(), 0, last - NC);
-                for (size_t i = 0; i < range2.number; ++i) {
-                    expected[NC - first + range2.index[i]] = range2.value[i];
-                }
-            }
-        }  else {
-            auto range = dense->sparse_row(i, outval.data(), outidx.data(), first - NC, last - NC);
-            for (size_t i = 0; i < range.number; ++i) {
-                expected[range.index[i] - (first - NC)] = range.value[i];
-            }
-        }
-
-        wipe_output();
-        fill_output(cbind->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(cbind->sparse_row(i, outval.data(), outidx.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= cbind->ncol();
-    }
-
-    // Column access.
-    wrk = cbind->new_workspace(false);
-    LEN = 11;
-    first = 0;
-    for (size_t i = 0; i < cbind->ncol(); ++i) {
-        set_sizes(first, std::min(first + LEN, cbind->nrow()));
-
-        wipe_expected();
-        fill_expected(dense->sparse_column(i % NC, outval.data(), outidx.data(), first, last));
-
-        wipe_output();
-        fill_output(cbind->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(cbind->sparse_column(i, outval.data(), outidx.data(), first, last, wrk.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= cbind->nrow();
-    }
-}
+INSTANTIATE_TEST_CASE_P(
+    DelayedBind,
+    BindSubsetAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // use dense or sparse for the first matrix.
+        ::testing::Values(true, false), // use dense or sparse for the second matrix.
+        ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
+            std::vector<size_t>({ 1, 4, 4 }), // non-overlapping shifts
+            std::vector<size_t>({ 3, 10, 0 })
+        )
+    )
+);

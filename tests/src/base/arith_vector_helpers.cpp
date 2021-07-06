@@ -10,48 +10,65 @@
 #include "../data/data.h"
 #include "TestCore.h"
 
-class ArithVectorTestCore : public TestCore {
+template<class PARAM>
+class ArithVectorTest : public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
     std::shared_ptr<tatami::numeric_matrix> dense, sparse;
-    std::shared_ptr<tatami::workspace> work_dense, work_sparse;
 protected:
-    void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
+    void SetUp() {
+        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse = tatami::convert_to_sparse(dense.get(), false);
         return;
     }
-
-    void create_workspaces(bool row) {
-        work_dense = dense->new_workspace(row);
-        work_sparse = sparse->new_workspace(row);
-        return;
-    }
-
-    std::vector<double> create_vector(size_t n, double starter){ 
-        std::vector<double> output(n, starter);
-        for (size_t i = 1; i < n; ++i) {
-            output[i] += i;
-        }
-        return output;
-    }
 };
 
-class ArithVectorTest : public ArithVectorTestCore {
-protected:
-    void SetUp() {
-        assemble(sparse_nrow, sparse_ncol, sparse_matrix);
+std::vector<double> create_vector(size_t n, double starter = 0, double jump = 1){ 
+    std::vector<double> output(n, starter);
+    for (size_t i = 1; i < n; ++i) {
+        output[i] = output[i-1] + jump;
     }
-};
+    return output;
+}
 
 /****************************
  ********* ADDITION *********
  ****************************/
 
-TEST_F(ArithVectorTest, AdditionAlongRows) {
-    auto vec = create_vector(dense->nrow(), 0.2);
-    auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+template<class PARAM>
+class ArithVectorAdditionTest : public ArithVectorTest<PARAM> {
+protected:
+    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::vector<double> vec;
+
+    void extra_assemble(const PARAM& param) {
+        bool row = std::get<2>(param);
+        vec = create_vector(
+            row ? (this->dense)->nrow() : (this->dense)->ncol(),
+            std::get<0>(param), 
+            std::get<1>(param)
+        );
+        if (row) {
+            auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
+            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+        } else {
+            auto op = tatami::make_DelayedAddVectorHelper<1>(vec);
+            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+        }
+    }
+
+    void add_value(double& ref, const PARAM& param, size_t r, size_t c) {
+        ref += vec[std::get<2>(param) ? r : c];
+        return;
+    }
+};
+
+using ArithVectorAdditionFullTest = ArithVectorAdditionTest<std::tuple<double, double, bool, size_t> >;
+
+TEST_P(ArithVectorAdditionFullTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_FALSE(sparse_mod->sparse());
@@ -61,944 +78,874 @@ TEST_F(ArithVectorTest, AdditionAlongRows) {
     EXPECT_TRUE(dense->prefer_rows());
     EXPECT_FALSE(sparse->prefer_rows());
 
-    // Works in full.
-    set_sizes(0, dense->nrow());
+    auto work_dense = dense_mod->new_workspace(false);
+    auto work_sparse = sparse_mod->new_workspace(false);
 
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] += vec[j];
+    for (size_t c = 0; c < dense->ncol(); c += std::get<3>(param)) {
+        auto expected = extract_dense<false>(dense.get(), c);
+        for (size_t r = 0; r < dense->nrow(); ++r) {
+            add_value(expected[r], param, r, c);
         }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
+        auto output = extract_dense<false>(dense_mod.get(), c);
         EXPECT_EQ(output, expected);
 
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        // Works with different backends.
+        auto output2 = extract_dense<false>(sparse_mod.get(), c);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), c);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<false>(dense_mod.get(), c, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Works in a slice.
-    set_sizes(dense->nrow()/6, dense->nrow()/2);
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data(), first, last));
-        for (size_t j = 0; j < last - first; ++j) {
-            expected[j] += vec[first + j];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Row extraction works as well.
-    create_workspaces(true);
-    set_sizes(0, dense->ncol());
-
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data()));
-        for (size_t j = 0; j < dense->ncol(); ++j) {
-            expected[j] += vec[i];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-        
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<false>(sparse_mod.get(), c, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(ArithVectorTest, AdditionAlongColumns) {
-    auto vec = create_vector(dense->ncol(), -10.7);
-    auto op = tatami::make_DelayedAddVectorHelper<1>(vec);
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+TEST_P(ArithVectorAdditionFullTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(true);
+    auto work_sparse = sparse_mod->new_workspace(true);
 
-    // Works in full.
-    set_sizes(0, dense->ncol());
-
-    create_workspaces(true);
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data()));
-        for (size_t j = 0; j < dense->ncol(); ++j) {
-            expected[j] += vec[j];
+    for (size_t r = 0; r < dense->nrow(); r += std::get<3>(param)) {
+        auto expected = extract_dense<true>(dense.get(), r);
+        for (size_t c = 0; c < dense->ncol(); ++c) {
+            add_value(expected[c], param, r, c);
         }
 
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data()));
+        auto output = extract_dense<true>(dense_mod.get(), r);
         EXPECT_EQ(output, expected);
 
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
+        // Works with different backends.
+        auto output2 = extract_dense<true>(sparse_mod.get(), r);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<true>(sparse_mod.get(), r);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        auto outputDW = extract_dense<true>(dense_mod.get(), r, work_dense.get());
         EXPECT_EQ(output, expected);
 
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Works in a slice.
-    set_sizes(dense->ncol()/6, dense->ncol()/2);
-
-    create_workspaces(true);
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data(), first, last));
-        for (size_t j = 0; j < last - first; ++j) {
-            expected[j] += vec[first + j];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Column extraction works as well.
-    create_workspaces(false);
-    set_sizes(0, dense->nrow());
-
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] += vec[i];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
-        
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<true>(sparse_mod.get(), r, work_sparse.get());
+        EXPECT_EQ(outputDW, expected);
     }
 }
 
-/****************************
- ******** SUBTRACTION *******
- ****************************/
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorAdditionFullTest,
+    ::testing::Combine(
+        ::testing::Values(5),
+        ::testing::Values(0.5),
+        ::testing::Values(true, false), // add by row, or by column
+        ::testing::Values(1, 3) // jump, to test the workspace's memory.
+    )
+);
 
-TEST_F(ArithVectorTest, SubtractionAlongRows) {
-    auto vec = create_vector(dense->nrow(), -1.2);
-    auto op = tatami::make_DelayedSubtractVectorHelper<true, 0>(vec);
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+using ArithVectorAdditionSubsetTest = ArithVectorAdditionTest<std::tuple<double, double, bool, size_t, std::vector<size_t> > >;
+
+TEST_P(ArithVectorAdditionSubsetTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(false);
+    auto work_sparse = sparse_mod->new_workspace(false);
+
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    for (size_t c = 0; c < dense->ncol(); c += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->nrow());
+        size_t start = interval.first, end = interval.second;
+
+        auto expected = extract_dense<false>(dense.get(), c, start, end);
+        for (size_t r = start; r < end; ++r) {
+            add_value(expected[r - start], param, r, c);
+        }
+
+        auto output = extract_dense<false>(dense_mod.get(), c, start, end);
+        EXPECT_EQ(output, expected);
+
+        // Works with different backends.
+        auto output2 = extract_dense<false>(sparse_mod.get(), c, start, end);
+        EXPECT_EQ(output2, expected);
+
+        // Works in sparse mode as well.
+        auto outputS = extract_sparse<false>(sparse_mod.get(), c, start, end);
+        EXPECT_EQ(outputS, expected);
+
+        // Passes along the workspace.
+        auto outputDW = extract_dense<false>(dense_mod.get(), c, start, end, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
+
+        auto outputSW = extract_sparse<false>(sparse_mod.get(), c, start, end, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
+    }
+}
+
+TEST_P(ArithVectorAdditionSubsetTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(true);
+    auto work_sparse = sparse_mod->new_workspace(true);
+
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    for (size_t r = 0; r < dense->nrow(); r += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
+        size_t start = interval.first, end = interval.second;
+
+        auto expected = extract_dense<true>(dense.get(), r, start, end);
+        for (size_t c = start; c < end; ++c) {
+            add_value(expected[c - start], param, r, c);
+        }
+
+        auto output = extract_dense<true>(dense_mod.get(), r, start, end);
+        EXPECT_EQ(output, expected);
+
+        // Works with different backends.
+        auto output2 = extract_dense<true>(sparse_mod.get(), r, start, end);
+        EXPECT_EQ(output2, expected);
+
+        // Works in sparse mode as well.
+        auto outputS = extract_sparse<true>(sparse_mod.get(), r, start, end);
+        EXPECT_EQ(outputS, expected);
+
+        // Passes along the workspace.
+        auto outputDW = extract_dense<true>(dense_mod.get(), r, start, end, work_dense.get());
+        EXPECT_EQ(output, expected);
+
+        auto outputSW = extract_sparse<true>(sparse_mod.get(), r, start, end, work_sparse.get());
+        EXPECT_EQ(outputDW, expected);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorAdditionSubsetTest,
+    ::testing::Combine(
+        ::testing::Values(5),
+        ::testing::Values(0.5),
+        ::testing::Values(true, false), // add by row, or add by column.
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
+            std::vector<size_t>({ 1, 4, 4 }), // non-overlapping shifts
+            std::vector<size_t>({ 3, 10, 0 })
+        )
+    )
+);
+
+/*******************************
+ ********* SUBTRACTION *********
+ *******************************/
+
+template<class PARAM>
+class ArithVectorSubtractionTest : public ArithVectorTest<PARAM> {
+protected:
+    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::vector<double> vec;
+
+    void extra_assemble(const PARAM& param) {
+        bool row = std::get<2>(param);
+        vec = create_vector(
+            row ? (this->dense)->nrow() : (this->dense)->ncol(),
+            std::get<0>(param), 
+            std::get<1>(param)
+        );
+
+        bool right = std::get<3>(param);
+        if (row) {
+            if (right) {
+                auto op = tatami::make_DelayedSubtractVectorHelper<true, 0>(vec);
+                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            } else {
+                auto op = tatami::make_DelayedSubtractVectorHelper<false, 0>(vec);
+                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            }
+        } else {
+            if (right) {
+                auto op = tatami::make_DelayedSubtractVectorHelper<true, 1>(vec);
+                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            } else {
+                auto op = tatami::make_DelayedSubtractVectorHelper<false, 1>(vec);
+                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            }
+        }
+    }
+
+    void subtract_value(double& ref, const PARAM& param, size_t r, size_t c) {
+        const double& val = vec[std::get<2>(param) ? r : c];
+        if (std::get<3>(param)) {
+            ref -= val;
+        } else {
+            ref = val - ref;
+        }
+        return;
+    }
+};
+
+using ArithVectorSubtractionFullTest = ArithVectorSubtractionTest<std::tuple<double, double, bool, bool, size_t> >;
+
+TEST_P(ArithVectorSubtractionFullTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_FALSE(sparse_mod->sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
-    // Works in full.
-    set_sizes(0, dense->nrow());
+    EXPECT_TRUE(dense->prefer_rows());
+    EXPECT_FALSE(sparse->prefer_rows());
 
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] -= vec[j];
+    auto work_dense = dense_mod->new_workspace(false);
+    auto work_sparse = sparse_mod->new_workspace(false);
+
+    for (size_t c = 0; c < dense->ncol(); c += std::get<4>(param)) {
+        auto expected = extract_dense<false>(dense.get(), c);
+        for (size_t r = 0; r < dense->nrow(); ++r) {
+            subtract_value(expected[r], param, r, c);
         }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
+        auto output = extract_dense<false>(dense_mod.get(), c);
         EXPECT_EQ(output, expected);
 
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        // Works with different backends.
+        auto output2 = extract_dense<false>(sparse_mod.get(), c);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), c);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<false>(dense_mod.get(), c, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Works in a slice.
-    set_sizes(dense->nrow()/6, dense->nrow()/2);
-    auto op2 = tatami::make_DelayedSubtractVectorHelper<false, 0>(vec);
-    auto dense_mod2 = tatami::make_DelayedIsometricOp(dense, op2);
-    auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse, op2);
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data(), first, last));
-        for (size_t j = 0; j < last - first; ++j) {
-            expected[j] = vec[first + j] - expected[j];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod2->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod2->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod2->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod2->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod2->column(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Row extraction works as well.
-    create_workspaces(true);
-    set_sizes(0, dense->ncol());
-
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data()));
-        for (size_t j = 0; j < dense->ncol(); ++j) {
-            expected[j] -= vec[i];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-        
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<false>(sparse_mod.get(), c, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(ArithVectorTest, SubtractionAlongColumns) {
-    auto vec = create_vector(dense->ncol(), 24.1);
-    auto op = tatami::make_DelayedSubtractVectorHelper<true, 1>(vec);
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+TEST_P(ArithVectorSubtractionFullTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(true);
+    auto work_sparse = sparse_mod->new_workspace(true);
 
-    // Works in full.
-    set_sizes(0, dense->ncol());
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data()));
-        for (size_t j = 0; j < dense->ncol(); ++j) {
-            expected[j] -= vec[j];
+    for (size_t r = 0; r < dense->nrow(); r += std::get<4>(param)) {
+        auto expected = extract_dense<true>(dense.get(), r);
+        for (size_t c = 0; c < dense->ncol(); ++c) {
+            subtract_value(expected[c], param, r, c);
         }
 
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data()));
+        auto output = extract_dense<true>(dense_mod.get(), r);
         EXPECT_EQ(output, expected);
 
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
+        // Works with different backends.
+        auto output2 = extract_dense<true>(sparse_mod.get(), r);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<true>(sparse_mod.get(), r);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        auto outputDW = extract_dense<true>(dense_mod.get(), r, work_dense.get());
         EXPECT_EQ(output, expected);
 
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Works in a slice.
-    auto op2 = tatami::make_DelayedSubtractVectorHelper<false, 1>(vec);
-    auto dense_mod2 = tatami::make_DelayedIsometricOp(dense, op2);
-    auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse, op2);
-
-    set_sizes(dense->ncol()/6, dense->ncol()/2);
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data(), first, last));
-        for (size_t j = 0; j < last - first; ++j) {
-            expected[j] = vec[first + j] - expected[j];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod2->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod2->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod2->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod2->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod2->row(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Column extraction works as well.
-    create_workspaces(false);
-    set_sizes(0, dense->nrow());
-
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] -= vec[i];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
-        
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<true>(sparse_mod.get(), r, work_sparse.get());
+        EXPECT_EQ(outputDW, expected);
     }
 }
 
-/*******************************
- ******* MULTIPLICATION ********
- *******************************/
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorSubtractionFullTest,
+    ::testing::Combine(
+        ::testing::Values(1),
+        ::testing::Values(0.33),
+        ::testing::Values(true, false), // by row or by column
+        ::testing::Values(true, false), // on the right or left
+        ::testing::Values(1, 3) // jump, to test the workspace's memory.
+    )
+);
 
-TEST_F(ArithVectorTest, MultiplicationAlongRows) {
-    auto vec = create_vector(dense->nrow(), 0.1);
-    auto op = tatami::make_DelayedMultiplyVectorHelper<0>(vec);
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+using ArithVectorSubtractionSubsetTest = ArithVectorSubtractionTest<std::tuple<double, double, bool, bool, size_t, std::vector<size_t> > >;
+
+TEST_P(ArithVectorSubtractionSubsetTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(false);
+    auto work_sparse = sparse_mod->new_workspace(false);
+
+    size_t JUMP = std::get<4>(param);
+    auto interval_info = std::get<5>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    for (size_t c = 0; c < dense->ncol(); c += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->nrow());
+        size_t start = interval.first, end = interval.second;
+
+        auto expected = extract_dense<false>(dense.get(), c, start, end);
+        for (size_t r = start; r < end; ++r) {
+            subtract_value(expected[r - start], param, r, c);
+        }
+
+        auto output = extract_dense<false>(dense_mod.get(), c, start, end);
+        EXPECT_EQ(output, expected);
+
+        // Works with different backends.
+        auto output2 = extract_dense<false>(sparse_mod.get(), c, start, end);
+        EXPECT_EQ(output2, expected);
+
+        // Works in sparse mode as well.
+        auto outputS = extract_sparse<false>(sparse_mod.get(), c, start, end);
+        EXPECT_EQ(outputS, expected);
+
+        // Passes along the workspace.
+        auto outputDW = extract_dense<false>(dense_mod.get(), c, start, end, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
+
+        auto outputSW = extract_sparse<false>(sparse_mod.get(), c, start, end, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
+    }
+}
+
+TEST_P(ArithVectorSubtractionSubsetTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(true);
+    auto work_sparse = sparse_mod->new_workspace(true);
+
+    size_t JUMP = std::get<4>(param);
+    auto interval_info = std::get<5>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    for (size_t r = 0; r < dense->nrow(); r += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
+        size_t start = interval.first, end = interval.second;
+
+        auto expected = extract_dense<true>(dense.get(), r, start, end);
+        for (size_t c = start; c < end; ++c) {
+            subtract_value(expected[c - start], param, r, c);
+        }
+
+        auto output = extract_dense<true>(dense_mod.get(), r, start, end);
+        EXPECT_EQ(output, expected);
+
+        // Works with different backends.
+        auto output2 = extract_dense<true>(sparse_mod.get(), r, start, end);
+        EXPECT_EQ(output2, expected);
+
+        // Works in sparse mode as well.
+        auto outputS = extract_sparse<true>(sparse_mod.get(), r, start, end);
+        EXPECT_EQ(outputS, expected);
+
+        // Passes along the workspace.
+        auto outputDW = extract_dense<true>(dense_mod.get(), r, start, end, work_dense.get());
+        EXPECT_EQ(output, expected);
+
+        auto outputSW = extract_sparse<true>(sparse_mod.get(), r, start, end, work_sparse.get());
+        EXPECT_EQ(outputDW, expected);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorSubtractionSubsetTest,
+    ::testing::Combine(
+        ::testing::Values(5),
+        ::testing::Values(0.5),
+        ::testing::Values(true, false), // add by row, or add by column.
+        ::testing::Values(true, false), // on the right or left
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
+            std::vector<size_t>({ 1, 4, 4 }), // non-overlapping shifts
+            std::vector<size_t>({ 3, 10, 0 })
+        )
+    )
+);
+
+/**********************************
+ ********* MULTIPLICATION *********
+ **********************************/
+
+template<class PARAM>
+class ArithVectorMultiplicationTest : public ArithVectorTest<PARAM> {
+protected:
+    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::vector<double> vec;
+
+    void extra_assemble(const PARAM& param) {
+        bool row = std::get<2>(param);
+        vec = create_vector(
+            row ? (this->dense)->nrow() : (this->dense)->ncol(),
+            std::get<0>(param), 
+            std::get<1>(param)
+        );
+        if (row) {
+            auto op = tatami::make_DelayedMultiplyVectorHelper<0>(vec);
+            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+        } else {
+            auto op = tatami::make_DelayedMultiplyVectorHelper<1>(vec);
+            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+        }
+    }
+
+    void multiply_value(double& ref, const PARAM& param, size_t r, size_t c) {
+        ref *= vec[std::get<2>(param) ? r : c];
+        return;
+    }
+};
+
+using ArithVectorMultiplicationFullTest = ArithVectorMultiplicationTest<std::tuple<double, double, bool, size_t> >;
+
+TEST_P(ArithVectorMultiplicationFullTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_TRUE(sparse_mod->sparse());
-
-    // Works in full.
-    set_sizes(0, dense->nrow());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] *= vec[j];
+    EXPECT_TRUE(dense->prefer_rows());
+    EXPECT_FALSE(sparse->prefer_rows());
+
+    auto work_dense = dense_mod->new_workspace(false);
+    auto work_sparse = sparse_mod->new_workspace(false);
+
+    for (size_t c = 0; c < dense->ncol(); c += std::get<3>(param)) {
+        auto expected = extract_dense<false>(dense.get(), c);
+        for (size_t r = 0; r < dense->nrow(); ++r) {
+            multiply_value(expected[r], param, r, c);
         }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
+        auto output = extract_dense<false>(dense_mod.get(), c);
         EXPECT_EQ(output, expected);
 
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        // Works with different backends.
+        auto output2 = extract_dense<false>(sparse_mod.get(), c);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), c);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<false>(dense_mod.get(), c, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Works in a slice.
-    set_sizes(dense->nrow()/6, dense->nrow()/2);
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data(), first, last));
-        for (size_t j = 0; j < last - first; ++j) {
-            expected[j] *= vec[first + j];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Row extraction works as well.
-    create_workspaces(true);
-    set_sizes(0, dense->ncol());
-
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data()));
-        for (size_t j = 0; j < dense->ncol(); ++j) {
-            expected[j] *= vec[i];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-        
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<false>(sparse_mod.get(), c, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(ArithVectorTest, MultiplicationAlongColumns) {
-    auto vec = create_vector(dense->ncol(), -10.5);
-    auto op = tatami::make_DelayedMultiplyVectorHelper<1>(vec);
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+TEST_P(ArithVectorMultiplicationFullTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(true);
+    auto work_sparse = sparse_mod->new_workspace(true);
 
-    // Works in full.
-    set_sizes(0, dense->ncol());
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data()));
-        for (size_t j = 0; j < dense->ncol(); ++j) {
-            expected[j] *= vec[j];
+    for (size_t r = 0; r < dense->nrow(); r += std::get<3>(param)) {
+        auto expected = extract_dense<true>(dense.get(), r);
+        for (size_t c = 0; c < dense->ncol(); ++c) {
+            multiply_value(expected[c], param, r, c);
         }
 
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data()));
+        auto output = extract_dense<true>(dense_mod.get(), r);
         EXPECT_EQ(output, expected);
 
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
+        // Works with different backends.
+        auto output2 = extract_dense<true>(sparse_mod.get(), r);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<true>(sparse_mod.get(), r);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        auto outputDW = extract_dense<true>(dense_mod.get(), r, work_dense.get());
         EXPECT_EQ(output, expected);
 
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Works in a slice.
-    set_sizes(dense->ncol()/6, dense->ncol()/2);
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data(), first, last));
-        for (size_t j = 0; j < last - first; ++j) {
-            expected[j] *= vec[j + first];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Column extraction works as well.
-    create_workspaces(false);
-    set_sizes(0, dense->nrow());
-
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] *= vec[i];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
-        
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<true>(sparse_mod.get(), r, work_sparse.get());
+        EXPECT_EQ(outputDW, expected);
     }
 }
 
-/*************************
- ******** DIVISION *******
- *************************/
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorMultiplicationFullTest,
+    ::testing::Combine(
+        ::testing::Values(5),
+        ::testing::Values(0.5),
+        ::testing::Values(true, false),
+        ::testing::Values(1, 3) // jump, to test the workspace's memory.
+    )
+);
 
-TEST_F(ArithVectorTest, DivisionAlongRows) {
-    auto vec = create_vector(dense->nrow(), 1.2);
-    auto op = tatami::make_DelayedDivideVectorHelper<true, 0>(vec);
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+using ArithVectorMultiplicationSubsetTest = ArithVectorMultiplicationTest<std::tuple<double, double, bool, size_t, std::vector<size_t> > >;
+
+TEST_P(ArithVectorMultiplicationSubsetTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(false);
+    auto work_sparse = sparse_mod->new_workspace(false);
+
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    for (size_t c = 0; c < dense->ncol(); c += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->nrow());
+        size_t start = interval.first, end = interval.second;
+
+        auto expected = extract_dense<false>(dense.get(), c, start, end);
+        for (size_t r = start; r < end; ++r) {
+            multiply_value(expected[r - start], param, r, c);
+        }
+
+        auto output = extract_dense<false>(dense_mod.get(), c, start, end);
+        EXPECT_EQ(output, expected);
+
+        // Works with different backends.
+        auto output2 = extract_dense<false>(sparse_mod.get(), c, start, end);
+        EXPECT_EQ(output2, expected);
+
+        // Works in sparse mode as well.
+        auto outputS = extract_sparse<false>(sparse_mod.get(), c, start, end);
+        EXPECT_EQ(outputS, expected);
+
+        // Passes along the workspace.
+        auto outputDW = extract_dense<false>(dense_mod.get(), c, start, end, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
+
+        auto outputSW = extract_sparse<false>(sparse_mod.get(), c, start, end, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
+    }
+}
+
+TEST_P(ArithVectorMultiplicationSubsetTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(true);
+    auto work_sparse = sparse_mod->new_workspace(true);
+
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    for (size_t r = 0; r < dense->nrow(); r += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
+        size_t start = interval.first, end = interval.second;
+
+        auto expected = extract_dense<true>(dense.get(), r, start, end);
+        for (size_t c = start; c < end; ++c) {
+            multiply_value(expected[c - start], param, r, c);
+        }
+
+        auto output = extract_dense<true>(dense_mod.get(), r, start, end);
+        EXPECT_EQ(output, expected);
+
+        // Works with different backends.
+        auto output2 = extract_dense<true>(sparse_mod.get(), r, start, end);
+        EXPECT_EQ(output2, expected);
+
+        // Works in sparse mode as well.
+        auto outputS = extract_sparse<true>(sparse_mod.get(), r, start, end);
+        EXPECT_EQ(outputS, expected);
+
+        // Passes along the workspace.
+        auto outputDW = extract_dense<true>(dense_mod.get(), r, start, end, work_dense.get());
+        EXPECT_EQ(output, expected);
+
+        auto outputSW = extract_sparse<true>(sparse_mod.get(), r, start, end, work_sparse.get());
+        EXPECT_EQ(outputDW, expected);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorMultiplicationSubsetTest,
+    ::testing::Combine(
+        ::testing::Values(5),
+        ::testing::Values(0.5),
+        ::testing::Values(true, false), // add by row, or add by column.
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
+            std::vector<size_t>({ 1, 4, 4 }), // non-overlapping shifts
+            std::vector<size_t>({ 3, 10, 0 })
+        )
+    )
+);
+
+/****************************
+ ********* DIVISION *********
+ ****************************/
+
+template<class PARAM>
+class ArithVectorDivisionTest : public ArithVectorTest<PARAM> {
+protected:
+    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::vector<double> vec;
+
+    void extra_assemble(const PARAM& param) {
+        bool row = std::get<2>(param);
+        vec = create_vector(
+            row ? (this->dense)->nrow() : (this->dense)->ncol(),
+            std::get<0>(param), 
+            std::get<1>(param)
+        );
+
+        bool right = std::get<3>(param);
+        if (!right) {
+            // Some shenanigans to avoid division by zero.
+            tatami::DelayedExpHelper<double> op2a;
+            this->dense = tatami::make_DelayedIsometricOp(this->dense, op2a);
+            this->sparse = tatami::make_DelayedIsometricOp(this->sparse, op2a);
+        }
+
+        if (row) {
+            if (right) {
+                auto op = tatami::make_DelayedDivideVectorHelper<true, 0>(vec);
+                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            } else {
+                auto op = tatami::make_DelayedDivideVectorHelper<false, 0>(vec);
+                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            }
+        } else {
+            if (right) {
+                auto op = tatami::make_DelayedDivideVectorHelper<true, 1>(vec);
+                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            } else {
+                auto op = tatami::make_DelayedDivideVectorHelper<false, 1>(vec);
+                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            }
+        }
+    }
+
+    void divide_value(double& ref, const PARAM& param, size_t r, size_t c) {
+        const double& val = vec[std::get<2>(param) ? r : c];
+        if (std::get<3>(param)) {
+            ref /= val;
+        } else {
+            ref = val / ref;
+        }
+        return;
+    }
+};
+
+using ArithVectorDivisionFullTest = ArithVectorDivisionTest<std::tuple<double, double, bool, bool, size_t> >;
+
+TEST_P(ArithVectorDivisionFullTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
     EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
-
-    // Works in full.
-    set_sizes(0, dense->nrow());
+    if (std::get<3>(param)) {
+        // only true if we're dividing on the right; 
+        // divisions on the left need to undo the sparsity
+        // to avoid divide by zero errors.
+        EXPECT_TRUE(sparse_mod->sparse());
+    }
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] /= vec[j];
+    EXPECT_TRUE(dense->prefer_rows());
+    EXPECT_FALSE(sparse->prefer_rows());
+
+    auto work_dense = dense_mod->new_workspace(false);
+    auto work_sparse = sparse_mod->new_workspace(false);
+
+    for (size_t c = 0; c < dense->ncol(); c += std::get<4>(param)) {
+        auto expected = extract_dense<false>(dense.get(), c);
+        for (size_t r = 0; r < dense->nrow(); ++r) {
+            divide_value(expected[r], param, r, c);
         }
 
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
+        auto output = extract_dense<false>(dense_mod.get(), c);
         EXPECT_EQ(output, expected);
 
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        // Works with different backends.
+        auto output2 = extract_dense<false>(sparse_mod.get(), c);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_mod.get(), c);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<false>(dense_mod.get(), c, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Works in a slice. Some shenanigans involved to avoid division by zero.
-    tatami::DelayedExpHelper<double> op2a;
-    auto dense_mod2a = tatami::make_DelayedIsometricOp(dense, op2a);
-    auto sparse_mod2a = tatami::make_DelayedIsometricOp(sparse, op2a);
-
-    auto op2 = tatami::make_DelayedDivideVectorHelper<false, 0>(vec);
-    auto dense_mod2 = tatami::make_DelayedIsometricOp(dense_mod2a, op2);
-    auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse_mod2a, op2);
-
-    set_sizes(dense->nrow()/10, dense->nrow()/2);
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data(), first, last));
-        for (size_t j = 0; j < last - first; ++j) {
-            expected[j] = vec[j + first] / std::exp(expected[j]);
-        }
-
-        wipe_output();
-        fill_output(sparse_mod2->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod2->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod2->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod2->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod2->column(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Row extraction works as well.
-    create_workspaces(true);
-    set_sizes(0, dense->ncol());
-
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data()));
-        for (size_t j = 0; j < dense->ncol(); ++j) {
-            expected[j] /= vec[i];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-        
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<false>(sparse_mod.get(), c, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(ArithVectorTest, DivisionAlongColumns) {
-    auto vec = create_vector(dense->ncol(), -10.2);
-    auto op = tatami::make_DelayedDivideVectorHelper<true, 1>(vec);
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+TEST_P(ArithVectorDivisionFullTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(true);
+    auto work_sparse = sparse_mod->new_workspace(true);
 
-    // Works in full.
-    set_sizes(0, dense->ncol());
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data()));
-        for (size_t j = 0; j < dense->ncol(); ++j) {
-            expected[j] /= vec[j];
+    for (size_t r = 0; r < dense->nrow(); r += std::get<4>(param)) {
+        auto expected = extract_dense<true>(dense.get(), r);
+        for (size_t c = 0; c < dense->ncol(); ++c) {
+            divide_value(expected[c], param, r, c);
         }
 
-        wipe_output();
-        fill_output(sparse_mod->row(i, output.data()));
+        auto output = extract_dense<true>(dense_mod.get(), r);
         EXPECT_EQ(output, expected);
 
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->row(i, output.data()));
-        EXPECT_EQ(output, expected);
+        // Works with different backends.
+        auto output2 = extract_dense<true>(sparse_mod.get(), r);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<true>(sparse_mod.get(), r);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
+        auto outputDW = extract_dense<true>(dense_mod.get(), r, work_dense.get());
         EXPECT_EQ(output, expected);
 
-        wipe_output();
-        fill_output(dense_mod->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Works in a slice. Some shenanigans involved to avoid division by zero.
-    tatami::DelayedExpHelper<double> op2a;
-    auto dense_mod2a = tatami::make_DelayedIsometricOp(dense, op2a);
-    auto sparse_mod2a = tatami::make_DelayedIsometricOp(sparse, op2a);
-
-    auto op2 = tatami::make_DelayedDivideVectorHelper<false, 1>(vec);
-    auto dense_mod2 = tatami::make_DelayedIsometricOp(dense_mod2a, op2);
-    auto sparse_mod2 = tatami::make_DelayedIsometricOp(sparse_mod2a, op2);
-
-    set_sizes(dense->ncol()/4, dense->ncol()/2);
-
-    create_workspaces(false);
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->row(i, expected.data(), first, last));
-        for (size_t j = 0; j < last - first; ++j) {
-            expected[j] = vec[j + first] / std::exp(expected[j]);
-        }
-
-        wipe_output();
-        fill_output(sparse_mod2->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod2->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod2->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod2->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod2->row(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-    
-    // Column extraction works as well.
-    create_workspaces(false);
-    set_sizes(0, dense->nrow());
-
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(sparse->column(i, expected.data()));
-        for (size_t j = 0; j < dense->nrow(); ++j) {
-            expected[j] /= vec[i];
-        }
-
-        wipe_output();
-        fill_output(sparse_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
-        
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_mod->column(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_mod->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_mod->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<true>(sparse_mod.get(), r, work_sparse.get());
+        EXPECT_EQ(outputDW, expected);
     }
 }
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorDivisionFullTest,
+    ::testing::Combine(
+        ::testing::Values(1),
+        ::testing::Values(0.33),
+        ::testing::Values(true, false), // by row or by column
+        ::testing::Values(true, false), // on the right or left
+        ::testing::Values(1, 3) // jump, to test the workspace's memory.
+    )
+);
+
+using ArithVectorDivisionSubsetTest = ArithVectorDivisionTest<std::tuple<double, double, bool, bool, size_t, std::vector<size_t> > >;
+
+TEST_P(ArithVectorDivisionSubsetTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(false);
+    auto work_sparse = sparse_mod->new_workspace(false);
+
+    size_t JUMP = std::get<4>(param);
+    auto interval_info = std::get<5>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    for (size_t c = 0; c < dense->ncol(); c += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->nrow());
+        size_t start = interval.first, end = interval.second;
+
+        auto expected = extract_dense<false>(dense.get(), c, start, end);
+        for (size_t r = start; r < end; ++r) {
+            divide_value(expected[r - start], param, r, c);
+        }
+
+        auto output = extract_dense<false>(dense_mod.get(), c, start, end);
+        EXPECT_EQ(output, expected);
+
+        // Works with different backends.
+        auto output2 = extract_dense<false>(sparse_mod.get(), c, start, end);
+        EXPECT_EQ(output2, expected);
+
+        // Works in sparse mode as well.
+        auto outputS = extract_sparse<false>(sparse_mod.get(), c, start, end);
+        EXPECT_EQ(outputS, expected);
+
+        // Passes along the workspace.
+        auto outputDW = extract_dense<false>(dense_mod.get(), c, start, end, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
+
+        auto outputSW = extract_sparse<false>(sparse_mod.get(), c, start, end, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
+    }
+}
+
+TEST_P(ArithVectorDivisionSubsetTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+    auto work_dense = dense_mod->new_workspace(true);
+    auto work_sparse = sparse_mod->new_workspace(true);
+
+    size_t JUMP = std::get<4>(param);
+    auto interval_info = std::get<5>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    for (size_t r = 0; r < dense->nrow(); r += JUMP, FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
+        size_t start = interval.first, end = interval.second;
+
+        auto expected = extract_dense<true>(dense.get(), r, start, end);
+        for (size_t c = start; c < end; ++c) {
+            divide_value(expected[c - start], param, r, c);
+        }
+
+        auto output = extract_dense<true>(dense_mod.get(), r, start, end);
+        EXPECT_EQ(output, expected);
+
+        // Works with different backends.
+        auto output2 = extract_dense<true>(sparse_mod.get(), r, start, end);
+        EXPECT_EQ(output2, expected);
+
+        // Works in sparse mode as well.
+        auto outputS = extract_sparse<true>(sparse_mod.get(), r, start, end);
+        EXPECT_EQ(outputS, expected);
+
+        // Passes along the workspace.
+        auto outputDW = extract_dense<true>(dense_mod.get(), r, start, end, work_dense.get());
+        EXPECT_EQ(output, expected);
+
+        auto outputSW = extract_sparse<true>(sparse_mod.get(), r, start, end, work_sparse.get());
+        EXPECT_EQ(outputDW, expected);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorDivisionSubsetTest,
+    ::testing::Combine(
+        ::testing::Values(5),
+        ::testing::Values(0.5),
+        ::testing::Values(true, false), // add by row, or add by column.
+        ::testing::Values(true, false), // on the right or left
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
+            std::vector<size_t>({ 1, 4, 4 }), // non-overlapping shifts
+            std::vector<size_t>({ 3, 10, 0 })
+        )
+    )
+);
+
 

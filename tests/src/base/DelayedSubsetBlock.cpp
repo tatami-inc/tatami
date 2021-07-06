@@ -11,287 +11,226 @@
 #include "../data/data.h"
 #include "TestCore.h"
 
-class SubsetBlockTestCore : public TestCore {
+template<class PARAM> 
+class SubsetBlockTest : public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense, sparse;
-    std::shared_ptr<tatami::workspace> work_dense, work_sparse;
+    std::shared_ptr<tatami::numeric_matrix> dense, sparse, ref, dense_block, sparse_block;
 
+    size_t first, last;
+    std::vector<size_t> sub;
 protected:
-    void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
+    void SetUp() {
+        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse = tatami::convert_to_sparse(dense.get(), false); // column-major.
         return;
     }
 
-    void create_create_workspaces(bool row) {
-        work_dense = dense->new_workspace(row);
-        work_sparse = sparse->new_workspace(row);
-        return;
+    void extra_assemble(const PARAM& param) {
+        size_t full;
+        if (std::get<0>(param)) {
+            full = dense->nrow(); 
+        } else {
+            full = dense->ncol();
+        }
+
+        first = static_cast<double>(full) * std::get<1>(param).first;
+        last = static_cast<double>(full) * std::get<1>(param).second;
+        sub.resize(last - first);
+        for (size_t i = 0; i < sub.size(); ++i) { sub[i] = i + first; }
+
+        if (std::get<0>(param)) {
+            ref = tatami::make_DelayedSubset<0>(dense, sub);
+            dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, last);
+            sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, first, last);
+        } else {
+            ref = tatami::make_DelayedSubset<1>(dense, sub);
+            dense_block = tatami::make_DelayedSubsetBlock<1>(dense, first, last);
+            sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, first, last);
+        }
     }
 };
 
-class SubsetBlockTest : public SubsetBlockTestCore {
-protected:
-    void SetUp() {
-        assemble(sparse_nrow, sparse_ncol, sparse_matrix);
+/*****************************
+ *****************************/
+
+using SubsetBlockFullAccessTest = SubsetBlockTest<std::tuple<bool, std::pair<double, double>, size_t> >;
+
+TEST_P(SubsetBlockFullAccessTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
+
+    EXPECT_EQ(ref->nrow(), dense_block->nrow());
+    EXPECT_EQ(ref->ncol(), dense_block->ncol());
+    if (std::get<0>(param)) {
+        EXPECT_EQ(sub.size(), dense_block->nrow());
+        EXPECT_EQ(dense->ncol(), dense_block->ncol());
+    } else {
+        EXPECT_EQ(dense->nrow(), dense_block->nrow());
+        EXPECT_EQ(sub.size(), dense_block->ncol());
     }
-};
-
-TEST_F(SubsetBlockTest, SubsetRowFullColumnAccess) {
-    // Column subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 3, 4, 5, 6 };
-    std::vector<double> buffer_full(dense->nrow());
-
-    auto ref = tatami::make_DelayedSubset<0>(dense, sub);
-    auto dense_block = tatami::make_DelayedSubsetBlock<0>(dense, 3, 7);
-    auto sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, 3, 7);
-
-    set_sizes(0, sub.size());
-    EXPECT_EQ(sub.size(), dense_block->nrow());
-    EXPECT_EQ(dense->ncol(), dense_block->ncol());
 
     EXPECT_TRUE(dense_block->prefer_rows());
     EXPECT_FALSE(sparse_block->prefer_rows());
+    EXPECT_FALSE(dense_block->sparse());
+    EXPECT_TRUE(sparse_block->sparse());
 
-    create_create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        wipe_expected();
-        fill_expected(ref->column(i, expected.data()));
+    auto work_dense = dense_block->new_workspace(true);
+    auto work_sparse = dense_block->new_workspace(true);
 
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_block->column(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_block->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
-    }
-}
-
-TEST_F(SubsetBlockTest, SubsetRowSlicedColumnAccess) {
-    // Column subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 12, 13, 14, 15, 16, 17, 18, 19 };
-    std::vector<double> buffer_full(dense->nrow());
-
-    auto ref = tatami::make_DelayedSubset<0>(dense, sub);
-    auto dense_block = tatami::make_DelayedSubsetBlock<0>(dense, 12, 20);
-    auto sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, 12, 20);
-
-    size_t LEN = 4;
-    size_t first = 0;
-
-    create_create_workspaces(false);
-    for (size_t i = 0; i < dense->ncol(); ++i) {
-        set_sizes(first, std::min(first + LEN, sub.size()));
-
-        wipe_expected();
-        fill_expected(ref->column(i, output.data(), first, last));
-
-        // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_block->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);        
-
-        // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(dense_block->column(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 13;
-        first %= sub.size();
-    }
-}
-
-TEST_F(SubsetBlockTest, SubsetRowFullRowAccess) {
-    // Column subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 7, 8, 9, 10, 11, 12 };
-    std::vector<double> buffer_full(dense->nrow());
-
-    auto ref = tatami::make_DelayedSubset<0>(dense, sub);
-    auto dense_block = tatami::make_DelayedSubsetBlock<0>(dense, 7, 13);
-    auto sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, 7, 13);
-
-    set_sizes(0, dense->ncol());
-
-    create_create_workspaces(true);
-    for (size_t i = 0; i < sub.size(); ++i) {
-        wipe_expected();
-        fill_expected(ref->row(i, expected.data()));
-
-        wipe_output();
-        fill_output(sparse_block->row(i, output.data()));
+    for (size_t i = 0; i < dense_block->nrow(); i += std::get<2>(param)) {
+        auto expected = extract_dense<true>(ref.get(), i);
+        auto output = extract_dense<true>(dense_block.get(), i);
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_block->row(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto output2 = extract_dense<true>(sparse_block.get(), i);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<true>(sparse_block.get(), i);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<true>(dense_block.get(), i, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(dense_block->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<true>(sparse_block.get(), i, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(SubsetBlockTest, SubsetColumnFullRowAccess) {
-    // Row subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 0, 1, 2, 3, 4, 5 };
-    std::vector<double> buffer_full(dense->ncol());
+TEST_P(SubsetBlockFullAccessTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
-    auto ref = tatami::make_DelayedSubset<1>(dense, sub);
-    auto dense_block = tatami::make_DelayedSubsetBlock<1>(dense, 0, 6);
-    auto sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, 0, 6);
+    auto work_dense = dense_block->new_workspace(false);
+    auto work_sparse = dense_block->new_workspace(false);
 
-    set_sizes(0, sub.size());
-    EXPECT_EQ(sub.size(), dense_block->ncol());
-    EXPECT_EQ(dense->nrow(), dense_block->nrow());
-
-    create_create_workspaces(true);
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        wipe_expected();
-        fill_expected(ref->row(i, expected.data()));
-
-        wipe_output();
-        fill_output(sparse_block->row(i, output.data()));
+    for (size_t i = 0; i < dense_block->ncol(); i += std::get<2>(param)) {
+        auto expected = extract_dense<false>(ref.get(), i);
+        auto output = extract_dense<false>(dense_block.get(), i);
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_block->row(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto output2 = extract_dense<false>(sparse_block.get(), i);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_row(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_block.get(), i);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_row(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<false>(dense_block.get(), i, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(dense_block->row(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<false>(sparse_block.get(), i, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(SubsetBlockTest, SubsetColumnSlicedRowAccess) {
-    // Row subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 5, 6, 7, 8, 9 };
-    std::vector<double> buffer_full(dense->ncol());
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubsetBlock,
+    SubsetBlockFullAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // row or column subsetting, respectively.
+        ::testing::Values(
+            std::make_pair(0.0, 0.5),
+            std::make_pair(0.25, 0.8),
+            std::make_pair(0.4, 1)
+        ),
+        ::testing::Values(1, 3) // jump, to check the workspace memory
+    )
+);
 
-    auto ref = tatami::make_DelayedSubset<1>(dense, sub);
-    auto dense_block = tatami::make_DelayedSubsetBlock<1>(dense, 5, 10);
-    auto sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, 5, 10);
+/*****************************
+ *****************************/
 
-    create_create_workspaces(true);
-    size_t LEN = 7;
-    first = 0;
+using SubsetBlockSlicedAccessTest = SubsetBlockTest<std::tuple<bool, std::pair<double, double>, size_t, std::vector<size_t> > >;
 
-    for (size_t i = 0; i < dense->nrow(); ++i) {
-        set_sizes(first, std::min(first + LEN, sub.size()));
+TEST_P(SubsetBlockSlicedAccessTest, RowAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
-        wipe_expected();
-        fill_expected(ref->row(i, expected.data(), first, last));
+    auto slice = std::get<3>(GetParam());
+    size_t FIRST = slice[0], LEN = slice[1], SHIFT = slice[2];
 
-        wipe_output();
-        fill_output(sparse_block->row(i, output.data(), first, last));
+    auto work_dense = dense_block->new_workspace(true);
+    auto work_sparse = dense_block->new_workspace(true);
+
+    for (size_t i = 0; i < dense_block->nrow(); i += std::get<2>(param), FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + SHIFT, dense_block->ncol());
+        size_t first = interval.first, last = interval.second;
+
+        auto expected = extract_dense<true>(ref.get(), i, first, last);
+        auto output = extract_dense<true>(dense_block.get(), i, first, last);
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_block->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
+        auto output2 = extract_dense<true>(sparse_block.get(), i, first, last);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);        
+        auto outputS = extract_sparse<true>(sparse_block.get(), i, first, last);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse.get()));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<true>(dense_block.get(), i, first, last, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(dense_block->row(i, outval.data(), first, last, work_dense.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 11;
-        first %= sub.size();
+        auto outputSW = extract_sparse<true>(sparse_block.get(), i, first, last, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-TEST_F(SubsetBlockTest, SubsetColumnFullColumnAccess) {
-    // Row subsetting by a vector with duplicates, out of order.
-    std::vector<size_t> sub = { 4, 5, 6, 7, 8 };
-    std::vector<double> buffer_full(dense->ncol());
+TEST_P(SubsetBlockSlicedAccessTest, ColumnAccess) {
+    auto param = GetParam();
+    extra_assemble(param);
 
-    auto ref = tatami::make_DelayedSubset<1>(dense, sub);
-    auto dense_block = tatami::make_DelayedSubsetBlock<1>(dense, 4, 9);
-    auto sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, 4, 9);
+    auto slice = std::get<3>(GetParam());
+    size_t FIRST = slice[0], LEN = slice[1], SHIFT = slice[2];
 
-    set_sizes(0, sparse->nrow());
+    auto work_dense = dense_block->new_workspace(false);
+    auto work_sparse = dense_block->new_workspace(false);
 
-    create_create_workspaces(false);
-    for (size_t i = 0; i < sub.size(); ++i) {
-        wipe_expected();
-        fill_expected(ref->column(i, expected.data()));
+    for (size_t i = 0; i < dense_block->ncol(); i += std::get<2>(param), FIRST += SHIFT) {
+        auto interval = wrap_intervals(FIRST, FIRST + SHIFT, dense_block->nrow());
+        size_t first = interval.first, last = interval.second;
 
-        wipe_output();
-        fill_output(sparse_block->column(i, output.data()));
+        auto expected = extract_dense<false>(ref.get(), i, first, last);
+        auto output = extract_dense<false>(dense_block.get(), i, first, last);
         EXPECT_EQ(output, expected);
 
         // Same result regardless of the backend.
-        wipe_output();
-        fill_output(dense_block->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+        auto output2 = extract_dense<false>(sparse_block.get(), i, first, last);
+        EXPECT_EQ(output2, expected);
 
         // Works in sparse mode as well.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_column(i, outval.data(), outidx.data()));
-        EXPECT_EQ(output, expected);
+        auto outputS = extract_sparse<false>(sparse_block.get(), i, first, last);
+        EXPECT_EQ(outputS, expected);
 
         // Passes along the workspace.
-        wipe_output();
-        fill_sparse_output(sparse_block->sparse_column(i, outval.data(), outidx.data(), work_sparse.get()));
-        EXPECT_EQ(output, expected);
+        auto outputDW = extract_dense<false>(dense_block.get(), i, first, last, work_dense.get());
+        EXPECT_EQ(outputDW, expected);
 
-        wipe_output();
-        fill_output(dense_block->column(i, outval.data(), work_dense.get()));
-        EXPECT_EQ(output, expected);
+        auto outputSW = extract_sparse<false>(sparse_block.get(), i, first, last, work_sparse.get());
+        EXPECT_EQ(outputSW, expected);
     }
 }
 
-
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubsetBlock,
+    SubsetBlockSlicedAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // row or column subsetting, respectively.
+        ::testing::Values(
+            std::make_pair(0.0, 0.5),
+            std::make_pair(0.25, 0.8),
+            std::make_pair(0.4, 1)
+        ),
+        ::testing::Values(1, 3), // jump, to check the workspace memory
+        ::testing::Values(
+            std::vector<size_t>({ 0, 10, 1 }), // start, length, shift
+            std::vector<size_t>({ 3, 5, 0 })
+        )        
+    )
+);

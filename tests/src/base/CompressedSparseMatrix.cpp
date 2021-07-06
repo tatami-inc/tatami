@@ -22,43 +22,32 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
     EXPECT_EQ(mat.type(), tatami::_double);
 }
 
-class SparseTestCore : public TestCore {
+template<class PARAM>
+class SparseTest : public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    size_t NR, NC;
-    std::shared_ptr<tatami::numeric_matrix> dense;
-    std::shared_ptr<tatami::typed_matrix<double, int> > sparse_row, sparse_column;
-    std::shared_ptr<tatami::workspace> work_dense, work_sparse_row, work_sparse_column;
+    std::shared_ptr<tatami::numeric_matrix> dense, sparse_row, sparse_column;
+    std::shared_ptr<tatami::workspace> work_sparse_row, work_sparse_column;
 
-protected:
-    void assemble(size_t nr, size_t nc, const std::vector<double>& source) {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(nr, nc, source));
-        sparse_row = tatami::convert_to_sparse(dense.get(), true);
-        sparse_column = tatami::convert_to_sparse(dense.get(), false);
-
-        NR = sparse_column->nrow();
-        NC = sparse_column->ncol();
-        return;
-    }
-
-    void create_workspaces(bool row) {
-        work_dense = dense->new_workspace(row);
-        work_sparse_column = sparse_column->new_workspace(row);
-        work_sparse_row = sparse_row->new_workspace(row);
-        return;
-    }
-};
-
-class SparseTest : public SparseTestCore {
 protected:
     void SetUp() {
-        assemble(sparse_nrow, sparse_ncol, sparse_matrix);
+        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        sparse_row = tatami::convert_to_sparse(dense.get(), true);
+        sparse_column = tatami::convert_to_sparse(dense.get(), false);
+        return;
     }
 };
 
-TEST_F(SparseTest, FullColumnAccess) {
-    set_sizes(0, NR);
+/*************************************
+ *************************************/
+
+using SparseFullAccessTest = SparseTest<std::tuple<bool, size_t> >;
+
+TEST_P(SparseFullAccessTest, ColumnAccess) {
+    size_t NC = sparse_column->ncol(), NR = sparse_column->nrow();
     EXPECT_EQ(NC, sparse_ncol);
     EXPECT_EQ(NR, sparse_nrow);
+    EXPECT_EQ(sparse_row->ncol(), sparse_ncol);
+    EXPECT_EQ(sparse_row->nrow(), sparse_nrow);
 
     EXPECT_FALSE(dense->sparse());
     EXPECT_TRUE(sparse_column->sparse());
@@ -67,536 +56,252 @@ TEST_F(SparseTest, FullColumnAccess) {
     EXPECT_FALSE(sparse_column->prefer_rows());
     EXPECT_TRUE(sparse_row->prefer_rows());
 
-    // Column access without create_workspaces.
-    for (size_t i = 0; i < NC; ++i) {
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data()));
+    auto param = GetParam(); 
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
 
-        wipe_output();
-        fill_output(sparse_column->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+    auto work_column = sparse_column->new_workspace(false);
+    auto work_column2 = sparse_column->new_workspace(false);
+    auto work_row = sparse_row->new_workspace(false);
+    auto work_row2 = sparse_row->new_workspace(false);
+    EXPECT_EQ(work_column.get(), nullptr);
 
-        wipe_output();
-        fill_output(sparse_row->column(i, output.data()));
-        EXPECT_EQ(output, expected);
+    for (size_t i = 0; i < NC; i += JUMP) {
+        size_t c = (FORWARD ? i : NC - i - 1);
+        auto expected = extract_dense<false>(dense.get(), c);
 
-        wipe_sparse_buffers();
+        // Checking the CSC extractors.
+        auto outputC = extract_dense<false>(sparse_column.get(), c);
+        EXPECT_EQ(outputC, expected);
+
+        auto outputCW = extract_dense<false>(sparse_column.get(), c, work_column.get());
+        EXPECT_EQ(outputC, expected);
+
+        auto outputCS = extract_sparse<false>(sparse_column.get(), c);
+        EXPECT_EQ(outputCS, expected);
+
+        auto outputCSW = extract_sparse<false>(sparse_column.get(), c, work_column2.get());
+        EXPECT_EQ(outputCSW, expected);
+
+        // Checking the CSR extractors.
+        auto outputR = extract_dense<false>(sparse_row.get(), c);
+        EXPECT_EQ(outputR, expected);
+
+        std::vector<size_t> old_offsets = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_row.get())->current_indptrs;
+
+        auto outputRW = extract_dense<false>(sparse_row.get(), c, work_row.get());
+        EXPECT_EQ(outputR, expected);
+
+        if (!FORWARD || c!=0) {
+            // Checking that it actually has an effect on the latest indptrs.
+            std::vector<size_t> new_offsets = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_row.get())->current_indptrs;
+            EXPECT_NE(old_offsets, new_offsets); 
+        }
+
+        auto outputRS = extract_sparse<false>(sparse_row.get(), c);
+        EXPECT_EQ(outputRS, expected);
+
+        auto outputRSW = extract_sparse<false>(sparse_row.get(), c, work_row2.get());
+        EXPECT_EQ(outputRSW, expected);
+
+        // Double-checking the read-only sparse extractors.
+        std::vector<double> outval(sparse_column->nrow());
+        std::vector<int> outidx(sparse_column->nrow());
+
         auto x = sparse_column->sparse_column(i, outval.data(), outidx.data());
-        fill_sparse_output(x);
         EXPECT_TRUE(x.number < NR);
-        EXPECT_EQ(output, expected);
         EXPECT_FALSE(outval.data()==x.value); // points to internal data.
         EXPECT_FALSE(outidx.data()==x.index);
 
-        wipe_sparse_buffers();
         auto y = sparse_row->sparse_column(i, outval.data(), outidx.data());
-        fill_sparse_output(y);
         EXPECT_TRUE(y.number < NR);
-        EXPECT_EQ(output, expected);
         EXPECT_TRUE(outval.data()==y.value); // points to buffer.
         EXPECT_TRUE(outidx.data()==y.index);
     }
+}
 
-    // Column access with create_workspaces.
-    create_workspaces(false);
-    std::vector<size_t> old_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->current_indptrs;
-    EXPECT_EQ(work_sparse_column.get(), nullptr);
+TEST_P(SparseFullAccessTest, RowAccess) {
+    size_t NC = sparse_column->ncol(), NR = sparse_column->nrow();
 
-    for (size_t i = 0; i < NC; ++i) {
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data(), work_dense.get()));
+    auto param = GetParam(); 
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
 
-        wipe_output();
-        fill_output(sparse_column->column(i, output.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
+    auto work_column = sparse_column->new_workspace(true);
+    auto work_column2 = sparse_column->new_workspace(true);
+    auto work_row = sparse_row->new_workspace(true);
+    auto work_row2 = sparse_row->new_workspace(true);
+    EXPECT_EQ(work_row.get(), nullptr);
 
-        wipe_output();
-        fill_output(sparse_row->column(i, output.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
+    for (size_t i = 0; i < NR; i += JUMP) {
+        size_t r = (FORWARD ? i : NR - i - 1);
+        auto expected = extract_dense<true>(dense.get(), r);
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_column(i, outval.data(), outidx.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
+        // Checking the CSC extractors.
+        auto outputC = extract_dense<true>(sparse_column.get(), r);
+        EXPECT_EQ(outputC, expected);
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_column(i, outval.data(), outidx.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
+        auto outputCW = extract_dense<true>(sparse_column.get(), r, work_column.get());
+        EXPECT_EQ(outputC, expected);
+
+        auto outputCS = extract_sparse<true>(sparse_column.get(), r);
+        EXPECT_EQ(outputCS, expected);
+
+        auto outputCSW = extract_sparse<true>(sparse_column.get(), r, work_column2.get());
+        EXPECT_EQ(outputCSW, expected);
+
+        // Checking the CSR extractors.
+        auto outputR = extract_dense<true>(sparse_row.get(), r);
+        EXPECT_EQ(outputR, expected);
+
+        auto outputRW = extract_dense<true>(sparse_row.get(), r, work_row.get());
+        EXPECT_EQ(outputR, expected);
+
+        auto outputRS = extract_sparse<true>(sparse_row.get(), r);
+        EXPECT_EQ(outputRS, expected);
+
+        auto outputRSW = extract_sparse<true>(sparse_row.get(), r, work_row2.get());
+        EXPECT_EQ(outputRSW, expected);
     }
 
-    std::vector<size_t> new_offset_row = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_row.get())->current_indptrs;
-    EXPECT_NE(old_offset_row, new_offset_row); // actually has an effect on the latest indptrs.
+}
 
-    // Column access with create_workspaces and reverse order.
-    create_workspaces(false);
-    for (size_t i = 0; i < NC; ++i) {
-        wipe_expected();
-        fill_expected(dense->column(NC - i - 1, expected.data(), work_dense.get()));
+INSTANTIATE_TEST_CASE_P(
+    CompressedSparseMatrix,
+    SparseFullAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
+        ::testing::Values(1, 4) // jump, to test the workspace's memory.
+    )
+);
 
-        wipe_output();
-        fill_output(sparse_column->column(NC - i - 1, output.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
+/*************************************
+ *************************************/
 
-        wipe_output();
-        fill_output(sparse_row->column(NC - i - 1, output.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
+using SparseSlicedAccessTest = SparseTest<std::tuple<bool, size_t, std::vector<size_t> > >;
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_column(NC - i - 1, outval.data(), outidx.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
+TEST_P(SparseSlicedAccessTest, ColumnAccess) {
+    size_t NC = sparse_column->ncol(), NR = sparse_column->nrow();
+    EXPECT_EQ(NC, sparse_ncol);
+    EXPECT_EQ(NR, sparse_nrow);
+    EXPECT_EQ(sparse_row->ncol(), sparse_ncol);
+    EXPECT_EQ(sparse_row->nrow(), sparse_nrow);
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_column(NC - i - 1, outval.data(), outidx.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-    }
+    EXPECT_FALSE(dense->sparse());
+    EXPECT_TRUE(sparse_column->sparse());
+    EXPECT_TRUE(sparse_row->sparse());
 
-    // Column access with create_workspaces and jump forward.
-    create_workspaces(false);
-    for (size_t i = 0; i < NC; i+=2) {
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data(), work_dense.get()));
+    EXPECT_FALSE(sparse_column->prefer_rows());
+    EXPECT_TRUE(sparse_row->prefer_rows());
 
-        wipe_output();
-        fill_output(sparse_column->column(i, output.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
+    auto param = GetParam(); 
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
 
-        wipe_output();
-        fill_output(sparse_row->column(i, output.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
+    auto work_column = sparse_column->new_workspace(false);
+    auto work_column2 = sparse_column->new_workspace(false);
+    auto work_row = sparse_row->new_workspace(false);
+    auto work_row2 = sparse_row->new_workspace(false);
+    EXPECT_EQ(work_column.get(), nullptr);
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_column(i, outval.data(), outidx.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
+    for (size_t i = 0; i < NC; i += JUMP, FIRST += SHIFT) {
+        size_t c = (FORWARD ? i : NC - i - 1);
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
+        size_t start = interval.first, end = interval.second;
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_column(i, outval.data(), outidx.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-    }
+        auto expected = extract_dense<false>(dense.get(), c, start, end);
 
-    // Column access with create_workspaces and jump backward.
-    create_workspaces(false);
-    for (size_t i = 0; i < NC; i+=3) {
-        wipe_expected();
-        fill_expected(dense->column(NC - i - 1, expected.data(), work_dense.get()));
+        // Checking the CSC extractors.
+        auto outputC = extract_dense<false>(sparse_column.get(), c, start, end);
+        EXPECT_EQ(outputC, expected);
 
-        wipe_output();
-        fill_output(sparse_column->column(NC - i - 1, output.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
+        auto outputCW = extract_dense<false>(sparse_column.get(), c, start, end, work_column.get());
+        EXPECT_EQ(outputC, expected);
 
-        wipe_output();
-        fill_output(sparse_row->column(NC - i - 1, output.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
+        auto outputCS = extract_sparse<false>(sparse_column.get(), c, start, end);
+        EXPECT_EQ(outputCS, expected);
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_column(NC - i - 1, outval.data(), outidx.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
+        auto outputCSW = extract_sparse<false>(sparse_column.get(), c, start, end, work_column2.get());
+        EXPECT_EQ(outputCSW, expected);
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_column(NC - i - 1, outval.data(), outidx.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
+        // Checking the CSR extractors.
+        auto outputR = extract_dense<false>(sparse_row.get(), c, start, end);
+        EXPECT_EQ(outputR, expected);
+
+        auto outputRW = extract_dense<false>(sparse_row.get(), c, start, end, work_row.get());
+        EXPECT_EQ(outputR, expected);
+
+        auto outputRS = extract_sparse<false>(sparse_row.get(), c, start, end);
+        EXPECT_EQ(outputRS, expected);
+
+        auto outputRSW = extract_sparse<false>(sparse_row.get(), c, start, end, work_row2.get());
+        EXPECT_EQ(outputRSW, expected);
     }
 }
 
-TEST_F(SparseTest, SlicedColumnAccess) {
-    first = NR / 5;
-    last = NR / 2;
-    set_sizes(first, last);
+TEST_P(SparseSlicedAccessTest, RowAccess) {
+    size_t NC = sparse_column->ncol(), NR = sparse_column->nrow();
 
-    // Constant slicing, with and without create_workspaces.
-    for (size_t i = 0; i < NC; ++i) {
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data(), first, last));
+    auto param = GetParam(); 
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
 
-        wipe_output();
-        fill_output(sparse_column->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
+    auto work_column = sparse_column->new_workspace(true);
+    auto work_column2 = sparse_column->new_workspace(true);
+    auto work_row = sparse_row->new_workspace(true);
+    auto work_row2 = sparse_row->new_workspace(true);
+    EXPECT_EQ(work_row.get(), nullptr);
 
-        wipe_output();
-        fill_output(sparse_row->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
+    for (size_t i = 0; i < NR; i += JUMP) {
+        size_t r = (FORWARD ? i : NR - i - 1);
+        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
+        size_t start = interval.first, end = interval.second;
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
+        auto expected = extract_dense<true>(dense.get(), r, start, end);
 
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
+        // Checking the CSC extractors.
+        auto outputC = extract_dense<true>(sparse_column.get(), r, start, end);
+        EXPECT_EQ(outputC, expected);
+
+        auto outputCW = extract_dense<true>(sparse_column.get(), r, start, end, work_column.get());
+        EXPECT_EQ(outputC, expected);
+
+        auto outputCS = extract_sparse<true>(sparse_column.get(), r, start, end);
+        EXPECT_EQ(outputCS, expected);
+
+        auto outputCSW = extract_sparse<true>(sparse_column.get(), r, start, end, work_column2.get());
+        EXPECT_EQ(outputCSW, expected);
+
+        // Checking the CSR extractors.
+        auto outputR = extract_dense<true>(sparse_row.get(), r, start, end);
+        EXPECT_EQ(outputR, expected);
+
+        auto outputRW = extract_dense<true>(sparse_row.get(), r, start, end, work_row.get());
+        EXPECT_EQ(outputR, expected);
+
+        auto outputRS = extract_sparse<true>(sparse_row.get(), r, start, end);
+        EXPECT_EQ(outputRS, expected);
+
+        auto outputRSW = extract_sparse<true>(sparse_row.get(), r, start, end, work_row2.get());
+        EXPECT_EQ(outputRSW, expected);
     }
 
-    create_workspaces(false);
-    for (size_t i = 0; i < NC; ++i) {
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data(), first, last, work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->column(i, output.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->column(i, output.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Variable restriction, with and without create_workspaces.
-    first = 0;
-    size_t LEN = 5;
-    for (size_t i = 0; i < NC; ++i) {
-        set_sizes(first, std::min(first + LEN, NR));
-
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data(), first, last));
-
-        wipe_output();
-        fill_output(sparse_column->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->column(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_column(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= NR;
-    }
-
-    first = 0;
-    create_workspaces(false);
-    for (size_t i = 0; i < NC; ++i) {
-        set_sizes(first, std::min(first + LEN, NR));
-
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data(), first, last, work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->column(i, output.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->column(i, output.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= NR;
-    }
-
-    // Variable restriction, with create_workspaces and jumps.
-    first = 0;
-    create_workspaces(false);
-    for (size_t i = 0; i < NC; i+=3) {
-        set_sizes(first, std::min(first + LEN, NR));
-
-        wipe_expected();
-        fill_expected(dense->column(i, expected.data(), first, last, work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->column(i, output.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->column(i, output.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_column(i, outval.data(), outidx.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 7;
-        first %= NR;
-    }
 }
 
-TEST_F(SparseTest, FullRowAccess) {
-    set_sizes(0, NC);
-
-    // Row access without create_workspaces.
-    for (size_t i = 0; i < NR; ++i) {
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data()));
-
-        wipe_output();
-        fill_output(sparse_column->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->row(i, output.data()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        auto x = sparse_column->sparse_row(i, outval.data(), outidx.data());
-        fill_sparse_output(x);
-        EXPECT_TRUE(x.number < NC);
-        EXPECT_EQ(output, expected);
-        EXPECT_TRUE(outval.data()==x.value); // points to buffer.
-        EXPECT_TRUE(outidx.data()==x.index);
-
-        wipe_sparse_buffers();
-        auto y = sparse_row->sparse_row(i, outval.data(), outidx.data());
-        fill_sparse_output(y);
-        EXPECT_TRUE(y.number < NC);
-        EXPECT_EQ(output, expected);
-        EXPECT_FALSE(outval.data()==y.value); // points to internal data.
-        EXPECT_FALSE(outidx.data()==y.index);
-    }
-
-    // Row access with create_workspaces.
-    create_workspaces(true);
-    std::vector<size_t> old_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->current_indptrs;
-    EXPECT_EQ(work_sparse_row.get(), nullptr);
-
-    for (size_t i = 0; i < NR; ++i) {
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data(), work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->row(i, output.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->row(i, output.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_row(i, outval.data(), outidx.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_row(i, outval.data(), outidx.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    std::vector<size_t> new_offset_column = dynamic_cast<tatami::CompressedSparseColumnMatrix<double, int>::compressed_sparse_workspace*>(work_sparse_column.get())->current_indptrs;
-    EXPECT_NE(old_offset_column, new_offset_column); // actually has an effect on the latest indptrs.
-
-    // Row access with create_workspaces and reverse order.
-    create_workspaces(true);
-    for (size_t i = 0; i < NR; ++i) {
-        wipe_expected();
-        fill_expected(dense->row(NR - i - 1, expected.data(), work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->row(NR - i - 1, output.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->row(NR - i - 1, output.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_row(NR - i - 1, outval.data(), outidx.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_row(NR - i - 1, outval.data(), outidx.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Row access with create_workspaces and jump forward.
-    create_workspaces(true);
-    for (size_t i = 0; i < NR; i+=2) {
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data(), work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->row(i, output.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output(); 
-        fill_output(sparse_row->row(i, output.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_row(i, outval.data(), outidx.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_row(i, outval.data(), outidx.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Row access with create_workspaces and jump backward.
-    create_workspaces(true);
-    for (size_t i = 0; i < NR; i+=3) {
-        wipe_expected();
-        fill_expected(dense->row(NR - i - 1, expected.data(), work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->row(NR - i - 1, output.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->row(NR - i - 1, output.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_row(NR - i - 1, outval.data(), outidx.data(), work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_row(NR - i - 1, outval.data(), outidx.data(), work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-    }
-}
-
-TEST_F(SparseTest, SlicedRowAccess) {
-    first = NC / 5;
-    last = NC / 2;
-    set_sizes(first, last);
-
-    // Constant slicing, with and without create_workspaces.
-    for (size_t i = 0; i < NR; ++i) {
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data(), first, last));
-
-        wipe_output();
-        fill_output(sparse_column->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-    }
-
-    create_workspaces(true);
-    for (size_t i = 0; i < NR; ++i) {
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data(), first, last, work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->row(i, output.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->row(i, output.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-    }
-
-    // Variable restriction, with and without create_workspaces.
-    size_t LEN = 5;
-    first = 0;
-    for (size_t i = 0; i < NR; ++i) {
-        set_sizes(first, std::min(NC, first + LEN));
-
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data(), first, last));
-
-        wipe_output();
-        fill_output(sparse_column->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->row(i, output.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_row(i, outval.data(), outidx.data(), first, last));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= NC;
-    }
-
-    first = 0;
-    create_workspaces(true);
-    for (size_t i = 0; i < NR; ++i) {
-        set_sizes(first, std::min(NC, first + LEN));
-
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data(), first, last, work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->row(i, output.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output();
-        fill_output(sparse_row->row(i, output.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 3;
-        first %= NC;
-    }
-
-    // Variable restriction, with create_workspaces and jumps.
-    LEN = 10;
-    first = 0;
-    create_workspaces(true);
-    for (size_t i = 0; i < NR; i+=3) {
-        set_sizes(first, std::min(NC, first + LEN));
-
-        wipe_expected();
-        fill_expected(dense->row(i, expected.data(), first, last, work_dense.get()));
-
-        wipe_output();
-        fill_output(sparse_column->row(i, output.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_output(); 
-        fill_output(sparse_row->row(i, output.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_column->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse_column.get()));
-        EXPECT_EQ(output, expected);
-
-        wipe_sparse_buffers();
-        fill_sparse_output(sparse_row->sparse_row(i, outval.data(), outidx.data(), first, last, work_sparse_row.get()));
-        EXPECT_EQ(output, expected);
-
-        first += 7;
-        first %= NC;
-    }
-}
+INSTANTIATE_TEST_CASE_P(
+    CompressedSparseMatrix,
+    SparseSlicedAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
+            std::vector<size_t>({ 1, 4, 4 }), // non-overlapping shifts
+            std::vector<size_t>({ 3, 10, 0 })
+        )
+    )
+);
