@@ -1,8 +1,6 @@
 #include "tatami/tatami.h"
+#include "print_vector.h"
 #include <vector>
-#include <iostream>
-#include <numeric>
-#include <iomanip>
 
 /* INTRODUCTION: 
  *
@@ -60,7 +58,7 @@ std::vector<double> colsums_work(std::shared_ptr<tatami::numeric_matrix> p) {
     auto wrk = p->new_workspace(false);
 
     for (size_t i = 0; i < NC; ++i) {
-        auto ptr = p->column(i, buffer.data(), wrk);
+        auto ptr = p->column(i, buffer.data(), wrk.get());
         output[i] = std::accumulate(ptr, ptr + NR, 0.0);
     }
 
@@ -95,11 +93,11 @@ std::vector<double> colsums_sparse(std::shared_ptr<tatami::numeric_matrix> p) {
          * 'index', the (row) indices of the non-zero values.
          */
         if (p->sparse()) {
-            auto range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk);
+            auto range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());
             n = range.number;
             ptr = range.value;
         } else {
-            ptr = p->column(i, buffer.data(), wrk);
+            ptr = p->column(i, buffer.data(), wrk.get());
         }
 
         output[i] = std::accumulate(ptr, ptr + n, 0.0);
@@ -117,6 +115,8 @@ std::vector<double> colsums_sparse(std::shared_ptr<tatami::numeric_matrix> p) {
  * and compute column sums by adding each row onto a running sum. Again, this
  * is only possible for certain calculations; if we really need an entire
  * column's values at once, there's really no way around calling column().
+ *
+ * Incidentally, this is the approach that tatami::column_sums() uses.
  */
 std::vector<double> colsums_preferred(std::shared_ptr<tatami::numeric_matrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
@@ -130,12 +130,12 @@ std::vector<double> colsums_preferred(std::shared_ptr<tatami::numeric_matrix> p)
 
         for (size_t i = 0; i < NR; ++i) {
             if (p->sparse()) {
-                auto range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk);
+                auto range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk.get());
                 for (size_t j = 0; j < range.number; ++j) {
                     output[range.index[j]] += range.value[j];
                 }
             } else {
-                auto ptr = p->row(i, buffer.data(), wrk);
+                auto ptr = p->row(i, buffer.data(), wrk.get());
                 for (size_t j = 0; j < NC; ++j) {
                     output[j] += ptr[j];
                 }
@@ -151,11 +151,11 @@ std::vector<double> colsums_preferred(std::shared_ptr<tatami::numeric_matrix> p)
             size_t n = NR;
 
             if (p->sparse()) {
-                auto range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk);
+                auto range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());
                 n = range.number;
                 ptr = range.value;
             } else {
-                ptr = p->column(i, buffer.data(), wrk);
+                ptr = p->column(i, buffer.data(), wrk.get());
             }
 
             output[i] = std::accumulate(ptr, ptr + n, 0.0);
@@ -165,26 +165,12 @@ std::vector<double> colsums_preferred(std::shared_ptr<tatami::numeric_matrix> p)
     return output;
 }
 
-template<class IT>
-void print_vector(IT start, IT end) {
-    bool first = true;
-    std::cout << "[ "; 
-    for (IT it = start; it != end; ++it) {
-        if (!first) {
-            std::cout << ", ";
-        }
-        std::cout << std::setw(6) << std::fixed << std::setprecision(2) << *it;
-        first = false;
-    }
-    std::cout << " ]" << std::endl;
-}
-
 int main(int argc, char** argv) {
     std::vector<int> rows = { 3, 5, 0, 1, 8, 4, 7, 5, 6, 9, 0, 1, 2, 3, 4 };
     std::vector<int> cols = { 0, 1, 3, 2, 0, 4, 1, 2, 4, 0, 1, 3, 0, 3, 2 };
     std::vector<double> vals = { -0.40, 0.14, -0.17, 1.20, 1.20, -1.10, -0.42, 2.10, 0.38, 0.40, -1.10, 0.57, -0.89, 1.60, 0.27 };
 
-    auto indptrs = tatami::compress_sparse_triplets(10, 5, vals, rows, cols);
+    auto indptrs = tatami::compress_sparse_triplets<false>(10, 5, vals, rows, cols);
     std::shared_ptr<tatami::numeric_matrix> mat(new tatami::CompressedSparseColumnMatrix<double, int>(10, 5, vals, rows, indptrs));
 
     std::cout << "Matrix preview: " << std::endl;

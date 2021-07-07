@@ -12,6 +12,11 @@ add_library(tatami INTERFACE)
 target_include_directories(tatami INTERFACE include/)
 
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
+    option(BUILD_TATAMI_GALLERY "compiling the gallery" OFF)
+    if (BUILD_TATAMI_GALLERY)
+        add_subdirectory(gallery)
+    endif()
+
     include(CTest)
     if(BUILD_TESTING)
         add_subdirectory(tests)

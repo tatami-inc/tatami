@@ -1,25 +1,17 @@
 # Gallery of `tatami` examples
 
-## `colsums.cpp`
-
-Use column (and eventually also row) extraction methods for a typical `tatami::numeric_matrix` to compute the column sums.
+All of the examples can be compiled with:
 
 ```sh
-g++ -std=c++1z -I../include colsums.cpp
+cd ..
+cmake -DBUILD_TESTING=OFF -DBUILD_TATAMI_GALLERY=ON -S . -B build
+cmake --build build
 ```
 
-## `parallel.cpp`
+The resulting binaries will be available in the `build/gallery` subdirectory,
+named after the C++ source file from which they were generated.
 
-Compute row sums in parallel with OpenMP.
-
-```sh
-g++ -std=c++1z -I../include -fopenmp parallel.cpp
-```
-
-## `char2double.cpp`
-
-Store integers as `char` to save memory, but return them as `double`s for compatibility with downstream code.
-
-```sh
-g++ -std=c++1z -I../include char2double.cpp
-```
+- `colsums.cpp`: use column (and eventually also row) extraction methods for a typical `tatami::numeric_matrix` to compute the column sums.
+- `parallel.cpp`: compute row sums in parallel with OpenMP.
+- `char2double.cpp`: store integers as `char` to save memory, but return them as `double`s for compatibility with downstream code.
+- `sparse_workspace.cpp`: compare sparse matrix access speeds with and without a workspace.

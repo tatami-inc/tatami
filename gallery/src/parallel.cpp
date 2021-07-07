@@ -1,8 +1,6 @@
 #include "tatami/tatami.h"
+#include "print_vector.h"
 #include <vector>
-#include <iostream>
-#include <numeric>
-#include <iomanip>
 
 /* INTRODUCTION: 
  *
@@ -63,7 +61,7 @@ std::vector<double> rowsums_work(std::shared_ptr<tatami::numeric_matrix> p) {
 
         #pragma omp for schedule(static)
         for (size_t i = 0; i < NR; ++i) {
-            auto ptr = p->row(i, buffer.data(), wrk);
+            auto ptr = p->row(i, buffer.data(), wrk.get());
             output[i] = std::accumulate(ptr, ptr + NR, 0.0);
         }
     }
@@ -71,26 +69,12 @@ std::vector<double> rowsums_work(std::shared_ptr<tatami::numeric_matrix> p) {
     return output;
 }
 
-template<class IT>
-void print_vector(IT start, IT end) {
-    bool first = true;
-    std::cout << "[ "; 
-    for (IT it = start; it != end; ++it) {
-        if (!first) {
-            std::cout << ", ";
-        }
-        std::cout << std::setw(6) << std::fixed << std::setprecision(2) << *it;
-        first = false;
-    }
-    std::cout << " ]" << std::endl;
-}
-
 int main(int argc, char** argv) {
     std::vector<int> rows = { 3, 5, 0, 1, 8, 4, 7, 5, 6, 9, 0, 1, 2, 3, 4 };
     std::vector<int> cols = { 0, 1, 3, 2, 0, 4, 1, 2, 4, 0, 1, 3, 0, 3, 2 };
     std::vector<double> vals = { -0.40, 0.14, -0.17, 1.20, 1.20, -1.10, -0.42, 2.10, 0.38, 0.40, -1.10, 0.57, -0.89, 1.60, 0.27 };
 
-    auto indptrs = tatami::compress_sparse_triplets(10, 5, vals, rows, cols);
+    auto indptrs = tatami::compress_sparse_triplets<false>(10, 5, vals, rows, cols);
     std::shared_ptr<tatami::numeric_matrix> mat(new tatami::CompressedSparseColumnMatrix<double, int>(10, 5, vals, rows, indptrs));
 
     std::cout << "Matrix preview: " << std::endl;
