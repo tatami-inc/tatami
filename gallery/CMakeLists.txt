@@ -42,3 +42,16 @@ target_link_libraries(
     PUBLIC
     tatami
 )
+
+#########################################
+# Checking sparse workspace performance.
+
+add_executable(
+    sparse_workspace 
+    src/sparse_workspace.cpp
+)
+
+target_link_libraries(
+    sparse_workspace
+    tatami
+)
