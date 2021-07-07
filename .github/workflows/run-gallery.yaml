@@ -1,0 +1,43 @@
+on: [push, pull_request]
+
+name: Run gallery code
+
+jobs:
+  build:
+    name: ${{ matrix.config.name }}
+    runs-on: ${{ matrix.config.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+        - {
+            name: "Ubuntu Latest GCC", artifact: "Linux.tar.xz",
+            os: ubuntu-latest
+          }
+        - {
+            name: "macOS Latest Clang", artifact: "macOS.tar.xz",
+            os: macos-latest
+          }
+
+    steps:
+    - uses: actions/checkout@v1
+
+    - name: Get latest CMake
+      uses: lukka/get-cmake@latest
+
+    - name: Configure the build
+      run: cmake -DBUILD_TESTING=OFF -DBUILD_TATAMI_GALLERY=ON -S . -B build
+
+    - name: Run the build
+      run: cmake --build build
+
+    - name: Run the tests
+      run: | 
+        cd build/gallery
+        for x in $(find . -type f -executable)
+        do
+            echo "#### RUNNING ${x} ####"
+            echo
+            ./${x}
+            echo
+        done
