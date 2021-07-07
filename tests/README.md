@@ -1,7 +1,7 @@
-# **tatami** unit tests
+# `tatami` unit tests
 
 We use the [GoogleTest](https://google.github.io/googletest/) framework to perform unit testing on the **tatami** libary code.
-To run the tests, compile the test code and run the binary:
+To run the tests, compile the test code and run the binary with the following commands:
 
 ```sh
 cd ..
@@ -9,8 +9,9 @@ cmake -S . -B build
 build/tests/libtest
 ```
 
-For matrix representations, the philosophy is to check access under multiple scenarios.
-For column access, we want to consider all combinations of:
+The philosophy here is to test for correct access across multiple scenarios.
+To demonstrate, consider the tests for column access from a particular matrix representation.
+We want to consider all combinations of the following options:
 
 - Access with and without a supplied workspace.
 - Access to the full column or to a slice.
@@ -20,8 +21,8 @@ For column access, we want to consider all combinations of:
   This checks that the workspace "memory" does not rely on consecutive access.
 - Access in dense and sparse modes.
 
-The equivalent requirements apply to row access.
 Where possible, we use parametrized fixtures to avoid code duplication.
+The equivalent test requirements apply to row access.
 
 For more complicated representations, further parameter combinations may be necessary.
 This is particularly true of matrices that contain other matrices, e.g., as part of delayed operations.

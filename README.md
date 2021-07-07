@@ -1,6 +1,7 @@
 # A C++ API for all sorts of matrices 
 
 ![Unit tests](https://github.com/LTLA/tatami/actions/workflows/run-tests.yaml/badge.svg)
+![Gallery](https://github.com/LTLA/tatami/actions/workflows/run-gallery.yaml/badge.svg)
 ![Documentation](https://github.com/LTLA/tatami/actions/workflows/doxygenate.yaml/badge.svg)
 
 ## Overview
@@ -9,11 +10,11 @@
 Specifically, applications can use **tatami** to read rows and/or columns of a matrix without any knowledge of the specific matrix representation.
 This allows application developers to write a single piece of code that will work seamlessly with different inputs, even if the underlying representation varies at run-time.
 
-**tatami** (and **beachmat** before it) is motivated by analyses of processed genomics data, where matrices are typically interpreted as a collection of row- or column-wise vectors.
+**tatami** (and **beachmat** before it) is motivated by analyses of processed genomics data, where matrices are often interpreted as a collection of row- or column-wise vectors.
 Many applications involve looping over rows or columns to compute some statistic or summary - for example, testing for differential expression within each row of the matrix.
-**tatami** is largely optimized for this access pattern.
+**tatami** aims to optimize this access pattern across a variety of different matrix representations, depending on how the data is provided to the application.
 
-Representations currently supported by **tatami** include:
+Currently supported representations include:
 
 - Dense row/column major matrices, with user-defined storage modes and containers.
 - Compressed sparse row/column matrices, with user-defined storage modes and containers.
@@ -21,7 +22,7 @@ Representations currently supported by **tatami** include:
 
 ## Quick start
 
-**tatami** is a header-only library so can be easily used by just including the source files and creating the desired matrices:
+**tatami** is a header-only library, so it can be easily used by just `#include`ing the relevant source files:
 
 ```cpp
 #include "tatami/tatami.h"
@@ -41,7 +42,7 @@ auto ptr = mat->column(i, buffer.data(), 5, 10);
 ```
 
 The key idea here is that, once `mat` is created, the application does not need to worry about the exact format of the matrix referenced by the pointer.
-Application developers can then write code that works interchangeably with a variety of different matrix representations.
+Application developers can write code that works interchangeably with a variety of different matrix representations.
 
 ## Access patterns
 
@@ -69,11 +70,12 @@ This is supported with the following methods:
 - `prefer_rows()` indicates whether a matrix is more efficiently access along its rows (e.g., row-major dense matrices).
 
 This allows client developers to design special code paths to take advantage of these properties - 
-the [`colsums.cpp`](https://github.com/LTLA/tatami/tree/master/gallery/colsums.cpp) example is particularly demonstrative.
+the [`colsums.cpp`](https://github.com/LTLA/tatami/tree/master/gallery/src/colsums.cpp) example is particularly demonstrative.
 
 All methods in **tatami** are `const` and thus can be used concurrently.
 Any mutable information that needs to persist across API calls is handled by passing a writeable pointer to a `workspace` object to each call.
-This can be used to cache information across calls for greater efficiency, e.g., when iterating across consecutive rows or columns of a matrix.
+This can be used to cache information across calls for greater efficiency, e.g., when iterating across consecutive rows or columns of a matrix;
+run the [`sparse_workspace.cpp`](https://github.com/LTLA/tatami/tree/master/gallery/src/sparse_workspace.cpp) example to compare performance.
 
 ```cpp
 auto wrk = mat->new_workspace(true);
@@ -104,7 +106,7 @@ but this is rather restrictive without providing obvious performance benefits.
 
 ## Other operations
 
-As previously mentioned, **tatami** is really designed to pull out rows or columns of a matrix, and little else.
+As previously mentioned, **tatami** is designed to pull out rows or columns of a matrix, and little else.
 Some support is provided for basic statistics in the same vein as the [**matrixStats**](https://github.com/HenrikBengtsson/matrixStats) package:
 
 ```cpp
@@ -116,7 +118,7 @@ auto rowvars = tatami::row_variances(mat);
 For this we typically use [**Eigen**](https://eigen.tuxfamily.org/), effectively trading the diversity of representations for a much more comprehensive suite of operations.
 A frequent pattern is to use **tatami** to load the input data, which is usually in a custom format to save memory for large datasets;
 process it into a smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis;
-and then copy this cheaply into an `Eigen::MatrixXd` for more computationally intensive work.
+and then copy this cheaply into an `Eigen::MatrixXd` or `Eigen::SparseMatrix` for more computationally intensive work.
 
 ## Building projects with **tatami** 
 
