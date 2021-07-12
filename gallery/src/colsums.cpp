@@ -17,7 +17,7 @@
  * This is the simplest implementation whereby we just loop across all
  * columns, extract each column and compute the sum. 
  */
-std::vector<double> colsums_simple(std::shared_ptr<tatami::numeric_matrix> p) {
+std::vector<double> colsums_simple(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
     std::vector<double> output(NC);
 
@@ -45,7 +45,7 @@ std::vector<double> colsums_simple(std::shared_ptr<tatami::numeric_matrix> p) {
  * mechanism also makes extraction easy to parallelize as each thread/process
  * gets it own workspace and the underlying matrix is const on read access.
  */
-std::vector<double> colsums_work(std::shared_ptr<tatami::numeric_matrix> p) {
+std::vector<double> colsums_work(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
     std::vector<double> output(NC);
     std::vector<double> buffer(NR);
@@ -73,7 +73,7 @@ std::vector<double> colsums_work(std::shared_ptr<tatami::numeric_matrix> p) {
  * sense to write a high-efficiency extraction path if our downstream calculations
  * can take advantage of the sparsity.
  */
-std::vector<double> colsums_sparse(std::shared_ptr<tatami::numeric_matrix> p) {
+std::vector<double> colsums_sparse(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
     std::vector<double> output(NC);
     std::vector<double> buffer(NR);
@@ -118,7 +118,7 @@ std::vector<double> colsums_sparse(std::shared_ptr<tatami::numeric_matrix> p) {
  *
  * Incidentally, this is the approach that tatami::column_sums() uses.
  */
-std::vector<double> colsums_preferred(std::shared_ptr<tatami::numeric_matrix> p) {
+std::vector<double> colsums_preferred(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
     std::vector<double> output(NC);
 
@@ -171,7 +171,7 @@ int main(int argc, char** argv) {
     std::vector<double> vals = { -0.40, 0.14, -0.17, 1.20, 1.20, -1.10, -0.42, 2.10, 0.38, 0.40, -1.10, 0.57, -0.89, 1.60, 0.27 };
 
     auto indptrs = tatami::compress_sparse_triplets<false>(10, 5, vals, rows, cols);
-    std::shared_ptr<tatami::numeric_matrix> mat(new tatami::CompressedSparseColumnMatrix<double, int>(10, 5, vals, rows, indptrs));
+    std::shared_ptr<tatami::NumericMatrix> mat(new tatami::CompressedSparseColumnMatrix<double, int>(10, 5, vals, rows, indptrs));
 
     std::cout << "Matrix preview: " << std::endl;
     std::vector<double> buffer(mat->ncol());

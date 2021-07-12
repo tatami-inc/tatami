@@ -37,7 +37,7 @@ int main(int argc, char** argv) {
      * 8-bit unsigned integers. This enables us to be extremely space-efficient
      * if we know that the values will not exceed the limits of the type.
      */
-    std::shared_ptr<tatami::numeric_matrix> mat(new tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows)>(10, 5, vals, rows, indptrs));
+    std::shared_ptr<tatami::NumericMatrix> mat(new tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows)>(10, 5, vals, rows, indptrs));
 
     std::cout << "Matrix preview: " << std::endl;
     std::vector<double> buffer(mat->ncol());

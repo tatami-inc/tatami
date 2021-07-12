@@ -21,7 +21,7 @@
  * number of non-zero elements.
  */
 
-std::shared_ptr<tatami::numeric_matrix> generate_sparse_matrix(size_t nr, size_t nc, double density) {
+std::shared_ptr<tatami::NumericMatrix> generate_sparse_matrix(size_t nr, size_t nc, double density) {
     std::vector<int> i, j;
     std::vector<double> x;
 
@@ -41,7 +41,7 @@ std::shared_ptr<tatami::numeric_matrix> generate_sparse_matrix(size_t nr, size_t
 
     // Get column-major representation.
     auto indptrs = tatami::compress_sparse_triplets<false>(nr, nc, x, i, j);
-    return std::shared_ptr<tatami::numeric_matrix>(new tatami::CompressedSparseColumnMatrix<double, int>(nr, nc, std::move(x), std::move(i), std::move(indptrs)));
+    return std::shared_ptr<tatami::NumericMatrix>(new tatami::CompressedSparseColumnMatrix<double, int>(nr, nc, std::move(x), std::move(i), std::move(indptrs)));
 }
 
 int main() {

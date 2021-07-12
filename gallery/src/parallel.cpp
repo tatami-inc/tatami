@@ -19,7 +19,7 @@
  * inside 'p'. Note that the buffer needs to be created per thread inside the
  * parallel region.
  */
-std::vector<double> rowsums_simple(std::shared_ptr<tatami::numeric_matrix> p) {
+std::vector<double> rowsums_simple(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
     std::vector<double> output(NR);
 
@@ -50,7 +50,7 @@ std::vector<double> rowsums_simple(std::shared_ptr<tatami::numeric_matrix> p) {
  * course, if extraction is cheap compared to the actual calculation, other
  * schedules may be preferable.
  */
-std::vector<double> rowsums_work(std::shared_ptr<tatami::numeric_matrix> p) {
+std::vector<double> rowsums_work(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
     std::vector<double> output(NR);
 
@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
     std::vector<double> vals = { -0.40, 0.14, -0.17, 1.20, 1.20, -1.10, -0.42, 2.10, 0.38, 0.40, -1.10, 0.57, -0.89, 1.60, 0.27 };
 
     auto indptrs = tatami::compress_sparse_triplets<false>(10, 5, vals, rows, cols);
-    std::shared_ptr<tatami::numeric_matrix> mat(new tatami::CompressedSparseColumnMatrix<double, int>(10, 5, vals, rows, indptrs));
+    std::shared_ptr<tatami::NumericMatrix> mat(new tatami::CompressedSparseColumnMatrix<double, int>(10, 5, vals, rows, indptrs));
 
     std::cout << "Matrix preview: " << std::endl;
     std::vector<double> buffer(mat->ncol());
