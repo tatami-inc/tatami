@@ -74,7 +74,7 @@ $(function() {
 <div class="title">DelayedBind.hpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="typed__matrix_8hpp_source.html">typed_matrix.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="Matrix_8hpp_source.html">Matrix.hpp</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -82,17 +82,14 @@ Include dependency graph for DelayedBind.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="DelayedBind_8hpp__incl.png" border="0" usemap="#atatami_2base_2DelayedBind_8hpp" alt=""/></div>
 <map name="atatami_2base_2DelayedBind_8hpp" id="atatami_2base_2DelayedBind_8hpp">
-<area shape="rect" title=" " alt="" coords="355,5,546,32"/>
-<area shape="rect" href="typed__matrix_8hpp.html" title=" " alt="" coords="242,80,361,107"/>
-<area shape="rect" title=" " alt="" coords="347,304,415,331"/>
-<area shape="rect" title=" " alt="" coords="488,80,563,107"/>
-<area shape="rect" href="matrix_8hpp.html" title=" " alt="" coords="131,155,213,181"/>
-<area shape="rect" href="workspace_8hpp.html" title=" " alt="" coords="227,229,336,256"/>
-<area shape="rect" href="sparse__range_8hpp_source.html" title=" " alt="" coords="289,155,413,181"/>
-<area shape="rect" href="content__type_8hpp.html" title=" " alt="" coords="83,229,203,256"/>
-<area shape="rect" title=" " alt="" coords="5,304,88,331"/>
-<area shape="rect" title=" " alt="" coords="112,304,173,331"/>
-<area shape="rect" title=" " alt="" coords="198,304,253,331"/>
+<area shape="rect" title=" " alt="" coords="207,5,397,32"/>
+<area shape="rect" href="Matrix_8hpp.html" title=" " alt="" coords="168,80,249,107"/>
+<area shape="rect" title=" " alt="" coords="229,229,297,256"/>
+<area shape="rect" title=" " alt="" coords="339,80,414,107"/>
+<area shape="rect" href="SparseRange_8hpp.html" title=" " alt="" coords="5,155,129,181"/>
+<area shape="rect" href="Workspace_8hpp.html" title=" " alt="" coords="153,155,264,181"/>
+<area shape="rect" title=" " alt="" coords="19,229,84,256"/>
+<area shape="rect" title=" " alt="" coords="109,229,167,256"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -143,13 +140,13 @@ template&lt;int MARGIN, class MAT &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">MARGIN</td><td>Dimension along which the combining is to occur. If 0, matrices are combined along the rows; if 1, matrices are combined to the columns. </td></tr>
-    <tr><td class="paramname">MAT</td><td>A specialized <code>typed_matrix</code>, to be automatically deducted.</td></tr>
+    <tr><td class="paramname">MAT</td><td>A specialized <code>Matrix</code>, to be automatically deducted.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">ps</td><td>Pointers to <code>typed_matrix</code> objects.</td></tr>
+    <tr><td class="paramname">ps</td><td>Pointers to <code>Matrix</code> objects.</td></tr>
   </table>
   </dd>
 </dl>

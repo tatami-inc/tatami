@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['index_54',['index',['../classtatami_1_1typed__matrix.html#a6382c3c69364289a8550750189ddbcdf',1,'tatami::typed_matrix::index()'],['../structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826',1,'tatami::sparse_range::index()']]]
+  ['index_52',['index',['../classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90',1,'tatami::Matrix::index()'],['../structtatami_1_1SparseRange.html#ac7dd33e84bcc456c04e848bdc51ade73',1,'tatami::SparseRange::index()'],['../structtatami_1_1SparseRangeCopy.html#a7313c71408288136db76d5a33abf158c',1,'tatami::SparseRangeCopy::index()']]]
 ];

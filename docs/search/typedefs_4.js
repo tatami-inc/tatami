@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['value_225',['value',['../classtatami_1_1typed__matrix.html#a9586bf720aae239231559488e9ce7cd4',1,'tatami::typed_matrix']]]
+  ['value_226',['value',['../classtatami_1_1Matrix.html#a748cb0b5464085347243c9d26a300005',1,'tatami::Matrix']]]
 ];

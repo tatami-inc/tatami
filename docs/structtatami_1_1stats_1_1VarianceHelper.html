@@ -99,12 +99,12 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:ab266fe594cb1d464d9e118e972db98cb"><td class="memTemplParams" colspan="2">template&lt;typename T  = double&gt; </td></tr>
 <tr class="memitem:ab266fe594cb1d464d9e118e972db98cb"><td class="memTemplItemLeft" align="right" valign="top">static std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper.html#ab266fe594cb1d464d9e118e972db98cb">compute_with_mean</a> (const T *ptr, size_t n, T *buffer=NULL)</td></tr>
 <tr class="separator:ab266fe594cb1d464d9e118e972db98cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf772b134cacc3afb698dc8cf9662dc5"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
-<tr class="memitem:acf772b134cacc3afb698dc8cf9662dc5"><td class="memTemplItemLeft" align="right" valign="top">static double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper.html#acf772b134cacc3afb698dc8cf9662dc5">compute</a> (const <a class="el" href="structtatami_1_1sparse__range.html">sparse_range</a>&lt; T, IDX &gt; &amp;range, size_t n, T *vbuffer=NULL, IDX *ibuffer=NULL)</td></tr>
-<tr class="separator:acf772b134cacc3afb698dc8cf9662dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a14d603e4c829ef53efb59945c31ce6a0"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
-<tr class="memitem:a14d603e4c829ef53efb59945c31ce6a0"><td class="memTemplItemLeft" align="right" valign="top">static std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper.html#a14d603e4c829ef53efb59945c31ce6a0">compute_with_mean</a> (const <a class="el" href="structtatami_1_1sparse__range.html">sparse_range</a>&lt; T, IDX &gt; &amp;range, size_t n, T *vbuffer=NULL, IDX *ibuffer=NULL)</td></tr>
-<tr class="separator:a14d603e4c829ef53efb59945c31ce6a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44bc8994fff6d0daa6a3982f5aed7423"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:a44bc8994fff6d0daa6a3982f5aed7423"><td class="memTemplItemLeft" align="right" valign="top">static double&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper.html#a44bc8994fff6d0daa6a3982f5aed7423">compute</a> (const <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; &amp;range, size_t n, T *vbuffer=NULL, IDX *ibuffer=NULL)</td></tr>
+<tr class="separator:a44bc8994fff6d0daa6a3982f5aed7423"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2435e67c0858dcdd11693eb9afd9400a"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:a2435e67c0858dcdd11693eb9afd9400a"><td class="memTemplItemLeft" align="right" valign="top">static std::pair&lt; double, double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper.html#a2435e67c0858dcdd11693eb9afd9400a">compute_with_mean</a> (const <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; &amp;range, size_t n, T *vbuffer=NULL, IDX *ibuffer=NULL)</td></tr>
+<tr class="separator:a2435e67c0858dcdd11693eb9afd9400a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -116,8 +116,8 @@ Static Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Helper to compute the variance along each dimension. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="acf772b134cacc3afb698dc8cf9662dc5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf772b134cacc3afb698dc8cf9662dc5">&#9670;&nbsp;</a></span>compute() <span class="overload">[1/2]</span></h2>
+<a id="a44bc8994fff6d0daa6a3982f5aed7423"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44bc8994fff6d0daa6a3982f5aed7423">&#9670;&nbsp;</a></span>compute() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -130,7 +130,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
         <tr>
           <td class="memname">static double tatami::stats::VarianceHelper::compute </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structtatami_1_1sparse__range.html">sparse_range</a>&lt; T, IDX &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; &amp;&#160;</td>
           <td class="paramname"><em>range</em>, </td>
         </tr>
         <tr>
@@ -173,7 +173,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">range</td><td>A <code><a class="el" href="structtatami_1_1sparse__range.html" title="A range of sparse values.">sparse_range</a></code> object specifying the number and values of all non-zero indices. </td></tr>
+    <tr><td class="paramname">range</td><td>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object specifying the number and values of all non-zero indices. </td></tr>
     <tr><td class="paramname">n</td><td>Total length of the vector, including zero values. </td></tr>
     <tr><td class="paramname">vbuffer,ibuffer</td><td>Unused, provided here for consistency only.</td></tr>
   </table>
@@ -243,8 +243,8 @@ template&lt;typename T  = double&gt; </div>
 
 </div>
 </div>
-<a id="a14d603e4c829ef53efb59945c31ce6a0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a14d603e4c829ef53efb59945c31ce6a0">&#9670;&nbsp;</a></span>compute_with_mean() <span class="overload">[1/2]</span></h2>
+<a id="a2435e67c0858dcdd11693eb9afd9400a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2435e67c0858dcdd11693eb9afd9400a">&#9670;&nbsp;</a></span>compute_with_mean() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -257,7 +257,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
         <tr>
           <td class="memname">static std::pair&lt;double, double&gt; tatami::stats::VarianceHelper::compute_with_mean </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="structtatami_1_1sparse__range.html">sparse_range</a>&lt; T, IDX &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; &amp;&#160;</td>
           <td class="paramname"><em>range</em>, </td>
         </tr>
         <tr>
@@ -300,7 +300,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">range</td><td>A <code><a class="el" href="structtatami_1_1sparse__range.html" title="A range of sparse values.">sparse_range</a></code> object specifying the number and values of all non-zero indices. </td></tr>
+    <tr><td class="paramname">range</td><td>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object specifying the number and values of all non-zero indices. </td></tr>
     <tr><td class="paramname">n</td><td>Total length of the vector, including zero values. </td></tr>
     <tr><td class="paramname">vbuffer,ibuffer</td><td>Unused, provided here for consistency only.</td></tr>
   </table>

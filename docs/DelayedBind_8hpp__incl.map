@@ -1,13 +1,10 @@
 <map id="tatami/base/DelayedBind.hpp" name="tatami/base/DelayedBind.hpp">
-<area shape="rect" id="node1" title=" " alt="" coords="355,5,546,32"/>
-<area shape="rect" id="node2" href="$typed__matrix_8hpp.html" title=" " alt="" coords="242,80,361,107"/>
-<area shape="rect" id="node9" title=" " alt="" coords="347,304,415,331"/>
-<area shape="rect" id="node11" title=" " alt="" coords="488,80,563,107"/>
-<area shape="rect" id="node3" href="$matrix_8hpp.html" title=" " alt="" coords="131,155,213,181"/>
-<area shape="rect" id="node8" href="$workspace_8hpp.html" title=" " alt="" coords="227,229,336,256"/>
-<area shape="rect" id="node10" href="$sparse__range_8hpp_source.html" title=" " alt="" coords="289,155,413,181"/>
-<area shape="rect" id="node4" href="$content__type_8hpp.html" title=" " alt="" coords="83,229,203,256"/>
-<area shape="rect" id="node5" title=" " alt="" coords="5,304,88,331"/>
-<area shape="rect" id="node6" title=" " alt="" coords="112,304,173,331"/>
-<area shape="rect" id="node7" title=" " alt="" coords="198,304,253,331"/>
+<area shape="rect" id="node1" title=" " alt="" coords="207,5,397,32"/>
+<area shape="rect" id="node2" href="$Matrix_8hpp.html" title=" " alt="" coords="168,80,249,107"/>
+<area shape="rect" id="node7" title=" " alt="" coords="229,229,297,256"/>
+<area shape="rect" id="node8" title=" " alt="" coords="339,80,414,107"/>
+<area shape="rect" id="node3" href="$SparseRange_8hpp.html" title=" " alt="" coords="5,155,129,181"/>
+<area shape="rect" id="node6" href="$Workspace_8hpp.html" title=" " alt="" coords="153,155,264,181"/>
+<area shape="rect" id="node4" title=" " alt="" coords="19,229,84,256"/>
+<area shape="rect" id="node5" title=" " alt="" coords="109,229,167,256"/>
 </map>

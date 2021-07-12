@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['index_213',['index',['../structtatami_1_1sparse__range.html#ab90aaa9698db7de4df68e5adac8f7826',1,'tatami::sparse_range']]]
+  ['index_214',['index',['../structtatami_1_1SparseRange.html#ac7dd33e84bcc456c04e848bdc51ade73',1,'tatami::SparseRange::index()'],['../structtatami_1_1SparseRangeCopy.html#a7313c71408288136db76d5a33abf158c',1,'tatami::SparseRangeCopy::index()']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['variances_2ehpp_153',['variances.hpp',['../variances_8hpp.html',1,'']]]
+  ['workspace_2ehpp_152',['Workspace.hpp',['../Workspace_8hpp.html',1,'']]]
 ];

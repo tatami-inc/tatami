@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['content_5ftype_226',['content_type',['../content__type_8hpp.html#aac79d5f0dc4bb45282e5a68cb2962dc5',1,'tatami']]]
+  ['sparsecopymode_227',['SparseCopyMode',['../SparseRange_8hpp.html#ac4dba1039cc39910b0dd3bcccfea0f71',1,'tatami']]]
 ];

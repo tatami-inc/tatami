@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['index_223',['index',['../classtatami_1_1typed__matrix.html#a6382c3c69364289a8550750189ddbcdf',1,'tatami::typed_matrix']]]
+  ['index_224',['index',['../classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90',1,'tatami::Matrix']]]
 ];

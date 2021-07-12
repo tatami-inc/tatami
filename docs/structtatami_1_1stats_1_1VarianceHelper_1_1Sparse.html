@@ -86,9 +86,9 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a59c14ae16c7af63c8d968f7a3ab0e26d"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a59c14ae16c7af63c8d968f7a3ab0e26d">Sparse</a> (size_t n)</td></tr>
 <tr class="separator:a59c14ae16c7af63c8d968f7a3ab0e26d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acb68863727c09d65deb38662a8c26cb5"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:acb68863727c09d65deb38662a8c26cb5"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#acb68863727c09d65deb38662a8c26cb5">add</a> (<a class="el" href="structtatami_1_1sparse__range.html">sparse_range</a>&lt; T, IDX &gt; range, T *vbuffer=NULL, IDX *ibuffer=NULL)</td></tr>
-<tr class="separator:acb68863727c09d65deb38662a8c26cb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1db1f7717795d83fd2302936d3840382"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:a1db1f7717795d83fd2302936d3840382"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a1db1f7717795d83fd2302936d3840382">add</a> (<a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; range, T *vbuffer=NULL, IDX *ibuffer=NULL)</td></tr>
+<tr class="separator:a1db1f7717795d83fd2302936d3840382"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a171c70991ba55523439df387654c6f31"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a171c70991ba55523439df387654c6f31">finish</a> ()</td></tr>
 <tr class="separator:a171c70991ba55523439df387654c6f31"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae9fb6fe7b76c53b522140725d87c5a66"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#ae9fb6fe7b76c53b522140725d87c5a66">means</a> ()</td></tr>
@@ -132,8 +132,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="acb68863727c09d65deb38662a8c26cb5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acb68863727c09d65deb38662a8c26cb5">&#9670;&nbsp;</a></span>add()</h2>
+<a id="a1db1f7717795d83fd2302936d3840382"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1db1f7717795d83fd2302936d3840382">&#9670;&nbsp;</a></span>add()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,7 +146,7 @@ template&lt;typename T , typename IDX &gt; </div>
         <tr>
           <td class="memname">void tatami::stats::VarianceHelper::Sparse::add </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structtatami_1_1sparse__range.html">sparse_range</a>&lt; T, IDX &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td>
           <td class="paramname"><em>range</em>, </td>
         </tr>
         <tr>
@@ -183,7 +183,7 @@ template&lt;typename T , typename IDX &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">range</td><td>A <code><a class="el" href="structtatami_1_1sparse__range.html" title="A range of sparse values.">sparse_range</a></code> object identifying the non-zero elements in the sparse vector. </td></tr>
+    <tr><td class="paramname">range</td><td>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object identifying the non-zero elements in the sparse vector. </td></tr>
     <tr><td class="paramname">vbuffer,ibuffer</td><td>Ignored. </td></tr>
   </table>
   </dd>
@@ -239,7 +239,7 @@ template&lt;typename T , typename IDX &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Obtain the sample mean for each parallel vector. This will contain NaN values if <code><a class="el" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#acb68863727c09d65deb38662a8c26cb5">add()</a></code> was not called at least once. </p>
+<p>Obtain the sample mean for each parallel vector. This will contain NaN values if <code><a class="el" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a1db1f7717795d83fd2302936d3840382">add()</a></code> was not called at least once. </p>
 
 </div>
 </div>
@@ -265,7 +265,7 @@ template&lt;typename T , typename IDX &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Obtain the sample variance for each parallel vector. This will contain NaN values if <code><a class="el" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#acb68863727c09d65deb38662a8c26cb5">add()</a></code> was not called more than once. </p>
+<p>Obtain the sample variance for each parallel vector. This will contain NaN values if <code><a class="el" href="structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#a1db1f7717795d83fd2302936d3840382">add()</a></code> was not called more than once. </p>
 
 </div>
 </div>

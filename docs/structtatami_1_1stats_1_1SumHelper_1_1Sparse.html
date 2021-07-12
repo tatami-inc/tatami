@@ -84,9 +84,9 @@ $(function() {
 Public Member Functions</h2></td></tr>
 <tr class="memitem:aba00c375b54d1e98bcca49ebb9325b97"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1SumHelper_1_1Sparse.html#aba00c375b54d1e98bcca49ebb9325b97">Sparse</a> (size_t n)</td></tr>
 <tr class="separator:aba00c375b54d1e98bcca49ebb9325b97"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4757164fff29ed0b23ce2f2baa25bb9b"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
-<tr class="memitem:a4757164fff29ed0b23ce2f2baa25bb9b"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1SumHelper_1_1Sparse.html#a4757164fff29ed0b23ce2f2baa25bb9b">add</a> (<a class="el" href="structtatami_1_1sparse__range.html">sparse_range</a>&lt; T, IDX &gt; range, T *vbuffer=NULL, IDX *ibuffer=NULL)</td></tr>
-<tr class="separator:a4757164fff29ed0b23ce2f2baa25bb9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1840459a0cba297f993477a05d811942"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:a1840459a0cba297f993477a05d811942"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1SumHelper_1_1Sparse.html#a1840459a0cba297f993477a05d811942">add</a> (<a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; range, T *vbuffer=NULL, IDX *ibuffer=NULL)</td></tr>
+<tr class="separator:a1840459a0cba297f993477a05d811942"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0f991eca400ae918ac3c75cb802f8af4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1SumHelper_1_1Sparse.html#a0f991eca400ae918ac3c75cb802f8af4">finish</a> ()</td></tr>
 <tr class="separator:a0f991eca400ae918ac3c75cb802f8af4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0d1ff5ca7a4d579bec6d8d962217c02d"><td class="memItemLeft" align="right" valign="top">const std::vector&lt; double &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1SumHelper_1_1Sparse.html#a0d1ff5ca7a4d579bec6d8d962217c02d">statistics</a> ()</td></tr>
@@ -128,8 +128,8 @@ Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a4757164fff29ed0b23ce2f2baa25bb9b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4757164fff29ed0b23ce2f2baa25bb9b">&#9670;&nbsp;</a></span>add()</h2>
+<a id="a1840459a0cba297f993477a05d811942"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1840459a0cba297f993477a05d811942">&#9670;&nbsp;</a></span>add()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -142,7 +142,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
         <tr>
           <td class="memname">void tatami::stats::SumHelper::Sparse::add </td>
           <td>(</td>
-          <td class="paramtype"><a class="el" href="structtatami_1_1sparse__range.html">sparse_range</a>&lt; T, IDX &gt;&#160;</td>
+          <td class="paramtype"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td>
           <td class="paramname"><em>range</em>, </td>
         </tr>
         <tr>
@@ -179,7 +179,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">range</td><td>A <code><a class="el" href="structtatami_1_1sparse__range.html" title="A range of sparse values.">sparse_range</a></code> object identifying the non-zero elements in the sparse vector. </td></tr>
+    <tr><td class="paramname">range</td><td>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object identifying the non-zero elements in the sparse vector. </td></tr>
     <tr><td class="paramname">vbuffer,ibuffer</td><td>Ignored. </td></tr>
   </table>
   </dd>

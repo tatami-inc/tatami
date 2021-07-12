@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['numeric_5fmatrix_224',['numeric_matrix',['../typed__matrix_8hpp.html#a5b1e4064bdc526365d29e54ae5e96df2',1,'tatami']]]
+  ['numericmatrix_225',['NumericMatrix',['../Matrix_8hpp.html#a35c670894994f1d620abb55953f98441',1,'tatami']]]
 ];

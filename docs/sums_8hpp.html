@@ -74,7 +74,7 @@ $(function() {
 <div class="title">sums.hpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="typed__matrix_8hpp_source.html">../base/typed_matrix.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="Matrix_8hpp_source.html">../base/Matrix.hpp</a>&quot;</code><br />
 <code>#include &quot;apply.hpp&quot;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;numeric&gt;</code><br />
@@ -83,19 +83,15 @@ Include dependency graph for sums.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="sums_8hpp__incl.png" border="0" usemap="#atatami_2stats_2sums_8hpp" alt=""/></div>
 <map name="atatami_2stats_2sums_8hpp" id="atatami_2stats_2sums_8hpp">
-<area shape="rect" title=" " alt="" coords="311,5,462,32"/>
-<area shape="rect" href="typed__matrix_8hpp.html" title=" " alt="" coords="222,155,383,181"/>
-<area shape="rect" href="apply_8hpp_source.html" title=" " alt="" coords="303,80,379,107"/>
-<area shape="rect" title=" " alt="" coords="404,80,463,107"/>
-<area shape="rect" title=" " alt="" coords="487,80,555,107"/>
-<area shape="rect" href="matrix_8hpp.html" title=" " alt="" coords="183,229,265,256"/>
-<area shape="rect" href="workspace_8hpp.html" title=" " alt="" coords="248,304,357,331"/>
-<area shape="rect" href="sparse__range_8hpp_source.html" title=" " alt="" coords="341,229,465,256"/>
-<area shape="rect" href="content__type_8hpp.html" title=" " alt="" coords="97,304,217,331"/>
-<area shape="rect" title=" " alt="" coords="5,379,88,405"/>
-<area shape="rect" title=" " alt="" coords="112,379,173,405"/>
-<area shape="rect" title=" " alt="" coords="198,379,253,405"/>
-<area shape="rect" title=" " alt="" coords="277,379,345,405"/>
+<area shape="rect" title=" " alt="" coords="188,5,339,32"/>
+<area shape="rect" href="Matrix_8hpp.html" title=" " alt="" coords="114,155,237,181"/>
+<area shape="rect" title=" " alt="" coords="266,304,325,331"/>
+<area shape="rect" href="apply_8hpp_source.html" title=" " alt="" coords="188,80,264,107"/>
+<area shape="rect" title=" " alt="" coords="340,80,408,107"/>
+<area shape="rect" href="SparseRange_8hpp.html" title=" " alt="" coords="140,229,264,256"/>
+<area shape="rect" href="Workspace_8hpp.html" title=" " alt="" coords="5,229,116,256"/>
+<area shape="rect" title=" " alt="" coords="169,304,235,331"/>
+<area shape="rect" title=" " alt="" coords="27,304,95,331"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -124,18 +120,18 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:ac8ef5dbd449f3351d87010fabc669024"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:ac8ef5dbd449f3351d87010fabc669024"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="sums_8hpp.html#ac8ef5dbd449f3351d87010fabc669024">tatami::column_sums</a> (const typed_matrix&lt; T, IDX &gt; *p)</td></tr>
-<tr class="separator:ac8ef5dbd449f3351d87010fabc669024"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a868630dceb4d7225c261ea39dce1d9b2"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a868630dceb4d7225c261ea39dce1d9b2"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="sums_8hpp.html#a868630dceb4d7225c261ea39dce1d9b2">tatami::row_sums</a> (const typed_matrix&lt; T, IDX &gt; *p)</td></tr>
-<tr class="separator:a868630dceb4d7225c261ea39dce1d9b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a689e4606b730f6f8d9691a9f5eb1ff00"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:a689e4606b730f6f8d9691a9f5eb1ff00"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="sums_8hpp.html#a689e4606b730f6f8d9691a9f5eb1ff00">tatami::column_sums</a> (const Matrix&lt; T, IDX &gt; *p)</td></tr>
+<tr class="separator:a689e4606b730f6f8d9691a9f5eb1ff00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac970a7b70a7237139fd91f34014890ff"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:ac970a7b70a7237139fd91f34014890ff"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="sums_8hpp.html#ac970a7b70a7237139fd91f34014890ff">tatami::row_sums</a> (const Matrix&lt; T, IDX &gt; *p)</td></tr>
+<tr class="separator:ac970a7b70a7237139fd91f34014890ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Compute row and column sums from a <code><a class="el" href="classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type.">tatami::typed_matrix</a></code>. </p>
+<div class="textblock"><p>Compute row and column sums from a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="ac8ef5dbd449f3351d87010fabc669024"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac8ef5dbd449f3351d87010fabc669024">&#9670;&nbsp;</a></span>column_sums()</h2>
+<a id="a689e4606b730f6f8d9691a9f5eb1ff00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a689e4606b730f6f8d9691a9f5eb1ff00">&#9670;&nbsp;</a></span>column_sums()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -148,7 +144,7 @@ template&lt;typename T , typename IDX &gt; </div>
         <tr>
           <td class="memname">std::vector&lt;double&gt; tatami::column_sums </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
           <td class="paramname"><em>p</em></td><td>)</td>
           <td></td>
         </tr>
@@ -168,7 +164,7 @@ template&lt;typename T , typename IDX &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type.">tatami::typed_matrix</a></code>.</td></tr>
+    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
@@ -176,8 +172,8 @@ template&lt;typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a868630dceb4d7225c261ea39dce1d9b2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a868630dceb4d7225c261ea39dce1d9b2">&#9670;&nbsp;</a></span>row_sums()</h2>
+<a id="ac970a7b70a7237139fd91f34014890ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac970a7b70a7237139fd91f34014890ff">&#9670;&nbsp;</a></span>row_sums()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -190,7 +186,7 @@ template&lt;typename T , typename IDX &gt; </div>
         <tr>
           <td class="memname">std::vector&lt;double&gt; tatami::row_sums </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1typed__matrix.html">typed_matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
           <td class="paramname"><em>p</em></td><td>)</td>
           <td></td>
         </tr>
@@ -210,7 +206,7 @@ template&lt;typename T , typename IDX &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1typed__matrix.html" title="Virtual class for a matrix with a defined type.">tatami::typed_matrix</a></code>.</td></tr>
+    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>.</td></tr>
   </table>
   </dd>
 </dl>

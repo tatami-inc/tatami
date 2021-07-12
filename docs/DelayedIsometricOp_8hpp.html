@@ -75,7 +75,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><code>#include &lt;memory&gt;</code><br />
-<code>#include &quot;<a class="el" href="typed__matrix_8hpp_source.html">typed_matrix.hpp</a>&quot;</code><br />
+<code>#include &quot;<a class="el" href="Matrix_8hpp_source.html">Matrix.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="arith__scalar__helpers_8hpp_source.html">arith_scalar_helpers.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="arith__vector__helpers_8hpp_source.html">arith_vector_helpers.hpp</a>&quot;</code><br />
 <code>#include &quot;<a class="el" href="math__helpers_8hpp_source.html">math_helpers.hpp</a>&quot;</code><br />
@@ -84,21 +84,17 @@ Include dependency graph for DelayedIsometricOp.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="DelayedIsometricOp_8hpp__incl.png" border="0" usemap="#atatami_2base_2DelayedIsometricOp_8hpp" alt=""/></div>
 <map name="atatami_2base_2DelayedIsometricOp_8hpp" id="atatami_2base_2DelayedIsometricOp_8hpp">
-<area shape="rect" title=" " alt="" coords="223,5,418,47"/>
-<area shape="rect" title=" " alt="" coords="5,319,73,345"/>
-<area shape="rect" href="typed__matrix_8hpp.html" title=" " alt="" coords="96,95,215,121"/>
-<area shape="rect" href="arith__scalar__helpers_8hpp.html" title=" " alt="" coords="239,95,402,121"/>
-<area shape="rect" href="arith__vector__helpers_8hpp.html" title=" " alt="" coords="426,95,589,121"/>
-<area shape="rect" href="math__helpers_8hpp.html" title=" " alt="" coords="613,95,737,121"/>
-<area shape="rect" href="matrix_8hpp.html" title=" " alt="" coords="133,169,215,196"/>
-<area shape="rect" href="workspace_8hpp.html" title=" " alt="" coords="59,244,169,271"/>
-<area shape="rect" href="sparse__range_8hpp_source.html" title=" " alt="" coords="239,169,363,196"/>
-<area shape="rect" href="content__type_8hpp.html" title=" " alt="" coords="193,244,313,271"/>
-<area shape="rect" title=" " alt="" coords="115,319,198,345"/>
-<area shape="rect" title=" " alt="" coords="222,319,283,345"/>
-<area shape="rect" title=" " alt="" coords="308,319,363,345"/>
-<area shape="rect" title=" " alt="" coords="478,169,537,196"/>
-<area shape="rect" title=" " alt="" coords="646,169,705,196"/>
+<area shape="rect" title=" " alt="" coords="179,5,374,47"/>
+<area shape="rect" title=" " alt="" coords="5,244,73,271"/>
+<area shape="rect" href="Matrix_8hpp.html" title=" " alt="" coords="89,95,171,121"/>
+<area shape="rect" href="arith__scalar__helpers_8hpp.html" title=" " alt="" coords="195,95,358,121"/>
+<area shape="rect" href="arith__vector__helpers_8hpp.html" title=" " alt="" coords="314,169,477,196"/>
+<area shape="rect" href="math__helpers_8hpp.html" title=" " alt="" coords="451,95,575,121"/>
+<area shape="rect" href="SparseRange_8hpp.html" title=" " alt="" coords="165,169,289,196"/>
+<area shape="rect" href="Workspace_8hpp.html" title=" " alt="" coords="31,169,141,196"/>
+<area shape="rect" title=" " alt="" coords="195,244,260,271"/>
+<area shape="rect" title=" " alt="" coords="325,244,383,271"/>
+<area shape="rect" title=" " alt="" coords="501,169,559,196"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -158,14 +154,14 @@ template&lt;class MAT , class OP &gt; </div>
 <p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">MAT</td><td>A specialized <code>typed_matrix</code>, to be automatically deducted. </td></tr>
+    <tr><td class="paramname">MAT</td><td>A specialized <code>Matrix</code>, to be automatically deducted. </td></tr>
     <tr><td class="paramname">OP</td><td>Helper class defining the operation.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code>typed_matrix</code>. </td></tr>
+    <tr><td class="paramname">p</td><td>Pointer to a <code>Matrix</code>. </td></tr>
     <tr><td class="paramname">op</td><td>Instance of the operation helper class. </td></tr>
   </table>
   </dd>

@@ -74,7 +74,7 @@ $(function() {
 <div class="title">DelayedSubsetBlock.hpp File Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><code>#include &quot;<a class="el" href="typed__matrix_8hpp_source.html">typed_matrix.hpp</a>&quot;</code><br />
+<div class="textblock"><code>#include &quot;<a class="el" href="Matrix_8hpp_source.html">Matrix.hpp</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;memory&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
@@ -82,17 +82,14 @@ Include dependency graph for DelayedSubsetBlock.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="DelayedSubsetBlock_8hpp__incl.png" border="0" usemap="#atatami_2base_2DelayedSubsetBlock_8hpp" alt=""/></div>
 <map name="atatami_2base_2DelayedSubsetBlock_8hpp" id="atatami_2base_2DelayedSubsetBlock_8hpp">
-<area shape="rect" title=" " alt="" coords="360,5,541,47"/>
-<area shape="rect" href="typed__matrix_8hpp.html" title=" " alt="" coords="242,95,361,121"/>
-<area shape="rect" title=" " alt="" coords="347,319,415,345"/>
-<area shape="rect" title=" " alt="" coords="488,95,563,121"/>
-<area shape="rect" href="matrix_8hpp.html" title=" " alt="" coords="131,169,213,196"/>
-<area shape="rect" href="workspace_8hpp.html" title=" " alt="" coords="227,244,336,271"/>
-<area shape="rect" href="sparse__range_8hpp_source.html" title=" " alt="" coords="289,169,413,196"/>
-<area shape="rect" href="content__type_8hpp.html" title=" " alt="" coords="83,244,203,271"/>
-<area shape="rect" title=" " alt="" coords="5,319,88,345"/>
-<area shape="rect" title=" " alt="" coords="112,319,173,345"/>
-<area shape="rect" title=" " alt="" coords="198,319,253,345"/>
+<area shape="rect" title=" " alt="" coords="211,5,393,47"/>
+<area shape="rect" href="Matrix_8hpp.html" title=" " alt="" coords="168,95,249,121"/>
+<area shape="rect" title=" " alt="" coords="229,244,297,271"/>
+<area shape="rect" title=" " alt="" coords="339,95,414,121"/>
+<area shape="rect" href="SparseRange_8hpp.html" title=" " alt="" coords="5,169,129,196"/>
+<area shape="rect" href="Workspace_8hpp.html" title=" " alt="" coords="153,169,264,196"/>
+<area shape="rect" title=" " alt="" coords="19,244,84,271"/>
+<area shape="rect" title=" " alt="" coords="109,244,167,271"/>
 </map>
 </div>
 </div>
@@ -150,14 +147,14 @@ template&lt;int MARGIN, class MAT &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">MARGIN</td><td>Dimension along which the addition is to occur. If 0, the subset is applied to the rows; if 1, the subset is applied to the columns. </td></tr>
-    <tr><td class="paramname">MAT</td><td>A specialized <code>typed_matrix</code>, to be automatically deducted. </td></tr>
+    <tr><td class="paramname">MAT</td><td>A specialized <code>Matrix</code>, to be automatically deducted. </td></tr>
     <tr><td class="paramname">V</td><td>Vector containing the subset indices, to be automatically deducted.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the underlying (pre-subset) <code>typed_matrix</code>. </td></tr>
+    <tr><td class="paramname">p</td><td>Pointer to the underlying (pre-subset) <code>Matrix</code>. </td></tr>
     <tr><td class="paramname">f</td><td>Index of the start of the block. This should be a row index if <code>MARGIN = 0</code> and a column index otherwise. </td></tr>
     <tr><td class="paramname">l</td><td>Index of the one-past-the-end of the block.</td></tr>
   </table>
