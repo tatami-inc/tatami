@@ -21,7 +21,7 @@ namespace tatami {
 template <typename T, typename IDX = int>
 class Matrix {
 public:
-    ~Matrix() {}
+    virtual ~Matrix() {}
 
     /** 
      * Type of the value to be returned by getters.
