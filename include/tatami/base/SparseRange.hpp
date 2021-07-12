@@ -2,11 +2,12 @@
 #define TATAMI_SPARSE_RANGE_H
 
 #include <cstddef>
+#include <vector>
 
 /**
  * @file SparseRange.hpp
  *
- * Defines the `SparseRange` class to hold information about extracted sparse values.
+ * Defines the `SparseRange` class to hold information about extracted sparse elements.
  */
 
 using std::size_t;
@@ -14,11 +15,15 @@ using std::size_t;
 namespace tatami {
 
 /**
- * @brief A range of sparse values.
+ * @brief A range of a sparse vector.
  *
- * More specifically, this class defines a range of sparse (i.e., "non-zero") values, e.g., along a slice of a row or column.
- * The aim is to hold (pointers to) the values and row/column indices, as well as the number of non-zero values within this range.
- * This is most commonly returned by `Matrix::sparse_row()` and `typed_matrix::get_sparse_column()` methods.
+ * This class defines a range along a sparse vector.
+ * It records the number of "non-zero" elements within this range, and contains pointers to their values and row/column indices.
+ * This is most commonly returned by `Matrix::sparse_row()` and `Matrix::sparse_column()` methods to obtain the contents of a row or column of a sparse matrix.
+ *
+ * @note
+ * Note that the elements in `value` are not guaranteed to be non-zero.
+ * Zero values are usually not explicitly filtered out.
  *
  * @tparam T Type of value.
  * @tparam IDX Type of index.
@@ -54,6 +59,40 @@ struct SparseRange {
      */
     const IDX* index = NULL;
 };
+
+/**
+ * @brief A range of a sparse vector with copying 
+ *
+ * This class defines a range along a sparse vector, where the values and indices of the non-zero elements are copied into internal `vector`s.
+ * It provides more memory safety than the `SparseRange` class, at the cost of extra allocation and copying.
+ *
+ * @tparam T Type of value.
+ * @tparam IDX Type of index.
+ */
+template<typename T, typename IDX>
+struct SparseRangeCopy {
+    /** 
+     * Values of the non-zero elements.
+     */
+    std::vector<T> value;
+
+    /** 
+     * Indices of the non-zero elements.
+     * This should be of the same length as `value`.
+     */
+    std::vector<IDX> index;
+
+    /**
+     * @param n Number of non-zero elements.
+     */
+    SparseRangeCopy(size_t n) : index(n), value(n) {}
+};
+
+/**
+ * What components of the non-zero elements should be copied?
+ * Just the indices (`INDEX`), the values (`VALUE`) or both (`BOTH`).
+ */
+enum SparseCopyMode { SPARSE_COPY_INDEX, SPARSE_COPY_VALUE, SPARSE_COPY_BOTH };
 
 }
 
