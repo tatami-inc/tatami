@@ -14,10 +14,10 @@
 template<class PARAM> 
 class ArithScalarTest : public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense, sparse;
+    std::shared_ptr<tatami::NumericMatrix> dense, sparse;
 protected:
     void SetUp() {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse = tatami::convert_to_sparse(dense.get(), false); // column major.
         return;
     }
@@ -66,7 +66,7 @@ INSTANTIATE_TEST_CASE_P(
 class ArithScalarSubtractionTest : public ArithScalarTest<std::tuple<double, bool> > {};
 
 TEST_P(ArithScalarSubtractionTest, ColumnAccess) {
-    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
 
     auto my_param = GetParam();
     double val = std::get<0>(my_param);
@@ -155,7 +155,7 @@ INSTANTIATE_TEST_CASE_P(
 class ArithScalarDivisionTest : public ArithScalarTest<std::tuple<double, bool> > {};
 
 TEST_P(ArithScalarDivisionTest, ColumnAccess) {
-    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
 
     auto my_param = GetParam();
     double val = std::get<0>(my_param);

@@ -1,7 +1,7 @@
 #ifndef TATAMI_STATS_MEDIANS_HPP
 #define TATAMI_STATS_MEDIANS_HPP
 
-#include "../base/typed_matrix.hpp"
+#include "../base/Matrix.hpp"
 #include "apply.hpp"
 
 #include <cmath>
@@ -12,7 +12,7 @@
 /**
  * @file medians.hpp
  *
- * Compute row and column medians from a `tatami::typed_matrix`.
+ * Compute row and column medians from a `tatami::Matrix`.
  */
 
 namespace tatami {
@@ -75,14 +75,14 @@ public:
      * @tparam T Type of the input data.
      * @tparam IDX Type of the indices.
      *
-     * @param range A `sparse_range` object specifying the number and values of all non-zero indices.
+     * @param range A `SparseRange` object specifying the number and values of all non-zero indices.
      * @param n Total length of the vector, including zero values.
      * @param vbuffer,ibuffer Pointer to arrays with `range.number` addressible elements, to be used as a workspace.
      *
      * @return The median of values in the vector.
      */
     template<typename T = double, typename IDX = int>
-    static double compute(const sparse_range<T, IDX>& range, size_t n, T* vbuffer, IDX* ibuffer) {
+    static double compute(const SparseRange<T, IDX>& range, size_t n, T* vbuffer, IDX* ibuffer) {
         if (range.number == n) {
             return compute(range.value, n, vbuffer);
         } else if (range.number * 2 < n) {
@@ -135,12 +135,12 @@ public:
  * @tparam T Type of the matrix value.
  * @tparam IDX Type of the row/column indices.
  *
- * @param p Shared pointer to a `tatami::typed_matrix`.
+ * @param p Shared pointer to a `tatami::Matrix`.
  *
  * @return A vector of length equal to the number of columns, containing the column medians.
  */
 template<typename T, typename IDX>
-inline std::vector<T> column_medians(const typed_matrix<T, IDX>* p) {
+inline std::vector<T> column_medians(const Matrix<T, IDX>* p) {
     return apply<1, T, IDX, stats::MedianHelper>(p);
 }
 
@@ -148,12 +148,12 @@ inline std::vector<T> column_medians(const typed_matrix<T, IDX>* p) {
  * @tparam T Type of the matrix value, should be summable.
  * @tparam IDX Type of the row/column indices.
  *
- * @param p Shared pointer to a `tatami::typed_matrix`.
+ * @param p Shared pointer to a `tatami::Matrix`.
  *
  * @return A vector of length equal to the number of rows, containing the row medians.
  */
 template<typename T, typename IDX>
-inline std::vector<T> row_medians(const typed_matrix<T, IDX>* p) {
+inline std::vector<T> row_medians(const Matrix<T, IDX>* p) {
     return apply<0, T, IDX, stats::MedianHelper>(p);
 }
 

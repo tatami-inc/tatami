@@ -14,13 +14,13 @@
 template<class PARAM> 
 class SubsetBlockTest : public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense, sparse, ref, dense_block, sparse_block;
+    std::shared_ptr<tatami::NumericMatrix> dense, sparse, ref, dense_block, sparse_block;
 
     size_t first, last;
     std::vector<size_t> sub;
 protected:
     void SetUp() {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse = tatami::convert_to_sparse(dense.get(), false); // column-major.
         return;
     }

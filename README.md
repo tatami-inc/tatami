@@ -27,7 +27,7 @@ Currently supported representations include:
 ```cpp
 #include "tatami/tatami.h"
 
-std::shared_ptr<tatami::numeric_matrix> mat(new tatami::DenseRowMatrix<double>(nrows, ncols, vals));
+std::shared_ptr<tatami::NumericMatrix> mat(new tatami::DenseRowMatrix<double>(nrows, ncols, vals));
 
 // Get the dimensions:
 size_t NR = mat->nrow(), NC = mat->ncol();
@@ -90,19 +90,17 @@ The [gallery](https://github.com/LTLA/tatami/tree/master/gallery) also contains 
 
 ## API design
 
-Matrix classes named with `snake_case` are virtual and intended for use as interfaces - these cannot be directly constructed.
-Matrix classes named with `CamelCase` correspond to actual matrix representations and can be explicitly constructed.
-All other functions or non-matrix classes use `snake_case`.
-
 We use templating to define the type of values returned by the interface.
 This includes the type of the data (most typically `double`) as well as the type of row/column indices (default `int`, but one could imagine using, e.g., `size_t`).
 It is worth noting that the storage type does not need to be the same as the interface type.
 For example, developers could store a matrix of small counts as `uint16_t` while returning `double`s for compatibility with downstream mathematical code.
 
-Most of the examples in the **tatami** documentation use a `shared_ptr` to a `tatami::numeric_matrix`, relying on run-time polymorphism to determine the right method to call.
+Most of the examples in the **tatami** documentation use a `shared_ptr` to a `tatami::NumericMatrix`, relying on run-time polymorphism to determine the right method to call.
 This allows applications to easily handle a variety of different input representations.
 Alternatively, applications may use templating to achieve compile-time polymorphism on the different **tatami** subclasses,
 but this is rather restrictive without providing obvious performance benefits. 
+
+Classes are named with `CamelCase`, while all functions, methods and members use `snake_case`.
 
 ## Other operations
 

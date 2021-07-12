@@ -1,7 +1,7 @@
 #ifndef TATAMI_STATS_SUMS_HPP
 #define TATAMI_STATS_SUMS_HPP
 
-#include "../base/typed_matrix.hpp"
+#include "../base/Matrix.hpp"
 #include "apply.hpp"
 #include <vector>
 #include <numeric>
@@ -9,7 +9,7 @@
 /**
  * @file sums.hpp
  *
- * Compute row and column sums from a `tatami::typed_matrix`.
+ * Compute row and column sums from a `tatami::Matrix`.
  */
 
 namespace tatami {
@@ -55,14 +55,14 @@ public:
      * @tparam T Type of the input data.
      * @tparam IDX Type of the indices.
      *
-     * @param range A `sparse_range` object specifying the number and values of all non-zero indices.
+     * @param range A `SparseRange` object specifying the number and values of all non-zero indices.
      * @param n Total length of the vector, including zero values.
      * @param vbuffer,ibuffer Unused, provided here for consistency only.
      *
      * @return The sample mean of values in the vector.
      */
     template<typename T = double, typename IDX = int>
-    static double compute(const sparse_range<T, IDX>& range, size_t n, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+    static double compute(const SparseRange<T, IDX>& range, size_t n, T* vbuffer = NULL, IDX* ibuffer = NULL) {
         return std::accumulate(range.value, range.value + range.number, 0.0);
     }
 
@@ -124,11 +124,11 @@ public:
          * @tparam T Type of the input data.
          * @tparam IDX Type of the indices.
          *
-         * @param range A `sparse_range` object identifying the non-zero elements in the sparse vector.
+         * @param range A `SparseRange` object identifying the non-zero elements in the sparse vector.
          * @param vbuffer,ibuffer Ignored.
          */
         template<typename T = double, typename IDX = int>
-        void add(sparse_range<T, IDX> range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        void add(SparseRange<T, IDX> range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
             for (size_t j = 0; j < range.number; ++j, ++range.index, ++range.value) {
                 store[*range.index] += *range.value;
             }
@@ -157,12 +157,12 @@ public:
  * @tparam T Type of the matrix value, should be summable.
  * @tparam IDX Type of the row/column indices.
  *
- * @param p Pointer to a `tatami::typed_matrix`.
+ * @param p Pointer to a `tatami::Matrix`.
  *
  * @return A vector of length equal to the number of columns, containing the column sums.
  */
 template<typename T, typename IDX>
-inline std::vector<double> column_sums(const typed_matrix<T, IDX>* p) {
+inline std::vector<double> column_sums(const Matrix<T, IDX>* p) {
     return apply<1, T, IDX, stats::SumHelper>(p);
 }
 
@@ -170,12 +170,12 @@ inline std::vector<double> column_sums(const typed_matrix<T, IDX>* p) {
  * @tparam T Type of the matrix value, should be summable.
  * @tparam IDX Type of the row/column indices.
  *
- * @param p Pointer to a `tatami::typed_matrix`.
+ * @param p Pointer to a `tatami::Matrix`.
  *
  * @return A vector of length equal to the number of rows, containing the row sums.
  */
 template<typename T, typename IDX>
-inline std::vector<double> row_sums(const typed_matrix<T, IDX>* p) {
+inline std::vector<double> row_sums(const Matrix<T, IDX>* p) {
     return apply<0, T, IDX, stats::SumHelper>(p);
 }
 

@@ -1,7 +1,7 @@
 #ifndef TATAMI_DELAYED_SUBSET
 #define TATAMI_DELAYED_SUBSET
 
-#include "typed_matrix.hpp"
+#include "Matrix.hpp"
 #include <algorithm>
 #include <memory>
 
@@ -25,12 +25,12 @@ namespace tatami {
  * @tparam IDX Type of index value.
  */
 template<int MARGIN, typename T, typename IDX>
-class DelayedBind : public typed_matrix<T, IDX> {
+class DelayedBind : public Matrix<T, IDX> {
 public:
     /**
      * @param ps Pointers to the matrices to be combined.
      */
-    DelayedBind(std::vector<std::shared_ptr<const typed_matrix<T, IDX> > > ps) : mats(std::move(ps)), cumulative(mats.size()+1) {
+    DelayedBind(std::vector<std::shared_ptr<const Matrix<T, IDX> > > ps) : mats(std::move(ps)), cumulative(mats.size()+1) {
         for (size_t i = 0; i < mats.size(); ++i) {
             if constexpr(MARGIN==0) {
                 cumulative[i+1] = mats[i]->nrow();
@@ -44,7 +44,7 @@ public:
     /**
      * @param ps Pointers to the matrices to be combined.
      */
-    DelayedBind(const std::vector<std::shared_ptr<typed_matrix<T, IDX> > >& ps) : mats(ps.begin(), ps.end()), cumulative(mats.size()+1) {
+    DelayedBind(const std::vector<std::shared_ptr<Matrix<T, IDX> > >& ps) : mats(ps.begin(), ps.end()), cumulative(mats.size()+1) {
         for (size_t i = 0; i < mats.size(); ++i) {
             if constexpr(MARGIN==0) {
                 cumulative[i+1] = mats[i]->nrow();
@@ -58,7 +58,7 @@ public:
 
     ~DelayedBind() {}
 public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
+    const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         if constexpr(MARGIN==1) {
             assemble_along_dimension<true>(r, buffer, start, end, work);
             return buffer;
@@ -67,7 +67,7 @@ public:
         }
     }
 
-    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
+    const T* column(size_t c, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         if constexpr(MARGIN==1) {
             return extract_one_dimension<false>(c, buffer, start, end, work);
         } else {
@@ -76,17 +76,17 @@ public:
         }
     }
 
-    using typed_matrix<T, IDX>::column;
+    using Matrix<T, IDX>::column;
 
-    using typed_matrix<T, IDX>::row;
+    using Matrix<T, IDX>::row;
 
 private:
     template<bool ROW>
-    const T* extract_one_dimension(size_t i, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
+    const T* extract_one_dimension(size_t i, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         size_t chosen = std::upper_bound(cumulative.begin(), cumulative.end(), i) - cumulative.begin() - 1;
 
         if (work != nullptr) {
-            auto work2 = static_cast<bind_workspace*>(work);
+            auto work2 = static_cast<BindWorkspace*>(work);
             work = work2->workspaces[chosen].get();
         }
 
@@ -98,10 +98,10 @@ private:
     }
 
     template<bool ROW>
-    void assemble_along_dimension(size_t i, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
-        bind_workspace* work2 = NULL;
+    void assemble_along_dimension(size_t i, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
+        BindWorkspace* work2 = NULL;
         if (work != nullptr) {
-            work2 = static_cast<bind_workspace*>(work);
+            work2 = static_cast<BindWorkspace*>(work);
         }
         
         size_t left = 0;
@@ -114,7 +114,7 @@ private:
             size_t curstart = current - cumulative[left];
             size_t curend = std::min(cumulative[left + 1], end) - cumulative[left];
 
-            workspace* curwork = NULL;
+            Workspace* curwork = NULL;
             if (work2 != NULL) {
                 curwork = work2->workspaces[left].get();
             }
@@ -137,7 +137,7 @@ private:
     }
 
 public:
-    sparse_range<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
         if constexpr(MARGIN==1) {
             return assemble_along_dimension_sparse<true>(r, out_values, out_indices, start, end, work, sorted);
         } else {
@@ -145,7 +145,7 @@ public:
         }
     }
 
-    sparse_range<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
         if constexpr(MARGIN==1) {
             return extract_one_dimension_sparse<false>(c, out_values, out_indices, start, end, work, sorted);
         } else {
@@ -153,17 +153,17 @@ public:
         }
     }
 
-    using typed_matrix<T, IDX>::sparse_column;
+    using Matrix<T, IDX>::sparse_column;
 
-    using typed_matrix<T, IDX>::sparse_row;
+    using Matrix<T, IDX>::sparse_row;
 
 private:
     template<bool ROW>
-    sparse_range<T, IDX> extract_one_dimension_sparse(size_t i, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> extract_one_dimension_sparse(size_t i, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
         size_t chosen = std::upper_bound(cumulative.begin(), cumulative.end(), i) - cumulative.begin() - 1;
 
         if (work != nullptr) {
-            auto work2 = static_cast<bind_workspace*>(work);
+            auto work2 = static_cast<BindWorkspace*>(work);
             work = work2->workspaces[chosen].get();
         }
 
@@ -175,10 +175,10 @@ private:
     }
 
     template<bool ROW>
-    sparse_range<T, IDX> assemble_along_dimension_sparse(size_t i, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
-        bind_workspace* work2 = NULL;
+    SparseRange<T, IDX> assemble_along_dimension_sparse(size_t i, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
+        BindWorkspace* work2 = NULL;
         if (work != nullptr) {
-            work2 = static_cast<bind_workspace*>(work);
+            work2 = static_cast<BindWorkspace*>(work);
         }
         
         size_t left = 0;
@@ -187,19 +187,19 @@ private:
         }
 
         size_t current = start;
-        sparse_range<T, IDX> output(0, out_values, out_indices);
+        SparseRange<T, IDX> output(0, out_values, out_indices);
         auto& ntotal = output.number;
 
         while (current < end) {
             size_t curstart = current - cumulative[left];
             size_t curend = std::min(cumulative[left + 1], end) - cumulative[left];
 
-            workspace* curwork = NULL;
+            Workspace* curwork = NULL;
             if (work2 != NULL) {
                 curwork = work2->workspaces[left].get();
             }
 
-            sparse_range<T, IDX> range;
+            SparseRange<T, IDX> range;
             if constexpr(ROW) {
                 range = mats[left]->sparse_row(i, out_values, out_indices, curstart, curend, curwork);
             } else {
@@ -251,22 +251,22 @@ public:
     }
 
 public:
-    struct bind_workspace : public workspace {
-        bind_workspace(std::vector<std::shared_ptr<workspace> > w) : workspaces(std::move(w)) {}
-        std::vector<std::shared_ptr<workspace> > workspaces;
+    struct BindWorkspace : public Workspace {
+        BindWorkspace(std::vector<std::shared_ptr<Workspace> > w) : workspaces(std::move(w)) {}
+        std::vector<std::shared_ptr<Workspace> > workspaces;
     };
 
     /**
      * @param row Should a workspace be created for row-wise extraction?
      *
-     * @return A null pointer or a shared pointer to a `workspace` object.
+     * @return A null pointer or a shared pointer to a `Workspace` object.
      */
-    std::shared_ptr<workspace> new_workspace(bool row) const {
-        std::vector<std::shared_ptr<workspace> > workspaces;
+    std::shared_ptr<Workspace> new_workspace(bool row) const {
+        std::vector<std::shared_ptr<Workspace> > workspaces;
         for (const auto& x : mats) {
             workspaces.push_back(x->new_workspace(row));
         }           
-        return std::shared_ptr<workspace>(new bind_workspace(std::move(workspaces)));
+        return std::shared_ptr<Workspace>(new BindWorkspace(std::move(workspaces)));
     }
 
     /**
@@ -309,7 +309,7 @@ public:
     }
 
 private:
-    std::vector<std::shared_ptr<const typed_matrix<T, IDX> > > mats;
+    std::vector<std::shared_ptr<const Matrix<T, IDX> > > mats;
     std::vector<size_t> cumulative;
 };
 
@@ -318,9 +318,9 @@ private:
  *
  * @tparam MARGIN Dimension along which the combining is to occur.
  * If 0, matrices are combined along the rows; if 1, matrices are combined to the columns.
- * @tparam MAT A specialized `typed_matrix`, to be automatically deducted.
+ * @tparam MAT A specialized `Matrix`, to be automatically deducted.
  *
- * @param ps Pointers to `typed_matrix` objects.
+ * @param ps Pointers to `Matrix` objects.
  *
  * @return A pointer to a `DelayedBind` instance.
  */

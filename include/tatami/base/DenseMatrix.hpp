@@ -1,7 +1,7 @@
 #ifndef TATAMI_DENSE_MATRIX_H
 #define TATAMI_DENSE_MATRIX_H
 
-#include "typed_matrix.hpp"
+#include "Matrix.hpp"
 #include "has_data.hpp"
 
 #include <vector>
@@ -28,7 +28,7 @@ namespace tatami {
  * If a method is available for `data()` that returns a `const T*`, it will also be used.
  */
 template<bool ROW, typename T, typename IDX = int, class V = std::vector<T> >
-class DenseMatrix : public typed_matrix<T, IDX> {
+class DenseMatrix : public Matrix<T, IDX> {
 public: 
     /**
      * @param nr Number of rows.
@@ -67,7 +67,7 @@ public:
     bool prefer_rows() const { return ROW; }
 
 public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
+    const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         if constexpr(ROW) {
             return primary(r, buffer, start, end, work, ncols);
         } else {
@@ -76,7 +76,7 @@ public:
         }
     }
 
-    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
+    const T* column(size_t c, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         if constexpr(ROW) {
             secondary(c, buffer, start, end, work, ncols);
             return buffer;
@@ -85,15 +85,15 @@ public:
         }
     }
 
-    using typed_matrix<T, IDX>::row;
+    using Matrix<T, IDX>::row;
 
-    using typed_matrix<T, IDX>::column;
+    using Matrix<T, IDX>::column;
 
 private: 
     size_t nrows, ncols;
     V values;
 
-    const T* primary(size_t c, T* buffer, size_t start, size_t end, workspace* work, size_t dim_secondary) const {
+    const T* primary(size_t c, T* buffer, size_t start, size_t end, Workspace* work, size_t dim_secondary) const {
         size_t shift = c * dim_secondary;
         if constexpr(has_data<T, V>::value) {
             return values.data() + shift + start;
@@ -104,7 +104,7 @@ private:
         }
     }
 
-    void secondary(size_t r, T* buffer, size_t start, size_t end, workspace* work, size_t dim_secondary) const {
+    void secondary(size_t r, T* buffer, size_t start, size_t end, Workspace* work, size_t dim_secondary) const {
         auto it = values.begin() + r + start * dim_secondary;
         for (size_t i = start; i < end; ++i, ++buffer, it+=dim_secondary) {
             *buffer = *it; 

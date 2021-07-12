@@ -10,7 +10,7 @@
 #include "../data/data.h"
 
 TEST(ComputingDimsums, RowSums) {
-    auto dense_row = std::unique_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
     auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
     auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
     auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
@@ -23,7 +23,7 @@ TEST(ComputingDimsums, RowSums) {
 }
 
 TEST(ComputingDimsums, ColumnSums) {
-    auto dense_row = std::unique_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
     auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
     auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
     auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);

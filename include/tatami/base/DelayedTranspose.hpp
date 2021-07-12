@@ -1,7 +1,7 @@
 #ifndef TATAMI_DELAYED_TRANSPOSE
 #define TATAMI_DELAYED_TRANSPOSE
 
-#include "typed_matrix.hpp"
+#include "Matrix.hpp"
 #include <memory>
 
 /**
@@ -22,39 +22,39 @@ namespace tatami {
  * @tparam IDX Type of index value.
  */
 template<typename T, typename IDX>
-class DelayedTranspose : public typed_matrix<T, IDX> {
+class DelayedTranspose : public Matrix<T, IDX> {
 public:
     /**
      * @param p Pointer to the underlying (pre-transpose) matrix.
      */
-    DelayedTranspose(std::shared_ptr<const typed_matrix<T, IDX> > p) : mat(std::move(p)) {}
+    DelayedTranspose(std::shared_ptr<const Matrix<T, IDX> > p) : mat(std::move(p)) {}
 
     ~DelayedTranspose() {}
 public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
+    const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         return mat->column(r, buffer, start, end, work);
     }
 
-    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
+    const T* column(size_t c, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         return mat->row(c, buffer, start, end, work);
     }
 
-    using typed_matrix<T, IDX>::column;
+    using Matrix<T, IDX>::column;
 
-    using typed_matrix<T, IDX>::row;
+    using Matrix<T, IDX>::row;
 
 public:
-    sparse_range<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
         return mat->sparse_column(r, out_values, out_indices, start, end, work, sorted);
     }
 
-    sparse_range<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
         return mat->sparse_row(c, out_values, out_indices, start, end, work, sorted);
     }
 
-    using typed_matrix<T, IDX>::sparse_column;
+    using Matrix<T, IDX>::sparse_column;
 
-    using typed_matrix<T, IDX>::sparse_row;
+    using Matrix<T, IDX>::sparse_row;
 
 public:
     /**
@@ -72,9 +72,9 @@ public:
     }
 
     /**
-     * @return A null pointer or a shared pointer to a `workspace` object, depending on the underlying (pre-subsetted) matrix.
+     * @return A null pointer or a shared pointer to a `Workspace` object, depending on the underlying (pre-subsetted) matrix.
      */
-    std::shared_ptr<workspace> new_workspace(bool row) const {
+    std::shared_ptr<Workspace> new_workspace(bool row) const {
         return mat->new_workspace(!row);
     }
 
@@ -92,15 +92,15 @@ public:
         return !mat->prefer_rows();
     }
 private:
-    std::shared_ptr<const typed_matrix<T, IDX> > mat;
+    std::shared_ptr<const Matrix<T, IDX> > mat;
 };
 
 /**
  * A `make_*` helper function to enable partial template deduction of supplied types.
  *
- * @tparam MAT A specialized `typed_matrix`, to be automatically deducted.
+ * @tparam MAT A specialized `Matrix`, to be automatically deducted.
  *
- * @param p Pointer to a `typed_matrix`.
+ * @param p Pointer to a `Matrix`.
  *
  * @return A pointer to a `DelayedTranspose` instance.
  */

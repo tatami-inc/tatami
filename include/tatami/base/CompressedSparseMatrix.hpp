@@ -1,9 +1,9 @@
 #ifndef TATAMI_COMPRESSED_SPARSE_MATRIX_H
 #define TATAMI_COMPRESSED_SPARSE_MATRIX_H
 
-#include "typed_matrix.hpp"
+#include "Matrix.hpp"
 #include "has_data.hpp"
-#include "sparse_range.hpp"
+#include "SparseRange.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -36,7 +36,7 @@ namespace tatami {
  * Methods should be available for `size()`, `begin()` and `end()`.
  */
 template<bool ROW, typename T, typename IDX = int, class U = std::vector<T>, class V = std::vector<IDX>, class W = std::vector<size_t> >
-class CompressedSparseMatrix : public typed_matrix<T, IDX> {
+class CompressedSparseMatrix : public Matrix<T, IDX> {
 public:
     /**
      * @param nr Number of rows.
@@ -73,7 +73,7 @@ public:
     bool prefer_rows() const { return ROW; }
 
 public:
-    const T* row(size_t r, T* buffer, size_t first, size_t last, workspace* work=nullptr) const {
+    const T* row(size_t r, T* buffer, size_t first, size_t last, Workspace* work=nullptr) const {
         if constexpr(ROW) {
             primary_dimension_expanded(r, first, last, this->ncols, buffer, 0);
         } else {
@@ -82,7 +82,7 @@ public:
         return buffer;
     }
 
-    const T* column(size_t c, T* buffer, size_t first, size_t last, workspace* work=nullptr) const {
+    const T* column(size_t c, T* buffer, size_t first, size_t last, Workspace* work=nullptr) const {
         if constexpr(ROW) {
             secondary_dimension_expanded(c, first, last, work, buffer, 0);
         } else {
@@ -91,15 +91,15 @@ public:
         return buffer;
     }
 
-    using typed_matrix<T, IDX>::row;
+    using Matrix<T, IDX>::row;
 
-    using typed_matrix<T, IDX>::column;
+    using Matrix<T, IDX>::column;
 
 public:
     /**
-     * @copydoc typed_matrix::sparse_row()
+     * @copydoc Matrix::sparse_row()
      */
-    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr, bool sorted=true) const {
         // It's always sorted anyway, no need to pass along 'sorted'.
         if constexpr(ROW) {
             return primary_dimension_raw(r, first, last, this->ncols, vbuffer, ibuffer);
@@ -109,9 +109,9 @@ public:
     }
 
     /**
-     * @copydoc typed_matrix::sparse_column()
+     * @copydoc Matrix::sparse_column()
      */
-    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr, bool sorted=true) const {
         // It's always sorted anyway, no need to pass along 'sorted'.
         if constexpr(ROW) {
             return secondary_dimension_raw(c, first, last, work, vbuffer, ibuffer); 
@@ -120,9 +120,9 @@ public:
         }
     }
 
-    using typed_matrix<T, IDX>::sparse_row;
+    using Matrix<T, IDX>::sparse_row;
 
-    using typed_matrix<T, IDX>::sparse_column;
+    using Matrix<T, IDX>::sparse_column;
 
 private:
     size_t nrows, ncols;
@@ -199,9 +199,9 @@ private:
         return std::make_pair(iIt - indices.begin(), eIt - iIt);
     }
 
-    sparse_range<T, IDX> primary_dimension_raw(size_t i, size_t first, size_t last, size_t otherdim, T* out_values, IDX* out_indices) const {
+    SparseRange<T, IDX> primary_dimension_raw(size_t i, size_t first, size_t last, size_t otherdim, T* out_values, IDX* out_indices) const {
         auto obtained = primary_dimension(i, first, last, otherdim);
-        sparse_range<T, IDX> output(obtained.second);
+        SparseRange<T, IDX> output(obtained.second);
 
         if constexpr(has_data<T, U>::value) {
             output.value = values.data() + obtained.first;
@@ -236,20 +236,20 @@ private:
 public:
     /**
      * @return If `row == ROW`, a null pointer as no workspace is required for extraction along the preferred dimension.
-     * Otherwise, a shared pointer to a `workspace` object is returned.
+     * Otherwise, a shared pointer to a `Workspace` object is returned.
      *
      * @param row Should a workspace be created for row-wise extraction?
      */
-    std::shared_ptr<workspace> new_workspace (bool row) const {
+    std::shared_ptr<Workspace> new_workspace (bool row) const {
         if (row == ROW) {
             return nullptr;
         } else {
-            return std::shared_ptr<workspace>(new compressed_sparse_workspace(max_secondary_index(), indices, indptrs));
+            return std::shared_ptr<Workspace>(new CompressedSparseWorkspace(max_secondary_index(), indices, indptrs));
         }
     }
 
-    struct compressed_sparse_workspace : public workspace {
-        compressed_sparse_workspace(size_t max_index, const V& idx, const W& idp) : 
+    struct CompressedSparseWorkspace : public Workspace {
+        CompressedSparseWorkspace(size_t max_index, const V& idx, const W& idp) : 
             previous_request(idp.size() - 1),
             current_indptrs(idp.begin(), idp.begin() + idp.size() - 1), // all but the last.
             current_indices(idp.size() - 1)
@@ -283,7 +283,7 @@ private:
     }
 
     template<class STORE>
-    void secondary_dimension(IDX i, size_t first, size_t last, workspace* work, STORE& output) const {
+    void secondary_dimension(IDX i, size_t first, size_t last, Workspace* work, STORE& output) const {
         if (work == nullptr) {
             for (size_t c = first; c < last; ++c) { 
                 auto start = indices.begin() + indptrs[c];
@@ -295,7 +295,7 @@ private:
                 }
             }
         } else {
-            compressed_sparse_workspace& worker = *(dynamic_cast<compressed_sparse_workspace*>(work));
+            CompressedSparseWorkspace& worker = *(dynamic_cast<CompressedSparseWorkspace*>(work));
             auto max_index = max_secondary_index();
 
             for (size_t current = first; current < last; ++current) {
@@ -349,12 +349,12 @@ private:
         }
     };
 
-    sparse_range<T, IDX> secondary_dimension_raw(IDX i, size_t first, size_t last, workspace* work, T* out_values, IDX* out_indices) const {
+    SparseRange<T, IDX> secondary_dimension_raw(IDX i, size_t first, size_t last, Workspace* work, T* out_values, IDX* out_indices) const {
         raw_store store;
         store.out_values = out_values;
         store.out_indices = out_indices;
         secondary_dimension(i, first, last, work, store);
-        return sparse_range<T, IDX>(store.n, out_values, out_indices);
+        return SparseRange<T, IDX>(store.n, out_values, out_indices);
     }
 
     struct expanded_store {
@@ -366,7 +366,7 @@ private:
         }
     };
 
-    void secondary_dimension_expanded(IDX i, size_t first, size_t last, workspace* work, T* out_values, T empty) const {
+    void secondary_dimension_expanded(IDX i, size_t first, size_t last, Workspace* work, T* out_values, T empty) const {
         std::fill(out_values, out_values + (last - first), empty);
         expanded_store store;
         store.out_values = out_values;

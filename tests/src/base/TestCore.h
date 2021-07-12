@@ -16,7 +16,7 @@ private:
         return;
     }
 
-    static void copy(const tatami::sparse_range<double, int>& range, std::vector<double>& output, size_t shift = 0) {
+    static void copy(const tatami::SparseRange<double, int>& range, std::vector<double>& output, size_t shift = 0) {
         std::fill(output.begin(), output.end(), 0);
         for (size_t i = 0; i < range.number; ++i) {
             if (i) {
@@ -53,7 +53,7 @@ protected:
     }
 
     template<bool ROW, class M>
-    std::vector<double> extract_dense(const M* ptr, size_t i, tatami::workspace* work) {
+    std::vector<double> extract_dense(const M* ptr, size_t i, tatami::Workspace* work) {
         std::vector<double> output(otherdim<ROW>(ptr));
 
         const double* out = NULL;
@@ -84,7 +84,7 @@ protected:
     }
 
     template<bool ROW, class M>
-    std::vector<double> extract_dense(const M* ptr, size_t i, size_t first, size_t last, tatami::workspace* work) {
+    std::vector<double> extract_dense(const M* ptr, size_t i, size_t first, size_t last, tatami::Workspace* work) {
         std::vector<double> output(last - first);
 
         const double* out = NULL;
@@ -105,7 +105,7 @@ protected:
         std::vector<double> vbuffer(output.size());
         std::vector<int> ibuffer(output.size());
 
-        tatami::sparse_range<double, int> out;
+        tatami::SparseRange<double, int> out;
         if constexpr(ROW) {
             out = ptr->sparse_row(i, vbuffer.data(), ibuffer.data());
         } else {
@@ -117,12 +117,12 @@ protected:
     }
 
     template<bool ROW, class M>
-    std::vector<double> extract_sparse(const M* ptr, size_t i, tatami::workspace* work) {
+    std::vector<double> extract_sparse(const M* ptr, size_t i, tatami::Workspace* work) {
         std::vector<double> output(otherdim<ROW>(ptr));
         std::vector<double> vbuffer(output.size());
         std::vector<int> ibuffer(output.size());
 
-        tatami::sparse_range<double, int> out;
+        tatami::SparseRange<double, int> out;
         if constexpr(ROW) {
             out = ptr->sparse_row(i, vbuffer.data(), ibuffer.data(), work);
         } else {
@@ -140,7 +140,7 @@ protected:
         std::vector<double> vbuffer(output.size());
         std::vector<int> ibuffer(output.size());
 
-        tatami::sparse_range<double, int> out;
+        tatami::SparseRange<double, int> out;
         if constexpr(ROW) {
             out = ptr->sparse_row(i, vbuffer.data(), ibuffer.data(), first, last);
         } else {
@@ -152,12 +152,12 @@ protected:
     }
 
     template<bool ROW, class M>
-    std::vector<double> extract_sparse(const M* ptr, size_t i, size_t first, size_t last, tatami::workspace* work) {
+    std::vector<double> extract_sparse(const M* ptr, size_t i, size_t first, size_t last, tatami::Workspace* work) {
         std::vector<double> output(last - first);
         std::vector<double> vbuffer(output.size());
         std::vector<int> ibuffer(output.size());
 
-        tatami::sparse_range<double, int> out;
+        tatami::SparseRange<double, int> out;
         if constexpr(ROW) {
             out = ptr->sparse_row(i, vbuffer.data(), ibuffer.data(), first, last, work);
         } else {

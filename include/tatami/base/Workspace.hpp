@@ -4,9 +4,9 @@
 #include <memory>
 
 /**
- * @file workspace.hpp
+ * @file Workspace.hpp
  *
- * Defines the virtual base `workspace` class.
+ * Defines the virtual base `Workspace` class.
  */
 
 namespace tatami {
@@ -16,11 +16,11 @@ namespace tatami {
  *
  * Instances of this class cannot be constructed; it is only provided as a base class for `matrix::new_workspace()` methods to return appropriate objects.
  */
-class workspace {
+class Workspace {
 public:
-    virtual ~workspace() {}
+    virtual ~Workspace() {}
 protected:
-    workspace() {}
+    Workspace() {}
 };
 
 }

@@ -19,13 +19,13 @@ namespace tatami {
  * @tparam T Type of the values in the matrix.
  * @tparam IDX Type of index values.
  *
- * @param incoming Pointer to a `tatami::typed_matrix`.
+ * @param incoming Pointer to a `tatami::Matrix`.
  * @param row Whether the output matrix should be row-major.
  *
  * @return A pointer to a new `tatami::DenseMatrix` with the same dimensions and type as the matrix referenced by `incoming`.
  */
 template <typename T, typename IDX>
-inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_dense(const typed_matrix<T, IDX>* incoming, bool row) {
+inline std::shared_ptr<Matrix<T, IDX> > convert_to_dense(const Matrix<T, IDX>* incoming, bool row) {
     size_t NR = incoming->nrow();
     size_t NC = incoming->ncol();
     std::vector<T> output(NR * NC);
@@ -39,7 +39,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_dense(const typed_matri
                 std::copy(ptr, ptr + NC, optr);
             }
         }
-        return std::shared_ptr<typed_matrix<T, IDX> >(new DenseRowMatrix<T, IDX>(NR, NC, std::move(output)));
+        return std::shared_ptr<Matrix<T, IDX> >(new DenseRowMatrix<T, IDX>(NR, NC, std::move(output)));
 
     } else {
         auto wrk = incoming->new_workspace(false);
@@ -49,7 +49,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_dense(const typed_matri
                 std::copy(ptr, ptr + NR, optr);
             }
         }
-        return std::shared_ptr<typed_matrix<T, IDX> >(new DenseColumnMatrix<T, IDX>(NR, NC, std::move(output)));
+        return std::shared_ptr<Matrix<T, IDX> >(new DenseColumnMatrix<T, IDX>(NR, NC, std::move(output)));
     }
 }
 
@@ -59,12 +59,12 @@ inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_dense(const typed_matri
  * @tparam T Type of the values in the matrix.
  * @tparam IDX Type of index values.
  *
- * @param incoming Pointer to a `tatami::typed_matrix`.
+ * @param incoming Pointer to a `tatami::Matrix`.
  *
  * @return A pointer to a new `tatami::DenseMatrix` with the same dimensions and type as the matrix referenced by `incoming`.
  */
 template <typename T, typename IDX>
-inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_dense(const typed_matrix<T, IDX>* incoming) {
+inline std::shared_ptr<Matrix<T, IDX> > convert_to_dense(const Matrix<T, IDX>* incoming) {
     return convert_to_dense(incoming, incoming->prefer_rows());
 }
 

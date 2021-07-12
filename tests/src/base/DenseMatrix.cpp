@@ -13,7 +13,6 @@ TEST(DenseMatrix, Construction) {
     tatami::DenseColumnMatrix<double> mat(10, 20, contents);
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
-    EXPECT_EQ(mat.type(), tatami::_double);
 
     // Checks run properly.
     contents.clear();

@@ -16,15 +16,15 @@ const double MULT1 = 10, MULT2 = 1.5;
 template<class PARAM>
 class BindTest: public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense, sparse, bound;
+    std::shared_ptr<tatami::NumericMatrix> dense, sparse, bound;
 protected:
     void SetUp() {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse = tatami::convert_to_sparse(dense.get(), false); // column-major.
     }
 
     void extra_assemble(const PARAM& param) {
-        std::shared_ptr<tatami::numeric_matrix> one, two;
+        std::shared_ptr<tatami::NumericMatrix> one, two;
 
         // Multiplying to make sure we're actually extracting from a different submatrix.
         if (std::get<0>(param)) {

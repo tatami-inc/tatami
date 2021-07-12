@@ -19,18 +19,17 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
     EXPECT_TRUE(mat.sparse());
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
-    EXPECT_EQ(mat.type(), tatami::_double);
 }
 
 template<class PARAM>
 class SparseTest : public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense, sparse_row, sparse_column;
-    std::shared_ptr<tatami::workspace> work_sparse_row, work_sparse_column;
+    std::shared_ptr<tatami::NumericMatrix> dense, sparse_row, sparse_column;
+    std::shared_ptr<tatami::Workspace> work_sparse_row, work_sparse_column;
 
 protected:
     void SetUp() {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse_row = tatami::convert_to_sparse(dense.get(), true);
         sparse_column = tatami::convert_to_sparse(dense.get(), false);
         return;
@@ -87,14 +86,14 @@ TEST_P(SparseFullAccessTest, ColumnAccess) {
         auto outputR = extract_dense<false>(sparse_row.get(), c);
         EXPECT_EQ(outputR, expected);
 
-        std::vector<size_t> old_offsets = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_row.get())->current_indptrs;
+        std::vector<size_t> old_offsets = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::CompressedSparseWorkspace*>(work_row.get())->current_indptrs;
 
         auto outputRW = extract_dense<false>(sparse_row.get(), c, work_row.get());
         EXPECT_EQ(outputR, expected);
 
         if (!FORWARD || c!=0) {
             // Checking that it actually has an effect on the latest indptrs.
-            std::vector<size_t> new_offsets = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::compressed_sparse_workspace*>(work_row.get())->current_indptrs;
+            std::vector<size_t> new_offsets = dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::CompressedSparseWorkspace*>(work_row.get())->current_indptrs;
             EXPECT_NE(old_offsets, new_offsets); 
         }
 

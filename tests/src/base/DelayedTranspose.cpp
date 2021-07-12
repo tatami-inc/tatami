@@ -13,10 +13,10 @@
 template<class PARAM>
 class TransposeTest: public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense, sparse, tdense, tsparse;
+    std::shared_ptr<tatami::NumericMatrix> dense, sparse, tdense, tsparse;
 protected:
     void SetUp() {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse = tatami::convert_to_sparse(dense.get(), false); // column-major.
         tdense = tatami::make_DelayedTranspose(dense);
         tsparse = tatami::make_DelayedTranspose(sparse);

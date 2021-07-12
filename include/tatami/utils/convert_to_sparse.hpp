@@ -19,7 +19,7 @@ namespace tatami {
  * @tparam T Type of the values in the matrix.
  * @tparam IDX Type of index values.
  *
- * @param incoming Pointer to a `tatami::typed_matrix`, possibly containing delayed operations.
+ * @param incoming Pointer to a `tatami::Matrix`, possibly containing delayed operations.
  * @param row Whether the output matrix should be in compressed sparse row format.
  * @param reserve The expected density of non-zero values in `incoming`.
  * A slight overestimate will avoid reallocation of the temporary vectors.
@@ -27,7 +27,7 @@ namespace tatami {
  * @return A pointer to a new `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
  */
 template <typename T, typename IDX>
-inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_sparse(const typed_matrix<T, IDX>* incoming, bool row, double reserve = 0.2) {
+inline std::shared_ptr<Matrix<T, IDX> > convert_to_sparse(const Matrix<T, IDX>* incoming, bool row, double reserve = 0.2) {
     size_t NR = incoming->nrow();
     size_t NC = incoming->ncol();
     size_t reservation = static_cast<double>(NR * NC) * reserve;
@@ -67,7 +67,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_sparse(const typed_matr
             }
         }
 
-        return std::shared_ptr<typed_matrix<T, IDX> >(new CompressedSparseRowMatrix<T, IDX>(NR, NC, std::move(output_v), std::move(output_i), std::move(indptrs)));
+        return std::shared_ptr<Matrix<T, IDX> >(new CompressedSparseRowMatrix<T, IDX>(NR, NC, std::move(output_v), std::move(output_i), std::move(indptrs)));
 
     } else {
         auto wrk = incoming->new_workspace(false);
@@ -100,7 +100,7 @@ inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_sparse(const typed_matr
             }
         }
 
-        return std::shared_ptr<typed_matrix<T, IDX> >(new CompressedSparseColumnMatrix<T, IDX>(NR, NC, std::move(output_v), std::move(output_i), std::move(indptrs)));
+        return std::shared_ptr<Matrix<T, IDX> >(new CompressedSparseColumnMatrix<T, IDX>(NR, NC, std::move(output_v), std::move(output_i), std::move(indptrs)));
     }
 }
 
@@ -110,12 +110,12 @@ inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_sparse(const typed_matr
  * @tparam T Type of the values in the matrix.
  * @tparam IDX Type of index values.
  *
- * @param incoming Pointer to a `tatami::typed_matrix`, possibly containing delayed operations.
+ * @param incoming Pointer to a `tatami::Matrix`, possibly containing delayed operations.
  *
  * @return A pointer to a new `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
  */
 template <typename T, typename IDX>
-inline std::shared_ptr<typed_matrix<T, IDX> > convert_to_sparse(const typed_matrix<T, IDX>* incoming) {
+inline std::shared_ptr<Matrix<T, IDX> > convert_to_sparse(const Matrix<T, IDX>* incoming) {
     return convert_to_sparse(incoming, incoming->prefer_rows(), incoming->sparse());
 }
 

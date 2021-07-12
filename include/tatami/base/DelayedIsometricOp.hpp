@@ -2,7 +2,7 @@
 #define TATAMI_DELAYED_ISOMETRIC_OP_H
 
 #include <memory>
-#include "typed_matrix.hpp"
+#include "Matrix.hpp"
 
 /**
  * @file DelayedIsometricOp.hpp
@@ -24,18 +24,18 @@ namespace tatami {
  * @tparam IDX Type of index value.
  */
 template<typename T, typename IDX, class OP>
-class DelayedIsometricOp : public typed_matrix<T, IDX> {
+class DelayedIsometricOp : public Matrix<T, IDX> {
 public:
     /**
      * @param p Pointer to the underlying matrix.
      * @param op Instance of the functor class.
      */
-    DelayedIsometricOp(std::shared_ptr<const typed_matrix<T, IDX> > p, OP op) : mat(p), operation(std::move(op)) {}
+    DelayedIsometricOp(std::shared_ptr<const Matrix<T, IDX> > p, OP op) : mat(p), operation(std::move(op)) {}
 
     ~DelayedIsometricOp() {}
 
 public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
+    const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         const T* raw = mat->row(r, buffer, start, end, work);
         for (size_t i = start; i < end; ++i, ++raw) {
             buffer[i - start] = operation(r, i, *raw);
@@ -43,7 +43,7 @@ public:
         return buffer;
     }
 
-    const T* column(size_t c, T* buffer, size_t start, size_t end, workspace* work=nullptr) const {
+    const T* column(size_t c, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         const T* raw = mat->column(c, buffer, start, end, work);
         for (size_t i = start; i < end; ++i, ++raw) {
             buffer[i - start] = operation(i, c, *raw);
@@ -51,18 +51,18 @@ public:
         return buffer;
     }
 
-    using typed_matrix<T, IDX>::column;
+    using Matrix<T, IDX>::column;
 
-    using typed_matrix<T, IDX>::row;
+    using Matrix<T, IDX>::row;
 
 public:
-    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
         if constexpr(OP::sparse) {
             auto raw = mat->sparse_row(r, vbuffer, ibuffer, start, end, work, sorted);
             for (size_t i = 0; i < raw.number; ++i) {
                 vbuffer[i] = operation(r, raw.index[i], raw.value[i]);
             }
-            return sparse_range<T, IDX>(raw.number, vbuffer, raw.index);
+            return SparseRange<T, IDX>(raw.number, vbuffer, raw.index);
         } else {
             auto ptr = mat->row(r, vbuffer, start, end, work);
             auto original_values = vbuffer;
@@ -71,17 +71,17 @@ public:
                 (*vbuffer) = operation(r, i, *ptr);
                 (*ibuffer) = i;
             }
-            return sparse_range<T, IDX>(end - start, original_values, original_indices); 
+            return SparseRange<T, IDX>(end - start, original_values, original_indices); 
         }
     }
 
-    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
         if constexpr(OP::sparse) {
             auto raw = mat->sparse_column(c, vbuffer, ibuffer, start, end, work, sorted);
             for (size_t i = 0; i < raw.number; ++i) {
                 vbuffer[i] = operation(raw.index[i], c, raw.value[i]);
             }
-            return sparse_range<T, IDX>(raw.number, vbuffer, raw.index);
+            return SparseRange<T, IDX>(raw.number, vbuffer, raw.index);
         } else {
             auto ptr = mat->column(c, vbuffer, start, end, work);
             auto original_values = vbuffer;
@@ -90,13 +90,13 @@ public:
                 (*vbuffer) = operation(i, c, *ptr);
                 (*ibuffer) = i;
             }
-            return sparse_range<T, IDX>(end - start, original_values, original_indices); 
+            return SparseRange<T, IDX>(end - start, original_values, original_indices); 
         }
     }
 
-    using typed_matrix<T, IDX>::sparse_column;
+    using Matrix<T, IDX>::sparse_column;
 
-    using typed_matrix<T, IDX>::sparse_row;
+    using Matrix<T, IDX>::sparse_row;
 
 public:
     size_t nrow() const {
@@ -108,9 +108,9 @@ public:
     }
 
     /**
-     * @return A null pointer or a shared pointer to a `workspace` object, depending on the underlying (pre-operation) matrix.
+     * @return A null pointer or a shared pointer to a `Workspace` object, depending on the underlying (pre-operation) matrix.
      */
-    std::shared_ptr<workspace> new_workspace(bool row) const {
+    std::shared_ptr<Workspace> new_workspace(bool row) const {
         return mat->new_workspace(row);
     }
 
@@ -128,7 +128,7 @@ public:
     bool prefer_rows() const { return mat->prefer_rows(); }
 
 private:
-    std::shared_ptr<const typed_matrix<T, IDX> > mat;
+    std::shared_ptr<const Matrix<T, IDX> > mat;
     OP operation;
     static_assert(std::is_same<T, decltype(operation(0, 0, 0))>::value);
 };
@@ -136,10 +136,10 @@ private:
 /**
  * A `make_*` helper function to enable partial template deduction of supplied types.
  *
- * @tparam MAT A specialized `typed_matrix`, to be automatically deducted.
+ * @tparam MAT A specialized `Matrix`, to be automatically deducted.
  * @tparam OP Helper class defining the operation.
  *
- * @param p Pointer to a `typed_matrix`.
+ * @param p Pointer to a `Matrix`.
  * @param op Instance of the operation helper class.
  */
 template<class MAT, class OP>

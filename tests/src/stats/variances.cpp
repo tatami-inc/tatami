@@ -19,7 +19,7 @@ void compare_double_vectors (const L& left, const R& right) {
 }
 
 TEST(ComputingDimVariances, RowVariances) {
-    auto dense_row = std::unique_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
     auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
     auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
     auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
@@ -32,7 +32,7 @@ TEST(ComputingDimVariances, RowVariances) {
 }
 
 TEST(ComputingDimVariances, ColumnVariances) {
-    auto dense_row = std::unique_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
     auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
     auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
     auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
@@ -47,7 +47,7 @@ TEST(ComputingDimVariances, ColumnVariances) {
 TEST(ComputingDimVariances, RowVariancesNaN) {
     auto copy = sparse_matrix;
     copy.resize(0);
-    auto dense = std::unique_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, 0, copy));
+    auto dense = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, 0, copy));
 
     auto cref = tatami::column_variances(dense.get());
     EXPECT_EQ(cref.size(), 0);

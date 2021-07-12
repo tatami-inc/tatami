@@ -1,12 +1,11 @@
-#ifndef TATAMI_TYPED_MATRIX_H
-#define TATAMI_TYPED_MATRIX_H
+#ifndef TATAMI_MATRIX_H
+#define TATAMI_MATRIX_H
 
-#include "matrix.hpp"
-#include "sparse_range.hpp"
-#include "workspace.hpp"
+#include "SparseRange.hpp"
+#include "Workspace.hpp"
 
 /**
- * @file typed_matrix.hpp
+ * @file Matrix.hpp
  *
  * Virtual class for a matrix with a defined type.
  */
@@ -20,10 +19,69 @@ namespace tatami {
  * @tparam IDX Type of the row/column indices.
  */
 template <typename T, typename IDX = int>
-class typed_matrix : public matrix {
+class Matrix {
 public:
-    ~typed_matrix() {}
+    ~Matrix() {}
 
+    /** 
+     * Type of the value to be returned by getters.
+     */
+    typedef T value;
+
+    /** 
+     * Type of the index to be returned by the sparse getters.
+     */
+    typedef IDX index;
+public:
+    /**
+     * @return Number of rows.
+     */
+    virtual size_t nrow() const = 0;
+
+    /**
+     * @return Number of columns.
+     */
+    virtual size_t ncol() const = 0;
+
+    /**
+     * @param row Should a workspace for row extraction be returned?
+     *
+     * @return A shared pointer to a `Workspace` for row or column extraction, or a null pointer if no workspace is required.
+     * Defaults to returning a null pointer if no specialized method is provided in derived classes.
+     */
+    virtual std::shared_ptr<Workspace> new_workspace(bool row) const { return nullptr; }
+
+    /**
+     * @return Is this matrix sparse?
+     * Defaults to `false` if no specialized method is provided in derived classes.
+     */
+    virtual bool sparse() const { return false; }
+
+    /**
+     * @return The preferred dimension for extracting values.
+     * If `true`, row-wise extraction is preferred; if `false`, column-wise extraction is preferred.
+     * Defaults to `false` if no specialized method is provided in derived classes.
+     */
+    virtual bool prefer_rows() const { return false; }
+
+    /**
+     * @return A `pair` containing the number of matrix elements that prefer row-level access (`first`) or column-level access (`second`).
+     *
+     * This method is useful for determining the return value of `prefer_rows()` in combined matrices consisting of both row- and column-preferred submatrices.
+     * In such cases, the net preference can be determined based on the combined size of the submatrices for each preference.
+     *
+     * For simpler matrices, the return value contains the total size of the matrix in one of the `double`s and zero in the other.
+     */
+    virtual std::pair<double, double> dimension_preference () const {
+        double size = static_cast<double>(nrow()) * static_cast<double>(ncol());
+        if (prefer_rows()) {
+            return std::make_pair(size, 0.0);
+        } else {
+            return std::make_pair(0.0, size);
+        }
+    }
+
+public:
     /**
      * See comments for `column()`, which are also applicable here.
      *
@@ -35,7 +93,7 @@ public:
      *
      * @return Pointer to the values of row `r`, starting from the value in the `first` column and containing `last - first` valid entries.
      */
-    virtual const T* row(size_t r, T* buffer, size_t first, size_t last, workspace* work=nullptr) const = 0;
+    virtual const T* row(size_t r, T* buffer, size_t first, size_t last, Workspace* work=nullptr) const = 0;
 
     /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
@@ -52,7 +110,7 @@ public:
      *
      * @return Pointer to the values of column `c`, starting from the value in the `first` row and containing `last - first` valid entries.
      */
-    virtual const T* column(size_t c, T* buffer, size_t first, size_t last, workspace* work=nullptr) const = 0;
+    virtual const T* column(size_t c, T* buffer, size_t first, size_t last, Workspace* work=nullptr) const = 0;
 
     /**
      * See comments for `column()`, which are also applicable here.
@@ -63,7 +121,7 @@ public:
      *
      * @return Pointer to the values of row `r`.
      */
-    const T* row(size_t r, T* buffer, workspace* work=nullptr) const {
+    const T* row(size_t r, T* buffer, Workspace* work=nullptr) const {
         return row(r, buffer, 0, this->ncol(), work);
     }
 
@@ -76,7 +134,7 @@ public:
      *
      * @return Pointer to the values of column `c`.
      */
-    const T* column(size_t c, T* buffer, workspace* work=nullptr) const {
+    const T* column(size_t c, T* buffer, Workspace* work=nullptr) const {
         return column(c, buffer, 0, this->nrow(), work);
     }
 
@@ -91,21 +149,21 @@ public:
      * @param work Pointer to a workspace.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
-     * @return A `sparse_range` object containing the number of non-zero elements in `r` from column `first` up to `last`.
+     * @return A `SparseRange` object containing the number of non-zero elements in `r` from column `first` up to `last`.
      * This also contains pointers to their column indices and values.
      */
-    virtual sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=nullptr, bool sorted=true) const {
+    virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr, bool sorted=true) const {
         const T* val = row(r, vbuffer, first, last, work);
         for (size_t i = first; i < last; ++i) {
             ibuffer[i - first] = i;
         }
-        return sparse_range(last - first, val, ibuffer); 
+        return SparseRange(last - first, val, ibuffer); 
     }
 
     /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
-     * This be checked by comparing the returned `sparse_range::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled. 
-     * The same applies for `ibuffer` and the returned `sparse_range::index` pointer.
+     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled. 
+     * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
      * Values in `vbuffer` are not guaranteed to be non-zero.
      * If zeroes are explicitly initialized in the underlying representation, they will be reported here.
@@ -124,15 +182,15 @@ public:
      * @param work Pointer to a workspace.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
-     * @return A `sparse_range` object containing the number of non-zero elements in `c` from column `first` up to `last`.
+     * @return A `SparseRange` object containing the number of non-zero elements in `c` from column `first` up to `last`.
      * This also contains pointers to their row indices and values.
      */
-    virtual sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, workspace* work=nullptr, bool sorted=true) const {
+    virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr, bool sorted=true) const {
         const T* val = column(c, vbuffer, first, last, work);
         for (size_t i = first; i < last; ++i) {
             ibuffer[i - first] = i;
         }
-        return sparse_range(last - first, val, ibuffer); 
+        return SparseRange(last - first, val, ibuffer); 
     }
 
     /**
@@ -144,10 +202,10 @@ public:
      * @param work Pointer to a workspace.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
-     * @return A `sparse_range` object containing the number of non-zero elements in `r`.
+     * @return A `SparseRange` object containing the number of non-zero elements in `r`.
      * This also contains pointers to their column indices and values.
      */
-    sparse_range<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, Workspace* work=nullptr, bool sorted=true) const {
         return sparse_row(r, vbuffer, ibuffer, 0, this->ncol(), work, sorted);
     }
 
@@ -160,34 +218,18 @@ public:
      * @param work Pointer to a workspace.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
-     * @return A `sparse_range` object containing the number of non-zero elements in `c`.
+     * @return A `SparseRange` object containing the number of non-zero elements in `c`.
      * This also contains pointers to their row indices and values.
      */
-    sparse_range<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, workspace* work=nullptr, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, Workspace* work=nullptr, bool sorted=true) const {
         return sparse_column(c, vbuffer, ibuffer, 0, this->nrow(), work, sorted);
     }
-
-    /**
-     * @return A `content_type` specifying the type of the values in the matrix.
-     * This is derived from `T` by default, see `determine_content_type()`.
-     */
-    content_type type() const { return determine_content_type<T>(); }
-
-    /** 
-     * Type of the value to be returned by getters.
-     */
-    typedef T value;
-
-    /** 
-     * Type of the index to be returned by the sparse getters.
-     */
-    typedef IDX index;
 };
 
 /**
  * A convenient shorthand for the most common use case of double-precision matrices.
  */
-using numeric_matrix = typed_matrix<double, int>;
+using NumericMatrix = Matrix<double, int>;
 
 }
 

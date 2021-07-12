@@ -1,7 +1,7 @@
 #ifndef TATAMI_STATS_APPLY_H
 #define TATAMI_STATS_APPLY_H
 
-#include "../base/typed_matrix.hpp"
+#include "../base/Matrix.hpp"
 
 namespace tatami {
 
@@ -16,13 +16,13 @@ namespace tatami {
  * If `runnable = true`, there should be `running()` method to compute a running statistic;
  * and if `sparse = true`, there should be `*_sparse()` equivalents of the other methods.
  *
- * @param p Pointer to a `tatami::typed_matrix`.
+ * @param p Pointer to a `tatami::Matrix`.
  * @param stat Instance of a statistics store.
  *
  * @return A vector of row- or column-wise statistics.
  */
 template<int MARGIN, typename T, typename IDX, class STAT>
-inline typename std::vector<double> apply(const typed_matrix<T, IDX>* p) {
+inline typename std::vector<double> apply(const Matrix<T, IDX>* p) {
     size_t NR = p->nrow(), NC = p->ncol();
 
     /* One might question why we use MARGIN in the template if we just convert

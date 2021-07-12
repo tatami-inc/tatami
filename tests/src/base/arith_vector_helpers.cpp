@@ -13,10 +13,10 @@
 template<class PARAM>
 class ArithVectorTest : public TestCore<::testing::TestWithParam<PARAM> > {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense, sparse;
+    std::shared_ptr<tatami::NumericMatrix> dense, sparse;
 protected:
     void SetUp() {
-        dense = std::shared_ptr<tatami::numeric_matrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse = tatami::convert_to_sparse(dense.get(), false);
         return;
     }
@@ -37,7 +37,7 @@ std::vector<double> create_vector(size_t n, double starter = 0, double jump = 1)
 template<class PARAM>
 class ArithVectorAdditionTest : public ArithVectorTest<PARAM> {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
     std::vector<double> vec;
 
     void extra_assemble(const PARAM& param) {
@@ -253,7 +253,7 @@ INSTANTIATE_TEST_CASE_P(
 template<class PARAM>
 class ArithVectorSubtractionTest : public ArithVectorTest<PARAM> {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
     std::vector<double> vec;
 
     void extra_assemble(const PARAM& param) {
@@ -490,7 +490,7 @@ INSTANTIATE_TEST_CASE_P(
 template<class PARAM>
 class ArithVectorMultiplicationTest : public ArithVectorTest<PARAM> {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
     std::vector<double> vec;
 
     void extra_assemble(const PARAM& param) {
@@ -706,7 +706,7 @@ INSTANTIATE_TEST_CASE_P(
 template<class PARAM>
 class ArithVectorDivisionTest : public ArithVectorTest<PARAM> {
 protected:
-    std::shared_ptr<tatami::numeric_matrix> dense_mod, sparse_mod;
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
     std::vector<double> vec;
 
     void extra_assemble(const PARAM& param) {

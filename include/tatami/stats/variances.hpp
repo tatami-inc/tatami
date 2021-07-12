@@ -1,7 +1,7 @@
 #ifndef TATAMI_VARS_HPP
 #define TATAMI_VARS_HPP
 
-#include "../base/typed_matrix.hpp"
+#include "../base/Matrix.hpp"
 #include "apply.hpp"
 
 #include <vector>
@@ -12,7 +12,7 @@
 /**
  * @file variances.hpp
  *
- * Compute row and column variances from a `tatami::typed_matrix`.
+ * Compute row and column variances from a `tatami::Matrix`.
  */
 
 namespace tatami {
@@ -105,14 +105,14 @@ public:
      * @tparam T Type of the input data.
      * @tparam IDX Type of the indices.
      *
-     * @param range A `sparse_range` object specifying the number and values of all non-zero indices.
+     * @param range A `SparseRange` object specifying the number and values of all non-zero indices.
      * @param n Total length of the vector, including zero values.
      * @param vbuffer,ibuffer Unused, provided here for consistency only.
      *
      * @return The sample variance of values in the vector.
      */
     template<typename T = double, typename IDX = int>
-    static double compute(const sparse_range<T, IDX>& range, size_t n, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+    static double compute(const SparseRange<T, IDX>& range, size_t n, T* vbuffer = NULL, IDX* ibuffer = NULL) {
         return compute_with_mean(range, n, vbuffer, ibuffer).second;
     }
 
@@ -123,14 +123,14 @@ public:
      * @tparam T Type of the input data.
      * @tparam IDX Type of the indices.
      *
-     * @param range A `sparse_range` object specifying the number and values of all non-zero indices.
+     * @param range A `SparseRange` object specifying the number and values of all non-zero indices.
      * @param n Total length of the vector, including zero values.
      * @param vbuffer,ibuffer Unused, provided here for consistency only.
      *
      * @return The sample mean and variance of values in the vector.
      */
     template<typename T = double, typename IDX = int>
-    static std::pair<double, double> compute_with_mean(const sparse_range<T, IDX>& range, size_t n, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+    static std::pair<double, double> compute_with_mean(const SparseRange<T, IDX>& range, size_t n, T* vbuffer = NULL, IDX* ibuffer = NULL) {
         if (n < 1) {
             return both_NaN();
         }
@@ -243,11 +243,11 @@ public:
          * @tparam T Type of the input data.
          * @tparam IDX Type of the indices.
          *
-         * @param range A `sparse_range` object identifying the non-zero elements in the sparse vector.
+         * @param range A `SparseRange` object identifying the non-zero elements in the sparse vector.
          * @param vbuffer,ibuffer Ignored.
          */
         template<typename T, typename IDX>
-        void add(sparse_range<T, IDX> range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        void add(SparseRange<T, IDX> range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
             auto sIt = running_var.begin();
             auto mIt = running_mean.begin();
             auto nzIt = running_nnzero.begin();
@@ -312,34 +312,34 @@ public:
 }
 
 /**
- * This uses the usual algorithm for matrices where `tatami::matrix::prefer_rows()` is false, otherwise it uses Welford's algorithm.
+ * This uses the usual algorithm for matrices where `tatami::Matrix::prefer_rows()` is false, otherwise it uses Welford's algorithm.
  * As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.
  *
  * @tparam T Type of the matrix value, should be numeric.
  * @tparam IDX Type of the row/column indices.
  *
- * @param p Pointer to a `tatami::typed_matrix`.
+ * @param p Pointer to a `tatami::Matrix`.
  *
  * @return A vector of length equal to the number of columns, containing the column variances.
  */
 template<typename T, typename IDX>
-inline std::vector<T> column_variances(const typed_matrix<T, IDX>* p) {
+inline std::vector<T> column_variances(const Matrix<T, IDX>* p) {
     return apply<1, T, IDX, stats::VarianceHelper>(p);
 }
 
 /**
- * This uses the usual algorithm for matrices where `tatami::matrix::prefer_rows()` is true, otherwise it uses Welford's algorithm.
+ * This uses the usual algorithm for matrices where `tatami::Matrix::prefer_rows()` is true, otherwise it uses Welford's algorithm.
  * As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.
  *
  * @tparam T Type of the matrix value, should be numeric.
  * @tparam IDX Type of the row/column indices.
  *
- * @param p Pointer to a `tatami::typed_matrix`.
+ * @param p Pointer to a `tatami::Matrix`.
  *
  * @return A vector of length equal to the number of rows, containing the row variances.
  */
 template<typename T, typename IDX>
-inline std::vector<T> row_variances(const typed_matrix<T, IDX>* p) {
+inline std::vector<T> row_variances(const Matrix<T, IDX>* p) {
     return apply<0, T, IDX, stats::VarianceHelper>(p);
 }
 
