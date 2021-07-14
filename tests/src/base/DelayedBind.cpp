@@ -107,6 +107,7 @@ TEST_P(BindFullAccessTest, RowAccess) {
         auto preference = bound->dimension_preference();
         EXPECT_EQ(preference.first, preference.second);
     }
+    EXPECT_EQ(bound->sparse(), std::get<0>(param) && std::get<1>(param));
 
     auto work_bound = bound->new_workspace(true);
 
@@ -237,8 +238,8 @@ INSTANTIATE_TEST_CASE_P(
     DelayedBind,
     BindSubsetAccessTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // use dense or sparse for the first matrix.
-        ::testing::Values(true, false), // use dense or sparse for the second matrix.
+        ::testing::Values(true, false), // use sparse or dense for the first matrix.
+        ::testing::Values(true, false), // use sparse or dense for the second matrix.
         ::testing::Values(true, false), // bind by row or by column
         ::testing::Values(1, 3), // jump, to test the workspace's memory.
         ::testing::Values(

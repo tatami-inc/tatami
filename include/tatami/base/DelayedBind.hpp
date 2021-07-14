@@ -274,11 +274,11 @@ public:
      * If any individual matrix is not sparse, the combination is also considered to be non-sparse.
      */
     bool sparse() const {
-        bool any_not_sparse = false;
+        bool is_sparse = true;
         for (const auto& x : mats) {
-            any_not_sparse |= !x->sparse();
+            is_sparse &= x->sparse();
         }
-        return any_not_sparse;
+        return is_sparse;
     }
 
     /**
