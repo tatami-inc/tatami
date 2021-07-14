@@ -35,7 +35,20 @@ target_link_libraries(
     tatami
 )
 
+add_executable(
+    exttest 
+    src/ext/MatrixMarket.cpp
+)
+
+target_link_libraries(
+    exttest
+    gtest_main
+    tatami
+)
+
 include(GoogleTest)
 gtest_discover_tests(libtest)
 
-add_test(NAME tatami_tests COMMAND libtest)
+gtest_discover_tests(exttest)
+
+add_test(NAME tatami_tests COMMAND libtest exttest)
