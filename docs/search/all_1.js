@@ -5,7 +5,7 @@ var searchData=
   ['column_5fmedians_6',['column_medians',['../medians_8hpp.html#a000a998d078a56d97ea63b022fbb186b',1,'tatami']]],
   ['column_5fsums_7',['column_sums',['../sums_8hpp.html#a689e4606b730f6f8d9691a9f5eb1ff00',1,'tatami']]],
   ['column_5fvariances_8',['column_variances',['../variances_8hpp.html#a42269a5dc89e1ab623344a316f99f8fb',1,'tatami']]],
-  ['compress_5fsparse_5ftriplets_9',['compress_sparse_triplets',['../compress__sparse__triplets_8hpp.html#a1dd727510bf01fe4e8c90e49f73470cb',1,'tatami']]],
+  ['compress_5fsparse_5ftriplets_9',['compress_sparse_triplets',['../compress__sparse__triplets_8hpp.html#ae7e407170902e1fcef2c09f47289d134',1,'tatami']]],
   ['compress_5fsparse_5ftriplets_2ehpp_10',['compress_sparse_triplets.hpp',['../compress__sparse__triplets_8hpp.html',1,'']]],
   ['compressedsparsecolumnmatrix_11',['CompressedSparseColumnMatrix',['../CompressedSparseMatrix_8hpp.html#a3d1338ade036e38b6d363a6c8a704a2b',1,'tatami']]],
   ['compressedsparsematrix_12',['CompressedSparseMatrix',['../classtatami_1_1CompressedSparseMatrix.html#a3d72d9e6a0cdc46315fd78f7f7edb78e',1,'tatami::CompressedSparseMatrix::CompressedSparseMatrix()'],['../classtatami_1_1CompressedSparseMatrix.html',1,'tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;']]],

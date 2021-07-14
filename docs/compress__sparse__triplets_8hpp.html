@@ -101,20 +101,20 @@ This graph shows which files directly or indirectly include this file:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a1dd727510bf01fe4e8c90e49f73470cb"><td class="memTemplParams" colspan="2">template&lt;bool ROW, class U , class V &gt; </td></tr>
-<tr class="memitem:a1dd727510bf01fe4e8c90e49f73470cb"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="compress__sparse__triplets_8hpp.html#a1dd727510bf01fe4e8c90e49f73470cb">tatami::compress_sparse_triplets</a> (size_t nr, size_t nc, U &amp;values, V &amp;rows, V &amp;cols)</td></tr>
-<tr class="separator:a1dd727510bf01fe4e8c90e49f73470cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7e407170902e1fcef2c09f47289d134"><td class="memTemplParams" colspan="2">template&lt;bool ROW, class U , class V , class W &gt; </td></tr>
+<tr class="memitem:ae7e407170902e1fcef2c09f47289d134"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="compress__sparse__triplets_8hpp.html#ae7e407170902e1fcef2c09f47289d134">tatami::compress_sparse_triplets</a> (size_t nr, size_t nc, U &amp;values, V &amp;rows, W &amp;cols)</td></tr>
+<tr class="separator:ae7e407170902e1fcef2c09f47289d134"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Convert sparse data in triplet format to a compressed sparse row/column format. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a1dd727510bf01fe4e8c90e49f73470cb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1dd727510bf01fe4e8c90e49f73470cb">&#9670;&nbsp;</a></span>compress_sparse_triplets()</h2>
+<a id="ae7e407170902e1fcef2c09f47289d134"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7e407170902e1fcef2c09f47289d134">&#9670;&nbsp;</a></span>compress_sparse_triplets()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;bool ROW, class U , class V &gt; </div>
+template&lt;bool ROW, class U , class V , class W &gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">std::vector&lt;size_t&gt; tatami::compress_sparse_triplets </td>
@@ -143,7 +143,7 @@ template&lt;bool ROW, class U , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">V &amp;&#160;</td>
+          <td class="paramtype">W &amp;&#160;</td>
           <td class="paramname"><em>cols</em>&#160;</td>
         </tr>
         <tr>
@@ -157,7 +157,8 @@ template&lt;bool ROW, class U , class V &gt; </div>
   <table class="tparams">
     <tr><td class="paramname">ROW</td><td>Whether to create a compressed sparse row format. If <code>false</code>, the compressed sparse column format is used instead. </td></tr>
     <tr><td class="paramname">U</td><td>Random-access container for the values. </td></tr>
-    <tr><td class="paramname">V</td><td>Random access container for the indices.</td></tr>
+    <tr><td class="paramname">V</td><td>Random access container for the row indices. </td></tr>
+    <tr><td class="paramname">W</td><td>Random access container for the column indices.</td></tr>
   </table>
   </dd>
 </dl>

@@ -309,11 +309,11 @@ $(function() {
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    }</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160; </div>
 <div class="line"><a name="l00276"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedBind.html#a9bc50acc8abb34153ffb8e6aecca44de">  276</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classtatami_1_1DelayedBind.html#a9bc50acc8abb34153ffb8e6aecca44de">sparse</a>()<span class="keyword"> const </span>{</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        <span class="keywordtype">bool</span> any_not_sparse = <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;        <span class="keywordtype">bool</span> is_sparse = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; x : mats) {</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;            any_not_sparse |= !x-&gt;sparse();</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;            is_sparse &amp;= x-&gt;sparse();</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;        }</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <span class="keywordflow">return</span> any_not_sparse;</div>
+<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <span class="keywordflow">return</span> is_sparse;</div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    }</div>
 <div class="line"><a name="l00283"></a><span class="lineno">  283</span>&#160; </div>
 <div class="line"><a name="l00290"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedBind.html#a1bccf518ae9d0347e3d35dea911f16a2">  290</a></span>&#160;    <span class="keywordtype">bool</span> <a class="code" href="classtatami_1_1DelayedBind.html#a1bccf518ae9d0347e3d35dea911f16a2">prefer_rows</a>()<span class="keyword"> const </span>{</div>
