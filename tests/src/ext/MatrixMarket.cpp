@@ -4,7 +4,9 @@
 
 #include <limits>
 #include <random>
-#include <cstdio>
+#include <fstream>
+#include <string>
+#include <vector>
 
 template<class U, class V, class W>
 auto write_MatrixMarket(size_t nr, size_t nc, const U& vals, const V& rows, const W& cols) {
@@ -49,14 +51,20 @@ TEST_P(MatrixMarketSimpleTest, LayeredLoaderSimple) {
 
     // Loading it into an assignment object.
     std::ifstream in(filepath);
-    auto ass = tatami::MatrixMarket::assign_lines(in);
+    tatami::MatrixMarket::LineAssignments ass;
+    std::string line;
+    while (std::getline(in, line) && ass.preamble(line.c_str())) {}
+    while (std::getline(in, line)) {
+        ass.add(line.c_str());
+    }
+    ass.finish();
     in.close();
 
-    EXPECT_EQ(std::accumulate(ass.nlines.begin(), ass.nlines.end(), 0), rows.size());
-    EXPECT_EQ(ass.nlines.size(), 3);
+    EXPECT_EQ(std::accumulate(ass.lines_per_category.begin(), ass.lines_per_category.end(), 0), rows.size());
+    EXPECT_EQ(ass.lines_per_category.size(), 3);
 
-    EXPECT_EQ(std::accumulate(ass.nfeatures.begin(), ass.nfeatures.end(), 0), NR);
-    EXPECT_EQ(ass.nfeatures.size(), 3);
+    EXPECT_EQ(std::accumulate(ass.rows_per_category.begin(), ass.rows_per_category.end(), 0), NR);
+    EXPECT_EQ(ass.rows_per_category.size(), 3);
 
     auto copy = ass.permutation;
     EXPECT_EQ(copy.size(), NR);
