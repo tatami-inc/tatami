@@ -148,11 +148,9 @@ std::shared_ptr<Matrix<T, IDX> > create_layered_sparse_matrix_internal(STREAM& i
         collated.push_back(create_sparse_matrix<T, IDX>(assign.nfeatures[0], num_cols, dat8, row8, col8));
     }
     if (assign.nfeatures[1]) {
-        std::cout << assign.nfeatures[1] << std::endl;
         collated.push_back(create_sparse_matrix<T, IDX>(assign.nfeatures[1], num_cols, dat16, row16, col16));
     }
     if (assign.nfeatures[2]) {
-        std::cout << assign.nfeatures[2] << std::endl;
         collated.push_back(create_sparse_matrix<T, IDX>(assign.nfeatures[2], num_cols, dat32, row32, col32));
     }
 
