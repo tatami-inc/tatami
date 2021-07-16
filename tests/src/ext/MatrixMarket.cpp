@@ -53,9 +53,8 @@ TEST_P(MatrixMarketSimpleTest, LayeredLoaderSimple) {
     std::ifstream in(filepath);
     tatami::MatrixMarket::LineAssignments ass;
     std::string line;
-    while (std::getline(in, line) && ass.preamble(line.c_str())) {}
     while (std::getline(in, line)) {
-        ass.add(line.c_str());
+        ass.add(line.c_str(), line.size());
     }
     ass.finish();
     in.close();

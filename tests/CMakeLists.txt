@@ -46,6 +46,10 @@ target_link_libraries(
     tatami
 )
 
+find_package(ZLIB)
+target_link_libraries(exttest ZLIB::ZLIB)
+target_compile_definitions(exttest PRIVATE TATAMI_USE_ZLIB=1)
+
 include(GoogleTest)
 gtest_discover_tests(libtest)
 
