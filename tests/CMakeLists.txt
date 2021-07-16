@@ -38,6 +38,7 @@ target_link_libraries(
 add_executable(
     exttest 
     src/ext/MatrixMarket.cpp
+    src/ext/MatrixMarketGzip.cpp
 )
 
 target_link_libraries(

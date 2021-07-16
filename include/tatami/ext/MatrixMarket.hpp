@@ -5,18 +5,16 @@
 #include <cstdint>
 #include <algorithm>
 #include <vector>
-#include <cstdlib>
 #include <fstream>
+#include <cctype>
 
 #include "../base/CompressedSparseMatrix.hpp"
 #include "../base/DelayedBind.hpp"
 #include "../utils/compress_sparse_triplets.hpp"
 
 #ifdef TATAMI_USE_ZLIB
-
 #include "zlib.h"
 #include <array>
-
 #endif
 
 namespace tatami {
@@ -25,30 +23,53 @@ namespace MatrixMarket {
 
 template<typename T>
 size_t process_triplet_line(const char* buffer, T& arg1, T& arg2, T& arg3, size_t n) {
-    const char * original = buffer;
-    char *next;
-    arg1 = std::strtol(buffer, &next, 10);
-    buffer = next;
+    auto read = [=](size_t& i, T& arg) -> bool {
+        // These had better be positive integers, 
+        // otherwise this will throw a bunch of errors.
+        while (i < n && std::isspace(buffer[i])) { 
+            ++i;
+        }
+        if (i == n) {
+            return false;
+        }
 
-    arg2 = std::strtol(buffer, &next, 10);
-    buffer = next;
+        auto prev = i;
+        arg = 0;
+        while (i < n && std::isdigit(buffer[i])) {
+            arg *= 10;
+            arg += (buffer[i] - '0');
+            ++i;
+        }
+        if (i == n || i == prev) {
+            return false;
+        }
 
-    arg3 = std::strtol(buffer, &next, 10);
-    buffer = next;
+        if (i < n && !std::isspace(buffer[i]) && buffer[i] != '\0') {
+            throw std::runtime_error("values should be non-negative integers");
+        }
+        return true;
+    };
 
-    // TODO: check for positive integer values, do not overrun 'n'.
+    size_t i = 0;
+    if (!read(i, arg1)) {
+        return 0;
+    }
+    if (!read(i, arg2)) {
+        return 0;
+    }
+    if (!read(i, arg3)) {
+        return 0;
+    }
 
-    return buffer - original + 1;
+    return i + 1;
 }
 
 inline size_t read_to_eol(const char * buffer, size_t n) {
-    // TODO: should probably check for 'coordinate integer'.
     for (size_t i = 0; i < n; ++i) {
         if (buffer[i] == '\n' || buffer[i] == '\0') {
             return i + 1;
         }
     }
-
     return 0; // out of range
 }
 
@@ -69,9 +90,14 @@ struct LineAssignments {
         if (buffer[0] == '%') {
             // TODO: should probably check for 'coordinate integer'.
             return read_to_eol(buffer, n);
+
         } else if (!passed_preamble) {
             passed_preamble = true;
             auto read = process_triplet_line(buffer, nrows, ncols, nlines, n);
+            if (read == 0) {
+                return 0;
+            }
+
             category.resize(nrows);
             index.resize(nrows);
             permutation.resize(nrows);
@@ -80,12 +106,16 @@ struct LineAssignments {
         }
 
         // Assigning each line to a block based on its integer size.
-        constexpr long max8 = std::numeric_limits<uint8_t>::max();
-        constexpr long max16 = std::numeric_limits<uint16_t>::max();
+        constexpr int max8 = std::numeric_limits<uint8_t>::max();
+        constexpr int max16 = std::numeric_limits<uint16_t>::max();
 
-        long row, col, data;
+        int row, col, data;
         auto read = process_triplet_line(buffer, row, col, data, n);
-        
+        if (read == 0){
+            return 0;
+        }
+       
+        --row; // 1-based.
         if (data > max16) {
             category[row] = std::max(category[row], static_cast<uint8_t>(2));
         } else if (data > max8) {
@@ -169,8 +199,14 @@ public:
             return read_to_eol(buffer, n);
         }
 
-        long row, col, data;
+        int row, col, data;
         auto read = process_triplet_line(buffer, row, col, data, n);
+        if (read == 0){
+            return 0;
+        }
+
+        --row; // 1-based.
+        --col; 
 
         auto idx = assign.index[row];
         switch (assign.category[row]) {
@@ -238,9 +274,17 @@ template<typename T = double, typename IDX = int>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath) {
     auto process = [=](auto& obj) -> void {
         std::ifstream in(filepath);
+        if (!in) {
+            throw std::runtime_error("failed to open file");
+        }
         std::string line;
+        int counter = 0;
         while (std::getline(in, line)) {
-            obj.add(line.c_str(), line.size());
+            auto status = obj.add(line.c_str(), line.size() + 1); // for the null terminator
+            if (!status) {
+                throw std::runtime_error(std::string("failed to process line ") + std::to_string(counter + 1));
+            }
+            ++counter;
         }
         return;
     };
@@ -280,7 +324,8 @@ struct Unzlibber {
             strm.avail_in = 0;
             strm.next_in = Z_NULL;
 
-            int ret = inflateInit(&strm);
+            // https://stackoverflow.com/questions/1838699/how-can-i-decompress-a-gzip-stream-with-zlib
+            int ret = inflateInit2(&strm, 16+MAX_WBITS); 
             if (ret != Z_OK) {
                 throw 1;
             }
@@ -303,55 +348,64 @@ struct Unzlibber {
     template<class OBJECT>
     void operator()(const char* filepath, OBJECT& obj) {
         std::ifstream source(filepath, std::ios::binary);
-        std::array<unsigned char, 226214> input, output;
+        if (!source) {
+            throw std::runtime_error("failed to open file");
+        }
+
+        constexpr int bufsize = 16384; // 262144;
+        std::array<unsigned char, bufsize> input;
+        std::array<unsigned char, bufsize + 100> output; // give enough space for leftovers and a safety NULL at EOF, see below.
 
         ZStream zstr;
-        zstr.strm.next_in = input.data();
         size_t leftovers = 0;
         int ret = 0;
 
         /* decompress until deflate stream ends or end of file */
         do {
-            source.read((char*)input.data(), input.size());
+            source.read((char*)input.data(), bufsize);
             zstr.strm.avail_in = source.gcount();
             if (!source && zstr.strm.avail_in == 0) {
                 break;
             }
+            zstr.strm.next_in = input.data(); // this needs to be done every loop. Guess it modifies it in place.
 
             /* run inflate() on input until output buffer not full */
-            size_t current_stored = leftovers;
             do {
-                zstr.strm.avail_out = output.size() - current_stored;
-                zstr.strm.next_out = output.data() + current_stored;
-                ret = inflate(&zstr.strm, Z_NO_FLUSH);
+                zstr.strm.avail_out = bufsize;
+                zstr.strm.next_out = output.data() + leftovers;
+                ret = inflate(&(zstr.strm), Z_NO_FLUSH);
                 assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
 
                 switch (ret) {
                 case Z_NEED_DICT:
-                    ret = Z_DATA_ERROR;     /* and fall through */
+                    ret = Z_DATA_ERROR; /* and fall through */
                 case Z_DATA_ERROR:
                 case Z_MEM_ERROR:
                     throw 1;
                 }
 
-                current_stored += zstr.strm.avail_out;
-            } while (zstr.strm.avail_out == 0);
+                size_t current_stored = bufsize + leftovers - zstr.strm.avail_out;
 
-            // Adding whole lines.
-            size_t last_processed = 0, total_processed = 0;
-            do {
-                last_processed = obj.add(output.data(), current_stored);
-                total_processed += last_processed;
-            } while (last_processed);
+                // Making sure we have a terminating newline.
+                if (ret == Z_STREAM_END && current_stored && output[current_stored-1]!='\n') {
+                    output[current_stored] = '\n';
+                    ++current_stored;
+                }
 
-            // Rotating what's left to the front for the next cycle.
-            if (total_processed) {
+                // Adding whole lines.
+                size_t last_processed = 0, total_processed = 0;
+                do {
+                    last_processed = obj.add((char*)output.data() + total_processed, current_stored - total_processed);
+                    total_processed += last_processed;
+                } while (last_processed);
+
+                // Rotating what's left to the front for the next cycle.
                 leftovers = current_stored - total_processed;
                 for (size_t i = 0; i < leftovers; ++i) {
                     output[i] = output[total_processed + i];
                 }
-            }
 
+            } while (zstr.strm.avail_out == 0);
         } while (ret != Z_STREAM_END); /* done when inflate() says it's done */
 
         /* clean up and return */
