@@ -38,6 +38,7 @@ target_link_libraries(
 add_executable(
     exttest 
     src/ext/MatrixMarket.cpp
+    src/ext/MatrixMarketGzip.cpp
 )
 
 target_link_libraries(
@@ -45,6 +46,10 @@ target_link_libraries(
     gtest_main
     tatami
 )
+
+find_package(ZLIB)
+target_link_libraries(exttest ZLIB::ZLIB)
+target_compile_definitions(exttest PRIVATE TATAMI_USE_ZLIB=1)
 
 include(GoogleTest)
 gtest_discover_tests(libtest)

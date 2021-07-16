@@ -1,28 +1,12 @@
 #include <gtest/gtest.h>
 
 #include "tatami/ext/MatrixMarket.hpp"
+#include "write_matrix_market.h"
 
 #include <limits>
-#include <random>
 #include <fstream>
 #include <string>
 #include <vector>
-
-template<class U, class V, class W>
-auto write_MatrixMarket(size_t nr, size_t nc, const U& vals, const V& rows, const W& cols) {
-    std::string path("testing-WHEE.txt"); 
-    std::ofstream out(path);
-
-    out << "%%MatrixMarket matrix coordinate integer general\n";
-    out << nr << " " << nc << " " << vals.size();
-
-    for (size_t i = 0; i < vals.size(); ++i) {
-        out << "\n" << rows[i] << " " << cols[i] << " " << vals[i];
-    }
-    out << std::endl;
-    out.close();
-    return path;
-}
 
 template<class PARAM>
 class MatrixMarketTest : public ::testing::TestWithParam<PARAM> {
@@ -37,7 +21,10 @@ protected:
         rows = std::get<2>(param);
         cols = std::get<3>(param);
         vals = std::get<4>(param);
-        return write_MatrixMarket(NR, NC, vals, rows, cols);
+
+        std::string path = "testing-MM.mtx";
+        write_matrix_market(path, NR, NC, vals, rows, cols);
+        return path;
     }
 };
 
@@ -53,9 +40,8 @@ TEST_P(MatrixMarketSimpleTest, LayeredLoaderSimple) {
     std::ifstream in(filepath);
     tatami::MatrixMarket::LineAssignments ass;
     std::string line;
-    while (std::getline(in, line) && ass.preamble(line.c_str())) {}
     while (std::getline(in, line)) {
-        ass.add(line.c_str());
+        ass.add(line.c_str(), line.size() + 1); // for the null terminator
     }
     ass.finish();
     in.close();
@@ -159,5 +145,3 @@ INSTANTIATE_TEST_CASE_P(
         )
     )
 );
-
-
