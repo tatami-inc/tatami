@@ -315,110 +315,75 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath) {
 // Stolen from 'inf()' at http://www.zlib.net/zpipe.c,
 // with some shuffling of code to make it a bit more C++-like.
 struct Unzlibber {
-    struct ZStream {
-        ZStream() {
-            /* allocate inflate state */
-            strm.zalloc = Z_NULL;
-            strm.zfree = Z_NULL;
-            strm.opaque = Z_NULL;
-            strm.avail_in = 0;
-            strm.next_in = Z_NULL;
+    Unzlibber (const int size = 16348) : bufsize(size), buffer(bufsize) {}
+    const int bufsize;
+    std::vector<unsigned char> buffer;
 
-            // https://stackoverflow.com/questions/1838699/how-can-i-decompress-a-gzip-stream-with-zlib
-            int ret = inflateInit2(&strm, 16+MAX_WBITS); 
-            if (ret != Z_OK) {
-                throw 1;
+    struct GZFile {
+        GZFile(const char* path) : handle(gzopen(path, "rb")) {
+            if (!handle) {
+                throw std::runtime_error("failed to open file");
             }
         }
 
-        ~ZStream() {
-            (void)inflateEnd(&strm);
-            return;
+        ~GZFile() {
+            gzclose(handle);
         }
 
         // Delete the remaining constructors.
-        ZStream(const ZStream&) = delete;
-        ZStream(ZStream&&) = delete;
-        ZStream& operator=(const ZStream&) = delete;
-        ZStream& operator=(ZStream&&) = delete;
+        GZFile(const GZFile&) = delete;
+        GZFile(GZFile&&) = delete;
+        GZFile& operator=(const GZFile&) = delete;
+        GZFile& operator=(GZFile&&) = delete;
 
-        z_stream strm;
+        gzFile handle;
     };
 
     template<class OBJECT>
     void operator()(const char* filepath, OBJECT& obj) {
-        std::ifstream source(filepath, std::ios::binary);
-        if (!source) {
-            throw std::runtime_error("failed to open file");
-        }
+        GZFile gz(filepath);
 
-        constexpr int bufsize = 16384; // 262144;
-        std::array<unsigned char, bufsize> input;
-        std::array<unsigned char, bufsize + 100> output; // give enough space for leftovers and a safety NULL at EOF, see below.
-
-        ZStream zstr;
+        size_t read = 1; // any positive value, to get the ball rolling.
         size_t leftovers = 0;
-        int ret = 0;
 
-        /* decompress until deflate stream ends or end of file */
-        do {
-            source.read((char*)input.data(), bufsize);
-            zstr.strm.avail_in = source.gcount();
-            if (!source && zstr.strm.avail_in == 0) {
-                break;
+        while (read) {
+            read = gzread(gz.handle, buffer.data() + leftovers, bufsize - leftovers);
+            size_t current_stored = read + leftovers;
+
+            if (read == 0) {
+                // Making sure we have a terminating newline on the last line.
+                if (gzeof(gz.handle)) { 
+                    if (current_stored && buffer[current_stored-1]!='\n') {
+                        buffer[current_stored] = '\n';
+                        ++current_stored;
+                    }
+                } else {
+                    int dummy;
+                    throw std::runtime_error(gzerror(gz.handle, &dummy));
+                }
             }
-            zstr.strm.next_in = input.data(); // this needs to be done every loop. Guess it modifies it in place.
 
-            /* run inflate() on input until output buffer not full */
+            // Adding whole lines.
+            size_t last_processed = 0, total_processed = 0;
             do {
-                zstr.strm.avail_out = bufsize;
-                zstr.strm.next_out = output.data() + leftovers;
-                ret = inflate(&(zstr.strm), Z_NO_FLUSH);
-                assert(ret != Z_STREAM_ERROR);  /* state not clobbered */
+                last_processed = obj.add((char*)buffer.data() + total_processed, current_stored - total_processed);
+                total_processed += last_processed;
+            } while (last_processed);
 
-                switch (ret) {
-                case Z_NEED_DICT:
-                    ret = Z_DATA_ERROR; /* and fall through */
-                case Z_DATA_ERROR:
-                case Z_MEM_ERROR:
-                    throw 1;
-                }
-
-                size_t current_stored = bufsize + leftovers - zstr.strm.avail_out;
-
-                // Making sure we have a terminating newline.
-                if (ret == Z_STREAM_END && current_stored && output[current_stored-1]!='\n') {
-                    output[current_stored] = '\n';
-                    ++current_stored;
-                }
-
-                // Adding whole lines.
-                size_t last_processed = 0, total_processed = 0;
-                do {
-                    last_processed = obj.add((char*)output.data() + total_processed, current_stored - total_processed);
-                    total_processed += last_processed;
-                } while (last_processed);
-
-                // Rotating what's left to the front for the next cycle.
-                leftovers = current_stored - total_processed;
-                for (size_t i = 0; i < leftovers; ++i) {
-                    output[i] = output[total_processed + i];
-                }
-
-            } while (zstr.strm.avail_out == 0);
-        } while (ret != Z_STREAM_END); /* done when inflate() says it's done */
-
-        /* clean up and return */
-        if (ret != Z_STREAM_END) {
-            throw 1;
+            // Rotating what's left to the front for the next cycle.
+            leftovers = current_stored - total_processed;
+            for (size_t i = 0; i < leftovers; ++i) {
+                buffer[i] = buffer[total_processed + i];
+            }
         }
+
         return;
     }
 };
 
 template<typename T = double, typename IDX = int>
-LayeredMatrixData<T, IDX> load_layered_sparse_matrix_gzip(const char * filepath) {
-    Unzlibber unz;
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix_gzip(const char * filepath, int buffer = 16384) {
+    Unzlibber unz(buffer);
 
     LineAssignments ass;
     unz(filepath, ass);
