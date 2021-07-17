@@ -1,5 +1,5 @@
-#ifndef TATAMI_DELAYED_SUBSET
-#define TATAMI_DELAYED_SUBSET
+#ifndef TATAMI_DELAYED_BIND_HPP
+#define TATAMI_DELAYED_BIND_HPP
 
 #include "Matrix.hpp"
 #include <algorithm>
