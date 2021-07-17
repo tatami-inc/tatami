@@ -22,7 +22,7 @@ protected:
         cols = std::get<3>(param);
         vals = std::get<4>(param);
 
-        std::string path = "testing-MM.mtx";
+        std::string path = temp_file_path("tatami-tests-ext-MatrixMarket.mtx");
         write_matrix_market(path, NR, NC, vals, rows, cols);
         return path;
     }

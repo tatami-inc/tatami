@@ -81,7 +81,7 @@ TEST(MatrixMarketGzip, GzipTest) {
     }
 
     // Writing to file first.
-    std::string path = "testing-MM-gzip.mtx";
+    std::string path = temp_file_path("tatami-tests-ext-MatrixMarketGzip.mtx");
     write_matrix_market(path, NR, NC, vals, rows, cols);
 
     FILE * ihandle = std::fopen(path.c_str(), "rb");

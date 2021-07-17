@@ -22,4 +22,26 @@ void write_matrix_market(std::string path, size_t nr, size_t nc, const U& vals, 
     return;
 }
 
+#if __has_include(<filesystem>)
+
+#include <filesystem>
+
+inline auto temp_file_path(std::string base) {
+    auto path = std::filesystem::temp_directory_path();
+    path += base;
+    return path;
+}
+
+#else
+
+#include <experimental/filesystem>
+
+inline auto temp_file_path(std::string base) {
+    auto path = std::filesystem::temp_directory_path();
+    path += base;
+    return path;
+}
+
+#endif
+
 #endif
