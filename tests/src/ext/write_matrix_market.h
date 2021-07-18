@@ -28,7 +28,7 @@ void write_matrix_market(std::string path, size_t nr, size_t nc, const U& vals, 
 
 inline auto temp_file_path(std::string base) {
     auto path = std::filesystem::temp_directory_path();
-    path += base;
+    path.append(base);
     return path;
 }
 
@@ -37,8 +37,8 @@ inline auto temp_file_path(std::string base) {
 #include <experimental/filesystem>
 
 inline auto temp_file_path(std::string base) {
-    auto path = std::filesystem::temp_directory_path();
-    path += base;
+    auto path = std::experimental::filesystem::temp_directory_path();
+    path.append(base);
     return path;
 }
 

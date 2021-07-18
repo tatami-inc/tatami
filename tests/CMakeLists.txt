@@ -51,6 +51,12 @@ find_package(ZLIB)
 target_link_libraries(exttest ZLIB::ZLIB)
 target_compile_definitions(exttest PRIVATE TATAMI_USE_ZLIB=1)
 
+include(CheckIncludeFiles)
+check_include_files(filesystem HAVE_CXX_FS)
+if (NOT HAVE_CXX_FS) 
+    target_link_libraries(exttest stdc++fs) 
+endif()
+
 include(GoogleTest)
 gtest_discover_tests(libtest)
 
