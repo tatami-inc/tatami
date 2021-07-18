@@ -1,9 +1,0 @@
-<map id="tatami/ext" name="tatami/ext">
-<area shape="rect" id="node1" href="dir_1431006efcc686dc889083f70f9f4d8a.html" title="base" alt="" coords="40,244,112,292"/>
-<area shape="rect" id="node2" href="dir_d053d230eec548c17a4551a02c6d5eb8.html" title="utils" alt="" coords="53,148,125,196"/>
-<area shape="rect" id="edge3-headlabel" href="dir_000004_000001.html" title="2" alt="" coords="86,220,94,234"/>
-<area shape="rect" id="node3" href="dir_d150a8c9e059c5b80d37182ce62240de.html" title="ext" alt="" coords="40,52,112,100"/>
-<area shape="rect" id="edge1-headlabel" href="dir_000002_000001.html" title="2" alt="" coords="56,216,64,231"/>
-<area shape="rect" id="edge2-headlabel" href="dir_000002_000004.html" title="1" alt="" coords="88,121,96,136"/>
-<area shape="rect" id="clust1" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html" title="tatami" alt="" coords="16,16,136,303"/>
-</map>
