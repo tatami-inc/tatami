@@ -1,6 +1,6 @@
 <map id="tatami/base/CompressedSparseMatrix.hpp" name="tatami/base/CompressedSparseMatrix.hpp">
 <area shape="rect" id="node1" title=" " alt="" coords="122,5,330,47"/>
-<area shape="rect" id="node2" href="$MatrixMarket_8hpp_source.html" title=" " alt="" coords="5,102,188,129"/>
+<area shape="rect" id="node2" href="$MatrixMarket_8hpp.html" title="Read a sparse matrix from the Matrix Market coordinate format." alt="" coords="5,102,188,129"/>
 <area shape="rect" id="node3" href="$tatami_8h_source.html" title=" " alt="" coords="224,184,332,211"/>
 <area shape="rect" id="node4" href="$convert__to__sparse_8hpp.html" title=" " alt="" coords="263,95,397,136"/>
 </map>

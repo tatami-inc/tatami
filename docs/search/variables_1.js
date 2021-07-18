@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['number_215',['number',['../structtatami_1_1SparseRange.html#a9116bc26b0d7526e8f211be8a6a4472f',1,'tatami::SparseRange']]]
+  ['matrix_223',['matrix',['../structtatami_1_1MatrixMarket_1_1LayeredMatrixData.html#ae67083943991b9bedd47c08dc4c41da4',1,'tatami::MatrixMarket::LayeredMatrixData']]]
 ];

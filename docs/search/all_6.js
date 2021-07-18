@@ -1,8 +1,22 @@
 var searchData=
 [
-  ['ncol_70',['ncol',['../classtatami_1_1DelayedBind.html#aac4be39ad30c0d3f663ae757a0997add',1,'tatami::DelayedBind::ncol()'],['../classtatami_1_1DelayedIsometricOp.html#a452bca17a80a3c0813fd17af9a31b954',1,'tatami::DelayedIsometricOp::ncol()'],['../classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad',1,'tatami::DelayedSubset::ncol()'],['../classtatami_1_1DelayedSubsetBlock.html#abb010d4a45c1a06dfb53003025a1bdca',1,'tatami::DelayedSubsetBlock::ncol()'],['../classtatami_1_1DelayedTranspose.html#a29552de098bd2374ae99ef0e223d8973',1,'tatami::DelayedTranspose::ncol()'],['../classtatami_1_1DenseMatrix.html#a2aeb481069a05d0fc07da5243b4de981',1,'tatami::DenseMatrix::ncol()'],['../classtatami_1_1Matrix.html#a1049bd5cbe37b618db795787725930e4',1,'tatami::Matrix::ncol()'],['../classtatami_1_1CompressedSparseMatrix.html#a6871fd77991469c12276bd76c01bec59',1,'tatami::CompressedSparseMatrix::ncol()']]],
-  ['new_5fworkspace_71',['new_workspace',['../classtatami_1_1DelayedSubsetBlock.html#aeb08a21a497f77c27073c6c2b7567173',1,'tatami::DelayedSubsetBlock::new_workspace()'],['../classtatami_1_1Matrix.html#a4e297749a340e7a723728db91ee0bbce',1,'tatami::Matrix::new_workspace()'],['../classtatami_1_1DelayedTranspose.html#a1eb87e18984e78675b175134bc24912e',1,'tatami::DelayedTranspose::new_workspace()'],['../classtatami_1_1DelayedSubset.html#ab603737bb1cca0a13d41d185f579f4af',1,'tatami::DelayedSubset::new_workspace()'],['../classtatami_1_1DelayedIsometricOp.html#a448bb035d018c38c490560ae08fbf532',1,'tatami::DelayedIsometricOp::new_workspace()'],['../classtatami_1_1DelayedBind.html#af3f69c27902703fb0583c0e52a2598af',1,'tatami::DelayedBind::new_workspace()'],['../classtatami_1_1CompressedSparseMatrix.html#a4d1e6a9081f9bd306de5db99fcd45f2d',1,'tatami::CompressedSparseMatrix::new_workspace(bool row) const']]],
-  ['nrow_72',['nrow',['../classtatami_1_1CompressedSparseMatrix.html#a5c8cbee3334cbc3f860c1b328e254f7d',1,'tatami::CompressedSparseMatrix::nrow()'],['../classtatami_1_1DelayedBind.html#aa09ce1f17542ea8b3d7fa52361e2471d',1,'tatami::DelayedBind::nrow()'],['../classtatami_1_1DelayedIsometricOp.html#afff7ed215617739acaa9571b43df40db',1,'tatami::DelayedIsometricOp::nrow()'],['../classtatami_1_1DelayedSubset.html#a0b1e46c7058a68bf99d22e1abbfae180',1,'tatami::DelayedSubset::nrow()'],['../classtatami_1_1DelayedSubsetBlock.html#ac129143b74bc85931ecbc0171e1306e5',1,'tatami::DelayedSubsetBlock::nrow()'],['../classtatami_1_1DelayedTranspose.html#afb9f6fb4d51c4741d1c7ae60dd068a26',1,'tatami::DelayedTranspose::nrow()'],['../classtatami_1_1DenseMatrix.html#a8a036df3d67b81cb8b513343da4fd762',1,'tatami::DenseMatrix::nrow()'],['../classtatami_1_1Matrix.html#a48e1342556ff97cc8367b25d244195a9',1,'tatami::Matrix::nrow()']]],
-  ['number_73',['number',['../structtatami_1_1SparseRange.html#a9116bc26b0d7526e8f211be8a6a4472f',1,'tatami::SparseRange']]],
-  ['numericmatrix_74',['NumericMatrix',['../Matrix_8hpp.html#a35c670894994f1d620abb55953f98441',1,'tatami']]]
+  ['make_5fdelayedaddvectorhelper_55',['make_DelayedAddVectorHelper',['../arith__vector__helpers_8hpp.html#aab7caaa0d2bad4b765846b62b344b5d3',1,'tatami']]],
+  ['make_5fdelayedbind_56',['make_DelayedBind',['../DelayedBind_8hpp.html#a48c6e4d7a7e9f680160abce00803401a',1,'tatami']]],
+  ['make_5fdelayeddividevectorhelper_57',['make_DelayedDivideVectorHelper',['../arith__vector__helpers_8hpp.html#a3f94d5c5091d1562009de09061781090',1,'tatami']]],
+  ['make_5fdelayedisometricop_58',['make_DelayedIsometricOp',['../DelayedIsometricOp_8hpp.html#a5a7e21a93834358e04f10fe18ce3276f',1,'tatami']]],
+  ['make_5fdelayedmultiplyvectorhelper_59',['make_DelayedMultiplyVectorHelper',['../arith__vector__helpers_8hpp.html#ae7fb56f2213f17500196d0b2b1848cac',1,'tatami']]],
+  ['make_5fdelayedsubset_60',['make_DelayedSubset',['../DelayedSubset_8hpp.html#a4473d783d29c4cf969b4294922b3b081',1,'tatami']]],
+  ['make_5fdelayedsubsetblock_61',['make_DelayedSubsetBlock',['../DelayedSubsetBlock_8hpp.html#ac57f538400a283e093b91b415a18ecda',1,'tatami']]],
+  ['make_5fdelayedsubtractvectorhelper_62',['make_DelayedSubtractVectorHelper',['../arith__vector__helpers_8hpp.html#a9c7f75368ccdeef11137081b2d698fcf',1,'tatami']]],
+  ['make_5fdelayedtranspose_63',['make_DelayedTranspose',['../DelayedTranspose_8hpp.html#a22624c4d027f123a484db188bd2af996',1,'tatami']]],
+  ['math_5fhelpers_2ehpp_64',['math_helpers.hpp',['../math__helpers_8hpp.html',1,'']]],
+  ['matrix_65',['matrix',['../structtatami_1_1MatrixMarket_1_1LayeredMatrixData.html#ae67083943991b9bedd47c08dc4c41da4',1,'tatami::MatrixMarket::LayeredMatrixData']]],
+  ['matrix_66',['Matrix',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_2ehpp_67',['Matrix.hpp',['../Matrix_8hpp.html',1,'']]],
+  ['matrix_3c_20t_2c_20idx_20_3e_68',['Matrix&lt; T, IDX &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_3c_20t_2c_20int_20_3e_69',['Matrix&lt; T, int &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrixmarket_2ehpp_70',['MatrixMarket.hpp',['../MatrixMarket_8hpp.html',1,'']]],
+  ['means_71',['means',['../structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#ae9fb6fe7b76c53b522140725d87c5a66',1,'tatami::stats::VarianceHelper::Sparse::means()'],['../structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a028be1ec55aeb6c626532ef68a35598b',1,'tatami::stats::VarianceHelper::Dense::means()']]],
+  ['medianhelper_72',['MedianHelper',['../structtatami_1_1stats_1_1MedianHelper.html',1,'tatami::stats']]],
+  ['medians_2ehpp_73',['medians.hpp',['../medians_8hpp.html',1,'']]]
 ];
