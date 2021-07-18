@@ -17,10 +17,19 @@
 #include <array>
 #endif
 
+/**
+ * @file MatrixMarket.hpp
+ *
+ * @brief Read a sparse matrix from the Matrix Market coordinate format.
+ */
+
 namespace tatami {
 
 namespace MatrixMarket {
 
+/**
+ * @cond
+ */
 template<typename T>
 size_t process_triplet_line(const char* buffer, T& arg1, T& arg2, T& arg3, size_t n) {
     auto read = [=](size_t& i, T& arg) -> bool {
@@ -72,6 +81,9 @@ inline size_t read_to_eol(const char * buffer, size_t n) {
     }
     return 0; // out of range
 }
+/**
+ * @endcond
+ */
 
 struct LineAssignments {
     LineAssignments() : rows_per_category(3), lines_per_category(3) {}
@@ -264,12 +276,53 @@ public:
     }
 };
 
+/**
+ * @brief Pointer and permutations for a layered sparse matrix.
+ *
+ * This holds a pointer to a "layered sparse matrix", see `load_layered_sparse_matrix()` for details.
+ * It also holds the permutation vector that was generated as part of the layering process.
+ *
+ * @tparam T Type of the matrix values.
+ * @tparam IDX Integer type for the index.
+ */
 template<typename T = double, typename IDX = int>
 struct LayeredMatrixData {
+    /**
+     * Pointer to the matrix data.
+     * Note that rows will not follow their original order, see `permutation`.
+     */
     std::shared_ptr<Matrix<T, IDX> > matrix;
+
+    /**
+     * Permutation vector indicating the position of each original row in `matrix`.
+     * Specifically, for an original row `r`, its new row index in `matrix` is defined as `permutation[i]`.
+     */
     std::vector<size_t> permutation;
 };
 
+/**
+ * @param filepath Path to a Matrix Market file.
+ * The file should contain integer data in the coordinate format, stored in text without any compression.
+ * 
+ * @return A `LayeredMatrixData` object.
+ *
+ * @tparam T Type of value in the `tatami::Matrix` interface.
+ * @tparam IDX Integer type for the index.
+ *
+ * This loads a sparse integer matrix from a Matrix Market coordinate file, with a twist:
+ * values are stored in the smallest integer type that will fit all entries on the same row.
+ * This is achieved by reordering the rows into separate `tatami::CompressedSparseMatrix` submatrices,
+ * where each submatrix contains all rows that can fit into a certain integer type.
+ * Submatrices are then combined together using an instance of the `tatami::DelayedBind` class.
+ * The idea is to reduce memory usage in common situations involving small integers.
+ *
+ * Note that the rows of the output matrix will be in a different order from the data in the file.
+ * This is a consequence of the reordering to ensure that rows of the same type can be put into the same submatrix.
+ * The returned `LayeredMatriData` object will contain a permutation vector indicating the new position of each original row.
+ * This can be passed to `tatami::DelayedSubset` to restore the original order, if so desired.
+ *
+ * Currently, only unsigned integers are supported.
+ */
 template<typename T = double, typename IDX = int>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath) {
     auto process = [=](auto& obj) -> void {
@@ -312,8 +365,6 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath) {
 
 #ifdef TATAMI_USE_ZLIB
 
-// Stolen from 'inf()' at http://www.zlib.net/zpipe.c,
-// with some shuffling of code to make it a bit more C++-like.
 struct Unzlibber {
     Unzlibber (const int size = 16348) : bufsize(size), buffer(bufsize) {}
     const int bufsize;
@@ -381,6 +432,19 @@ struct Unzlibber {
     }
 };
 
+/**
+ * @param filepath Path to a Matrix Market file.
+ * The file should contain integer data in the coordinate format, stored with Gzip compression.
+ * @param buffer Size of the buffer to use for decompression, in bytes.
+ *
+ * @return A `LayeredMatrixData` object.
+ *
+ * @tparam T Type of value in the `tatami::Matrix` interface.
+ * @tparam IDX Integer type for the index.
+ *
+ * This is a version of `load_layered_sparse_matrix()` for loading in Gzip-compressed Matrix Market files.
+ * To make this function available, make sure to define `TATAMI_USE_ZLIB` and compile with **zlib** support.
+ */
 template<typename T = double, typename IDX = int>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix_gzip(const char * filepath, int buffer = 16384) {
     Unzlibber unz(buffer);
