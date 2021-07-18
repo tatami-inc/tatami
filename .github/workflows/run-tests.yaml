@@ -32,4 +32,6 @@ jobs:
       run: cmake --build build
 
     - name: Run the tests
-      run: build/tests/libtest
+      run: |
+        build/tests/libtest
+        build/tests/exttest
