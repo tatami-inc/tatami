@@ -3,6 +3,7 @@
 ![Unit tests](https://github.com/LTLA/tatami/actions/workflows/run-tests.yaml/badge.svg)
 ![Gallery](https://github.com/LTLA/tatami/actions/workflows/run-gallery.yaml/badge.svg)
 ![Documentation](https://github.com/LTLA/tatami/actions/workflows/doxygenate.yaml/badge.svg)
+[![Codecov](https://codecov.io/gh/LTLA/tatami/branch/master/graph/badge.svg?token=Z189ORCLLR)](https://codecov.io/gh/LTLA/tatami)
 
 ## Overview
 
