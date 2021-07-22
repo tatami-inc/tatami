@@ -50,7 +50,7 @@ jobs:
       if: ${{ matrix.config.cov == true }}
       run: |
         cd build/tests/CMakeFiles/
-        find -type f -name "*.gcno" -execdir gcov -abcfu {} +
+        gcov -abcfu $(find . -type f -name "*.gcno")
 
     - name: Upload to Codecov
       if: ${{ matrix.config.cov == true }}
