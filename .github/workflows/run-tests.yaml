@@ -11,11 +11,16 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu Latest GCC", artifact: "Linux.tar.xz",
+            name: "Ubuntu Latest GCC", 
             os: ubuntu-latest
           }
         - {
-            name: "macOS Latest Clang", artifact: "macOS.tar.xz",
+            name: "Ubuntu Latest GCC, coverage enabled", 
+            os: ubuntu-latest,
+            cov: true
+          }
+        - {
+            name: "macOS Latest Clang", 
             os: macos-latest
           }
 
@@ -26,12 +31,29 @@ jobs:
       uses: lukka/get-cmake@latest
 
     - name: Configure the build
+      if: ${{ ! matrix.config.cov }}
       run: cmake -S . -B build
+
+    - name: Configure the build with coverage
+      if: ${{ matrix.config.cov }}
+      run: cmake -S . -B build -DCODE_COVERAGE=ON
 
     - name: Run the build
       run: cmake --build build
 
     - name: Run the tests
       run: |
-        build/tests/libtest
-        build/tests/exttest
+        cd build
+        ctest
+
+    - name: Generate code coverage
+      if: ${{ matrix.config.cov == true }}
+      run: |
+        cd build/tests/CMakeFiles/libtest.dir/src/
+        gcov -abcfu *.gcno
+
+    - name: Upload to Codecov
+      if: ${{ matrix.config.cov == true }}
+      uses: codecov/codecov-action@v1
+      with:
+        directory: build/tests/CMakeFiles/libtest.dir/src/
