@@ -49,11 +49,11 @@ jobs:
     - name: Generate code coverage
       if: ${{ matrix.config.cov == true }}
       run: |
-        cd build/tests/CMakeFiles/libtest.dir/src/
+        cd build/tests/CMakeFiles/
         find -type f -name "*.gcno" -execdir gcov -abcfu {} +
 
     - name: Upload to Codecov
       if: ${{ matrix.config.cov == true }}
       uses: codecov/codecov-action@v1
       with:
-        directory: build/tests/CMakeFiles/libtest.dir/src/
+        directory: build/tests/CMakeFiles/
