@@ -300,6 +300,29 @@ struct LayeredMatrixData {
     std::vector<size_t> permutation;
 };
 
+template<typename T = double, typename IDX = int, class Functor>
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Functor&& process) {
+    LineAssignments ass;
+    process(ass);
+    ass.finish();
+
+    LayeredMatrixData<T, IDX> output;
+    output.permutation = ass.permutation;
+
+    constexpr size_t max16 = std::numeric_limits<uint16_t>::max();
+    if (ass.nrows > max16) {
+        LayeredBuilder<uint16_t> builder(std::move(ass));
+        process(builder);
+        output.matrix = builder.template finish<T, IDX>();
+    } else {
+        LayeredBuilder<IDX> builder(std::move(ass));
+        process(builder);
+        output.matrix = builder.template finish<T, IDX>();
+    }
+
+    return output;
+}
+
 /**
  * @param filepath Path to a Matrix Market file.
  * The file should contain integer data in the coordinate format, stored in text without any compression.
@@ -342,32 +365,15 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath) {
         return;
     };
 
-    LineAssignments ass;
-    process(ass);
-    ass.finish();
-
-    LayeredMatrixData<T, IDX> output;
-    output.permutation = ass.permutation;
-
-    constexpr size_t max16 = std::numeric_limits<uint16_t>::max();
-    if (ass.nrows > max16) {
-        LayeredBuilder<uint16_t> builder(std::move(ass));
-        process(builder);
-        output.matrix = builder.template finish<T, IDX>();
-    } else {
-        LayeredBuilder<IDX> builder(std::move(ass));
-        process(builder);
-        output.matrix = builder.template finish<T, IDX>();
-    }
-
-    return output;
+    return load_layered_sparse_matrix_internal(process);
 }
 
 #ifdef TATAMI_USE_ZLIB
 
 struct Unzlibber {
-    Unzlibber (const int size = 16348) : bufsize(size), buffer(bufsize) {}
+    Unzlibber (const char* path, const int size = 16348) : filepath(path), bufsize(size), buffer(bufsize) {}
     const int bufsize;
+    const char* filepath;
     std::vector<unsigned char> buffer;
 
     struct GZFile {
@@ -391,7 +397,7 @@ struct Unzlibber {
     };
 
     template<class OBJECT>
-    void operator()(const char* filepath, OBJECT& obj) {
+    void operator()(OBJECT& obj) {
         GZFile gz(filepath);
 
         size_t read = 1; // any positive value, to get the ball rolling.
@@ -447,27 +453,8 @@ struct Unzlibber {
  */
 template<typename T = double, typename IDX = int>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix_gzip(const char * filepath, int buffer = 16384) {
-    Unzlibber unz(buffer);
-
-    LineAssignments ass;
-    unz(filepath, ass);
-    ass.finish();
-
-    LayeredMatrixData<T, IDX> output;
-    output.permutation = ass.permutation;
-
-    constexpr size_t max16 = std::numeric_limits<uint16_t>::max();
-    if (ass.nrows > max16) {
-        LayeredBuilder<uint16_t> builder(std::move(ass));
-        unz(filepath, builder);
-        output.matrix = builder.template finish<T, IDX>();
-    } else {
-        LayeredBuilder<IDX> builder(std::move(ass));
-        unz(filepath, builder);
-        output.matrix = builder.template finish<T, IDX>();
-    }
-
-    return output;
+    Unzlibber unz(filepath, buffer);
+    return load_layered_sparse_matrix_internal(unz);
 }
 
 #endif
