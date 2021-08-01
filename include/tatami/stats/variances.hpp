@@ -143,7 +143,7 @@ void compute_running(const T* ptr, size_t n, O* means, O* vars, int& count) {
  * Each element is assigned to a target vector based on its index.
  * @param[out] means Pointer to an array containing the running means for each target vector.
  * @param[out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
- * @param[out] nonzeroes Pointer to an array containing the running number of non-zero values for each target vector.
+ * @param[out] nonzeros Pointer to an array containing the running number of non-zero values for each target vector.
  * @param count Number of times this function has already been called.
  *
  * @return `means` and `vars` are updated with the corresponding elements from `range`.
@@ -202,7 +202,7 @@ void finish_running(size_t n, O* means, O* vars, int count) {
  * @param n Number of target vectors.
  * @param[out] means Pointer to an array containing the running means for each target vector.
  * @param[out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
- * @param[out] nonzeroes Pointer to an array containing the running number of non-zero values for each target vector.
+ * @param[out] nonzeros Pointer to an array containing the running number of non-zero values for each target vector.
  * @param count Number of times the `compute_running()` function was called.
  *
  * @return Elements in `vars` are divided by `count - 1`.
