@@ -16,144 +16,106 @@ namespace tatami {
 
 namespace stats {
 
-/**
- * @brief Helper to compute the sum along each dimension.
- */
-struct SumHelper {
+template<typename O>
+struct SumFactory {
 public:
-    /**
-     * This statistic can be computed from sparse inputs.
-     */
+    SumFactory(O* o, size_t d1, size_t d2) : output(o), dim(d1), otherdim(d2) {}
+
     static const bool supports_sparse = true;
 
-    /**
-     * This statistic can be computed in a running manner.
-     */
     static const bool supports_running = true;
 
-public:
-    /**
-     * Compute the mean along a vector.
-     *
-     * @tparam T Type of the input data.
-     *
-     * @param ptr Pointer to an array of values of length `n`.
-     * @param n Size of the array.
-     * @param buffer Unused, provided here for consistency only.
-     *
-     * @return The sample mean of values in `[ptr, ptr + n)`.
-     */
-    template<typename T = double>
-    static double compute(const T* ptr, size_t n, T* buffer = NULL) {
-        return std::accumulate(ptr, ptr + n, 0.0);
-    }
-
-    /**
-     * Compute the mean along a sparse vector.
-     * This achieves faster processing by only performing summations over non-zero elements.
-     *
-     * @tparam T Type of the input data.
-     * @tparam IDX Type of the indices.
-     *
-     * @param range A `SparseRange` object specifying the number and values of all non-zero indices.
-     * @param n Total length of the vector, including zero values.
-     * @param vbuffer,ibuffer Unused, provided here for consistency only.
-     *
-     * @return The sample mean of values in the vector.
-     */
-    template<typename T = double, typename IDX = int>
-    static double compute(const SparseRange<T, IDX>& range, size_t n, T* vbuffer = NULL, IDX* ibuffer = NULL) {
-        return std::accumulate(range.value, range.value + range.number, 0.0);
-    }
+private:
+    O* output;
+    size_t dim, otherdim;
 
 public:
-    /**
-     * @brief Helper to compute the running sum from dense inputs.
-     */
-    struct Dense {
-        /**
-         * @param n Number of parallel vectors for which to compute running statistics.
-         */
-        Dense(size_t n) : store(n) {}
+    struct DenseDirect {
+        DenseDirect(O* o, size_t d2) : output(o), otherdim(d2) {}
 
-        /**
-         * Add another vector to the running sum calculations.
-         * Each entry in the `ptr` array contains the latest values of the set of parallel vectors.
-         *
-         * @tparam T Type of the input data.
-         *
-         * @param ptr Pointer to an array of length equal to the number of parallel vectors.
-         * @param buffer Ignored.
-         */
-        template<typename T = double>
-        void add(const T* ptr, T* buffer = NULL) {
-            for (auto sIt = store.begin(); sIt != store.end(); ++sIt, ++ptr) {
-                *sIt += *ptr;
-            }
-            return;
+        template<typename V>
+        void compute(size_t i, const V* ptr, V* buffer) {
+            output[i] = std::accumulate(ptr, ptr + otherdim, static_cast<O>(0));
         }
-
-        /**
-         * Finish the running calculation.
-         */
-        void finish() {}
-
-        /**
-         * Obtain the sum of values for each parallel vector. 
-         */
-        const std::vector<double>& statistics() {
-            return store;
-        }
-
     private:
-        std::vector<double> store;
+        O* output;
+        size_t otherdim;
     };
 
-    /**
-     * @brief Helper to compute the running sum from sparse inputs.
-     */
-    struct Sparse {
-        /**
-         * @param n Number of parallel vectors for which to compute running statistics.
-         */
-        Sparse(size_t n) : store(n) {}
+    DenseDirect dense_direct() {
+        return DenseDirect(output, otherdim);
+    }
 
-        /**
-         * Add another sparse vector to the running sum calculations.
-         *
-         * @tparam T Type of the input data.
-         * @tparam IDX Type of the indices.
-         *
-         * @param range A `SparseRange` object identifying the non-zero elements in the sparse vector.
-         * @param vbuffer,ibuffer Ignored.
-         */
+public:
+    struct SparseDirect {
+        SparseDirect(O* o) : output(o) {}
+
+        template<typename T, typename IDX>
+        void compute(size_t i, const SparseRange<T, IDX>& range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+            output[i] = std::accumulate(range.value, range.value + range.number, static_cast<O>(0));
+        }
+    private:
+        O* output;
+    };
+
+    SparseDirect sparse_direct() {
+        return SparseDirect(output);
+    }
+
+public:
+    struct DenseRunning {
+        DenseRunning(O* o, size_t d1) : output(o), dim(d1) {}
+
+        template<typename V>
+        void add(const V* ptr, V* buffer = NULL) {
+            for (size_t d = 0; d < dim; ++d) {
+                output[d] += ptr[d];
+            }
+        }
+
+        void finish() {}
+    private:
+        O* output;
+        size_t dim;
+    };
+
+    DenseRunning dense_running() {
+        return DenseRunning(output, dim);
+    }
+
+    DenseRunning dense_running(size_t start, size_t end) {
+        return DenseRunning(output + start, end - start);
+    }
+
+public:
+    struct SparseRunning {
+        SparseRunning(O* o) : output(o) {}
+
         template<typename T = double, typename IDX = int>
-        void add(SparseRange<T, IDX> range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
-            for (size_t j = 0; j < range.number; ++j, ++range.index, ++range.value) {
-                store[*range.index] += *range.value;
+        void add(const SparseRange<T, IDX>& range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+            for (size_t j = 0; j < range.number; ++j) {
+                output[range.index[j]] += range.value[j];
             }
-            return;
         }
 
-        /**
-         * Finish the running calculation.
-         */
         void finish() {}
-
-        /**
-         * Obtain the sum of values for each parallel vector. 
-         */
-        const std::vector<double>& statistics() {
-            return store;
-        }
     private:
-        std::vector<double> store;
+        O* output;
     };
+
+    SparseRunning sparse_running() {
+        return SparseRunning(output);
+    }
+
+    SparseRunning sparse_running(size_t start, size_t end) {
+        return SparseRunning(output);
+    }
 };
 
 }
 
 /**
+ * @tparam Output Type of the output value.
  * @tparam T Type of the matrix value, should be summable.
  * @tparam IDX Type of the row/column indices.
  *
@@ -161,12 +123,16 @@ public:
  *
  * @return A vector of length equal to the number of columns, containing the column sums.
  */
-template<typename T, typename IDX>
-inline std::vector<double> column_sums(const Matrix<T, IDX>* p) {
-    return apply<1, T, IDX, stats::SumHelper>(p);
+template<typename Output = double, typename T, typename IDX>
+std::vector<Output> column_sums(const Matrix<T, IDX>* p) {
+    std::vector<Output> output(p->ncol());
+    stats::SumFactory factory(output.data(), p->ncol(), p->nrow());
+    apply<1>(p, factory);
+    return output;
 }
 
 /**
+ * @tparam Output Type of the output value.
  * @tparam T Type of the matrix value, should be summable.
  * @tparam IDX Type of the row/column indices.
  *
@@ -174,9 +140,12 @@ inline std::vector<double> column_sums(const Matrix<T, IDX>* p) {
  *
  * @return A vector of length equal to the number of rows, containing the row sums.
  */
-template<typename T, typename IDX>
-inline std::vector<double> row_sums(const Matrix<T, IDX>* p) {
-    return apply<0, T, IDX, stats::SumHelper>(p);
+template<typename Output = double, typename T, typename IDX>
+std::vector<Output> row_sums(const Matrix<T, IDX>* p) {
+    std::vector<Output> output(p->nrow());
+    stats::SumFactory factory(output.data(), p->nrow(), p->ncol());
+    apply<0>(p, factory);
+    return output;
 }
 
 }

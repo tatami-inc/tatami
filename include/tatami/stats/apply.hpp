@@ -3,6 +3,10 @@
 
 #include "../base/Matrix.hpp"
 
+#ifdef _OPENMP
+#include <omp.h>
+#endif
+
 namespace tatami {
 
 /**
@@ -21,8 +25,8 @@ namespace tatami {
  *
  * @return A vector of row- or column-wise statistics.
  */
-template<int MARGIN, typename T, typename IDX, class STAT>
-inline typename std::vector<double> apply(const Matrix<T, IDX>* p) {
+template<int MARGIN, typename T, typename IDX, class Factory>
+void apply(const Matrix<T, IDX>* p, Factory& factory) {
     size_t NR = p->nrow(), NC = p->ncol();
 
     /* One might question why we use MARGIN in the template if we just convert
@@ -38,15 +42,40 @@ inline typename std::vector<double> apply(const Matrix<T, IDX>* p) {
     /* If we support running calculations AND the preference 
      * is not consistent with the margin, we give it a shot.
      */
-    if constexpr(STAT::supports_running) {
+    if constexpr(Factory::supports_running) {
         if (p->prefer_rows() != ROW){
-            std::vector<T> obuffer(dim);
-            auto wrk = p->new_workspace(!ROW);
 
-            if constexpr(STAT::supports_sparse) {
+            if constexpr(Factory::supports_sparse) {
                 if (p->sparse()) {
-                    typename STAT::Sparse stat(dim);
+#ifdef _OPENMP
+                    #pragma omp parallel
+                    {
+                        int nworkers = omp_get_num_threads();
+                        size_t worker_size = std::ceil(static_cast<double>(dim) / nworkers);
+                        size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
+
+                        std::vector<T> obuffer(end - start);
+                        std::vector<IDX> ibuffer(obuffer.size());
+                        auto wrk = p->new_workspace(!ROW);
+                        auto stat = factory.sparse_running(start, end);
+
+                        for (size_t i = 0; i < otherdim; ++i) {
+                            if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
+                                auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
+                                stat.add(range, obuffer.data(), ibuffer.data());
+                            } else {
+                                auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
+                                stat.add(range, obuffer.data(), ibuffer.data());
+                            }
+                        }
+                        stat.finish();
+                    }
+#else
+                    auto stat = factory.sparse_running();
+                    std::vector<T> obuffer(dim);
                     std::vector<IDX> ibuffer(dim);
+                    auto wrk = p->new_workspace(!ROW);
+
                     for (size_t i = 0; i < otherdim; ++i) {
                         if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
                             auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
@@ -57,11 +86,38 @@ inline typename std::vector<double> apply(const Matrix<T, IDX>* p) {
                         }
                     }
                     stat.finish();
-                    return stat.statistics();
+#endif
+                    return;
                 }
             }
 
-            typename STAT::Dense stat(dim);
+#ifdef _OPENMP
+            #pragma omp parallel
+            {
+                int nworkers = omp_get_num_threads();
+                size_t worker_size = std::ceil(static_cast<double>(dim) / nworkers);
+                size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
+
+                auto stat = factory.dense_running(start, end);
+                std::vector<T> obuffer(end - start);
+                auto wrk = p->new_workspace(!ROW);
+
+                for (size_t i = 0; i < otherdim; ++i) {
+                    if constexpr(ROW) { // flipped around, see above.
+                        auto ptr = p->column(i, obuffer.data(), start, end, wrk.get());
+                        stat.add(ptr, obuffer.data());
+                    } else {
+                        auto ptr = p->row(i, obuffer.data(), start, end, wrk.get());
+                        stat.add(ptr, obuffer.data());
+                    }
+                }
+                stat.finish();
+            }
+#else
+            auto stat = factory.dense_running();
+            std::vector<T> obuffer(dim);
+            auto wrk = p->new_workspace(!ROW);
+
             for (size_t i = 0; i < otherdim; ++i) {
                 if constexpr(ROW) { // flipped around, see above.
                     auto ptr = p->column(i, obuffer.data(), wrk.get());
@@ -72,40 +128,54 @@ inline typename std::vector<double> apply(const Matrix<T, IDX>* p) {
                 }
             }
             stat.finish();
-            return stat.statistics();
+#endif
+            return;
         }
     }
 
-    std::vector<double> output(dim);
-    std::vector<T> obuffer(otherdim);
-    auto wrk = p->new_workspace(ROW);
-
-    if constexpr(STAT::supports_sparse) {
+    if constexpr(Factory::supports_sparse) {
         if (p->sparse()) {
-            std::vector<IDX> ibuffer(otherdim);
-            for (size_t i = 0; i < dim; ++i) {
-                if constexpr(ROW) {
-                    auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    output[i] = STAT::compute(range, otherdim, obuffer.data(), ibuffer.data());
-                } else {
-                    auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    output[i] = STAT::compute(range, otherdim, obuffer.data(), ibuffer.data());
+            #pragma omp parallel
+            {
+                std::vector<T> obuffer(otherdim);
+                auto wrk = p->new_workspace(ROW);
+                std::vector<IDX> ibuffer(otherdim);
+                auto stat = factory.sparse_direct();
+
+                #pragma omp for schedule(static) 
+                for (size_t i = 0; i < dim; ++i) {
+                    if constexpr(ROW) {
+                        auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
+                        stat.compute(i, range, obuffer.data(), ibuffer.data());
+                    } else {
+                        auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
+                        stat.compute(i, range, obuffer.data(), ibuffer.data());
+                    }
                 }
             }
-            return output;
+            return;
         }
     }
 
-    for (size_t i = 0; i < dim; ++i) {
-        if constexpr(ROW) {
-            auto ptr = p->row(i, obuffer.data(), wrk.get());
-            output[i] = STAT::compute(ptr, otherdim, obuffer.data());
-        } else {
-            auto ptr = p->column(i, obuffer.data(), wrk.get());
-            output[i] = STAT::compute(ptr, otherdim, obuffer.data());
+    #pragma omp parallel
+    {
+        std::vector<T> obuffer(otherdim);
+        auto wrk = p->new_workspace(ROW);
+        auto stat = factory.dense_direct();
+
+        #pragma omp for schedule(static)
+        for (size_t i = 0; i < dim; ++i) {
+            if constexpr(ROW) {
+                auto ptr = p->row(i, obuffer.data(), wrk.get());
+                stat.compute(i, ptr, obuffer.data());
+            } else {
+                auto ptr = p->column(i, obuffer.data(), wrk.get());
+                stat.compute(i, ptr, obuffer.data());
+            }
         }
     }
-    return output;
+
+    return; 
 }
 
 }
