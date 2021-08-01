@@ -68,7 +68,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle">
 <div class="title">sums.hpp File Reference</div>  </div>
@@ -77,57 +76,38 @@ $(function() {
 
 <p><a href="sums_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1SumHelper.html">tatami::stats::SumHelper</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper to compute the sum along each dimension.  <a href="structtatami_1_1stats_1_1SumHelper.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1SumHelper_1_1Dense.html">tatami::stats::SumHelper::Dense</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper to compute the running sum from dense inputs.  <a href="structtatami_1_1stats_1_1SumHelper_1_1Dense.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1stats_1_1SumHelper_1_1Sparse.html">tatami::stats::SumHelper::Sparse</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Helper to compute the running sum from sparse inputs.  <a href="structtatami_1_1stats_1_1SumHelper_1_1Sparse.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a689e4606b730f6f8d9691a9f5eb1ff00"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a689e4606b730f6f8d9691a9f5eb1ff00"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="sums_8hpp.html#a689e4606b730f6f8d9691a9f5eb1ff00">tatami::column_sums</a> (const Matrix&lt; T, IDX &gt; *p)</td></tr>
-<tr class="separator:a689e4606b730f6f8d9691a9f5eb1ff00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac970a7b70a7237139fd91f34014890ff"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:ac970a7b70a7237139fd91f34014890ff"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; double &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="sums_8hpp.html#ac970a7b70a7237139fd91f34014890ff">tatami::row_sums</a> (const Matrix&lt; T, IDX &gt; *p)</td></tr>
-<tr class="separator:ac970a7b70a7237139fd91f34014890ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a092dc3d0b446f5a36df5a82aa5e8682e"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:a092dc3d0b446f5a36df5a82aa5e8682e"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="sums_8hpp.html#a092dc3d0b446f5a36df5a82aa5e8682e">tatami::column_sums</a> (const Matrix&lt; T, IDX &gt; *p)</td></tr>
+<tr class="separator:a092dc3d0b446f5a36df5a82aa5e8682e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7215c2020ee1afc250f70cf0d0a04c5d"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:a7215c2020ee1afc250f70cf0d0a04c5d"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="sums_8hpp.html#a7215c2020ee1afc250f70cf0d0a04c5d">tatami::row_sums</a> (const Matrix&lt; T, IDX &gt; *p)</td></tr>
+<tr class="separator:a7215c2020ee1afc250f70cf0d0a04c5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Compute row and column sums from a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a689e4606b730f6f8d9691a9f5eb1ff00"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a689e4606b730f6f8d9691a9f5eb1ff00">&#9670;&nbsp;</a></span>column_sums()</h2>
+<a id="a092dc3d0b446f5a36df5a82aa5e8682e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a092dc3d0b446f5a36df5a82aa5e8682e">&#9670;&nbsp;</a></span>column_sums()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename IDX &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;double&gt; tatami::column_sums </td>
+          <td class="memname">std::vector&lt;Output&gt; tatami::column_sums </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
           <td class="paramname"><em>p</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
+    <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
     <tr><td class="paramname">T</td><td>Type of the matrix value, should be summable. </td></tr>
     <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
   </table>
@@ -143,33 +123,26 @@ template&lt;typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="ac970a7b70a7237139fd91f34014890ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac970a7b70a7237139fd91f34014890ff">&#9670;&nbsp;</a></span>row_sums()</h2>
+<a id="a7215c2020ee1afc250f70cf0d0a04c5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7215c2020ee1afc250f70cf0d0a04c5d">&#9670;&nbsp;</a></span>row_sums()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename IDX &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
+template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;double&gt; tatami::row_sums </td>
+          <td class="memname">std::vector&lt;Output&gt; tatami::row_sums </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
           <td class="paramname"><em>p</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
+    <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
     <tr><td class="paramname">T</td><td>Type of the matrix value, should be summable. </td></tr>
     <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
   </table>

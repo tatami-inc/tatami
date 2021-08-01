@@ -16,7 +16,5 @@ var searchData=
   ['matrix_3c_20t_2c_20idx_20_3e_69',['Matrix&lt; T, IDX &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
   ['matrix_3c_20t_2c_20int_20_3e_70',['Matrix&lt; T, int &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
   ['matrixmarket_2ehpp_71',['MatrixMarket.hpp',['../MatrixMarket_8hpp.html',1,'']]],
-  ['means_72',['means',['../structtatami_1_1stats_1_1VarianceHelper_1_1Sparse.html#ae9fb6fe7b76c53b522140725d87c5a66',1,'tatami::stats::VarianceHelper::Sparse::means()'],['../structtatami_1_1stats_1_1VarianceHelper_1_1Dense.html#a028be1ec55aeb6c626532ef68a35598b',1,'tatami::stats::VarianceHelper::Dense::means()']]],
-  ['medianhelper_73',['MedianHelper',['../structtatami_1_1stats_1_1MedianHelper.html',1,'tatami::stats']]],
-  ['medians_2ehpp_74',['medians.hpp',['../medians_8hpp.html',1,'']]]
+  ['medians_2ehpp_72',['medians.hpp',['../medians_8hpp.html',1,'']]]
 ];

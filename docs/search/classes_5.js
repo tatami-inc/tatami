@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['variancehelper_139',['VarianceHelper',['../structtatami_1_1stats_1_1VarianceHelper.html',1,'tatami::stats']]]
+  ['workspace_127',['Workspace',['../classtatami_1_1Workspace.html',1,'tatami']]]
 ];
