@@ -302,12 +302,20 @@ struct LayeredMatrixData {
 
 template<typename T = double, typename IDX = int, class Functor>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Functor&& process) {
+#ifdef TATAMI_PROGRESS_PRINTER
+    TATAMI_PROGRESS_PRINTER("tatami::load_layered_sparse_matrix", 1, 3, "Assigning lines to submatrices")
+#endif
+
     LineAssignments ass;
     process(ass);
     ass.finish();
 
     LayeredMatrixData<T, IDX> output;
     output.permutation = ass.permutation;
+
+#ifdef TATAMI_PROGRESS_PRINTER
+    TATAMI_PROGRESS_PRINTER("tatami::load_layered_sparse_matrix", 2, 3, "Building the submatrices")
+#endif
 
     constexpr size_t max16 = std::numeric_limits<uint16_t>::max();
     if (ass.nrows > max16) {
@@ -319,6 +327,10 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Functor&& process)
         process(builder);
         output.matrix = builder.template finish<T, IDX>();
     }
+
+#ifdef TATAMI_PROGRESS_PRINTER
+    TATAMI_PROGRESS_PRINTER("tatami::load_layered_sparse_matrix", 3, 3, "Done")
+#endif
 
     return output;
 }
