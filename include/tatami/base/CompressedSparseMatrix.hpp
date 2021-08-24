@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <memory>
+#include <utility>
 
 /**
  * @file CompressedSparseMatrix.hpp
@@ -269,8 +270,8 @@ public:
         } 
 
         std::vector<size_t> previous_request; // the last request for each column.
-        std::vector<typename W::value_type> current_indptrs; // the current position of the pointer
-        std::vector<typename V::value_type> current_indices; // the current index being pointed to
+        std::vector<typename std::remove_reference<decltype(std::declval<W>()[0])>::type> current_indptrs; // the current position of the pointer
+        std::vector<typename std::remove_reference<decltype(std::declval<V>()[0])>::type> current_indices; // the current index being pointed to
     };
 
 private:
