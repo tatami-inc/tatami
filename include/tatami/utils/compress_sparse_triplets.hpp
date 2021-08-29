@@ -13,6 +13,33 @@
 
 namespace tatami {
 
+template<class Primary, class Secondary>
+void order(std::vector<size_t>& indices, const Primary& primary, const Secondary& secondary) {
+    if (std::is_sorted(primary.begin(), primary.end())) {
+        size_t start = 0;
+        while (start < primary.size()) {
+            size_t end = start + 1;
+            while (end < primary.size() && primary[end] == primary[start]) {
+                ++end;
+            }
+            if (!std::is_sorted(secondary.begin() + start, secondary.begin() + end)) {
+                std::sort(indices.begin() + start, indices.begin() + end, [&](size_t left, size_t right) -> bool { 
+                    return secondary[left] < secondary[right];
+                });
+            }
+            start = end;
+        }
+
+    } else {
+        std::sort(indices.begin(), indices.end(), [&](size_t left, size_t right) -> bool {
+            if (primary[left] == primary[right]) {
+                return (secondary[left] < secondary[right]);
+            }
+            return (primary[left] < primary[right]);
+        });
+    }
+}
+
 /**
  * @tparam ROW Whether to create a compressed sparse row format.
  * If `false`, the compressed sparse column format is used instead.
@@ -46,19 +73,9 @@ std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V&
 
     // Sorting without duplicating the data.
     if constexpr(ROW) {
-        std::sort(indices.begin(), indices.end(), [&](size_t left, size_t right) -> bool {
-            if (rows[left] == rows[right]) {
-                return (cols[left] < cols[right]);
-            }
-            return (rows[left] < rows[right]);
-        });
+        order(indices, rows, cols);
     } else {
-        std::sort(indices.begin(), indices.end(), [&](size_t left, size_t right) -> bool {
-            if (cols[left] == cols[right]) {
-                return (rows[left] < rows[right]);
-            }
-            return (cols[left] < cols[right]);
-        });
+        order(indices, cols, rows);
     }
 
     // Reordering values in place.
