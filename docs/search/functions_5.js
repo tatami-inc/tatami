@@ -1,12 +1,12 @@
 var searchData=
 [
-  ['make_5fdelayedaddvectorhelper_181',['make_DelayedAddVectorHelper',['../arith__vector__helpers_8hpp.html#aab7caaa0d2bad4b765846b62b344b5d3',1,'tatami']]],
-  ['make_5fdelayedbind_182',['make_DelayedBind',['../DelayedBind_8hpp.html#a48c6e4d7a7e9f680160abce00803401a',1,'tatami']]],
-  ['make_5fdelayeddividevectorhelper_183',['make_DelayedDivideVectorHelper',['../arith__vector__helpers_8hpp.html#a3f94d5c5091d1562009de09061781090',1,'tatami']]],
-  ['make_5fdelayedisometricop_184',['make_DelayedIsometricOp',['../DelayedIsometricOp_8hpp.html#a5a7e21a93834358e04f10fe18ce3276f',1,'tatami']]],
-  ['make_5fdelayedmultiplyvectorhelper_185',['make_DelayedMultiplyVectorHelper',['../arith__vector__helpers_8hpp.html#ae7fb56f2213f17500196d0b2b1848cac',1,'tatami']]],
-  ['make_5fdelayedsubset_186',['make_DelayedSubset',['../DelayedSubset_8hpp.html#a4473d783d29c4cf969b4294922b3b081',1,'tatami']]],
-  ['make_5fdelayedsubsetblock_187',['make_DelayedSubsetBlock',['../DelayedSubsetBlock_8hpp.html#ac57f538400a283e093b91b415a18ecda',1,'tatami']]],
-  ['make_5fdelayedsubtractvectorhelper_188',['make_DelayedSubtractVectorHelper',['../arith__vector__helpers_8hpp.html#a9c7f75368ccdeef11137081b2d698fcf',1,'tatami']]],
-  ['make_5fdelayedtranspose_189',['make_DelayedTranspose',['../DelayedTranspose_8hpp.html#a22624c4d027f123a484db188bd2af996',1,'tatami']]]
+  ['make_5fdelayedaddvectorhelper_0',['make_DelayedAddVectorHelper',['../arith__vector__helpers_8hpp.html#aa82419090e54a4674d971429e93e6af5',1,'tatami']]],
+  ['make_5fdelayedbind_1',['make_DelayedBind',['../DelayedBind_8hpp.html#ac019a143af4fd0eb34f530527a424888',1,'tatami']]],
+  ['make_5fdelayeddividevectorhelper_2',['make_DelayedDivideVectorHelper',['../arith__vector__helpers_8hpp.html#ab104e5029db4d09afe0b47a125f457bf',1,'tatami']]],
+  ['make_5fdelayedisometricop_3',['make_DelayedIsometricOp',['../DelayedIsometricOp_8hpp.html#a0e2cd6fd2c5bba7eb83582619ffc9cea',1,'tatami']]],
+  ['make_5fdelayedmultiplyvectorhelper_4',['make_DelayedMultiplyVectorHelper',['../arith__vector__helpers_8hpp.html#a316f4cf0ae5a9e83c2dad6ccbbbcfb43',1,'tatami']]],
+  ['make_5fdelayedsubset_5',['make_DelayedSubset',['../DelayedSubset_8hpp.html#acd395c7ec8bb251ab11206166a972bbc',1,'tatami']]],
+  ['make_5fdelayedsubsetblock_6',['make_DelayedSubsetBlock',['../DelayedSubsetBlock_8hpp.html#a4ef69731d317edc4ce24de03e67f8097',1,'tatami']]],
+  ['make_5fdelayedsubtractvectorhelper_7',['make_DelayedSubtractVectorHelper',['../arith__vector__helpers_8hpp.html#abb68a8d27e821f213965edab7f029c48',1,'tatami']]],
+  ['make_5fdelayedtranspose_8',['make_DelayedTranspose',['../DelayedTranspose_8hpp.html#ab8888d53a1922d378a7abafa1a1146ff',1,'tatami']]]
 ];
