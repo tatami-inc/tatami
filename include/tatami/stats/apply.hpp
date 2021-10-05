@@ -2,6 +2,7 @@
 #define TATAMI_STATS_APPLY_H
 
 #include "../base/Matrix.hpp"
+#include <cmath>
 
 #ifdef _OPENMP
 #include <omp.h>
