@@ -47,9 +47,6 @@ template<typename O>
 struct MedianFactory {
     MedianFactory(O* o, size_t d2) : output(o), otherdim(d2) {}
 
-    static const bool supports_sparse = true;
-
-    static const bool supports_running = false;
 private:
     O* output;
     size_t otherdim;

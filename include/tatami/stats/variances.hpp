@@ -229,10 +229,6 @@ struct VarianceFactory {
 public:
     VarianceFactory(O* o, size_t d1, size_t d2) : output(o), dim(d1), otherdim(d2) {}
 
-    static const bool supports_sparse = true;
-
-    static const bool supports_running = true;
-
 private:
     O* output;
     size_t dim, otherdim;

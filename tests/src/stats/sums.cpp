@@ -48,3 +48,12 @@ TEST(ComputingDimsums, ColumnSums) {
     EXPECT_EQ(ref, tatami::column_sums(sparse_row.get()));
     EXPECT_EQ(ref, tatami::column_sums(sparse_column.get()));
 }
+
+TEST(ComputingDimsums, Configuration) {
+    typedef tatami::stats::SumFactory<double> SumFact;
+    EXPECT_TRUE(tatami::stats::has_sparse_running<SumFact>::value);
+    EXPECT_TRUE(tatami::stats::has_sparse_running_parallel<SumFact>::value);
+    EXPECT_TRUE(tatami::stats::has_dense_running<SumFact>::value);
+    EXPECT_TRUE(tatami::stats::has_dense_running_parallel<SumFact>::value);
+    EXPECT_TRUE(tatami::stats::has_sparse_direct<SumFact>::value);
+}

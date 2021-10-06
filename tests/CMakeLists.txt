@@ -25,6 +25,7 @@ add_executable(
     src/stats/sums.cpp
     src/stats/variances.cpp
     src/stats/medians.cpp
+    src/stats/apply.cpp
     src/data/data_sparse.cpp
     src/data/data_triangular.cpp
 )

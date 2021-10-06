@@ -86,3 +86,12 @@ TEST(ComputingDimVariances, RowVariancesNaN) {
     EXPECT_TRUE(std::isnan(rref.front()));
     EXPECT_TRUE(std::isnan(rref.back()));
 }
+
+TEST(ComputingDimVariances, Configuration) {
+    typedef tatami::stats::VarianceFactory<double> VarFact;
+    EXPECT_TRUE(tatami::stats::has_sparse_running<VarFact>::value);
+    EXPECT_TRUE(tatami::stats::has_sparse_running_parallel<VarFact>::value);
+    EXPECT_TRUE(tatami::stats::has_dense_running<VarFact>::value);
+    EXPECT_TRUE(tatami::stats::has_dense_running_parallel<VarFact>::value);
+    EXPECT_TRUE(tatami::stats::has_sparse_direct<VarFact>::value);
+}
