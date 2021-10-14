@@ -206,7 +206,7 @@ $(function() {
 <div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>        DenseDirect(O* o, <span class="keywordtype">size_t</span> d2) : output(o), otherdim(d2) {}</div>
 <div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span> </div>
 <div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> V&gt;</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>        <span class="keywordtype">void</span> compute(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> V* ptr, V* buffer = NULL) {</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>        <span class="keywordtype">void</span> compute(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> V* ptr) {</div>
 <div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            output[i] = variances::compute_direct&lt;O&gt;(ptr, otherdim).second;</div>
 <div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        }</div>
 <div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>    <span class="keyword">private</span>:</div>
@@ -223,7 +223,7 @@ $(function() {
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        SparseDirect(O* o, <span class="keywordtype">size_t</span> d2) : output(o), otherdim(d2) {}</div>
 <div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span> </div>
 <div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        <span class="keywordtype">void</span> compute(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> SparseRange&lt;T, IDX&gt;&amp; range, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        <span class="keywordtype">void</span> compute(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> SparseRange&lt;T, IDX&gt;&amp; range) {</div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>            output[i] = variances::compute_direct&lt;O&gt;(range, otherdim).second;</div>
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        }</div>
 <div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    <span class="keyword">private</span>:</div>
@@ -240,7 +240,7 @@ $(function() {
 <div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>        DenseRunning(O* o, <span class="keywordtype">size_t</span> d1) : output(o), dim(d1), running_means(dim) {}</div>
 <div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span> </div>
 <div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> V&gt;</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        <span class="keywordtype">void</span> add(<span class="keyword">const</span> V* ptr, V* buffer = NULL) {</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        <span class="keywordtype">void</span> add(<span class="keyword">const</span> V* ptr) {</div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            variances::compute_running(ptr, dim, running_means.data(), output, counter);</div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        }</div>
 <div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
@@ -267,7 +267,7 @@ $(function() {
 <div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        SparseRunning(O* o, <span class="keywordtype">size_t</span> d1) : output(o), dim(d1), running_means(dim), running_nzeros(dim) {}</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span> </div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        <span class="keywordtype">void</span> add(<span class="keyword">const</span> SparseRange&lt;T, IDX&gt;&amp; range, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        <span class="keywordtype">void</span> add(<span class="keyword">const</span> SparseRange&lt;T, IDX&gt;&amp; range) {</div>
 <div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>            variances::compute_running(range, running_means.data(), output, running_nzeros.data(), counter);</div>
 <div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        }</div>
 <div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span> </div>

@@ -97,7 +97,7 @@ $(function() {
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        DenseDirect(O* o, <span class="keywordtype">size_t</span> d2) : output(o), otherdim(d2) {}</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span> </div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> V&gt;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <span class="keywordtype">void</span> compute(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> V* ptr, V* buffer) {</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        <span class="keywordtype">void</span> compute(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> V* ptr) {</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            output[i] = std::accumulate(ptr, ptr + otherdim, <span class="keyword">static_cast&lt;</span>O<span class="keyword">&gt;</span>(0));</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        }</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keyword">private</span>:</div>
@@ -114,7 +114,7 @@ $(function() {
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        SparseDirect(O* o) : output(o) {}</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordtype">void</span> compute(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> SparseRange&lt;T, IDX&gt;&amp; range, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordtype">void</span> compute(<span class="keywordtype">size_t</span> i, <span class="keyword">const</span> SparseRange&lt;T, IDX&gt;&amp; range) {</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            output[i] = std::accumulate(range.value, range.value + range.number, <span class="keyword">static_cast&lt;</span>O<span class="keyword">&gt;</span>(0));</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        }</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">private</span>:</div>
@@ -130,7 +130,7 @@ $(function() {
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        DenseRunning(O* o, <span class="keywordtype">size_t</span> d1) : output(o), dim(d1) {}</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span> </div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> V&gt;</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordtype">void</span> add(<span class="keyword">const</span> V* ptr, V* buffer = NULL) {</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordtype">void</span> add(<span class="keyword">const</span> V* ptr) {</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> d = 0; d &lt; dim; ++d) {</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                output[d] += ptr[d];</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            }</div>
@@ -155,7 +155,7 @@ $(function() {
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        SparseRunning(O* o) : output(o) {}</div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> T = <span class="keywordtype">double</span>, <span class="keyword">typename</span> IDX = <span class="keywordtype">int</span>&gt;</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="keywordtype">void</span> add(<span class="keyword">const</span> SparseRange&lt;T, IDX&gt;&amp; range, T* vbuffer = NULL, IDX* ibuffer = NULL) {</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="keywordtype">void</span> add(<span class="keyword">const</span> SparseRange&lt;T, IDX&gt;&amp; range) {</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> j = 0; j &lt; range.number; ++j) {</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                output[range.index[j]] += range.value[j];</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>            }</div>
