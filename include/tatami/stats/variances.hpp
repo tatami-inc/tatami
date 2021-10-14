@@ -296,7 +296,7 @@ public:
 
 public:
     struct SparseRunning {
-        SparseRunning(O* o, size_t d1) : output(o), dim(d1), running_means(dim), running_nzeros(dim) {}
+        SparseRunning(O* o, size_t dim, size_t s, size_t e) : output(o), start(s), end(e), running_means(dim), running_nzeros(dim) {}
 
         template<typename T, typename IDX>
         void add(const SparseRange<T, IDX>& range) {
@@ -304,22 +304,22 @@ public:
         }
 
         void finish() {
-            variances::finish_running(dim, running_means.data(), output, running_nzeros.data(), counter);
+            variances::finish_running(end - start, running_means.data() + start, output + start, running_nzeros.data() + start, counter);
         }
     private:
         O* output;
-        size_t dim;
+        size_t start, end;
         std::vector<O> running_means;
         std::vector<int> running_nzeros;
         int counter = 0;
     };
 
     SparseRunning sparse_running() {
-        return SparseRunning(output, dim);
+        return SparseRunning(output, dim, 0, dim);
     }
 
     SparseRunning sparse_running(size_t start, size_t end) {
-        return SparseRunning(output, dim);
+        return SparseRunning(output, dim, start, end);
     }
 };
 
