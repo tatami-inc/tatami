@@ -196,7 +196,8 @@ public:
     }
 
 private:
-    static void copy_over(const T* src, T* dest, size_t n) {
+    template<typename X>
+    static void copy_over(const X* src, X* dest, size_t n) {
         if (src!=dest) {
             std::copy(src, src + n, dest);
         }
@@ -399,7 +400,7 @@ public:
      * Depending on `copy`, values and incides will be copied into `vbuffer` and/or `ibuffer`.
      */
     SparseRange<T, IDX> sparse_column_copy(size_t c, T* vbuffer, IDX* ibuffer, size_t first, size_t last, SparseCopyMode copy, Workspace* work=nullptr, bool sorted=true) const {
-        auto output = sparse_column(c, vbuffer, first, last, work);
+        auto output = sparse_column(c, vbuffer, ibuffer, first, last, work, sorted);
 
         if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_INDEX) && output.index != ibuffer) {
             copy_over(output.index, ibuffer, last - first);
