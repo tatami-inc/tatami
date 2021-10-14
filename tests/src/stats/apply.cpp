@@ -25,7 +25,7 @@ public:
         DenseDirect(double* o) : output(o) {}
 
         template<typename V>
-        void compute(size_t i, const V* ptr, V* buffer) {
+        void compute(size_t i, const V* ptr) {
             output[i] = 1;
         }
     private:
@@ -41,7 +41,7 @@ public:
         SparseDirect(double* o) : output(o) {}
 
         template<typename T, typename IDX>
-        void compute(size_t i, const tatami::SparseRange<T, IDX>& range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        void compute(size_t i, const tatami::SparseRange<T, IDX>& range) {
             output[i] = 2;
         }
     private:
@@ -57,7 +57,7 @@ public:
         DenseRunning(double* o, size_t d) : output(o), dim(d) {}
 
         template<typename V>
-        void add(const V* ptr, V* buffer = NULL) {
+        void add(const V* ptr) {
             for (size_t d = 0; d < dim; ++d) {
                 output[d] = 3;
             }
@@ -82,7 +82,7 @@ public:
         SparseRunning(double* o, size_t d) : output(o), dim(d) {}
 
         template<typename T = double, typename IDX = int>
-        void add(const tatami::SparseRange<T, IDX>& range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        void add(const tatami::SparseRange<T, IDX>& range) {
             for (size_t d = 0; d < dim; ++d) {
                 output[d] = 4;
             }
@@ -171,6 +171,87 @@ TEST(ApplyCheck, VariableDispatchColumns) {
         std::vector<double> output(N);
         SillyFactory factory(output.data(), N);
         tatami::apply<1>(sparse_column.get(), factory);
+        EXPECT_EQ(output, std::vector<double>(N, 2));
+    }
+}
+
+struct SillyFactoryCopy {
+public:
+    SillyFactoryCopy(double* o, size_t d1) : output(o), dim(d1) {}
+
+private:
+    double* output;
+    size_t dim;
+
+public:
+    struct DenseDirect {
+        DenseDirect(double* o) : output(o) {}
+
+        template<typename V>
+        void compute_copy(size_t i, V* ptr) {
+            output[i] = 1;
+        }
+    private:
+        double* output;
+    };
+
+    DenseDirect dense_direct() {
+        return DenseDirect(output);
+    }
+
+public:
+    struct SparseDirect {
+        SparseDirect(double* o) : output(o) {}
+
+        template<typename T, typename IDX>
+        void compute_copy(size_t i, size_t n, T* xbuffer, IDX* ibuffer) {
+            output[i] = 2;
+        }
+    private:
+        double* output;
+    };
+
+    SparseDirect sparse_direct() {
+        return SparseDirect(output);
+    }
+};
+
+TEST(ApplyCheck, VariableDispatchRowsCopy) {
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
+
+    size_t N = dense_row->nrow();
+    {
+        std::vector<double> output(N);
+        SillyFactoryCopy factory(output.data(), N);
+        tatami::apply<0>(dense_row.get(), factory);
+        EXPECT_EQ(output, std::vector<double>(N, 1));
+    }
+
+    {
+        std::vector<double> output(N);
+        SillyFactoryCopy factory(output.data(), N);
+        tatami::apply<0>(sparse_row.get(), factory);
+        EXPECT_EQ(output, std::vector<double>(N, 2));
+    }
+}
+
+TEST(ApplyCheck, VariableDispatchColumnsCopy) {
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
+
+    size_t N = dense_row->ncol();
+    {
+        std::vector<double> output(N);
+        SillyFactoryCopy factory(output.data(), N);
+        tatami::apply<1>(dense_row.get(), factory);
+        EXPECT_EQ(output, std::vector<double>(N, 1));
+    }
+
+    {
+        std::vector<double> output(N);
+        SillyFactoryCopy factory(output.data(), N);
+        tatami::apply<1>(sparse_row.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 2));
     }
 }

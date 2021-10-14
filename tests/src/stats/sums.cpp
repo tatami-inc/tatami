@@ -51,9 +51,19 @@ TEST(ComputingDimsums, ColumnSums) {
 
 TEST(ComputingDimsums, Configuration) {
     typedef tatami::stats::SumFactory<double> SumFact;
+
     EXPECT_TRUE(tatami::stats::has_sparse_running<SumFact>::value);
     EXPECT_TRUE(tatami::stats::has_sparse_running_parallel<SumFact>::value);
     EXPECT_TRUE(tatami::stats::has_dense_running<SumFact>::value);
     EXPECT_TRUE(tatami::stats::has_dense_running_parallel<SumFact>::value);
     EXPECT_TRUE(tatami::stats::has_sparse_direct<SumFact>::value);
+
+    typedef decltype(std::declval<SumFact>().dense_direct()) SumDense;
+    const bool ndc = tatami::stats::has_nonconst_dense_compute<SumDense, double, int>::value;
+    EXPECT_FALSE(ndc);
+    typedef decltype(std::declval<SumFact>().sparse_direct()) SumSparse;
+    const bool nsc = tatami::stats::has_nonconst_sparse_compute<SumSparse, double, int>::value;
+    EXPECT_FALSE(nsc);
+    const tatami::SparseCopyMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<SumSparse>::value;
+    EXPECT_EQ(nscc, tatami::SPARSE_COPY_BOTH); // just a negative control.
 }

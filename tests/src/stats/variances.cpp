@@ -94,4 +94,13 @@ TEST(ComputingDimVariances, Configuration) {
     EXPECT_TRUE(tatami::stats::has_dense_running<VarFact>::value);
     EXPECT_TRUE(tatami::stats::has_dense_running_parallel<VarFact>::value);
     EXPECT_TRUE(tatami::stats::has_sparse_direct<VarFact>::value);
+
+    typedef decltype(std::declval<VarFact>().dense_direct()) VarDense;
+    const bool ndc = tatami::stats::has_nonconst_dense_compute<VarDense, double, int>::value;
+    EXPECT_FALSE(ndc);
+    typedef decltype(std::declval<VarFact>().sparse_direct()) VarSparse;
+    const bool nsc = tatami::stats::has_nonconst_sparse_compute<VarSparse, double, int>::value;
+    EXPECT_FALSE(nsc);
+    const tatami::SparseCopyMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<VarSparse>::value;
+    EXPECT_EQ(nscc, tatami::SPARSE_COPY_BOTH); // just a negative control.
 }

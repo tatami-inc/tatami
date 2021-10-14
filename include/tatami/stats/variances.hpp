@@ -238,7 +238,7 @@ public:
         DenseDirect(O* o, size_t d2) : output(o), otherdim(d2) {}
 
         template<typename V>
-        void compute(size_t i, const V* ptr, V* buffer = NULL) {
+        void compute(size_t i, const V* ptr) {
             output[i] = variances::compute_direct<O>(ptr, otherdim).second;
         }
     private:
@@ -255,7 +255,7 @@ public:
         SparseDirect(O* o, size_t d2) : output(o), otherdim(d2) {}
 
         template<typename T, typename IDX>
-        void compute(size_t i, const SparseRange<T, IDX>& range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        void compute(size_t i, const SparseRange<T, IDX>& range) {
             output[i] = variances::compute_direct<O>(range, otherdim).second;
         }
     private:
@@ -272,7 +272,7 @@ public:
         DenseRunning(O* o, size_t d1) : output(o), dim(d1), running_means(dim) {}
 
         template<typename V>
-        void add(const V* ptr, V* buffer = NULL) {
+        void add(const V* ptr) {
             variances::compute_running(ptr, dim, running_means.data(), output, counter);
         }
 
@@ -299,7 +299,7 @@ public:
         SparseRunning(O* o, size_t d1) : output(o), dim(d1), running_means(dim), running_nzeros(dim) {}
 
         template<typename T, typename IDX>
-        void add(const SparseRange<T, IDX>& range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        void add(const SparseRange<T, IDX>& range) {
             variances::compute_running(range, running_means.data(), output, running_nzeros.data(), counter);
         }
 

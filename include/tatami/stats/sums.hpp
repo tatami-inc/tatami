@@ -30,7 +30,7 @@ public:
         DenseDirect(O* o, size_t d2) : output(o), otherdim(d2) {}
 
         template<typename V>
-        void compute(size_t i, const V* ptr, V* buffer) {
+        void compute(size_t i, const V* ptr) {
             output[i] = std::accumulate(ptr, ptr + otherdim, static_cast<O>(0));
         }
     private:
@@ -47,7 +47,7 @@ public:
         SparseDirect(O* o) : output(o) {}
 
         template<typename T, typename IDX>
-        void compute(size_t i, const SparseRange<T, IDX>& range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        void compute(size_t i, const SparseRange<T, IDX>& range) {
             output[i] = std::accumulate(range.value, range.value + range.number, static_cast<O>(0));
         }
     private:
@@ -63,7 +63,7 @@ public:
         DenseRunning(O* o, size_t d1) : output(o), dim(d1) {}
 
         template<typename V>
-        void add(const V* ptr, V* buffer = NULL) {
+        void add(const V* ptr) {
             for (size_t d = 0; d < dim; ++d) {
                 output[d] += ptr[d];
             }
@@ -88,7 +88,7 @@ public:
         SparseRunning(O* o) : output(o) {}
 
         template<typename T = double, typename IDX = int>
-        void add(const SparseRange<T, IDX>& range, T* vbuffer = NULL, IDX* ibuffer = NULL) {
+        void add(const SparseRange<T, IDX>& range) {
             for (size_t j = 0; j < range.number; ++j) {
                 output[range.index[j]] += range.value[j];
             }

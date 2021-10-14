@@ -20,13 +20,9 @@ namespace tatami {
 namespace stats {
 
 template<typename O = double, typename T>
-O compute_median(const T* src, T* buffer, size_t n) {
+O compute_median(T* buffer, size_t n) {
     if (n == 0) {
         return std::numeric_limits<O>::quiet_NaN();
-    }
-
-    if (src != buffer) {
-        std::copy(src, src + n, buffer);
     }
 
     size_t halfway = n / 2;
@@ -56,8 +52,8 @@ public:
         Dense(O* o, size_t d2) : output(o), otherdim(d2) {}
 
         template<typename T>
-        void compute(size_t i, const T* ptr, T* buffer) {
-            output[i] = compute_median<O>(ptr, buffer, otherdim);
+        void compute_copy(size_t i, T* ptr) {
+            output[i] = compute_median<O>(ptr, otherdim);
         }
     private:
         O* output;
@@ -72,24 +68,26 @@ public:
     struct Sparse {
         Sparse(O* o, size_t d2) : output(o), otherdim(d2) {}
 
+        static constexpr SparseCopyMode copy_mode = SPARSE_COPY_VALUE;
+
         template<typename T, typename IDX>
-        void compute(size_t i, const SparseRange<T, IDX>& range, T* vbuffer, IDX* ibuffer) {
-            if (range.number == otherdim) {
-                output[i] = compute_median<O>(range.value, vbuffer, otherdim);
-            } else if (range.number * 2 < otherdim) {
+        void compute_copy(size_t i, size_t n, T* vbuffer, IDX*) {
+            if (n == otherdim) {
+                output[i] = compute_median<O>(vbuffer, otherdim);
+            } else if (n * 2 < otherdim) {
                 output[i] = 0; // zero is the median if there are too many zeroes.
             } else {
-                if (range.value != vbuffer) {
-                    std::copy(range.value, range.value + range.number, vbuffer);
+                if (vbuffer != vbuffer) {
+                    std::copy(vbuffer, vbuffer + n, vbuffer);
                 }
 
                 size_t halfway = otherdim / 2;
                 bool is_even = (otherdim % 2 == 0);
 
-                auto vend = vbuffer + range.number;
+                auto vend = vbuffer + n;
                 std::sort(vbuffer, vend);
                 size_t zeropos = std::lower_bound(vbuffer, vend, 0) - vbuffer;
-                size_t nzero = otherdim - range.number;
+                size_t nzero = otherdim - n;
 
                 if (!is_even) {
                     if (zeropos > halfway) {

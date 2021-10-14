@@ -167,4 +167,13 @@ TEST(ComputingDimMedians, Configuration) {
     EXPECT_FALSE(tatami::stats::has_dense_running<MedFact>::value);
     EXPECT_FALSE(tatami::stats::has_dense_running_parallel<MedFact>::value);
     EXPECT_TRUE(tatami::stats::has_sparse_direct<MedFact>::value);
+
+    typedef decltype(std::declval<MedFact>().dense_direct()) MedDense;
+    const bool ndc = tatami::stats::has_nonconst_dense_compute<MedDense, double, int>::value;
+    EXPECT_TRUE(ndc);
+    typedef decltype(std::declval<MedFact>().sparse_direct()) MedSparse;
+    const bool nsc = tatami::stats::has_nonconst_sparse_compute<MedSparse, double, int>::value;
+    EXPECT_TRUE(nsc);
+    const tatami::SparseCopyMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<MedSparse>::value;
+    EXPECT_EQ(nscc, tatami::SPARSE_COPY_VALUE);
 }
