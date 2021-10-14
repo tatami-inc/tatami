@@ -36,6 +36,12 @@ target_link_libraries(
     tatami
 )
 
+set(USE_OPENMP OFF CACHE BOOL "Compile with OpenMP support")
+if (USE_OPENMP)
+    find_package(OpenMP)
+    target_link_libraries(libtest OpenMP::OpenMP_CXX)
+endif()
+
 add_executable(
     exttest 
     src/ext/MatrixMarket.cpp
@@ -58,7 +64,7 @@ if (NOT HAVE_CXX_FS)
     target_link_libraries(exttest stdc++fs) 
 endif()
 
-set(CODE_COVERAGE "Enable coverage testing" OFF)
+set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(libtest PRIVATE -O0 -g --coverage)
     target_compile_options(exttest PRIVATE -O0 -g --coverage)
