@@ -11,7 +11,7 @@ jobs:
       matrix:
         config:
         - {
-            name: "Ubuntu Latest GCC", 
+            name: "Ubuntu Latest GCC, OpenMP enabled", 
             os: ubuntu-latest,
             omp: true
           }
@@ -39,7 +39,7 @@ jobs:
       if: ${{ matrix.config.cov }}
       run: cmake -S . -B build -DCODE_COVERAGE=ON
 
-    - name: Configure the build with coverage
+    - name: Configure the build with OpenMP
       if: ${{ matrix.config.omp }}
       run: cmake -S . -B build -DUSE_OPENMP=ON
 
