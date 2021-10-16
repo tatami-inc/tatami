@@ -3,7 +3,10 @@
 
 #include "../base/Matrix.hpp"
 #include "config.hpp"
+
 #include <cmath>
+#include <vector>
+#include <algorithm>
 
 #ifdef _OPENMP
 #include <omp.h>
@@ -113,21 +116,23 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
                             size_t worker_size = std::ceil(static_cast<double>(dim) / nworkers);
                             size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
 
-                            std::vector<T> obuffer(end - start);
-                            std::vector<IDX> ibuffer(obuffer.size());
-                            auto wrk = p->new_workspace(!ROW);
-                            auto stat = factory.sparse_running(start, end);
+                            if (start < end) {
+                                std::vector<T> obuffer(end - start);
+                                std::vector<IDX> ibuffer(obuffer.size());
+                                auto wrk = p->new_workspace(!ROW);
+                                auto stat = factory.sparse_running(start, end);
 
-                            for (size_t i = 0; i < otherdim; ++i) {
-                                if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
-                                    auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
-                                    stat.add(range);
-                                } else {
-                                    auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
-                                    stat.add(range);
+                                for (size_t i = 0; i < otherdim; ++i) {
+                                    if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
+                                        auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
+                                        stat.add(range);
+                                    } else {
+                                        auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
+                                        stat.add(range);
+                                    }
                                 }
+                                stat.finish();
                             }
-                            stat.finish();
                         }
                         return;
                     }
@@ -159,20 +164,22 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
                     size_t worker_size = std::ceil(static_cast<double>(dim) / nworkers);
                     size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
 
-                    auto stat = factory.dense_running(start, end);
-                    std::vector<T> obuffer(end - start);
-                    auto wrk = p->new_workspace(!ROW);
+                    if (start < end) {
+                        auto stat = factory.dense_running(start, end);
+                        std::vector<T> obuffer(end - start);
+                        auto wrk = p->new_workspace(!ROW);
 
-                    for (size_t i = 0; i < otherdim; ++i) {
-                        if constexpr(ROW) { // flipped around, see above.
-                            auto ptr = p->column(i, obuffer.data(), start, end, wrk.get());
-                            stat.add(ptr);
-                        } else {
-                            auto ptr = p->row(i, obuffer.data(), start, end, wrk.get());
-                            stat.add(ptr);
+                        for (size_t i = 0; i < otherdim; ++i) {
+                            if constexpr(ROW) { // flipped around, see above.
+                                auto ptr = p->column(i, obuffer.data(), start, end, wrk.get());
+                                stat.add(ptr);
+                            } else {
+                                auto ptr = p->row(i, obuffer.data(), start, end, wrk.get());
+                                stat.add(ptr);
+                            }
                         }
+                        stat.finish();
                     }
-                    stat.finish();
                 }
                 return;
             }
