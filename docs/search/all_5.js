@@ -2,5 +2,7 @@ var searchData=
 [
   ['layeredmatrixdata_0',['LayeredMatrixData',['../structtatami_1_1MatrixMarket_1_1LayeredMatrixData.html',1,'tatami::MatrixMarket']]],
   ['load_5flayered_5fsparse_5fmatrix_1',['load_layered_sparse_matrix',['../MatrixMarket_8hpp.html#a96821262839b9cb97d6cfca47cf67d2e',1,'tatami::MatrixMarket']]],
-  ['load_5flayered_5fsparse_5fmatrix_5fgzip_2',['load_layered_sparse_matrix_gzip',['../MatrixMarket_8hpp.html#a10010454a57c83a50acd89ff1cbedb5c',1,'tatami::MatrixMarket']]]
+  ['load_5flayered_5fsparse_5fmatrix_5fgzip_2',['load_layered_sparse_matrix_gzip',['../MatrixMarket_8hpp.html#a10010454a57c83a50acd89ff1cbedb5c',1,'tatami::MatrixMarket']]],
+  ['load_5fsparse_5fmatrix_3',['load_sparse_matrix',['../MatrixMarket_8hpp.html#a44fe31fd649a377e4e6aa9cfd54dd6ba',1,'tatami::MatrixMarket']]],
+  ['load_5fsparse_5fmatrix_5fgzip_4',['load_sparse_matrix_gzip',['../MatrixMarket_8hpp.html#a79deeaae853fffc88e12a5ceef75dba8',1,'tatami::MatrixMarket']]]
 ];
