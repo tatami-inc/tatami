@@ -81,10 +81,272 @@ inline size_t read_to_eol(const char * buffer, size_t n) {
     }
     return 0; // out of range
 }
+
+struct TextReader {
+    TextReader(const char* path) : filepath(path) {}
+
+    template<class Object>
+    void operator()(Object& obj) {
+        std::ifstream in(filepath);
+        if (!in) {
+            throw std::runtime_error("failed to open file");
+        }
+        std::string line;
+        int counter = 0;
+        while (std::getline(in, line)) {
+            auto status = obj.add(line.c_str(), line.size() + 1); // for the null terminator
+            if (!status) {
+                throw std::runtime_error(std::string("failed to process line ") + std::to_string(counter + 1));
+            }
+            ++counter;
+        }
+        return;
+    }
+private:
+    const char* filepath;
+};
+
+#ifdef TATAMI_USE_ZLIB
+
+struct GzipReader {
+    GzipReader (const char* path, const int size = 16348) : filepath(path), bufsize(size), buffer(bufsize) {}
+    const int bufsize;
+    const char* filepath;
+    std::vector<unsigned char> buffer;
+
+    struct GZFile {
+        GZFile(const char* path) : handle(gzopen(path, "rb")) {
+            if (!handle) {
+                throw std::runtime_error("failed to open file");
+            }
+        }
+
+        ~GZFile() {
+            gzclose(handle);
+        }
+
+        // Delete the remaining constructors.
+        GZFile(const GZFile&) = delete;
+        GZFile(GZFile&&) = delete;
+        GZFile& operator=(const GZFile&) = delete;
+        GZFile& operator=(GZFile&&) = delete;
+
+        gzFile handle;
+    };
+
+    template<class Object>
+    void operator()(Object& obj) {
+        GZFile gz(filepath);
+
+        size_t read = 1; // any positive value, to get the ball rolling.
+        size_t leftovers = 0;
+
+        while (read) {
+            read = gzread(gz.handle, buffer.data() + leftovers, bufsize - leftovers);
+            size_t current_stored = read + leftovers;
+
+            if (read == 0) {
+                // Making sure we have a terminating newline on the last line.
+                if (gzeof(gz.handle)) { 
+                    if (current_stored && buffer[current_stored-1]!='\n') {
+                        buffer[current_stored] = '\n';
+                        ++current_stored;
+                    }
+                } else {
+                    int dummy;
+                    throw std::runtime_error(gzerror(gz.handle, &dummy));
+                }
+            }
+
+            // Adding whole lines.
+            size_t last_processed = 0, total_processed = 0;
+            do {
+                last_processed = obj.add((char*)buffer.data() + total_processed, current_stored - total_processed);
+                total_processed += last_processed;
+            } while (last_processed);
+
+            // Rotating what's left to the front for the next cycle.
+            leftovers = current_stored - total_processed;
+            for (size_t i = 0; i < leftovers; ++i) {
+                buffer[i] = buffer[total_processed + i];
+            }
+        }
+
+        return;
+    }
+};
+
+#endif
+
 /**
  * @endcond
  */
 
+/*******************************************************************************
+ **************************** Simple loading functions *************************
+ *******************************************************************************/
+
+/**
+ * @cond
+ */
+template<typename T, typename IDX> 
+struct SimpleBuilder {
+    std::vector<uint16_t> short_rows;
+    std::vector<IDX> long_rows;
+    bool use_short_rows = false;
+
+    std::vector<uint16_t> short_cols;
+    std::vector<IDX> long_cols;
+    bool use_short_cols = false;
+
+    std::vector<T> values;
+    int current_line = 0;
+
+    size_t nrows, ncols, nlines;
+    bool passed_preamble = false;
+
+    size_t add(const char* buffer, size_t n) {
+        if (buffer[0] == '%') {
+            // TODO: should probably check for 'coordinate integer'.
+            return read_to_eol(buffer, n);
+
+        } else if (!passed_preamble) {
+            passed_preamble = true;
+            auto read = process_triplet_line(buffer, nrows, ncols, nlines, n);
+            if (read == 0) {
+                return 0;
+            }
+
+            constexpr size_t max16 = std::numeric_limits<uint16_t>::max();
+            if (nrows <= max16) {
+                short_rows.resize(nlines);
+                use_short_rows = true;
+            } else {
+                long_rows.resize(nlines);
+            }
+
+            if (ncols <= max16) {
+                short_cols.resize(nlines);
+                use_short_cols = true;
+            } else {
+                long_cols.resize(nlines);
+            }
+
+            values.resize(nlines);
+            return read;
+        }
+
+        int row, col, data;
+        auto read = process_triplet_line(buffer, row, col, data, n);
+        if (read == 0){
+            return 0;
+        }
+
+        --row;
+        if (use_short_rows) {
+            short_rows[current_line] = row;
+        } else {
+            long_rows[current_line] = row;
+        }
+
+        --col;
+        if (use_short_cols) {
+            short_cols[current_line] = col;
+        } else {
+            long_cols[current_line] = col;
+        }
+
+        values[current_line] = data;
+        ++current_line;
+
+        return read;
+    }
+
+    std::shared_ptr<tatami::Matrix<T, IDX> > finish() {
+        auto create_matrix = [&](auto& rows, auto& cols) -> auto {
+            auto idptrs = compress_sparse_triplets<false>(nrows, ncols, values, rows, cols);
+
+            // Jesus, so much typedefing.
+            typedef typename std::remove_reference<decltype(rows)>::type RowType;
+            typedef typename std::remove_reference<decltype(idptrs)>::type IndType;
+            typedef CompressedSparseColumnMatrix<T, IDX, decltype(values), RowType, IndType> SparseMat;
+
+            return std::shared_ptr<tatami::Matrix<T, IDX> >(new SparseMat(nrows, ncols, std::move(values), std::move(rows), std::move(idptrs), false));
+        };
+
+        if (use_short_rows) {
+            if (use_short_cols) {
+                return create_matrix(short_rows, short_cols);
+            } else {
+                return create_matrix(short_rows, long_cols);
+            }
+        } else {
+            if (use_short_cols) {
+                return create_matrix(long_rows, short_cols);
+            } else {
+                return create_matrix(long_rows, long_cols);
+            }
+        }
+    }
+};
+/**
+ * @endcond
+ */
+
+/**
+ * @param filepath Path to a Matrix Market file.
+ * The file should contain integer data in the coordinate format, stored in text without any compression.
+ * 
+ * @return A pointer to a `tatami::Matrix` object.
+ *
+ * @tparam T Type of value in the `tatami::Matrix` interface.
+ * @tparam IDX Integer type for the index.
+ *
+ * This loads a sparse integer matrix from a Matrix Market coordinate file.
+ * It will store the data in memory as a compressed sparse column matrix,
+ * and is smart enough to use a smaller integer type if the number of rows is less than the maximum value of `uint16_t`.
+ * Currently, only unsigned integers are supported.
+ */
+template<typename T = double, typename IDX = int>
+std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix(const char * filepath) {
+    TextReader txt(filepath);
+    SimpleBuilder<T, IDX> build;
+    txt(build);
+    return build.finish();
+}
+
+#ifdef TATAMI_USE_ZLIB
+
+/**
+ * @param filepath Path to a Matrix Market file.
+ * The file should contain integer data in the coordinate format, stored with Gzip compression.
+ * @param buffer Size of the buffer to use for decompression, in bytes.
+ *
+ * @return A `LayeredMatrixData` object.
+ *
+ * @tparam T Type of value in the `tatami::Matrix` interface.
+ * @tparam IDX Integer type for the index.
+ *
+ * This is a version of `load_sparse_matrix()` for loading in Gzip-compressed Matrix Market files.
+ * To make this function available, make sure to define `TATAMI_USE_ZLIB` and compile with **zlib** support.
+ */
+template<typename T = double, typename IDX = int>
+std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_gzip(const char * filepath, int buffer = 16384) {
+    GzipReader unz(filepath, buffer);
+    SimpleBuilder<T, IDX> build;
+    unz(build);
+    return build.finish();
+}
+
+#endif
+
+/*******************************************************************************
+ *********************** Layered matrix loading functions **********************
+ *******************************************************************************/
+
+/**
+ * @cond
+ */
 struct LineAssignments {
     LineAssignments() : rows_per_category(3), lines_per_category(3) {}
 
@@ -275,6 +537,9 @@ public:
         }
     }
 };
+/**
+ * @endcond
+ */
 
 /**
  * @brief Pointer and permutations for a layered sparse matrix.
@@ -300,8 +565,11 @@ struct LayeredMatrixData {
     std::vector<size_t> permutation;
 };
 
+/**
+ * @cond
+ */
 template<typename T = double, typename IDX = int, class Functor>
-LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Functor&& process) {
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Functor& process) {
 #ifdef TATAMI_PROGRESS_PRINTER
     TATAMI_PROGRESS_PRINTER("tatami::load_layered_sparse_matrix", 1, 3, "Assigning lines to submatrices")
 #endif
@@ -334,6 +602,9 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Functor&& process)
 
     return output;
 }
+/**
+ * @endcond
+ */
 
 /**
  * @param filepath Path to a Matrix Market file.
@@ -360,95 +631,11 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Functor&& process)
  */
 template<typename T = double, typename IDX = int>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath) {
-    auto process = [=](auto& obj) -> void {
-        std::ifstream in(filepath);
-        if (!in) {
-            throw std::runtime_error("failed to open file");
-        }
-        std::string line;
-        int counter = 0;
-        while (std::getline(in, line)) {
-            auto status = obj.add(line.c_str(), line.size() + 1); // for the null terminator
-            if (!status) {
-                throw std::runtime_error(std::string("failed to process line ") + std::to_string(counter + 1));
-            }
-            ++counter;
-        }
-        return;
-    };
-
-    return load_layered_sparse_matrix_internal(process);
+    TextReader txt(filepath);
+    return load_layered_sparse_matrix_internal(txt);
 }
 
 #ifdef TATAMI_USE_ZLIB
-
-struct Unzlibber {
-    Unzlibber (const char* path, const int size = 16348) : filepath(path), bufsize(size), buffer(bufsize) {}
-    const int bufsize;
-    const char* filepath;
-    std::vector<unsigned char> buffer;
-
-    struct GZFile {
-        GZFile(const char* path) : handle(gzopen(path, "rb")) {
-            if (!handle) {
-                throw std::runtime_error("failed to open file");
-            }
-        }
-
-        ~GZFile() {
-            gzclose(handle);
-        }
-
-        // Delete the remaining constructors.
-        GZFile(const GZFile&) = delete;
-        GZFile(GZFile&&) = delete;
-        GZFile& operator=(const GZFile&) = delete;
-        GZFile& operator=(GZFile&&) = delete;
-
-        gzFile handle;
-    };
-
-    template<class OBJECT>
-    void operator()(OBJECT& obj) {
-        GZFile gz(filepath);
-
-        size_t read = 1; // any positive value, to get the ball rolling.
-        size_t leftovers = 0;
-
-        while (read) {
-            read = gzread(gz.handle, buffer.data() + leftovers, bufsize - leftovers);
-            size_t current_stored = read + leftovers;
-
-            if (read == 0) {
-                // Making sure we have a terminating newline on the last line.
-                if (gzeof(gz.handle)) { 
-                    if (current_stored && buffer[current_stored-1]!='\n') {
-                        buffer[current_stored] = '\n';
-                        ++current_stored;
-                    }
-                } else {
-                    int dummy;
-                    throw std::runtime_error(gzerror(gz.handle, &dummy));
-                }
-            }
-
-            // Adding whole lines.
-            size_t last_processed = 0, total_processed = 0;
-            do {
-                last_processed = obj.add((char*)buffer.data() + total_processed, current_stored - total_processed);
-                total_processed += last_processed;
-            } while (last_processed);
-
-            // Rotating what's left to the front for the next cycle.
-            leftovers = current_stored - total_processed;
-            for (size_t i = 0; i < leftovers; ++i) {
-                buffer[i] = buffer[total_processed + i];
-            }
-        }
-
-        return;
-    }
-};
 
 /**
  * @param filepath Path to a Matrix Market file.
@@ -465,7 +652,7 @@ struct Unzlibber {
  */
 template<typename T = double, typename IDX = int>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix_gzip(const char * filepath, int buffer = 16384) {
-    Unzlibber unz(filepath, buffer);
+    GzipReader unz(filepath, buffer);
     return load_layered_sparse_matrix_internal(unz);
 }
 

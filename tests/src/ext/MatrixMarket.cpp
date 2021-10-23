@@ -8,13 +8,15 @@
 #include <string>
 #include <vector>
 
-template<class PARAM>
-class MatrixMarketTest : public ::testing::TestWithParam<PARAM> {
+typedef std::vector<int> IntVec;
+
+class MatrixMarketTextTest : public ::testing::TestWithParam<std::tuple<int, int, IntVec, IntVec, IntVec> > {
 protected:
     size_t NR, NC;
     std::vector<int> rows, cols, vals;
 
 protected:
+    template<class PARAM>
     auto extra_assemble(PARAM param) {
         NR = std::get<0>(param);
         NC = std::get<1>(param);
@@ -28,10 +30,22 @@ protected:
     }
 };
 
-typedef std::vector<int> IntVec;
-using MatrixMarketSimpleTest = MatrixMarketTest<std::tuple<int, int, IntVec, IntVec, IntVec> >;
+TEST_P(MatrixMarketTextTest, SimpleLoader) {
+    auto filepath = extra_assemble(GetParam());
+    auto out = tatami::MatrixMarket::load_sparse_matrix(filepath.c_str());
 
-TEST_P(MatrixMarketSimpleTest, LayeredLoaderSimple) {
+    // Checking against a reference.
+    auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
+    typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
+    auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
+
+    for (size_t i = 0; i < NC; ++i) {
+        auto stuff = out->column(i);
+        EXPECT_EQ(stuff, ref->column(i));
+    }
+}
+
+TEST_P(MatrixMarketTextTest, LayeredLoader) {
     auto filepath = extra_assemble(GetParam());
     ASSERT_EQ(rows.size(), cols.size());
     ASSERT_EQ(vals.size(), cols.size());
@@ -64,11 +78,9 @@ TEST_P(MatrixMarketSimpleTest, LayeredLoaderSimple) {
     const auto& out = loaded.matrix;
 
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
-    auto ref = std::shared_ptr<tatami::NumericMatrix>(new tatami::CompressedSparseColumnMatrix<double, int,
-                                                                                               decltype(vals),
-                                                                                               decltype(rows),
-                                                                                               decltype(indptrs)
-                                                                                              >(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
+    typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
+    auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
+
     EXPECT_EQ(out->nrow(), ref->nrow());
     EXPECT_EQ(out->ncol(), ref->ncol());
     EXPECT_TRUE(out->sparse());
@@ -93,7 +105,7 @@ TEST_P(MatrixMarketSimpleTest, LayeredLoaderSimple) {
 
 INSTANTIATE_TEST_CASE_P(
     MatrixMarket,
-    MatrixMarketSimpleTest,
+    MatrixMarketTextTest,
     ::testing::Values(
         std::make_tuple(
             // this example guarantees a few rows in each chunk.
