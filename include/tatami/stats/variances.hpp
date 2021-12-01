@@ -153,16 +153,18 @@ template<typename T, typename IDX, typename O, typename Nz>
 void compute_running(const SparseRange<T, IDX>& range, O* means, O* vars, Nz* nonzeros, int& count) {
     ++count;
     for (size_t j = 0; j < range.number; ++j) {
-        auto ri = range.index[j];
-        auto& curM = means[ri];
-        auto& curS = vars[ri];
-        auto& curNZ = nonzeros[ri];
-        ++curNZ;
+        if (range.value[j]) { // skip observed zeros so 'nonzeros' is what it says.
+            auto ri = range.index[j];
+            auto& curM = means[ri];
+            auto& curS = vars[ri];
+            auto& curNZ = nonzeros[ri];
+            ++curNZ;
 
-        const auto& curval = range.value[j];
-        const double delta = curval - curM;
-        curM += delta / curNZ;
-        curS += delta * (curval - curM);
+            const auto& curval = range.value[j];
+            const double delta = curval - curM;
+            curM += delta / curNZ;
+            curS += delta * (curval - curM);
+        }
     }
 }
 
