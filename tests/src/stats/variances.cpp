@@ -104,3 +104,31 @@ TEST(ComputingDimVariances, Configuration) {
     const tatami::SparseCopyMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<VarSparse>::value;
     EXPECT_EQ(nscc, tatami::SPARSE_COPY_BOTH); // just a negative control.
 }
+
+TEST(RunningVariances, SensibleZeros) {
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    size_t NR = sparse_column->nrow();
+    size_t NC = sparse_column->ncol();
+
+    // We set the first value to zero and check that 
+    // the number of non-zeros is still correctly reported.
+    std::vector<double> running_vars(NR);
+    std::vector<double> running_means(NR);
+    std::vector<int> running_nzeros(NR);
+    std::vector<int> ibuffer(NR);
+    std::vector<double> vbuffer(NR);
+
+    std::vector<int> ref_nzeros(NR);
+    for (int c = 0; c < static_cast<int>(NC); ++c) {
+        auto range = sparse_column->sparse_column_copy(c, vbuffer.data(), ibuffer.data(), tatami::SPARSE_COPY_VALUE);
+        vbuffer[0] = 0; 
+        tatami::stats::variances::compute_running(range, running_means.data(), running_vars.data(), running_nzeros.data(), c);
+        for (size_t r = 1; r < range.number; ++r) {
+            ref_nzeros[range.index[r]] += (range.value[r] != 0);
+        }
+    }
+    tatami::stats::variances::finish_running(NR, running_means.data(), running_vars.data(), running_nzeros.data(), NC);
+
+    EXPECT_EQ(ref_nzeros, running_nzeros);
+}
