@@ -88,24 +88,36 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a44fe31fd649a377e4e6aa9cfd54dd6ba"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
-<tr class="memitem:a44fe31fd649a377e4e6aa9cfd54dd6ba"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a44fe31fd649a377e4e6aa9cfd54dd6ba">tatami::MatrixMarket::load_sparse_matrix</a> (const char *filepath)</td></tr>
-<tr class="separator:a44fe31fd649a377e4e6aa9cfd54dd6ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a79deeaae853fffc88e12a5ceef75dba8"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
-<tr class="memitem:a79deeaae853fffc88e12a5ceef75dba8"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a79deeaae853fffc88e12a5ceef75dba8">tatami::MatrixMarket::load_sparse_matrix_gzip</a> (const char *filepath, int buffer=16384)</td></tr>
-<tr class="separator:a79deeaae853fffc88e12a5ceef75dba8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96821262839b9cb97d6cfca47cf67d2e"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
-<tr class="memitem:a96821262839b9cb97d6cfca47cf67d2e"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a96821262839b9cb97d6cfca47cf67d2e">tatami::MatrixMarket::load_layered_sparse_matrix</a> (const char *filepath)</td></tr>
-<tr class="separator:a96821262839b9cb97d6cfca47cf67d2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10010454a57c83a50acd89ff1cbedb5c"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
-<tr class="memitem:a10010454a57c83a50acd89ff1cbedb5c"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a10010454a57c83a50acd89ff1cbedb5c">tatami::MatrixMarket::load_layered_sparse_matrix_gzip</a> (const char *filepath, int buffer=16384)</td></tr>
-<tr class="separator:a10010454a57c83a50acd89ff1cbedb5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a97b0ccae943855b8e7b65a8cd20e0ced"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:a97b0ccae943855b8e7b65a8cd20e0ced"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a97b0ccae943855b8e7b65a8cd20e0ced">tatami::MatrixMarket::load_sparse_matrix</a> (const char *filepath, size_t bufsize=65536)</td></tr>
+<tr class="separator:a97b0ccae943855b8e7b65a8cd20e0ced"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4d7aea8d2c7ce97014b33714bf85212"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int, typename B &gt; </td></tr>
+<tr class="memitem:ac4d7aea8d2c7ce97014b33714bf85212"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#ac4d7aea8d2c7ce97014b33714bf85212">tatami::MatrixMarket::load_sparse_matrix_from_buffer</a> (const B *buffer, size_t n)</td></tr>
+<tr class="separator:ac4d7aea8d2c7ce97014b33714bf85212"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f38d73d03d81ac6e32f11f804031d80"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:a1f38d73d03d81ac6e32f11f804031d80"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a1f38d73d03d81ac6e32f11f804031d80">tatami::MatrixMarket::load_sparse_matrix_gzip</a> (const char *filepath, size_t bufsize=65536)</td></tr>
+<tr class="separator:a1f38d73d03d81ac6e32f11f804031d80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac74ee8a01c2f978f3f80daccbd2d3e4c"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:ac74ee8a01c2f978f3f80daccbd2d3e4c"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#ac74ee8a01c2f978f3f80daccbd2d3e4c">tatami::MatrixMarket::load_sparse_matrix_from_buffer_gzip</a> (const unsigned char *buffer, size_t n, size_t bufsize=65536)</td></tr>
+<tr class="separator:ac74ee8a01c2f978f3f80daccbd2d3e4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f4f1f9c5f4d8216082df388615450ea"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:a2f4f1f9c5f4d8216082df388615450ea"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a2f4f1f9c5f4d8216082df388615450ea">tatami::MatrixMarket::load_layered_sparse_matrix</a> (const char *filepath, size_t bufsize=65536)</td></tr>
+<tr class="separator:a2f4f1f9c5f4d8216082df388615450ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a096857b5e1ff25b92479cbd510343626"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int, typename B &gt; </td></tr>
+<tr class="memitem:a096857b5e1ff25b92479cbd510343626"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a096857b5e1ff25b92479cbd510343626">tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer</a> (const B *buffer, size_t n)</td></tr>
+<tr class="separator:a096857b5e1ff25b92479cbd510343626"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ea0ccd9a65c82bde2a3ced643ad0375"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:a3ea0ccd9a65c82bde2a3ced643ad0375"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a3ea0ccd9a65c82bde2a3ced643ad0375">tatami::MatrixMarket::load_layered_sparse_matrix_gzip</a> (const char *filepath, int bufsize=65536)</td></tr>
+<tr class="separator:a3ea0ccd9a65c82bde2a3ced643ad0375"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2141872c08eb8a61ca7e37ff4804e85e"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:a2141872c08eb8a61ca7e37ff4804e85e"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket_8hpp.html#a2141872c08eb8a61ca7e37ff4804e85e">tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer_gzip</a> (const unsigned char *buffer, size_t n, size_t bufsize=65536)</td></tr>
+<tr class="separator:a2141872c08eb8a61ca7e37ff4804e85e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Read a sparse matrix from the Matrix Market coordinate format. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a96821262839b9cb97d6cfca47cf67d2e" name="a96821262839b9cb97d6cfca47cf67d2e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96821262839b9cb97d6cfca47cf67d2e">&#9670;&nbsp;</a></span>load_layered_sparse_matrix()</h2>
+<a id="a2f4f1f9c5f4d8216082df388615450ea" name="a2f4f1f9c5f4d8216082df388615450ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2f4f1f9c5f4d8216082df388615450ea">&#9670;&nbsp;</a></span>load_layered_sparse_matrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -116,14 +128,25 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
           <td class="memname">LayeredMatrixData&lt; T, IDX &gt; tatami::MatrixMarket::load_layered_sparse_matrix </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>filepath</em></td><td>)</td>
+          <td class="paramname"><em>filepath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>bufsize</em> = <code>65536</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filepath</td><td>Path to a Matrix Market file. The file should contain integer data in the coordinate format, stored in text without any compression.</td></tr>
+    <tr><td class="paramname">filepath</td><td>Path to a Matrix Market file. The file should contain integer data in the coordinate format, stored in text without any compression. </td></tr>
+    <tr><td class="paramname">bufsize</td><td>Size of the buffer (in bytes) to use when reading from file.</td></tr>
   </table>
   </dd>
 </dl>
@@ -141,8 +164,108 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
 
 </div>
 </div>
-<a id="a10010454a57c83a50acd89ff1cbedb5c" name="a10010454a57c83a50acd89ff1cbedb5c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a10010454a57c83a50acd89ff1cbedb5c">&#9670;&nbsp;</a></span>load_layered_sparse_matrix_gzip()</h2>
+<a id="a096857b5e1ff25b92479cbd510343626" name="a096857b5e1ff25b92479cbd510343626"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a096857b5e1ff25b92479cbd510343626">&#9670;&nbsp;</a></span>load_layered_sparse_matrix_from_buffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double, typename IDX  = int, typename B &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">LayeredMatrixData&lt; T, IDX &gt; tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer </td>
+          <td>(</td>
+          <td class="paramtype">const B *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Array containing the contents of a Matrix Market file. The file should contain integer data in the coordinate format, stored in text without any compression. </td></tr>
+    <tr><td class="paramname">n</td><td>Length of the array.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>LayeredMatrixData</code> object.</dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Type of value in the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code> interface. </td></tr>
+    <tr><td class="paramname">IDX</td><td>Integer type for the index. </td></tr>
+    <tr><td class="paramname">B</td><td>Type of the buffer, usually <code>char</code> or <code>unsigned char</code>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This is equivalent to <code><a class="el" href="MatrixMarket_8hpp.html#a2f4f1f9c5f4d8216082df388615450ea">load_layered_sparse_matrix()</a></code> but assumes that the entire file has been read into <code>buffer</code>. </p>
+
+</div>
+</div>
+<a id="a2141872c08eb8a61ca7e37ff4804e85e" name="a2141872c08eb8a61ca7e37ff4804e85e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2141872c08eb8a61ca7e37ff4804e85e">&#9670;&nbsp;</a></span>load_layered_sparse_matrix_from_buffer_gzip()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double, typename IDX  = int&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">LayeredMatrixData&lt; T, IDX &gt; tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer_gzip </td>
+          <td>(</td>
+          <td class="paramtype">const unsigned char *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>bufsize</em> = <code>65536</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Array containing the contents of a Matrix Market file. The file should contain integer data in the coordinate format, stored in text without any compression. </td></tr>
+    <tr><td class="paramname">n</td><td>Length of the array. </td></tr>
+    <tr><td class="paramname">bufsize</td><td>Size of the buffer to use for decompression, in bytes.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>LayeredMatrixData</code> object.</dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Type of value in the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code> interface. </td></tr>
+    <tr><td class="paramname">IDX</td><td>Integer type for the index.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This is equivalent to <code><a class="el" href="MatrixMarket_8hpp.html#a3ea0ccd9a65c82bde2a3ced643ad0375">load_layered_sparse_matrix_gzip()</a></code> but assumes that the entire file has been read into <code>buffer</code>. </p>
+
+</div>
+</div>
+<a id="a3ea0ccd9a65c82bde2a3ced643ad0375" name="a3ea0ccd9a65c82bde2a3ced643ad0375"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ea0ccd9a65c82bde2a3ced643ad0375">&#9670;&nbsp;</a></span>load_layered_sparse_matrix_gzip()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -159,7 +282,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>buffer</em> = <code>16384</code>&#160;</td>
+          <td class="paramname"><em>bufsize</em> = <code>65536</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -171,7 +294,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">filepath</td><td>Path to a Matrix Market file. The file should contain integer data in the coordinate format, stored with Gzip compression. </td></tr>
-    <tr><td class="paramname">buffer</td><td>Size of the buffer to use for decompression, in bytes.</td></tr>
+    <tr><td class="paramname">bufsize</td><td>Size of the buffer to use for decompression, in bytes.</td></tr>
   </table>
   </dd>
 </dl>
@@ -183,12 +306,12 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
   </table>
   </dd>
 </dl>
-<p>This is a version of <code><a class="el" href="MatrixMarket_8hpp.html#a96821262839b9cb97d6cfca47cf67d2e">load_layered_sparse_matrix()</a></code> for loading in Gzip-compressed Matrix Market files. To make this function available, make sure to define <code>TATAMI_USE_ZLIB</code> and compile with <b>zlib</b> support. </p>
+<p>This is a version of <code><a class="el" href="MatrixMarket_8hpp.html#a2f4f1f9c5f4d8216082df388615450ea">load_layered_sparse_matrix()</a></code> for loading in Gzip-compressed Matrix Market files. To make this function available, make sure to define <code>TATAMI_USE_ZLIB</code> and compile with <b>zlib</b> support. </p>
 
 </div>
 </div>
-<a id="a44fe31fd649a377e4e6aa9cfd54dd6ba" name="a44fe31fd649a377e4e6aa9cfd54dd6ba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a44fe31fd649a377e4e6aa9cfd54dd6ba">&#9670;&nbsp;</a></span>load_sparse_matrix()</h2>
+<a id="a97b0ccae943855b8e7b65a8cd20e0ced" name="a97b0ccae943855b8e7b65a8cd20e0ced"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a97b0ccae943855b8e7b65a8cd20e0ced">&#9670;&nbsp;</a></span>load_sparse_matrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -199,14 +322,25 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
           <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt; &gt; tatami::MatrixMarket::load_sparse_matrix </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
-          <td class="paramname"><em>filepath</em></td><td>)</td>
+          <td class="paramname"><em>filepath</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>bufsize</em> = <code>65536</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">filepath</td><td>Path to a Matrix Market file. The file should contain integer data in the coordinate format, stored in text without any compression.</td></tr>
+    <tr><td class="paramname">filepath</td><td>Path to a Matrix Market file. The file should contain integer data in the coordinate format, stored in text without any compression. </td></tr>
+    <tr><td class="paramname">bufsize</td><td>Size of the buffer (in bytes) to use when reading from file.</td></tr>
   </table>
   </dd>
 </dl>
@@ -222,8 +356,108 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
 
 </div>
 </div>
-<a id="a79deeaae853fffc88e12a5ceef75dba8" name="a79deeaae853fffc88e12a5ceef75dba8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a79deeaae853fffc88e12a5ceef75dba8">&#9670;&nbsp;</a></span>load_sparse_matrix_gzip()</h2>
+<a id="ac4d7aea8d2c7ce97014b33714bf85212" name="ac4d7aea8d2c7ce97014b33714bf85212"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4d7aea8d2c7ce97014b33714bf85212">&#9670;&nbsp;</a></span>load_sparse_matrix_from_buffer()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double, typename IDX  = int, typename B &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt; &gt; tatami::MatrixMarket::load_sparse_matrix_from_buffer </td>
+          <td>(</td>
+          <td class="paramtype">const B *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Array containing the contents of a Matrix Market file. The file should contain integer data in the coordinate format, stored in text without any compression. </td></tr>
+    <tr><td class="paramname">n</td><td>Length of the array.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code> object.</dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Type of value in the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code> interface. </td></tr>
+    <tr><td class="paramname">IDX</td><td>Integer type for the index. </td></tr>
+    <tr><td class="paramname">B</td><td>Type of the buffer, usually <code>char</code> or <code>unsigned char</code>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This is equivalent to <code><a class="el" href="MatrixMarket_8hpp.html#a97b0ccae943855b8e7b65a8cd20e0ced">load_sparse_matrix()</a></code> but assumes that the entire file has been read into <code>buffer</code>. </p>
+
+</div>
+</div>
+<a id="ac74ee8a01c2f978f3f80daccbd2d3e4c" name="ac74ee8a01c2f978f3f80daccbd2d3e4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac74ee8a01c2f978f3f80daccbd2d3e4c">&#9670;&nbsp;</a></span>load_sparse_matrix_from_buffer_gzip()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double, typename IDX  = int&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt; &gt; tatami::MatrixMarket::load_sparse_matrix_from_buffer_gzip </td>
+          <td>(</td>
+          <td class="paramtype">const unsigned char *&#160;</td>
+          <td class="paramname"><em>buffer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>bufsize</em> = <code>65536</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">buffer</td><td>Array containing the contents of a Matrix Market file. The file should contain integer data in the coordinate format, stored in text without any compression. </td></tr>
+    <tr><td class="paramname">n</td><td>Size of the <code>buffer</code> array. </td></tr>
+    <tr><td class="paramname">bufsize</td><td>Size of the buffer to use for decompression, in bytes.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>LayeredMatrixData</code> object.</dd></dl>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T</td><td>Type of value in the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code> interface. </td></tr>
+    <tr><td class="paramname">IDX</td><td>Integer type for the index.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>This is equivalent to <code><a class="el" href="MatrixMarket_8hpp.html#a1f38d73d03d81ac6e32f11f804031d80">load_sparse_matrix_gzip()</a></code> but assumes that the entire file has been read into <code>buffer</code>. </p>
+
+</div>
+</div>
+<a id="a1f38d73d03d81ac6e32f11f804031d80" name="a1f38d73d03d81ac6e32f11f804031d80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1f38d73d03d81ac6e32f11f804031d80">&#9670;&nbsp;</a></span>load_sparse_matrix_gzip()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -239,8 +473,8 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>buffer</em> = <code>16384</code>&#160;</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>bufsize</em> = <code>65536</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -252,7 +486,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">filepath</td><td>Path to a Matrix Market file. The file should contain integer data in the coordinate format, stored with Gzip compression. </td></tr>
-    <tr><td class="paramname">buffer</td><td>Size of the buffer to use for decompression, in bytes.</td></tr>
+    <tr><td class="paramname">bufsize</td><td>Size of the buffer to use for decompression, in bytes.</td></tr>
   </table>
   </dd>
 </dl>
@@ -264,7 +498,7 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
   </table>
   </dd>
 </dl>
-<p>This is a version of <code><a class="el" href="MatrixMarket_8hpp.html#a44fe31fd649a377e4e6aa9cfd54dd6ba">load_sparse_matrix()</a></code> for loading in Gzip-compressed Matrix Market files. To make this function available, make sure to define <code>TATAMI_USE_ZLIB</code> and compile with <b>zlib</b> support. </p>
+<p>This is a version of <code><a class="el" href="MatrixMarket_8hpp.html#a97b0ccae943855b8e7b65a8cd20e0ced">load_sparse_matrix()</a></code> for loading in Gzip-compressed Matrix Market files. To make this function available, make sure to define <code>TATAMI_USE_ZLIB</code> and compile with <b>zlib</b> support. </p>
 
 </div>
 </div>
