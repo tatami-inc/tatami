@@ -44,7 +44,8 @@ endif()
 
 add_executable(
     exttest 
-    src/ext/MatrixMarket.cpp
+    src/ext/MatrixMarketBuffer.cpp
+    src/ext/MatrixMarketText.cpp
     src/ext/MatrixMarketGzip.cpp
 )
 

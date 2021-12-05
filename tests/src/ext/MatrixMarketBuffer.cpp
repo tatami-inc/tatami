@@ -1,38 +1,38 @@
 #include <gtest/gtest.h>
 
-#include "tatami/ext/MatrixMarket.hpp"
 #include "write_matrix_market.h"
+#include "tatami/ext/MatrixMarket.hpp"
 
 #include <limits>
-#include <fstream>
 #include <string>
 #include <vector>
 
-typedef std::vector<int> IntVec;
-
-class MatrixMarketTextTest : public ::testing::TestWithParam<std::tuple<int, int, IntVec, IntVec, IntVec> > {
+class MatrixMarketBufferTest : public ::testing::TestWithParam<std::tuple<int, int, IntVec, IntVec, IntVec> > {
 protected:
     size_t NR, NC;
     std::vector<int> rows, cols, vals;
 
-protected:
     template<class PARAM>
-    auto extra_assemble(PARAM param) {
+    auto dump(PARAM param) {
+        if (rows.size() != cols.size() || vals.size() != cols.size()) {
+            throw std::runtime_error("inconsistent lengths in the sparse vectors");
+        }
+
         NR = std::get<0>(param);
         NC = std::get<1>(param);
         rows = std::get<2>(param);
         cols = std::get<3>(param);
         vals = std::get<4>(param);
 
-        std::string path = temp_file_path("tatami-tests-ext-MatrixMarket.mtx");
-        write_matrix_market(path, NR, NC, vals, rows, cols);
-        return path;
+        std::stringstream stream;
+        write_matrix_market(stream, NR, NC, vals, rows, cols);
+        return stream.str();
     }
 };
 
-TEST_P(MatrixMarketTextTest, SimpleLoader) {
-    auto filepath = extra_assemble(GetParam());
-    auto out = tatami::MatrixMarket::load_sparse_matrix(filepath.c_str());
+TEST_P(MatrixMarketBufferTest, Simple) {
+    auto stuff = dump(GetParam());
+    auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
 
     // Checking against a reference.
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
@@ -45,20 +45,13 @@ TEST_P(MatrixMarketTextTest, SimpleLoader) {
     }
 }
 
-TEST_P(MatrixMarketTextTest, LayeredLoader) {
-    auto filepath = extra_assemble(GetParam());
-    ASSERT_EQ(rows.size(), cols.size());
-    ASSERT_EQ(vals.size(), cols.size());
+TEST_P(MatrixMarketBufferTest, Layered) {
+    auto stuff = dump(GetParam());
 
-    // Loading it into an assignment object.
-    std::ifstream in(filepath);
     tatami::MatrixMarket::LineAssignments ass;
-    std::string line;
-    while (std::getline(in, line)) {
-        ass.add(line.c_str(), line.size() + 1); // for the null terminator
-    }
+    tatami::MatrixMarket::BufferReader reader(stuff.c_str(), stuff.size());
+    reader(ass);
     ass.finish();
-    in.close();
 
     EXPECT_EQ(std::accumulate(ass.lines_per_category.begin(), ass.lines_per_category.end(), 0), rows.size());
     EXPECT_EQ(ass.lines_per_category.size(), 3);
@@ -74,7 +67,7 @@ TEST_P(MatrixMarketTextTest, LayeredLoader) {
     }
 
     // Checking against a reference.
-    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix(filepath.c_str());
+    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
     const auto& out = loaded.matrix;
 
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
@@ -105,7 +98,7 @@ TEST_P(MatrixMarketTextTest, LayeredLoader) {
 
 INSTANTIATE_TEST_CASE_P(
     MatrixMarket,
-    MatrixMarketTextTest,
+    MatrixMarketBufferTest,
     ::testing::Values(
         std::make_tuple(
             // this example guarantees a few rows in each chunk.
@@ -157,3 +150,21 @@ INSTANTIATE_TEST_CASE_P(
         )
     )
 );
+
+void quickMMErrorCheck(std::string contents, std::string msg) {
+    EXPECT_ANY_THROW({
+        try {
+            tatami::MatrixMarket::load_sparse_matrix_from_buffer(contents.c_str(), contents.size());
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find(msg) != std::string::npos);
+            throw;
+        }
+    });
+}
+
+TEST(MatrixMarketTest, Errors) {
+    quickMMErrorCheck("%% asdasdad\n1 2 -1", "non-negative");
+    quickMMErrorCheck("%% asdasdad\n1 2 1a", "non-negative");
+    quickMMErrorCheck("%% asdasdad\n1 2 1 5", "terminate with a newline");
+    quickMMErrorCheck("%% asdasdad\n1 2 3\n\n\n", "premature termination");
+}

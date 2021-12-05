@@ -7,6 +7,7 @@
 #include <vector>
 #include <fstream>
 #include <cctype>
+#include <string>
 
 #include "../base/CompressedSparseMatrix.hpp"
 #include "../base/DelayedBind.hpp"
@@ -14,7 +15,6 @@
 
 #ifdef TATAMI_USE_ZLIB
 #include "zlib.h"
-#include <array>
 #endif
 
 /**
@@ -30,33 +30,42 @@ namespace MatrixMarket {
 /**
  * @cond
  */
-template<typename T>
-size_t process_triplet_line(const char* buffer, T& arg1, T& arg2, T& arg3, size_t n) {
+template<typename B, typename T>
+size_t process_triplet_line(const B* buffer, size_t n, T& arg1, T& arg2, T& arg3, size_t line) {
     auto read = [=](size_t& i, T& arg) -> bool {
-        // These had better be positive integers, 
-        // otherwise this will throw a bunch of errors.
-        while (i < n && std::isspace(buffer[i])) { 
+        // Chomping up any preceding whitespace.
+        while (i < n && std::isspace(buffer[i]) && buffer[i] != '\n') { 
             ++i;
         }
         if (i == n) {
             return false;
         }
+        if (buffer[i] == '\n') {
+            throw std::runtime_error("premature termination of triplet on line " + std::to_string(line));
+        }
 
-        auto prev = i;
+        // These had better be non-negative integers, 
+        // otherwise this will throw a bunch of errors.
+        bool terminated = false;
         arg = 0;
-        while (i < n && std::isdigit(buffer[i])) {
+        while (i < n) {
+            if (!std::isdigit(buffer[i])) {
+                if (std::isspace(buffer[i])) {
+                    terminated = true;
+                    break;
+                } else {
+                    throw std::runtime_error("values should be non-negative integers on line " + std::to_string(line));
+                }
+            }
+
             arg *= 10;
             arg += (buffer[i] - '0');
             ++i;
         }
-        if (i == n || i == prev) {
-            return false;
-        }
 
-        if (i < n && !std::isspace(buffer[i]) && buffer[i] != '\0') {
-            throw std::runtime_error("values should be non-negative integers");
-        }
-        return true;
+        // If it didn't end with some whitespace, there might be more stuff
+        // coming, so we return false to restart once the buffer is topped up.
+        return terminated;
     };
 
     size_t i = 0;
@@ -70,10 +79,23 @@ size_t process_triplet_line(const char* buffer, T& arg1, T& arg2, T& arg3, size_
         return 0;
     }
 
+    // Check that we terminate on a newline. If we can't find the newline,
+    // we bail out without an error; but if we find something other than
+    // a new line, then we need to error.
+    while (i < n && std::isspace(buffer[i]) && buffer[i] != '\n') { 
+        ++i;
+    }
+    if (i == n) {
+        return 0;
+    } else if (buffer[i] != '\n') {
+        throw std::runtime_error("triplet should terminate with a newline on " + std::to_string(line));
+    }
+
     return i + 1;
 }
 
-inline size_t read_to_eol(const char * buffer, size_t n) {
+template<typename B>
+size_t read_to_eol(const B* buffer, size_t n) {
     for (size_t i = 0; i < n; ++i) {
         if (buffer[i] == '\n' || buffer[i] == '\0') {
             return i + 1;
@@ -82,42 +104,116 @@ inline size_t read_to_eol(const char * buffer, size_t n) {
     return 0; // out of range
 }
 
-struct TextReader {
-    TextReader(const char* path) : filepath(path) {}
+template<typename B, class Object>
+size_t add_from_buffer(B* buffer, size_t length, Object& obj) {
+    // Adding whole lines.
+    size_t last_processed = 0, total_processed = 0;
+    do {
+        last_processed = obj.add(buffer + total_processed, length - total_processed);
+        total_processed += last_processed;
+    } while (last_processed);
+
+    // If nothing was actually stored, this is an error because there's not
+    // going to be space to add anything to the buffer. The only exception
+    // is the edge case where length == 0 at the EOF (i.e., the previous read
+    // caught the last newline and the current read caught the EOF).
+    if (total_processed == 0 && length > 0) {
+        throw std::runtime_error("failed to read line " + std::to_string(obj.line_number() + 1));
+    }
+
+    // Rotating what's left to the front for the next cycle.
+    size_t leftovers = length - total_processed;
+    for (size_t i = 0; i < leftovers; ++i) {
+        buffer[i] = buffer[total_processed + i];
+    }
+
+    return leftovers;
+}
+
+template<typename B>
+void set_terminating_newline(B* buffer, size_t& available) {
+    if (buffer[available - 1] != '\n') {
+        buffer[available] = '\n';
+        ++available;
+    }
+}
+
+/*******************************************************************************
+ ******************************** Reader classes *******************************
+ *******************************************************************************/
+
+template<typename B>
+struct BufferReader {
+    BufferReader(const B* buf, size_t n) : buffer(buf), length(n) {}
 
     template<class Object>
-    void operator()(Object& obj) {
+    void operator()(Object& obj) const {
+        size_t last_processed = 0, total_processed = 0;
+        do {
+            last_processed = obj.add(buffer + total_processed, length - total_processed);
+            total_processed += last_processed;
+        } while (last_processed);
+
+        size_t leftovers = length - total_processed;
+        if (leftovers) {
+            std::vector<B> temp(leftovers + 1); // adding a safety newline, if required.
+            std::copy(buffer + total_processed, buffer + length, temp.data());
+            set_terminating_newline(temp.data(), leftovers);
+            obj.add(temp.data(), leftovers);
+        }
+
+        return;
+    }
+
+private:
+    const B* buffer;
+    size_t length;
+};
+
+struct TextReader {
+    TextReader(const char* path, size_t bufsize = 65536) : filepath(path), buffer_size(bufsize) {}
+
+    template<class Object>
+    void operator()(Object& obj) const {
         std::ifstream in(filepath);
         if (!in) {
-            throw std::runtime_error("failed to open file");
+            throw std::runtime_error("failed to open file at '" + std::string(filepath) + "'");
         }
-        std::string line;
-        int counter = 0;
-        while (std::getline(in, line)) {
-            auto status = obj.add(line.c_str(), line.size() + 1); // for the null terminator
-            if (!status) {
-                throw std::runtime_error(std::string("failed to process line ") + std::to_string(counter + 1));
+
+        std::vector<char> buffer(buffer_size + 1); // adding an extra space for the terminating newline.
+        size_t leftovers = 0;
+        
+        while (1) {
+            in.read(buffer.data() + leftovers, buffer_size - leftovers);
+            size_t available = in.gcount() + leftovers;
+
+            if (!in) {
+                set_terminating_newline(buffer.data(), available); // adding a terminating newline, just in case.
+                add_from_buffer(buffer.data(), available, obj);
+                break;
+            } else {
+                leftovers = add_from_buffer(buffer.data(), available, obj);
             }
-            ++counter;
         }
+
         return;
     }
 private:
     const char* filepath;
+    size_t buffer_size;
 };
 
 #ifdef TATAMI_USE_ZLIB
 
 struct GzipReader {
-    GzipReader (const char* path, const int size = 16348) : filepath(path), bufsize(size), buffer(bufsize) {}
-    const int bufsize;
+    GzipReader (const char* path, size_t bufsize = 65536) : filepath(path), buffer_size(bufsize) {}
     const char* filepath;
-    std::vector<unsigned char> buffer;
+    const size_t buffer_size;
 
     struct GZFile {
         GZFile(const char* path) : handle(gzopen(path, "rb")) {
             if (!handle) {
-                throw std::runtime_error("failed to open file");
+                throw std::runtime_error("failed to open file at '" + std::string(path) + "'");
             }
         }
 
@@ -135,42 +231,110 @@ struct GzipReader {
     };
 
     template<class Object>
-    void operator()(Object& obj) {
+    void operator()(Object& obj) const {
         GZFile gz(filepath);
+        std::vector<unsigned char> buffer(buffer_size + 1); // extra space for the terminating newline.
 
-        size_t read = 1; // any positive value, to get the ball rolling.
         size_t leftovers = 0;
-
-        while (read) {
-            read = gzread(gz.handle, buffer.data() + leftovers, bufsize - leftovers);
+        while (1) {
+            size_t read = gzread(gz.handle, buffer.data() + leftovers, buffer_size - leftovers);
             size_t current_stored = read + leftovers;
 
             if (read == 0) {
-                // Making sure we have a terminating newline on the last line.
-                if (gzeof(gz.handle)) { 
-                    if (current_stored && buffer[current_stored-1]!='\n') {
-                        buffer[current_stored] = '\n';
-                        ++current_stored;
-                    }
-                } else {
+                if (!gzeof(gz.handle)) { 
                     int dummy;
                     throw std::runtime_error(gzerror(gz.handle, &dummy));
                 }
-            }
 
-            // Adding whole lines.
-            size_t last_processed = 0, total_processed = 0;
-            do {
-                last_processed = obj.add((char*)buffer.data() + total_processed, current_stored - total_processed);
-                total_processed += last_processed;
-            } while (last_processed);
-
-            // Rotating what's left to the front for the next cycle.
-            leftovers = current_stored - total_processed;
-            for (size_t i = 0; i < leftovers; ++i) {
-                buffer[i] = buffer[total_processed + i];
+                if (current_stored) {
+                    // Making sure we have a terminating newline on the last line.
+                    set_terminating_newline(buffer.data(), current_stored);
+                    add_from_buffer(buffer.data(), current_stored, obj);
+                }
+                break;
+            } else {
+                leftovers = add_from_buffer(buffer.data(), current_stored, obj);
             }
         }
+
+        return;
+    }
+};
+
+// Stolen from 'inf()' at http://www.zlib.net/zpipe.c,
+// with some shuffling of code to make it a bit more C++-like.
+struct GzipBufferReader {
+    GzipBufferReader(const unsigned char* buf, size_t n, size_t bufsize = 65536) : buffer(buf), len(n), buffer_size(bufsize) {}
+    const unsigned char* buffer;
+    size_t len, buffer_size;
+
+    struct ZStream {
+        ZStream() {
+            /* allocate inflate state */
+            strm.zalloc = Z_NULL;
+            strm.zfree = Z_NULL;
+            strm.opaque = Z_NULL;
+            strm.avail_in = 0;
+            strm.next_in = Z_NULL;
+
+            // https://stackoverflow.com/questions/1838699/how-can-i-decompress-a-gzip-stream-with-zlib
+            int ret = inflateInit2(&strm, 16+MAX_WBITS); 
+            if (ret != Z_OK) {
+                throw 1;
+            }
+        }
+
+        ~ZStream() {
+            (void)inflateEnd(&strm);
+            return;
+        }
+
+        // Delete the remaining constructors.
+        ZStream(const ZStream&) = delete;
+        ZStream(ZStream&&) = delete;
+        ZStream& operator=(const ZStream&) = delete;
+        ZStream& operator=(ZStream&&) = delete;
+
+        z_stream strm;
+    };
+
+    template<class OBJECT>
+    void operator()(OBJECT& obj) {
+        std::vector<unsigned char> output(buffer_size + 1); // for a safety newline at EOF, see below.
+
+        ZStream zstr;
+        zstr.strm.avail_in = len;
+        zstr.strm.next_in = const_cast<unsigned char*>(buffer); // because C interfaces don't have const'ness.
+
+        size_t leftovers = 0;
+
+        /* run inflate() on input until output buffer not full */
+        while (1) {
+            zstr.strm.avail_out = buffer_size - leftovers;
+            zstr.strm.next_out = output.data() + leftovers;
+            int ret = inflate(&(zstr.strm), Z_NO_FLUSH);
+
+            switch (ret) {
+                case Z_STREAM_ERROR:
+                case Z_NEED_DICT:
+                case Z_DATA_ERROR:
+                case Z_MEM_ERROR:
+                    throw std::runtime_error("zlib error");
+            }
+
+            size_t current_stored = buffer_size - zstr.strm.avail_out;
+            
+            // Making sure we have a terminating newline.
+            if (ret == Z_STREAM_END) {
+                if (current_stored) {
+                    set_terminating_newline(output.data(), current_stored);
+                    add_from_buffer(output.data(), current_stored, obj);
+                }
+                break;
+            } else {
+                leftovers = add_from_buffer(output.data(), current_stored, obj);
+            }
+        } 
 
         return;
     }
@@ -200,22 +364,23 @@ struct SimpleBuilder {
     bool use_short_cols = false;
 
     std::vector<T> values;
-    int current_line = 0;
+    size_t current_line = 0;
 
     size_t nrows, ncols, nlines;
     bool passed_preamble = false;
 
-    size_t add(const char* buffer, size_t n) {
+    template<typename B>
+    size_t add(const B* buffer, size_t n) {
         if (buffer[0] == '%') {
             // TODO: should probably check for 'coordinate integer'.
             return read_to_eol(buffer, n);
 
         } else if (!passed_preamble) {
-            passed_preamble = true;
-            auto read = process_triplet_line(buffer, nrows, ncols, nlines, n);
+            auto read = process_triplet_line(buffer, n, nrows, ncols, nlines, current_line);
             if (read == 0) {
                 return 0;
             }
+            passed_preamble = true;
 
             constexpr size_t max16 = std::numeric_limits<uint16_t>::max();
             if (nrows <= max16) {
@@ -237,7 +402,7 @@ struct SimpleBuilder {
         }
 
         int row, col, data;
-        auto read = process_triplet_line(buffer, row, col, data, n);
+        auto read = process_triplet_line(buffer, n, row, col, data, current_line);
         if (read == 0){
             return 0;
         }
@@ -260,6 +425,10 @@ struct SimpleBuilder {
         ++current_line;
 
         return read;
+    }
+
+    size_t line_number() const {
+        return current_line;
     }
 
     std::shared_ptr<tatami::Matrix<T, IDX> > finish() {
@@ -296,6 +465,7 @@ struct SimpleBuilder {
 /**
  * @param filepath Path to a Matrix Market file.
  * The file should contain integer data in the coordinate format, stored in text without any compression.
+ * @param bufsize Size of the buffer (in bytes) to use when reading from file.
  * 
  * @return A pointer to a `tatami::Matrix` object.
  *
@@ -308,10 +478,31 @@ struct SimpleBuilder {
  * Currently, only unsigned integers are supported.
  */
 template<typename T = double, typename IDX = int>
-std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix(const char * filepath) {
-    TextReader txt(filepath);
+std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix(const char * filepath, size_t bufsize = 65536) {
+    TextReader txt(filepath, bufsize);
     SimpleBuilder<T, IDX> build;
     txt(build);
+    return build.finish();
+}
+
+/**
+ * @param buffer Array containing the contents of a Matrix Market file.
+ * The file should contain integer data in the coordinate format, stored in text without any compression.
+ * @param n Length of the array.
+ * 
+ * @return A pointer to a `tatami::Matrix` object.
+ *
+ * @tparam T Type of value in the `tatami::Matrix` interface.
+ * @tparam IDX Integer type for the index.
+ * @tparam B Type of the buffer, usually `char` or `unsigned char`.
+ *
+ * This is equivalent to `load_sparse_matrix()` but assumes that the entire file has been read into `buffer`.
+ */
+template<typename T = double, typename IDX = int, typename B>
+std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_buffer(const B* buffer, size_t n) {
+    BufferReader raw(buffer, n);
+    SimpleBuilder<T, IDX> build;
+    raw(build);
     return build.finish();
 }
 
@@ -320,7 +511,7 @@ std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix(const char * filepat
 /**
  * @param filepath Path to a Matrix Market file.
  * The file should contain integer data in the coordinate format, stored with Gzip compression.
- * @param buffer Size of the buffer to use for decompression, in bytes.
+ * @param bufsize Size of the buffer to use for decompression, in bytes.
  *
  * @return A `LayeredMatrixData` object.
  *
@@ -331,12 +522,34 @@ std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix(const char * filepat
  * To make this function available, make sure to define `TATAMI_USE_ZLIB` and compile with **zlib** support.
  */
 template<typename T = double, typename IDX = int>
-std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_gzip(const char * filepath, int buffer = 16384) {
-    GzipReader unz(filepath, buffer);
+std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_gzip(const char * filepath, size_t bufsize = 65536) {
+    GzipReader unz(filepath, bufsize);
     SimpleBuilder<T, IDX> build;
     unz(build);
     return build.finish();
 }
+
+/**
+ * @param buffer Array containing the contents of a Matrix Market file.
+ * The file should contain integer data in the coordinate format, stored in text without any compression.
+ * @param n Size of the `buffer` array.
+ * @param bufsize Size of the buffer to use for decompression, in bytes.
+ *
+ * @return A `LayeredMatrixData` object.
+ *
+ * @tparam T Type of value in the `tatami::Matrix` interface.
+ * @tparam IDX Integer type for the index.
+ *
+ * This is equivalent to `load_sparse_matrix_gzip()` but assumes that the entire file has been read into `buffer`.
+ */
+template<typename T = double, typename IDX = int>
+std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_buffer_gzip(const unsigned char * buffer, size_t n, size_t bufsize = 65536) {
+    GzipBufferReader unz(buffer, n, bufsize);
+    SimpleBuilder<T, IDX> build;
+    unz(build);
+    return build.finish();
+}
+
 
 #endif
 
@@ -359,18 +572,20 @@ struct LineAssignments {
 
     size_t nrows, ncols, nlines;
     bool passed_preamble = false;
+    size_t current_line = 0;
 
-    size_t add(const char* buffer, size_t n) {
+    template<typename B>
+    size_t add(const B* buffer, size_t n) {
         if (buffer[0] == '%') {
             // TODO: should probably check for 'coordinate integer'.
             return read_to_eol(buffer, n);
 
         } else if (!passed_preamble) {
-            passed_preamble = true;
-            auto read = process_triplet_line(buffer, nrows, ncols, nlines, n);
+            auto read = process_triplet_line(buffer, n, nrows, ncols, nlines, current_line);
             if (read == 0) {
                 return 0;
             }
+            passed_preamble = true;
 
             category.resize(nrows);
             index.resize(nrows);
@@ -384,7 +599,7 @@ struct LineAssignments {
         constexpr int max16 = std::numeric_limits<uint16_t>::max();
 
         int row, col, data;
-        auto read = process_triplet_line(buffer, row, col, data, n);
+        auto read = process_triplet_line(buffer, n, row, col, data, current_line);
         if (read == 0){
             return 0;
         }
@@ -396,8 +611,13 @@ struct LineAssignments {
             category[row] = std::max(category[row], static_cast<uint8_t>(1));
         }
         ++lines_per_row[row];
+        ++current_line;
 
         return read;
+    }
+
+    size_t line_number() const {
+        return current_line;
     }
 
     void finish() {
@@ -451,6 +671,7 @@ private:
     size_t counter32 = 0;
 
     bool passed_preamble = false;
+    size_t current_line = 0;
 public:
     LayeredBuilder(LineAssignments ass) : 
         assign(std::move(ass)),
@@ -465,16 +686,20 @@ public:
         dat32(assign.lines_per_category[2]) {}
 
 public:
-    size_t add(const char* buffer, size_t n) {
+    template<typename B>
+    size_t add(const B* buffer, size_t n) {
         if (buffer[0] == '%') {
             return read_to_eol(buffer, n);
         } else if (!passed_preamble) {
-            passed_preamble = true;
-            return read_to_eol(buffer, n);
+            size_t read = read_to_eol(buffer, n);
+            if (read) {
+                passed_preamble = true;
+            }
+            return read;
         }
 
         int row, col, data;
-        auto read = process_triplet_line(buffer, row, col, data, n);
+        auto read = process_triplet_line(buffer, n, row, col, data, current_line);
         if (read == 0){
             return 0;
         }
@@ -503,8 +728,13 @@ public:
             ++counter32;
             break;
         }
-        
+
+        ++current_line;
         return read;
+    }
+
+    size_t line_number() const {
+        return current_line;
     }
 
 private:
@@ -609,6 +839,7 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Functor& process) 
 /**
  * @param filepath Path to a Matrix Market file.
  * The file should contain integer data in the coordinate format, stored in text without any compression.
+ * @param bufsize Size of the buffer (in bytes) to use when reading from file.
  * 
  * @return A `LayeredMatrixData` object.
  *
@@ -630,9 +861,28 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Functor& process) 
  * Currently, only unsigned integers are supported.
  */
 template<typename T = double, typename IDX = int>
-LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath) {
-    TextReader txt(filepath);
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath, size_t bufsize = 65536) {
+    TextReader txt(filepath, bufsize);
     return load_layered_sparse_matrix_internal(txt);
+}
+
+/**
+ * @param buffer Array containing the contents of a Matrix Market file.
+ * The file should contain integer data in the coordinate format, stored in text without any compression.
+ * @param n Length of the array.
+ * 
+ * @return A `LayeredMatrixData` object.
+ *
+ * @tparam T Type of value in the `tatami::Matrix` interface.
+ * @tparam IDX Integer type for the index.
+ * @tparam B Type of the buffer, usually `char` or `unsigned char`.
+ *
+ * This is equivalent to `load_layered_sparse_matrix()` but assumes that the entire file has been read into `buffer`.
+ */
+template<typename T = double, typename IDX = int, typename B>
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix_from_buffer(const B* buffer, size_t n) {
+    BufferReader raw(buffer, n);
+    return load_layered_sparse_matrix_internal(raw);
 }
 
 #ifdef TATAMI_USE_ZLIB
@@ -640,7 +890,7 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath) {
 /**
  * @param filepath Path to a Matrix Market file.
  * The file should contain integer data in the coordinate format, stored with Gzip compression.
- * @param buffer Size of the buffer to use for decompression, in bytes.
+ * @param bufsize Size of the buffer to use for decompression, in bytes.
  *
  * @return A `LayeredMatrixData` object.
  *
@@ -651,9 +901,28 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath) {
  * To make this function available, make sure to define `TATAMI_USE_ZLIB` and compile with **zlib** support.
  */
 template<typename T = double, typename IDX = int>
-LayeredMatrixData<T, IDX> load_layered_sparse_matrix_gzip(const char * filepath, int buffer = 16384) {
-    GzipReader unz(filepath, buffer);
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix_gzip(const char * filepath, int bufsize = 65536) {
+    GzipReader unz(filepath, bufsize);
     return load_layered_sparse_matrix_internal(unz);
+}
+
+/**
+ * @param buffer Array containing the contents of a Matrix Market file.
+ * The file should contain integer data in the coordinate format, stored in text without any compression.
+ * @param n Length of the array.
+ * @param bufsize Size of the buffer to use for decompression, in bytes.
+ * 
+ * @return A `LayeredMatrixData` object.
+ *
+ * @tparam T Type of value in the `tatami::Matrix` interface.
+ * @tparam IDX Integer type for the index.
+ *
+ * This is equivalent to `load_layered_sparse_matrix_gzip()` but assumes that the entire file has been read into `buffer`.
+ */
+template<typename T = double, typename IDX = int>
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix_from_buffer_gzip(const unsigned char* buffer, size_t n, size_t bufsize = 65536) {
+    GzipBufferReader raw(buffer, n, bufsize);
+    return load_layered_sparse_matrix_internal(raw);
 }
 
 #endif

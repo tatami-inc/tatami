@@ -9,11 +9,12 @@
 #include <random>
 #include "write_matrix_market.h"
 
-class MatrixMarketGzipTest : public ::testing::Test {
+class MatrixMarketGzipTest : public ::testing::TestWithParam<int> {
 protected:
     size_t NR = 2000, NC = 1000;
     std::vector<int> vals, rows, cols;
-    std::string path, gzname;
+    std::vector<unsigned char> contents;
+    std::string gzname;
 
 protected:
     void SetUp() {
@@ -29,28 +30,24 @@ protected:
             }
         }
 
-        path = temp_file_path("tatami-tests-ext-MatrixMarketGzip.mtx");
-        write_matrix_market(path, NR, NC, vals, rows, cols);
+        std::stringstream ss;
+        write_matrix_market(ss, NR, NC, vals, rows, cols);
+        ss >> std::noskipws;
+        contents.insert(contents.end(), std::istream_iterator<unsigned char>{ss}, std::istream_iterator<unsigned char>());
 
-        // Now applying compression.
-        FILE * ihandle = std::fopen(path.c_str(), "rb");
-        gzname = path + ".gz";
+        gzname = temp_file_path("tatami-tests-ext-MatrixMarketGzip.mtx.gz");
         gzFile ohandle = gzopen(gzname.c_str(), "w");
-        constexpr int CHUNK = 16384;
-        std::vector<unsigned char> in(CHUNK);
-        size_t nread = 0;
-        while ((nread = std::fread(in.data(), 1, CHUNK, ihandle))) {
-            gzwrite(ohandle, in.data(), nread);
-        }
-        std::fclose(ihandle);
+        gzwrite(ohandle, contents.data(), contents.size());
         gzclose(ohandle);
 
         return;
     }
 };
 
-TEST_F(MatrixMarketGzipTest, SimpleTest) {
+TEST_P(MatrixMarketGzipTest, SimpleTest) {
     auto loaded = tatami::MatrixMarket::load_sparse_matrix_gzip(gzname.c_str());
+    EXPECT_EQ(loaded->nrow(), NR);
+    EXPECT_EQ(loaded->ncol(), NC);
 
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
     typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
@@ -62,9 +59,28 @@ TEST_F(MatrixMarketGzipTest, SimpleTest) {
     }
 }
 
-TEST_F(MatrixMarketGzipTest, LayeredTest) {
-    // Loading everyone from file.
-    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix(path.c_str());
+TEST_P(MatrixMarketGzipTest, SimpleBufferTest) {
+    auto ref = tatami::MatrixMarket::load_sparse_matrix_from_buffer(contents.data(), contents.size());
+    EXPECT_EQ(ref->nrow(), NR);
+    EXPECT_EQ(ref->ncol(), NC);
+
+    std::ifstream handle(gzname, std::ios_base::binary);
+    handle >> std::noskipws;
+    std::vector<unsigned char> gzcontents(std::istream_iterator<unsigned char>{handle}, std::istream_iterator<unsigned char>());
+    EXPECT_TRUE(gzcontents.size() < contents.size()); // compression should have an effect.
+
+    auto obs = tatami::MatrixMarket::load_sparse_matrix_from_buffer_gzip(gzcontents.data(), gzcontents.size());
+    EXPECT_EQ(obs->nrow(), NR);
+    EXPECT_EQ(obs->ncol(), NC);
+
+    for (size_t i = 0; i < NC; ++i) {
+        auto stuff = obs->column(i);
+        EXPECT_EQ(stuff, ref->column(i));
+    }
+}
+
+TEST_P(MatrixMarketGzipTest, LayeredTest) {
+    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(contents.data(), contents.size());
     auto loaded_gz = tatami::MatrixMarket::load_layered_sparse_matrix_gzip(gzname.c_str());
 
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
@@ -89,3 +105,32 @@ TEST_F(MatrixMarketGzipTest, LayeredTest) {
         EXPECT_EQ(stuff, ref->column(i));
     }
 }
+
+TEST_P(MatrixMarketGzipTest, LayeredBufferTest) {
+    auto ref = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(contents.data(), contents.size());
+    EXPECT_EQ(ref.matrix->nrow(), NR);
+    EXPECT_EQ(ref.matrix->ncol(), NC);
+
+    std::ifstream handle(gzname, std::ios_base::binary);
+    handle >> std::noskipws;
+    std::vector<unsigned char> gzcontents(std::istream_iterator<unsigned char>{handle}, std::istream_iterator<unsigned char>());
+    EXPECT_TRUE(gzcontents.size() < contents.size()); // compression should have an effect.
+
+    auto obs = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer_gzip(gzcontents.data(), gzcontents.size());
+    EXPECT_EQ(obs.matrix->nrow(), NR);
+    EXPECT_EQ(obs.matrix->ncol(), NC);
+
+    for (size_t i = 0; i < NC; ++i) {
+        auto stuff = obs.matrix->column(i);
+        EXPECT_EQ(stuff, ref.matrix->column(i));
+    }
+
+    EXPECT_EQ(obs.permutation, ref.permutation);
+}
+
+
+INSTANTIATE_TEST_CASE_P(
+    MatrixMarket,
+    MatrixMarketGzipTest,
+    ::testing::Values(50, 100, 1000, 10000)
+);
