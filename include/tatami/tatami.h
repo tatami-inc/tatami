@@ -11,6 +11,7 @@
 #include "utils/compress_sparse_triplets.hpp"
 #include "utils/convert_to_sparse.hpp"
 #include "utils/convert_to_dense.hpp"
+#include "utils/bind_shared_ptr.hpp"
 
 #include "stats/sums.hpp"
 #include "stats/variances.hpp"
