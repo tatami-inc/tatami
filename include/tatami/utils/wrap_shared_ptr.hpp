@@ -1,5 +1,5 @@
-#ifndef TATAMI_BIND_SHARED_PTR_HPP
-#define TATAMI_BIND_SHARED_PTR_HPP
+#ifndef TATAMI_WRAP_SHARED_PTR_HPP
+#define TATAMI_WRAP_SHARED_PTR_HPP
 
 #include <memory>
 #include "../base/Matrix.hpp"
@@ -16,7 +16,7 @@ namespace tatami {
  * The assumption is that `ptr` will always outlive the returned pointer.
  */
 template<typename T, typename IDX>
-std::shared_ptr<const Matrix<T, IDX> > bind_shared_ptr(const Matrix<T, IDX>* ptr) {
+std::shared_ptr<const Matrix<T, IDX> > wrap_shared_ptr(const Matrix<T, IDX>* ptr) {
     // Using a no-op deleter in a shared pointer to get it to work with, e.g.,
     // delayed operations without actually taking ownership of 'ptr'. This
     // shared pointer should only be used as long as 'ptr' is alive.
