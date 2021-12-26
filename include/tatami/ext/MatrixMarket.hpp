@@ -1,5 +1,5 @@
-#ifndef SCRAN_LOAD_MATRIX_MARKET_HPP
-#define SCRAN_LOAD_MATRIX_MARKET_HPP
+#ifndef TATAMI_MATRIX_MARKET_HPP
+#define TATAMI_MATRIX_MARKET_HPP
 
 #include <limits>
 #include <cstdint>
@@ -51,7 +51,7 @@ private:
             in_comment = false;
         } else {
             if (onto != 3) {
-                throw std::runtime_error("line " + std::string(current_line + 1) + " should contain three values");
+                throw std::runtime_error("line " + std::to_string(current_line + 1) + " should contain three values");
             }
             if (!passed_preamble) {
                 nlines = curval;
@@ -59,15 +59,15 @@ private:
                 passed_preamble = true;
             } else {
                 if (!currow) {
-                    throw std::runtime_error("row index must be positive on line " + std::string(current_line + 1));
+                    throw std::runtime_error("row index must be positive on line " + std::to_string(current_line + 1));
                 }
                 if (!curcol) {
-                    throw std::runtime_error("column index must be positive on line " + std::string(current_line + 1));
+                    throw std::runtime_error("column index must be positive on line " + std::to_string(current_line + 1));
                 }
                 if (current_line >= nlines) {
-                    throw std::runtime_error("more lines present (" + std::string(current_line + 1) + ") than specified in the header (" + std::string(nlines) + ")");
+                    throw std::runtime_error("more lines present (" + std::to_string(current_line + 1) + ") than specified in the header (" + std::to_string(nlines) + ")");
                 }
-                store.add(currow - 1, curcol - 1, curval, current_line);
+                store.addline(currow - 1, curcol - 1, curval, current_line);
             }
 
             onto = 0;
@@ -161,7 +161,7 @@ public:
  * @cond
  */
 template<typename T, typename IDX> 
-struct SimpleBuilderStore {
+struct SimpleBuilder {
 public:
     std::vector<uint16_t> short_rows;
     std::vector<IDX> long_rows;
@@ -174,6 +174,7 @@ public:
     size_t nrows, ncols;
     std::vector<T> values;
 
+public:
     void setdim(size_t currow, size_t curcol, size_t nlines) {
         nrows = currow;
         ncols = curcol;
@@ -196,7 +197,7 @@ public:
         values.resize(nlines);
     }
 
-    void add(size_t row, size_t col, size_t val, size_t line) {
+    void addline(size_t row, size_t col, size_t val, size_t line) {
         if (use_short_rows) {
             short_rows[line] = row;
         } else {
@@ -211,25 +212,18 @@ public:
 
         values[line] = val;
     }
-};
 
-
-template<typename T, typename IDX> 
-struct SimpleBuilder {
 public:
-    SimpleBuilderStore<T, IDX> store;
     BaseMMParser base;
-public:
+
     template<typename B>
-    size_t add(const B* buffer, size_t n) {
-        base.add(store);
+    void add(const B* buffer, size_t n) {
+        base.add(buffer, n, *this);
+        return;
     }
 
     std::shared_ptr<tatami::Matrix<T, IDX> > finish() {
-        base.finish(store);
-        const auto& nrows = store.nrows;
-        const auto& ncols = store.ncols;
-        auto& values = store.values;
+        base.finish(*this);
 
         auto create_matrix = [&](auto& rows, auto& cols) -> auto {
             auto idptrs = compress_sparse_triplets<false>(nrows, ncols, values, rows, cols);
@@ -242,17 +236,17 @@ public:
             return std::shared_ptr<tatami::Matrix<T, IDX> >(new SparseMat(nrows, ncols, std::move(values), std::move(rows), std::move(idptrs), false));
         };
 
-        if (store.use_short_rows) {
-            if (store.use_short_cols) {
-                return create_matrix(store.short_rows, store.short_cols);
+        if (use_short_rows) {
+            if (use_short_cols) {
+                return create_matrix(short_rows, short_cols);
             } else {
-                return create_matrix(store.short_rows, store.long_cols);
+                return create_matrix(short_rows, long_cols);
             }
         } else {
-            if (store.use_short_cols) {
-                return create_matrix(store.long_rows, store.short_cols);
+            if (use_short_cols) {
+                return create_matrix(long_rows, short_cols);
             } else {
-                return create_matrix(store.long_rows, store.long_cols);
+                return create_matrix(long_rows, long_cols);
             }
         }
     }
@@ -341,7 +335,7 @@ std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_gzip(const char * fi
 template<typename T = double, typename IDX = int>
 std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_buffer_gzip(const unsigned char * buffer, size_t n, size_t bufsize = 65536) {
     SimpleBuilder<T, IDX> build;
-    buffin::parse_zlib_buffer(buffer, n, build, 3, bufsize);
+    buffin::parse_zlib_buffer(const_cast<unsigned char*>(buffer), n, build, 3, bufsize);
     return build.finish();
 }
 

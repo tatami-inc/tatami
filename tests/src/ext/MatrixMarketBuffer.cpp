@@ -2,6 +2,7 @@
 
 #include "write_matrix_market.h"
 #include "tatami/ext/MatrixMarket.hpp"
+#include "tatami/ext/MatrixMarket_layered.hpp"
 
 #include <limits>
 #include <string>
@@ -49,8 +50,7 @@ TEST_P(MatrixMarketBufferTest, Layered) {
     auto stuff = dump(GetParam());
 
     tatami::MatrixMarket::LineAssignments ass;
-    tatami::MatrixMarket::BufferReader reader(stuff.c_str(), stuff.size());
-    reader(ass);
+    ass.add(stuff.c_str(), stuff.size());
     ass.finish();
 
     EXPECT_EQ(std::accumulate(ass.lines_per_category.begin(), ass.lines_per_category.end(), 0), rows.size());
