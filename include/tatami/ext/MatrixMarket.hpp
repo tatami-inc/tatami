@@ -43,7 +43,7 @@ private:
     bool non_empty = false;
 
     size_t currow = 0, curcol = 0, curval = 0;
-    size_t nlines;
+    size_t nrows, ncols, nlines;
 
 private:
     template<class Store>
@@ -59,16 +59,27 @@ private:
             }
 
             if (!passed_preamble) {
+                nrows = currow;
+                ncols = curcol;
                 nlines = curval;
+
                 store.setdim(currow, curcol, curval);
                 passed_preamble = true;
             } else {
                 if (!currow) {
                     throw std::runtime_error("row index must be positive on line " + std::to_string(current_line + 1));
                 }
+                if (currow > nrows) {
+                    throw std::runtime_error("row index out of range on line " + std::to_string(current_line + 1));
+                }
+
                 if (!curcol) {
                     throw std::runtime_error("column index must be positive on line " + std::to_string(current_line + 1));
                 }
+                if (curcol > ncols) {
+                    throw std::runtime_error("column index out of range on line " + std::to_string(current_line + 1));
+                }
+
                 if (current_data_line >= nlines) {
                     throw std::runtime_error("more lines present than specified in the header (" + std::to_string(nlines) + ")");
                 }
@@ -155,6 +166,10 @@ public:
         // last line that was _not_ terminated by a newline.
         if (onto != 0 || non_empty) { 
             new_line(store); 
+        }
+
+        if (!passed_preamble) {
+            throw std::runtime_error("no header line specifying the dimensions");
         }
 
         if (current_data_line != nlines) {
