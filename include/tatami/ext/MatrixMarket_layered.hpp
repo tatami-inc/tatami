@@ -5,13 +5,11 @@
 #include <cstdint>
 #include <algorithm>
 #include <vector>
-#include <fstream>
-#include <cctype>
-#include <string>
 
 #include "../base/CompressedSparseMatrix.hpp"
 #include "../base/DelayedBind.hpp"
 #include "../utils/compress_sparse_triplets.hpp"
+#include "MatrixMarket.hpp"
 
 #include "buffin/parse_text_file.hpp"
 
