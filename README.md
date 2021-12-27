@@ -119,7 +119,7 @@ A frequent pattern is to use **tatami** to load the input data, which is usually
 process it into a smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis;
 and then copy this cheaply into an `Eigen::MatrixXd` or `Eigen::SparseMatrix` for more computationally intensive work.
 
-## Building projects with **tatami** 
+## Building projects 
 
 If you're using CMake, you just need to add something like this to your `CMakeLists.txt`:
 
@@ -146,6 +146,7 @@ target_link_libraries(mylib INTERFACE tatami)
 ```
 
 If you're not using CMake, the simple approach is to just copy the files - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
+If you want to read Matrix Market files, you'll also need to add the [**buffin**](https://github.com/clusterfork/buffin) header-only library to the compiler's search path.
 
 ## TODO
 

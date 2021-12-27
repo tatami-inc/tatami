@@ -2,6 +2,7 @@
 
 #include "write_matrix_market.h"
 #include "tatami/ext/MatrixMarket.hpp"
+#include "tatami/ext/MatrixMarket_layered.hpp"
 
 #include <limits>
 #include <string>
@@ -49,8 +50,7 @@ TEST_P(MatrixMarketBufferTest, Layered) {
     auto stuff = dump(GetParam());
 
     tatami::MatrixMarket::LineAssignments ass;
-    tatami::MatrixMarket::BufferReader reader(stuff.c_str(), stuff.size());
-    reader(ass);
+    ass.add(stuff.c_str(), stuff.size());
     ass.finish();
 
     EXPECT_EQ(std::accumulate(ass.lines_per_category.begin(), ass.lines_per_category.end(), 0), rows.size());
@@ -165,6 +165,51 @@ void quickMMErrorCheck(std::string contents, std::string msg) {
 TEST(MatrixMarketTest, Errors) {
     quickMMErrorCheck("%% asdasdad\n1 2 -1", "non-negative");
     quickMMErrorCheck("%% asdasdad\n1 2 1a", "non-negative");
-    quickMMErrorCheck("%% asdasdad\n1 2 1 5", "terminate with a newline");
-    quickMMErrorCheck("%% asdasdad\n1 2 3\n\n\n", "premature termination");
+    quickMMErrorCheck("%% asdasdad\n1 2 1 5", "three values");
+
+    quickMMErrorCheck("%% asdasdad\n1 2 3\n\n\n", "three values");
+    quickMMErrorCheck("%% asdasdad\n1 2\n", "three values");
+
+    quickMMErrorCheck("%% asdasdad\n", "no header line");
+
+    quickMMErrorCheck("%% asdasdad\n1 2 1\n0 2 3\n", "must be positive"); 
+    quickMMErrorCheck("%% asdasdad\n1 2 1\n2 2 3\n", "out of range"); 
+
+    quickMMErrorCheck("%% asdasdad\n1 2 3\n1 2 3\n", "but 3 lines specified in the header"); 
+    quickMMErrorCheck("%% asdasdad\n1 2 1\n1 2 3\n1 1 3\n", "more lines present"); 
 }
+
+TEST(MatrixMarketTest, EdgeCases) {
+    auto check = [](const auto& mat) {
+        EXPECT_TRUE(mat->sparse());
+        EXPECT_EQ(mat->nrow(), 5);
+        EXPECT_EQ(mat->ncol(), 6);
+        
+        for (size_t i = 0; i < 3; ++i) {
+            auto col = mat->sparse_column(i);
+            EXPECT_EQ(col.index.size(), 1);
+            EXPECT_EQ(col.index[0], i);
+            EXPECT_EQ(col.value[0], i + 1);
+        }
+
+        for (size_t i = 3; i < 6; ++i) {
+            auto col = mat->sparse_column(i);
+            EXPECT_EQ(col.index.size(), 0);
+        }
+    };
+
+    // Handles arbitrary number of spaces.
+    {
+        std::string buffer = "5   6 3\n1 \t1 1 \n2 2 2   \n3 3 3 \n";
+        auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(buffer.c_str(), buffer.size());
+        check(out);
+    }
+
+    // Handles absence of a termianting newline.
+    {
+        std::string buffer = "5 6 3\n1 1 1\n2 2 2\n3 3 3";
+        auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(buffer.c_str(), buffer.size());
+        check(out);
+    }
+}
+
