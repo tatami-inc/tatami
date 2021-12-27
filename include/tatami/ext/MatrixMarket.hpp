@@ -35,6 +35,7 @@ namespace MatrixMarket {
 struct BaseMMParser {
 private:
     size_t current_line = 0;
+    size_t current_data_line = 0;
     bool passed_preamble = false;
     bool in_comment = false;
 
@@ -50,9 +51,13 @@ private:
         if (in_comment) {
             in_comment = false;
         } else {
-            if (onto != 3) {
+            if ((onto == 3 && !non_empty) || (onto == 2 && non_empty)) {
+                // i.e., there are three fields.
+                ;
+            } else {
                 throw std::runtime_error("line " + std::to_string(current_line + 1) + " should contain three values");
             }
+
             if (!passed_preamble) {
                 nlines = curval;
                 store.setdim(currow, curcol, curval);
@@ -64,16 +69,19 @@ private:
                 if (!curcol) {
                     throw std::runtime_error("column index must be positive on line " + std::to_string(current_line + 1));
                 }
-                if (current_line >= nlines) {
-                    throw std::runtime_error("more lines present (" + std::to_string(current_line + 1) + ") than specified in the header (" + std::to_string(nlines) + ")");
+                if (current_data_line >= nlines) {
+                    throw std::runtime_error("more lines present than specified in the header (" + std::to_string(nlines) + ")");
                 }
-                store.addline(currow - 1, curcol - 1, curval, current_line);
+
+                store.addline(currow - 1, curcol - 1, curval, current_data_line);
+                ++current_data_line;
             }
 
             onto = 0;
             currow = 0;
             curcol = 0;
             curval = 0;
+            non_empty = false;
         }
         ++current_line;
     }
@@ -99,20 +107,22 @@ public:
                     ++i;
                 } while (i < n && buffer[i] != '\n');
             } else {
-                // Chomping up any preceding (non-newline) whitespace.
-                while (i < n && std::isspace(buffer[i]) && buffer[i] != '\n') { 
-                    ++i;
-                }
-
                 while (i < n) {
                     if (!std::isdigit(buffer[i])) {
-                        if (std::isspace(buffer[i])) {
-                            ++onto;
-                            non_empty = false;
-                            break;
-                        } else {
+                        if (!std::isspace(buffer[i])) {
                             throw std::runtime_error("values should be non-negative integers on line " + std::to_string(current_line));
                         }
+
+                        if (buffer[i] == '\n') {
+                            break;
+                        }
+
+                        if (non_empty) {
+                            ++onto;
+                            non_empty = false;
+                        }
+                        ++i;
+                        continue;
                     }
 
                     non_empty = true; // check that something was _actually_ present in this field.
@@ -132,7 +142,7 @@ public:
                             break;
                     }
                     ++i;
-                }                       
+                }
             }
         }
         return;
@@ -140,15 +150,15 @@ public:
 
     template<class Store>
     void finish(Store& store) {
-        if (onto == 2 && non_empty) { 
-            // Just in case the file doesn't end with a newline
-            // and we have three validly filled fields.
-            ++onto;
-            new_line(store);
-        } else if (onto != 0) {
-            // This will either fail (if onto < 3) or succeed
-            // (if onto = 3 due to a trailing whitespace).
+        // If onto = 0 and non_empty = false, we ended on a newline, so 
+        // there's no extra entry to add. Otherwise, we try to add the 
+        // last line that was _not_ terminated by a newline.
+        if (onto != 0 || non_empty) { 
             new_line(store); 
+        }
+
+        if (current_data_line != nlines) {
+            throw std::runtime_error("detected " + std::to_string(current_data_line) + " lines but " + std::to_string(nlines) + " lines specified in the header");
         }
         return;
     }

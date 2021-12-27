@@ -165,6 +165,6 @@ void quickMMErrorCheck(std::string contents, std::string msg) {
 TEST(MatrixMarketTest, Errors) {
     quickMMErrorCheck("%% asdasdad\n1 2 -1", "non-negative");
     quickMMErrorCheck("%% asdasdad\n1 2 1a", "non-negative");
-    quickMMErrorCheck("%% asdasdad\n1 2 1 5", "terminate with a newline");
-    quickMMErrorCheck("%% asdasdad\n1 2 3\n\n\n", "premature termination");
+    quickMMErrorCheck("%% asdasdad\n1 2 1 5", "three values");
+    quickMMErrorCheck("%% asdasdad\n1 2 3\n\n\n", "three values");
 }
