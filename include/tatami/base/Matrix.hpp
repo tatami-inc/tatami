@@ -461,7 +461,9 @@ public:
      */
     SparseRangeCopy<T, IDX> sparse_row(size_t r, size_t first, size_t last, Workspace* work=nullptr, bool sorted=true) const {
         SparseRangeCopy<T, IDX> output(last - first);
-        sparse_row_copy(r, output.value.data(), output.index.data(), first, last, SPARSE_COPY_BOTH, work, sorted);
+        auto ret = sparse_row_copy(r, output.value.data(), output.index.data(), first, last, SPARSE_COPY_BOTH, work, sorted);
+        output.index.resize(ret.number);
+        output.value.resize(ret.number);
         return output;
     }
 
@@ -478,7 +480,9 @@ public:
      */
     SparseRangeCopy<T, IDX> sparse_column(size_t c, size_t first, size_t last, Workspace* work=nullptr, bool sorted=true) const {
         SparseRangeCopy<T, IDX> output(last - first);
-        sparse_column_copy(c, output.value.data(), output.index.data(), first, last, SPARSE_COPY_BOTH, work, sorted);
+        auto ret = sparse_column_copy(c, output.value.data(), output.index.data(), first, last, SPARSE_COPY_BOTH, work, sorted);
+        output.index.resize(ret.number);
+        output.value.resize(ret.number);
         return output;
     }
 
