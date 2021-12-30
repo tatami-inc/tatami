@@ -5,6 +5,7 @@
 #include "base/CompressedSparseMatrix.hpp"
 #include "base/DelayedIsometricOp.hpp"
 #include "base/DelayedSubset.hpp"
+#include "base/DelayedSubsetBlock.hpp"
 #include "base/DelayedBind.hpp"
 #include "base/DelayedTranspose.hpp"
 
