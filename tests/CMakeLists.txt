@@ -27,6 +27,7 @@ add_executable(
     src/stats/medians.cpp
     src/stats/apply.cpp
     src/utils/wrap_shared_ptr.cpp
+    src/utils/NakedArray.cpp
     src/data/data_sparse.cpp
     src/data/data_triangular.cpp
 )

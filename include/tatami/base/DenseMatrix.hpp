@@ -24,7 +24,7 @@ namespace tatami {
  * @tparam IDX Type of the row/column indices.
  * @tparam V Vector class used to store the matrix values internally.
  * This does not necessarily have to contain `T`, as long as the type is convertible to `T`.
- * Methods should be available for `size()`, `begin()` and `end()`.
+ * Methods should be available for `size()`, `begin()`, `end()` and `[]`.
  * If a method is available for `data()` that returns a `const T*`, it will also be used.
  */
 template<bool ROW, typename T, typename IDX = int, class V = std::vector<T> >

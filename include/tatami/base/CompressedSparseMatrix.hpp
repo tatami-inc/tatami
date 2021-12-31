@@ -27,14 +27,14 @@ namespace tatami {
  * @tparam IDX Type of the row/column indices.
  * @tparam U Vector class used to store the matrix values internally.
  * This does not necessarily have to contain `T`, as long as the type is convertible to `T`.
- * Methods should be available for `size()`, `begin()` and `end()`.
+ * Methods should be available for `size()`, `begin()`, `end()` and `[]`.
  * If a method is available for `data()` that returns a `const T*`, it will also be used.
  * @tparam V Vector class used to store the row/column indices internally.
  * This does not necessarily have to contain `IDX`, as long as the type is convertible to `IDX`.
- * Methods should be available for `size()`, `begin()` and `end()`.
+ * Methods should be available for `size()`, `begin()`, `end()` and `[]`.
  * If a method is available for `data()` that returns a `const IDX*`, it will also be used.
  * @tparam W Vector class used to store the column/row index pointers.
- * Methods should be available for `size()`, `begin()` and `end()`.
+ * Methods should be available for `size()`, `begin()`, `end()` and `[]`.
  */
 template<bool ROW, typename T, typename IDX = int, class U = std::vector<T>, class V = std::vector<IDX>, class W = std::vector<size_t> >
 class CompressedSparseMatrix : public Matrix<T, IDX> {
