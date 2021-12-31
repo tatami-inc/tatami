@@ -25,6 +25,7 @@ add_executable(
     src/stats/sums.cpp
     src/stats/variances.cpp
     src/stats/medians.cpp
+    src/stats/ranges.cpp
     src/stats/apply.cpp
     src/utils/wrap_shared_ptr.cpp
     src/utils/NakedArray.cpp
