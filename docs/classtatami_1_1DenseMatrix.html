@@ -182,7 +182,7 @@ class tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</div><p >Dense matrix represen
     <tr><td class="paramname">ROW</td><td>Whether this is a row-major representation. If <code>false</code>, a column-major representation is assumed instead. </td></tr>
     <tr><td class="paramname">T</td><td>Type of the matrix values. </td></tr>
     <tr><td class="paramname">IDX</td><td>Type of the row/column indices. </td></tr>
-    <tr><td class="paramname">V</td><td>Vector class used to store the matrix values internally. This does not necessarily have to contain <code>T</code>, as long as the type is convertible to <code>T</code>. Methods should be available for <code>size()</code>, <code>begin()</code> and <code>end()</code>. If a method is available for <code>data()</code> that returns a <code>const T*</code>, it will also be used. </td></tr>
+    <tr><td class="paramname">V</td><td>Vector class used to store the matrix values internally. This does not necessarily have to contain <code>T</code>, as long as the type is convertible to <code>T</code>. Methods should be available for <code>size()</code>, <code>begin()</code>, <code>end()</code> and <code>[]</code>. If a method is available for <code>data()</code> that returns a <code>const T*</code>, it will also be used. </td></tr>
   </table>
   </dd>
 </dl>

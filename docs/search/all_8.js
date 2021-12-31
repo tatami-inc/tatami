@@ -1,4 +1,21 @@
 var searchData=
 [
-  ['operator_28_29_0',['operator()',['../structtatami_1_1DelayedAddScalarHelper.html#ac285729c698438913524ced072fb6cbf',1,'tatami::DelayedAddScalarHelper::operator()()'],['../structtatami_1_1DelayedMultiplyScalarHelper.html#aa4469882c45e9c6f37d478bdc9ae7984',1,'tatami::DelayedMultiplyScalarHelper::operator()()'],['../structtatami_1_1DelayedSubtractScalarHelper.html#ad686b1974b4ff2023a140fef7b9b2620',1,'tatami::DelayedSubtractScalarHelper::operator()()'],['../structtatami_1_1DelayedDivideScalarHelper.html#a819a3adf111e3067178e92a6f7b2c8c5',1,'tatami::DelayedDivideScalarHelper::operator()()'],['../structtatami_1_1DelayedAddVectorHelper.html#ab4efab1cf8add8c7314b7f6da5bd3fa4',1,'tatami::DelayedAddVectorHelper::operator()()'],['../structtatami_1_1DelayedSubtractVectorHelper.html#af7b4833df07f470bcbb7bf82c9c5efbe',1,'tatami::DelayedSubtractVectorHelper::operator()()'],['../structtatami_1_1DelayedMultiplyVectorHelper.html#ac64849c5578ccfbb1262020421448f07',1,'tatami::DelayedMultiplyVectorHelper::operator()()'],['../structtatami_1_1DelayedDivideVectorHelper.html#a63ca8047273ae80a88165d81be120146',1,'tatami::DelayedDivideVectorHelper::operator()()'],['../structtatami_1_1DelayedAbsHelper.html#ae1f88bd02c562b770648f23cc2711470',1,'tatami::DelayedAbsHelper::operator()()'],['../structtatami_1_1DelayedLogHelper.html#ab443629dd5741c6bba0deb07c8ff92c4',1,'tatami::DelayedLogHelper::operator()()'],['../structtatami_1_1DelayedSqrtHelper.html#ae0941c96f07180027d17918d6a8df941',1,'tatami::DelayedSqrtHelper::operator()()'],['../structtatami_1_1DelayedLog1pHelper.html#a1b82fc162ab70e33f19542f93aa6d387',1,'tatami::DelayedLog1pHelper::operator()()'],['../structtatami_1_1DelayedRoundHelper.html#aa6c9c7ab1d87872d51473361f25bb284',1,'tatami::DelayedRoundHelper::operator()()'],['../structtatami_1_1DelayedExpHelper.html#affeefc01a2a66d3704aef703e040d653',1,'tatami::DelayedExpHelper::operator()()']]]
+  ['make_5fdelayedaddvectorhelper_0',['make_DelayedAddVectorHelper',['../arith__vector__helpers_8hpp.html#aa82419090e54a4674d971429e93e6af5',1,'tatami']]],
+  ['make_5fdelayedbind_1',['make_DelayedBind',['../DelayedBind_8hpp.html#ac019a143af4fd0eb34f530527a424888',1,'tatami']]],
+  ['make_5fdelayeddividevectorhelper_2',['make_DelayedDivideVectorHelper',['../arith__vector__helpers_8hpp.html#ab104e5029db4d09afe0b47a125f457bf',1,'tatami']]],
+  ['make_5fdelayedisometricop_3',['make_DelayedIsometricOp',['../DelayedIsometricOp_8hpp.html#a0e2cd6fd2c5bba7eb83582619ffc9cea',1,'tatami']]],
+  ['make_5fdelayedmultiplyvectorhelper_4',['make_DelayedMultiplyVectorHelper',['../arith__vector__helpers_8hpp.html#a316f4cf0ae5a9e83c2dad6ccbbbcfb43',1,'tatami']]],
+  ['make_5fdelayedsubset_5',['make_DelayedSubset',['../DelayedSubset_8hpp.html#acd395c7ec8bb251ab11206166a972bbc',1,'tatami']]],
+  ['make_5fdelayedsubsetblock_6',['make_DelayedSubsetBlock',['../DelayedSubsetBlock_8hpp.html#a4ef69731d317edc4ce24de03e67f8097',1,'tatami']]],
+  ['make_5fdelayedsubtractvectorhelper_7',['make_DelayedSubtractVectorHelper',['../arith__vector__helpers_8hpp.html#abb68a8d27e821f213965edab7f029c48',1,'tatami']]],
+  ['make_5fdelayedtranspose_8',['make_DelayedTranspose',['../DelayedTranspose_8hpp.html#ab8888d53a1922d378a7abafa1a1146ff',1,'tatami']]],
+  ['math_5fhelpers_2ehpp_9',['math_helpers.hpp',['../math__helpers_8hpp.html',1,'']]],
+  ['matrix_10',['matrix',['../structtatami_1_1MatrixMarket_1_1LayeredMatrixData.html#ae67083943991b9bedd47c08dc4c41da4',1,'tatami::MatrixMarket::LayeredMatrixData']]],
+  ['matrix_11',['Matrix',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_2ehpp_12',['Matrix.hpp',['../Matrix_8hpp.html',1,'']]],
+  ['matrix_3c_20t_2c_20idx_20_3e_13',['Matrix&lt; T, IDX &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_3c_20t_2c_20int_20_3e_14',['Matrix&lt; T, int &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrixmarket_2ehpp_15',['MatrixMarket.hpp',['../MatrixMarket_8hpp.html',1,'']]],
+  ['matrixmarket_5flayered_2ehpp_16',['MatrixMarket_layered.hpp',['../MatrixMarket__layered_8hpp.html',1,'']]],
+  ['medians_2ehpp_17',['medians.hpp',['../medians_8hpp.html',1,'']]]
 ];
