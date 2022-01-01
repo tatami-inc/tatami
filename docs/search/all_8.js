@@ -10,7 +10,7 @@ var searchData=
   ['make_5fdelayedsubtractvectorhelper_7',['make_DelayedSubtractVectorHelper',['../arith__vector__helpers_8hpp.html#abb68a8d27e821f213965edab7f029c48',1,'tatami']]],
   ['make_5fdelayedtranspose_8',['make_DelayedTranspose',['../DelayedTranspose_8hpp.html#ab8888d53a1922d378a7abafa1a1146ff',1,'tatami']]],
   ['math_5fhelpers_2ehpp_9',['math_helpers.hpp',['../math__helpers_8hpp.html',1,'']]],
-  ['matrix_10',['matrix',['../structtatami_1_1MatrixMarket_1_1LayeredMatrixData.html#ae67083943991b9bedd47c08dc4c41da4',1,'tatami::MatrixMarket::LayeredMatrixData']]],
+  ['matrix_10',['matrix',['../structtatami_1_1LayeredMatrixData.html#a117e250097c0219902fad9160e5d389c',1,'tatami::LayeredMatrixData']]],
   ['matrix_11',['Matrix',['../classtatami_1_1Matrix.html',1,'tatami']]],
   ['matrix_2ehpp_12',['Matrix.hpp',['../Matrix_8hpp.html',1,'']]],
   ['matrix_3c_20t_2c_20idx_20_3e_13',['Matrix&lt; T, IDX &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['permutation_0',['permutation',['../structtatami_1_1MatrixMarket_1_1LayeredMatrixData.html#a9fb819d27b312ac5d3940438ffe7b4ad',1,'tatami::MatrixMarket::LayeredMatrixData']]]
+  ['permutation_0',['permutation',['../structtatami_1_1LayeredMatrixData.html#ae9c9cfb331519d5c7e18f4e51fc2898c',1,'tatami::LayeredMatrixData']]]
 ];

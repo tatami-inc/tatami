@@ -69,7 +69,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">MatrixMarket_layered.hpp File Reference</div></div>
 </div><!--header-->
@@ -80,12 +79,6 @@ $(function() {
 
 <p><a href="MatrixMarket__layered_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1MatrixMarket_1_1LayeredMatrixData.html">tatami::MatrixMarket::LayeredMatrixData&lt; T, IDX &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pointer and permutations for a layered sparse matrix.  <a href="structtatami_1_1MatrixMarket_1_1LayeredMatrixData.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a2f4f1f9c5f4d8216082df388615450ea"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
@@ -146,9 +139,8 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
   </table>
   </dd>
 </dl>
-<p>This loads a sparse integer matrix from a Matrix Market coordinate file, with a twist: values are stored in the smallest integer type that will fit all entries on the same row. This is achieved by reordering the rows into separate <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">tatami::CompressedSparseMatrix</a></code> submatrices, where each submatrix contains all rows that can fit into a certain integer type. Submatrices are then combined together using an instance of the <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">tatami::DelayedBind</a></code> class. The idea is to reduce memory usage in common situations involving small integers.</p>
-<p >Note that the rows of the output matrix will be in a different order from the data in the file. This is a consequence of the reordering to ensure that rows of the same type can be put into the same submatrix. The returned <code>LayeredMatriData</code> object will contain a permutation vector indicating the new position of each original row. This can be passed to <code><a class="el" href="classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix.">tatami::DelayedSubset</a></code> to restore the original order, if so desired.</p>
-<p >Currently, only unsigned integers are supported. </p>
+<p>This function loads a layered sparse integer matrix from a Matrix Market coordinate file. The aim is to reduce memory usage by storing each gene's counts in the smallest unsigned integer type that can hold them. See the documentation for <code>LayeredMatrixData</code> for more details.</p>
+<p >On a related note, this function will automatically use <code>uint16_t</code> values to store the internal row indices if the number of rows is less than 65536. This aims to further reduce memory usage in most cases, e.g., gene count matrices usually have fewer than 50000 rows. Note that the internal storage is orthogonal to the choice of <code>IDX</code> in the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code> interface. </p>
 
 </div>
 </div>
