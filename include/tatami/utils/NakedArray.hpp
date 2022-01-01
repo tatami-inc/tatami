@@ -22,6 +22,11 @@ template<typename T>
 class NakedArray {
 public:
     /**
+     * Default constructor.
+     */
+    NakedArray() : ptr(NULL), len(0) {}
+
+    /**
      * @param p Pointer to an array of values.
      * @param n Length of the array pointed to by `p`.
      */
