@@ -9,7 +9,9 @@
 #include "../base/CompressedSparseMatrix.hpp"
 #include "../base/DelayedBind.hpp"
 #include "../utils/compress_sparse_triplets.hpp"
+
 #include "MatrixMarket.hpp"
+#include "LayeredMatrixData.hpp"
 
 #include "buffin/parse_text_file.hpp"
 
@@ -224,30 +226,6 @@ public:
  */
 
 /**
- * @brief Pointer and permutations for a layered sparse matrix.
- *
- * This holds a pointer to a "layered sparse matrix", see `load_layered_sparse_matrix()` for details.
- * It also holds the permutation vector that was generated as part of the layering process.
- *
- * @tparam T Type of the matrix values.
- * @tparam IDX Integer type for the index.
- */
-template<typename T = double, typename IDX = int>
-struct LayeredMatrixData {
-    /**
-     * Pointer to the matrix data.
-     * Note that rows will not follow their original order, see `permutation`.
-     */
-    std::shared_ptr<Matrix<T, IDX> > matrix;
-
-    /**
-     * Permutation vector indicating the position of each original row in `matrix`.
-     * Specifically, for an original row `r`, its new row index in `matrix` is defined as `permutation[i]`.
-     */
-    std::vector<size_t> permutation;
-};
-
-/**
  * @cond
  */
 template<typename T = double, typename IDX = int, class Function>
@@ -286,19 +264,13 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Function process) 
  * @tparam T Type of value in the `tatami::Matrix` interface.
  * @tparam IDX Integer type for the index.
  *
- * This loads a sparse integer matrix from a Matrix Market coordinate file, with a twist:
- * values are stored in the smallest integer type that will fit all entries on the same row.
- * This is achieved by reordering the rows into separate `tatami::CompressedSparseMatrix` submatrices,
- * where each submatrix contains all rows that can fit into a certain integer type.
- * Submatrices are then combined together using an instance of the `tatami::DelayedBind` class.
- * The idea is to reduce memory usage in common situations involving small integers.
+ * This function loads a layered sparse integer matrix from a Matrix Market coordinate file.
+ * The aim is to reduce memory usage by storing each gene's counts in the smallest unsigned integer type that can hold them.
+ * See the documentation for `LayeredMatrixData` for more details.
  *
- * Note that the rows of the output matrix will be in a different order from the data in the file.
- * This is a consequence of the reordering to ensure that rows of the same type can be put into the same submatrix.
- * The returned `LayeredMatriData` object will contain a permutation vector indicating the new position of each original row.
- * This can be passed to `tatami::DelayedSubset` to restore the original order, if so desired.
- *
- * Currently, only unsigned integers are supported.
+ * On a related note, this function will automatically use `uint16_t` values to store the internal row indices if the number of rows is less than 65536.
+ * This aims to further reduce memory usage in most cases, e.g., gene count matrices usually have fewer than 50000 rows.
+ * Note that the internal storage is orthogonal to the choice of `IDX` in the `tatami::Matrix` interface.
  */
 template<typename T = double, typename IDX = int>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath, size_t bufsize = 65536) {
