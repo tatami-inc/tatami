@@ -51,6 +51,7 @@ add_executable(
     src/ext/MatrixMarketText.cpp
     src/ext/MatrixMarketGzip.cpp
     src/ext/convert_to_layered_sparse.cpp
+    src/ext/SomeNumericArray.cpp
 )
 
 target_link_libraries(
