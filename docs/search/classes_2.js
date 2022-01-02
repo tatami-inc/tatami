@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['layeredmatrixdata_0',['LayeredMatrixData',['../structtatami_1_1LayeredMatrixData.html',1,'tatami']]]
+  ['iterator_0',['Iterator',['../structtatami_1_1SomeNumericArray_1_1Iterator.html',1,'tatami::SomeNumericArray']]]
 ];

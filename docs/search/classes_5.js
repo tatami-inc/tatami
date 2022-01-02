@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['sparserange_0',['SparseRange',['../structtatami_1_1SparseRange.html',1,'tatami']]],
-  ['sparserangecopy_1',['SparseRangeCopy',['../structtatami_1_1SparseRangeCopy.html',1,'tatami']]]
+  ['nakedarray_0',['NakedArray',['../classtatami_1_1NakedArray.html',1,'tatami']]]
 ];

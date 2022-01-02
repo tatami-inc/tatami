@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['workspace_0',['Workspace',['../classtatami_1_1Workspace.html',1,'tatami']]],
-  ['workspace_2ehpp_1',['Workspace.hpp',['../Workspace_8hpp.html',1,'']]]
+  ['value_0',['value',['../classtatami_1_1Matrix.html#a748cb0b5464085347243c9d26a300005',1,'tatami::Matrix::value()'],['../structtatami_1_1SparseRange.html#af58b18de602bb4e82e5223b0d7168a08',1,'tatami::SparseRange::value()'],['../structtatami_1_1SparseRangeCopy.html#a3091fafa3385c97f6c21e251e0ad951a',1,'tatami::SparseRangeCopy::value()']]],
+  ['value_5ftype_1',['value_type',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a452df712534d47fdb8543805affd038b',1,'tatami::SomeNumericArray::Iterator']]],
+  ['variances_2ehpp_2',['variances.hpp',['../variances_8hpp.html',1,'']]]
 ];

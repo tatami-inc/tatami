@@ -29,5 +29,6 @@ var searchData=
   ['densematrix_26',['DenseMatrix',['../classtatami_1_1DenseMatrix.html#a520c63dd6f58dc7daaca05cbff960cae',1,'tatami::DenseMatrix::DenseMatrix(size_t nr, size_t nc, const V &amp;source)'],['../classtatami_1_1DenseMatrix.html#ab89adaca1dccbcce13c745191f506ba1',1,'tatami::DenseMatrix::DenseMatrix(size_t nr, size_t nc, V &amp;&amp;source)'],['../classtatami_1_1DenseMatrix.html',1,'tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;']]],
   ['densematrix_2ehpp_27',['DenseMatrix.hpp',['../DenseMatrix_8hpp.html',1,'']]],
   ['denserowmatrix_28',['DenseRowMatrix',['../DenseMatrix_8hpp.html#ad4db75262ca90f85a4278b90f844cffd',1,'tatami']]],
-  ['dimension_5fpreference_29',['dimension_preference',['../classtatami_1_1DelayedBind.html#ad2e7e7de5d4bfb9805c1ae30d6349a03',1,'tatami::DelayedBind::dimension_preference()'],['../classtatami_1_1Matrix.html#a8e0c04c5b051451af78a64e517aae0c1',1,'tatami::Matrix::dimension_preference()']]]
+  ['difference_5ftype_29',['difference_type',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#ae2439d56ee9c796afae3b07f70e1c3b1',1,'tatami::SomeNumericArray::Iterator']]],
+  ['dimension_5fpreference_30',['dimension_preference',['../classtatami_1_1DelayedBind.html#ad2e7e7de5d4bfb9805c1ae30d6349a03',1,'tatami::DelayedBind::dimension_preference()'],['../classtatami_1_1Matrix.html#a8e0c04c5b051451af78a64e517aae0c1',1,'tatami::Matrix::dimension_preference()']]]
 ];
