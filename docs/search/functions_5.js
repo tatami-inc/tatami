@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['finish_5frunning_0',['finish_running',['../variances_8hpp.html#a34e1f6cd5406db80632d8dae5c5f8887',1,'tatami::stats::variances::finish_running(size_t n, O *means, O *vars, int count)'],['../variances_8hpp.html#a52831de71032b77f466b9432aa61bbba',1,'tatami::stats::variances::finish_running(size_t n, O *means, O *vars, Nz *nonzeros, int count)']]]
+  ['iterator_0',['Iterator',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#aaec76c06dc4b04937e4c0e16233a7fdb',1,'tatami::SomeNumericArray::Iterator::Iterator()'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a47aa875df6ad992824acccefb811c4d4',1,'tatami::SomeNumericArray::Iterator::Iterator(const SomeNumericArray *p, size_t i)']]]
 ];
