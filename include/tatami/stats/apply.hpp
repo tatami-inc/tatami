@@ -108,14 +108,16 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
 
             if constexpr(stats::has_sparse_running<Factory>::value) {
                 if (p->sparse()) {
-#ifdef _OPENMP
+#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
                     if constexpr(stats::has_sparse_running_parallel<Factory>::value) {
+#ifndef TATAMI_CUSTOM_PARALLEL
                         #pragma omp parallel
                         {
-                            int nworkers = omp_get_num_threads();
-                            size_t worker_size = std::ceil(static_cast<double>(dim) / nworkers);
+                            size_t worker_size = std::ceil(static_cast<double>(dim) / omp_get_num_threads());
                             size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
-
+#else
+                        TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
+#endif
                             if (start < end) {
                                 std::vector<T> obuffer(end - start);
                                 std::vector<IDX> ibuffer(obuffer.size());
@@ -133,7 +135,11 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
                                 }
                                 stat.finish();
                             }
+#ifndef TATAMI_CUSTOM_PARALLEL
                         }
+#else
+                        });
+#endif
                         return;
                     }
 #endif
@@ -156,14 +162,16 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
                 }
             }
 
-#ifdef _OPENMP
+#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
             if constexpr(stats::has_dense_running_parallel<Factory>::value) {
+#ifndef TATAMI_CUSTOM_PARALLEL
                 #pragma omp parallel
                 {
-                    int nworkers = omp_get_num_threads();
-                    size_t worker_size = std::ceil(static_cast<double>(dim) / nworkers);
+                    size_t worker_size = std::ceil(static_cast<double>(dim) / omp_get_num_threads());
                     size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
-
+#else
+                TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
+#endif                
                     if (start < end) {
                         auto stat = factory.dense_running(start, end);
                         std::vector<T> obuffer(end - start);
@@ -180,7 +188,11 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
                         }
                         stat.finish();
                     }
+#ifndef TATAMI_CUSTOM_PARALLEL
                 }
+#else
+                });
+#endif
                 return;
             }
 #endif
@@ -204,8 +216,12 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
 
     if constexpr(stats::has_sparse_direct<Factory>::value) {
         if (p->sparse()) {
+#ifndef TATAMI_CUSTOM_PARALLEL
             #pragma omp parallel
             {
+#else
+            TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
+#endif
                 std::vector<T> obuffer(otherdim);
                 auto wrk = p->new_workspace(ROW);
                 std::vector<IDX> ibuffer(otherdim);
@@ -214,8 +230,12 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
                 constexpr bool do_copy = stats::has_nonconst_sparse_compute<decltype(stat), T, IDX>::value;
                 constexpr SparseCopyMode copy_mode = stats::nonconst_sparse_compute_copy_mode<decltype(stat)>::value;
 
+#ifndef TATAMI_CUSTOM_PARALLEL
                 #pragma omp for schedule(static) 
                 for (size_t i = 0; i < dim; ++i) {
+#else
+                for (size_t i = start; i < end; ++i) {
+#endif
                     if constexpr(ROW) {
                         if constexpr(do_copy) {
                             auto range = p->sparse_row_copy(i, obuffer.data(), ibuffer.data(), copy_mode, wrk.get());
@@ -234,20 +254,32 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
                         }
                     }
                 }
+#ifndef TATAMI_CUSTOM_PARALLEL
             }
+#else
+            });
+#endif
             return;
         }
     }
 
+#ifndef TATAMI_CUSTOM_PARALLEL
     #pragma omp parallel
     {
+#else
+    TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
+#endif
         std::vector<T> obuffer(otherdim);
         auto wrk = p->new_workspace(ROW);
         auto stat = factory.dense_direct();
         constexpr bool do_copy = stats::has_nonconst_dense_compute<decltype(stat), T>::value;
 
+#ifndef TATAMI_CUSTOM_PARALLEL
         #pragma omp for schedule(static)
         for (size_t i = 0; i < dim; ++i) {
+#else            
+        for (size_t i = start; i < end; ++i) {
+#endif
             if constexpr(ROW) {
                 if constexpr(do_copy) {
                     auto ptr = p->row_copy(i, obuffer.data(), wrk.get());
@@ -266,7 +298,11 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
                 }
             }
         }
+#ifndef TATAMI_CUSTOM_PARALLEL            
     }
+#else
+    });
+#endif
 
     return; 
 }

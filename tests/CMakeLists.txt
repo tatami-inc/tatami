@@ -10,6 +10,7 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
+# Main test executable.
 add_executable(
     libtest 
     src/base/DenseMatrix.cpp
@@ -39,12 +40,20 @@ target_link_libraries(
     tatami
 )
 
-set(USE_OPENMP OFF CACHE BOOL "Compile with OpenMP support")
-if (USE_OPENMP)
-    find_package(OpenMP)
-    target_link_libraries(libtest OpenMP::OpenMP_CXX)
-endif()
+# Test custom parallelization during apply.
+add_executable(
+    cuspartest 
+    src/stats/custom_parallel.cpp
+    src/data/data_sparse.cpp
+)
 
+target_link_libraries(
+    cuspartest 
+    gtest_main
+    tatami
+)
+
+# Test extensions
 add_executable(
     exttest 
     src/ext/MatrixMarketBuffer.cpp
@@ -59,6 +68,15 @@ target_link_libraries(
     gtest_main
     tatami
 )
+
+# Adding the assorted linker flags.
+set(USE_OPENMP OFF CACHE BOOL "Compile with OpenMP support")
+if (USE_OPENMP)
+    find_package(OpenMP)
+    target_link_libraries(libtest OpenMP::OpenMP_CXX)
+    target_link_libraries(exttest OpenMP::OpenMP_CXX)
+    target_link_libraries(cuspartest OpenMP::OpenMP_CXX)
+endif()
 
 find_package(ZLIB)
 target_link_libraries(exttest ZLIB::ZLIB)
@@ -78,9 +96,8 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_link_options(exttest PRIVATE --coverage)
 endif()
 
+# Making the tests discoverable.
 include(GoogleTest)
 gtest_discover_tests(libtest)
-
 gtest_discover_tests(exttest)
-
-add_test(NAME tatami_tests COMMAND libtest exttest)
+gtest_discover_tests(cuspartest)
