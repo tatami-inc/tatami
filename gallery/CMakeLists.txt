@@ -55,3 +55,20 @@ target_link_libraries(
     sparse_workspace
     tatami
 )
+
+#########################################
+# Checking MatrixMarket reading performance.
+
+add_executable(
+    read_mm
+    src/read_mm.cpp
+)
+
+target_link_libraries(
+    read_mm
+    tatami
+)
+
+target_compile_options(
+    read_mm PUBLIC -O2
+)

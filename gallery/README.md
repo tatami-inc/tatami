@@ -14,6 +14,7 @@ This generates executables in the `build/gallery` subdirectory:
 - `parallel`: compute row sums in parallel with OpenMP.
 - `char2double`: store integers as `char` to save memory, but return them as `double`s for downstream use.
 - `sparse_workspace`: compare sparse matrix access speeds with and without a workspace.
+- `read_mm`: read a Matrix Market file from the command line.
 
 Each executable is named after the C++ source file from which they were generated.
 Each file contains some commentary explaining the rationale behind each example.
