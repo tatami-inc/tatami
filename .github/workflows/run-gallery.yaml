@@ -31,13 +31,20 @@ jobs:
     - name: Run the build
       run: cmake --build build
 
-    - name: Run the tests
+    - name: Run the no-argument tests
       run: | 
         cd build/gallery
-        for x in $(find . -type f -executable)
+        for x in char2double colsums parallel sparse_workspace
         do
             echo "#### RUNNING ${x} ####"
             echo
             ./${x}
             echo
         done
+
+    - name: Run the MatrixMarket reader
+        x=read_mm
+        echo "#### RUNNING ${x} ####"
+        echo
+        printf "%% MatrixMarket\n10 10 3\n1 1 1\n2 2 2\n3 3 4\n" > test.mtx
+        ./${x} test.mtx
