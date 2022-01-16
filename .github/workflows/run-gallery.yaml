@@ -43,6 +43,8 @@ jobs:
         done
 
     - name: Run the MatrixMarket reader
+      run: |
+        cd build/gallery
         x=read_mm
         echo "#### RUNNING ${x} ####"
         echo
