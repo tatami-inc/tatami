@@ -64,7 +64,51 @@ constexpr H5::PredType& define_type() {
 template<typename T, typename IDX, bool transpose = false>
 class HDF5DenseMatrix : public tatami::Matrix<T, IDX> {
 public:
-    HDF5DenseMatrix(std::string file, std::string path, size_t buffer_size) {
+    struct CacheDetails {
+        CacheDetails() : CacheDetails(0, 0) {}
+        CacheDetails(size_t n, size_t c) : n_slots(n), cache_size(c) {}
+        size_t n_slots;
+        size_t cache_size;
+    };
+
+    static CacheDetails compute_best_cache_parameters(const H5::DataSet& dataset, bool row, bool col) {
+        auto dparms = dataset.getCreatePlist();
+
+        hsize_t dims[2];
+        space.getSimpleExtentDims(dims, NULL);
+        const size_t nrows = (transpose ? dims[1] : dims[0]);
+        const size_t ncols = (transpose ? dims[0] : dims[1]);
+
+        hsize_t chunk_dims[2];
+        dparms.getChunk(2, chunk_dims);
+        const size_t chunk_nrows = (transpose ? chunk_dims[1] : chunk_dims[0]);
+        const size_t chunk_ncols = (transpose ? chunk_dims[0] : chunk_dims[1]);
+
+        const size_t num_chunks_per_row = std::ceil(static_cast<double>(ncol)/chunk_ncols); // per row needs to divide by column dimensions.
+        const size_t num_chunks_per_col = std::ceil(static_cast<double>(nrow)/chunk_nrows);
+
+        // We used to be able to compute the nslots exactly, but then we got:
+        // https://forum.hdfgroup.org/t/unintended-behaviour-for-hash-values-during-chunk-caching/4869/5
+        // ... so we'll just set the number of slots to the total number of chunks and forget about it.
+        const size_t num_slots = num_chunks_per_row * num_chunks_per_col; 
+    
+        auto chunk_size = dataset.getType().getSize() * chunk_nrows * chunk_ncols;
+        const size_t cache_size_row = num_chunks_per_row * chunk_size;
+        const size_t cache_size_col = num_chunks_per_col * chunk_size;
+
+        if (row && col) {
+            return CacheDetails(num_slots, std::max(cache_size_row, cache_size_col)); 
+        } else if (row) {
+            return CacheDetails(num_slots, cache_size_row); 
+        } else if (column) {
+            return CacheDetails(num_slots, cache_size_col); 
+        } else {
+            return CacheDetails();
+        }
+    }
+
+public:
+    HDF5DenseMatrix(std::string file, std::string path, size_t cache_limit) {
         file.openFile(path, H5F_ACC_RDONLY);
         dhandle = file.openDataSet(path);
         auto space = dhandle.getSpace();
