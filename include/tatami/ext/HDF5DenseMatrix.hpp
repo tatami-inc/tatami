@@ -12,7 +12,7 @@ namespace tatami {
 namespace HDF5 {
 
 template<typename T>
-constexpr H5::PredType& define_type() {
+constexpr H5::PredType& define_mem_type() {
     if constexpr(std::is_same<int, T>::value) {
         return H5::NATIVE_INT;
     } else if (std::is_same<unsigned int, T>::value) {
@@ -63,54 +63,22 @@ constexpr H5::PredType& define_type() {
 
 template<typename T, typename IDX, bool transpose = false>
 class HDF5DenseMatrix : public tatami::Matrix<T, IDX> {
-public:
-    struct CacheDetails {
-        CacheDetails() : CacheDetails(0, 0) {}
-        CacheDetails(size_t n, size_t c) : n_slots(n), cache_size(c) {}
-        size_t n_slots;
-        size_t cache_size;
-    };
+    size_t firstdim, seconddim;
+    std::string file_name, dataset_name;
 
-    static CacheDetails compute_best_cache_parameters(const H5::DataSet& dataset, bool row, bool col) {
-        auto dparms = dataset.getCreatePlist();
-
-        hsize_t dims[2];
-        space.getSimpleExtentDims(dims, NULL);
-        const size_t nrows = (transpose ? dims[1] : dims[0]);
-        const size_t ncols = (transpose ? dims[0] : dims[1]);
-
-        hsize_t chunk_dims[2];
-        dparms.getChunk(2, chunk_dims);
-        const size_t chunk_nrows = (transpose ? chunk_dims[1] : chunk_dims[0]);
-        const size_t chunk_ncols = (transpose ? chunk_dims[0] : chunk_dims[1]);
-
-        const size_t num_chunks_per_row = std::ceil(static_cast<double>(ncol)/chunk_ncols); // per row needs to divide by column dimensions.
-        const size_t num_chunks_per_col = std::ceil(static_cast<double>(nrow)/chunk_nrows);
-
-        // We used to be able to compute the nslots exactly, but then we got:
-        // https://forum.hdfgroup.org/t/unintended-behaviour-for-hash-values-during-chunk-caching/4869/5
-        // ... so we'll just set the number of slots to the total number of chunks and forget about it.
-        const size_t num_slots = num_chunks_per_row * num_chunks_per_col; 
-    
-        auto chunk_size = dataset.getType().getSize() * chunk_nrows * chunk_ncols;
-        const size_t cache_size_row = num_chunks_per_row * chunk_size;
-        const size_t cache_size_col = num_chunks_per_col * chunk_size;
-
-        if (row && col) {
-            return CacheDetails(num_slots, std::max(cache_size_row, cache_size_col)); 
-        } else if (row) {
-            return CacheDetails(num_slots, cache_size_row); 
-        } else if (column) {
-            return CacheDetails(num_slots, cache_size_col); 
-        } else {
-            return CacheDetails();
-        }
-    }
+    size_t nslots = 0;
+    size_t cache_size_firstdim = 0;
+    size_t cache_size_seconddim = 0;
+    bool prefer_firstdim = false;
 
 public:
-    HDF5DenseMatrix(std::string file, std::string path, size_t cache_limit) {
-        file.openFile(path, H5F_ACC_RDONLY);
-        dhandle = file.openDataSet(path);
+    HDF5DenseMatrix(std::string file, std::string path, size_t cache_limit = 100000000) : 
+        file_name(std::move(file)), 
+        dataset_name(std::move(path)), 
+        max_cache_size(cache_limit)
+    {
+        H5::H5File file (path, H5F_ACC_RDONLY);
+        auto dhandle = file.openDataSet(path);
         auto space = dhandle.getSpace();
 
         int ndim = space.getSimpleExtentNdims();
@@ -123,14 +91,45 @@ public:
         firstdim = dims_out[0];
         seconddim = dims_out[1];
 
-        auto curtype=hdata.getTypeClass();
+        auto curtype = dhandle.getTypeClass();
         if (curtype != H5T_INTEGER || curtype != H5T_FLOAT) { 
             throw std::runtime_error("expected numeric data in the HDF5 dataset");
         }
 
+        auto dparms = dhandle.getCreatePlist();
+        size_t num_chunks_per_firstdim, num_chunks_per_seconddim;
+
+        if (dparms.getLayout() != H5D_CHUNKED) {
+            // If contiguous, each firstdim is treated as a chunk.
+            // So the number of chunks along the seconddim
+            num_chunks_per_firstdim = 1;
+            num_chunks_per_seconddim = firstdim;
+        } else {
+            hsize_t chunk_dims[2];
+            dparms.getChunk(2, chunk_dims);
+            const size_t chunk_firstdim = chunk_dims[0];
+            const size_t chunk_seconddim = chunk_dims[1];
+
+            // Need to use the other dimension to figure out
+            // the number of chunks along one dimension.
+            num_chunks_per_firstdim = std::ceil(static_cast<double>(seconddim)/chunk_seconddim); 
+            cnum_chunks_per_seconddim = std::ceil(static_cast<double>(firstdim)/chunk_firstdim);
+
+            size_t chunk_size = dataset.getType().getSize() * chunk_firstdim * chunk_seconddim;
+            cache_size_firstdim = std::min(cache_limit, num_chunks_per_firstdim * chunk_size);
+            cache_size_seconddim = std::min(cache_limit, num_chunks_per_seconddim * chunk_size);
+
+            // We used to be able to compute the nslots exactly, but then we got:
+            // https://forum.hdfgroup.org/t/unintended-behaviour-for-hash-values-during-chunk-caching/4869/5
+            // ... so we'll just set the number of slots to the total number of chunks and forget about it.
+            nslots = num_chunks_per_firstdim * num_chunks_per_seconddim; 
+        }
+
+        prefer_firstdim = num_chunks_per_firstdim < num_chunks_per_seconddim;
         return;
     }
 
+public:
     size_t nrow() const {
         if constexpr(transpose) {
             return seconddim;
@@ -147,50 +146,88 @@ public:
         }
     }
 
+    bool prefer_rows() const {
+        if constexpr(transpose) {
+            return !prefer_firstdim;
+        } else {
+            return prefer_firstdim;
+        }
+    }
+
 public:
-    struct HDF5DenseWorkspace {
-        HDF5DenseWorkspace(H5::DataSpace ds, size_t n) : dataspace(std::move(ds)), current_n(n), memspace(1, &current_n) {
+    struct HDF5DenseWorkspace : public Workspace {
+        HDF5DenseWorkspace(const std::string& file, const std::string& path, size_t nslots, size_t cache_size, size_t dim) : 
+            current_size(dim),
+            memspace(1, &current_size)
+        { 
+            // Configuring the chunk cache.
+            if (nslots) {
+                H5::FileAccPropList plist(H5::FileAccPropList::DEFAULT.getId());
+
+                /* The first argument is ignored, according to https://support.hdfgroup.org/HDF5/doc/RM/RM_H5P.html.
+                 * Setting w0 to 0 to evict the last used chunk; no need to worry about full vs partial reads here.
+                 */
+                plist.setCache(10000, nslots, cache_size, 0);
+
+                file.openFile(file, H5F_ACC_RDONLY, plist);
+            } else {
+                file.openFile(file, H5F_ACC_RDONLY);
+            }
+
+            dataset = file.openDataset(path);
+            dataspace = dataset.getSpace();
             dataspace.selectNone();
             memspace.selectAll();
             return;
         }
 
+        H5::H5File file;
+        H5::DataSet dataset;
+
         H5::DataSpace dataspace;
         hsize_t offset[2];
         hsize_t count[2];
 
-        hsize_t current_n;
+        hsize_t current_size;
         H5::DataSpace memspace;
     }
 
     std::shared_ptr<Workspace> new_workspace(bool row) const {
-        return std::shared_ptr<Workspace>(new HDF5DenseWorkspace(dataset.getSpace(), row ? ncol() : nrow()));
+        return std::shared_ptr<Workspace>(
+            new HDF5DenseWorkspace(
+                file_name, 
+                dataset_name, 
+                nslots, 
+                row != transpose ? cache_size_firstdim : cache_size_seconddim,
+                row ? ncol() : nrow()
+            )
+        );
     }
 
 private:
     template<bool row>
-    const T* extract(size_t i, T* buffer, size_t first, size_t last, H5::DataSpace& dataspace, hsize_t* offset, hsize_t* count, hsize_t& n, H5::DataSpace& memspace) const {
+    const T* extract(size_t i, T* buffer, size_t first, size_t last, HDF5DenseWorkspace& work) const {
         if constexpr(row != transpose) {
-            offset[0] = i;
-            offset[1] = first;
-            count[0] = 1;
-            count[1] = last - first;
+            work.offset[0] = i;
+            work.offset[1] = first;
+            work.count[0] = 1;
+            work.count[1] = last - first;
         } else {
-            offset[1] = i;
-            offset[0] = first;
-            count[1] = 1;
-            count[0] = last - first;
+            work.offset[1] = i;
+            work.offset[0] = first;
+            work.count[1] = 1;
+            work.count[0] = last - first;
         }
 
-        dataspace.selectHyperslab(H5S_SELECT_SET, count, offset):
+        work.dataspace.selectHyperslab(H5S_SELECT_SET, work.count, work.offset);
 
         if (static_cast<size_t>(n) != last - first) {
-            n = last - first;
-            memspace.setExtentSimple(1, &n);
-            memspace.selectAll();
+            work.current_size = last - first;
+            work.memspace.setExtentSimple(1, &(work.current_size));
+            work.memspace.selectAll();
         }
 
-        dataset.read(buffer, define_type<T>(), memspace, dataspace);
+        work.dataset.read(buffer, define_mem_type<T>(), work.memspace, work.dataspace);
         return buffer;
     }
 
@@ -198,17 +235,12 @@ private:
     const T* extract(size_t i, T* buffer, size_t first, size_t last, Workspace* work) const {
         if (work) {
             auto wptr = dynamic_cast<HDF5DenseWorkspace*>(work);
-            return extract(i, buffer, first, last, wptr->dataspace, wptr->offset, wptr->count, wptr->current_n, wptr->memspace);
+            return extract<row>(i, buffer, first, last, *wptr);
         } else {
-            H5::DataSpace dspace = dataset.getSpace();
-            hsize_t offset[2];
-            hsize_t count[2];
-            hsize_t current_n = last - first;
-            H5::DataSpace memspace(1, &current_n);
-            return extract(i, buffer, first, last, wptr->dataspace, offset, count, current_n, memspace);
+            auto wptr = new_workspace(row);
+            return extract<row>(i, buffer, first, last, *wptr);
         }
     }
-
 
 public:
     const T* row(size_t r, T* buffer, size_t first, size_t last, Workspace* work=nullptr) const {
@@ -219,10 +251,6 @@ public:
         return extract<false>(r, buffer, first, last, work);
     }
 
-private:
-    size_t firstdim, seconddim;
-    H5::H5File file;
-    H5::DataSet dataset;
 }
 
 }
