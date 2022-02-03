@@ -10,7 +10,17 @@
 
 #include "../base/Matrix.hpp"
 
+/**
+ * @file HDF5DenseMatrix.hpp
+ *
+ * @brief Defines a class for a HDF5-backed dense matrix.
+ */
+
 namespace tatami {
+
+/**
+ * @cond
+ */
 
 namespace HDF5 {
 
@@ -64,6 +74,22 @@ const H5::PredType& define_mem_type() {
 
 }
 
+/**
+ * @endcond
+ */
+
+/**
+ * @brief Dense matrix backed by a DataSet in a HDF5 file.
+ *
+ * This class retrieves data from the HDF5 file on demand rather than loading it all in at the start.
+ * This allows us to handle very large datasets in limited memory at the cost of speed.
+ * It is strongly advised to follow the `prefer_rows()` suggestion when extracting data,
+ * otherwise the access pattern on disk will be highly suboptimal.
+ *
+ * @tparam T Type of the matrix values.
+ * @tparam IDX Type of the row/column indices.
+ * @tparam transpose Whether the dataset is transposed in its storage order, i.e., rows in HDF5 are columns in this matrix.
+ */
 template<typename T, typename IDX, bool transpose = false>
 class HDF5DenseMatrix : public tatami::Matrix<T, IDX> {
     size_t firstdim, seconddim;
@@ -75,9 +101,18 @@ class HDF5DenseMatrix : public tatami::Matrix<T, IDX> {
     bool prefer_firstdim = false;
 
 public:
-    HDF5DenseMatrix(std::string file, std::string path, size_t cache_limit = 100000000) : 
+    /**
+     * @param file Path to the file.
+     * @param name Path to the dataset inside the file.
+     * @param cache_limit Limit to the size of the cache, in bytes.
+     *
+     * The actual cache size is automatically chosen to optimize for row or column extraction,
+     * as long as this choice is less than `cache_limit`.
+     * Otherwise, access is likely to be pretty slow.
+     */
+    HDF5DenseMatrix(std::string file, std::string name, size_t cache_limit = 100000000) : 
         file_name(std::move(file)), 
-        dataset_name(std::move(path))
+        dataset_name(std::move(name))
     {
         H5::H5File fhandle(file_name, H5F_ACC_RDONLY);
         auto dhandle = fhandle.openDataSet(dataset_name);
@@ -148,6 +183,9 @@ public:
         }
     }
 
+    /**
+     * @return `true` if the row extraction requires loading of fewer chunks compared to column extraction.
+     */
     bool prefer_rows() const {
         if constexpr(transpose) {
             return !prefer_firstdim;
@@ -157,6 +195,9 @@ public:
     }
 
 public:
+    /**
+     * @cond
+     */
     struct HDF5DenseWorkspace : public Workspace {
         HDF5DenseWorkspace(const std::string& fpath, const std::string& dpath, size_t nslots, size_t cache_size, size_t dim) : 
             current_size(dim),
@@ -193,7 +234,14 @@ public:
         hsize_t current_size;
         H5::DataSpace memspace;
     };
+    /**
+     * @endcond
+     */
 
+    /**
+     * @param row Should a workspace be created for row-wise extraction?
+     * @return A shared pointer to a `Workspace` object is returned.
+     */
     std::shared_ptr<Workspace> new_workspace(bool row) const {
         return std::shared_ptr<Workspace>(
             new HDF5DenseWorkspace(
