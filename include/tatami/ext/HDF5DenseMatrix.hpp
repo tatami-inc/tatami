@@ -2,9 +2,12 @@
 #define TATAMI_HDF5_DENSE_MATRIX_HPP
 
 #include "H5Cpp.h"
+
 #include <string>
 #include <cstdint>
 #include <type_traits>
+#include <cmath>
+
 #include "../base/Matrix.hpp"
 
 namespace tatami {
@@ -12,49 +15,49 @@ namespace tatami {
 namespace HDF5 {
 
 template<typename T>
-constexpr H5::PredType& define_mem_type() {
+const H5::PredType& define_mem_type() {
     if constexpr(std::is_same<int, T>::value) {
-        return H5::NATIVE_INT;
+        return H5::PredType::NATIVE_INT;
     } else if (std::is_same<unsigned int, T>::value) {
-        return H5::NATIVE_UINT;
+        return H5::PredType::NATIVE_UINT;
     } else if (std::is_same<long, T>::value) {
-        return H5::NATIVE_LONG;
+        return H5::PredType::NATIVE_LONG;
     } else if (std::is_same<unsigned long, T>::value) {
-        return H5::NATIVE_ULONG;
+        return H5::PredType::NATIVE_ULONG;
     } else if (std::is_same<long long, T>::value) {
-        return H5::NATIVE_LLONG;
+        return H5::PredType::NATIVE_LLONG;
     } else if (std::is_same<unsigned long long, T>::value) {
-        return H5::NATIVE_ULLONG;
+        return H5::PredType::NATIVE_ULLONG;
     } else if (std::is_same<short, T>::value) {
-        return H5::NATIVE_SHORT;
+        return H5::PredType::NATIVE_SHORT;
     } else if (std::is_same<unsigned short, T>::value) {
-        return H5::NATIVE_USHORT;
+        return H5::PredType::NATIVE_USHORT;
     } else if (std::is_same<char, T>::value) {
-        return H5::NATIVE_CHAR;
+        return H5::PredType::NATIVE_CHAR;
     } else if (std::is_same<unsigned char, T>::value) {
-        return H5::NATIVE_UCHAR;
+        return H5::PredType::NATIVE_UCHAR;
     } else if (std::is_same<double, T>::value) {
-        return H5::NATIVE_DOUBLE;
+        return H5::PredType::NATIVE_DOUBLE;
     } else if (std::is_same<float, T>::value) {
-        return H5::NATIVE_FLOAT;
+        return H5::PredType::NATIVE_FLOAT;
     } else if (std::is_same<long double, T>::value) {
-        return H5::NATIVE_LDOUBLE;
+        return H5::PredType::NATIVE_LDOUBLE;
     } else if (std::is_same<uint8_t, T>::value) {
-        return H5::NATIVE_UINT8;
+        return H5::PredType::NATIVE_UINT8;
     } else if (std::is_same<int8_t, T>::value) {
-        return H5::NATIVE_INT8;
+        return H5::PredType::NATIVE_INT8;
     } else if (std::is_same<uint16_t, T>::value) {
-        return H5::NATIVE_UINT16;
+        return H5::PredType::NATIVE_UINT16;
     } else if (std::is_same<int16_t, T>::value) {
-        return H5::NATIVE_INT16;
+        return H5::PredType::NATIVE_INT16;
     } else if (std::is_same<uint32_t, T>::value) {
-        return H5::NATIVE_UINT32;
+        return H5::PredType::NATIVE_UINT32;
     } else if (std::is_same<int32_t, T>::value) {
-        return H5::NATIVE_INT32;
+        return H5::PredType::NATIVE_INT32;
     } else if (std::is_same<uint64_t, T>::value) {
-        return H5::NATIVE_UINT64;
+        return H5::PredType::NATIVE_UINT64;
     } else if (std::is_same<int64_t, T>::value) {
-        return H5::NATIVE_INT64;
+        return H5::PredType::NATIVE_INT64;
     }
     static_assert("unsupported HDF5 type for template parameter 'T'");
 }
@@ -74,11 +77,10 @@ class HDF5DenseMatrix : public tatami::Matrix<T, IDX> {
 public:
     HDF5DenseMatrix(std::string file, std::string path, size_t cache_limit = 100000000) : 
         file_name(std::move(file)), 
-        dataset_name(std::move(path)), 
-        max_cache_size(cache_limit)
+        dataset_name(std::move(path))
     {
-        H5::H5File file (path, H5F_ACC_RDONLY);
-        auto dhandle = file.openDataSet(path);
+        H5::H5File fhandle(file_name, H5F_ACC_RDONLY);
+        auto dhandle = fhandle.openDataSet(dataset_name);
         auto space = dhandle.getSpace();
 
         int ndim = space.getSimpleExtentNdims();
@@ -92,7 +94,7 @@ public:
         seconddim = dims_out[1];
 
         auto curtype = dhandle.getTypeClass();
-        if (curtype != H5T_INTEGER || curtype != H5T_FLOAT) { 
+        if (curtype != H5T_INTEGER && curtype != H5T_FLOAT) { 
             throw std::runtime_error("expected numeric data in the HDF5 dataset");
         }
 
@@ -113,9 +115,9 @@ public:
             // Need to use the other dimension to figure out
             // the number of chunks along one dimension.
             num_chunks_per_firstdim = std::ceil(static_cast<double>(seconddim)/chunk_seconddim); 
-            cnum_chunks_per_seconddim = std::ceil(static_cast<double>(firstdim)/chunk_firstdim);
+            num_chunks_per_seconddim = std::ceil(static_cast<double>(firstdim)/chunk_firstdim);
 
-            size_t chunk_size = dataset.getType().getSize() * chunk_firstdim * chunk_seconddim;
+            size_t chunk_size = dhandle.getDataType().getSize() * chunk_firstdim * chunk_seconddim;
             cache_size_firstdim = std::min(cache_limit, num_chunks_per_firstdim * chunk_size);
             cache_size_seconddim = std::min(cache_limit, num_chunks_per_seconddim * chunk_size);
 
@@ -156,7 +158,7 @@ public:
 
 public:
     struct HDF5DenseWorkspace : public Workspace {
-        HDF5DenseWorkspace(const std::string& file, const std::string& path, size_t nslots, size_t cache_size, size_t dim) : 
+        HDF5DenseWorkspace(const std::string& fpath, const std::string& dpath, size_t nslots, size_t cache_size, size_t dim) : 
             current_size(dim),
             memspace(1, &current_size)
         { 
@@ -169,12 +171,12 @@ public:
                  */
                 plist.setCache(10000, nslots, cache_size, 0);
 
-                file.openFile(file, H5F_ACC_RDONLY, plist);
+                file.openFile(fpath, H5F_ACC_RDONLY, plist);
             } else {
-                file.openFile(file, H5F_ACC_RDONLY);
+                file.openFile(fpath, H5F_ACC_RDONLY);
             }
 
-            dataset = file.openDataset(path);
+            dataset = file.openDataSet(dpath);
             dataspace = dataset.getSpace();
             dataspace.selectNone();
             memspace.selectAll();
@@ -190,7 +192,7 @@ public:
 
         hsize_t current_size;
         H5::DataSpace memspace;
-    }
+    };
 
     std::shared_ptr<Workspace> new_workspace(bool row) const {
         return std::shared_ptr<Workspace>(
@@ -213,21 +215,21 @@ private:
             work.count[0] = 1;
             work.count[1] = last - first;
         } else {
-            work.offset[1] = i;
             work.offset[0] = first;
-            work.count[1] = 1;
+            work.offset[1] = i;
             work.count[0] = last - first;
+            work.count[1] = 1;
         }
 
         work.dataspace.selectHyperslab(H5S_SELECT_SET, work.count, work.offset);
 
-        if (static_cast<size_t>(n) != last - first) {
+        if (static_cast<size_t>(work.current_size) != last - first) {
             work.current_size = last - first;
             work.memspace.setExtentSimple(1, &(work.current_size));
             work.memspace.selectAll();
         }
 
-        work.dataset.read(buffer, define_mem_type<T>(), work.memspace, work.dataspace);
+        work.dataset.read(buffer, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
         return buffer;
     }
 
@@ -237,7 +239,8 @@ private:
             auto wptr = dynamic_cast<HDF5DenseWorkspace*>(work);
             return extract<row>(i, buffer, first, last, *wptr);
         } else {
-            auto wptr = new_workspace(row);
+            auto full = new_workspace(row);
+            auto wptr = dynamic_cast<HDF5DenseWorkspace*>(full.get());
             return extract<row>(i, buffer, first, last, *wptr);
         }
     }
@@ -248,10 +251,14 @@ public:
     }
 
     const T* column(size_t c, T* buffer, size_t first, size_t last, Workspace* work=nullptr) const {
-        return extract<false>(r, buffer, first, last, work);
+        return extract<false>(c, buffer, first, last, work);
     }
 
-}
+    using Matrix<T, IDX>::row;
+
+    using Matrix<T, IDX>::column;
+};
 
 }
 
+#endif

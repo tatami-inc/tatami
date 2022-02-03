@@ -101,3 +101,23 @@ include(GoogleTest)
 gtest_discover_tests(libtest)
 gtest_discover_tests(exttest)
 gtest_discover_tests(cuspartest)
+
+# Test HDF5 capabilities.
+set(TEST_HDF5 OFF CACHE BOOL "Test HDF5 support")
+if (TEST_HDF5) 
+    add_executable(
+        h5test 
+        src/ext/HDF5DenseMatrix.cpp
+    )
+
+    target_link_libraries(
+        h5test
+        gtest_main
+        tatami
+    )
+
+    find_package(HDF5 REQUIRED COMPONENTS C CXX)
+    target_link_libraries(h5test hdf5::hdf5 hdf5::hdf5_cpp)
+    gtest_discover_tests(h5test)
+endif()
+
