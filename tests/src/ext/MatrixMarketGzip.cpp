@@ -8,6 +8,8 @@
 
 #include <limits>
 #include <random>
+
+#include "temp_file_path.h"
 #include "write_matrix_market.h"
 
 class MatrixMarketGzipTest : public ::testing::TestWithParam<int> {
