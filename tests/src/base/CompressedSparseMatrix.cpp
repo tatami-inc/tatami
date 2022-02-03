@@ -9,7 +9,7 @@
 
 #include "../_tests/test_row_access.h"
 #include "../_tests/test_column_access.h"
-#include "../data/data.h"
+#include "../_data/simulate_dense.h"
 
 TEST(CompressedSparseMatrix, ConstructionEmpty) {
     std::vector<double> values;
@@ -27,10 +27,11 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
 
 class SparseTestMethods {
 protected:
+    size_t nrow = 200, ncol = 100;
     std::shared_ptr<tatami::NumericMatrix> dense, sparse_row, sparse_column;
 
     void assemble() {
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulate_sparse_vector<double>(nrow * ncol, 0.05)));
         sparse_row = tatami::convert_to_sparse(dense.get(), true);
         sparse_column = tatami::convert_to_sparse(dense.get(), false);
         return;
@@ -47,10 +48,10 @@ protected:
 
 TEST_F(SparseUtilsTest, Basic) {
     size_t NC = sparse_column->ncol(), NR = sparse_column->nrow();
-    EXPECT_EQ(NC, sparse_ncol);
-    EXPECT_EQ(NR, sparse_nrow);
-    EXPECT_EQ(sparse_row->ncol(), sparse_ncol);
-    EXPECT_EQ(sparse_row->nrow(), sparse_nrow);
+    EXPECT_EQ(NC, ncol);
+    EXPECT_EQ(NR, nrow);
+    EXPECT_EQ(sparse_row->ncol(), ncol);
+    EXPECT_EQ(sparse_row->nrow(), nrow);
 
     EXPECT_FALSE(dense->sparse());
     EXPECT_TRUE(sparse_column->sparse());
