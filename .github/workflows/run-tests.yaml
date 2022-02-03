@@ -31,16 +31,18 @@ jobs:
     - name: Get latest CMake
       uses: lukka/get-cmake@latest
 
-    - name: Configure the build
-      if: ${{ ! matrix.config.cov && ! matrix.config.omp }}
+    - name: Configure the build for Mac
+      if: ${{ matrix.config.os == 'macos-latest' }}
       run: cmake -S . -B build
 
-    - name: Configure the build with coverage
-      if: ${{ matrix.config.cov }}
-      run: cmake -S . -B build -DCODE_COVERAGE=ON
+    - name: Configure the build with coverage and HDF5
+      if: ${{ matrix.config.os == 'ubuntu-latest' && matrix.config.cov }}
+      run: |
+        sudo apt-get install libhdf5-dev
+        cmake -S . -B build -DCODE_COVERAGE=ON -DTEST_HDF5=ON
 
     - name: Configure the build with OpenMP
-      if: ${{ matrix.config.omp }}
+      if: ${{ matrix.config.os == 'ubuntu-latest' && matrix.config.omp }}
       run: cmake -S . -B build -DUSE_OPENMP=ON
 
     - name: Run the build
