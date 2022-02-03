@@ -1,13 +1,6 @@
 var searchData=
 [
-  ['layeredmatrixdata_0',['LayeredMatrixData',['../structtatami_1_1LayeredMatrixData.html',1,'tatami']]],
-  ['layeredmatrixdata_2ehpp_1',['LayeredMatrixData.hpp',['../LayeredMatrixData_8hpp.html',1,'']]],
-  ['load_5flayered_5fsparse_5fmatrix_2',['load_layered_sparse_matrix',['../MatrixMarket__layered_8hpp.html#a2f4f1f9c5f4d8216082df388615450ea',1,'tatami::MatrixMarket']]],
-  ['load_5flayered_5fsparse_5fmatrix_5ffrom_5fbuffer_3',['load_layered_sparse_matrix_from_buffer',['../MatrixMarket__layered_8hpp.html#a096857b5e1ff25b92479cbd510343626',1,'tatami::MatrixMarket']]],
-  ['load_5flayered_5fsparse_5fmatrix_5ffrom_5fbuffer_5fgzip_4',['load_layered_sparse_matrix_from_buffer_gzip',['../MatrixMarket__layered_8hpp.html#a2141872c08eb8a61ca7e37ff4804e85e',1,'tatami::MatrixMarket']]],
-  ['load_5flayered_5fsparse_5fmatrix_5fgzip_5',['load_layered_sparse_matrix_gzip',['../MatrixMarket__layered_8hpp.html#a3ea0ccd9a65c82bde2a3ced643ad0375',1,'tatami::MatrixMarket']]],
-  ['load_5fsparse_5fmatrix_6',['load_sparse_matrix',['../MatrixMarket_8hpp.html#a97b0ccae943855b8e7b65a8cd20e0ced',1,'tatami::MatrixMarket']]],
-  ['load_5fsparse_5fmatrix_5ffrom_5fbuffer_7',['load_sparse_matrix_from_buffer',['../MatrixMarket_8hpp.html#ac4d7aea8d2c7ce97014b33714bf85212',1,'tatami::MatrixMarket']]],
-  ['load_5fsparse_5fmatrix_5ffrom_5fbuffer_5fgzip_8',['load_sparse_matrix_from_buffer_gzip',['../MatrixMarket_8hpp.html#ac74ee8a01c2f978f3f80daccbd2d3e4c',1,'tatami::MatrixMarket']]],
-  ['load_5fsparse_5fmatrix_5fgzip_9',['load_sparse_matrix_gzip',['../MatrixMarket_8hpp.html#a1f38d73d03d81ac6e32f11f804031d80',1,'tatami::MatrixMarket']]]
+  ['index_0',['index',['../classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90',1,'tatami::Matrix::index()'],['../structtatami_1_1SparseRange.html#ac7dd33e84bcc456c04e848bdc51ade73',1,'tatami::SparseRange::index()'],['../structtatami_1_1SparseRangeCopy.html#a7313c71408288136db76d5a33abf158c',1,'tatami::SparseRangeCopy::index()']]],
+  ['iterator_1',['Iterator',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#aaec76c06dc4b04937e4c0e16233a7fdb',1,'tatami::SomeNumericArray::Iterator::Iterator()'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a47aa875df6ad992824acccefb811c4d4',1,'tatami::SomeNumericArray::Iterator::Iterator(const SomeNumericArray *p, size_t i)'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html',1,'tatami::SomeNumericArray&lt; T &gt;::Iterator']]],
+  ['iterator_5fcategory_2',['iterator_category',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#aaf0075ceb671a85fc42404298baeed07',1,'tatami::SomeNumericArray::Iterator']]]
 ];
