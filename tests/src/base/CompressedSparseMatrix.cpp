@@ -25,12 +25,11 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
 /*************************************
  *************************************/
 
-template<class PARAM>
-class SparseTest : public ::testing::TestWithParam<PARAM> {
+class SparseTestMethods {
 protected:
     std::shared_ptr<tatami::NumericMatrix> dense, sparse_row, sparse_column;
-protected:
-    void SetUp() {
+
+    void assemble() {
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
         sparse_row = tatami::convert_to_sparse(dense.get(), true);
         sparse_column = tatami::convert_to_sparse(dense.get(), false);
@@ -38,9 +37,15 @@ protected:
     }
 };
 
-using SparseBasicTest = SparseTest<int>;
+class SparseUtilsTest : public ::testing::Test, public SparseTestMethods {
+protected:
+    void SetUp() {
+        assemble();
+        return;
+    }
+};
 
-TEST_P(SparseBasicTest, Basic) {
+TEST_F(SparseUtilsTest, Basic) {
     size_t NC = sparse_column->ncol(), NR = sparse_column->nrow();
     EXPECT_EQ(NC, sparse_ncol);
     EXPECT_EQ(NR, sparse_nrow);
@@ -63,16 +68,16 @@ TEST_P(SparseBasicTest, Basic) {
     EXPECT_EQ(work_row.get(), nullptr);
 }
 
-INSTANTIATE_TEST_CASE_P(
-    CompressedSparseMatrix,
-    SparseBasicTest,
-    ::testing::Values(0) // stub
-);
-    
 /*************************************
  *************************************/
 
-using SparseFullAccessTest = SparseTest<std::tuple<bool, size_t> >;
+class SparseFullAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t> >, public SparseTestMethods {
+protected:
+    void SetUp() {
+        assemble();
+        return;
+    }
+};
 
 TEST_P(SparseFullAccessTest, Basic) {
     auto param = GetParam(); 
@@ -137,7 +142,13 @@ INSTANTIATE_TEST_CASE_P(
 /*************************************
  *************************************/
 
-using SparseSlicedAccessTest = SparseTest<std::tuple<bool, size_t, std::vector<size_t> > >;
+class SparseSlicedAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<size_t> > >, public SparseTestMethods {
+protected:
+    void SetUp() {
+        assemble();
+        return;
+    }
+};
 
 TEST_P(SparseSlicedAccessTest, Basic) {
     auto param = GetParam(); 
