@@ -236,10 +236,17 @@ private:
 
 public:
     /**
+     * @param row Should a workspace be created for row-wise extraction?
+     *
      * @return If `row == ROW`, a null pointer as no workspace is required for extraction along the preferred dimension.
      * Otherwise, a shared pointer to a `Workspace` object is returned.
      *
-     * @param row Should a workspace be created for row-wise extraction?
+     * Extraction with a workspace is most efficient for accessing consecutive increasing indices,
+     * due to the use of a caching mechanism for the index pointers and indices.
+     * Access to increasing non-consecutive indices is the next-most efficient,
+     * then decreasing consecutive indices,
+     * then decreasing non-consecutive indices,
+     * and finally random indices, which is probably about the same as not using a workspace at all.
      */
     std::shared_ptr<Workspace> new_workspace (bool row) const {
         if (row == ROW) {
