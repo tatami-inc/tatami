@@ -31,7 +31,7 @@ namespace tatami {
  * @tparam IDX Type of the row/column indices.
  * @tparam transpose Whether the dataset is transposed in its storage order, i.e., rows in HDF5 are columns in this matrix.
  */
-template<typename T, typename IDX, bool row>
+template<typename T, typename IDX, bool ROW>
 class HDF5CompressedSparseMatrix : public tatami::Matrix<T, IDX> {
     size_t nrows, ncols;
     std::string file_name, data_name, index_name;
@@ -53,7 +53,7 @@ public:
         file_name(std::move(file)), 
         data_name(std::move(vals)),
         index_name(std::move(idx)),
-        pointers(row ? nr + 1 : nc + 1)
+        pointers(ROW ? nr + 1 : nc + 1)
     {
         H5::H5File fhandle(file_name, H5F_ACC_RDONLY);
 
@@ -65,23 +65,13 @@ public:
             auto space = dhandle.getSpace();
             
             int ndim = space.getSimpleExtentNdims();
-            if (ndim == 1) {
-                hsize_t dims_out[1];
-                space.getSimpleExtentDims(dims_out, NULL);
-                return dims_out[0];
-
-            } else if (ndim == 2) {
-                hsize_t dims_out[2];
-                space.getSimpleExtentDims(dims_out, NULL);
-                if (dims_out[0] == 1) {
-                    return dims_out[1];
-                } else if (dims_out[1] == 1) {
-                    return dims_out[0];
-                }
+            if (ndim != 1) {
+                throw std::runtime_error(std::string("'") + name + "' should be a one-dimensional array");
             }
 
-            throw std::runtime_error(std::string("'") + name + "' should be a one-dimensional array");
-            return 0;
+            hsize_t dims_out[1];
+            space.getSimpleExtentDims(dims_out, NULL);
+            return dims_out[0];
         };
 
         auto dhandle = fhandle.openDataSet(data_name);
@@ -125,51 +115,85 @@ public:
     }
 
     /**
+     * @return `true`.
+     */
+    bool sparse() const {
+        return true;
+    }
+
+    /**
      * @return `true` if this is in compressed sparse row format.
      */
     bool prefer_rows() const {
-        return row;
+        return ROW;
     }
 
 public:
     /**
      * @cond
      */
-    struct HDF5DenseWorkspace : public Workspace {
-        HDF5DenseWorkspace(const std::string& fpath, const std::string& dpath, size_t nslots, size_t cache_size, size_t dim) : 
-            current_size(dim),
-            memspace(1, &current_size)
-        { 
-            // Configuring the chunk cache.
-            if (nslots) {
-                H5::FileAccPropList plist(H5::FileAccPropList::DEFAULT.getId());
+    struct HDF5SparsePrimaryWorkspace : public Workspace {
+        HDF5SparsePrimaryWorkspace(const std::string& fpath, const std::string& dpath, const std::string& ipath) :
+            file(fpath, H5F_ACC_RDONLY),
+            data(file.openDataSet(dpath)),
+            index(file.openDataSet(ipath)),
+            dataspace(data.getSpace())
+        {}
 
-                /* The first argument is ignored, according to https://support.hdfgroup.org/HDF5/doc/RM/RM_H5P.html.
-                 * Setting w0 to 0 to evict the last used chunk; no need to worry about full vs partial reads here.
-                 */
-                plist.setCache(10000, nslots, cache_size, 0);
+        H5::H5File file;
+        H5::DataSet data, index;
 
-                file.openFile(fpath, H5F_ACC_RDONLY, plist);
-            } else {
-                file.openFile(fpath, H5F_ACC_RDONLY);
+        H5::DataSpace dataspace;
+        hsize_t offset = 0;
+        hsize_t count = 0;
+
+        H5::DataSpace memspace;
+        std::vector<T> dbuffer;
+        std::vector<IDX> ibuffer;
+    };
+
+    typedef CompressedSparseMatrix<
+        T, 
+        IDX, 
+        ROW, 
+        std::vector<T>,
+        std::vector<IDX>,
+        std::vector<hsize_t>
+    > RealizedWorkspaceMatrix;
+
+    std::unique_ptr<RealizedWorkspaceMatrix> realized = nullptr;
+
+    struct HDF5SparseSecondaryWorkspace : public Workspace {
+        HDF5SparseSecondaryWorkspace(
+            const std::string& fpath, 
+            const std::string& dpath, 
+            const std::string& ipath, 
+            const std::vector<hsize_t>& pointers,
+            std::unique_ptr<RealizedWorkspaceMatrix>& realized)
+        {
+            H5::H5File fhandle(fpath, H5F_ACC_RDONLY);
+            size_t nonzeroes = pointers.back();
+
+            auto dhandle = fhandle.openDataSet(dpath);
+            std::vector<T> data(nonzeroes);
+            dhandle.read(data.data(), define_mem_type<T>());
+
+            auto ihandle = fhandle.openDataSet(ipath);
+            std::vector<IDX> index(nonzeroes);
+            ihandle.read(index.data(), define_mem_type<IDX>());
+
+            if (!realized) {
+                realized.reset(new RealizedWorkspaceMatrix(nrows, ncols, std::move(data), std::move(index), pointers));
             }
-
-            dataset = file.openDataSet(dpath);
-            dataspace = dataset.getSpace();
-            dataspace.selectNone();
-            memspace.selectAll();
+            matrix = realized.get();
+            work.reset(new ptr->new_workspace(!ROW)); // i.e., use the dimension that is NOT the primary dimension in the RealizedWorkspaceMatrix.
             return;
         }
 
-        H5::H5File file;
-        H5::DataSet dataset;
-
-        H5::DataSpace dataspace;
-        hsize_t offset[2];
-        hsize_t count[2];
-
-        hsize_t current_size;
-        H5::DataSpace memspace;
+        const RealizedWorkspaceMatrix* matrix;
+        std::unique_ptr<Workspace*> work;
+        std::vector<T> data;
+        std::vector<IDX> index;
     };
     /**
      * @endcond
@@ -180,63 +204,246 @@ public:
      * @return A shared pointer to a `Workspace` object is returned.
      */
     std::shared_ptr<Workspace> new_workspace(bool row) const {
-        return std::shared_ptr<Workspace>(
-            new HDF5DenseWorkspace(
-                file_name, 
-                dataset_name, 
-                nslots, 
-                row != transpose ? cache_size_firstdim : cache_size_seconddim,
-                row ? ncol() : nrow()
-            )
-        );
+        if (row == ROW) {
+            return std::shared_ptr<Workspace>(
+                new HDF5SparsePrimaryWorkspace(
+                    file_name, 
+                    dataset_name, 
+                    index_name
+                )
+            );
+        } else {
+            return std::shared_ptr<Workspace>(
+                new HDF5SparseSecondaryWorkspace(
+                    file_name, 
+                    dataset_name, 
+                    index_name,
+                    pointers,
+                    const_cast<std::unique_ptr<RealizedWorkspaceMatrix>&>(realized)
+                )
+            );
+        }
     }
 
 private:
-    template<bool row>
-    const T* extract(size_t i, T* buffer, size_t first, size_t last, HDF5DenseWorkspace& work) const {
-        if constexpr(row != transpose) {
-            work.offset[0] = i;
-            work.offset[1] = first;
-            work.count[0] = 1;
-            work.count[1] = last - first;
-        } else {
-            work.offset[0] = first;
-            work.offset[1] = i;
-            work.count[0] = last - first;
-            work.count[1] = 1;
+    size_t extract_primary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, HDF5SparsePrimaryWorkspace& work) const {
+        work.offset = pointers[i];
+        work.count = pointers[i+1] - work.offset;
+        if (!work.count) {
+            return 0;
         }
-
         work.dataspace.selectHyperslab(H5S_SELECT_SET, work.count, work.offset);
 
-        if (static_cast<size_t>(work.current_size) != last - first) {
-            work.current_size = last - first;
-            work.memspace.setExtentSimple(1, &(work.current_size));
-            work.memspace.selectAll();
-        }
+        work.memspace.setExtentSimple(1, &work.count);
+        work.memspace.selectAll();
 
-        work.dataset.read(buffer, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+        if (dbuffer && ibuffer && last - first >= work.count) {
+            // Read directly to the output space, avoid unnecessary copying.
+            work.data.read(dbuffer, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+            work.index.read(ibuffer, HDF5::define_mem_type<IDX>(), work.memspace, work.dataspace);
+
+            size_t end = std::lower_bound(ibuffer, ibuffer + work.count, last) - ibuffer;
+            if (ibuffer[0] >= first) {
+                // Don't really need to wipe the extras, just return the number.
+                return end;
+            }
+
+            size_t start = std::lower_bound(ibuffer, ibuffer + work.count, first) - ibuffer;
+            if (start) {
+                std::copy(dbuffer + start, dbuffer + end, dbuffer);
+                std::copy(ibuffer + start, ibuffer + end, ibuffer);
+            }
+            return end - start;
+
+        } else {
+            // Copying is required here as the supplied space is not enough to hold the run contents.
+            work.ibuffer.resize(work.count);
+            work.dbuffer.resize(work.count);
+            work.data.read(work.dbuffer.data(), HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+            work.index.read(work.ibuffer.data(), HDF5::define_mem_type<IDX>(), work.memspace, work.dataspace);
+
+            size_t start = std::lower_bound(ibuffer.begin(), ibuffer.end(), first) - ibuffer;
+            size_t end = std::lower_bound(ibuffer.begin(), ibuffer.end(), last) - ibuffer;
+            if (ibuffer && dbuffer) {
+                std::copy(work.ibuffer.begin() + start, work.ibuffer.begin() + end, ibuffer);
+                std::copy(work.dbuffer.begin() + start, work.dbuffer.begin() + end, dbuffer);
+            } 
+            return end - start;
+        }
+    }
+
+    SparseRange<T, IDX> extract_primary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work) const {
+        if (work) {
+            auto wptr = dynamic_cast<HDF5SparsePrimaryWorkspace*>(work);
+            return SparseRange<T, IDX>(extract_primary(i, dbuffer, ibuffer, first, last, *wptr), dbuffer, ibuffer);
+        } else {
+            auto full = new_workspace(ROW);
+            auto wptr = dynamic_cast<HDF5SparsePrimaryWorkspace*>(full.get());
+            return SparseRange<T, IDX>(extract_primary(i, dbuffer, ibuffer, first, last, *wptr), dbuffer, ibuffer);
+        }
+    }
+
+private:
+    size_t extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, HDF5SparseSecondaryWorkspace& work) const {
+        // This is a secondary extraction, so if it's a CSR matrix, we want to extract by column.
+        if constexpr(ROW) {
+            return work.matrix->column(i, dbuffer, ibuffer, first, last, work.work.get());
+        } else {
+            return work.matrix->row(i, dbuffer, ibuffer, first, last, work.work.get());
+        }
+    }
+
+    SparseRange<T, IDX> extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work) const {
+        if (work) {
+            auto wptr = dynamic_cast<HDF5SparseSecondaryWorkspace*>(work);
+            return SparseRange<T, IDX>(extract_secondary(i, dbuffer, ibuffer, first, last, *wptr), dbuffer, ibuffer);
+        } else {
+            H5::H5File fhandle(file_name);
+            auto dhandle = fhandle.openDataSet(dpath);
+            auto ihandle = fhandle.openDataSet(ipath);
+
+            auto dataspace = dhandle.getSpace();
+            hsize_t count, offset;
+            H5::DataSpace memspace;
+
+            std::vector<IDX> index;
+            size_t counter = 0;
+
+            // Looping over all secondary dimensions.
+            for (size_t j = first; j < last; ++j) {
+                size_t left = pointers[j], right = pointers[j + 1];
+                index.resize(right - left);
+
+                offset = left;
+                count = index.size();
+                dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+                memspace.setExtentSimple(1, &count);
+                memspace.selectAll();
+                ihandle.read(index.data(), define_mem_type<IDX>(), memspace, dataspace);
+
+                auto it = std::lower_bound(index.begin(), index.end(), i);
+                if (it != index.end() && *it == i) {
+                    offset = it - index.begin();
+                    count = 1;
+                    dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+                    memspace.setExtentSimple(1, &count);
+                    memspace.selectAll();
+                    dhandle.read(dbuffer + counter, define_mem_type<T>(), memspace, dataspace);
+                    ibuffer[counter] = j;
+                    ++counter;
+                }
+            }
+            return SparseRange<T, IDX>(counter, dbuffer, ibuffer);
+        }
+    }
+
+public:
+    SparseRange<T, IDX> sparse_row(size_t r, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr) const {
+        if constexpr(ROW) {
+            return extract_primary(r, dbuffer, ibuffer, first, last, work);
+        } else {
+            return extract_secondary(r, dbuffer, ibuffer, first, last, work);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr) const {
+        if constexpr(ROW) {
+            return extract_secondary(c, dbuffer, ibuffer, first, last, work);
+        } else {
+            return extract_primary(c, dbuffer, ibuffer, first, last, work);
+        }
+    }
+
+    using Matrix<T, IDX>::sparse_row;
+
+    using Matrix<T, IDX>::sparse_column;
+
+private:
+    const T* expand(size_t number, const T* value, const IDX* index, size_t first, size_t last, T* buffer) {
+        std::fill(buffer, buffer + last - first, 0);
+        for (size_t i = 0; i < number; ++i) {
+            buffer[index[i] - first] = value[i];
+        }
         return buffer;
     }
 
-    template<bool row>
-    const T* extract(size_t i, T* buffer, size_t first, size_t last, Workspace* work) const {
+    const T* expand_primary(size_t i, T* buffer, size_t first, size_t last, Workspace* work) const {
+        const T* dummy_d = 0;
+        const IDX* dummy_i = 0;
         if (work) {
-            auto wptr = dynamic_cast<HDF5DenseWorkspace*>(work);
-            return extract<row>(i, buffer, first, last, *wptr);
+            auto wptr = dynamic_cast<HDF5SparsePrimaryWorkspace*>(work);
+            size_t n = extract_primary(i, dummy_d, dummy_i, first, last, *wptr);
+            return expand(n, wptr->data.data(), wptr->index.data(), first, last, buffer);
         } else {
-            auto full = new_workspace(row);
-            auto wptr = dynamic_cast<HDF5DenseWorkspace*>(full.get());
-            return extract<row>(i, buffer, first, last, *wptr);
+            auto full = new_workspace(ROW);
+            auto wptr = dynamic_cast<HDF5SparsePrimaryWorkspace*>(full.get());
+            size_t n = extract_primary(i, dummy_d, dummy_i, first, last, *wptr); 
+            return expand(n, wptr->data.data(), wptr->index.data(), first, last, buffer);
+        }
+    }
+
+    const T* expand_secondary(size_t i, T* buffer, size_t first, size_t last, Workspace* work) const {
+        if (work) {
+            auto wptr = dynamic_cast<HDF5SparseSecondaryWorkspace*>(work);
+            wptr->data.resize(last - first);
+            wptr->index.resize(last - first);
+            auto dptr = wptr->data.data();
+            auto iptr = wptr->index.data();
+            size_t n = extract_secondary(i, dptr, iptr, first, last, *work);
+            return expand(n, dptr, iptr, first, last, buffer);
+        } else {
+            H5::H5File fhandle(file_name);
+            auto dhandle = fhandle.openDataSet(dpath);
+            auto ihandle = fhandle.openDataSet(ipath);
+
+            auto dataspace = dhandle.getSpace();
+            hsize_t count, offset;
+            H5::DataSpace memspace;
+            std::vector<IDX> index;
+
+            // Looping over all secondary dimensions.
+            for (size_t j = first; j < last; ++j) {
+                size_t left = pointers[j], right = pointers[j + 1];
+                index.resize(right - left);
+
+                offset = left;
+                count = index.size();
+                dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+                memspace.setExtentSimple(1, &count);
+                memspace.selectAll();
+                ihandle.read(index.data(), define_mem_type<IDX>(), memspace, dataspace);
+
+                auto it = std::lower_bound(index.begin(), index.end(), i);
+                if (it != index.end() && *it == i) {
+                    offset = it - index.begin();
+                    count = 1;
+                    dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+                    memspace.setExtentSimple(1, &count);
+                    memspace.selectAll();
+                    dhandle.read(buffer + j - first, define_mem_type<T>(), memspace, dataspace);
+                } else {
+                    buffer[j - first] = 0;
+                }
+            }
+            return buffer;
         }
     }
 
 public:
     const T* row(size_t r, T* buffer, size_t first, size_t last, Workspace* work=nullptr) const {
-        return extract<true>(r, buffer, first, last, work);
+        if constexpr(ROW) {
+            return expand_primary(r, buffer, first, last, work);
+        } else {
+            return expand_secondary(r, buffer, first, last, work);
+        }
     }
 
     const T* column(size_t c, T* buffer, size_t first, size_t last, Workspace* work=nullptr) const {
-        return extract<false>(c, buffer, first, last, work);
+        if constexpr(ROW) {
+            return expand_secondary(c, buffer, first, last, work);
+        } else {
+            return expand_primary(c, buffer, first, last, work);
+        }
     }
 
     using Matrix<T, IDX>::row;
