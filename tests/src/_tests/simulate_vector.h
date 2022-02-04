@@ -1,5 +1,5 @@
-#ifndef SIMULATE_DENSE_H
-#define SIMULATE_DENSE_H
+#ifndef SIMULATE_VECTOR_H
+#define SIMULATE_VECTOR_H
 
 #include <random>
 #include <vector>

@@ -11,7 +11,7 @@
 
 #include "../_tests/test_column_access.h"
 #include "../_tests/test_row_access.h"
-#include "../_data/simulate_dense.h"
+#include "../_tests/simulate_dense.h"
 
 const size_t NR = 200, NC = 100;
 

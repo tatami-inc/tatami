@@ -9,7 +9,7 @@
 
 #include "../_tests/test_row_access.h"
 #include "../_tests/test_column_access.h"
-#include "../_data/simulate_dense.h"
+#include "../_tests/simulate_vector.h"
 
 TEST(CompressedSparseMatrix, ConstructionEmpty) {
     std::vector<double> values;
