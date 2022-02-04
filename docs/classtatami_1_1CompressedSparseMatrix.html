@@ -406,13 +406,14 @@ template&lt;bool ROW, typename T , typename IDX  = int, class U  = std::vector&l
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>If <code>row == ROW</code>, a null pointer as no workspace is required for extraction along the preferred dimension. Otherwise, a shared pointer to a <code><a class="el" href="classtatami_1_1Workspace.html" title="Virtual workspace class.">Workspace</a></code> object is returned.</dd></dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Should a workspace be created for row-wise extraction? </td></tr>
+    <tr><td class="paramname">row</td><td>Should a workspace be created for row-wise extraction?</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>If <code>row == ROW</code>, a null pointer as no workspace is required for extraction along the preferred dimension. Otherwise, a shared pointer to a <code><a class="el" href="classtatami_1_1Workspace.html" title="Virtual workspace class.">Workspace</a></code> object is returned.</dd></dl>
+<p>Extraction with a workspace is most efficient for accessing consecutive increasing indices, due to the use of a caching mechanism for the index pointers and indices. Access to increasing non-consecutive indices is the next-most efficient, then decreasing consecutive indices, then decreasing non-consecutive indices, and finally random indices, which is probably about the same as not using a workspace at all. </p>
 
 <p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#adfd586e0f8bc8b4f56048e877c5cf6a4">tatami::Matrix&lt; T, int &gt;</a>.</p>
 
