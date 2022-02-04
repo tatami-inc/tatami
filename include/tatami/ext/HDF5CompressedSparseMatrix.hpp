@@ -132,8 +132,8 @@ public:
     /**
      * @cond
      */
-    struct HDF5SparsePrimaryWorkspace : public Workspace {
-        HDF5SparsePrimaryWorkspace(const std::string& fpath, const std::string& dpath, const std::string& ipath) :
+    struct HDF5SparseWorkspace : public Workspace {
+        HDF5SparseWorkspace(const std::string& fpath, const std::string& dpath, const std::string& ipath) :
             file(fpath, H5F_ACC_RDONLY),
             data(file.openDataSet(dpath)),
             index(file.openDataSet(ipath)),
@@ -151,50 +151,6 @@ public:
         std::vector<T> dbuffer;
         std::vector<IDX> ibuffer;
     };
-
-    typedef CompressedSparseMatrix<
-        T, 
-        IDX, 
-        ROW, 
-        std::vector<T>,
-        std::vector<IDX>,
-        std::vector<hsize_t>
-    > RealizedWorkspaceMatrix;
-
-    std::unique_ptr<RealizedWorkspaceMatrix> realized = nullptr;
-
-    struct HDF5SparseSecondaryWorkspace : public Workspace {
-        HDF5SparseSecondaryWorkspace(
-            const std::string& fpath, 
-            const std::string& dpath, 
-            const std::string& ipath, 
-            const std::vector<hsize_t>& pointers,
-            std::unique_ptr<RealizedWorkspaceMatrix>& realized)
-        {
-            H5::H5File fhandle(fpath, H5F_ACC_RDONLY);
-            size_t nonzeroes = pointers.back();
-
-            auto dhandle = fhandle.openDataSet(dpath);
-            std::vector<T> data(nonzeroes);
-            dhandle.read(data.data(), define_mem_type<T>());
-
-            auto ihandle = fhandle.openDataSet(ipath);
-            std::vector<IDX> index(nonzeroes);
-            ihandle.read(index.data(), define_mem_type<IDX>());
-
-            if (!realized) {
-                realized.reset(new RealizedWorkspaceMatrix(nrows, ncols, std::move(data), std::move(index), pointers));
-            }
-            matrix = realized.get();
-            work.reset(new ptr->new_workspace(!ROW)); // i.e., use the dimension that is NOT the primary dimension in the RealizedWorkspaceMatrix.
-            return;
-        }
-
-        const RealizedWorkspaceMatrix* matrix;
-        std::unique_ptr<Workspace*> work;
-        std::vector<T> data;
-        std::vector<IDX> index;
-    };
     /**
      * @endcond
      */
@@ -204,29 +160,17 @@ public:
      * @return A shared pointer to a `Workspace` object is returned.
      */
     std::shared_ptr<Workspace> new_workspace(bool row) const {
-        if (row == ROW) {
-            return std::shared_ptr<Workspace>(
-                new HDF5SparsePrimaryWorkspace(
-                    file_name, 
-                    dataset_name, 
-                    index_name
-                )
-            );
-        } else {
-            return std::shared_ptr<Workspace>(
-                new HDF5SparseSecondaryWorkspace(
-                    file_name, 
-                    dataset_name, 
-                    index_name,
-                    pointers,
-                    const_cast<std::unique_ptr<RealizedWorkspaceMatrix>&>(realized)
-                )
-            );
-        }
+        return std::shared_ptr<Workspace>(
+            new HDF5SparseWorkspace(
+                file_name, 
+                dataset_name, 
+                index_name
+            )
+        );
     }
 
 private:
-    size_t extract_primary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, HDF5SparsePrimaryWorkspace& work) const {
+    size_t extract_primary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, HDF5SparseWorkspace& work) const {
         work.offset = pointers[i];
         work.count = pointers[i+1] - work.offset;
         if (!work.count) {
@@ -274,23 +218,54 @@ private:
 
     SparseRange<T, IDX> extract_primary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work) const {
         if (work) {
-            auto wptr = dynamic_cast<HDF5SparsePrimaryWorkspace*>(work);
+            auto wptr = dynamic_cast<HDF5SparseWorkspace*>(work);
             return SparseRange<T, IDX>(extract_primary(i, dbuffer, ibuffer, first, last, *wptr), dbuffer, ibuffer);
         } else {
-            auto full = new_workspace(ROW);
-            auto wptr = dynamic_cast<HDF5SparsePrimaryWorkspace*>(full.get());
+            auto full = new_workspace(ROW); // extract along the primary dimension.
+            auto wptr = dynamic_cast<HDF5SparseWorkspace*>(full.get());
             return SparseRange<T, IDX>(extract_primary(i, dbuffer, ibuffer, first, last, *wptr), dbuffer, ibuffer);
         }
     }
 
 private:
     size_t extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, HDF5SparseSecondaryWorkspace& work) const {
-        // This is a secondary extraction, so if it's a CSR matrix, we want to extract by column.
-        if constexpr(ROW) {
-            return work.matrix->column(i, dbuffer, ibuffer, first, last, work.work.get());
-        } else {
-            return work.matrix->row(i, dbuffer, ibuffer, first, last, work.work.get());
+        auto& ihandle = work.ihandle;
+        auto& dhandle = work.dhandle;
+
+        auto& dataspace = work.dataspace;
+        auto& memspace = work.memspace;
+        hsize_t& count = work.count;
+        hsize_t& offset = work.offset;
+
+        std::vector<IDX>& index = work.ibuffer;
+        size_t counter = 0;
+
+        // Looping over all secondary dimensions.
+        for (size_t j = first; j < last; ++j) {
+            size_t left = pointers[j], right = pointers[j + 1];
+            index.resize(right - left);
+
+            offset = left;
+            count = index.size();
+            dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+            memspace.setExtentSimple(1, &count);
+            memspace.selectAll();
+            ihandle.read(index.data(), define_mem_type<IDX>(), memspace, dataspace);
+
+            auto it = std::lower_bound(index.begin(), index.end(), i);
+            if (it != index.end() && *it == i) {
+                offset = it - index.begin();
+                count = 1;
+                dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+                memspace.setExtentSimple(1, &count);
+                memspace.selectAll();
+                dhandle.read(dbuffer + counter, define_mem_type<T>(), memspace, dataspace);
+                ibuffer[counter] = j;
+                ++counter;
+            }
         }
+
+        return counter;
     }
 
     SparseRange<T, IDX> extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work) const {
@@ -298,42 +273,9 @@ private:
             auto wptr = dynamic_cast<HDF5SparseSecondaryWorkspace*>(work);
             return SparseRange<T, IDX>(extract_secondary(i, dbuffer, ibuffer, first, last, *wptr), dbuffer, ibuffer);
         } else {
-            H5::H5File fhandle(file_name);
-            auto dhandle = fhandle.openDataSet(dpath);
-            auto ihandle = fhandle.openDataSet(ipath);
-
-            auto dataspace = dhandle.getSpace();
-            hsize_t count, offset;
-            H5::DataSpace memspace;
-
-            std::vector<IDX> index;
-            size_t counter = 0;
-
-            // Looping over all secondary dimensions.
-            for (size_t j = first; j < last; ++j) {
-                size_t left = pointers[j], right = pointers[j + 1];
-                index.resize(right - left);
-
-                offset = left;
-                count = index.size();
-                dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
-                memspace.setExtentSimple(1, &count);
-                memspace.selectAll();
-                ihandle.read(index.data(), define_mem_type<IDX>(), memspace, dataspace);
-
-                auto it = std::lower_bound(index.begin(), index.end(), i);
-                if (it != index.end() && *it == i) {
-                    offset = it - index.begin();
-                    count = 1;
-                    dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
-                    memspace.setExtentSimple(1, &count);
-                    memspace.selectAll();
-                    dhandle.read(dbuffer + counter, define_mem_type<T>(), memspace, dataspace);
-                    ibuffer[counter] = j;
-                    ++counter;
-                }
-            }
-            return SparseRange<T, IDX>(counter, dbuffer, ibuffer);
+            auto full = new_workspace(!ROW); // extract along the secondary dimension.
+            auto wptr = dynamic_cast<HDF5SparseSecondaryWorkspace*>(full.get());
+            return SparseRange<T, IDX>(extract_secondary(i, dbuffer, ibuffer, first, last, *wptr), dbuffer, ibuffer);
         }
     }
 
@@ -371,61 +313,32 @@ private:
         const T* dummy_d = 0;
         const IDX* dummy_i = 0;
         if (work) {
-            auto wptr = dynamic_cast<HDF5SparsePrimaryWorkspace*>(work);
+            auto wptr = dynamic_cast<HDF5SparseWorkspace*>(work);
             size_t n = extract_primary(i, dummy_d, dummy_i, first, last, *wptr);
             return expand(n, wptr->data.data(), wptr->index.data(), first, last, buffer);
         } else {
             auto full = new_workspace(ROW);
-            auto wptr = dynamic_cast<HDF5SparsePrimaryWorkspace*>(full.get());
+            auto wptr = dynamic_cast<HDF5SparseWorkspace*>(full.get());
             size_t n = extract_primary(i, dummy_d, dummy_i, first, last, *wptr); 
             return expand(n, wptr->data.data(), wptr->index.data(), first, last, buffer);
         }
     }
 
     const T* expand_secondary(size_t i, T* buffer, size_t first, size_t last, Workspace* work) const {
+        std::vector<T> dbuffer(last - first);
+        std::vector<IDX> ibuffer(last - first);
+        auto dptr = dbuffer.data();
+        auto iptr = ibuffer.data();
+
         if (work) {
-            auto wptr = dynamic_cast<HDF5SparseSecondaryWorkspace*>(work);
-            wptr->data.resize(last - first);
-            wptr->index.resize(last - first);
-            auto dptr = wptr->data.data();
-            auto iptr = wptr->index.data();
-            size_t n = extract_secondary(i, dptr, iptr, first, last, *work);
+            auto wptr = dynamic_cast<HDF5SparseWorkspace*>(work);
+            size_t n = extract_secondary(i, dptr, iptr, first, last, *wptr);
             return expand(n, dptr, iptr, first, last, buffer);
         } else {
-            H5::H5File fhandle(file_name);
-            auto dhandle = fhandle.openDataSet(dpath);
-            auto ihandle = fhandle.openDataSet(ipath);
-
-            auto dataspace = dhandle.getSpace();
-            hsize_t count, offset;
-            H5::DataSpace memspace;
-            std::vector<IDX> index;
-
-            // Looping over all secondary dimensions.
-            for (size_t j = first; j < last; ++j) {
-                size_t left = pointers[j], right = pointers[j + 1];
-                index.resize(right - left);
-
-                offset = left;
-                count = index.size();
-                dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
-                memspace.setExtentSimple(1, &count);
-                memspace.selectAll();
-                ihandle.read(index.data(), define_mem_type<IDX>(), memspace, dataspace);
-
-                auto it = std::lower_bound(index.begin(), index.end(), i);
-                if (it != index.end() && *it == i) {
-                    offset = it - index.begin();
-                    count = 1;
-                    dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
-                    memspace.setExtentSimple(1, &count);
-                    memspace.selectAll();
-                    dhandle.read(buffer + j - first, define_mem_type<T>(), memspace, dataspace);
-                } else {
-                    buffer[j - first] = 0;
-                }
-            }
-            return buffer;
+            auto full = new_workspace(ROW);
+            auto wptr = dynamic_cast<HDF5SparseWorkspace*>(full.get());
+            size_t n = extract_secondary(i, dptr, iptr, first, last, *wptr);
+            return expand(n, dptr, iptr, first, last, buffer);
         }
     }
 
