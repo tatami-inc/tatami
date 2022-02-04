@@ -20,6 +20,11 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
     EXPECT_TRUE(mat.sparse());
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
+
+    // Comparing access for an empty matrix.
+    tatami::DenseColumnMatrix<double, int> dense(10, 20, std::vector<double>(200));
+    test_simple_column_access(&mat, &dense);
+    test_simple_row_access(&mat, &dense);
 }
 
 /*************************************

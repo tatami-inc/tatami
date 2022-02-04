@@ -3,7 +3,7 @@
 #include "utils.h"
 
 template<class Matrix, class Matrix2>
-void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump) {
+void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward = true, size_t jump = 1) {
     size_t NR = ptr->nrow();
     ASSERT_EQ(NR, ref->nrow());
     size_t NC = ptr->ncol();
