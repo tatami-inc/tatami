@@ -373,12 +373,12 @@ public:
         auto output = sparse_row(r, vbuffer, ibuffer, first, last, work, sorted);
         
         if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_INDEX) && output.index != ibuffer) {
-            copy_over(output.index, ibuffer, last - first);
+            copy_over(output.index, ibuffer, output.number);
             output.index = ibuffer;
         }
 
         if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_VALUE) && output.value != vbuffer) {
-            copy_over(output.value, vbuffer, last - first);
+            copy_over(output.value, vbuffer, output.number);
             output.value = vbuffer;
         }
 
@@ -403,12 +403,12 @@ public:
         auto output = sparse_column(c, vbuffer, ibuffer, first, last, work, sorted);
 
         if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_INDEX) && output.index != ibuffer) {
-            copy_over(output.index, ibuffer, last - first);
+            copy_over(output.index, ibuffer, output.number);
             output.index = ibuffer;
         }
 
         if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_VALUE) && output.value != vbuffer) {
-            copy_over(output.value, vbuffer, last - first);
+            copy_over(output.value, vbuffer, output.number);
             output.value = vbuffer;
         }
 
