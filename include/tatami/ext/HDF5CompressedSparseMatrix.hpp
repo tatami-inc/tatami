@@ -47,7 +47,7 @@ public:
      * as long as this choice is less than `cache_limit`.
      * Otherwise, access is likely to be pretty slow.
      */
-    HDF5DenseMatrix(size_t nr, size_t nc, std::string file, std::string vals, std::string idx, std::string ptr) :
+    HDF5CompressedSparseMatrix(size_t nr, size_t nc, std::string file, std::string vals, std::string idx, std::string ptr) :
         nrows(nr),
         ncols(nc),
         file_name(std::move(file)), 
@@ -57,7 +57,7 @@ public:
     {
         H5::H5File fhandle(file_name, H5F_ACC_RDONLY);
 
-        auto check_size = [&](H5::DataSpace& dhandle) -> size_t {
+        auto check_size = [&](const H5::DataSet& dhandle, const std::string& name) -> size_t {
             auto dtype = dhandle.getTypeClass();
             if (dtype != H5T_INTEGER && dtype != H5T_FLOAT) { 
                 throw std::runtime_error(std::string("expected numeric values in the '") + name + "' dataset");
@@ -75,10 +75,10 @@ public:
         };
 
         auto dhandle = fhandle.openDataSet(data_name);
-        const size_t nonzeros = check_size(dhandle, "vals")'
+        const size_t nonzeros = check_size(dhandle, "vals");
 
-        auto ihandle = fhandle.openDataSet(index_name, "idx");
-        if (check_size(ihandle) != nonzeros) {
+        auto ihandle = fhandle.openDataSet(index_name);
+        if (check_size(ihandle, "idx") != nonzeros) {
             throw std::runtime_error("number of non-zero elements is not consistent between 'data' and 'idx'");
         }
 
@@ -163,7 +163,7 @@ public:
         return std::shared_ptr<Workspace>(
             new HDF5SparseWorkspace(
                 file_name, 
-                dataset_name, 
+                data_name, 
                 index_name
             )
         );
@@ -176,7 +176,7 @@ private:
         if (!work.count) {
             return 0;
         }
-        work.dataspace.selectHyperslab(H5S_SELECT_SET, work.count, work.offset);
+        work.dataspace.selectHyperslab(H5S_SELECT_SET, &work.count, &work.offset);
 
         work.memspace.setExtentSimple(1, &work.count);
         work.memspace.selectAll();
@@ -206,8 +206,8 @@ private:
             work.data.read(work.dbuffer.data(), HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
             work.index.read(work.ibuffer.data(), HDF5::define_mem_type<IDX>(), work.memspace, work.dataspace);
 
-            size_t start = std::lower_bound(ibuffer.begin(), ibuffer.end(), first) - ibuffer;
-            size_t end = std::lower_bound(ibuffer.begin(), ibuffer.end(), last) - ibuffer;
+            size_t start = std::lower_bound(work.ibuffer.begin(), work.ibuffer.end(), first) - work.ibuffer.begin();
+            size_t end = std::lower_bound(work.ibuffer.begin(), work.ibuffer.end(), last) - work.ibuffer.begin();
             if (ibuffer && dbuffer) {
                 std::copy(work.ibuffer.begin() + start, work.ibuffer.begin() + end, ibuffer);
                 std::copy(work.dbuffer.begin() + start, work.dbuffer.begin() + end, dbuffer);
@@ -228,9 +228,9 @@ private:
     }
 
 private:
-    size_t extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, HDF5SparseSecondaryWorkspace& work) const {
-        auto& ihandle = work.ihandle;
-        auto& dhandle = work.dhandle;
+    size_t extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, HDF5SparseWorkspace& work) const {
+        auto& dhandle = work.data;
+        auto& ihandle = work.index;
 
         auto& dataspace = work.dataspace;
         auto& memspace = work.memspace;
@@ -250,7 +250,7 @@ private:
             dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
             memspace.setExtentSimple(1, &count);
             memspace.selectAll();
-            ihandle.read(index.data(), define_mem_type<IDX>(), memspace, dataspace);
+            ihandle.read(index.data(), HDF5::define_mem_type<IDX>(), memspace, dataspace);
 
             auto it = std::lower_bound(index.begin(), index.end(), i);
             if (it != index.end() && *it == i) {
@@ -259,7 +259,7 @@ private:
                 dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
                 memspace.setExtentSimple(1, &count);
                 memspace.selectAll();
-                dhandle.read(dbuffer + counter, define_mem_type<T>(), memspace, dataspace);
+                dhandle.read(dbuffer + counter, HDF5::define_mem_type<T>(), memspace, dataspace);
                 ibuffer[counter] = j;
                 ++counter;
             }
@@ -270,11 +270,11 @@ private:
 
     SparseRange<T, IDX> extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work) const {
         if (work) {
-            auto wptr = dynamic_cast<HDF5SparseSecondaryWorkspace*>(work);
+            auto wptr = dynamic_cast<HDF5SparseWorkspace*>(work);
             return SparseRange<T, IDX>(extract_secondary(i, dbuffer, ibuffer, first, last, *wptr), dbuffer, ibuffer);
         } else {
             auto full = new_workspace(!ROW); // extract along the secondary dimension.
-            auto wptr = dynamic_cast<HDF5SparseSecondaryWorkspace*>(full.get());
+            auto wptr = dynamic_cast<HDF5SparseWorkspace*>(full.get());
             return SparseRange<T, IDX>(extract_secondary(i, dbuffer, ibuffer, first, last, *wptr), dbuffer, ibuffer);
         }
     }
@@ -301,7 +301,7 @@ public:
     using Matrix<T, IDX>::sparse_column;
 
 private:
-    const T* expand(size_t number, const T* value, const IDX* index, size_t first, size_t last, T* buffer) {
+    const T* expand(size_t number, const T* value, const IDX* index, size_t first, size_t last, T* buffer) const {
         std::fill(buffer, buffer + last - first, 0);
         for (size_t i = 0; i < number; ++i) {
             buffer[index[i] - first] = value[i];
@@ -310,17 +310,17 @@ private:
     }
 
     const T* expand_primary(size_t i, T* buffer, size_t first, size_t last, Workspace* work) const {
-        const T* dummy_d = 0;
-        const IDX* dummy_i = 0;
+        T* dummy_d = 0;
+        IDX* dummy_i = 0;
         if (work) {
             auto wptr = dynamic_cast<HDF5SparseWorkspace*>(work);
             size_t n = extract_primary(i, dummy_d, dummy_i, first, last, *wptr);
-            return expand(n, wptr->data.data(), wptr->index.data(), first, last, buffer);
+            return expand(n, wptr->dbuffer.data(), wptr->ibuffer.data(), first, last, buffer);
         } else {
             auto full = new_workspace(ROW);
             auto wptr = dynamic_cast<HDF5SparseWorkspace*>(full.get());
             size_t n = extract_primary(i, dummy_d, dummy_i, first, last, *wptr); 
-            return expand(n, wptr->data.data(), wptr->index.data(), first, last, buffer);
+            return expand(n, wptr->dbuffer.data(), wptr->ibuffer.data(), first, last, buffer);
         }
     }
 

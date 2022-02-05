@@ -108,6 +108,7 @@ if (TEST_HDF5)
     add_executable(
         h5test 
         src/ext/HDF5DenseMatrix.cpp
+        src/ext/HDF5CompressedSparseMatrix.cpp
     )
 
     target_link_libraries(
