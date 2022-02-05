@@ -27,41 +27,50 @@ namespace tatami {
  * It is strongly advised to follow the `prefer_rows()` suggestion when extracting data,
  * otherwise the access pattern on disk will be highly suboptimal.
  *
+ * @tparam ROW Whether the matrix is stored in compressed sparse row format.
  * @tparam T Type of the matrix values.
  * @tparam IDX Type of the row/column indices.
  */
 template<bool ROW, typename T, typename IDX>
 class HDF5CompressedSparseMatrix : public tatami::Matrix<T, IDX> {
     size_t nrows, ncols;
-    std::string file_name, data_name, index_name;
+    std::string file_name;
+    std::string data_name, index_name;
     std::vector<hsize_t> pointers;
+    std::pair<size_t, size_t> data_cache, index_cache;
 
 public:
     /**
+     * @param nr Number of rows in the matrix.
+     * @param nc Number of columns in the matrix.
      * @param file Path to the file.
-     * @param name Path to the dataset inside the file.
-     * @param cache_limit Limit to the size of the cache, in bytes.
+     * @param vals Name of the 1D dataset inside `file` containing the non-zero elements.
+     * @param idx Name of the 1D dataset inside `file` containing the indices of the non-zero elements.
+     * If `ROW = true`, this should contain column indices sorted within each row, otherwise it should contain row indices sorted within each column.
+     * @param ptr Name of the 1D dataset inside `file` containing the index pointers for the start and end of each row (if `ROW = true`) or column (otherwise).
+     * This should have length equal to the number of rows (if `ROW = true`) or columns (otherwise).
+     * @param cache_limit Limit to the size of the chunk cache, in bytes.
      *
-     * The actual cache size is automatically chosen to optimize for row or column extraction,
-     * as long as this choice is less than `cache_limit`.
-     * Otherwise, access is likely to be pretty slow.
+     * A suitable cache size is automatically computed; and as long as this choice is less than `cache_limit`, the former will be used.
+     * We only hit the `cache_limit` if the "suitable" choice is too large and might lead to out-of-memory errors.
+     * Of course, using a cache smaller than the suitable choice may lead to a degradation in performance.
      */
-    HDF5CompressedSparseMatrix(size_t nr, size_t nc, std::string file, std::string vals, std::string idx, std::string ptr) :
+    HDF5CompressedSparseMatrix(size_t nr, size_t nc, std::string file, std::string vals, std::string idx, std::string ptr, size_t cache_limit = 100000000) :
         nrows(nr),
         ncols(nc),
-        file_name(std::move(file)), 
+        file_name(file),
         data_name(std::move(vals)),
         index_name(std::move(idx)),
         pointers(ROW ? nr + 1 : nc + 1)
     {
-        H5::H5File fhandle(file_name, H5F_ACC_RDONLY);
+        H5::H5File file_handle(file_name, H5F_ACC_RDONLY);
 
-        auto check_size = [&](const H5::DataSet& dhandle, const std::string& name) -> size_t {
-            auto dtype = dhandle.getTypeClass();
-            if (dtype != H5T_INTEGER && dtype != H5T_FLOAT) { 
+        auto check_size = [&](const H5::DataSet& handle, const std::string& name) -> size_t {
+            auto type = handle.getTypeClass();
+            if (type != H5T_INTEGER && type != H5T_FLOAT) { 
                 throw std::runtime_error(std::string("expected numeric values in the '") + name + "' dataset");
             }
-            auto space = dhandle.getSpace();
+            auto space = handle.getSpace();
             
             int ndim = space.getSimpleExtentNdims();
             if (ndim != 1) {
@@ -73,15 +82,15 @@ public:
             return dims_out[0];
         };
 
-        auto dhandle = fhandle.openDataSet(data_name);
+        auto dhandle = file_handle.openDataSet(data_name);
         const size_t nonzeros = check_size(dhandle, "vals");
 
-        auto ihandle = fhandle.openDataSet(index_name);
+        auto ihandle = file_handle.openDataSet(index_name);
         if (check_size(ihandle, "idx") != nonzeros) {
             throw std::runtime_error("number of non-zero elements is not consistent between 'data' and 'idx'");
         }
 
-        auto phandle = fhandle.openDataSet(ptr);
+        auto phandle = file_handle.openDataSet(ptr);
         const size_t ptr_size = check_size(phandle, "ptr");
         if (ptr_size != pointers.size()) {
             throw std::runtime_error("'ptr' is not of the appropriate length");
@@ -95,12 +104,42 @@ public:
         if (pointers.back() != nonzeros) {
             throw std::runtime_error("last index pointer should be equal to the number of non-zero elements");
         }
+
+        size_t maxgap = 0;
         for (size_t i = 1; i < pointers.size(); ++i) {
             if (pointers[i] < pointers[i-1]) {
                 throw std::runtime_error("index pointers should be sorted");
             }
+            size_t delta = pointers[i] - pointers[i - 1];
+            if (delta > maxgap) {
+                maxgap = delta;
+            }
         }
 
+        // Choosing the cache size for the indices/data values. We don't really
+        // know how HDF5 chooses to retrieve chunks, so we basically want to
+        // ensure that all chunks overlapping a column are held in memory for
+        // the next column; otherwise HDF5 might evict the chunk that overlaps
+        // the current and next column in favor of a chunk for earlier values
+        // of the current column (as the load order of chunks on a given
+        // request is not defined).
+        auto choose_chunk_size = [&](const H5::DataSet& handle) -> std::pair<size_t, size_t> {
+            auto parms = handle.getCreatePlist();
+            if (parms.getLayout() != H5D_CHUNKED) {
+                // no consideration on the number of slots or the chunk size.
+                return std::pair<size_t, size_t>(0, 0);
+            } else {
+                hsize_t chunk_dim;
+                parms.getChunk(1, &chunk_dim);
+                size_t nchunks = std::ceil(static_cast<double>(nonzeros) / chunk_dim);
+                size_t chunk_per_primary = std::ceil(static_cast<double>(maxgap) / chunk_dim) + 1;
+                size_t cache_size = chunk_per_primary * chunk_dim * handle.getDataType().getSize();
+                return std::pair<size_t, size_t>(nchunks, std::min(cache_limit, cache_size));
+            }
+        };
+
+        index_cache = choose_chunk_size(ihandle);
+        data_cache = choose_chunk_size(dhandle);
         return;
     }
 
@@ -132,16 +171,8 @@ public:
      * @cond
      */
     struct HDF5SparseWorkspace : public Workspace {
-        HDF5SparseWorkspace(const std::string& fpath, const std::string& dpath, const std::string& ipath) :
-            file(fpath, H5F_ACC_RDONLY),
-            data(file.openDataSet(dpath)),
-            index(file.openDataSet(ipath)),
-            dataspace(data.getSpace())
-        {}
-
-        H5::H5File file;
+        H5::H5File file_handle;
         H5::DataSet data, index;
-
         H5::DataSpace dataspace;
         H5::DataSpace memspace;
         std::vector<T> dbuffer;
@@ -156,13 +187,31 @@ public:
      * @return A shared pointer to a `Workspace` object is returned.
      */
     std::shared_ptr<Workspace> new_workspace(bool row) const {
-        return std::shared_ptr<Workspace>(
-            new HDF5SparseWorkspace(
-                file_name, 
-                data_name, 
-                index_name
-            )
-        );
+        auto ptr = new HDF5SparseWorkspace;
+        std::shared_ptr<Workspace> output(ptr);
+
+        if (data_cache.first || index_cache.first) {
+            auto flist = H5::FileAccPropList(H5::FileAccPropList::DEFAULT.getId());
+
+            /* The first argument is ignored, according to https://support.hdfgroup.org/HDF5/doc/RM/RM_H5P.html.
+             * We use the max values for the cache because we can't set the cache per dataset in HDF5 1.10.
+             * Setting w0 to 0 to evict the last used chunk; no need to worry about full vs partial reads here.
+             */
+            flist.setCache(
+                10000,
+                std::max(data_cache.first, index_cache.first),
+                std::max(data_cache.second, index_cache.second),
+                0);
+
+            ptr->file_handle = H5::H5File(file_name, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, flist);
+        } else {
+            ptr->file_handle = H5::H5File(file_name, H5F_ACC_RDONLY);
+        }
+
+        ptr->data = ptr->file_handle.openDataSet(data_name);
+        ptr->index = ptr->file_handle.openDataSet(index_name);
+        ptr->dataspace = ptr->data.getSpace();
+        return output;
     }
 
 private:
