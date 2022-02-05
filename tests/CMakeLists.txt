@@ -108,6 +108,7 @@ if (TEST_HDF5)
     add_executable(
         h5test 
         src/ext/HDF5DenseMatrix.cpp
+        src/ext/HDF5CompressedSparseMatrix.cpp
     )
 
     target_link_libraries(
@@ -115,6 +116,10 @@ if (TEST_HDF5)
         gtest_main
         tatami
     )
+
+    if (NOT HAVE_CXX_FS) 
+        target_link_libraries(h5test stdc++fs) 
+    endif()
 
     find_package(HDF5 REQUIRED COMPONENTS C CXX)
     target_link_libraries(h5test hdf5::hdf5 hdf5::hdf5_cpp)
