@@ -29,9 +29,8 @@ namespace tatami {
  *
  * @tparam T Type of the matrix values.
  * @tparam IDX Type of the row/column indices.
- * @tparam transpose Whether the dataset is transposed in its storage order, i.e., rows in HDF5 are columns in this matrix.
  */
-template<typename T, typename IDX, bool ROW>
+template<bool ROW, typename T, typename IDX>
 class HDF5CompressedSparseMatrix : public tatami::Matrix<T, IDX> {
     size_t nrows, ncols;
     std::string file_name, data_name, index_name;
@@ -254,7 +253,7 @@ private:
 
             auto it = std::lower_bound(index.begin(), index.end(), i);
             if (it != index.end() && *it == i) {
-                offset = it - index.begin();
+                offset = left + (it - index.begin());
                 count = 1;
                 dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
                 memspace.setExtentSimple(1, &count);
