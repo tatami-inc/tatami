@@ -143,9 +143,6 @@ public:
         H5::DataSet data, index;
 
         H5::DataSpace dataspace;
-        hsize_t offset = 0;
-        hsize_t count = 0;
-
         H5::DataSpace memspace;
         std::vector<T> dbuffer;
         std::vector<IDX> ibuffer;
@@ -170,48 +167,74 @@ public:
 
 private:
     size_t extract_primary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, HDF5SparseWorkspace& work) const {
-        work.offset = pointers[i];
-        work.count = pointers[i+1] - work.offset;
-        if (!work.count) {
+        hsize_t offset = pointers[i];
+        hsize_t count = pointers[i+1] - pointers[i];
+        if (!count) {
             return 0;
         }
-        work.dataspace.selectHyperslab(H5S_SELECT_SET, &work.count, &work.offset);
 
-        work.memspace.setExtentSimple(1, &work.count);
+        work.dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+        work.memspace.setExtentSimple(1, &count);
         work.memspace.selectAll();
 
-        if (dbuffer && ibuffer && last - first >= work.count) {
-            // Read directly to the output space, avoid unnecessary copying.
-            work.data.read(dbuffer, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+        if (dbuffer && ibuffer && last - first >= count) {
+            // Read indices directly to the output space, avoid unnecessary copying.
             work.index.read(ibuffer, HDF5::define_mem_type<IDX>(), work.memspace, work.dataspace);
 
-            size_t end = std::lower_bound(ibuffer, ibuffer + work.count, last) - ibuffer;
-            if (ibuffer[0] >= first) {
-                // Don't really need to wipe the extras, just return the number.
-                return end;
-            }
-
-            size_t start = std::lower_bound(ibuffer, ibuffer + work.count, first) - ibuffer;
-            if (start) {
-                std::copy(dbuffer + start, dbuffer + end, dbuffer);
+            size_t start = 0;
+            size_t end = std::lower_bound(ibuffer, ibuffer + count, last) - ibuffer;
+            if (ibuffer[0] < first) {
+                start = std::lower_bound(ibuffer, ibuffer + end, first) - ibuffer;
                 std::copy(ibuffer + start, ibuffer + end, ibuffer);
             }
-            return end - start;
+
+            // Seeing if we can narrow the extraction space for the data.
+            hsize_t delta = end - start;
+            if (delta) {
+                if (delta != count) {
+                    offset += start;
+                    work.dataspace.selectHyperslab(H5S_SELECT_SET, &delta, &offset);
+                    work.memspace.setExtentSimple(1, &delta);
+                    work.memspace.selectAll();
+                }
+                work.data.read(dbuffer, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+            }
+
+            return delta;
 
         } else {
             // Copying is required here as the supplied space is not enough to hold the run contents.
-            work.ibuffer.resize(work.count);
-            work.dbuffer.resize(work.count);
-            work.data.read(work.dbuffer.data(), HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+            work.ibuffer.resize(count);
             work.index.read(work.ibuffer.data(), HDF5::define_mem_type<IDX>(), work.memspace, work.dataspace);
 
             size_t start = std::lower_bound(work.ibuffer.begin(), work.ibuffer.end(), first) - work.ibuffer.begin();
-            size_t end = std::lower_bound(work.ibuffer.begin(), work.ibuffer.end(), last) - work.ibuffer.begin();
-            if (ibuffer && dbuffer) {
+            size_t end = std::lower_bound(work.ibuffer.begin() + start, work.ibuffer.end(), last) - work.ibuffer.begin();
+
+            if (ibuffer) {
                 std::copy(work.ibuffer.begin() + start, work.ibuffer.begin() + end, ibuffer);
-                std::copy(work.dbuffer.begin() + start, work.dbuffer.begin() + end, dbuffer);
-            } 
-            return end - start;
+            } else {
+                std::copy(work.ibuffer.begin() + start, work.ibuffer.begin() + end, work.ibuffer.begin());
+            }
+
+            hsize_t delta = end - start;
+            if (delta) {
+                if (delta != count) {
+                    offset += start;
+                    work.dataspace.selectHyperslab(H5S_SELECT_SET, &delta, &offset);
+                    work.memspace.setExtentSimple(1, &delta);
+                    work.memspace.selectAll();
+                }
+
+                // At this point, the supplied space _must_ be large enough to hold the run contents, so whatever.
+                if (dbuffer) {
+                    work.data.read(dbuffer, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+                } else {
+                    work.dbuffer.resize(delta);
+                    work.data.read(work.dbuffer.data(), HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+                }
+            }
+
+            return delta;
         }
     }
 
@@ -233,8 +256,6 @@ private:
 
         auto& dataspace = work.dataspace;
         auto& memspace = work.memspace;
-        hsize_t& count = work.count;
-        hsize_t& offset = work.offset;
 
         std::vector<IDX>& index = work.ibuffer;
         size_t counter = 0;
@@ -244,8 +265,8 @@ private:
             size_t left = pointers[j], right = pointers[j + 1];
             index.resize(right - left);
 
-            offset = left;
-            count = index.size();
+            hsize_t offset = left;
+            hsize_t count = index.size();
             dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
             memspace.setExtentSimple(1, &count);
             memspace.selectAll();
@@ -279,7 +300,7 @@ private:
     }
 
 public:
-    SparseRange<T, IDX> sparse_row(size_t r, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr, bool sorted=true) const {
         if constexpr(ROW) {
             return extract_primary(r, dbuffer, ibuffer, first, last, work);
         } else {
@@ -287,7 +308,7 @@ public:
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work=nullptr, bool sorted=true) const {
         if constexpr(ROW) {
             return extract_secondary(c, dbuffer, ibuffer, first, last, work);
         } else {

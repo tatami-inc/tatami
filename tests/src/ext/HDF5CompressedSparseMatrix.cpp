@@ -180,3 +180,103 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(0, 10, 100)
     )
 );
+
+/*************************************
+ *************************************/
+
+class HDF5SparseSlicedTest : public ::testing::TestWithParam<std::tuple<bool, int, std::vector<int>, int> >, public HDF5SparseMatrixTestMethods {};
+
+TEST_P(HDF5SparseSlicedTest, Primary) {
+    auto param = GetParam();
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    auto caching = std::get<3>(param);
+    const size_t NR = 200, NC = 100;
+    dump(caching, NR, NC);
+
+    {
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::CompressedSparseMatrix<
+            true, 
+            double, 
+            int, 
+            decltype(triplets.value), 
+            decltype(triplets.index), 
+            decltype(triplets.ptr)
+        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+
+        test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
+    }
+
+    {
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::CompressedSparseMatrix<
+            false, 
+            double, 
+            int, 
+            decltype(triplets.value), 
+            decltype(triplets.index), 
+            decltype(triplets.ptr)
+        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
+
+        test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
+    }
+}
+
+TEST_P(HDF5SparseSlicedTest, Secondary) {
+    auto param = GetParam();
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    auto caching = std::get<3>(param);
+    const size_t NR = 50, NC = 10; // much smaller for the secondary dimension.
+    dump(caching, NR, NC);
+
+    {
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::CompressedSparseMatrix<
+            true, 
+            double, 
+            int, 
+            decltype(triplets.value), 
+            decltype(triplets.index), 
+            decltype(triplets.ptr)
+        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+
+        test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
+    }
+
+    {
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::CompressedSparseMatrix<
+            false, 
+            double, 
+            int, 
+            decltype(triplets.value), 
+            decltype(triplets.index), 
+            decltype(triplets.ptr)
+        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
+
+        test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    HDF5SparseMatrix,
+    HDF5SparseSlicedTest,
+    ::testing::Combine(
+        ::testing::Values(true, false),
+        ::testing::Values(1, 3),
+        ::testing::Values(
+            std::vector<int>({ 0, 8, 3 }), // overlapping shifts
+            std::vector<int>({ 1, 4, 4 }), // non-overlapping shifts
+            std::vector<int>({ 3, 10, 0 })
+        ),
+        ::testing::Values(0, 10, 100) // chunk size
+    )
+);

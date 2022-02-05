@@ -117,6 +117,10 @@ if (TEST_HDF5)
         tatami
     )
 
+    if (NOT HAVE_CXX_FS) 
+        target_link_libraries(h5test stdc++fs) 
+    endif()
+
     find_package(HDF5 REQUIRED COMPONENTS C CXX)
     target_link_libraries(h5test hdf5::hdf5 hdf5::hdf5_cpp)
     gtest_discover_tests(h5test)
