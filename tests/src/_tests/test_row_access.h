@@ -9,7 +9,7 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
     size_t NC = ptr->ncol();
     ASSERT_EQ(NC, ref->ncol());
 
-    auto wrk = ptr->new_workspace(false);
+    auto wrk = ptr->new_workspace(true);
     for (size_t i = 0; i < NR; i += jump) {
         size_t c = (forward ? i : NR - i - 1);
 
@@ -41,7 +41,7 @@ void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward,
     size_t NC = ptr->ncol();
     ASSERT_EQ(NC, ref->ncol());
 
-    auto wrk = ptr->new_workspace(false);
+    auto wrk = ptr->new_workspace(true);
     for (size_t i = 0; i < NR; i += jump, first += shift) {
         size_t c = (forward ? i : NR - i - 1);
         auto interval = wrap_intervals(first, first + len, NC);
