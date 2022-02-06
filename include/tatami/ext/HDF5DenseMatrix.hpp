@@ -82,9 +82,15 @@ const H5::PredType& define_mem_type() {
  * @brief Dense matrix backed by a DataSet in a HDF5 file.
  *
  * This class retrieves data from the HDF5 file on demand rather than loading it all in at the start.
- * This allows us to handle very large datasets in limited memory at the cost of speed.
- * It is strongly advised to follow the `prefer_rows()` suggestion when extracting data,
- * otherwise the access pattern on disk will be highly suboptimal.
+ * This allows us to handle very large datasets in limited memory at the cost of some speed.
+ *
+ * We use HDF5's chunk caching to speed up access for consecutive rows and columns.
+ * However, cache parameters seem to be ignored if any existing HDF5 file handle is open;
+ * callers should close other handles before creating a `HDF5DenseMatrix`.
+ *
+ * Callers should follow the `prefer_rows()` suggestion when extracting data,
+ * as this tries to minimize the number of chunks that need to be read per access request.
+ * If they do not, the access pattern on disk may be highly suboptimal, depending on the chunk dimensions.
  *
  * @tparam T Type of the matrix values.
  * @tparam IDX Type of the row/column indices.
@@ -104,11 +110,11 @@ public:
     /**
      * @param file Path to the file.
      * @param name Path to the dataset inside the file.
-     * @param cache_limit Limit to the size of the cache, in bytes.
+     * @param cache_limit Limit to the size of the chunk cache, in bytes.
      *
-     * The actual cache size is automatically chosen to optimize for row or column extraction,
-     * as long as this choice is less than `cache_limit`.
-     * Otherwise, access is likely to be pretty slow.
+     * The actual size of the chunk cache is automatically chosen to optimize for row or column extraction during a call to `new_workspace()`.
+     * As long as this automatic choice is less than `cache_limit`, the former is used.
+     * The latter is only used if the automatic choice would be too large and we need to constrain memory usage (at the likely cost of some speed).
      */
     HDF5DenseMatrix(std::string file, std::string name, size_t cache_limit = 100000000) : 
         file_name(std::move(file)), 

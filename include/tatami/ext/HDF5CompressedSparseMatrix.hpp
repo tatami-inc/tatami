@@ -132,9 +132,16 @@ public:
                 hsize_t chunk_dim;
                 parms.getChunk(1, &chunk_dim);
                 size_t nchunks = std::ceil(static_cast<double>(nonzeros) / chunk_dim);
-                size_t chunk_per_primary = std::ceil(static_cast<double>(maxgap) / chunk_dim) + 1;
-                size_t cache_size = chunk_per_primary * chunk_dim * handle.getDataType().getSize();
-                return std::pair<size_t, size_t>(nchunks, std::min(cache_limit, cache_size));
+
+                // Get the largest number of chunks that a given column might
+                // overlap.  This is done by considering the worst fit possible
+                // - one chunk has a 1-element overlap at the start of the
+                // column (hence the -1 element and +1 chunk), and then we
+                // consider the remaining contiguous chunks.
+                size_t max_chunk_per_primary = maxgap ? std::ceil(static_cast<double>(maxgap - 1) / chunk_dim) + 1 : 0;
+
+                size_t max_cache_size = max_chunk_per_primary * chunk_dim * handle.getDataType().getSize();
+                return std::pair<size_t, size_t>(nchunks, std::min(cache_limit, max_cache_size));
             }
         };
 
@@ -203,9 +210,9 @@ public:
                 std::max(data_cache.second, index_cache.second),
                 0);
 
-            ptr->file_handle = H5::H5File(file_name, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, flist);
+            ptr->file_handle.openFile(file_name, H5F_ACC_RDONLY, flist);
         } else {
-            ptr->file_handle = H5::H5File(file_name, H5F_ACC_RDONLY);
+            ptr->file_handle.openFile(file_name, H5F_ACC_RDONLY);
         }
 
         ptr->data = ptr->file_handle.openDataSet(data_name);
