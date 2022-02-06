@@ -145,9 +145,6 @@ TEST_P(HDF5DenseSlicedTest, Basic) {
     size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
 
     test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
-    test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
-
-    test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
     test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
 }
 
@@ -164,9 +161,6 @@ TEST_P(HDF5DenseSlicedTest, Transposed) {
     size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
 
     test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
-    test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
-
-    test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
     test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
 }
 
