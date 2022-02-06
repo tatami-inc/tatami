@@ -84,9 +84,9 @@ const H5::PredType& define_mem_type() {
  * This class retrieves data from the HDF5 file on demand rather than loading it all in at the start.
  * This allows us to handle very large datasets in limited memory at the cost of some speed.
  *
- * We use HDF5's chunk caching to speed up access for consecutive rows and columns.
- * However, cache parameters seem to be ignored if any existing HDF5 file handle is open;
- * callers should close other handles before creating a `HDF5DenseMatrix`.
+ * We manually handle the chunk caching to speed up access for consecutive rows and columns.
+ * The policy is to minimize the number of calls to the HDF5 library by requesting large contiguous slices where possible.
+ * The size of the slice is determined by the cache limit in the constructor.
  *
  * Callers should follow the `prefer_rows()` suggestion when extracting data,
  * as this tries to minimize the number of chunks that need to be read per access request.
@@ -102,7 +102,8 @@ class HDF5DenseMatrix : public tatami::Matrix<T, IDX> {
     std::string file_name, dataset_name;
 
     hsize_t chunk_firstdim, chunk_seconddim;
-    bool prefer_firstdim = false;
+    hsize_t cache_firstdim, cache_seconddim;
+    bool prefer_firstdim;
 
 public:
     /**
@@ -110,9 +111,8 @@ public:
      * @param name Path to the dataset inside the file.
      * @param cache_limit Limit to the size of the chunk cache, in bytes.
      *
-     * The actual size of the chunk cache is automatically chosen to optimize for row or column extraction during a call to `new_workspace()`.
-     * As long as this automatic choice is less than `cache_limit`, the former is used.
-     * The latter is only used if the automatic choice would be too large and we need to constrain memory usage (at the likely cost of some speed).
+     * The cache size should be large enough to fit all chunks spanned by a row or column, for (near-)consecutive row and column access respectively.
+     * Otherwise, performance will degrade as the same chunks may need to be repeatedly read back into memory.
      */
     HDF5DenseMatrix(std::string file, std::string name, size_t cache_limit = 100000000) : 
         file_name(std::move(file)), 
@@ -149,11 +149,31 @@ public:
             chunk_seconddim = chunk_dims[1];
         }
 
-        // Need to use the other dimension to figure out
-        // the number of chunks along one dimension.
-        size_t num_chunks_per_firstdim = std::ceil(static_cast<double>(seconddim)/chunk_seconddim); 
-        size_t num_chunks_per_seconddim = std::ceil(static_cast<double>(firstdim)/chunk_firstdim);
-        prefer_firstdim = num_chunks_per_firstdim < num_chunks_per_seconddim;
+        auto limit_cache = [](size_t chunk_dim, size_t mydim, size_t otherdim, size_t type_size, size_t limit) -> size_t {
+            size_t nelements_along_chunkdim = std::min(mydim, limit / (type_size * otherdim));
+            size_t nchunks = nelements_along_chunkdim / chunk_dim;
+            return std::min(nelements_along_chunkdim, nchunks * chunk_dim); 
+        };
+
+        size_t data_size = dhandle.getDataType().getSize();
+        cache_firstdim = limit_cache(chunk_firstdim, firstdim, seconddim, data_size, cache_limit);
+        cache_seconddim = limit_cache(chunk_seconddim, seconddim, firstdim, data_size, cache_limit);
+
+        // Favoring extraction along the first dimension if it's not crippled
+        // by the chunking. This favors pulling of contiguous sections along
+        // the last (i.e., second) dimension, which is how HDF5 stores and
+        // returns 2D arrays, so we avoid needing some manual transposition.
+        if (cache_firstdim >= chunk_firstdim) {
+            prefer_firstdim = true;
+        } else if (cache_seconddim >= chunk_seconddim) {
+            // Of course, if the first dimension is chunk-compromised, then we
+            // would rather do the transpositions than repeat a read from file.
+            prefer_firstdim = false;
+        } else {
+            // If both are crippled, then we might as well extract along the first dimension.
+            prefer_firstdim = true;
+        }
+
         return;
     }
 
@@ -175,7 +195,11 @@ public:
     }
 
     /**
-     * @return `true` if the row extraction requires loading of fewer chunks compared to column extraction.
+     * @return Boolean indicating whether to prefer row extraction.
+     *
+     * We favor extraction on the first dimension (rows by default, columns when `transpose = true`) as this matches the HDF5 storage order.
+     * However, for some chunking scheme and `cache_limit`, this might require repeated reads from file;
+     * in such cases, we switch to extraction on the second dimension.
      */
     bool prefer_rows() const {
         if constexpr(transpose) {
@@ -199,7 +223,7 @@ public:
 
         H5::DataSpace memspace;
 
-        std::vector<T> cache, buffer, workspace;
+        std::vector<T> cache, buffer;
         size_t cached_chunk = -1;
         hsize_t cached_first = 0, cached_last = 0;
     };
@@ -212,6 +236,13 @@ public:
      * @return A shared pointer to a `Workspace` object is returned.
      */
     std::shared_ptr<Workspace> new_workspace(bool row) const {
+        // Caching is pointless in these cases.
+        if (row != transpose && cache_firstdim == 0) {
+            return nullptr;
+        } else if (row == transpose && cache_seconddim == 0) {
+            return nullptr;
+        }
+
         auto ptr = new HDF5DenseWorkspace;
         std::shared_ptr<Workspace> output(ptr);
 
@@ -232,117 +263,73 @@ private:
     template<bool row>
     const T* extract(size_t i, T* buffer, size_t first, size_t last, HDF5DenseWorkspace& work) const {
         // Figuring out which chunk the request belongs to.
-        hsize_t chunk_mydim, chunk_otherdim;
+        hsize_t cache_mydim, chunk_otherdim, mydim, otherdim;
         if constexpr(row != transpose) {
-            chunk_mydim = chunk_firstdim;
+            cache_mydim = cache_firstdim;
             chunk_otherdim = chunk_seconddim;
+            mydim = firstdim;
+            otherdim = seconddim;
         } else {
-            chunk_mydim = chunk_seconddim;
+            cache_mydim = cache_seconddim;
             chunk_otherdim = chunk_firstdim;
+            mydim = seconddim;
+            otherdim = firstdim;
         }
 
-        size_t chunk = i / chunk_mydim;
-        size_t index = i % chunk_mydim;
+        size_t chunk = i / cache_mydim;
+        size_t index = i % cache_mydim;
 
         // If we're in the same chunk for 'i' and the first/last are within range, we re-use the cache.
-        bool complete_refresh = false, partial_refresh = false;
-        if (chunk != work.cached_chunk) {
-            complete_refresh = true;
-        } else if (first < work.cached_first || last > work.cached_last) {
-            partial_refresh = true;
-        }
-
-        if (complete_refresh || partial_refresh) {
+        if (chunk != work.cached_chunk || first < work.cached_first || last > work.cached_last) {
             size_t first_chunk = first / chunk_otherdim;
 
             // Need the chunk _after_ the chunk containing the _before-last_ element.
             size_t last_chunk = last ? (last - 1) / chunk_otherdim + 1 : 0; 
 
-            // We always expand the cache for the current 'chunk'. This
-            // ensures that we are (eventually) performant for multiple queries
-            // to the same/neighboring 'i' but different 'first' and 'last'. 
-            if (partial_refresh) {
-                first_chunk = std::min(first_chunk, static_cast<size_t>(work.cached_first / chunk_otherdim));
-                last_chunk = std::max(last_chunk, static_cast<size_t>(work.cached_last / chunk_otherdim));
-            }
-
             hsize_t new_cached_first = first_chunk * chunk_otherdim;
-            hsize_t new_cached_last = last_chunk * chunk_otherdim;
+            hsize_t new_cached_last = std::min(otherdim, last_chunk * chunk_otherdim);
             size_t new_span = new_cached_last - new_cached_first;
-            size_t new_cache_size = new_span * chunk_mydim;
+
+            hsize_t cache_mydim_start = chunk * cache_mydim;
+            hsize_t cache_mydim_end = std::min(mydim, cache_mydim_start + cache_mydim);
+            hsize_t cache_mydim_actual = cache_mydim_end - cache_mydim_start;
+            size_t new_cache_size = new_span * cache_mydim;
 
             T* destination;
-            if (partial_refresh) {
-                // Copying the pieces we already have in memory. This uses a 
-                // separate workspace as I don't think I can modify the cache in-place.
-                work.workspace.resize(new_cache_size);
-                size_t src_span = work.cached_last - work.cached_first;
-                auto src = work.cache.begin();
-                auto dest = work.workspace.begin() + (work.cached_first - new_cached_first);
-                for (size_t c = 0; c < chunk_mydim; ++c, src += src_span, dest += new_span) {
-                    std::copy(src, src + src_span, dest);
-                }
-                destination = work.workspace.data();
-            } else {
-                work.cache.resize(new_cache_size);
+            work.cache.resize(new_cache_size);
+            if constexpr(row != transpose) {
                 destination = work.cache.data();
+            } else {
+                work.buffer.resize(new_cache_size);
+                destination = work.buffer.data();
             }
 
-            for (size_t c = first_chunk; c < last_chunk; ++c) {
-                size_t current_start_position = c * chunk_otherdim;
-                if (partial_refresh) {
-                    if (current_start_position >= work.cached_first && current_start_position < work.cached_last) {
-                        continue;
-                    }
-                }
+            // For chunks not present in the cache, we need to loop through and read them in.
+            {
+                constexpr int x = (row != transpose);
+                work.offset[1-x] = cache_mydim_start;
+                work.offset[x] = new_cached_first;
+                work.count[1-x] = cache_mydim_actual;
+                work.count[x] = new_span;
+            }
+            work.dataspace.selectHyperslab(H5S_SELECT_SET, work.count, work.offset);
 
-                // For chunks not present in the cache, we need to loop through and read them in.
-                if constexpr(row != transpose) {
-                    work.offset[0] = chunk * chunk_firstdim;
-                    work.offset[1] = c * chunk_seconddim;
-                } else {
-                    work.offset[0] = c * chunk_firstdim;
-                    work.offset[1] = chunk * chunk_seconddim;
-                }
+            // HDF5 is a lot faster when the memspace and dataspace match in dimensionality.
+            // Presumably there is some shuffling that happens inside when dimensions don't match.
+            work.memspace.setExtentSimple(2, work.count);
+            work.memspace.selectAll();
 
-                work.count[0] = std::min(work.offset[0] + chunk_firstdim, static_cast<hsize_t>(firstdim)) - work.offset[0];
-                work.count[1] = std::min(work.offset[1] + chunk_seconddim, static_cast<hsize_t>(seconddim)) - work.offset[1];
-                work.dataspace.selectHyperslab(H5S_SELECT_SET, work.count, work.offset);
-
-                hsize_t memsize = work.count[0] * work.count[1];
-                work.memspace.setExtentSimple(1, &memsize);
-                work.memspace.selectAll();
-
-                auto output = destination + (current_start_position - new_cached_first);
-                if (row != transpose && new_span == work.count[1]) {
-                    // Skipping the intermediate copy to the buffer.
-                    work.dataset.read(output, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
-                } else {
-                    if (work.buffer.empty()) {
-                        work.buffer.resize(chunk_firstdim * chunk_seconddim);
-                    }
-                    work.dataset.read(work.buffer.data(), HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
-
-                    // Transferring it to our internal buffer, with any relevant transposition.
-                    if constexpr(row != transpose) {
-                        auto in = work.buffer.begin();
-                        for (hsize_t x = 0; x < work.count[0]; ++x, in += work.count[1], output += new_span) {
-                            std::copy(in, in + work.count[1], output);
-                        }
-                    } else {
-                        for (hsize_t x = 0; x < work.count[1]; ++x, output += new_span) {
-                            auto in = work.buffer.begin() + x;
-                            for (hsize_t y = 0; y < work.count[0]; ++y, in += work.count[1]) {
-                                *(output + y) = *in;
-                            }
-                        }
+            work.dataset.read(destination, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+            if constexpr(row == transpose) {
+                auto output = work.cache.begin();
+                for (hsize_t x = 0; x < work.count[1]; ++x, output += new_span) {
+                    auto in = work.buffer.begin() + x;
+                    for (hsize_t y = 0; y < work.count[0]; ++y, in += work.count[1]) {
+                        *(output + y) = *in;
                     }
                 }
             }
 
-            if (partial_refresh) {
-                work.cache.swap(work.workspace);
-            }
             work.cached_first = new_cached_first;
             work.cached_last = new_cached_last;
             work.cached_chunk = chunk;

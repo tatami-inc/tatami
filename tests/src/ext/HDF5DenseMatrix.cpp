@@ -67,6 +67,42 @@ TEST_F(HDF5DenseUtilsTest, Basic) {
     EXPECT_FALSE(mat.sparse());
 }
 
+TEST_F(HDF5DenseUtilsTest, Preference) {
+    {
+        dump(std::make_pair<int, int>(10, 10));
+        tatami::HDF5DenseMatrix<double, int> mat(fpath, name);
+        EXPECT_TRUE(mat.prefer_rows());
+    }
+
+    {
+        // First dimension is compromised, switching to the second dimension.
+        dump(std::make_pair<int, int>(NR, 1));
+        tatami::HDF5DenseMatrix<double, int> mat(fpath, name, NR);
+        EXPECT_FALSE(mat.prefer_rows());
+    }
+
+    {
+        // Second dimension is compromised, but we just use the first anyway.
+        dump(std::make_pair<int, int>(1, NC));
+        tatami::HDF5DenseMatrix<double, int> mat(fpath, name, NC);
+        EXPECT_TRUE(mat.prefer_rows());
+    }
+
+    {
+        // Both are compromised.
+        dump(std::make_pair<int, int>(10, 10));
+        tatami::HDF5DenseMatrix<double, int> mat(fpath, name, 0);
+        EXPECT_TRUE(mat.prefer_rows());
+    }
+
+    {
+        // Transposed.
+        dump(std::make_pair<int, int>(10, 10));
+        tatami::HDF5DenseMatrix<double, int, true> mat(fpath, name);
+        EXPECT_FALSE(mat.prefer_rows());
+    }
+}
+
 /*************************************
  *************************************/
 
@@ -79,13 +115,7 @@ TEST_P(HDF5DenseAccessTest, Basic) {
 
     auto caching = std::get<2>(param);
     dump(caching);
-    tatami::HDF5DenseMatrix<double, int> mat(fpath, name);
-
-    if (caching.first) {
-        EXPECT_EQ(mat.prefer_rows(), NR/caching.first > NC/caching.second);
-    } else {
-        EXPECT_TRUE(mat.prefer_rows());
-    }
+    tatami::HDF5DenseMatrix<double, int> mat(fpath, name, NR * 10); // smaller cache to get some more interesting things happening.
 
     tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
     test_simple_column_access(&mat, &ref, FORWARD, JUMP);
@@ -99,13 +129,7 @@ TEST_P(HDF5DenseAccessTest, Transposed) {
 
     auto caching = std::get<2>(param);
     dump(caching);
-    tatami::HDF5DenseMatrix<double, int, true> mat(fpath, name);
-
-    if (caching.first) {
-        EXPECT_EQ(mat.prefer_rows(), NR/caching.first < NC/caching.second);
-    } else {
-        EXPECT_FALSE(mat.prefer_rows());
-    }
+    tatami::HDF5DenseMatrix<double, int, true> mat(fpath, name, NC * 5);
 
     std::shared_ptr<tatami::Matrix<double, int> > ptr(new tatami::DenseRowMatrix<double, int>(NR, NC, values));
     tatami::DelayedTranspose<double, int> ref(std::move(ptr));
@@ -122,7 +146,9 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(
             std::make_pair(NR, 1),
             std::make_pair(1, NC),
-            std::make_pair(10, 10),
+            std::make_pair(7, 13), // using chunk sizes that are a little odd to check for off-by-one errors.
+            std::make_pair(13, 7),
+            std::make_pair(11, 11),
             std::make_pair(0, 0)
         )
     )
@@ -131,34 +157,36 @@ INSTANTIATE_TEST_CASE_P(
 /*************************************
  *************************************/
 
-class HDF5DenseSlicedTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<size_t> > >, public HDF5DenseMatrixTestMethods {};
+class HDF5DenseSlicedTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<size_t>, std::pair<int, int> > >, public HDF5DenseMatrixTestMethods {};
 
 TEST_P(HDF5DenseSlicedTest, Basic) {
-    dump(std::make_pair(10, 10)); // basic square chunks.
-    tatami::HDF5DenseMatrix<double, int> mat(fpath, name);
-    tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
-
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    auto caching = std::get<3>(param);
+    dump(caching);
+    tatami::HDF5DenseMatrix<double, int> mat(fpath, name, NR * 5);
+    tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
 
     test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
     test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
 }
 
 TEST_P(HDF5DenseSlicedTest, Transposed) {
-    dump(std::make_pair(10, 10)); // basic square chunks.
-    tatami::HDF5DenseMatrix<double, int, true> mat(fpath, name);
-    std::shared_ptr<tatami::Matrix<double, int> > ptr(new tatami::DenseRowMatrix<double, int>(NR, NC, values));
-    tatami::DelayedTranspose<double, int> ref(std::move(ptr));
-
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
+    auto caching = std::get<3>(param);
+    dump(caching);
+    tatami::HDF5DenseMatrix<double, int, true> mat(fpath, name, NC * 10);
+    std::shared_ptr<tatami::Matrix<double, int> > ptr(new tatami::DenseRowMatrix<double, int>(NR, NC, values));
+    tatami::DelayedTranspose<double, int> ref(std::move(ptr));
 
     test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
     test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
@@ -174,6 +202,11 @@ INSTANTIATE_TEST_CASE_P(
             std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
             std::vector<size_t>({ 1, 4, 4 }), // non-overlapping shifts
             std::vector<size_t>({ 3, 10, 0 })
+        ),
+        ::testing::Values(
+            std::make_pair(7, 13), // using chunk sizes that are a little odd to check for off-by-one errors.
+            std::make_pair(13, 7),
+            std::make_pair(11, 11)
         )
     )
 );
