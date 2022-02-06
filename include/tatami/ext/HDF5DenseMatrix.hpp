@@ -138,25 +138,21 @@ public:
         }
 
         auto dparms = dhandle.getCreatePlist();
-        size_t num_chunks_per_firstdim, num_chunks_per_seconddim;
-
         if (dparms.getLayout() != H5D_CHUNKED) {
             // If contiguous, each firstdim is treated as a chunk.
-            // So the number of chunks along the seconddim
-            num_chunks_per_firstdim = 1;
-            num_chunks_per_seconddim = firstdim;
+            chunk_firstdim = 1;
+            chunk_seconddim = seconddim;
         } else {
             hsize_t chunk_dims[2];
             dparms.getChunk(2, chunk_dims);
             chunk_firstdim = chunk_dims[0];
             chunk_seconddim = chunk_dims[1];
-
-            // Need to use the other dimension to figure out
-            // the number of chunks along one dimension.
-            num_chunks_per_firstdim = std::ceil(static_cast<double>(seconddim)/chunk_seconddim); 
-            num_chunks_per_seconddim = std::ceil(static_cast<double>(firstdim)/chunk_firstdim);
         }
 
+        // Need to use the other dimension to figure out
+        // the number of chunks along one dimension.
+        size_t num_chunks_per_firstdim = std::ceil(static_cast<double>(seconddim)/chunk_seconddim); 
+        size_t num_chunks_per_seconddim = std::ceil(static_cast<double>(firstdim)/chunk_firstdim);
         prefer_firstdim = num_chunks_per_firstdim < num_chunks_per_seconddim;
         return;
     }
@@ -201,7 +197,6 @@ public:
         hsize_t offset[2];
         hsize_t count[2];
 
-        hsize_t memsize;
         H5::DataSpace memspace;
 
         std::vector<T> cache, buffer, workspace;
@@ -221,13 +216,15 @@ public:
         std::shared_ptr<Workspace> output(ptr);
 
         ptr->file.openFile(file_name, H5F_ACC_RDONLY);
-        ptr->dataset = ptr->file.openDataSet(data_name);
+        ptr->dataset = ptr->file.openDataSet(dataset_name);
         ptr->dataspace = ptr->dataset.getSpace();
-        ptr->buffer.resize(chunk_firstdim * chunk_seconddim);
         return output;
     }
 
 private:
+    /* We manually handle the chunk caching, in particular so that we only
+     * pay the cost of rearranging the chunked data into contiguous arrays once.
+     */
     template<bool row>
     const T* extract(size_t i, T* buffer, size_t first, size_t last, HDF5DenseWorkspace& work) const {
         // Figuring out which chunk the request belongs to.
@@ -253,39 +250,44 @@ private:
 
         if (complete_refresh || partial_refresh) {
             size_t first_chunk = first / chunk_otherdim;
-            size_t last_chunk = last ? (last - 1) / chunk_otherdim + 1 : 0; // need the chunk after the chunk containing the last included line.
+
+            // Need the chunk _after_ the chunk containing the _before-last_ element.
+            size_t last_chunk = last ? (last - 1) / chunk_otherdim + 1 : 0; 
+
+            // We always expand the cache for the current 'chunk'. This
+            // ensures that we are (eventually) performant for multiple queries
+            // to the same/neighboring 'i' but different 'first' and 'last'. 
+            if (partial_refresh) {
+                first_chunk = std::min(first_chunk, static_cast<size_t>(work.cached_first / chunk_otherdim));
+                last_chunk = std::max(last_chunk, static_cast<size_t>(work.cached_last / chunk_otherdim));
+            }
 
             hsize_t new_cached_first = first_chunk * chunk_otherdim;
             hsize_t new_cached_last = last_chunk * chunk_otherdim;
-            if (partial_refresh) {
-                // Always expanding the cache for the current 'chunk'. This
-                // ensures that we are (eventually) performant for multiple
-                // queries to the same 'i' but different 'first' and 'last'.
-                new_cached_first = std::min(work.cached_first, new_cached_first);
-                new_cached_last = std::max(work.cached_last, new_cached_last);
-            }
-            size_t new_span = new_cached_last - new_cached_last;
+            size_t new_span = new_cached_last - new_cached_first;
+            size_t new_cache_size = new_span * chunk_mydim;
 
-            // Copying the pieces we already have in memory. This uses a 
-            // separate workspace as I don't think I can modify the cache in-place.
             T* destination;
             if (partial_refresh) {
-                work.workspace.resize(chunk_mydim * new_span);
-                size_t src_span = work.cached_last - work.cached_start;
-                auto dest = work.workspace.begin() + (new_cached_first - work.cached_start);
+                // Copying the pieces we already have in memory. This uses a 
+                // separate workspace as I don't think I can modify the cache in-place.
+                work.workspace.resize(new_cache_size);
+                size_t src_span = work.cached_last - work.cached_first;
+                auto src = work.cache.begin();
+                auto dest = work.workspace.begin() + (work.cached_first - new_cached_first);
                 for (size_t c = 0; c < chunk_mydim; ++c, src += src_span, dest += new_span) {
                     std::copy(src, src + src_span, dest);
                 }
                 destination = work.workspace.data();
             } else {
-                work.cache.resize(chunk_mydim * new_span);
+                work.cache.resize(new_cache_size);
                 destination = work.cache.data();
             }
 
             for (size_t c = first_chunk; c < last_chunk; ++c) {
+                size_t current_start_position = c * chunk_otherdim;
                 if (partial_refresh) {
-                    size_t position = c * chunk_otherdim;
-                    if (position >= work.cached_first && position < work.cached_last) {
+                    if (current_start_position >= work.cached_first && current_start_position < work.cached_last) {
                         continue;
                     }
                 }
@@ -303,41 +305,49 @@ private:
                 work.count[1] = std::min(work.offset[1] + chunk_seconddim, static_cast<hsize_t>(seconddim)) - work.offset[1];
                 work.dataspace.selectHyperslab(H5S_SELECT_SET, work.count, work.offset);
 
-                work.memsize = work.count[0] * work.count[1];
-                work.memspace.setExtentSimple(1, &work.memsize);
+                hsize_t memsize = work.count[0] * work.count[1];
+                work.memspace.setExtentSimple(1, &memsize);
                 work.memspace.selectAll();
 
-                work.dataset.read(work.buffer.data(), HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
-
-                // Transferring it to our internal buffer, with any relevant transposition.
-                if constexpr(row != transpose) {
-                    auto in = work.buffer.begin();
-                    for (hsize_t x = 0; x < work.count[0]; ++x, in += work.count[1]) {
-                        std::copy(in, in + work.count[1], destination + span * x);
-                    }
+                auto output = destination + (current_start_position - new_cached_first);
+                if (row != transpose && new_span == work.count[1]) {
+                    // Skipping the intermediate copy to the buffer.
+                    work.dataset.read(output, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
                 } else {
-                    for (hsize_t x = 0; x < work.count[1]; ++x) {
-                        auto in = work.buffer.begin() + x;
-                        auto out = destination + x * span;
-                        for (hsize_t y = 0; y < work.count[0]; ++y, in += work.count[1]) {
-                            *(out + y) = *in;
+                    if (work.buffer.empty()) {
+                        work.buffer.resize(chunk_firstdim * chunk_seconddim);
+                    }
+                    work.dataset.read(work.buffer.data(), HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+
+                    // Transferring it to our internal buffer, with any relevant transposition.
+                    if constexpr(row != transpose) {
+                        auto in = work.buffer.begin();
+                        for (hsize_t x = 0; x < work.count[0]; ++x, in += work.count[1], output += new_span) {
+                            std::copy(in, in + work.count[1], output);
+                        }
+                    } else {
+                        for (hsize_t x = 0; x < work.count[1]; ++x, output += new_span) {
+                            auto in = work.buffer.begin() + x;
+                            for (hsize_t y = 0; y < work.count[0]; ++y, in += work.count[1]) {
+                                *(output + y) = *in;
+                            }
                         }
                     }
                 }
             }
 
             if (partial_refresh) {
-                work.cache.swap(work.cache.workspace);
+                work.cache.swap(work.workspace);
             }
             work.cached_first = new_cached_first;
             work.cached_last = new_cached_last;
             work.cached_chunk = chunk;
         }
 
-        auto start = work.cache.begin() + index * (work.cache_last - work.cache_first);
+        auto start = work.cache.begin() + index * (work.cached_last - work.cached_first);
         std::copy(
-            start + (first - work.cache_first), 
-            start + (last - work.cache_first), 
+            start + (first - work.cached_first), 
+            start + (last - work.cached_first), 
             buffer
         );
         return buffer;
@@ -349,9 +359,26 @@ private:
             auto wptr = dynamic_cast<HDF5DenseWorkspace*>(work);
             return extract<row>(i, buffer, first, last, *wptr);
         } else {
-            auto full = new_workspace(row);
-            auto wptr = dynamic_cast<HDF5DenseWorkspace*>(full.get());
-            return extract<row>(i, buffer, first, last, *wptr);
+            // Don't bother fiddling with the cache.
+            H5::H5File file(file_name, H5F_ACC_RDONLY);
+            auto dataset = file.openDataSet(dataset_name);
+            auto dataspace = dataset.getSpace();
+
+            hsize_t offset[2];
+            hsize_t count[2];
+            {
+                constexpr int x = (row != transpose);
+                offset[1-x] = i;
+                offset[x] = first;
+                count[1-x] = 1;
+                count[x] = last - first;
+            }
+            dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
+
+            H5::DataSpace memspace(2, count);
+            memspace.selectAll();
+            dataset.read(buffer, HDF5::define_mem_type<T>(), memspace, dataspace);
+            return buffer;
         }
     }
 
