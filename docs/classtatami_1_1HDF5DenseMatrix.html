@@ -187,7 +187,9 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T, typename IDX, bool transpose = false&gt;<br />
 class tatami::HDF5DenseMatrix&lt; T, IDX, transpose &gt;</div><p >Dense matrix backed by a DataSet in a HDF5 file. </p>
-<p >This class retrieves data from the HDF5 file on demand rather than loading it all in at the start. This allows us to handle very large datasets in limited memory at the cost of speed. It is strongly advised to follow the <code><a class="el" href="classtatami_1_1HDF5DenseMatrix.html#a1e44e966facadb765b89e4f6791cdeb4">prefer_rows()</a></code> suggestion when extracting data, otherwise the access pattern on disk will be highly suboptimal.</p>
+<p >This class retrieves data from the HDF5 file on demand rather than loading it all in at the start. This allows us to handle very large datasets in limited memory at the cost of some speed.</p>
+<p >We use HDF5's chunk caching to speed up access for consecutive rows and columns. However, cache parameters seem to be ignored if any existing HDF5 file handle is open; callers should close other handles before creating a <code><a class="el" href="classtatami_1_1HDF5DenseMatrix.html" title="Dense matrix backed by a DataSet in a HDF5 file.">HDF5DenseMatrix</a></code>.</p>
+<p >Callers should follow the <code><a class="el" href="classtatami_1_1HDF5DenseMatrix.html#a1e44e966facadb765b89e4f6791cdeb4">prefer_rows()</a></code> suggestion when extracting data, as this tries to minimize the number of chunks that need to be read per access request. If they do not, the access pattern on disk may be highly suboptimal, depending on the chunk dimensions.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Type of the matrix values. </td></tr>
@@ -242,11 +244,11 @@ template&lt;typename T , typename IDX , bool transpose = false&gt; </div>
   <table class="params">
     <tr><td class="paramname">file</td><td>Path to the file. </td></tr>
     <tr><td class="paramname">name</td><td>Path to the dataset inside the file. </td></tr>
-    <tr><td class="paramname">cache_limit</td><td>Limit to the size of the cache, in bytes.</td></tr>
+    <tr><td class="paramname">cache_limit</td><td>Limit to the size of the chunk cache, in bytes.</td></tr>
   </table>
   </dd>
 </dl>
-<p>The actual cache size is automatically chosen to optimize for row or column extraction, as long as this choice is less than <code>cache_limit</code>. Otherwise, access is likely to be pretty slow. </p>
+<p>The actual size of the chunk cache is automatically chosen to optimize for row or column extraction during a call to <code><a class="el" href="classtatami_1_1HDF5DenseMatrix.html#a442ed6cd344cde1fe248e2fab02a47f2">new_workspace()</a></code>. As long as this automatic choice is less than <code>cache_limit</code>, the former is used. The latter is only used if the automatic choice would be too large and we need to constrain memory usage (at the likely cost of some speed). </p>
 
 </div>
 </div>
