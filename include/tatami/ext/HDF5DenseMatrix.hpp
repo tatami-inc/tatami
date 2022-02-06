@@ -215,7 +215,11 @@ public:
         auto ptr = new HDF5DenseWorkspace;
         std::shared_ptr<Workspace> output(ptr);
 
-        ptr->file.openFile(file_name, H5F_ACC_RDONLY);
+        // Turn off HDF5's caching, as we'll be handling that.
+        H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());
+        fapl.setCache(0, 0, 0, 0);
+
+        ptr->file.openFile(file_name, H5F_ACC_RDONLY, fapl);
         ptr->dataset = ptr->file.openDataSet(dataset_name);
         ptr->dataspace = ptr->dataset.getSpace();
         return output;
@@ -359,8 +363,11 @@ private:
             auto wptr = dynamic_cast<HDF5DenseWorkspace*>(work);
             return extract<row>(i, buffer, first, last, *wptr);
         } else {
-            // Don't bother fiddling with the cache.
-            H5::H5File file(file_name, H5F_ACC_RDONLY);
+            // Bypass all caching, manual and HDF5.
+            H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());
+            fapl.setCache(10000, 0, 0, 0);
+
+            H5::H5File file(file_name, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, fapl);
             auto dataset = file.openDataSet(dataset_name);
             auto dataspace = dataset.getSpace();
 
