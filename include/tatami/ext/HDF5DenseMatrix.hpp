@@ -279,7 +279,11 @@ private:
         size_t chunk = i / cache_mydim;
         size_t index = i % cache_mydim;
 
-        // If we're in the same chunk for 'i' and the first/last are within range, we re-use the cache.
+        // If we're in the same chunk for 'i' and the 'first'/'last' are within
+        // range, we re-use the cache.  In theory, we could minimize
+        // extractions if the 'first' and 'last' are overlapping with their
+        // cached counterparts, but it's pretty rare that 'first' and 'last'
+        // will change, so we'll just keep things simple.
         if (chunk != work.cached_chunk || first < work.cached_first || last > work.cached_last) {
             size_t first_chunk = first / chunk_otherdim;
 
