@@ -218,9 +218,6 @@ public:
         H5::DataSet dataset;
 
         H5::DataSpace dataspace;
-        hsize_t offset[2];
-        hsize_t count[2];
-
         H5::DataSpace memspace;
 
         std::vector<T> cache, buffer;
@@ -236,13 +233,6 @@ public:
      * @return A shared pointer to a `Workspace` object is returned.
      */
     std::shared_ptr<Workspace> new_workspace(bool row) const {
-        // Caching is pointless in these cases.
-        if (row != transpose && cache_firstdim == 0) {
-            return nullptr;
-        } else if (row == transpose && cache_seconddim == 0) {
-            return nullptr;
-        }
-
         auto ptr = new HDF5DenseWorkspace;
         std::shared_ptr<Workspace> output(ptr);
 
@@ -257,6 +247,24 @@ public:
     }
 
 private:
+    template<bool row>
+    const T* extract(size_t i, T* buffer, size_t first, size_t last, H5::DataSet& dataset, H5::DataSpace& dataspace, H5::DataSpace& memspace) const {
+        hsize_t offset[2];
+        hsize_t count[2];
+
+        constexpr int x = (row != transpose);
+        offset[1-x] = i;
+        offset[x] = first;
+        count[1-x] = 1;
+        count[x] = last - first;
+
+        dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
+        memspace.setExtentSimple(2, count);
+        memspace.selectAll();
+        dataset.read(buffer, HDF5::define_mem_type<T>(), memspace, dataspace);
+        return buffer;
+    }
+
     /* We manually handle the chunk caching, in particular so that we only
      * pay the cost of rearranging the chunked data into contiguous arrays once.
      */
@@ -274,6 +282,11 @@ private:
             chunk_otherdim = chunk_firstdim;
             mydim = seconddim;
             otherdim = firstdim;
+        }
+
+        // No caching can be done here, so we just extract directly.
+        if (cache_mydim == 0) {
+            return extract<row>(i, buffer, first, last, work.dataset, work.dataspace, work.memspace);
         }
 
         size_t chunk = i / cache_mydim;
@@ -309,26 +322,28 @@ private:
             }
 
             // For chunks not present in the cache, we need to loop through and read them in.
+            hsize_t offset[2];
+            hsize_t count[2];
             {
                 constexpr int x = (row != transpose);
-                work.offset[1-x] = cache_mydim_start;
-                work.offset[x] = new_cached_first;
-                work.count[1-x] = cache_mydim_actual;
-                work.count[x] = new_span;
+                offset[1-x] = cache_mydim_start;
+                offset[x] = new_cached_first;
+                count[1-x] = cache_mydim_actual;
+                count[x] = new_span;
             }
-            work.dataspace.selectHyperslab(H5S_SELECT_SET, work.count, work.offset);
+            work.dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
 
             // HDF5 is a lot faster when the memspace and dataspace match in dimensionality.
             // Presumably there is some shuffling that happens inside when dimensions don't match.
-            work.memspace.setExtentSimple(2, work.count);
+            work.memspace.setExtentSimple(2, count);
             work.memspace.selectAll();
 
             work.dataset.read(destination, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
             if constexpr(row == transpose) {
                 auto output = work.cache.begin();
-                for (hsize_t x = 0; x < work.count[1]; ++x, output += new_span) {
+                for (hsize_t x = 0; x < count[1]; ++x, output += new_span) {
                     auto in = work.buffer.begin() + x;
-                    for (hsize_t y = 0; y < work.count[0]; ++y, in += work.count[1]) {
+                    for (hsize_t y = 0; y < count[0]; ++y, in += count[1]) {
                         *(output + y) = *in;
                     }
                 }
@@ -362,21 +377,8 @@ private:
             auto dataset = file.openDataSet(dataset_name);
             auto dataspace = dataset.getSpace();
 
-            hsize_t offset[2];
-            hsize_t count[2];
-            {
-                constexpr int x = (row != transpose);
-                offset[1-x] = i;
-                offset[x] = first;
-                count[1-x] = 1;
-                count[x] = last - first;
-            }
-            dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
-
-            H5::DataSpace memspace(2, count);
-            memspace.selectAll();
-            dataset.read(buffer, HDF5::define_mem_type<T>(), memspace, dataspace);
-            return buffer;
+            H5::DataSpace memspace;
+            return extract<row>(i, buffer, first, last, dataset, dataspace, memspace);
         }
     }
 
