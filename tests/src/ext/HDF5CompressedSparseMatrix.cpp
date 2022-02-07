@@ -105,7 +105,8 @@ TEST_P(HDF5SparseAccessTest, Primary) {
     dump(caching, NR, NC);
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr");
+        // We limit the cache size to ensure that the cache management is not trivial.
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NR * 2); 
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -119,7 +120,7 @@ TEST_P(HDF5SparseAccessTest, Primary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 3);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
@@ -143,7 +144,7 @@ TEST_P(HDF5SparseAccessTest, Secondary) {
     dump(caching, NR, NC);
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NC * 2);
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -157,7 +158,7 @@ TEST_P(HDF5SparseAccessTest, Secondary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NR * 1.5);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
@@ -198,7 +199,7 @@ TEST_P(HDF5SparseSlicedTest, Primary) {
     dump(caching, NR, NC);
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NR * 1.5);
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -212,7 +213,7 @@ TEST_P(HDF5SparseSlicedTest, Primary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 1);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
@@ -238,7 +239,7 @@ TEST_P(HDF5SparseSlicedTest, Secondary) {
     dump(caching, NR, NC);
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NC * 1.5);
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -252,7 +253,7 @@ TEST_P(HDF5SparseSlicedTest, Secondary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr");
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 2);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
