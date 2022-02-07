@@ -16,14 +16,14 @@ namespace tatami {
 /**
  * @cond
  */
-template<typename ROW, typename T = double, typename IDX = int>
-LayeredMatrixData<T, IDX> convert_to_layered_sparse_internal(const Matrix<T, IDX>* incoming) {
+template<typename RowIndex, typename DataOut = double, typename IndexOut = int, typename DataIn, typename IndexIn>
+LayeredMatrixData<DataOut, IndexOut> convert_to_layered_sparse_internal(const Matrix<DataIn, IndexIn>* incoming) {
     auto ranges = row_ranges(incoming);
     const auto& mins = ranges.first;
     const auto& maxs = ranges.second;
 
     // Using the permutation vector to store the reindexing vector for the time being.
-    LayeredMatrixData<T, IDX> output;
+    LayeredMatrixData<DataOut, IndexOut> output;
     auto& reindexed = output.permutation;
     reindexed.resize(maxs.size());
 
@@ -51,19 +51,19 @@ LayeredMatrixData<T, IDX> convert_to_layered_sparse_internal(const Matrix<T, IDX
     }
 
     // Filling the categories.
-    std::vector<ROW>      row8;
+    std::vector<RowIndex>      row8;
     std::vector<uint32_t> col8;
     std::vector<uint8_t>  dat8;
 
-    std::vector<ROW>      row16;
+    std::vector<RowIndex>      row16;
     std::vector<uint32_t> col16;
     std::vector<uint16_t> dat16;
 
-    std::vector<ROW>      row32;
+    std::vector<RowIndex>      row32;
     std::vector<uint32_t> col32;
     std::vector<uint32_t> dat32;
 
-    auto add_nonzero_element = [&](size_t r, size_t c, T val) -> void {
+    auto add_nonzero_element = [&](size_t r, size_t c, DataIn val) -> void {
         auto cat = category[r];
         auto r2 = reindexed[r];
         switch (cat) {
@@ -88,8 +88,8 @@ LayeredMatrixData<T, IDX> convert_to_layered_sparse_internal(const Matrix<T, IDX
     if (incoming->sparse()) {
         if (incoming->prefer_rows()) {
             auto wrk = incoming->new_workspace(true);
-            std::vector<IDX> ibuffer(incoming->ncol());
-            std::vector<T> vbuffer(incoming->ncol());
+            std::vector<IndexIn> ibuffer(incoming->ncol());
+            std::vector<DataIn> vbuffer(incoming->ncol());
 
             for (size_t r = 0; r < incoming->nrow(); ++r) {
                 auto range = incoming->sparse_row(r, vbuffer.data(), ibuffer.data(), wrk.get());
@@ -102,8 +102,8 @@ LayeredMatrixData<T, IDX> convert_to_layered_sparse_internal(const Matrix<T, IDX
 
         } else {
             auto wrk = incoming->new_workspace(false);
-            std::vector<IDX> ibuffer(incoming->nrow());
-            std::vector<T> vbuffer(incoming->nrow());
+            std::vector<IndexIn> ibuffer(incoming->nrow());
+            std::vector<DataIn> vbuffer(incoming->nrow());
 
             for (size_t c = 0; c < incoming->ncol(); ++c) {
                 auto range = incoming->sparse_column(c, vbuffer.data(), ibuffer.data(), wrk.get());
@@ -118,7 +118,7 @@ LayeredMatrixData<T, IDX> convert_to_layered_sparse_internal(const Matrix<T, IDX
     } else {
         if (incoming->prefer_rows()) {
             auto wrk = incoming->new_workspace(true);
-            std::vector<T> buffer(incoming->ncol());
+            std::vector<DataIn> buffer(incoming->ncol());
 
             for (size_t r = 0; r < incoming->nrow(); ++r) {
                 auto ptr = incoming->row(r, buffer.data(), wrk.get());
@@ -131,7 +131,7 @@ LayeredMatrixData<T, IDX> convert_to_layered_sparse_internal(const Matrix<T, IDX
 
         } else {
             auto wrk = incoming->new_workspace(false);
-            std::vector<T> buffer(incoming->nrow());
+            std::vector<DataIn> buffer(incoming->nrow());
 
             for (size_t c = 0; c < incoming->ncol(); ++c) {
                 auto ptr = incoming->column(c, buffer.data(),  wrk.get());
@@ -145,13 +145,13 @@ LayeredMatrixData<T, IDX> convert_to_layered_sparse_internal(const Matrix<T, IDX
     }
 
     // Creating the matrix.
-    std::vector<std::shared_ptr<Matrix<T, IDX> > > collated;
+    std::vector<std::shared_ptr<Matrix<DataOut, IndexOut> > > collated;
     size_t NC = incoming->ncol();
 
     auto create_sparse_matrix = [](size_t nr, size_t nc, auto values, auto rows, auto cols) -> auto { 
         auto indptrs = compress_sparse_triplets<false>(nr, nc, values, rows, cols);
-        typedef CompressedSparseColumnMatrix<T, IDX, decltype(values), decltype(rows), decltype(indptrs)> CSCMatrix;
-        return std::shared_ptr<Matrix<T, IDX> >(new CSCMatrix(nr, nc, std::move(values), std::move(rows), std::move(indptrs)));
+        typedef CompressedSparseColumnMatrix<DataOut, IndexOut, decltype(values), decltype(rows), decltype(indptrs)> CSCMatrix;
+        return std::shared_ptr<Matrix<DataOut, IndexOut> >(new CSCMatrix(nr, nc, std::move(values), std::move(rows), std::move(indptrs)));
     };
 
     if (per_category[0]) {
@@ -193,8 +193,9 @@ LayeredMatrixData<T, IDX> convert_to_layered_sparse_internal(const Matrix<T, IDX
  *
  * @return A `LayeredMatrixData` object.
  *
- * @tparam T Type of value in the `tatami::Matrix` interface.
+ * @tparam T Type of data value for the output `tatami::Matrix` interface.
  * @tparam IDX Integer type for the index.
+ * @tparam Matrix Realized `tatami::Matrix` class to be converted.
  *
  * This function converts an existing sparse integer matrix into a layered sparse matrix.
  * The aim is to reduce memory usage by storing each gene's counts in the smallest unsigned integer type that can hold them.
@@ -204,8 +205,8 @@ LayeredMatrixData<T, IDX> convert_to_layered_sparse_internal(const Matrix<T, IDX
  * This aims to further reduce memory usage in most cases, e.g., gene count matrices usually have fewer than 50000 rows.
  * Note that the internal storage is orthogonal to the choice of `IDX` in the `tatami::Matrix` interface.
  */
-template<typename T, typename IDX>
-LayeredMatrixData<T, IDX> convert_to_layered_sparse(const Matrix<T, IDX>* incoming) {
+template<typename T = double, typename IDX = int, class Matrix>
+LayeredMatrixData<T, IDX> convert_to_layered_sparse(const Matrix* incoming) {
     constexpr size_t max16 = std::numeric_limits<uint16_t>::max();
     if (incoming->nrow() <= max16) {
         return convert_to_layered_sparse_internal<uint16_t, T, IDX>(incoming);
