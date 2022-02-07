@@ -188,7 +188,7 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T, typename IDX, bool transpose = false&gt;<br />
 class tatami::HDF5DenseMatrix&lt; T, IDX, transpose &gt;</div><p >Dense matrix backed by a DataSet in a HDF5 file. </p>
 <p >This class retrieves data from the HDF5 file on demand rather than loading it all in at the start. This allows us to handle very large datasets in limited memory at the cost of some speed.</p>
-<p >We use HDF5's chunk caching to speed up access for consecutive rows and columns. However, cache parameters seem to be ignored if any existing HDF5 file handle is open; callers should close other handles before creating a <code><a class="el" href="classtatami_1_1HDF5DenseMatrix.html" title="Dense matrix backed by a DataSet in a HDF5 file.">HDF5DenseMatrix</a></code>.</p>
+<p >We manually handle the chunk caching to speed up access for consecutive rows and columns. The policy is to minimize the number of calls to the HDF5 library by requesting large contiguous slices where possible. The size of the slice is determined by the cache limit in the constructor.</p>
 <p >Callers should follow the <code><a class="el" href="classtatami_1_1HDF5DenseMatrix.html#a1e44e966facadb765b89e4f6791cdeb4">prefer_rows()</a></code> suggestion when extracting data, as this tries to minimize the number of chunks that need to be read per access request. If they do not, the access pattern on disk may be highly suboptimal, depending on the chunk dimensions.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
@@ -248,7 +248,7 @@ template&lt;typename T , typename IDX , bool transpose = false&gt; </div>
   </table>
   </dd>
 </dl>
-<p>The actual size of the chunk cache is automatically chosen to optimize for row or column extraction during a call to <code><a class="el" href="classtatami_1_1HDF5DenseMatrix.html#a442ed6cd344cde1fe248e2fab02a47f2">new_workspace()</a></code>. As long as this automatic choice is less than <code>cache_limit</code>, the former is used. The latter is only used if the automatic choice would be too large and we need to constrain memory usage (at the likely cost of some speed). </p>
+<p>The cache size should be large enough to fit all chunks spanned by a row or column, for (near-)consecutive row and column access respectively. Otherwise, performance will degrade as the same chunks may need to be repeatedly read back into memory. </p>
 
 </div>
 </div>
@@ -445,7 +445,8 @@ template&lt;typename T , typename IDX , bool transpose = false&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd><code>true</code> if the row extraction requires loading of fewer chunks compared to column extraction. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Boolean indicating whether to prefer row extraction.</dd></dl>
+<p>We favor extraction on the first dimension (rows by default, columns when <code>transpose = true</code>) as this matches the HDF5 storage order. However, for some chunking scheme and <code>cache_limit</code>, this might require repeated reads from file; in such cases, we switch to extraction on the second dimension. </p>
 
 <p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#ac31ddc309419b4b2f6a2d0a01837e7a3">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
