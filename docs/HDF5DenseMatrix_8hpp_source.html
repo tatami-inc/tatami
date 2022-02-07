@@ -241,185 +241,187 @@ $(function() {
 <div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        H5::DataSet dataset;</div>
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span> </div>
 <div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        H5::DataSpace dataspace;</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        hsize_t offset[2];</div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>        hsize_t count[2];</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span> </div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        H5::DataSpace memspace;</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span> </div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>        std::vector&lt;T&gt; cache, buffer;</div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        <span class="keywordtype">size_t</span> cached_chunk = -1;</div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>        hsize_t cached_first = 0, cached_last = 0;</div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>    };</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno"><a class="line" href="classtatami_1_1HDF5DenseMatrix.html#a442ed6cd344cde1fe248e2fab02a47f2">  238</a></span>    std::shared_ptr&lt;Workspace&gt; <a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a442ed6cd344cde1fe248e2fab02a47f2">new_workspace</a>(<span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a>)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        <span class="comment">// Caching is pointless in these cases.</span></div>
-<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        <span class="keywordflow">if</span> (<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> != transpose &amp;&amp; cache_firstdim == 0) {</div>
-<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>            <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> == transpose &amp;&amp; cache_seconddim == 0) {</div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>            <span class="keywordflow">return</span> <span class="keyword">nullptr</span>;</div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        }</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span> </div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        <span class="keyword">auto</span> ptr = <span class="keyword">new</span> HDF5DenseWorkspace;</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        std::shared_ptr&lt;Workspace&gt; output(ptr);</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>        H5::DataSpace memspace;</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>        std::vector&lt;T&gt; cache, buffer;</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        <span class="keywordtype">size_t</span> cached_chunk = -1;</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        hsize_t cached_first = 0, cached_last = 0;</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    };</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno"><a class="line" href="classtatami_1_1HDF5DenseMatrix.html#a442ed6cd344cde1fe248e2fab02a47f2">  235</a></span>    std::shared_ptr&lt;Workspace&gt; <a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a442ed6cd344cde1fe248e2fab02a47f2">new_workspace</a>(<span class="keywordtype">bool</span> <a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a>)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        <span class="keyword">auto</span> ptr = <span class="keyword">new</span> HDF5DenseWorkspace;</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>        std::shared_ptr&lt;Workspace&gt; output(ptr);</div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span> </div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>        <span class="comment">// Turn off HDF5&#39;s caching, as we&#39;ll be handling that.</span></div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>        H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>        fapl.setCache(0, 0, 0, 0);</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span> </div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        ptr-&gt;file.openFile(file_name, H5F_ACC_RDONLY, fapl);</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>        ptr-&gt;dataset = ptr-&gt;file.openDataSet(dataset_name);</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>        ptr-&gt;dataspace = ptr-&gt;dataset.getSpace();</div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>        <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>    }</div>
 <div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span> </div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>        <span class="comment">// Turn off HDF5&#39;s caching, as we&#39;ll be handling that.</span></div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>        H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>        fapl.setCache(0, 0, 0, 0);</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span> </div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>        ptr-&gt;file.openFile(file_name, H5F_ACC_RDONLY, fapl);</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        ptr-&gt;dataset = ptr-&gt;file.openDataSet(dataset_name);</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        ptr-&gt;dataspace = ptr-&gt;dataset.getSpace();</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>        <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    }</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span> </div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>    <span class="comment">/* We manually handle the chunk caching, in particular so that we only</span></div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span><span class="comment">     * pay the cost of rearranging the chunked data into contiguous arrays once.</span></div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span><span class="comment">     */</span></div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row&gt;</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>    <span class="keyword">const</span> T* extract(<span class="keywordtype">size_t</span> i, T* buffer, <span class="keywordtype">size_t</span> first, <span class="keywordtype">size_t</span> last, HDF5DenseWorkspace&amp; work)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        <span class="comment">// Figuring out which chunk the request belongs to.</span></div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        hsize_t cache_mydim, chunk_otherdim, mydim, otherdim;</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> != transpose) {</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            cache_mydim = cache_firstdim;</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>            chunk_otherdim = chunk_seconddim;</div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>            mydim = firstdim;</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>            otherdim = seconddim;</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>            cache_mydim = cache_seconddim;</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>            chunk_otherdim = chunk_firstdim;</div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>            mydim = seconddim;</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            otherdim = firstdim;</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>        }</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span> </div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>        <span class="keywordtype">size_t</span> chunk = i / cache_mydim;</div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        <span class="keywordtype">size_t</span> <a class="code hl_typedef" href="classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90">index</a> = i % cache_mydim;</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>        <span class="comment">// If we&#39;re in the same chunk for &#39;i&#39; and the &#39;first&#39;/&#39;last&#39; are within</span></div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        <span class="comment">// range, we re-use the cache.  In theory, we could minimize</span></div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>        <span class="comment">// extractions if the &#39;first&#39; and &#39;last&#39; are overlapping with their</span></div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        <span class="comment">// cached counterparts, but it&#39;s pretty rare that &#39;first&#39; and &#39;last&#39;</span></div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        <span class="comment">// will change, so we&#39;ll just keep things simple.</span></div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        <span class="keywordflow">if</span> (chunk != work.cached_chunk || first &lt; work.cached_first || last &gt; work.cached_last) {</div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>            <span class="keywordtype">size_t</span> first_chunk = first / chunk_otherdim;</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>            <span class="comment">// Need the chunk _after_ the chunk containing the _before-last_ element.</span></div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>            <span class="keywordtype">size_t</span> last_chunk = last ? (last - 1) / chunk_otherdim + 1 : 0; </div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span> </div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>            hsize_t new_cached_first = first_chunk * chunk_otherdim;</div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>            hsize_t new_cached_last = std::min(otherdim, last_chunk * chunk_otherdim);</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>            <span class="keywordtype">size_t</span> new_span = new_cached_last - new_cached_first;</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span> </div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>            hsize_t cache_mydim_start = chunk * cache_mydim;</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>            hsize_t cache_mydim_end = std::min(mydim, cache_mydim_start + cache_mydim);</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>            hsize_t cache_mydim_actual = cache_mydim_end - cache_mydim_start;</div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>            <span class="keywordtype">size_t</span> new_cache_size = new_span * cache_mydim;</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span> </div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>            T* destination;</div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>            work.cache.resize(new_cache_size);</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> != transpose) {</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>                destination = work.cache.data();</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>                work.buffer.resize(new_cache_size);</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>                destination = work.buffer.data();</div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>            }</div>
-<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span> </div>
-<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>            <span class="comment">// For chunks not present in the cache, we need to loop through and read them in.</span></div>
-<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>            {</div>
-<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>                <span class="keyword">constexpr</span> <span class="keywordtype">int</span> x = (<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> != transpose);</div>
-<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span>                work.offset[1-x] = cache_mydim_start;</div>
-<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>                work.offset[x] = new_cached_first;</div>
-<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>                work.count[1-x] = cache_mydim_actual;</div>
-<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>                work.count[x] = new_span;</div>
-<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>            }</div>
-<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>            work.dataspace.selectHyperslab(H5S_SELECT_SET, work.count, work.offset);</div>
-<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span> </div>
-<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>            <span class="comment">// HDF5 is a lot faster when the memspace and dataspace match in dimensionality.</span></div>
-<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>            <span class="comment">// Presumably there is some shuffling that happens inside when dimensions don&#39;t match.</span></div>
-<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span>            work.memspace.setExtentSimple(2, work.count);</div>
-<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>            work.memspace.selectAll();</div>
-<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span> </div>
-<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>            work.dataset.read(destination, HDF5::define_mem_type&lt;T&gt;(), work.memspace, work.dataspace);</div>
-<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> == transpose) {</div>
-<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>                <span class="keyword">auto</span> output = work.cache.begin();</div>
-<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                <span class="keywordflow">for</span> (hsize_t x = 0; x &lt; work.count[1]; ++x, output += new_span) {</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>                    <span class="keyword">auto</span> in = work.buffer.begin() + x;</div>
-<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>                    <span class="keywordflow">for</span> (hsize_t y = 0; y &lt; work.count[0]; ++y, in += work.count[1]) {</div>
-<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>                        *(output + y) = *in;</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>                    }</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>                }</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>            }</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span> </div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>            work.cached_first = new_cached_first;</div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>            work.cached_last = new_cached_last;</div>
-<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>            work.cached_chunk = chunk;</div>
-<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>        }</div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span> </div>
-<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>        <span class="keyword">auto</span> start = work.cache.begin() + <a class="code hl_typedef" href="classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90">index</a> * (work.cached_last - work.cached_first);</div>
-<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>        std::copy(</div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>            start + (first - work.cached_first), </div>
-<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>            start + (last - work.cached_first), </div>
-<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>            buffer</div>
-<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>        );</div>
-<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>        <span class="keywordflow">return</span> buffer;</div>
-<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>    }</div>
-<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span> </div>
-<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row&gt;</div>
-<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>    <span class="keyword">const</span> T* extract(<span class="keywordtype">size_t</span> i, T* buffer, <span class="keywordtype">size_t</span> first, <span class="keywordtype">size_t</span> last, Workspace* work)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>        <span class="keywordflow">if</span> (work) {</div>
-<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>            <span class="keyword">auto</span> wptr = <span class="keyword">dynamic_cast&lt;</span>HDF5DenseWorkspace*<span class="keyword">&gt;</span>(work);</div>
-<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>            <span class="keywordflow">return</span> extract&lt;row&gt;(i, buffer, first, last, *wptr);</div>
-<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>            <span class="comment">// Bypass all caching, manual and HDF5.</span></div>
-<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>            H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());</div>
-<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>            fapl.setCache(10000, 0, 0, 0);</div>
-<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span> </div>
-<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>            H5::H5File file(file_name, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, fapl);</div>
-<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>            <span class="keyword">auto</span> dataset = file.openDataSet(dataset_name);</div>
-<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>            <span class="keyword">auto</span> dataspace = dataset.getSpace();</div>
-<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span> </div>
-<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span>            hsize_t offset[2];</div>
-<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>            hsize_t count[2];</div>
-<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>            {</div>
-<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>                <span class="keyword">constexpr</span> <span class="keywordtype">int</span> x = (<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> != transpose);</div>
-<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>                offset[1-x] = i;</div>
-<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>                offset[x] = first;</div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>                count[1-x] = 1;</div>
-<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>                count[x] = last - first;</div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>            }</div>
-<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>            dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);</div>
+<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row&gt;</div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>    <span class="keyword">const</span> T* extract(<span class="keywordtype">size_t</span> i, T* buffer, <span class="keywordtype">size_t</span> first, <span class="keywordtype">size_t</span> last, H5::DataSet&amp; dataset, H5::DataSpace&amp; dataspace, H5::DataSpace&amp; memspace)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>        hsize_t offset[2];</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>        hsize_t count[2];</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span> </div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        <span class="keyword">constexpr</span> <span class="keywordtype">int</span> x = (<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> != transpose);</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>        offset[1-x] = i;</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>        offset[x] = first;</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        count[1-x] = 1;</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>        count[x] = last - first;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span> </div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>        memspace.setExtentSimple(2, count);</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>        memspace.selectAll();</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>        dataset.read(buffer, HDF5::define_mem_type&lt;T&gt;(), memspace, dataspace);</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        <span class="keywordflow">return</span> buffer;</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    }</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span> </div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    <span class="comment">/* We manually handle the chunk caching, in particular so that we only</span></div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span><span class="comment">     * pay the cost of rearranging the chunked data into contiguous arrays once.</span></div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span><span class="comment">     */</span></div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row&gt;</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    <span class="keyword">const</span> T* extract(<span class="keywordtype">size_t</span> i, T* buffer, <span class="keywordtype">size_t</span> first, <span class="keywordtype">size_t</span> last, HDF5DenseWorkspace&amp; work)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        <span class="comment">// Figuring out which chunk the request belongs to.</span></div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>        hsize_t cache_mydim, chunk_otherdim, mydim, otherdim;</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> != transpose) {</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>            cache_mydim = cache_firstdim;</div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>            chunk_otherdim = chunk_seconddim;</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>            mydim = firstdim;</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>            otherdim = seconddim;</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span>            cache_mydim = cache_seconddim;</div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>            chunk_otherdim = chunk_firstdim;</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>            mydim = seconddim;</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>            otherdim = firstdim;</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        }</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>        <span class="comment">// No caching can be done here, so we just extract directly.</span></div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        <span class="keywordflow">if</span> (cache_mydim == 0) {</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>            <span class="keywordflow">return</span> extract&lt;row&gt;(i, buffer, first, last, work.dataset, work.dataspace, work.memspace);</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        }</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span> </div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>        <span class="keywordtype">size_t</span> chunk = i / cache_mydim;</div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        <span class="keywordtype">size_t</span> <a class="code hl_typedef" href="classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90">index</a> = i % cache_mydim;</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span> </div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>        <span class="comment">// If we&#39;re in the same chunk for &#39;i&#39; and the &#39;first&#39;/&#39;last&#39; are within</span></div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        <span class="comment">// range, we re-use the cache.  In theory, we could minimize</span></div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        <span class="comment">// extractions if the &#39;first&#39; and &#39;last&#39; are overlapping with their</span></div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        <span class="comment">// cached counterparts, but it&#39;s pretty rare that &#39;first&#39; and &#39;last&#39;</span></div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        <span class="comment">// will change, so we&#39;ll just keep things simple.</span></div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        <span class="keywordflow">if</span> (chunk != work.cached_chunk || first &lt; work.cached_first || last &gt; work.cached_last) {</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>            <span class="keywordtype">size_t</span> first_chunk = first / chunk_otherdim;</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>            <span class="comment">// Need the chunk _after_ the chunk containing the _before-last_ element.</span></div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>            <span class="keywordtype">size_t</span> last_chunk = last ? (last - 1) / chunk_otherdim + 1 : 0; </div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span> </div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>            hsize_t new_cached_first = first_chunk * chunk_otherdim;</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>            hsize_t new_cached_last = std::min(otherdim, last_chunk * chunk_otherdim);</div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>            <span class="keywordtype">size_t</span> new_span = new_cached_last - new_cached_first;</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span> </div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>            hsize_t cache_mydim_start = chunk * cache_mydim;</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>            hsize_t cache_mydim_end = std::min(mydim, cache_mydim_start + cache_mydim);</div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>            hsize_t cache_mydim_actual = cache_mydim_end - cache_mydim_start;</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span>            <span class="keywordtype">size_t</span> new_cache_size = new_span * cache_mydim;</div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span> </div>
+<div class="line"><a id="l00315" name="l00315"></a><span class="lineno">  315</span>            T* destination;</div>
+<div class="line"><a id="l00316" name="l00316"></a><span class="lineno">  316</span>            work.cache.resize(new_cache_size);</div>
+<div class="line"><a id="l00317" name="l00317"></a><span class="lineno">  317</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> != transpose) {</div>
+<div class="line"><a id="l00318" name="l00318"></a><span class="lineno">  318</span>                destination = work.cache.data();</div>
+<div class="line"><a id="l00319" name="l00319"></a><span class="lineno">  319</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00320" name="l00320"></a><span class="lineno">  320</span>                work.buffer.resize(new_cache_size);</div>
+<div class="line"><a id="l00321" name="l00321"></a><span class="lineno">  321</span>                destination = work.buffer.data();</div>
+<div class="line"><a id="l00322" name="l00322"></a><span class="lineno">  322</span>            }</div>
+<div class="line"><a id="l00323" name="l00323"></a><span class="lineno">  323</span> </div>
+<div class="line"><a id="l00324" name="l00324"></a><span class="lineno">  324</span>            <span class="comment">// For chunks not present in the cache, we need to loop through and read them in.</span></div>
+<div class="line"><a id="l00325" name="l00325"></a><span class="lineno">  325</span>            hsize_t offset[2];</div>
+<div class="line"><a id="l00326" name="l00326"></a><span class="lineno">  326</span>            hsize_t count[2];</div>
+<div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span>            {</div>
+<div class="line"><a id="l00328" name="l00328"></a><span class="lineno">  328</span>                <span class="keyword">constexpr</span> <span class="keywordtype">int</span> x = (<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> != transpose);</div>
+<div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>                offset[1-x] = cache_mydim_start;</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>                offset[x] = new_cached_first;</div>
+<div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>                count[1-x] = cache_mydim_actual;</div>
+<div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>                count[x] = new_span;</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>            }</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>            work.dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span> </div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>            <span class="comment">// HDF5 is a lot faster when the memspace and dataspace match in dimensionality.</span></div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>            <span class="comment">// Presumably there is some shuffling that happens inside when dimensions don&#39;t match.</span></div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>            work.memspace.setExtentSimple(2, count);</div>
+<div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>            work.memspace.selectAll();</div>
+<div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span> </div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>            work.dataset.read(destination, HDF5::define_mem_type&lt;T&gt;(), work.memspace, work.dataspace);</div>
+<div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(<a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a> == transpose) {</div>
+<div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>                <span class="keyword">auto</span> output = work.cache.begin();</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>                <span class="keywordflow">for</span> (hsize_t x = 0; x &lt; count[1]; ++x, output += new_span) {</div>
+<div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span>                    <span class="keyword">auto</span> in = work.buffer.begin() + x;</div>
+<div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>                    <span class="keywordflow">for</span> (hsize_t y = 0; y &lt; count[0]; ++y, in += count[1]) {</div>
+<div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>                        *(output + y) = *in;</div>
+<div class="line"><a id="l00348" name="l00348"></a><span class="lineno">  348</span>                    }</div>
+<div class="line"><a id="l00349" name="l00349"></a><span class="lineno">  349</span>                }</div>
+<div class="line"><a id="l00350" name="l00350"></a><span class="lineno">  350</span>            }</div>
+<div class="line"><a id="l00351" name="l00351"></a><span class="lineno">  351</span> </div>
+<div class="line"><a id="l00352" name="l00352"></a><span class="lineno">  352</span>            work.cached_first = new_cached_first;</div>
+<div class="line"><a id="l00353" name="l00353"></a><span class="lineno">  353</span>            work.cached_last = new_cached_last;</div>
+<div class="line"><a id="l00354" name="l00354"></a><span class="lineno">  354</span>            work.cached_chunk = chunk;</div>
+<div class="line"><a id="l00355" name="l00355"></a><span class="lineno">  355</span>        }</div>
+<div class="line"><a id="l00356" name="l00356"></a><span class="lineno">  356</span> </div>
+<div class="line"><a id="l00357" name="l00357"></a><span class="lineno">  357</span>        <span class="keyword">auto</span> start = work.cache.begin() + <a class="code hl_typedef" href="classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90">index</a> * (work.cached_last - work.cached_first);</div>
+<div class="line"><a id="l00358" name="l00358"></a><span class="lineno">  358</span>        std::copy(</div>
+<div class="line"><a id="l00359" name="l00359"></a><span class="lineno">  359</span>            start + (first - work.cached_first), </div>
+<div class="line"><a id="l00360" name="l00360"></a><span class="lineno">  360</span>            start + (last - work.cached_first), </div>
+<div class="line"><a id="l00361" name="l00361"></a><span class="lineno">  361</span>            buffer</div>
+<div class="line"><a id="l00362" name="l00362"></a><span class="lineno">  362</span>        );</div>
+<div class="line"><a id="l00363" name="l00363"></a><span class="lineno">  363</span>        <span class="keywordflow">return</span> buffer;</div>
+<div class="line"><a id="l00364" name="l00364"></a><span class="lineno">  364</span>    }</div>
+<div class="line"><a id="l00365" name="l00365"></a><span class="lineno">  365</span> </div>
+<div class="line"><a id="l00366" name="l00366"></a><span class="lineno">  366</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row&gt;</div>
+<div class="line"><a id="l00367" name="l00367"></a><span class="lineno">  367</span>    <span class="keyword">const</span> T* extract(<span class="keywordtype">size_t</span> i, T* buffer, <span class="keywordtype">size_t</span> first, <span class="keywordtype">size_t</span> last, Workspace* work)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>        <span class="keywordflow">if</span> (work) {</div>
+<div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span>            <span class="keyword">auto</span> wptr = <span class="keyword">dynamic_cast&lt;</span>HDF5DenseWorkspace*<span class="keyword">&gt;</span>(work);</div>
+<div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>            <span class="keywordflow">return</span> extract&lt;row&gt;(i, buffer, first, last, *wptr);</div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>            <span class="comment">// Bypass all caching, manual and HDF5.</span></div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>            H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());</div>
+<div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>            fapl.setCache(10000, 0, 0, 0);</div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span> </div>
-<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>            H5::DataSpace memspace(2, count);</div>
-<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>            memspace.selectAll();</div>
-<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>            dataset.read(buffer, HDF5::define_mem_type&lt;T&gt;(), memspace, dataspace);</div>
-<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span>            <span class="keywordflow">return</span> buffer;</div>
-<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>        }</div>
-<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>    }</div>
-<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span> </div>
-<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span><span class="keyword">public</span>:</div>
-<div class="line"><a id="l00384" name="l00384"></a><span class="lineno"><a class="line" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">  384</a></span>    <span class="keyword">const</span> T* <a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a>(<span class="keywordtype">size_t</span> r, T* buffer, <span class="keywordtype">size_t</span> first, <span class="keywordtype">size_t</span> last, <a class="code hl_class" href="classtatami_1_1Workspace.html">Workspace</a>* work=<span class="keyword">nullptr</span>)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span>        <span class="keywordflow">return</span> extract&lt;true&gt;(r, buffer, first, last, work);</div>
-<div class="line"><a id="l00386" name="l00386"></a><span class="lineno">  386</span>    }</div>
-<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span> </div>
-<div class="line"><a id="l00388" name="l00388"></a><span class="lineno"><a class="line" href="classtatami_1_1HDF5DenseMatrix.html#aa2103edb0c68e673419a06f73793df82">  388</a></span>    <span class="keyword">const</span> T* <a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#aa2103edb0c68e673419a06f73793df82">column</a>(<span class="keywordtype">size_t</span> c, T* buffer, <span class="keywordtype">size_t</span> first, <span class="keywordtype">size_t</span> last, <a class="code hl_class" href="classtatami_1_1Workspace.html">Workspace</a>* work=<span class="keyword">nullptr</span>)<span class="keyword"> const </span>{</div>
-<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span>        <span class="keywordflow">return</span> extract&lt;false&gt;(c, buffer, first, last, work);</div>
-<div class="line"><a id="l00390" name="l00390"></a><span class="lineno">  390</span>    }</div>
-<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span> </div>
-<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    <span class="keyword">using</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;T, IDX&gt;::row</a>;</div>
+<div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>            H5::H5File file(file_name, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, fapl);</div>
+<div class="line"><a id="l00377" name="l00377"></a><span class="lineno">  377</span>            <span class="keyword">auto</span> dataset = file.openDataSet(dataset_name);</div>
+<div class="line"><a id="l00378" name="l00378"></a><span class="lineno">  378</span>            <span class="keyword">auto</span> dataspace = dataset.getSpace();</div>
+<div class="line"><a id="l00379" name="l00379"></a><span class="lineno">  379</span> </div>
+<div class="line"><a id="l00380" name="l00380"></a><span class="lineno">  380</span>            H5::DataSpace memspace;</div>
+<div class="line"><a id="l00381" name="l00381"></a><span class="lineno">  381</span>            <span class="keywordflow">return</span> extract&lt;row&gt;(i, buffer, first, last, dataset, dataspace, memspace);</div>
+<div class="line"><a id="l00382" name="l00382"></a><span class="lineno">  382</span>        }</div>
+<div class="line"><a id="l00383" name="l00383"></a><span class="lineno">  383</span>    }</div>
+<div class="line"><a id="l00384" name="l00384"></a><span class="lineno">  384</span> </div>
+<div class="line"><a id="l00385" name="l00385"></a><span class="lineno">  385</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00386" name="l00386"></a><span class="lineno"><a class="line" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">  386</a></span>    <span class="keyword">const</span> T* <a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">row</a>(<span class="keywordtype">size_t</span> r, T* buffer, <span class="keywordtype">size_t</span> first, <span class="keywordtype">size_t</span> last, <a class="code hl_class" href="classtatami_1_1Workspace.html">Workspace</a>* work=<span class="keyword">nullptr</span>)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00387" name="l00387"></a><span class="lineno">  387</span>        <span class="keywordflow">return</span> extract&lt;true&gt;(r, buffer, first, last, work);</div>
+<div class="line"><a id="l00388" name="l00388"></a><span class="lineno">  388</span>    }</div>
+<div class="line"><a id="l00389" name="l00389"></a><span class="lineno">  389</span> </div>
+<div class="line"><a id="l00390" name="l00390"></a><span class="lineno"><a class="line" href="classtatami_1_1HDF5DenseMatrix.html#aa2103edb0c68e673419a06f73793df82">  390</a></span>    <span class="keyword">const</span> T* <a class="code hl_function" href="classtatami_1_1HDF5DenseMatrix.html#aa2103edb0c68e673419a06f73793df82">column</a>(<span class="keywordtype">size_t</span> c, T* buffer, <span class="keywordtype">size_t</span> first, <span class="keywordtype">size_t</span> last, <a class="code hl_class" href="classtatami_1_1Workspace.html">Workspace</a>* work=<span class="keyword">nullptr</span>)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00391" name="l00391"></a><span class="lineno">  391</span>        <span class="keywordflow">return</span> extract&lt;false&gt;(c, buffer, first, last, work);</div>
+<div class="line"><a id="l00392" name="l00392"></a><span class="lineno">  392</span>    }</div>
 <div class="line"><a id="l00393" name="l00393"></a><span class="lineno">  393</span> </div>
-<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>    <span class="keyword">using</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;T, IDX&gt;::column</a>;</div>
-<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span>};</div>
-<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span> </div>
-<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>}</div>
+<div class="line"><a id="l00394" name="l00394"></a><span class="lineno">  394</span>    <span class="keyword">using</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;T, IDX&gt;::row</a>;</div>
+<div class="line"><a id="l00395" name="l00395"></a><span class="lineno">  395</span> </div>
+<div class="line"><a id="l00396" name="l00396"></a><span class="lineno">  396</span>    <span class="keyword">using</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;T, IDX&gt;::column</a>;</div>
+<div class="line"><a id="l00397" name="l00397"></a><span class="lineno">  397</span>};</div>
 <div class="line"><a id="l00398" name="l00398"></a><span class="lineno">  398</span> </div>
-<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00399" name="l00399"></a><span class="lineno">  399</span>}</div>
+<div class="line"><a id="l00400" name="l00400"></a><span class="lineno">  400</span> </div>
+<div class="line"><a id="l00401" name="l00401"></a><span class="lineno">  401</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html">tatami::HDF5DenseMatrix</a></div><div class="ttdoc">Dense matrix backed by a DataSet in a HDF5 file.</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:100</div></div>
 <div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_a07799029be780dbd14512a44aea27c56"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#a07799029be780dbd14512a44aea27c56">tatami::HDF5DenseMatrix::nrow</a></div><div class="ttdeci">size_t nrow() const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:181</div></div>
 <div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_a1e44e966facadb765b89e4f6791cdeb4"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#a1e44e966facadb765b89e4f6791cdeb4">tatami::HDF5DenseMatrix::prefer_rows</a></div><div class="ttdeci">bool prefer_rows() const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:204</div></div>
-<div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_a3030f335ad69e0c0bd2ca7ba1728462a"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">tatami::HDF5DenseMatrix::row</a></div><div class="ttdeci">const T * row(size_t r, T *buffer, size_t first, size_t last, Workspace *work=nullptr) const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:384</div></div>
-<div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_a442ed6cd344cde1fe248e2fab02a47f2"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#a442ed6cd344cde1fe248e2fab02a47f2">tatami::HDF5DenseMatrix::new_workspace</a></div><div class="ttdeci">std::shared_ptr&lt; Workspace &gt; new_workspace(bool row) const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:238</div></div>
+<div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_a3030f335ad69e0c0bd2ca7ba1728462a"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#a3030f335ad69e0c0bd2ca7ba1728462a">tatami::HDF5DenseMatrix::row</a></div><div class="ttdeci">const T * row(size_t r, T *buffer, size_t first, size_t last, Workspace *work=nullptr) const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:386</div></div>
+<div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_a442ed6cd344cde1fe248e2fab02a47f2"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#a442ed6cd344cde1fe248e2fab02a47f2">tatami::HDF5DenseMatrix::new_workspace</a></div><div class="ttdeci">std::shared_ptr&lt; Workspace &gt; new_workspace(bool row) const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:235</div></div>
 <div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_a86aa91a8a57e173007edfa5519f234d8"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#a86aa91a8a57e173007edfa5519f234d8">tatami::HDF5DenseMatrix::HDF5DenseMatrix</a></div><div class="ttdeci">HDF5DenseMatrix(std::string file, std::string name, size_t cache_limit=100000000)</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:117</div></div>
 <div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_a8f75d095251002a518febb91a4905b37"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#a8f75d095251002a518febb91a4905b37">tatami::HDF5DenseMatrix::ncol</a></div><div class="ttdeci">size_t ncol() const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:189</div></div>
-<div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_aa2103edb0c68e673419a06f73793df82"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#aa2103edb0c68e673419a06f73793df82">tatami::HDF5DenseMatrix::column</a></div><div class="ttdeci">const T * column(size_t c, T *buffer, size_t first, size_t last, Workspace *work=nullptr) const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:388</div></div>
+<div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_aa2103edb0c68e673419a06f73793df82"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#aa2103edb0c68e673419a06f73793df82">tatami::HDF5DenseMatrix::column</a></div><div class="ttdeci">const T * column(size_t c, T *buffer, size_t first, size_t last, Workspace *work=nullptr) const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:390</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="classtatami_1_1Matrix.html">tatami::Matrix</a></div><div class="ttdoc">Virtual class for a matrix with a defined type.</div><div class="ttdef"><b>Definition:</b> Matrix.hpp:22</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a0f8a0b1b3493d8ae573d8157fcff1c90"><div class="ttname"><a href="classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90">tatami::Matrix&lt; T, IDX &gt;::index</a></div><div class="ttdeci">IDX index</div><div class="ttdef"><b>Definition:</b> Matrix.hpp:34</div></div>
 <div class="ttc" id="aclasstatami_1_1Workspace_html"><div class="ttname"><a href="classtatami_1_1Workspace.html">tatami::Workspace</a></div><div class="ttdoc">Virtual workspace class.</div><div class="ttdef"><b>Definition:</b> Workspace.hpp:19</div></div>
