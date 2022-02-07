@@ -52,6 +52,10 @@ public:
      * @param ptr Name of the 1D dataset inside `file` containing the index pointers for the start and end of each row (if `ROW = true`) or column (otherwise).
      * This should have length equal to the number of rows (if `ROW = true`) or columns (otherwise).
      * @param cache_limit Limit to the size of the chunk cache, in bytes.
+     *
+     * The cache is created by extracting multiple columns (for CSC matrices) or rows (CSR) on every call to the HDF5 library.
+     * These are held in memory in the workspace created by `new_workspace()`, while the relevant column/row is returned to the user by `row()` or `column()`.
+     * The aim is to minimize the number of calls to the HDF5 library - and thus expensive file reads - for consecutive accesses.
      */
     HDF5CompressedSparseMatrix(size_t nr, size_t nc, std::string file, std::string vals, std::string idx, std::string ptr, size_t cache_limit = 100000000) :
         nrows(nr),
