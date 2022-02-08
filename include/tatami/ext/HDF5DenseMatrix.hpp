@@ -90,7 +90,12 @@ const H5::PredType& define_mem_type() {
  *
  * Callers should follow the `prefer_rows()` suggestion when extracting data,
  * as this tries to minimize the number of chunks that need to be read per access request.
- * If they do not, the access pattern on disk may be highly suboptimal, depending on the chunk dimensions.
+ * If they do not, the access pattern on disk may be slightly to highly suboptimal, depending on the chunk dimensions.
+ *
+ * As the HDF5 library is not generally thread-safe, the HDF5-related operations should only be run in a single thread.
+ * For OpenMP, this is handled automatically by putting all HDF5 operations in a critical region.
+ * For other parallelization schemes, callers should define the `TATAMI_HDF5_PARALLEL_LOCK` macro;
+ * this should be a function that accepts and executes a no-argument lambda within an appropriate serial region (e.g., based on a global mutex).
  *
  * @tparam T Type of the matrix values.
  * @tparam IDX Type of the row/column indices.
@@ -118,6 +123,13 @@ public:
         file_name(std::move(file)), 
         dataset_name(std::move(name))
     {
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         H5::H5File fhandle(file_name, H5F_ACC_RDONLY);
         auto dhandle = fhandle.openDataSet(dataset_name);
         auto space = dhandle.getSpace();
@@ -173,6 +185,12 @@ public:
             // If both are crippled, then we might as well extract along the first dimension.
             prefer_firstdim = true;
         }
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        }
+#else
+        });
+#endif
 
         return;
     }
@@ -233,8 +251,17 @@ public:
      * @return A shared pointer to a `Workspace` object is returned.
      */
     std::shared_ptr<Workspace> new_workspace(bool row) const {
+        std::shared_ptr<Workspace> output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         auto ptr = new HDF5DenseWorkspace;
-        std::shared_ptr<Workspace> output(ptr);
+        output.reset(ptr);
 
         // Turn off HDF5's caching, as we'll be handling that.
         H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());
@@ -243,6 +270,13 @@ public:
         ptr->file.openFile(file_name, H5F_ACC_RDONLY, fapl);
         ptr->dataset = ptr->file.openDataSet(dataset_name);
         ptr->dataspace = ptr->dataset.getSpace();
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        }
+#else
+        });
+#endif
+
         return output;
     }
 
@@ -258,10 +292,12 @@ private:
         count[1-x] = 1;
         count[x] = last - first;
 
+        // Serial locks are applied in callers.
         dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
         memspace.setExtentSimple(2, count);
         memspace.selectAll();
         dataset.read(buffer, HDF5::define_mem_type<T>(), memspace, dataspace);
+
         return buffer;
     }
 
@@ -286,7 +322,22 @@ private:
 
         // No caching can be done here, so we just extract directly.
         if (cache_mydim == 0) {
-            return extract<row>(i, buffer, first, last, work.dataset, work.dataspace, work.memspace);
+            const T* out;
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+            #pragma omp critical
+            {
+#else
+            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
+            out = extract<row>(i, buffer, first, last, work.dataset, work.dataspace, work.memspace);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+            }
+#else
+            });
+#endif
+            return out;
         }
 
         size_t chunk = i / cache_mydim;
@@ -331,6 +382,14 @@ private:
                 count[1-x] = cache_mydim_actual;
                 count[x] = new_span;
             }
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+            #pragma omp critical
+            {
+#else
+            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
             work.dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
 
             // HDF5 is a lot faster when the memspace and dataspace match in dimensionality.
@@ -339,6 +398,13 @@ private:
             work.memspace.selectAll();
 
             work.dataset.read(destination, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+            }
+#else
+            });
+#endif
+
             if constexpr(row == transpose) {
                 auto output = work.cache.begin();
                 for (hsize_t x = 0; x < count[1]; ++x, output += new_span) {
@@ -369,6 +435,14 @@ private:
             auto wptr = dynamic_cast<HDF5DenseWorkspace*>(work);
             return extract<row>(i, buffer, first, last, *wptr);
         } else {
+            const T* out;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+            #pragma omp critical
+            {
+#else
+            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
             // Bypass all caching, manual and HDF5.
             H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());
             fapl.setCache(10000, 0, 0, 0);
@@ -378,7 +452,14 @@ private:
             auto dataspace = dataset.getSpace();
 
             H5::DataSpace memspace;
-            return extract<row>(i, buffer, first, last, dataset, dataspace, memspace);
+            out = extract<row>(i, buffer, first, last, dataset, dataspace, memspace);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+            }
+#else
+            });
+#endif
+            return out;
         }
     }
 

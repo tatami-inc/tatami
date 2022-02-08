@@ -22,10 +22,22 @@ namespace tatami {
 /**
  * @brief Compressed sparse matrix in a HDF5 file.
  *
- * This class retrieves data from the HDF5 file on demand rather than loading it all in at the start.
+ * This class retrieves sparse data from the HDF5 file on demand rather than loading it all in at the start.
  * This allows us to handle very large datasets in limited memory at the cost of speed.
- * It is strongly advised to follow the `prefer_rows()` suggestion when extracting data,
- * otherwise the access pattern on disk will be very suboptimal.
+ *
+ * We manually handle the chunk caching to speed up access for consecutive rows or columns (for compressed sparse row and column matrices, respectively).
+ * The policy is to minimize the number of calls to the HDF5 library by requesting large contiguous slices where possible.
+ * The size of the slice is determined by the cache limit in the constructor.
+ *
+ * Callers should follow the `prefer_rows()` suggestion when extracting data,
+ * as this tries to minimize the number of chunks that need to be read per access request.
+ * This recommendation is even stronger than for the `HDF5DenseMatrix`,
+ * as the access pattern on disk for the non-preferred dimension is very suboptimal.
+ *
+ * As the HDF5 library is not generally thread-safe, the HDF5-related operations should only be run in a single thread.
+ * For OpenMP, this is handled automatically by putting all HDF5 operations in a critical region.
+ * For other parallelization schemes, callers should define the `TATAMI_HDF5_PARALLEL_LOCK` macro;
+ * this should be a function that accepts and executes a no-argument lambda within an appropriate serial region (e.g., based on a global mutex).
  *
  * @tparam ROW Whether the matrix is stored in compressed sparse row format.
  * @tparam T Type of the matrix values.
@@ -65,6 +77,15 @@ public:
         index_name(std::move(idx)),
         pointers(ROW ? nr + 1 : nc + 1)
     {
+        size_t total_element_size;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         H5::H5File file_handle(file_name, H5F_ACC_RDONLY);
 
         auto check_size = [&](const H5::DataSet& handle, const std::string& name) -> size_t {
@@ -92,6 +113,8 @@ public:
             throw std::runtime_error("number of non-zero elements is not consistent between 'data' and 'idx'");
         }
 
+        total_element_size = dhandle.getDataType().getSize() + ihandle.getDataType().getSize();
+
         auto phandle = file_handle.openDataSet(ptr);
         const size_t ptr_size = check_size(phandle, "ptr");
         if (ptr_size != pointers.size()) {
@@ -106,6 +129,12 @@ public:
         if (pointers.back() != nonzeros) {
             throw std::runtime_error("last index pointer should be equal to the number of non-zero elements");
         }
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        }
+#else
+        });
+#endif
 
         size_t maxgap = 0;
         for (size_t i = 1; i < pointers.size(); ++i) {
@@ -124,7 +153,7 @@ public:
             cache_limits.emplace_back(0, pointers[1]);
         }
 
-        size_t effective_cache_limit = cache_limit / (dhandle.getDataType().getSize() + ihandle.getDataType().getSize());
+        size_t effective_cache_limit = cache_limit / total_element_size;
 
         size_t counter = 0, start = 0;
         for (size_t i = 1; i < cache_id.size(); ++i) {
@@ -188,8 +217,17 @@ public:
      * @return A shared pointer to a `Workspace` object is returned.
      */
     std::shared_ptr<Workspace> new_workspace(bool row) const {
+        std::shared_ptr<Workspace> output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         auto ptr = new HDF5SparseWorkspace;
-        std::shared_ptr<Workspace> output(ptr);
+        output.reset(ptr);
 
         H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());
         fapl.setCache(0, 0, 0, 0);
@@ -198,6 +236,13 @@ public:
         ptr->data = ptr->file.openDataSet(data_name);
         ptr->index = ptr->file.openDataSet(index_name);
         ptr->dataspace = ptr->data.getSpace();
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        }
+#else
+        });
+#endif
+
         return output;
     }
 
@@ -229,6 +274,13 @@ private:
             hsize_t offset = limits.first;
             hsize_t count = limits.second - limits.first;
 
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+            #pragma omp critical
+            {
+#else
+            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
             work.dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
             work.memspace.setExtentSimple(1, &count);
             work.memspace.selectAll();
@@ -238,6 +290,12 @@ private:
 
             work.data_cache.resize(count);
             work.data.read(work.data_cache.data(), HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK 
+            }
+#else
+            });
+#endif
         }
 
         size_t len = pointers[i + 1] - pointers[i];
@@ -261,6 +319,16 @@ private:
             return 0;
         }
 
+        std::vector<IDX> index_cache(count);
+        std::vector<T> data_cache(count);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());
         fapl.setCache(0, 0, 0, 0);
         H5::H5File file(file_name, H5F_ACC_RDONLY, H5::FileCreatPropList::DEFAULT, fapl);
@@ -273,10 +341,14 @@ private:
         H5::DataSpace memspace(1, &count);
         memspace.selectAll();
 
-        std::vector<IDX> index_cache(count);
         index.read(index_cache.data(), HDF5::define_mem_type<IDX>(), memspace, dataspace);
-        std::vector<T> data_cache(count);
         data.read(data_cache.data(), HDF5::define_mem_type<T>(), memspace, dataspace);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK 
+        }
+#else
+        });
+#endif
 
         return copy_primary_to_buffer(index_cache.begin(), data_cache.begin(), count, first, last, dbuffer, thing);
     }
@@ -303,6 +375,7 @@ private:
             size_t left = pointers[j], right = pointers[j + 1];
             index_cache.resize(right - left);
 
+            // Serial locks should be applied by the callers.
             hsize_t offset = left;
             hsize_t count = index_cache.size();
             dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
@@ -338,12 +411,38 @@ private:
 
     template<typename Thing>
     size_t extract_secondary(size_t i, T* dbuffer, Thing thing, size_t first, size_t last, HDF5SparseWorkspace& work) const {
+        size_t n;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         // Reusing the index cache inside the workspace as a holding ground for the indices extracted for each column.
-        return extract_secondary(i, dbuffer, thing, first, last, work.data, work.index, work.dataspace, work.memspace, work.index_cache);
+        n = extract_secondary(i, dbuffer, thing, first, last, work.data, work.index, work.dataspace, work.memspace, work.index_cache);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK 
+        }
+#else
+        });
+#endif
+
+        return n;
     }
 
     template<typename Thing>
     size_t extract_secondary(size_t i, T* dbuffer, Thing thing, size_t first, size_t last) const {
+        size_t n;
+        
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+        
         // Ignore all caches, not that it really makes a difference here anyway.
         H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());
         fapl.setCache(0, 0, 0, 0);
@@ -355,7 +454,15 @@ private:
 
         H5::DataSpace memspace;
         std::vector<IDX> index_cache;
-        return extract_secondary(i, dbuffer, thing, first, last, data, index, dataspace, memspace, index_cache);
+        n = extract_secondary(i, dbuffer, thing, first, last, data, index, dataspace, memspace, index_cache);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK 
+        }
+#else
+        });
+#endif
+
+        return n;
     }
 
     SparseRange<T, IDX> extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t first, size_t last, Workspace* work) const {
