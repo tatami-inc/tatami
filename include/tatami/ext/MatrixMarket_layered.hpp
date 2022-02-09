@@ -513,7 +513,7 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Function process) 
     ass.finish();
 
     constexpr size_t max16 = std::numeric_limits<uint16_t>::max();
-    if (ass.nrows > max16) {
+    if (ass.nrows <= max16) {
         return load_layered_sparse_matrix_internal<T, IDX, uint16_t>(ass, process);
     } else {
         return load_layered_sparse_matrix_internal<T, IDX, IDX>(ass, process);
