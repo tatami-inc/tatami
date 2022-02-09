@@ -322,3 +322,33 @@ TEST(MatrixMarketTest, ComplexLayered) {
         }
     }
 }
+
+TEST(MatrixMarketTest, EmptyLayered) {
+    {
+        // Get some coverage on the cases where there are no columns.
+        std::string stuff = "%%\n1000 0 0";
+        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+
+        EXPECT_EQ(out.matrix->nrow(), 1000);
+        EXPECT_EQ(out.matrix->ncol(), 0);
+
+        for (size_t i = 0; i < 1000; ++i) {
+            EXPECT_EQ(out.permutation[i], i);
+        }
+    }
+
+    {
+        // Get some coverage on the cases where there are no values.
+        std::string stuff = "%%\n1000 10 0";
+        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+
+        EXPECT_EQ(out.matrix->nrow(), 1000);
+        EXPECT_EQ(out.matrix->ncol(), 10);
+
+        for (size_t i = 0; i < 1000; ++i) {
+            EXPECT_EQ(out.permutation[i], i);
+            auto rdata = out.matrix->sparse_row(i);
+            EXPECT_EQ(rdata.value.size(), 0);
+        }
+    }
+}
