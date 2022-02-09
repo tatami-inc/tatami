@@ -25,14 +25,16 @@ protected:
         cols = std::get<3>(param);
         vals = std::get<4>(param);
 
-        std::stringstream stream;
-        write_matrix_market(stream, NR, NC, vals, rows, cols);
-        return stream.str();
+        return;
     }
 };
 
 TEST_P(MatrixMarketBufferTest, Simple) {
-    auto stuff = dump(GetParam());
+    dump(GetParam());
+    std::stringstream stream;
+    write_matrix_market(stream, NR, NC, vals, rows, cols);
+    auto stuff = stream.str();
+
     auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
 
     // Checking against a reference.
@@ -47,7 +49,10 @@ TEST_P(MatrixMarketBufferTest, Simple) {
 }
 
 TEST_P(MatrixMarketBufferTest, Layered) {
-    auto stuff = dump(GetParam());
+    dump(GetParam());
+    std::stringstream stream;
+    write_matrix_market(stream, NR, NC, vals, rows, cols);
+    auto stuff = stream.str();
 
     tatami::MatrixMarket::LineAssignments ass;
     ass.add(stuff.c_str(), stuff.size());
@@ -97,6 +102,54 @@ TEST_P(MatrixMarketBufferTest, Layered) {
             EXPECT_TRUE(maxed <= std::numeric_limits<uint16_t>::max());
             EXPECT_TRUE(maxed > std::numeric_limits<uint8_t>::max());
         }
+    }
+}
+
+TEST_P(MatrixMarketBufferTest, LayeredByRow) {
+    dump(GetParam());
+
+    // Sorting by row, 
+    auto indptrs = tatami::compress_sparse_triplets<true>(NR, NC, vals, rows, cols);
+    
+    std::stringstream stream;
+    write_matrix_market(stream, NR, NC, vals, rows, cols);
+    auto stuff = stream.str();
+
+    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+    const auto& out = loaded.matrix;
+
+    // Creating a reference.
+    typedef tatami::CompressedSparseRowMatrix<double, int, decltype(vals), decltype(cols), decltype(indptrs)> SparseMat; 
+    auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, vals, cols, indptrs)); 
+
+    for (size_t i = 0; i < NR; ++i) {
+        int adjusted = loaded.permutation[i];
+        auto stuff = out->row(adjusted);
+        EXPECT_EQ(stuff, ref->row(i));
+    }
+}
+
+TEST_P(MatrixMarketBufferTest, LayeredByColumn) {
+    dump(GetParam());
+
+    // Sorting by column.
+    auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
+
+    std::stringstream stream;
+    write_matrix_market(stream, NR, NC, vals, rows, cols);
+    auto stuff = stream.str();
+
+    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+    const auto& out = loaded.matrix;
+
+    // Creating a reference.
+    typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
+    auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, vals, rows, indptrs)); 
+
+    for (size_t i = 0; i < NR; ++i) {
+        int adjusted = loaded.permutation[i];
+        auto stuff = out->row(adjusted);
+        EXPECT_EQ(stuff, ref->row(i));
     }
 }
 
