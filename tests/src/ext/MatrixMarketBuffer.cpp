@@ -323,6 +323,31 @@ TEST(MatrixMarketTest, ComplexLayered) {
     }
 }
 
+TEST(MatrixMarketTest, ManyRows) {
+    size_t NR = 100000; // past the 16-bit limit; making sure that the dispatch to a larger int type works correctly.
+    size_t NC = 10;
+
+    std::vector<size_t> rows, cols;
+    std::vector<int> vals;
+    mock_layered_sparse_data<false>(NR, NC, rows, cols, vals);
+
+    std::stringstream stream;
+    write_matrix_market(stream, NR, NC, vals, rows, cols);
+    auto stuff = stream.str();
+
+    auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+
+    // Checking against a reference.
+    auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
+    typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
+    auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
+
+    for (size_t i = 0; i < NR; ++i) {
+        auto stuff = out.matrix->row(out.permutation[i]);
+        EXPECT_EQ(stuff, ref->row(i));
+    }
+}
+
 TEST(MatrixMarketTest, EmptyLayered) {
     {
         // Get some coverage on the cases where there are no columns.
