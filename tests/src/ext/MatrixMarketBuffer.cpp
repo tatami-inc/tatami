@@ -8,6 +8,8 @@
 #include <string>
 #include <vector>
 
+#include "mock_layered_sparse_data.h"
+
 class MatrixMarketBufferTest : public ::testing::TestWithParam<std::tuple<int, int, IntVec, IntVec, IntVec> > {
 protected:
     size_t NR, NC;
@@ -271,3 +273,52 @@ TEST(MatrixMarketTest, EdgeCases) {
     }
 }
 
+TEST(MatrixMarketTest, ComplexLayered) {
+    size_t NR = 1000;
+    size_t NC = 10;
+
+    {
+        std::vector<size_t> rows, cols;
+        std::vector<int> vals;
+        mock_layered_sparse_data<false>(NR, NC, rows, cols, vals);
+
+        std::stringstream stream;
+        write_matrix_market(stream, NR, NC, vals, rows, cols);
+        auto stuff = stream.str();
+
+        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+
+        // Checking against a reference.
+        auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
+        typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
+        auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
+
+        for (size_t i = 0; i < NR; ++i) {
+            auto stuff = out.matrix->row(out.permutation[i]);
+            EXPECT_EQ(stuff, ref->row(i));
+        }
+    }
+
+    // Checking in the other orientation. 
+    {
+        std::vector<size_t> rows, cols;
+        std::vector<int> vals;
+        mock_layered_sparse_data<true>(NR, NC, rows, cols, vals);
+
+        std::stringstream stream;
+        write_matrix_market(stream, NR, NC, vals, rows, cols);
+        auto stuff = stream.str();
+
+        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+
+        // Checking against a reference.
+        auto indptrs = tatami::compress_sparse_triplets<true>(NR, NC, vals, rows, cols);
+        typedef tatami::CompressedSparseRowMatrix<double, int, decltype(vals), decltype(cols), decltype(indptrs)> SparseMat; 
+        auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(cols), std::move(indptrs))); 
+
+        for (size_t i = 0; i < NR; ++i) {
+            auto stuff = out.matrix->row(out.permutation[i]);
+            EXPECT_EQ(stuff, ref->row(i));
+        }
+    }
+}
