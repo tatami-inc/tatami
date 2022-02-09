@@ -12,6 +12,7 @@
 
 #include "MatrixMarket.hpp"
 #include "LayeredMatrixData.hpp"
+#include "layered_utils.hpp"
 
 #include "buffin/parse_text_file.hpp"
 
@@ -37,14 +38,50 @@ struct LineAssignments {
     LineAssignments() : rows_per_category(3), lines_per_category(3) {}
 
 public:
-    std::vector<uint8_t> category;
+    bool sorted_by_column = true, sorted_by_row = true;
+    size_t lastrow = 0, lastcol = 0;
+
+    // For use with row-major extraction.
+    std::vector<size_t> by_row_ptr8, by_row_ptr16, by_row_ptr32;
+    std::vector<size_t> by_row_buffered_index;
+
+    // For general use, computed on the run.
+    std::vector<int> category;
+    std::vector<size_t> lines_per_row;
+
+    // For later use, computed in finish().
+    std::vector<size_t> lines_per_category;
     std::vector<size_t> index;
     std::vector<size_t> rows_per_category;
-    std::vector<size_t> lines_per_category;
-    std::vector<size_t> lines_per_row;
     std::vector<size_t> permutation;
 
     size_t nrows, ncols;
+
+private:
+    void update_row_data() {
+        if (by_row_buffered_index.empty()) {
+            return;
+        }
+
+        int cat = category[lastrow];
+        for (auto idx : by_row_buffered_index) {
+            ++idx; // shift up 1 for the CSC pointers.
+            switch (cat) {
+                case 0:
+                    ++(by_row_ptr8[idx]);
+                    break;
+                case 1:
+                    ++(by_row_ptr16[idx]);
+                    break;
+                case 2:
+                    ++(by_row_ptr32[idx]);
+                    break;
+                default:
+                    break;
+            }
+        }
+        by_row_buffered_index.clear();
+    }
 
 public:
     void setdim(size_t currow, size_t curcol, size_t) {
@@ -52,22 +89,44 @@ public:
         ncols = curcol;
 
         category.resize(nrows);
-        index.resize(nrows);
-        permutation.resize(nrows);
         lines_per_row.resize(nrows);
+
+        by_row_ptr8.resize(ncols + 1);
+        by_row_ptr16.resize(ncols + 1);
+        by_row_ptr32.resize(ncols + 1);
+        by_row_buffered_index.reserve(ncols);
+
         return;
     }
 
     void addline(size_t row, size_t col, size_t data, size_t) {
-        // Assigning each line to a block based on its integer size.
-        constexpr int max8 = std::numeric_limits<uint8_t>::max();
-        constexpr int max16 = std::numeric_limits<uint16_t>::max();
-
-        if (data > max16) {
-            category[row] = std::max(category[row], static_cast<uint8_t>(2));
-        } else if (data > max8) {
-            category[row] = std::max(category[row], static_cast<uint8_t>(1));
+        // No need to check for negative values in 'data' when 'data' is an
+        // unsigned type. To be honest, not much point checking for zeros
+        // either, but we might as well try to prune them out.
+        if (data == 0) {
+            return;
         }
+
+        auto chosen = layered_utils::categorize_row(data);
+        if (chosen > category[row]) {
+            category[row] = chosen;
+        }
+
+        if (sorted_by_row && (row < lastrow || (row == lastrow && col <= lastcol))) {
+            sorted_by_row = false;
+        } else {
+            if (row != lastrow) {
+                update_row_data();
+            }
+            by_row_buffered_index.push_back(col);
+        }
+
+        if (sorted_by_column && (col < lastcol || (col == lastcol && row <= lastrow))) {
+            sorted_by_column = false;
+        }
+
+        lastrow = row;
+        lastcol = col;
 
         ++lines_per_row[row];
         return;
@@ -84,31 +143,24 @@ public:
 
     void finish() {
         base.finish(*this);
+
+        if (sorted_by_row) {
+            update_row_data();
+            layered_utils::counts_to_offsets(by_row_ptr8);
+            layered_utils::counts_to_offsets(by_row_ptr16);
+            layered_utils::counts_to_offsets(by_row_ptr32);
+        }
         
         // Computing the number of features and lines in each block.
-        auto iIt = index.begin();
-        auto cIt = lines_per_row.begin();
-        for (auto f : category) {
-            auto& current = rows_per_category[f];
-
-            (*iIt) = current;
-            ++current;
-            ++iIt;
-
-            lines_per_category[f] += *cIt;
-            ++cIt;
+        for (size_t i = 0; i < category.size(); ++i) {
+            lines_per_category[category[i]] += lines_per_row[i];
         }
 
         // Computing the permutation.
-        auto cumsum = rows_per_category;
-        size_t last = 0;
-        for (auto& x : cumsum) {
-            std::swap(x, last);
-            last += x;
-        }
-        for (size_t i = 0; i < nrows; ++i) {
-            permutation[i] = cumsum[category[i]] + index[i];
-        }
+        auto remap = layered_utils::compute_new_indices<size_t>(category);
+        rows_per_category.swap(remap.per_category);
+        index.swap(remap.new_indices);
+        permutation.swap(remap.permutation);
 
         return;
     }
@@ -121,18 +173,230 @@ public:
  * @cond
  */
 template<typename ROW>
-struct LayeredBuilder {
-    LayeredBuilder(const LineAssignments* ass) : 
+struct LayeredBuilderByRow {
+    LayeredBuilderByRow(const LineAssignments* ass) :
         assign(ass),
-        row8(assign->lines_per_category[0]),
-        col8(assign->lines_per_category[0]),
-        dat8(assign->lines_per_category[0]),
-        row16(assign->lines_per_category[1]),
-        col16(assign->lines_per_category[1]),
-        dat16(assign->lines_per_category[1]),
-        row32(assign->lines_per_category[2]),
-        col32(assign->lines_per_category[2]),
-        dat32(assign->lines_per_category[2]) {}
+
+        off8(ass->by_row_ptr8),
+        row8(off8.back()),
+        dat8(off8.back()),
+
+        off16(ass->by_row_ptr16),
+        row16(off16.back()),
+        dat16(off16.back()),
+
+        off32(ass->by_row_ptr32),
+        row32(off32.back()),
+        dat32(off32.back())
+    {}
+
+public:
+    const LineAssignments* assign;
+
+    std::vector<size_t>   off8;
+    std::vector<ROW>      row8;
+    std::vector<uint8_t>  dat8;
+
+    std::vector<size_t>   off16;
+    std::vector<ROW>      row16;
+    std::vector<uint16_t> dat16;
+
+    std::vector<size_t>   off32;
+    std::vector<ROW>      row32;
+    std::vector<uint32_t> dat32;
+
+public:
+    void setdim(size_t, size_t, size_t) {}
+
+    void addline(size_t row, size_t col, size_t data, size_t) {
+        if (data == 0) { // match the LayeredAssignments behavior.
+            return;
+        }
+
+        auto idx = assign->index[row];
+        switch (assign->category[row]) {
+            case 0:
+                {
+                    auto& counter8 = off8[col];
+                    row8[counter8] = idx;
+                    dat8[counter8] = data;
+                    ++counter8;
+                }
+                break;
+            case 1:
+                {
+                    auto& counter16 = off16[col];
+                    row16[counter16] = idx;
+                    dat16[counter16] = data;
+                    ++counter16;
+                }
+                break;
+            case 2:
+                {
+                    auto& counter32 = off32[col];
+                    row32[counter32] = idx;
+                    dat32[counter32] = data;
+                    ++counter32;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+public:
+    BaseMMParser base;
+
+    template<typename B>
+    void add(const B* buffer, size_t n) {
+        base.add(buffer, n, *this);
+        return;
+    }
+
+    template<typename T, typename IDX>
+    std::shared_ptr<Matrix<T, IDX> > finish() {
+        base.finish(*this);
+        
+        return layered_utils::consolidate_submatrices<T, IDX>(
+            assign->rows_per_category,
+            std::move(row8),
+            std::move(dat8),
+            std::move(assign->by_row_ptr8),
+            std::move(row16),
+            std::move(dat16),
+            std::move(assign->by_row_ptr16),
+            std::move(row32),
+            std::move(dat32),
+            std::move(assign->by_row_ptr32));
+    }
+};
+/**
+ * @endcond
+ */
+
+/**
+ * @cond
+ */
+template<typename ROW>
+struct LayeredBuilderByColumn {
+    LayeredBuilderByColumn(const LineAssignments* ass) : 
+        assign(ass),
+        ptr8(ass->ncols + 1),
+        ptr16(ass->ncols + 1),
+        ptr32(ass->ncols + 1)
+    {
+        row8.reserve(assign->lines_per_category[0]);
+        dat8.reserve(assign->lines_per_category[0]);
+
+        row16.reserve(assign->lines_per_category[1]);
+        dat16.reserve(assign->lines_per_category[1]);
+
+        row32.reserve(assign->lines_per_category[2]);
+        dat32.reserve(assign->lines_per_category[2]);
+
+        return;
+    }
+
+public:
+    const LineAssignments* assign;
+
+    std::vector<ROW>      row8;
+    std::vector<uint8_t>  dat8;
+    std::vector<size_t>   ptr8;
+
+    std::vector<ROW>      row16;
+    std::vector<uint16_t> dat16;
+    std::vector<size_t>   ptr16;
+
+    std::vector<ROW>      row32;
+    std::vector<uint32_t> dat32;
+    std::vector<size_t>   ptr32;
+
+public:
+    void setdim(size_t, size_t, size_t) {}
+
+    void addline(size_t row, size_t col, size_t data, size_t) {
+        if (data == 0) { // match the LayeredAssignments behavior.
+            return;
+        }
+
+        auto idx = assign->index[row];
+        ++col;
+
+        switch (assign->category[row]) {
+            case 0:
+                row8.push_back(idx);
+                dat8.push_back(data);
+                ++ptr8[col];
+                break;
+            case 1:
+                row16.push_back(idx);
+                dat16.push_back(data);
+                ++ptr16[col];
+                break;
+            case 2:
+                row32.push_back(idx);
+                dat32.push_back(data);
+                ++ptr32[col];
+                break;
+            default:
+                break;
+        }
+    }
+
+public:
+    BaseMMParser base;
+
+    template<typename B>
+    void add(const B* buffer, size_t n) {
+        base.add(buffer, n, *this);
+        return;
+    }
+
+    template<typename T, typename IDX>
+    std::shared_ptr<Matrix<T, IDX> > finish() {
+        base.finish(*this);
+        
+        layered_utils::counts_to_offsets(ptr8);
+        layered_utils::counts_to_offsets(ptr16);
+        layered_utils::counts_to_offsets(ptr32);
+
+        return layered_utils::consolidate_submatrices<T, IDX>(
+            assign->rows_per_category,
+            std::move(row8),
+            std::move(dat8),
+            std::move(ptr8),
+            std::move(row16),
+            std::move(dat16),
+            std::move(ptr16),
+            std::move(row32),
+            std::move(dat32),
+            std::move(ptr32));
+    }
+};
+/**
+ * @endcond
+ */
+
+/**
+ * @cond
+ */
+template<typename ROW>
+struct LayeredBuilderUnsorted {
+    LayeredBuilderUnsorted(const LineAssignments* ass) : assign(ass) {
+        row8.reserve(assign->lines_per_category[0]);
+        col8.reserve(assign->lines_per_category[0]);
+        dat8.reserve(assign->lines_per_category[0]);
+
+        row16.reserve(assign->lines_per_category[1]);
+        col16.reserve(assign->lines_per_category[1]);
+        dat16.reserve(assign->lines_per_category[1]);
+
+        row32.reserve(assign->lines_per_category[2]);
+        col32.reserve(assign->lines_per_category[2]);
+        dat32.reserve(assign->lines_per_category[2]);
+        return;
+    }
 
 public:
     const LineAssignments* assign;
@@ -140,41 +404,39 @@ public:
     std::vector<ROW>      row8;
     std::vector<uint32_t> col8;
     std::vector<uint8_t>  dat8;
-    size_t counter8 = 0;
 
     std::vector<ROW>      row16;
     std::vector<uint32_t> col16;
     std::vector<uint16_t> dat16;
-    size_t counter16 = 0;
 
     std::vector<ROW>      row32;
     std::vector<uint32_t> col32;
     std::vector<uint32_t> dat32;
-    size_t counter32 = 0;
 
 public:
     void setdim(size_t, size_t, size_t) {}
 
     void addline(size_t row, size_t col, size_t data, size_t line) {
+        if (data == 0) { // match the LayeredAssignments behavior.
+            return;
+        }
+
         auto idx = assign->index[row];
         switch (assign->category[row]) {
         case 0:
-            row8[counter8] = idx;
-            col8[counter8] = col;
-            dat8[counter8] = data;
-            ++counter8;
+            row8.push_back(idx);
+            col8.push_back(col);
+            dat8.push_back(data);
             break;
         case 1:
-            row16[counter16] = idx;
-            col16[counter16] = col;
-            dat16[counter16] = data;
-            ++counter16;
+            row16.push_back(idx);
+            col16.push_back(col);
+            dat16.push_back(data);
             break;
         case 2:
-            row32[counter32] = idx;
-            col32[counter32] = col;
-            dat32[counter32] = data;
-            ++counter32;
+            row32.push_back(idx);
+            col32.push_back(col);
+            dat32.push_back(data);
             break;
         }
     }
@@ -212,13 +474,7 @@ public:
             collated.push_back(create_sparse_matrix<T, IDX>(ass.rows_per_category[2], ass.ncols, dat32, row32, col32));
         }
 
-        if (collated.size() == 0) {
-            return create_sparse_matrix<T, IDX>(0, ass.ncols, dat8, row8, col8);
-        } else if (collated.size() == 1) { 
-            return collated[0];
-        } else {
-            return make_DelayedBind<0>(std::move(collated));
-        }
+        return layered_utils::consolidate_submatrices(std::move(collated), ass.ncols);
     }
 };
 /**
@@ -228,27 +484,40 @@ public:
 /**
  * @cond
  */
+template<typename T = double, typename IDX = int, typename RowIndex, class Function>
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(LineAssignments& ass, Function& process) {
+    LayeredMatrixData<T, IDX> output;
+    output.permutation = ass.permutation;
+
+    if (ass.sorted_by_column) {
+        LayeredBuilderByColumn<RowIndex> builder(&ass);
+        process(builder);
+        output.matrix = builder.template finish<T, IDX>();
+    } else if (ass.sorted_by_row) {
+        LayeredBuilderByRow<RowIndex> builder(&ass);
+        process(builder);
+        output.matrix = builder.template finish<T, IDX>();
+    } else {
+        LayeredBuilderUnsorted<RowIndex> builder(&ass);
+        process(builder);
+        output.matrix = builder.template finish<T, IDX>();
+    }
+
+    return output;
+}
+
 template<typename T = double, typename IDX = int, class Function>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Function process) {
     LineAssignments ass;
     process(ass);
     ass.finish();
 
-    LayeredMatrixData<T, IDX> output;
-    output.permutation = ass.permutation;
-
     constexpr size_t max16 = std::numeric_limits<uint16_t>::max();
-    if (ass.nrows > max16) {
-        LayeredBuilder<uint16_t> builder(&ass);
-        process(builder);
-        output.matrix = builder.template finish<T, IDX>();
+    if (ass.nrows <= max16) {
+        return load_layered_sparse_matrix_internal<T, IDX, uint16_t>(ass, process);
     } else {
-        LayeredBuilder<IDX> builder(&ass);
-        process(builder);
-        output.matrix = builder.template finish<T, IDX>();
+        return load_layered_sparse_matrix_internal<T, IDX, IDX>(ass, process);
     }
-
-    return output;
 }
 /**
  * @endcond
