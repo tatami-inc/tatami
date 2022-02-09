@@ -357,6 +357,10 @@ public:
     std::shared_ptr<Matrix<T, IDX> > finish() {
         base.finish(*this);
         
+        layered_utils::counts_to_offsets(ptr8);
+        layered_utils::counts_to_offsets(ptr16);
+        layered_utils::counts_to_offsets(ptr32);
+
         return layered_utils::consolidate_submatrices<T, IDX>(
             assign->rows_per_category,
             std::move(row8),

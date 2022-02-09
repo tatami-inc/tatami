@@ -53,7 +53,11 @@ TEST_P(MatrixMarketBufferTest, Layered) {
     ass.add(stuff.c_str(), stuff.size());
     ass.finish();
 
-    EXPECT_EQ(std::accumulate(ass.lines_per_category.begin(), ass.lines_per_category.end(), 0), rows.size());
+    size_t nonzeros = 0;
+    for (auto& i : vals) { 
+        nonzeros += (i != 0);
+    }
+    EXPECT_EQ(std::accumulate(ass.lines_per_category.begin(), ass.lines_per_category.end(), 0), nonzeros);
     EXPECT_EQ(ass.lines_per_category.size(), 3);
 
     EXPECT_EQ(std::accumulate(ass.rows_per_category.begin(), ass.rows_per_category.end(), 0), NR);
@@ -102,6 +106,7 @@ INSTANTIATE_TEST_CASE_P(
     ::testing::Values(
         std::make_tuple(
             // this example guarantees a few rows in each chunk.
+            // (the zero is deliberate, we want to check that it gets properly removed).
             10,
             5,
             IntVec{ 1, 5, 8, 2, 9, 0, 4 }, 
