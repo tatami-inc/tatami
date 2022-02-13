@@ -107,7 +107,7 @@ private:
 template<class MAT>
 std::shared_ptr<MAT> make_DelayedTranspose(std::shared_ptr<MAT> p) {
     return std::shared_ptr<MAT>(
-        new DelayedTranspose<typename MAT::value, typename MAT::index>(std::move(p))
+        new DelayedTranspose<typename MAT::data_type, typename MAT::index_type>(std::move(p))
     );
 }
 

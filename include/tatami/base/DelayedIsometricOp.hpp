@@ -145,7 +145,7 @@ private:
 template<class MAT, class OP>
 std::shared_ptr<MAT> make_DelayedIsometricOp(std::shared_ptr<MAT> p, OP op) {
     return std::shared_ptr<MAT>(
-        new DelayedIsometricOp<typename MAT::value, typename MAT::index, typename std::remove_reference<OP>::type>(
+        new DelayedIsometricOp<typename MAT::data_type, typename MAT::index_type, typename std::remove_reference<OP>::type>(
             p,
             std::move(op)
         )

@@ -327,7 +327,7 @@ private:
 template<int MARGIN, class MAT>
 std::shared_ptr<MAT> make_DelayedBind(std::vector<std::shared_ptr<MAT> > ps) {
     return std::shared_ptr<MAT>(
-        new DelayedBind<MARGIN, typename MAT::value, typename MAT::index>(std::move(ps))
+        new DelayedBind<MARGIN, typename MAT::data_type, typename MAT::index_type>(std::move(ps))
     );
 }
 

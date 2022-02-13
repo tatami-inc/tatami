@@ -320,7 +320,7 @@ private:
 template<int MARGIN, class MAT, class V>
 std::shared_ptr<MAT> make_DelayedSubset(std::shared_ptr<MAT> p, V idx) {
     return std::shared_ptr<MAT>(
-        new DelayedSubset<MARGIN, typename MAT::value, typename MAT::index, typename std::remove_reference<V>::type>(
+        new DelayedSubset<MARGIN, typename MAT::data_type, typename MAT::index_type, typename std::remove_reference<V>::type>(
             p,
             std::move(idx)
         )

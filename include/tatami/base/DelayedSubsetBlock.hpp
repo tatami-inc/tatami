@@ -176,7 +176,7 @@ private:
 template<int MARGIN, class MAT>
 std::shared_ptr<MAT> make_DelayedSubsetBlock(std::shared_ptr<MAT> p, size_t f, size_t l) {
     return std::shared_ptr<MAT>(
-        new DelayedSubsetBlock<MARGIN, typename MAT::value, typename MAT::index>(
+        new DelayedSubsetBlock<MARGIN, typename MAT::data_type, typename MAT::index_type>(
             p,
             f,
             l

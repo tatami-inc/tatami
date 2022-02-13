@@ -15,7 +15,7 @@ namespace tatami {
 /**
  * @brief Virtual class for a matrix with a defined type.
  * 
- * @tparam T Type of the matrix values.
+ * @tparam T Type of the matrix data.
  * @tparam IDX Type of the row/column indices.
  */
 template <typename T, typename IDX = int>
@@ -24,14 +24,14 @@ public:
     virtual ~Matrix() {}
 
     /** 
-     * Type of the value to be returned by getters.
+     * Type of data to be returned by getters.
      */
-    typedef T value;
+    typedef T data_type;
 
     /** 
-     * Type of the index to be returned by the sparse getters.
+     * Type of index to be returned by the sparse getters.
      */
-    typedef IDX index;
+    typedef IDX index_type;
 public:
     /**
      * @return Number of rows.
