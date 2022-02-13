@@ -30,6 +30,8 @@ add_executable(
     src/stats/apply.cpp
     src/utils/wrap_shared_ptr.cpp
     src/utils/NakedArray.cpp
+    src/utils/convert_to_dense.cpp
+    src/utils/convert_to_sparse.cpp
     src/data/data_sparse.cpp
     src/data/data_triangular.cpp
 )

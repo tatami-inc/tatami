@@ -18,7 +18,7 @@ protected:
 protected:
     void SetUp() {
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-        sparse = tatami::convert_to_sparse(dense.get(), false); // column major.
+        sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
         return;
     }
 };

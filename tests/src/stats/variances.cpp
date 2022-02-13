@@ -20,9 +20,9 @@ void compare_double_vectors (const L& left, const R& right) {
 
 TEST(ComputingDimVariances, RowVariances) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     // Doing the difference of squares as a quick-and-dirty reference.
     auto ref = tatami::row_variances(dense_row.get());
@@ -48,9 +48,9 @@ TEST(ComputingDimVariances, RowVariances) {
 
 TEST(ComputingDimVariances, ColumnVariances) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     // Doing the difference of squares as a quick-and-dirty reference.
     auto ref = tatami::column_variances(dense_row.get());
@@ -107,7 +107,7 @@ TEST(ComputingDimVariances, Configuration) {
 
 TEST(RunningVariances, SensibleZeros) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
     size_t NR = sparse_column->nrow();
     size_t NC = sparse_column->ncol();
 

@@ -11,9 +11,9 @@
 
 TEST(ComputingDimMins, RowMins) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto ref = tatami::row_mins(dense_row.get());
     std::vector<double> expected(sparse_nrow);
@@ -32,9 +32,9 @@ TEST(ComputingDimMins, RowMins) {
 
 TEST(ComputingDimMins, ColumnMins) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto ref = tatami::column_mins(dense_row.get());
     std::vector<double> expected(sparse_ncol);
@@ -74,9 +74,9 @@ TEST(ComputingDimMins, Configuration) {
 
 TEST(ComputingDimMaxs, RowMaxs) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto ref = tatami::row_maxs(dense_row.get());
     std::vector<double> expected(sparse_nrow);
@@ -95,9 +95,9 @@ TEST(ComputingDimMaxs, RowMaxs) {
 
 TEST(ComputingDimMaxs, ColumnMaxs) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto ref = tatami::column_maxs(dense_row.get());
     std::vector<double> expected(sparse_ncol);
@@ -118,9 +118,9 @@ TEST(ComputingDimMaxs, ColumnMaxs) {
 
 TEST(ComputingDimRanges, RowRanges) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto ref = tatami::row_ranges(dense_row.get());
     EXPECT_EQ(ref.first, tatami::row_mins(dense_row.get()));
@@ -133,9 +133,9 @@ TEST(ComputingDimRanges, RowRanges) {
 
 TEST(ComputingDimRanges, ColumnRanges) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto ref = tatami::column_ranges(dense_row.get());
     EXPECT_EQ(ref.first, tatami::column_mins(dense_row.get()));
@@ -170,8 +170,8 @@ TEST(ComputingDimRanges, Configuration) {
 TEST(ComputingDimRanges, AllZeros) {
     // Testing for correct sparse behavior with all-zeros.
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(10, 20, std::vector<double>(200)));
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto cref = std::make_pair(std::vector<double>(20), std::vector<double>(20));
     EXPECT_EQ(cref, tatami::column_ranges(dense_row.get()));
@@ -192,8 +192,8 @@ TEST(ComputingDimRanges, NoZeros) {
     }
 
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(10, 20, stuff));
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto cref = tatami::column_ranges(dense_row.get());
     EXPECT_EQ(cref, tatami::column_ranges(sparse_row.get()));

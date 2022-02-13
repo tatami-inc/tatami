@@ -34,7 +34,7 @@ void permuter(U& values, V& rows, V& cols, U& values2, V& rows2, V& cols2) {
 
 TEST(compress_sparse_triplets, CompressionByColumn) {
     tatami::DenseRowMatrix<double> dense(sparse_nrow, sparse_ncol, sparse_matrix);
-    auto sparse = tatami::convert_to_sparse(&dense, false);
+    auto sparse = tatami::convert_to_sparse<false>(&dense);
 
     std::vector<int> rows, cols;
     std::vector<double> values;
@@ -66,7 +66,7 @@ TEST(compress_sparse_triplets, CompressionByColumn) {
 
 TEST(compress_sparse_triplets, CompressionByRow) {
     tatami::DenseRowMatrix<double> dense(sparse_nrow, sparse_ncol, sparse_matrix);
-    auto sparse = tatami::convert_to_sparse(&dense, true);
+    auto sparse = tatami::convert_to_sparse<true>(&dense);
 
     std::vector<int> rows, cols;
     std::vector<double> values;

@@ -37,7 +37,7 @@ template<typename T>
 struct SparseDetails {
     std::vector<T> value;
     std::vector<int> index;
-    std::vector<long> ptr;
+    std::vector<size_t> ptr;
 };
 
 template<typename T>

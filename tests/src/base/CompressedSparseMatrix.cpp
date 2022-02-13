@@ -37,8 +37,8 @@ protected:
 
     void assemble() {
         dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulate_sparse_vector<double>(nrow * ncol, 0.05)));
-        sparse_row = tatami::convert_to_sparse(dense.get(), true);
-        sparse_column = tatami::convert_to_sparse(dense.get(), false);
+        sparse_row = tatami::convert_to_sparse<true>(dense.get());
+        sparse_column = tatami::convert_to_sparse<false>(dense.get());
         return;
     }
 };

@@ -35,9 +35,9 @@ void parallelize(size_t n, Function f) {
 
 TEST(ComputingDimsums, RowSums) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto ref = tatami::row_sums(dense_row.get());
     std::vector<double> expected(sparse_nrow);
@@ -55,9 +55,9 @@ TEST(ComputingDimsums, RowSums) {
 
 TEST(ComputingDimsums, ColumnSums) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-    auto dense_column = tatami::convert_to_dense(dense_row.get(), false);
-    auto sparse_row = tatami::convert_to_sparse(dense_row.get(), true);
-    auto sparse_column = tatami::convert_to_sparse(dense_row.get(), false);
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto ref = tatami::column_sums(dense_row.get());
     std::vector<double> expected(sparse_ncol);
