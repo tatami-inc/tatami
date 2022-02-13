@@ -83,10 +83,10 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-types" name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a748cb0b5464085347243c9d26a300005"><td class="memItemLeft" align="right" valign="top">typedef T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a748cb0b5464085347243c9d26a300005">value</a></td></tr>
-<tr class="separator:a748cb0b5464085347243c9d26a300005"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f8a0b1b3493d8ae573d8157fcff1c90"><td class="memItemLeft" align="right" valign="top">typedef IDX&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90">index</a></td></tr>
-<tr class="separator:a0f8a0b1b3493d8ae573d8157fcff1c90"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f97683e1dbef330caadc258b0c404b5"><td class="memItemLeft" align="right" valign="top">typedef T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a8f97683e1dbef330caadc258b0c404b5">data_type</a></td></tr>
+<tr class="separator:a8f97683e1dbef330caadc258b0c404b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09b8f1870fe7f6c40fa5426f11ff82f4"><td class="memItemLeft" align="right" valign="top">typedef IDX&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a09b8f1870fe7f6c40fa5426f11ff82f4">index_type</a></td></tr>
+<tr class="separator:a09b8f1870fe7f6c40fa5426f11ff82f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -156,14 +156,14 @@ Public Member Functions</h2></td></tr>
 class tatami::Matrix&lt; T, IDX &gt;</div><p >Virtual class for a matrix with a defined type. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>Type of the matrix values. </td></tr>
+    <tr><td class="paramname">T</td><td>Type of the matrix data. </td></tr>
     <tr><td class="paramname">IDX</td><td>Type of the row/column indices. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
-<a id="a0f8a0b1b3493d8ae573d8157fcff1c90" name="a0f8a0b1b3493d8ae573d8157fcff1c90"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0f8a0b1b3493d8ae573d8157fcff1c90">&#9670;&nbsp;</a></span>index</h2>
+<a id="a8f97683e1dbef330caadc258b0c404b5" name="a8f97683e1dbef330caadc258b0c404b5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f97683e1dbef330caadc258b0c404b5">&#9670;&nbsp;</a></span>data_type</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -171,16 +171,16 @@ class tatami::Matrix&lt; T, IDX &gt;</div><p >Virtual class for a matrix with a 
 template&lt;typename T , typename IDX  = int&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef IDX <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt;::index</td>
+          <td class="memname">typedef T <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt;::data_type</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Type of the index to be returned by the sparse getters. </p>
+<p >Type of data to be returned by getters. </p>
 
 </div>
 </div>
-<a id="a748cb0b5464085347243c9d26a300005" name="a748cb0b5464085347243c9d26a300005"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a748cb0b5464085347243c9d26a300005">&#9670;&nbsp;</a></span>value</h2>
+<a id="a09b8f1870fe7f6c40fa5426f11ff82f4" name="a09b8f1870fe7f6c40fa5426f11ff82f4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a09b8f1870fe7f6c40fa5426f11ff82f4">&#9670;&nbsp;</a></span>index_type</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -188,11 +188,11 @@ template&lt;typename T , typename IDX  = int&gt; </div>
 template&lt;typename T , typename IDX  = int&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">typedef T <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt;::value</td>
+          <td class="memname">typedef IDX <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt;::index_type</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Type of the value to be returned by getters. </p>
+<p >Type of index to be returned by the sparse getters. </p>
 
 </div>
 </div>

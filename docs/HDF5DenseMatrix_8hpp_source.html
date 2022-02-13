@@ -351,7 +351,7 @@ $(function() {
 <div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>        }</div>
 <div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span> </div>
 <div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>        <span class="keywordtype">size_t</span> chunk = i / cache_mydim;</div>
-<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>        <span class="keywordtype">size_t</span> <a class="code hl_typedef" href="classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90">index</a> = i % cache_mydim;</div>
+<div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>        <span class="keywordtype">size_t</span> index = i % cache_mydim;</div>
 <div class="line"><a id="l00345" name="l00345"></a><span class="lineno">  345</span> </div>
 <div class="line"><a id="l00346" name="l00346"></a><span class="lineno">  346</span>        <span class="comment">// If we&#39;re in the same chunk for &#39;i&#39; and the &#39;first&#39;/&#39;last&#39; are within</span></div>
 <div class="line"><a id="l00347" name="l00347"></a><span class="lineno">  347</span>        <span class="comment">// range, we re-use the cache.  In theory, we could minimize</span></div>
@@ -430,7 +430,7 @@ $(function() {
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span>            work.cached_chunk = chunk;</div>
 <div class="line"><a id="l00421" name="l00421"></a><span class="lineno">  421</span>        }</div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span> </div>
-<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>        <span class="keyword">auto</span> start = work.cache.begin() + <a class="code hl_typedef" href="classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90">index</a> * (work.cached_last - work.cached_first);</div>
+<div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span>        <span class="keyword">auto</span> start = work.cache.begin() + index * (work.cached_last - work.cached_first);</div>
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>        std::copy(</div>
 <div class="line"><a id="l00425" name="l00425"></a><span class="lineno">  425</span>            start + (first - work.cached_first), </div>
 <div class="line"><a id="l00426" name="l00426"></a><span class="lineno">  426</span>            start + (last - work.cached_first), </div>
@@ -499,7 +499,6 @@ $(function() {
 <div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_a8f75d095251002a518febb91a4905b37"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#a8f75d095251002a518febb91a4905b37">tatami::HDF5DenseMatrix::ncol</a></div><div class="ttdeci">size_t ncol() const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:207</div></div>
 <div class="ttc" id="aclasstatami_1_1HDF5DenseMatrix_html_aa2103edb0c68e673419a06f73793df82"><div class="ttname"><a href="classtatami_1_1HDF5DenseMatrix.html#aa2103edb0c68e673419a06f73793df82">tatami::HDF5DenseMatrix::column</a></div><div class="ttdeci">const T * column(size_t c, T *buffer, size_t first, size_t last, Workspace *work=nullptr) const</div><div class="ttdef"><b>Definition:</b> HDF5DenseMatrix.hpp:471</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="classtatami_1_1Matrix.html">tatami::Matrix</a></div><div class="ttdoc">Virtual class for a matrix with a defined type.</div><div class="ttdef"><b>Definition:</b> Matrix.hpp:22</div></div>
-<div class="ttc" id="aclasstatami_1_1Matrix_html_a0f8a0b1b3493d8ae573d8157fcff1c90"><div class="ttname"><a href="classtatami_1_1Matrix.html#a0f8a0b1b3493d8ae573d8157fcff1c90">tatami::Matrix&lt; T, IDX &gt;::index</a></div><div class="ttdeci">IDX index</div><div class="ttdef"><b>Definition:</b> Matrix.hpp:34</div></div>
 <div class="ttc" id="aclasstatami_1_1Workspace_html"><div class="ttname"><a href="classtatami_1_1Workspace.html">tatami::Workspace</a></div><div class="ttdoc">Virtual workspace class.</div><div class="ttdef"><b>Definition:</b> Workspace.hpp:19</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

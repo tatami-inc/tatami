@@ -339,7 +339,7 @@ $(function() {
 <div class="line"><a id="l00327" name="l00327"></a><span class="lineno">  327</span><span class="keyword">template</span>&lt;<span class="keywordtype">int</span> MARGIN, <span class="keyword">class</span> MAT&gt;</div>
 <div class="line"><a id="l00328" name="l00328"></a><span class="lineno"><a class="line" href="DelayedBind_8hpp.html#ac019a143af4fd0eb34f530527a424888">  328</a></span>std::shared_ptr&lt;MAT&gt; <a class="code hl_function" href="DelayedBind_8hpp.html#ac019a143af4fd0eb34f530527a424888">make_DelayedBind</a>(std::vector&lt;std::shared_ptr&lt;MAT&gt; &gt; ps) {</div>
 <div class="line"><a id="l00329" name="l00329"></a><span class="lineno">  329</span>    <span class="keywordflow">return</span> std::shared_ptr&lt;MAT&gt;(</div>
-<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>        <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1DelayedBind.html">DelayedBind&lt;MARGIN, typename MAT::value, typename MAT::index&gt;</a>(std::move(ps))</div>
+<div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span>        <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1DelayedBind.html">DelayedBind&lt;MARGIN, typename MAT::data_type, typename MAT::index_type&gt;</a>(std::move(ps))</div>
 <div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>    );</div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>}</div>
 <div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span> </div>

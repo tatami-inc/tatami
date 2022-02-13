@@ -78,87 +78,38 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a6adcda6782e4cfcf812feba56500acc4"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a6adcda6782e4cfcf812feba56500acc4"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="convert__to__sparse_8hpp.html#a6adcda6782e4cfcf812feba56500acc4">tatami::convert_to_sparse</a> (const Matrix&lt; T, IDX &gt; *incoming, bool row, double reserve=0.2)</td></tr>
-<tr class="separator:a6adcda6782e4cfcf812feba56500acc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d3ec45fcd43899c13e160097c7df6b9"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a4d3ec45fcd43899c13e160097c7df6b9"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="convert__to__sparse_8hpp.html#a4d3ec45fcd43899c13e160097c7df6b9">tatami::convert_to_sparse</a> (const Matrix&lt; T, IDX &gt; *incoming)</td></tr>
-<tr class="separator:a4d3ec45fcd43899c13e160097c7df6b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ed3a3eeda7f447f08a125e304e35e5d"><td class="memTemplParams" colspan="2">template&lt;bool row_, class MatrixIn , typename DataOut  = typename MatrixIn::data_type, typename IndexOut  = typename MatrixIn::index_type&gt; </td></tr>
+<tr class="memitem:a4ed3a3eeda7f447f08a125e304e35e5d"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; DataOut, IndexOut &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="convert__to__sparse_8hpp.html#a4ed3a3eeda7f447f08a125e304e35e5d">tatami::convert_to_sparse</a> (const MatrixIn *incoming, double reserve=0.1)</td></tr>
+<tr class="separator:a4ed3a3eeda7f447f08a125e304e35e5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fd62d6ebd1133b33a271e88da05fcc8"><td class="memTemplParams" colspan="2">template&lt;class MatrixIn , typename DataOut  = typename MatrixIn::data_type, typename IndexOut  = typename MatrixIn::index_type&gt; </td></tr>
+<tr class="memitem:a9fd62d6ebd1133b33a271e88da05fcc8"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; DataOut, IndexOut &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="convert__to__sparse_8hpp.html#a9fd62d6ebd1133b33a271e88da05fcc8">tatami::convert_to_sparse</a> (const MatrixIn *incoming, int order)</td></tr>
+<tr class="separator:a9fd62d6ebd1133b33a271e88da05fcc8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Convert a matrix into a compressed sparse format. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a4d3ec45fcd43899c13e160097c7df6b9" name="a4d3ec45fcd43899c13e160097c7df6b9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d3ec45fcd43899c13e160097c7df6b9">&#9670;&nbsp;</a></span>convert_to_sparse() <span class="overload">[1/2]</span></h2>
+<a id="a4ed3a3eeda7f447f08a125e304e35e5d" name="a4ed3a3eeda7f447f08a125e304e35e5d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4ed3a3eeda7f447f08a125e304e35e5d">&#9670;&nbsp;</a></span>convert_to_sparse() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename IDX &gt; </div>
+template&lt;bool row_, class MatrixIn , typename DataOut  = typename MatrixIn::data_type, typename IndexOut  = typename MatrixIn::index_type&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; Matrix&lt; T, IDX &gt; &gt; tatami::convert_to_sparse </td>
+          <td class="memname">std::shared_ptr&lt; Matrix&lt; DataOut, IndexOut &gt; &gt; tatami::convert_to_sparse </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
-          <td class="paramname"><em>incoming</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p >This overload automatically sets the output row format based on <code>tatami::matrix::prefer_rows()</code>.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>Type of the values in the matrix. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of index values.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>, possibly containing delayed operations.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a new <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">tatami::CompressedSparseMatrix</a></code>, with the same dimensions and type as the matrix referenced by <code>incoming</code>. </dd></dl>
-
-</div>
-</div>
-<a id="a6adcda6782e4cfcf812feba56500acc4" name="a6adcda6782e4cfcf812feba56500acc4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6adcda6782e4cfcf812feba56500acc4">&#9670;&nbsp;</a></span>convert_to_sparse() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename IDX &gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; Matrix&lt; T, IDX &gt; &gt; tatami::convert_to_sparse </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const MatrixIn *&#160;</td>
           <td class="paramname"><em>incoming</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>row</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
           <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>reserve</em> = <code>0.2</code>&#160;</td>
+          <td class="paramname"><em>reserve</em> = <code>0.1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -174,6 +125,57 @@ template&lt;typename T , typename IDX &gt; </div>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
+    <tr><td class="paramname">row_</td><td>Whether to return a compressed sparse row matrix. </td></tr>
+    <tr><td class="paramname">MatrixIn</td><td>Input matrix class, most typically a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">Data</td><td>Type of data values in the output interface. </td></tr>
+    <tr><td class="paramname">Index</td><td>Integer type for the indices in the output interface.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>, possibly containing delayed operations. </td></tr>
+    <tr><td class="paramname">reserve</td><td>The expected density of non-zero values in <code>incoming</code>. A slight overestimate will avoid reallocation of the temporary vectors.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to a new <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">tatami::CompressedSparseMatrix</a></code>, with the same dimensions and type as the matrix referenced by <code>incoming</code>. If <code>row = true</code>, the matrix is compressed sparse row, otherwise it is compressed sparse column. </dd></dl>
+
+</div>
+</div>
+<a id="a9fd62d6ebd1133b33a271e88da05fcc8" name="a9fd62d6ebd1133b33a271e88da05fcc8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fd62d6ebd1133b33a271e88da05fcc8">&#9670;&nbsp;</a></span>convert_to_sparse() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MatrixIn , typename DataOut  = typename MatrixIn::data_type, typename IndexOut  = typename MatrixIn::index_type&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; Matrix&lt; DataOut, IndexOut &gt; &gt; tatami::convert_to_sparse </td>
+          <td>(</td>
+          <td class="paramtype">const MatrixIn *&#160;</td>
+          <td class="paramname"><em>incoming</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>order</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >This overload makes it easier to control the desired output order when it is not known at compile time.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">MatrixIn</td><td>Input matrix class, most typically a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">Data</td><td>Type of data values in the output interface. </td></tr>
+    <tr><td class="paramname">Index</td><td>Integer type for the indices in the output interface. </td></tr>
     <tr><td class="paramname">T</td><td>Type of the values in the matrix. </td></tr>
     <tr><td class="paramname">IDX</td><td>Type of index values.</td></tr>
   </table>
@@ -181,9 +183,8 @@ template&lt;typename T , typename IDX &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>, possibly containing delayed operations. </td></tr>
-    <tr><td class="paramname">row</td><td>Whether the output matrix should be in compressed sparse row format. </td></tr>
-    <tr><td class="paramname">reserve</td><td>The expected density of non-zero values in <code>incoming</code>. A slight overestimate will avoid reallocation of the temporary vectors.</td></tr>
+    <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">order</td><td>Ordering of values in the output matrix - compressed sparse row (0) or column (1). If set to -1, the ordering is chosen based on <code><a class="el" href="classtatami_1_1Matrix.html#ac31ddc309419b4b2f6a2d0a01837e7a3">tatami::Matrix::prefer_rows()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
