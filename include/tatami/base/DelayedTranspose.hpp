@@ -29,7 +29,6 @@ public:
      */
     DelayedTranspose(std::shared_ptr<const Matrix<T, IDX> > p) : mat(std::move(p)) {}
 
-    ~DelayedTranspose() {}
 public:
     const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         return mat->column(r, buffer, start, end, work);

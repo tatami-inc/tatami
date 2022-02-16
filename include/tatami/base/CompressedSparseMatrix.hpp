@@ -56,8 +56,6 @@ public:
         return;
     }
 
-    ~CompressedSparseMatrix() {}
-
 public:
     size_t nrow() const { return nrows; }
 

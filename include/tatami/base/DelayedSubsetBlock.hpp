@@ -41,8 +41,6 @@ public:
      */
     DelayedSubsetBlock(std::shared_ptr<Matrix<T, IDX> > p, size_t f, size_t l) : mat(p), first(f), last(l) {}
 
-    ~DelayedSubsetBlock() {}
-
 public:
     const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         if constexpr(MARGIN == 0) {

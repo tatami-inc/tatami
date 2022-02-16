@@ -32,8 +32,6 @@ public:
      */
     DelayedIsometricOp(std::shared_ptr<const Matrix<T, IDX> > p, OP op) : mat(p), operation(std::move(op)) {}
 
-    ~DelayedIsometricOp() {}
-
 public:
     const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         const T* raw = mat->row(r, buffer, start, end, work);

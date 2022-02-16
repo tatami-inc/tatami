@@ -54,8 +54,6 @@ public:
         return;
     }
 
-    ~DenseMatrix() {}
-
 public:
     size_t nrow() const { return nrows; }
 

@@ -21,8 +21,38 @@ namespace tatami {
 template <typename T, typename IDX = int>
 class Matrix {
 public:
-    virtual ~Matrix() {}
+    virtual ~Matrix() = default;
 
+    // Defining the other constructors for rule of 5. The move constructors
+    // don't get auto-made when a destructor is declared, and if I'm defining
+    // them, I might as well define the copy constructors.  Technically I
+    // suppose I don't need them because this class is just an interface, but
+    // who knows if I'll add some move-able stuff here later.
+
+    /**
+     * Default move constructor.
+     */
+    Matrix(Matrix&&) = default;
+
+    /**
+     * Default move assignment operator.
+     */
+    Matrix& operator=(Matrix&&) = default;
+
+    /**
+     * Default copy constructor.
+     */
+    Matrix(const Matrix&) = default;
+
+    /**
+     * Default copy assignment operator.
+     */
+    Matrix& operator=(const Matrix&) = default;
+
+protected:
+    Matrix() = default;
+
+public:
     /** 
      * Type of data to be returned by getters.
      */

@@ -55,8 +55,6 @@ public:
         }
     }
 
-
-    ~DelayedBind() {}
 public:
     const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
         if constexpr(MARGIN==1) {
