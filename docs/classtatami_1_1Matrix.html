@@ -90,6 +90,14 @@ Public Types</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a6d505c205ae7ff6fb225450fca5f4307"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a6d505c205ae7ff6fb225450fca5f4307">Matrix</a> (<a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &amp;&amp;)=default</td></tr>
+<tr class="separator:a6d505c205ae7ff6fb225450fca5f4307"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54a3bbc3ba8681438f51a48f5f40b42a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a54a3bbc3ba8681438f51a48f5f40b42a">operator=</a> (<a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &amp;&amp;)=default</td></tr>
+<tr class="separator:a54a3bbc3ba8681438f51a48f5f40b42a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac7d8e8cfd07b96e1a604cdccd3a8efaf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ac7d8e8cfd07b96e1a604cdccd3a8efaf">Matrix</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &amp;)=default</td></tr>
+<tr class="separator:ac7d8e8cfd07b96e1a604cdccd3a8efaf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9913765cad84cb6d43271ee213a9d019"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a9913765cad84cb6d43271ee213a9d019">operator=</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &amp;)=default</td></tr>
+<tr class="separator:a9913765cad84cb6d43271ee213a9d019"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48e1342556ff97cc8367b25d244195a9"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a48e1342556ff97cc8367b25d244195a9">nrow</a> () const =0</td></tr>
 <tr class="separator:a48e1342556ff97cc8367b25d244195a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1049bd5cbe37b618db795787725930e4"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a1049bd5cbe37b618db795787725930e4">ncol</a> () const =0</td></tr>
@@ -193,6 +201,65 @@ template&lt;typename T , typename IDX  = int&gt; </div>
       </table>
 </div><div class="memdoc">
 <p >Type of index to be returned by the sparse getters. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a6d505c205ae7ff6fb225450fca5f4307" name="a6d505c205ae7ff6fb225450fca5f4307"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6d505c205ae7ff6fb225450fca5f4307">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename IDX  = int&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt;::Matrix </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Default move constructor. </p>
+
+</div>
+</div>
+<a id="ac7d8e8cfd07b96e1a604cdccd3a8efaf" name="ac7d8e8cfd07b96e1a604cdccd3a8efaf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac7d8e8cfd07b96e1a604cdccd3a8efaf">&#9670;&nbsp;</a></span>Matrix() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename IDX  = int&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt;::Matrix </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Default copy constructor. </p>
 
 </div>
 </div>
@@ -674,6 +741,64 @@ template&lt;typename T , typename IDX  = int&gt; </div>
 <dl class="section return"><dt>Returns</dt><dd>Number of rows. </dd></dl>
 
 <p>Implemented in <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a5c8cbee3334cbc3f860c1b328e254f7d">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#aa09ce1f17542ea8b3d7fa52361e2471d">tatami::DelayedBind&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedIsometricOp.html#afff7ed215617739acaa9571b43df40db">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a0b1e46c7058a68bf99d22e1abbfae180">tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ac129143b74bc85931ecbc0171e1306e5">tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#afb9f6fb4d51c4741d1c7ae60dd068a26">tatami::DelayedTranspose&lt; T, IDX &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a8a036df3d67b81cb8b513343da4fd762">tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</a>, <a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html#aeb402bffe0ca1dcee1921d7dcf3e1a39">tatami::HDF5CompressedSparseMatrix&lt; ROW, T, IDX &gt;</a>, and <a class="el" href="classtatami_1_1HDF5DenseMatrix.html#a07799029be780dbd14512a44aea27c56">tatami::HDF5DenseMatrix&lt; T, IDX, transpose &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a9913765cad84cb6d43271ee213a9d019" name="a9913765cad84cb6d43271ee213a9d019"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9913765cad84cb6d43271ee213a9d019">&#9670;&nbsp;</a></span>operator=() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename IDX  = int&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &amp; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; &amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Default copy assignment operator. </p>
+
+</div>
+</div>
+<a id="a54a3bbc3ba8681438f51a48f5f40b42a" name="a54a3bbc3ba8681438f51a48f5f40b42a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54a3bbc3ba8681438f51a48f5f40b42a">&#9670;&nbsp;</a></span>operator=() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T , typename IDX  = int&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &amp; <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix</a>&lt; T, IDX &gt;::operator= </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; &amp;&amp;&#160;</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p >Default move assignment operator. </p>
 
 </div>
 </div>
