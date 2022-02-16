@@ -19,6 +19,9 @@ namespace tatami {
 
 namespace stats {
 
+/**
+ * @cond
+ */
 template<typename O = double, typename T>
 O compute_median(T* buffer, size_t n) {
     if (n == 0) {
@@ -125,6 +128,9 @@ public:
         return Sparse(output, otherdim);
     }
 };
+/**
+ * @endcond
+ */
 
 }
 

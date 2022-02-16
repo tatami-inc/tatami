@@ -13,6 +13,11 @@
 
 namespace tatami {
 
+namespace compress_triplets {
+
+/**
+ * @cond
+ */
 template<class Primary, class Secondary>
 int is_ordered(const Primary& primary, const Secondary& secondary) {
     if (!std::is_sorted(primary.begin(), primary.end())) {
@@ -63,6 +68,11 @@ void order(int status, std::vector<size_t>& indices, const Primary& primary, con
         });
     }
 }
+/**
+ * @endcond
+ */
+
+}
 
 /**
  * @tparam ROW Whether to create a compressed sparse row format.
@@ -92,9 +102,9 @@ std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V&
 
     int order_status = 0;
     if constexpr(ROW) {
-        order_status = is_ordered(rows, cols);
+        order_status = compress_triplets::is_ordered(rows, cols);
     } else {
-        order_status = is_ordered(cols, rows);
+        order_status = compress_triplets::is_ordered(cols, rows);
     }
 
     if (order_status != 0) {
@@ -105,9 +115,9 @@ std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V&
 
         // Sorting without duplicating the data.
         if constexpr(ROW) {
-            order(order_status, indices, rows, cols);
+            compress_triplets::order(order_status, indices, rows, cols);
         } else {
-            order(order_status, indices, cols, rows);
+            compress_triplets::order(order_status, indices, cols, rows);
         }
 
         // Reordering values in place. This (i) saves memory, and (ii) allows
