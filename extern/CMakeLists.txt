@@ -4,8 +4,8 @@ include(FetchContent)
 
 FetchContent_Declare(
   byteme 
-  GIT_REPOSITORY https://github.com/clusterfork/buffin
-  GIT_TAG 55730cfa3b01eb4d741e99b4069ea99ef2cf359f
+  GIT_REPOSITORY https://github.com/LTLA/byteme
+  GIT_TAG 2e2185a52dd474d28cab89eb79329b467b8dac8e 
 )
 
 FetchContent_MakeAvailable(byteme)
