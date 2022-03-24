@@ -3,9 +3,9 @@ cmake_minimum_required(VERSION 3.14 FATAL_ERROR)
 include(FetchContent)
 
 FetchContent_Declare(
-  buffin
-  GIT_REPOSITORY https://github.com/clusterfork/buffin
-  GIT_TAG 0d46932ee74c4687bf0070a4dc81b91c65ac9be7
+  byteme 
+  GIT_REPOSITORY https://github.com/LTLA/byteme
+  GIT_TAG 2e2185a52dd474d28cab89eb79329b467b8dac8e 
 )
 
-FetchContent_MakeAvailable(buffin)
+FetchContent_MakeAvailable(byteme)

@@ -10,6 +10,10 @@
 
 #include "mock_layered_sparse_data.h"
 
+const unsigned char* to_pointer(const std::string& x) {
+    return reinterpret_cast<const unsigned char*>(x.c_str());
+}
+
 class MatrixMarketBufferTest : public ::testing::TestWithParam<std::tuple<int, int, IntVec, IntVec, IntVec> > {
 protected:
     size_t NR, NC;
@@ -37,7 +41,7 @@ TEST_P(MatrixMarketBufferTest, Simple) {
     write_matrix_market(stream, NR, NC, vals, rows, cols);
     auto stuff = stream.str();
 
-    auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+    auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(to_pointer(stuff), stuff.size());
 
     // Checking against a reference.
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
@@ -57,8 +61,12 @@ TEST_P(MatrixMarketBufferTest, Layered) {
     auto stuff = stream.str();
 
     tatami::MatrixMarket::LineAssignments ass;
-    ass.add(stuff.c_str(), stuff.size());
-    ass.finish();
+    {
+        tatami::MatrixMarket::BaseMMParser parser;
+        byteme::RawBufferReader reader(to_pointer(stuff), stuff.size());
+        parser(reader, ass);
+        ass.finish();
+    }
 
     size_t nonzeros = 0;
     for (auto& i : vals) { 
@@ -78,7 +86,7 @@ TEST_P(MatrixMarketBufferTest, Layered) {
     }
 
     // Checking against a reference.
-    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(to_pointer(stuff), stuff.size());
     const auto& out = loaded.matrix;
 
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
@@ -117,7 +125,7 @@ TEST_P(MatrixMarketBufferTest, LayeredByRow) {
     write_matrix_market(stream, NR, NC, vals, rows, cols);
     auto stuff = stream.str();
 
-    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(to_pointer(stuff), stuff.size());
     const auto& out = loaded.matrix;
 
     // Creating a reference.
@@ -141,7 +149,7 @@ TEST_P(MatrixMarketBufferTest, LayeredByColumn) {
     write_matrix_market(stream, NR, NC, vals, rows, cols);
     auto stuff = stream.str();
 
-    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(to_pointer(stuff), stuff.size());
     const auto& out = loaded.matrix;
 
     // Creating a reference.
@@ -214,7 +222,7 @@ INSTANTIATE_TEST_CASE_P(
 void quickMMErrorCheck(std::string contents, std::string msg) {
     EXPECT_ANY_THROW({
         try {
-            tatami::MatrixMarket::load_sparse_matrix_from_buffer(contents.c_str(), contents.size());
+            tatami::MatrixMarket::load_sparse_matrix_from_buffer(to_pointer(contents), contents.size());
         } catch (std::exception& e) {
             EXPECT_TRUE(std::string(e.what()).find(msg) != std::string::npos);
             throw;
@@ -261,14 +269,14 @@ TEST(MatrixMarketTest, EdgeCases) {
     // Handles arbitrary number of spaces.
     {
         std::string buffer = "5   6 3\n1 \t1 1 \n2 2 2   \n3 3 3 \n";
-        auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(buffer.c_str(), buffer.size());
+        auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(to_pointer(buffer), buffer.size());
         check(out);
     }
 
     // Handles absence of a termianting newline.
     {
         std::string buffer = "5 6 3\n1 1 1\n2 2 2\n3 3 3";
-        auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(buffer.c_str(), buffer.size());
+        auto out = tatami::MatrixMarket::load_sparse_matrix_from_buffer(to_pointer(buffer), buffer.size());
         check(out);
     }
 }
@@ -286,7 +294,7 @@ TEST(MatrixMarketTest, ComplexLayered) {
         write_matrix_market(stream, NR, NC, vals, rows, cols);
         auto stuff = stream.str();
 
-        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(to_pointer(stuff), stuff.size());
 
         // Checking against a reference.
         auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
@@ -309,7 +317,7 @@ TEST(MatrixMarketTest, ComplexLayered) {
         write_matrix_market(stream, NR, NC, vals, rows, cols);
         auto stuff = stream.str();
 
-        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(to_pointer(stuff), stuff.size());
 
         // Checking against a reference.
         auto indptrs = tatami::compress_sparse_triplets<true>(NR, NC, vals, rows, cols);
@@ -335,7 +343,7 @@ TEST(MatrixMarketTest, ManyRows) {
     write_matrix_market(stream, NR, NC, vals, rows, cols);
     auto stuff = stream.str();
 
-    auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+    auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(to_pointer(stuff), stuff.size());
 
     // Checking against a reference.
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
@@ -352,7 +360,7 @@ TEST(MatrixMarketTest, EmptyLayered) {
     {
         // Get some coverage on the cases where there are no columns.
         std::string stuff = "%%\n1000 0 0";
-        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(to_pointer(stuff), stuff.size());
 
         EXPECT_EQ(out.matrix->nrow(), 1000);
         EXPECT_EQ(out.matrix->ncol(), 0);
@@ -365,7 +373,7 @@ TEST(MatrixMarketTest, EmptyLayered) {
     {
         // Get some coverage on the cases where there are no values.
         std::string stuff = "%%\n1000 10 0";
-        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(stuff.c_str(), stuff.size());
+        auto out = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(to_pointer(stuff), stuff.size());
 
         EXPECT_EQ(out.matrix->nrow(), 1000);
         EXPECT_EQ(out.matrix->ncol(), 10);
