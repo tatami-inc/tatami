@@ -84,9 +84,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a2f4f1f9c5f4d8216082df388615450ea"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
 <tr class="memitem:a2f4f1f9c5f4d8216082df388615450ea"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket__layered_8hpp.html#a2f4f1f9c5f4d8216082df388615450ea">tatami::MatrixMarket::load_layered_sparse_matrix</a> (const char *filepath, size_t bufsize=65536)</td></tr>
 <tr class="separator:a2f4f1f9c5f4d8216082df388615450ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a096857b5e1ff25b92479cbd510343626"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int, typename B &gt; </td></tr>
-<tr class="memitem:a096857b5e1ff25b92479cbd510343626"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket__layered_8hpp.html#a096857b5e1ff25b92479cbd510343626">tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer</a> (const B *buffer, size_t n)</td></tr>
-<tr class="separator:a096857b5e1ff25b92479cbd510343626"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a91918595cb6423afe83cac89847a0e97"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
+<tr class="memitem:a91918595cb6423afe83cac89847a0e97"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket__layered_8hpp.html#a91918595cb6423afe83cac89847a0e97">tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer</a> (const unsigned char *buffer, size_t n)</td></tr>
+<tr class="separator:a91918595cb6423afe83cac89847a0e97"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3ea0ccd9a65c82bde2a3ced643ad0375"><td class="memTemplParams" colspan="2">template&lt;typename T  = double, typename IDX  = int&gt; </td></tr>
 <tr class="memitem:a3ea0ccd9a65c82bde2a3ced643ad0375"><td class="memTemplItemLeft" align="right" valign="top">LayeredMatrixData&lt; T, IDX &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="MatrixMarket__layered_8hpp.html#a3ea0ccd9a65c82bde2a3ced643ad0375">tatami::MatrixMarket::load_layered_sparse_matrix_gzip</a> (const char *filepath, int bufsize=65536)</td></tr>
 <tr class="separator:a3ea0ccd9a65c82bde2a3ced643ad0375"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -144,18 +144,18 @@ template&lt;typename T  = double, typename IDX  = int&gt; </div>
 
 </div>
 </div>
-<a id="a096857b5e1ff25b92479cbd510343626" name="a096857b5e1ff25b92479cbd510343626"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a096857b5e1ff25b92479cbd510343626">&#9670;&nbsp;</a></span>load_layered_sparse_matrix_from_buffer()</h2>
+<a id="a91918595cb6423afe83cac89847a0e97" name="a91918595cb6423afe83cac89847a0e97"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a91918595cb6423afe83cac89847a0e97">&#9670;&nbsp;</a></span>load_layered_sparse_matrix_from_buffer()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double, typename IDX  = int, typename B &gt; </div>
+template&lt;typename T  = double, typename IDX  = int&gt; </div>
       <table class="memname">
         <tr>
           <td class="memname">LayeredMatrixData&lt; T, IDX &gt; tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer </td>
           <td>(</td>
-          <td class="paramtype">const B *&#160;</td>
+          <td class="paramtype">const unsigned char *&#160;</td>
           <td class="paramname"><em>buffer</em>, </td>
         </tr>
         <tr>
@@ -182,8 +182,7 @@ template&lt;typename T  = double, typename IDX  = int, typename B &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Type of value in the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code> interface. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Integer type for the index. </td></tr>
-    <tr><td class="paramname">B</td><td>Type of the buffer, usually <code>char</code> or <code>unsigned char</code>.</td></tr>
+    <tr><td class="paramname">IDX</td><td>Integer type for the index.</td></tr>
   </table>
   </dd>
 </dl>
