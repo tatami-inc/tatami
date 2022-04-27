@@ -5,6 +5,12 @@
 #include <cstddef>
 #include <iterator>
 
+/**
+ * @file SomeNumericArray.hpp
+ *
+ * @brief Defines an array class with run-time numeric type.
+ */
+
 namespace tatami {
 
 /**
@@ -14,6 +20,7 @@ namespace tatami {
  * mimicking the behavior of `std::vector<T>` for **tatami** use cases. 
  * The aim is to support inputs of variable types without multiple template specializations,
  * especially in cases where there are combinations of such arrays (e.g., `CompressedSparseMatrix`).
+ * Of course, this comes with a mild performance penalty as the type must be checked upon extracting any value.
  *
  * @tparam T Type to return when values are extracted.
  * This is allowed to differ from the internal storage type. 
@@ -29,7 +36,8 @@ struct SomeNumericArray {
     enum Type { I8, U8, I16, U16, I32, U32, I64, U64, F32, F64 };
    
     /**
-     * @param x Pointer to the array of interest, of type specified by `t`.
+     * @param[in] x Pointer to the array of interest, of run-time type specified by `t`.
+     * The lifetime of the array should exceed that of the constructed `SomeNumericArray` and any of its copies.
      * @param n Length of the array pointed to by `x`.
      * @param t Type of the array, see `Type`.
      */

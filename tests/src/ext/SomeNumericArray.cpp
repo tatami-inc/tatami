@@ -117,6 +117,12 @@ TEST(SomeNumericArray, DenseMatrix) {
         auto acol = alt.column(c);
         EXPECT_EQ(rcol, acol);
     }
+
+    for (int r = 0; r < nr; ++r) {
+        auto rrow = ref.row(r);
+        auto arow = alt.row(r);
+        EXPECT_EQ(rrow, arow);
+    }
 }
 
 TEST(SomeNumericArray, SparseMatrix) {
@@ -136,5 +142,10 @@ TEST(SomeNumericArray, SparseMatrix) {
         auto acol = alt.column(c);
         EXPECT_EQ(rcol, acol);
     }
-}
 
+    for (int r = 0; r < nr; ++r) {
+        auto rrow = ref.row(r);
+        auto arow = alt.row(r);
+        EXPECT_EQ(rrow, arow);
+    }
+}
