@@ -1,13 +1,11 @@
 var searchData=
 [
-  ['make_5fdelayedaddvectorhelper_0',['make_DelayedAddVectorHelper',['../arith__vector__helpers_8hpp.html#aa82419090e54a4674d971429e93e6af5',1,'tatami']]],
-  ['make_5fdelayedbind_1',['make_DelayedBind',['../DelayedBind_8hpp.html#ac019a143af4fd0eb34f530527a424888',1,'tatami']]],
-  ['make_5fdelayeddividevectorhelper_2',['make_DelayedDivideVectorHelper',['../arith__vector__helpers_8hpp.html#ab104e5029db4d09afe0b47a125f457bf',1,'tatami']]],
-  ['make_5fdelayedisometricop_3',['make_DelayedIsometricOp',['../DelayedIsometricOp_8hpp.html#a0e2cd6fd2c5bba7eb83582619ffc9cea',1,'tatami']]],
-  ['make_5fdelayedmultiplyvectorhelper_4',['make_DelayedMultiplyVectorHelper',['../arith__vector__helpers_8hpp.html#a316f4cf0ae5a9e83c2dad6ccbbbcfb43',1,'tatami']]],
-  ['make_5fdelayedsubset_5',['make_DelayedSubset',['../DelayedSubset_8hpp.html#acd395c7ec8bb251ab11206166a972bbc',1,'tatami']]],
-  ['make_5fdelayedsubsetblock_6',['make_DelayedSubsetBlock',['../DelayedSubsetBlock_8hpp.html#a4ef69731d317edc4ce24de03e67f8097',1,'tatami']]],
-  ['make_5fdelayedsubtractvectorhelper_7',['make_DelayedSubtractVectorHelper',['../arith__vector__helpers_8hpp.html#abb68a8d27e821f213965edab7f029c48',1,'tatami']]],
-  ['make_5fdelayedtranspose_8',['make_DelayedTranspose',['../DelayedTranspose_8hpp.html#ab8888d53a1922d378a7abafa1a1146ff',1,'tatami']]],
-  ['matrix_9',['Matrix',['../classtatami_1_1Matrix.html#a6d505c205ae7ff6fb225450fca5f4307',1,'tatami::Matrix::Matrix(Matrix &amp;&amp;)=default'],['../classtatami_1_1Matrix.html#ac7d8e8cfd07b96e1a604cdccd3a8efaf',1,'tatami::Matrix::Matrix(const Matrix &amp;)=default']]]
+  ['load_5flayered_5fsparse_5fmatrix_0',['load_layered_sparse_matrix',['../MatrixMarket__layered_8hpp.html#a2f4f1f9c5f4d8216082df388615450ea',1,'tatami::MatrixMarket']]],
+  ['load_5flayered_5fsparse_5fmatrix_5ffrom_5fbuffer_1',['load_layered_sparse_matrix_from_buffer',['../MatrixMarket__layered_8hpp.html#a91918595cb6423afe83cac89847a0e97',1,'tatami::MatrixMarket']]],
+  ['load_5flayered_5fsparse_5fmatrix_5ffrom_5fbuffer_5fgzip_2',['load_layered_sparse_matrix_from_buffer_gzip',['../MatrixMarket__layered_8hpp.html#a2141872c08eb8a61ca7e37ff4804e85e',1,'tatami::MatrixMarket']]],
+  ['load_5flayered_5fsparse_5fmatrix_5fgzip_3',['load_layered_sparse_matrix_gzip',['../MatrixMarket__layered_8hpp.html#a3ea0ccd9a65c82bde2a3ced643ad0375',1,'tatami::MatrixMarket']]],
+  ['load_5fsparse_5fmatrix_4',['load_sparse_matrix',['../MatrixMarket_8hpp.html#a97b0ccae943855b8e7b65a8cd20e0ced',1,'tatami::MatrixMarket']]],
+  ['load_5fsparse_5fmatrix_5ffrom_5fbuffer_5',['load_sparse_matrix_from_buffer',['../MatrixMarket_8hpp.html#a85a7cf61e2e8d9a3d509dedf369c3fde',1,'tatami::MatrixMarket']]],
+  ['load_5fsparse_5fmatrix_5ffrom_5fbuffer_5fgzip_6',['load_sparse_matrix_from_buffer_gzip',['../MatrixMarket_8hpp.html#ac74ee8a01c2f978f3f80daccbd2d3e4c',1,'tatami::MatrixMarket']]],
+  ['load_5fsparse_5fmatrix_5fgzip_7',['load_sparse_matrix_gzip',['../MatrixMarket_8hpp.html#a1f38d73d03d81ac6e32f11f804031d80',1,'tatami::MatrixMarket']]]
 ];

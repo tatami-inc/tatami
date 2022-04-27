@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['finish_5frunning_0',['finish_running',['../variances_8hpp.html#a34e1f6cd5406db80632d8dae5c5f8887',1,'tatami::stats::variances::finish_running(size_t n, O *means, O *vars, int count)'],['../variances_8hpp.html#a52831de71032b77f466b9432aa61bbba',1,'tatami::stats::variances::finish_running(size_t n, O *means, O *vars, Nz *nonzeros, int count)']]]
+  ['end_0',['end',['../classtatami_1_1ArrayView.html#a904e6d03b59a20f2cc7831fbb318cf33',1,'tatami::ArrayView::end()'],['../structtatami_1_1SomeNumericArray.html#aaf5d7921f2356a9a3aca745723611d71',1,'tatami::SomeNumericArray::end()'],['../classtatami_1_1NakedArray.html#a92d1284a06621c798dd3727816b69e83',1,'tatami::NakedArray::end()']]]
 ];

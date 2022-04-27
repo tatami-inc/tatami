@@ -10,13 +10,12 @@ var searchData=
   ['make_5fdelayedsubtractvectorhelper_7',['make_DelayedSubtractVectorHelper',['../arith__vector__helpers_8hpp.html#abb68a8d27e821f213965edab7f029c48',1,'tatami']]],
   ['make_5fdelayedtranspose_8',['make_DelayedTranspose',['../DelayedTranspose_8hpp.html#ab8888d53a1922d378a7abafa1a1146ff',1,'tatami']]],
   ['math_5fhelpers_2ehpp_9',['math_helpers.hpp',['../math__helpers_8hpp.html',1,'']]],
-  ['matrix_10',['Matrix',['../classtatami_1_1Matrix.html#ac7d8e8cfd07b96e1a604cdccd3a8efaf',1,'tatami::Matrix::Matrix(const Matrix &amp;)=default'],['../classtatami_1_1Matrix.html#a6d505c205ae7ff6fb225450fca5f4307',1,'tatami::Matrix::Matrix(Matrix &amp;&amp;)=default']]],
-  ['matrix_11',['matrix',['../structtatami_1_1LayeredMatrixData.html#a117e250097c0219902fad9160e5d389c',1,'tatami::LayeredMatrixData']]],
-  ['matrix_12',['Matrix',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrix_2ehpp_13',['Matrix.hpp',['../Matrix_8hpp.html',1,'']]],
-  ['matrix_3c_20t_2c_20idx_20_3e_14',['Matrix&lt; T, IDX &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrix_3c_20t_2c_20int_20_3e_15',['Matrix&lt; T, int &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrixmarket_2ehpp_16',['MatrixMarket.hpp',['../MatrixMarket_8hpp.html',1,'']]],
-  ['matrixmarket_5flayered_2ehpp_17',['MatrixMarket_layered.hpp',['../MatrixMarket__layered_8hpp.html',1,'']]],
-  ['medians_2ehpp_18',['medians.hpp',['../medians_8hpp.html',1,'']]]
+  ['matrix_10',['matrix',['../structtatami_1_1LayeredMatrixData.html#a117e250097c0219902fad9160e5d389c',1,'tatami::LayeredMatrixData']]],
+  ['matrix_11',['Matrix',['../classtatami_1_1Matrix.html#ac7d8e8cfd07b96e1a604cdccd3a8efaf',1,'tatami::Matrix::Matrix(const Matrix &amp;)=default'],['../classtatami_1_1Matrix.html#a6d505c205ae7ff6fb225450fca5f4307',1,'tatami::Matrix::Matrix(Matrix &amp;&amp;)=default'],['../classtatami_1_1Matrix.html',1,'tatami::Matrix&lt; T, IDX &gt;']]],
+  ['matrix_2ehpp_12',['Matrix.hpp',['../Matrix_8hpp.html',1,'']]],
+  ['matrix_3c_20t_2c_20idx_20_3e_13',['Matrix&lt; T, IDX &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_3c_20t_2c_20int_20_3e_14',['Matrix&lt; T, int &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrixmarket_2ehpp_15',['MatrixMarket.hpp',['../MatrixMarket_8hpp.html',1,'']]],
+  ['matrixmarket_5flayered_2ehpp_16',['MatrixMarket_layered.hpp',['../MatrixMarket__layered_8hpp.html',1,'']]],
+  ['medians_2ehpp_17',['medians.hpp',['../medians_8hpp.html',1,'']]]
 ];

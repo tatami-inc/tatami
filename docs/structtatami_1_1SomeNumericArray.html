@@ -143,7 +143,7 @@ Public Member Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T = double&gt;<br />
 struct tatami::SomeNumericArray&lt; T &gt;</div><p >Array of some numeric type, determined at runtime. </p>
-<p >This holds a pointer to an existing array of some numeric type, mimicking the behavior of <code>std::vector&lt;T&gt;</code> for <b>tatami</b> use cases. The aim is to support inputs of variable types without multiple template specializations, especially in cases where there are combinations of such arrays (e.g., <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">CompressedSparseMatrix</a></code>).</p>
+<p >This holds a pointer to an existing array of some numeric type, mimicking the behavior of <code>std::vector&lt;T&gt;</code> for <b>tatami</b> use cases. The aim is to support inputs of variable types without multiple template specializations, especially in cases where there are combinations of such arrays (e.g., <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">CompressedSparseMatrix</a></code>). Of course, this comes with a mild performance penalty as the type must be checked upon extracting any value.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Type to return when values are extracted. This is allowed to differ from the internal storage type. </td></tr>
@@ -212,9 +212,9 @@ template&lt;typename T  = double&gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">x</td><td>Pointer to the array of interest, of type specified by <code>t</code>. </td></tr>
-    <tr><td class="paramname">n</td><td>Length of the array pointed to by <code>x</code>. </td></tr>
-    <tr><td class="paramname">t</td><td>Type of the array, see <code>Type</code>. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">x</td><td>Pointer to the array of interest, of run-time type specified by <code>t</code>. The lifetime of the array should exceed that of the constructed <code><a class="el" href="structtatami_1_1SomeNumericArray.html" title="Array of some numeric type, determined at runtime.">SomeNumericArray</a></code> and any of its copies. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Length of the array pointed to by <code>x</code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">t</td><td>Type of the array, see <code>Type</code>. </td></tr>
   </table>
   </dd>
 </dl>
