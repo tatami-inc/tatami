@@ -32,6 +32,7 @@ add_executable(
     src/utils/NakedArray.cpp
     src/utils/convert_to_dense.cpp
     src/utils/convert_to_sparse.cpp
+    src/utils/bind_intersection.cpp
     src/data/data_sparse.cpp
     src/data/data_triangular.cpp
 )

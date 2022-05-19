@@ -14,6 +14,7 @@
 #include "utils/convert_to_dense.hpp"
 #include "utils/wrap_shared_ptr.hpp"
 #include "utils/NakedArray.hpp"
+#include "utils/bind_intersection.hpp"
 
 #include "stats/sums.hpp"
 #include "stats/variances.hpp"
