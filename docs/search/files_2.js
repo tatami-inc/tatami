@@ -1,9 +1,7 @@
 var searchData=
 [
-  ['delayedbind_2ehpp_0',['DelayedBind.hpp',['../DelayedBind_8hpp.html',1,'']]],
-  ['delayedisometricop_2ehpp_1',['DelayedIsometricOp.hpp',['../DelayedIsometricOp_8hpp.html',1,'']]],
-  ['delayedsubset_2ehpp_2',['DelayedSubset.hpp',['../DelayedSubset_8hpp.html',1,'']]],
-  ['delayedsubsetblock_2ehpp_3',['DelayedSubsetBlock.hpp',['../DelayedSubsetBlock_8hpp.html',1,'']]],
-  ['delayedtranspose_2ehpp_4',['DelayedTranspose.hpp',['../DelayedTranspose_8hpp.html',1,'']]],
-  ['densematrix_2ehpp_5',['DenseMatrix.hpp',['../DenseMatrix_8hpp.html',1,'']]]
+  ['compress_5fsparse_5ftriplets_2ehpp_0',['compress_sparse_triplets.hpp',['../compress__sparse__triplets_8hpp.html',1,'']]],
+  ['compressedsparsematrix_2ehpp_1',['CompressedSparseMatrix.hpp',['../CompressedSparseMatrix_8hpp.html',1,'']]],
+  ['convert_5fto_5fdense_2ehpp_2',['convert_to_dense.hpp',['../convert__to__dense_8hpp.html',1,'']]],
+  ['convert_5fto_5fsparse_2ehpp_3',['convert_to_sparse.hpp',['../convert__to__sparse_8hpp.html',1,'']]]
 ];
