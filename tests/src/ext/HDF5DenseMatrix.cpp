@@ -4,6 +4,7 @@
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/base/DelayedTranspose.hpp"
 #include "tatami/ext/HDF5DenseMatrix.hpp"
+#include "tatami/stats/sums.hpp"
 
 #include "temp_file_path.h"
 #include <vector>
@@ -137,6 +138,21 @@ TEST_P(HDF5DenseAccessTest, Transposed) {
     test_simple_row_access(&mat, &ref, FORWARD, JUMP);
 }
 
+TEST_P(HDF5DenseAccessTest, Apply) {
+    // Putting it through its paces for correct parallelization via apply.
+    auto param = GetParam(); 
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+
+    auto caching = std::get<2>(param);
+    dump(caching);
+    tatami::HDF5DenseMatrix<double, int> mat(fpath, name, NC * 4);
+    tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
+
+    EXPECT_EQ(tatami::row_sums(&mat), tatami::row_sums(&ref));
+    EXPECT_EQ(tatami::column_sums(&mat), tatami::column_sums(&ref));
+}
+
 INSTANTIATE_TEST_CASE_P(
     HDF5DenseMatrix,
     HDF5DenseAccessTest,
@@ -210,3 +226,6 @@ INSTANTIATE_TEST_CASE_P(
         )
     )
 );
+
+/*************************************
+ *************************************/

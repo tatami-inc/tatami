@@ -4,6 +4,7 @@
 #include "tatami/base/CompressedSparseMatrix.hpp"
 #include "tatami/base/DelayedTranspose.hpp"
 #include "tatami/ext/HDF5CompressedSparseMatrix.hpp"
+#include "tatami/stats/sums.hpp"
 
 #include "temp_file_path.h"
 #include <vector>
@@ -170,6 +171,26 @@ TEST_P(HDF5SparseAccessTest, Secondary) {
 
         test_simple_column_access(&mat, &ref, FORWARD, JUMP);
     }
+}
+
+TEST_F(HDF5SparseAccessTest, Apply) {
+    // Just putting it through its paces for correct parallelization via apply.
+    size_t NR = 500;
+    size_t NC = 200;
+    dump(10, NR, NC);
+
+    tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NR * 1.5);
+    tatami::CompressedSparseMatrix<
+        true, 
+        double, 
+        int, 
+        decltype(triplets.value), 
+        decltype(triplets.index), 
+        decltype(triplets.ptr)
+    > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+
+    EXPECT_EQ(tatami::row_sums(&mat), tatami::row_sums(&ref));
+    EXPECT_EQ(tatami::column_sums(&mat), tatami::column_sums(&ref));
 }
 
 INSTANTIATE_TEST_CASE_P(
