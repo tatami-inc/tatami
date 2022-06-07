@@ -73,7 +73,8 @@ target_link_libraries(
     tatami
 )
 
-# Adding the assorted linker flags.
+# Checking whether to add OpenMP support. This is turned off
+# by default to make it easier to debug test failures.
 set(USE_OPENMP OFF CACHE BOOL "Compile with OpenMP support")
 if (USE_OPENMP)
     find_package(OpenMP)
@@ -107,26 +108,39 @@ gtest_discover_tests(exttest)
 gtest_discover_tests(cuspartest)
 
 # Test HDF5 capabilities.
-set(TEST_HDF5 OFF CACHE BOOL "Test HDF5 support")
+set(TEST_HDF5 ON CACHE BOOL "Test HDF5 support")
 if (TEST_HDF5) 
-    add_executable(
-        h5test 
-        src/ext/HDF5DenseMatrix.cpp
-        src/ext/HDF5CompressedSparseMatrix.cpp
-    )
+    find_package(HDF5 COMPONENTS C CXX)
+    if (HDF5_FOUND) 
+        add_executable(
+            h5test 
+            src/ext/HDF5DenseMatrix.cpp
+            src/ext/HDF5CompressedSparseMatrix.cpp
+        )
 
-    target_link_libraries(
-        h5test
-        gtest_main
-        tatami
-    )
+        # Also checking the custom parallelization in the HDF5 libraries.
+        add_executable(
+            cusparh5test
+            src/ext/HDF5DenseMatrix.cpp
+            src/ext/HDF5CompressedSparseMatrix.cpp
+        )
+        target_compile_definitions(cusparh5test PRIVATE TEST_CUSTOM_PARALLEL=1)
 
-    if (NOT HAVE_CXX_FS) 
-        target_link_libraries(h5test stdc++fs) 
+        target_link_libraries(h5test gtest_main tatami hdf5::hdf5 hdf5::hdf5_cpp)
+        target_link_libraries(cusparh5test gtest_main tatami hdf5::hdf5 hdf5::hdf5_cpp)
+
+        if (NOT HAVE_CXX_FS) 
+            target_link_libraries(h5test stdc++fs) 
+            target_link_libraries(cusparh5test stdc++fs) 
+        endif()
+
+        if (USE_OPENMP)
+            # Assume that the package has already been found.
+            target_link_libraries(h5test OpenMP::OpenMP_CXX)
+        endif()
+
+        gtest_discover_tests(h5test)
+        gtest_discover_tests(cusparh5test)
     endif()
-
-    find_package(HDF5 REQUIRED COMPONENTS C CXX)
-    target_link_libraries(h5test hdf5::hdf5 hdf5::hdf5_cpp)
-    gtest_discover_tests(h5test)
 endif()
 
