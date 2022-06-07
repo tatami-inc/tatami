@@ -1,5 +1,11 @@
 #include <gtest/gtest.h>
 
+#ifdef TEST_CUSTOM_PARALLEL // make sure this is included before tatami::apply.
+#include "../stats/custom_parallel.h"
+#include "hdf5_custom_lock.h"
+std::mutex hdf5_lock; // declared in hdf5_custom_lock.h, defined here.
+#endif
+
 #include "H5Cpp.h"
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/base/DelayedTranspose.hpp"

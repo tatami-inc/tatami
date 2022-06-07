@@ -1,36 +1,11 @@
 #include <gtest/gtest.h>
 
-#include <vector>
-#include <thread>
-#include <cmath>
-
-template<class Function>
-void parallelize(size_t n, Function f) {
-    size_t jobs_per_worker = std::ceil(static_cast<double>(n) / 3);
-    size_t start = 0;
-    std::vector<std::thread> jobs;
-    
-    for (size_t w = 0; w < 3; ++w) {
-        size_t end = std::min(n, start + jobs_per_worker);
-        if (start >= end) {
-            break;
-        }
-        jobs.emplace_back(f, start, end);
-        start += jobs_per_worker;
-    }
-
-    for (auto& job : jobs) {
-        job.join();
-    }
-}
-
-#define TATAMI_CUSTOM_PARALLEL parallelize
+#include "custom_parallel.h" // make sure this is included before tatami::apply.
 
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/utils/convert_to_dense.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/sums.hpp"
-#include <iostream>
 #include "../data/data.h"
 
 TEST(ComputingDimsums, RowSums) {

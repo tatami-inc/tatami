@@ -118,17 +118,21 @@ if (TEST_HDF5)
             src/ext/HDF5CompressedSparseMatrix.cpp
         )
 
-        target_link_libraries(
-            h5test
-            gtest_main
-            tatami
+        # Also checking the custom parallelization in the HDF5 libraries.
+        add_executable(
+            cusparh5test
+            src/ext/HDF5DenseMatrix.cpp
+            src/ext/HDF5CompressedSparseMatrix.cpp
         )
+        target_compile_definitions(cusparh5test PRIVATE TEST_CUSTOM_PARALLEL=1)
+
+        target_link_libraries(h5test gtest_main tatami hdf5::hdf5 hdf5::hdf5_cpp)
+        target_link_libraries(cusparh5test gtest_main tatami hdf5::hdf5 hdf5::hdf5_cpp)
 
         if (NOT HAVE_CXX_FS) 
             target_link_libraries(h5test stdc++fs) 
+            target_link_libraries(cusparh5test stdc++fs) 
         endif()
-
-        target_link_libraries(h5test hdf5::hdf5 hdf5::hdf5_cpp)
 
         if (USE_OPENMP)
             # Assume that the package has already been found.
@@ -136,6 +140,7 @@ if (TEST_HDF5)
         endif()
 
         gtest_discover_tests(h5test)
+        gtest_discover_tests(cusparh5test)
     endif()
 endif()
 
