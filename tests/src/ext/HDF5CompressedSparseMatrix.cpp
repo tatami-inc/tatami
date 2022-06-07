@@ -173,7 +173,7 @@ TEST_P(HDF5SparseAccessTest, Secondary) {
     }
 }
 
-TEST_F(HDF5SparseAccessTest, Apply) {
+TEST_P(HDF5SparseAccessTest, Apply) {
     // Just putting it through its paces for correct parallelization via apply.
     size_t NR = 500;
     size_t NC = 200;
