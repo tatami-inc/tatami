@@ -250,19 +250,24 @@ private:
     template<typename IndexIt, typename DataIt, typename Thing> 
     size_t copy_primary_to_buffer(IndexIt istart, DataIt dstart, size_t len, size_t first, size_t last, T* dbuffer, Thing thing) const {
         size_t request_start = (first > *istart ? std::lower_bound(istart, istart + len, first) - istart : 0);
-        size_t request_end = (last < *(istart + len - 1) ? std::lower_bound(istart + request_start, istart + len, last) - istart : len);
+        istart += request_start;
+        dstart += request_start;
 
+        size_t count = 0;
         if constexpr(std::is_same<typename std::remove_reference<Thing>::type, IDX*>::value) {
-            std::copy(istart + request_start, istart + request_end, thing);
-            std::copy(dstart + request_start, dstart + request_end, dbuffer);
+            auto thing_copy = thing;
+            for (size_t i = request_start; i < len && *istart < last; ++i, ++istart, ++dstart, ++thing_copy, ++dbuffer, ++count) {
+                *thing_copy = *istart;
+                *dbuffer = *dstart;
+            }
         } else {
             std::fill(dbuffer, dbuffer + (last - first), 0);
-            for (size_t i = request_start; i < request_end; ++i) {
-                dbuffer[*(istart + i) - first] = *(dstart + i);
+            for (size_t i = request_start; i < len && *istart < last; ++i, ++istart, ++dstart, ++count) {
+                dbuffer[*istart - first] = *dstart; 
             }
         }
 
-        return request_end - request_start; // number of non-zeros.
+        return count; // number of non-zeros... or at least, structural non-zeros.
     }
 
     template<typename Thing>
