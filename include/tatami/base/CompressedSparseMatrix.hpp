@@ -275,8 +275,22 @@ public:
         } 
 
         std::vector<size_t> previous_request; // the last request for each column.
-        std::vector<typename std::remove_reference<decltype(std::declval<W>()[0])>::type> current_indptrs; // the current position of the pointer
-        std::vector<typename std::remove_reference<decltype(std::declval<V>()[0])>::type> current_indices; // the current index being pointed to
+
+        typedef typename std::remove_reference<decltype(std::declval<W>()[0])>::type indptr_type;
+        std::vector<indptr_type> current_indptrs; // the current position of the pointer
+
+        typedef typename std::remove_reference<decltype(std::declval<V>()[0])>::type index_type;
+
+        // The current index being pointed to, i.e., current_indices[0] <= indices[current_ptrs[0]]. 
+        // If current_ptrs[0] is out of range, the current index is instead set to the maximum index
+        // (e.g., max rows for CSC matrices).
+        std::vector<index_type> current_indices;
+
+        // Efficiency boosts for reverse consecutive searches. These aren't populated until they're required,
+        // given that forward consecutive searches are far more common.
+        // 'below_indices' holds 1-past-the-index of the non zero element immediately below 'previous_request'.
+        std::vector<index_type> below_indices;
+        bool store_below = false;
     };
 
 private:
@@ -286,6 +300,14 @@ private:
         } else {
             return nrows;
         }
+    }
+
+    auto define_below_index(size_t pos, size_t curptr) const {
+        // We set it to zero if there is no other non-zero element before
+        // 'curptr' in 'pos'.  This aligns with the idea of 'below_indices'
+        // holding 1-past-the-immediately-below-index; if it is zero,
+        // nothing remaings below 'curptr'.
+        return (curptr > indptrs[pos] ? indices[curptr - 1] + 1 : 0);
     }
 
     template<class STORE>
@@ -309,25 +331,73 @@ private:
                 auto& curptr = worker.current_indptrs[current];
                 auto& curdex = worker.current_indices[current];
 
-                if (i == prev_i + 1) {
-                    if (curdex < i) { // if true, this implies that curptr < indptrs[current + 1], provided i < max_index.
+                if (i > prev_i) {
+
+                    // Remember that we already store the index corresponding to the current indptr.
+                    // So, we only need to do more work if the request is greater than that index.
+                    if (i > curdex) {
+
+                        // Having a peek at the index of the next non-zero
+                        // element; maybe we're lucky enough that the requested
+                        // index is below this, as would be the case for
+                        // consecutive or near-consecutive accesses.
                         ++curptr;
-                        curdex = (curptr < indptrs[current + 1] ? indices[curptr] : max_index);
+                        auto limit = indptrs[current + 1];
+                        if (curptr < limit) {
+                            auto candidate = indices[curptr];
+                            if (candidate >= i) {
+                                curdex = candidate;
+                            } else {
+                                // Otherwise we need to search.
+                                curptr = std::lower_bound(indices.begin() + curptr, indices.begin() + limit, i) - indices.begin();
+                                curdex = (curptr < limit ? indices[curptr] : max_index);
+                            }
+                        } else {
+                            curdex = max_index;
+                        }
+
+                        if (worker.store_below) {
+                            worker.below_indices[current] = define_below_index(current, curptr);
+                        }
                     }
-                } else if (i + 1 == prev_i) {
-                    if (curptr != indptrs[current] && indices[curptr - 1] >= i) {
-                        --curptr;
-                        curdex = indices[curptr];
+
+                } else if (i < prev_i) {
+                    if (!worker.store_below) {
+                        worker.store_below = true;
+
+                        // Backfilling everything so that all uses of 'below_indices' are valid.
+                        worker.below_indices.resize(worker.previous_request.size());
+                        for (size_t j = 0, end = worker.below_indices.size(); j != end; ++j) {
+                            worker.below_indices[j] = define_below_index(j, worker.current_indptrs[j]);
+                        }
                     }
-                } else if (i > prev_i) {
-                    if (curdex < i) { // same implication as above.
-                        curptr = std::lower_bound(indices.begin() + curptr, indices.begin() + indptrs[current + 1], i) - indices.begin();
-                        curdex = (curptr < indptrs[current + 1] ? indices[curptr] : max_index);
-                    }
-                } else if (i < prev_i) { 
-                    if (curptr != indptrs[current]) {
-                        curptr = std::lower_bound(indices.begin() + indptrs[current], indices.begin() + curptr, i) - indices.begin();
-                        curdex = indices[curptr];
+
+                    // Remember that below_indices stores 'indices[curptr - 1] + 1'.
+                    // So, we only need to do more work if the request is less than this;
+                    // otherwise the curptr remains unchanged. We also skip if curptr is
+                    // equal to 'indptrs[current]' because decreasing is impossible.
+                    auto& prevdex = worker.below_indices[current];
+                    auto limit = indptrs[current];
+                    if (i < prevdex && curptr > limit) {
+
+                        // Having a peek at the index of the non-zero element below us.
+                        // Maybe we're lucky and the requested index is equal to this,
+                        // in which case we can use it directly. This would be the case
+                        // for consecutive accesses in the opposite direction.
+                        auto candidate = indices[curptr - 1];
+                        if (candidate == i) {
+                            --curptr;
+                            curdex = candidate;
+                        } else if (candidate < i) {
+                            // Do nothing... though we should have never gotten here 
+                            // in the first place, as it would imply that 'i >= prevdex'.
+                        } else {
+                            // Otherwise we need to search.
+                            curptr = std::lower_bound(indices.begin() + limit, indices.begin() + curptr - 1, i) - indices.begin();
+                            curdex = indices[curptr]; // guaranteed to be valid as curptr - 1 >= limit.
+                        }
+
+                        prevdex = define_below_index(current, curptr);
                     }
                 }
 

@@ -141,7 +141,7 @@ INSTANTIATE_TEST_CASE_P(
     SparseFullAccessTest,
     ::testing::Combine(
         ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
-        ::testing::Values(1, 4) // jump, to test the workspace's memory.
+        ::testing::Values(1, 4, 10, 20) // jump, to test the workspace's memory.
     )
 );
 
