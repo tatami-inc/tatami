@@ -42,6 +42,7 @@ TEST_P(MatrixMarketTextTest, Simple) {
     auto filepath = extra_assemble();
     auto bufsize = GetParam();
     auto out = tatami::MatrixMarket::load_sparse_matrix_from_file(filepath.c_str(), 0, bufsize);
+    size_t nlines = vals.size();
 
     // Checking against a reference.
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
@@ -52,6 +53,12 @@ TEST_P(MatrixMarketTextTest, Simple) {
         auto stuff = out->column(i);
         EXPECT_EQ(stuff, ref->column(i));
     }
+
+    // THrowing in an inspection.
+    auto details = tatami::MatrixMarket::extract_header_from_file(filepath.c_str(), 0, bufsize);
+    EXPECT_EQ(details.nrow, NR);
+    EXPECT_EQ(details.ncol, NC);
+    EXPECT_EQ(details.nlines, nlines);
 }
 
 TEST_P(MatrixMarketTextTest, Layered) {

@@ -47,6 +47,18 @@ private:
     size_t currow = 0, curcol = 0, curval = 0;
     size_t nrows, ncols, nlines;
 
+public:
+    // Some SFINAE nonsense for fun and profit.
+    template<class X, typename = int>
+    struct preamble_only {
+        constexpr static bool value = false;
+    };
+
+    template<class X>
+    struct preamble_only<X, decltype((void) X::preamble_only, 0)> {
+        constexpr static bool value = X::preamble_only;
+    };
+
 private:
     template<class Store>
     void new_line(Store& store) {
@@ -86,7 +98,9 @@ private:
                     throw std::runtime_error("more lines present than specified in the header (" + std::to_string(nlines) + ")");
                 }
 
-                store.addline(currow - 1, curcol - 1, curval, current_data_line);
+                if constexpr(!preamble_only<Store>::value) {
+                    store.addline(currow - 1, curcol - 1, curval, current_data_line);
+                }
                 ++current_data_line;
             }
 
@@ -121,6 +135,13 @@ public:
                 } else if (buffer[i] == '\n') {
                     new_line(store);
                     ++i;
+
+                    // Breaking out early if we only care about the preamble.
+                    if constexpr(preamble_only<Store>::value) {
+                        if (passed_preamble) {
+                            return;
+                        }
+                    }
                 } else if (in_comment) {
                     // Try to get to the next line, again.
                     do {
@@ -290,6 +311,51 @@ struct SimpleBuilder {
  */
 
 /**
+ * @cond
+ */
+template<class Builder>
+auto operate_on_file(const char * filepath, int compression, size_t bufsize) {
+    if (compression != 0) {
+#ifndef TATAMI_USE_ZLIB
+        throw std::runtime_error("tatami not compiled with support for non-zero 'compression'");
+#else
+        if (compression == -1) {
+            byteme::SomeFileReader reader(filepath, bufsize);
+            return Builder::build(reader);
+       } else if (compression == 1) {
+            byteme::GzipFileReader reader(filepath, bufsize);
+            return Builder::build(reader);
+        }
+#endif
+    }
+    byteme::RawFileReader reader(filepath, bufsize);
+    return Builder::build(reader);
+}
+
+template<class Builder>
+auto operate_on_buffer(const unsigned char * buffer, size_t n, int compression, size_t bufsize) {
+    if (compression != 0) {
+#ifndef TATAMI_USE_ZLIB
+        throw std::runtime_error("tatami not compiled with support for non-zero 'compression'");
+#else
+        if (compression == -1) {
+            byteme::SomeBufferReader reader(buffer, n, bufsize);
+            return Builder::build(reader);
+        } else if (compression == 1) {
+            byteme::ZlibBufferReader reader(buffer, n, 3, bufsize);
+            return Builder::build(reader);
+        }
+#endif
+    }
+
+    byteme::RawBufferReader reader(buffer, n);
+    return Builder::build(reader);
+}
+/**
+ * @endcond
+ */
+
+/**
  * @param filepath Path to a Matrix Market file.
  * The file should contain non-negative integer data in the coordinate format.
  * @param compression Compression method for the file - no compression (0) or Gzip compression (1).
@@ -310,22 +376,7 @@ struct SimpleBuilder {
  */
 template<typename T = double, typename IDX = int>
 std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_file(const char * filepath, int compression = 0, size_t bufsize = 65536) {
-    if (compression != 0) {
-#ifndef TATAMI_USE_ZLIB
-        throw std::runtime_error("tatami not compiled with support for non-zero 'compression'");
-#else
-        if (compression == -1) {
-            byteme::SomeFileReader reader(filepath, bufsize);
-            return SimpleBuilder<T, IDX>::build(reader);
-       } else if (compression == 1) {
-            byteme::GzipFileReader reader(filepath, bufsize);
-            return SimpleBuilder<T, IDX>::build(reader);
-        }
-#endif
-    }
-
-    byteme::RawFileReader reader(filepath, bufsize);
-    return SimpleBuilder<T, IDX>::build(reader);
+    return operate_on_file<SimpleBuilder<T, IDX> >(filepath, compression, bufsize);
 }
 
 // For back-compatibility.
@@ -352,22 +403,7 @@ std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix(const char * filepat
  */
 template<typename T = double, typename IDX = int>
 std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_buffer(const unsigned char* buffer, size_t n, int compression = 0, size_t bufsize = 65536) {
-    if (compression != 0) {
-#ifndef TATAMI_USE_ZLIB
-        throw std::runtime_error("tatami not compiled with support for non-zero 'compression'");
-#else
-        if (compression == -1) {
-            byteme::SomeBufferReader reader(buffer, n, bufsize);
-            return SimpleBuilder<T, IDX>::build(reader);
-        } else if (compression == 1) {
-            byteme::ZlibBufferReader reader(buffer, n, 3, bufsize);
-            return SimpleBuilder<T, IDX>::build(reader);
-        }
-#endif
-    }
-
-    byteme::RawBufferReader reader(buffer, n);
-    return SimpleBuilder<T, IDX>::build(reader);
+    return operate_on_buffer<SimpleBuilder<T, IDX> >(buffer, n, compression, bufsize);
 }
 
 #ifdef TATAMI_USE_ZLIB
@@ -385,6 +421,79 @@ std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_buffer_gzip(con
 }
 
 #endif
+
+/**
+ * @brief Details extracted from a MatrixMarket header.
+ */
+struct HeaderDetails {
+    /**
+     * Number of rows.
+     */
+    size_t nrow;
+
+    /**
+     * Number of columns.
+     */
+    size_t ncol;
+
+    /**
+     * Number of lines.
+     */
+   size_t nlines;
+};
+
+/**
+ * @cond
+ */
+struct Inspector {
+    struct Core {
+        HeaderDetails header;
+        constexpr static bool preamble_only = true;
+        void setdim(size_t nr, size_t nc, size_t nl) {
+            header.nrow = nr;
+            header.ncol = nc;
+            header.nlines = nl;
+        }
+    };
+
+    template<class Reader>
+    static HeaderDetails build(Reader& reader) {
+        BaseMMParser parser;
+        Core store;
+        parser(reader, store);
+        return store.header;
+    }
+};
+/**
+ * @endcond
+ */
+
+/**
+ * @param filepath Path to a Matrix Market file.
+ * The file should contain non-negative integer data in the coordinate format.
+ * @param compression Compression method for the file - no compression (0) or Gzip compression (1).
+ * If set to -1, the function will automatically guess the compression based on magic numbers.
+ * @param bufsize Size of the buffer (in bytes) to use when reading from file. 
+ * 
+ * @return A `HeaderDetails` object containing details about the file contents.
+ */
+inline HeaderDetails extract_header_from_file(const char* filepath, int compression = 0, size_t bufsize = 65536) {
+    return operate_on_file<Inspector>(filepath, compression, bufsize);
+}
+
+/**
+ * @param buffer Array containing the contents of a Matrix Market file.
+ * The file should contain non-negative integer data in the coordinate format.
+ * @param n Length of the array.
+ * @param compression Compression method for the file contents - no compression (0) or Gzip/Zlib compression (1).
+ * If set to -1, the function will automatically guess the compression based on magic numbers.
+ * @param bufsize Size of the buffer (in bytes) to use when decompressing the file contents.
+ * 
+ * @return A `HeaderDetails` object containing details about the file contents.
+ */
+inline HeaderDetails extract_header_from_buffer(const unsigned char* buffer, size_t n, int compression = 0, size_t bufsize = 65536) {
+    return operate_on_buffer<Inspector>(buffer, n, compression, bufsize);
+}
 
 }
 

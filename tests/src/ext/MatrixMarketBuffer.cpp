@@ -385,3 +385,16 @@ TEST(MatrixMarketTest, EmptyLayered) {
         }
     }
 }
+
+TEST(MatrixMarketTest, Inspection) {
+    std::string buffer = "5 6 3\n1 1 1\n2 2 2\n3 3 3";
+    auto details = tatami::MatrixMarket::extract_header_from_buffer(to_pointer(buffer), buffer.size());
+    EXPECT_EQ(details.nrow, 5);
+    EXPECT_EQ(details.ncol, 6);
+    EXPECT_EQ(details.nlines, 3);
+
+    // Check that the SFINAE works to enable early abort of the parsing.
+    bool val = tatami::MatrixMarket::BaseMMParser::preamble_only<tatami::MatrixMarket::SimpleBuilder<double, int>::Core>::value;
+    EXPECT_FALSE(val);
+    EXPECT_TRUE(tatami::MatrixMarket::BaseMMParser::preamble_only<tatami::MatrixMarket::Inspector::Core>::value);
+}
