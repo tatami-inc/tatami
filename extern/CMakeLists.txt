@@ -5,7 +5,7 @@ include(FetchContent)
 FetchContent_Declare(
   byteme 
   GIT_REPOSITORY https://github.com/LTLA/byteme
-  GIT_TAG 2e2185a52dd474d28cab89eb79329b467b8dac8e 
+  GIT_TAG 1deeedd74cc531bd1f0838f319be04c6c41dfe32
 )
 
 FetchContent_MakeAvailable(byteme)

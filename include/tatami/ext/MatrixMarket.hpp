@@ -17,6 +17,8 @@
 #ifdef TATAMI_USE_ZLIB
 #include "byteme/GzipFileReader.hpp"
 #include "byteme/ZlibBufferReader.hpp"
+#include "byteme/SomeFileReader.hpp"
+#include "byteme/SomeBufferReader.hpp"
 #endif
 
 /**
@@ -289,8 +291,10 @@ struct SimpleBuilder {
 
 /**
  * @param filepath Path to a Matrix Market file.
- * The file should contain non-negative integer data in the coordinate format, stored in text without any compression.
- * @param bufsize Size of the buffer (in bytes) to use when reading from file.
+ * The file should contain non-negative integer data in the coordinate format.
+ * @param compression Compression method for the file - no compression (0) or Gzip compression (1).
+ * If set to -1, the function will automatically guess the compression based on magic numbers.
+ * @param bufsize Size of the buffer (in bytes) to use when reading from file. 
  * 
  * @return A pointer to a `tatami::Matrix` object.
  *
@@ -301,69 +305,83 @@ struct SimpleBuilder {
  * It will store the data in memory as a compressed sparse column matrix,
  * and is smart enough to use a smaller integer type if the number of rows is less than the maximum value of `uint16_t`.
  * Currently, only unsigned integers are supported.
+ * 
+ * To support Gzip decompression, make sure to define `TATAMI_USE_ZLIB` and compile with **zlib** support.
  */
 template<typename T = double, typename IDX = int>
-std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix(const char * filepath, size_t bufsize = 65536) {
+std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_file(const char * filepath, int compression = 0, size_t bufsize = 65536) {
+    if (compression != 0) {
+#ifndef TATAMI_USE_ZLIB
+        throw std::runtime_error("tatami not compiled with support for non-zero 'compression'");
+#else
+        if (compression == -1) {
+            byteme::SomeFileReader reader(filepath, bufsize);
+            return SimpleBuilder<T, IDX>::build(reader);
+       } else if (compression == 1) {
+            byteme::GzipFileReader reader(filepath, bufsize);
+            return SimpleBuilder<T, IDX>::build(reader);
+        }
+#endif
+    }
+
     byteme::RawFileReader reader(filepath, bufsize);
     return SimpleBuilder<T, IDX>::build(reader);
 }
 
+// For back-compatibility.
+template<typename T = double, typename IDX = int>
+std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix(const char * filepath, size_t bufsize = 65536) {
+    return load_sparse_matrix_from_file(filepath, 0, bufsize);
+}
+
 /**
  * @param buffer Array containing the contents of a Matrix Market file.
- * The file should contain non-negative integer data in the coordinate format, stored in text without any compression.
+ * The file should contain non-negative integer data in the coordinate format.
  * @param n Length of the array.
+ * @param compression Compression method for the file contents - no compression (0) or Gzip/Zlib compression (1).
+ * If set to -1, the function will automatically guess the compression based on magic numbers.
+ * @param bufsize Size of the buffer (in bytes) to use when decompressing the file contents.
  * 
  * @return A pointer to a `tatami::Matrix` object.
  *
  * @tparam T Type of value in the `tatami::Matrix` interface.
  * @tparam IDX Integer type for the index.
  *
- * This is equivalent to `load_sparse_matrix()` but assumes that the entire file has been read into `buffer`.
+ * This is equivalent to `load_sparse_matrix_from_file()` but assumes that the entire file has been read into `buffer`.
+ * To support Gzip decompression, make sure to define `TATAMI_USE_ZLIB` and compile with **zlib** support.
  */
 template<typename T = double, typename IDX = int>
-std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_buffer(const unsigned char* buffer, size_t n) {
+std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_buffer(const unsigned char* buffer, size_t n, int compression = 0, size_t bufsize = 65536) {
+    if (compression != 0) {
+#ifndef TATAMI_USE_ZLIB
+        throw std::runtime_error("tatami not compiled with support for non-zero 'compression'");
+#else
+        if (compression == -1) {
+            byteme::SomeBufferReader reader(buffer, n, bufsize);
+            return SimpleBuilder<T, IDX>::build(reader);
+        } else if (compression == 1) {
+            byteme::ZlibBufferReader reader(buffer, n, 3, bufsize);
+            return SimpleBuilder<T, IDX>::build(reader);
+        }
+#endif
+    }
+
     byteme::RawBufferReader reader(buffer, n);
     return SimpleBuilder<T, IDX>::build(reader);
 }
 
 #ifdef TATAMI_USE_ZLIB
 
-/**
- * @param filepath Path to a Matrix Market file.
- * The file should contain non-negative integer data in the coordinate format, stored with Gzip compression.
- * @param bufsize Size of the buffer to use for decompression, in bytes.
- *
- * @return A pointer to a `tatami::Matrix` object.
- *
- * @tparam T Type of value in the `tatami::Matrix` interface.
- * @tparam IDX Integer type for the index.
- *
- * This is a version of `load_sparse_matrix()` for loading in Gzip-compressed Matrix Market files.
- * To make this function available, make sure to define `TATAMI_USE_ZLIB` and compile with **zlib** support.
- */
+// For back-compatibility.
 template<typename T = double, typename IDX = int>
 std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_gzip(const char * filepath, size_t bufsize = 65536) {
-    byteme::GzipFileReader reader(filepath, bufsize);
-    return SimpleBuilder<T, IDX>::build(reader);
+    return load_sparse_matrix_from_file(filepath, 1, bufsize);
 }
 
-/**
- * @param buffer Array containing the contents of a Matrix Market file.
- * The file should contain non-negative integer data in the coordinate format, stored with Gzip or Zlib compression.
- * @param n Size of the `buffer` array.
- * @param bufsize Size of the buffer to use for decompression, in bytes.
- *
- * @return A pointer to a `tatami::Matrix` object.
- *
- * @tparam T Type of value in the `tatami::Matrix` interface.
- * @tparam IDX Integer type for the index.
- *
- * This is equivalent to `load_sparse_matrix_gzip()` but assumes that the entire file has been read into `buffer`.
- */
+// For back-compatibility.
 template<typename T = double, typename IDX = int>
 std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_buffer_gzip(const unsigned char * buffer, size_t n, size_t bufsize = 65536) {
-    byteme::ZlibBufferReader reader(buffer, n, 3, bufsize);
-    return SimpleBuilder<T, IDX>::build(reader);
+    return load_sparse_matrix_from_buffer(buffer, n, 1, bufsize);
 }
 
 #endif

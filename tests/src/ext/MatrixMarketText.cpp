@@ -41,7 +41,7 @@ protected:
 TEST_P(MatrixMarketTextTest, Simple) {
     auto filepath = extra_assemble();
     auto bufsize = GetParam();
-    auto out = tatami::MatrixMarket::load_sparse_matrix(filepath.c_str(), bufsize);
+    auto out = tatami::MatrixMarket::load_sparse_matrix_from_file(filepath.c_str(), 0, bufsize);
 
     // Checking against a reference.
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
@@ -59,7 +59,7 @@ TEST_P(MatrixMarketTextTest, Layered) {
     auto bufsize = GetParam();
 
     // Checking against a reference.
-    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix(filepath.c_str(), bufsize);
+    auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_file(filepath.c_str(), 0, bufsize);
     const auto& out = loaded.matrix;
 
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);

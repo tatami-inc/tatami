@@ -20,6 +20,8 @@
 #ifdef TATAMI_USE_ZLIB
 #include "byteme/GzipFileReader.hpp"
 #include "byteme/ZlibBufferReader.hpp"
+#include "byteme/SomeFileReader.hpp"
+#include "byteme/SomeBufferReader.hpp"
 #endif
 
 /**
@@ -494,6 +496,8 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Function process) 
 /**
  * @param filepath Path to a Matrix Market file.
  * The file should contain integer data in the coordinate format, stored in text without any compression.
+ * @param compression Compression method for the file - no compression (0) or Gzip compression (1).
+ * If set to -1, the function will automatically guess the compression based on magic numbers.
  * @param bufsize Size of the buffer (in bytes) to use when reading from file.
  * 
  * @return A `LayeredMatrixData` object.
@@ -510,14 +514,34 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_internal(Function process) 
  * Note that the internal storage is orthogonal to the choice of `IDX` in the `tatami::Matrix` interface.
  */
 template<typename T = double, typename IDX = int>
-LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath, size_t bufsize = 65536) {
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix_from_file(const char * filepath, int compression = 0, size_t bufsize = 65536) {
+    if (compression != 0) {
+#ifndef TATAMI_USE_ZLIB
+        throw std::runtime_error("tatami not compiled with support for non-zero 'compression'");
+#else
+        if (compression == -1) {
+            return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::SomeFileReader(filepath, bufsize); });
+       } else if (compression == 1) {
+            return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::GzipFileReader(filepath, bufsize); });
+        }
+#endif
+    }
     return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::RawFileReader(filepath, bufsize); });
+}
+
+// For back-compatibility.
+template<typename T = double, typename IDX = int>
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath, size_t bufsize = 65536) {
+    return load_layered_sparse_matrix_from_file(filepath, 0, bufsize);
 }
 
 /**
  * @param buffer Array containing the contents of a Matrix Market file.
  * The file should contain integer data in the coordinate format, stored in text without any compression.
  * @param n Length of the array.
+ * @param compression Compression method for the file contents - no compression (0) or Gzip/Zlib compression (1).
+ * If set to -1, the function will automatically guess the compression based on magic numbers.
+ * @param bufsize Size of the buffer to use for decompression, in bytes.
  * 
  * @return A `LayeredMatrixData` object.
  *
@@ -527,46 +551,31 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath, size
  * This is equivalent to `load_layered_sparse_matrix()` but assumes that the entire file has been read into `buffer`.
  */
 template<typename T = double, typename IDX = int>
-LayeredMatrixData<T, IDX> load_layered_sparse_matrix_from_buffer(const unsigned char* buffer, size_t n) {
+LayeredMatrixData<T, IDX> load_layered_sparse_matrix_from_buffer(const unsigned char* buffer, size_t n, int compression = 0, size_t bufsize = 65536) {
+    if (compression != 0) {
+#ifndef TATAMI_USE_ZLIB
+        throw std::runtime_error("tatami not compiled with support for non-zero 'compression'");
+#else
+        if (compression == -1) {
+            return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::SomeBufferReader(buffer, n, bufsize); });
+        } else if (compression == 1) {
+            return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::ZlibBufferReader(buffer, n, 3, bufsize); });
+        }
+#endif
+    }
     return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::RawBufferReader(buffer, n); });
 }
 
 #ifdef TATAMI_USE_ZLIB
 
-/**
- * @param filepath Path to a Matrix Market file.
- * The file should contain integer data in the coordinate format, stored with Gzip compression.
- * @param bufsize Size of the buffer to use for decompression, in bytes.
- *
- * @return A `LayeredMatrixData` object.
- *
- * @tparam T Type of value in the `tatami::Matrix` interface.
- * @tparam IDX Integer type for the index.
- *
- * This is a version of `load_layered_sparse_matrix()` for loading in Gzip-compressed Matrix Market files.
- * To make this function available, make sure to define `TATAMI_USE_ZLIB` and compile with **zlib** support.
- */
 template<typename T = double, typename IDX = int>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix_gzip(const char * filepath, int bufsize = 65536) {
-    return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::GzipFileReader(filepath, bufsize); });
+    return load_layered_sparse_matrix_from_file(filepath, 1, bufsize);
 }
 
-/**
- * @param buffer Array containing the contents of a Matrix Market file.
- * The file should contain integer data in the coordinate format, stored in text without any compression.
- * @param n Length of the array.
- * @param bufsize Size of the buffer to use for decompression, in bytes.
- * 
- * @return A `LayeredMatrixData` object.
- *
- * @tparam T Type of value in the `tatami::Matrix` interface.
- * @tparam IDX Integer type for the index.
- *
- * This is equivalent to `load_layered_sparse_matrix_gzip()` but assumes that the entire file has been read into `buffer`.
- */
 template<typename T = double, typename IDX = int>
 LayeredMatrixData<T, IDX> load_layered_sparse_matrix_from_buffer_gzip(const unsigned char* buffer, size_t n, size_t bufsize = 65536) {
-    return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::ZlibBufferReader(buffer, n, 3, bufsize); });
+    return load_layered_sparse_matrix_from_buffer(buffer, n, 1, bufsize);
 }
 
 #endif

@@ -48,9 +48,15 @@ protected:
 };
 
 TEST_P(MatrixMarketGzipTest, SimpleTest) {
-    auto loaded = tatami::MatrixMarket::load_sparse_matrix_gzip(gzname.c_str());
+    auto bufsize = GetParam();
+
+    auto loaded = tatami::MatrixMarket::load_sparse_matrix_from_file(gzname.c_str(), 1, bufsize);
     EXPECT_EQ(loaded->nrow(), NR);
     EXPECT_EQ(loaded->ncol(), NC);
+
+    auto auto_loaded = tatami::MatrixMarket::load_sparse_matrix_from_file(gzname.c_str(), -1, bufsize); // auto-detect.
+    EXPECT_EQ(auto_loaded->nrow(), NR);
+    EXPECT_EQ(auto_loaded->ncol(), NC);
 
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
     typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
@@ -59,10 +65,14 @@ TEST_P(MatrixMarketGzipTest, SimpleTest) {
     for (size_t i = 0; i < NC; ++i) {
         auto stuff = loaded->column(i);
         EXPECT_EQ(stuff, ref->column(i));
+        auto auto_stuff = auto_loaded->column(i);
+        EXPECT_EQ(auto_stuff, ref->column(i));
     }
 }
 
 TEST_P(MatrixMarketGzipTest, SimpleBufferTest) {
+    auto bufsize = GetParam();
+
     auto ref = tatami::MatrixMarket::load_sparse_matrix_from_buffer(contents.data(), contents.size());
     EXPECT_EQ(ref->nrow(), NR);
     EXPECT_EQ(ref->ncol(), NC);
@@ -72,19 +82,27 @@ TEST_P(MatrixMarketGzipTest, SimpleBufferTest) {
     std::vector<unsigned char> gzcontents(std::istream_iterator<unsigned char>{handle}, std::istream_iterator<unsigned char>());
     EXPECT_TRUE(gzcontents.size() < contents.size()); // compression should have an effect.
 
-    auto obs = tatami::MatrixMarket::load_sparse_matrix_from_buffer_gzip(gzcontents.data(), gzcontents.size());
+    auto obs = tatami::MatrixMarket::load_sparse_matrix_from_buffer(gzcontents.data(), gzcontents.size(), 1, bufsize);
     EXPECT_EQ(obs->nrow(), NR);
     EXPECT_EQ(obs->ncol(), NC);
+
+    auto obs_auto = tatami::MatrixMarket::load_sparse_matrix_from_buffer(gzcontents.data(), gzcontents.size(), -1, bufsize); // now with autodetection.
+    EXPECT_EQ(obs_auto->nrow(), NR);
+    EXPECT_EQ(obs_auto->ncol(), NC);
 
     for (size_t i = 0; i < NC; ++i) {
         auto stuff = obs->column(i);
         EXPECT_EQ(stuff, ref->column(i));
+        auto auto_stuff = obs_auto->column(i);
+        EXPECT_EQ(auto_stuff, ref->column(i));
     }
 }
 
 TEST_P(MatrixMarketGzipTest, LayeredTest) {
+    auto bufsize = GetParam();
+
     auto loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(contents.data(), contents.size());
-    auto loaded_gz = tatami::MatrixMarket::load_layered_sparse_matrix_gzip(gzname.c_str());
+    auto loaded_gz = tatami::MatrixMarket::load_layered_sparse_matrix_from_file(gzname.c_str(), 1, bufsize);
 
     auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, vals, rows, cols);
     typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
@@ -107,9 +125,16 @@ TEST_P(MatrixMarketGzipTest, LayeredTest) {
         EXPECT_EQ(stuff, loaded_gz.matrix->column(adjusted));
         EXPECT_EQ(stuff, ref->column(i));
     }
+
+    // Auto-detection also works.
+    auto auto_loaded = tatami::MatrixMarket::load_layered_sparse_matrix_from_file(gzname.c_str(), -1, bufsize); 
+    EXPECT_EQ(auto_loaded.matrix->nrow(), NR);
+    EXPECT_EQ(auto_loaded.matrix->ncol(), NC);
 }
 
 TEST_P(MatrixMarketGzipTest, LayeredBufferTest) {
+    auto bufsize = GetParam();
+
     auto ref = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(contents.data(), contents.size());
     EXPECT_EQ(ref.matrix->nrow(), NR);
     EXPECT_EQ(ref.matrix->ncol(), NC);
@@ -119,7 +144,7 @@ TEST_P(MatrixMarketGzipTest, LayeredBufferTest) {
     std::vector<unsigned char> gzcontents(std::istream_iterator<unsigned char>{handle}, std::istream_iterator<unsigned char>());
     EXPECT_TRUE(gzcontents.size() < contents.size()); // compression should have an effect.
 
-    auto obs = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer_gzip(gzcontents.data(), gzcontents.size());
+    auto obs = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(gzcontents.data(), gzcontents.size(), 1, bufsize);
     EXPECT_EQ(obs.matrix->nrow(), NR);
     EXPECT_EQ(obs.matrix->ncol(), NC);
 
@@ -129,8 +154,12 @@ TEST_P(MatrixMarketGzipTest, LayeredBufferTest) {
     }
 
     EXPECT_EQ(obs.permutation, ref.permutation);
-}
 
+    // Auto-detection also works.
+    auto auto_obs = tatami::MatrixMarket::load_layered_sparse_matrix_from_buffer(gzcontents.data(), gzcontents.size(), -1, bufsize);
+    EXPECT_EQ(auto_obs.matrix->nrow(), NR);
+    EXPECT_EQ(auto_obs.matrix->ncol(), NC);
+}
 
 INSTANTIATE_TEST_CASE_P(
     MatrixMarket,
