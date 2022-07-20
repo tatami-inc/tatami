@@ -78,18 +78,18 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3580c564e5b476acd1fe35a4a9f2e1ed"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a3580c564e5b476acd1fe35a4a9f2e1ed"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="medians_8hpp.html#a3580c564e5b476acd1fe35a4a9f2e1ed">tatami::column_medians</a> (const Matrix&lt; T, IDX &gt; *p)</td></tr>
-<tr class="separator:a3580c564e5b476acd1fe35a4a9f2e1ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa77006be2260242469d12fc50e4d43bb"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:aa77006be2260242469d12fc50e4d43bb"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="medians_8hpp.html#aa77006be2260242469d12fc50e4d43bb">tatami::row_medians</a> (const Matrix&lt; T, IDX &gt; *p)</td></tr>
-<tr class="separator:aa77006be2260242469d12fc50e4d43bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acde903394a6c87915d3262d08b48fdea"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:acde903394a6c87915d3262d08b48fdea"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="medians_8hpp.html#acde903394a6c87915d3262d08b48fdea">tatami::column_medians</a> (const Matrix&lt; T, IDX &gt; *p, int threads=1)</td></tr>
+<tr class="separator:acde903394a6c87915d3262d08b48fdea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5406cb065686144b1fa807d6c1af09d1"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:a5406cb065686144b1fa807d6c1af09d1"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="medians_8hpp.html#a5406cb065686144b1fa807d6c1af09d1">tatami::row_medians</a> (const Matrix&lt; T, IDX &gt; *p, int threads=1)</td></tr>
+<tr class="separator:a5406cb065686144b1fa807d6c1af09d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Compute row and column medians from a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a3580c564e5b476acd1fe35a4a9f2e1ed" name="a3580c564e5b476acd1fe35a4a9f2e1ed"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3580c564e5b476acd1fe35a4a9f2e1ed">&#9670;&nbsp;</a></span>column_medians()</h2>
+<a id="acde903394a6c87915d3262d08b48fdea" name="acde903394a6c87915d3262d08b48fdea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acde903394a6c87915d3262d08b48fdea">&#9670;&nbsp;</a></span>column_medians()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -103,8 +103,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
           <td class="memname">std::vector&lt; Output &gt; tatami::column_medians </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
-          <td class="paramname"><em>p</em></td><td>)</td>
+          <td class="paramname"><em>p</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -123,7 +133,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Shared pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>.</td></tr>
+    <tr><td class="paramname">p</td><td>Shared pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">threads</td><td>Number of threads to use.</td></tr>
   </table>
   </dd>
 </dl>
@@ -131,8 +142,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="aa77006be2260242469d12fc50e4d43bb" name="aa77006be2260242469d12fc50e4d43bb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa77006be2260242469d12fc50e4d43bb">&#9670;&nbsp;</a></span>row_medians()</h2>
+<a id="a5406cb065686144b1fa807d6c1af09d1" name="a5406cb065686144b1fa807d6c1af09d1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5406cb065686144b1fa807d6c1af09d1">&#9670;&nbsp;</a></span>row_medians()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -146,8 +157,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
           <td class="memname">std::vector&lt; Output &gt; tatami::row_medians </td>
           <td>(</td>
           <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
-          <td class="paramname"><em>p</em></td><td>)</td>
+          <td class="paramname"><em>p</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -166,7 +187,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Shared pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>.</td></tr>
+    <tr><td class="paramname">p</td><td>Shared pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">threads</td><td>Number of threads to use.</td></tr>
   </table>
   </dd>
 </dl>

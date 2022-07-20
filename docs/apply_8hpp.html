@@ -81,15 +81,15 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a794620bd9c24e6c2bc39f4c65d7f1a16"><td class="memTemplParams" colspan="2">template&lt;int MARGIN, typename T , typename IDX , class Factory &gt; </td></tr>
-<tr class="memitem:a794620bd9c24e6c2bc39f4c65d7f1a16"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="apply_8hpp.html#a794620bd9c24e6c2bc39f4c65d7f1a16">tatami::apply</a> (const Matrix&lt; T, IDX &gt; *p, Factory &amp;factory)</td></tr>
-<tr class="separator:a794620bd9c24e6c2bc39f4c65d7f1a16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0692b6c82646df0131b9872431a11bf2"><td class="memTemplParams" colspan="2">template&lt;int MARGIN, typename T , typename IDX , class Factory &gt; </td></tr>
+<tr class="memitem:a0692b6c82646df0131b9872431a11bf2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">tatami::apply</a> (const Matrix&lt; T, IDX &gt; *p, Factory &amp;factory, int threads=1)</td></tr>
+<tr class="separator:a0692b6c82646df0131b9872431a11bf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Apply arbitrary calculations along rows or columns. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a794620bd9c24e6c2bc39f4c65d7f1a16" name="a794620bd9c24e6c2bc39f4c65d7f1a16"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a794620bd9c24e6c2bc39f4c65d7f1a16">&#9670;&nbsp;</a></span>apply()</h2>
+<a id="a0692b6c82646df0131b9872431a11bf2" name="a0692b6c82646df0131b9872431a11bf2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0692b6c82646df0131b9872431a11bf2">&#9670;&nbsp;</a></span>apply()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -106,7 +106,13 @@ template&lt;int MARGIN, typename T , typename IDX , class Factory &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Factory &amp;&#160;</td>
-          <td class="paramname"><em>factory</em>&#160;</td>
+          <td class="paramname"><em>factory</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -127,13 +133,14 @@ template&lt;int MARGIN, typename T , typename IDX , class Factory &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">factory</td><td>Instance of a factory.</td></tr>
+    <tr><td class="paramname">factory</td><td>Instance of a factory. </td></tr>
+    <tr><td class="paramname">threads</td><td>Number of threads to use for matrix traversal.</td></tr>
   </table>
   </dd>
 </dl>
 <h1><a class="anchor" id="apply_overview"></a>
 Overview</h1>
-<p >In this function, we consider the matrix to be a collection of "target vectors". When <code>MARGIN = 0</code>, each row is a target vector, whereas when <code>MARGIN = 1</code>, each column is a target vector. The goal is to compute some statistic along each of these target vectors, e.g., the per-row sums (<code><a class="el" href="sums_8hpp.html#a2911cbe4f7140539f015cc59edf22904">row_sums()</a></code>) or the per-column variances (<code><a class="el" href="variances_8hpp.html#a5ec25554e8927b70cf39398cf77e744f">row_variances()</a></code>). For brevity, we will refer to the vectors along the other dimension as "running vectors".</p>
+<p >In this function, we consider the matrix to be a collection of "target vectors". When <code>MARGIN = 0</code>, each row is a target vector, whereas when <code>MARGIN = 1</code>, each column is a target vector. The goal is to compute some statistic along each of these target vectors, e.g., the per-row sums (<code><a class="el" href="sums_8hpp.html#a3d121e9c7c0ded4ba86382bd83abf103">row_sums()</a></code>) or the per-column variances (<code><a class="el" href="variances_8hpp.html#a2aa54193cf4c92ace983cba8c118ca1a">row_variances()</a></code>). For brevity, we will refer to the vectors along the other dimension as "running vectors".</p>
 <h1><a class="anchor" id="apply_factory"></a>
 Factory requirements</h1>
 <p >Arbitrary computations are supported via the supplied instance of the factory class. The factory class should have a <code>dense_direct()</code> method that accepts no arguments and returns an arbitrary <code>struct</code>. The returned <code>struct</code> should have a <code>compute()</code> method that accepts the index of the target vector and a <code>const</code> pointer to the target vector. This will be used in a "direct" calculation, i.e., the statistic for a target vector is directly computed from the target vector's values in memory.</p>
@@ -143,8 +150,8 @@ Factory requirements</h1>
 <li>A <code>dense_running()</code> method that accepts no arguments and returns an arbitrary <code>struct</code>. The returned <code>struct</code> should have an <code>add()</code> method that accepts a pointer to a running vector. It should also have a <code>finish()</code> method, to be called to finalize any calculations after all running vectors are supplied.</li>
 <li>A <code>sparse_running()</code> method that accepts no arguments and returns an arbitrary <code>struct</code>. The returned <code>struct</code> should have an <code>add()</code> method that accepts a <code>SparseRange</code> object specifying the non-zero elements at a running vector. It should also have a <code>finish()</code> method, to be called to finalize any calculations after all running vectors are supplied.</li>
 </ul>
-<p >In the running calculations, the statistic for each target vector is computed incrementally as new values become available in successive running vectors. The idea is that <code><a class="el" href="apply_8hpp.html#a794620bd9c24e6c2bc39f4c65d7f1a16">apply()</a></code> will automatically choose the most appropriate calculation based on whether the matrix is sparse, whether it prefers row/column access, whether we want row/column statistics, and whether the calculation supports sparse and/or running calculations (based on the availability of the methods above). For example, if running calculations are feasible for a particular statistic, <code><a class="el" href="apply_8hpp.html#a794620bd9c24e6c2bc39f4c65d7f1a16">apply()</a></code> can choose a more favorable access pattern.</p>
-<p >Each of these <code>compute()</code> and <code>add()</code> methods should modify the contents of <code>factory</code> by reference, which is usually achieved by passing pointers from <code>factory</code> to each returned <code>struct</code> and writing to those pointers in <code>compute()</code> and <code>add()</code>. Computed statistics can then be extracted from <code>factory</code> once <code><a class="el" href="apply_8hpp.html#a794620bd9c24e6c2bc39f4c65d7f1a16">apply()</a></code> has finished running. Results should be agnostic to the choice of calculation, notwithstanding minor differences due to numerical precision.</p>
+<p >In the running calculations, the statistic for each target vector is computed incrementally as new values become available in successive running vectors. The idea is that <code><a class="el" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> will automatically choose the most appropriate calculation based on whether the matrix is sparse, whether it prefers row/column access, whether we want row/column statistics, and whether the calculation supports sparse and/or running calculations (based on the availability of the methods above). For example, if running calculations are feasible for a particular statistic, <code><a class="el" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> can choose a more favorable access pattern.</p>
+<p >Each of these <code>compute()</code> and <code>add()</code> methods should modify the contents of <code>factory</code> by reference, which is usually achieved by passing pointers from <code>factory</code> to each returned <code>struct</code> and writing to those pointers in <code>compute()</code> and <code>add()</code>. Computed statistics can then be extracted from <code>factory</code> once <code><a class="el" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> has finished running. Results should be agnostic to the choice of calculation, notwithstanding minor differences due to numerical precision.</p>
 <p >See the <code>VarianceFactory</code> in <code><a class="el" href="variances_8hpp.html">variances.hpp</a></code> for an example of a valid factory class.</p>
 <h1><a class="anchor" id="apply_mutable"></a>
 Mutating copies</h1>
@@ -153,24 +160,25 @@ Mutating copies</h1>
 <li>In the dense case, the <code>compute_copy()</code> method should accept the index of the target vector and a non-<code>const</code> pointer to a buffer with the values of the row/column.</li>
 <li>In the sparse case, the <code>compute_copy()</code> should accept the index of the target vector, the number of non-zero elements, a non-<code>const</code> pointer to a buffer with the non-zero values, and a non-<code>const</code> pointer to the indices of the non-zero elements. The <code>struct</code> may also contain a static <code>copy_mode</code> member specifying whether one or both the values/indices should be copied into the buffers, see the options for a <code>SparseCopyMode</code>.</li>
 </ul>
-<p >If a <code>compute_copy()</code> method is available, <code><a class="el" href="apply_8hpp.html#a794620bd9c24e6c2bc39f4c65d7f1a16">apply()</a></code> will create a copy upon row/column extraction and the developer is free to modify the buffers inside the <code>compute_copy()</code> method. Note that we do not provide a copyable option for the running calculations as this is rarely necessary.</p>
+<p >If a <code>compute_copy()</code> method is available, <code><a class="el" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> will create a copy upon row/column extraction and the developer is free to modify the buffers inside the <code>compute_copy()</code> method. Note that we do not provide a copyable option for the running calculations as this is rarely necessary.</p>
 <p >See the <code>MedianFactory</code> in <code><a class="el" href="medians_8hpp.html">medians.hpp</a></code> for an example of a factory that mutates the buffer.</p>
 <h1><a class="anchor" id="apply_parallel2"></a>
 Caller parallelization</h1>
-<p ><code><a class="el" href="apply_8hpp.html#a794620bd9c24e6c2bc39f4c65d7f1a16">apply()</a></code> supports parallelization via OpenMP by default, so callers can simply compile with <code>-fopenmp</code> to parallelize their code. <code><a class="el" href="apply_8hpp.html#a794620bd9c24e6c2bc39f4c65d7f1a16">apply()</a></code> will automatically distribute the calculations for each target vector across available threads. The maximum number of threads can be controlled with <code>omp_set_max_threads()</code>.</p>
-<p >Advanced callers of <code><a class="el" href="apply_8hpp.html#a794620bd9c24e6c2bc39f4c65d7f1a16">apply()</a></code> may specify their own parallelization scheme by defining a <code>TATAMI_CUSTOM_PARALLEL</code> macro. This should be a function-like macro with two arguments:</p>
+<p ><code><a class="el" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> supports parallelization via OpenMP by default, so callers can simply compile with <code>-fopenmp</code> to parallelize their code. <code><a class="el" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> will automatically distribute the calculations for each target vector across available threads. The maximum number of threads is defined by the <code>threads</code> argument.</p>
+<p >Advanced callers of <code><a class="el" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> may specify their own parallelization scheme by defining a <code>TATAMI_CUSTOM_PARALLEL</code> macro. This should be a function-like macro with three arguments:</p>
 <ul>
 <li><code>n</code>, an integer specifying the total number of jobs.</li>
 <li><code>f</code>, a lambda specifying the function to run on a range of jobs in <code>n</code>. This should take two <code>size_t</code> arguments specifying the start and one-past-the-end of the range.</li>
+<li><code>t</code>, an integer specifying the number of available threads. This is set to <code>threads</code>.</li>
 </ul>
 <p >The <code>TATAMI_CUSTOM_PARALLEL</code> function is expected to split <code>n</code> into non-overlapping ranges where each range is assigned to a worker. It should then call <code>f</code> within each worker on the corresponding range of jobs. For example:</p>
 <div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> Function&gt;</div>
-<div class="line"><span class="keywordtype">void</span> parallelize(<span class="keywordtype">size_t</span> n, Function f) {</div>
-<div class="line">    <span class="keywordtype">size_t</span> jobs_per_worker = std::ceil(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(n) / 3);</div>
+<div class="line"><span class="keywordtype">void</span> parallelize(<span class="keywordtype">size_t</span> n, Function f, <span class="keywordtype">size_t</span> nworkers) {</div>
+<div class="line">    <span class="keywordtype">size_t</span> jobs_per_worker = std::ceil(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(n) / nworkers);</div>
 <div class="line">    <span class="keywordtype">size_t</span> start = 0;</div>
 <div class="line">    std::vector&lt;std::thread&gt; jobs;</div>
 <div class="line">    </div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> w = 0; w &lt; 3; ++w) {</div>
+<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> w = 0; w &lt; nworkers; ++w) {</div>
 <div class="line">        <span class="keywordtype">size_t</span> end = std::min(n, start + jobs_per_worker);</div>
 <div class="line">        <span class="keywordflow">if</span> (start &gt;= end) {</div>
 <div class="line">            <span class="keywordflow">break</span>;</div>
