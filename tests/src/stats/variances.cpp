@@ -2,6 +2,11 @@
 
 #include <vector>
 
+#ifdef CUSTOM_PARALLEL_TEST
+// Put this before any tatami apply imports.
+#include "custom_parallel.h"
+#endif
+
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/utils/convert_to_dense.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
@@ -25,25 +30,30 @@ TEST(ComputingDimVariances, RowVariances) {
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     // Doing the difference of squares as a quick-and-dirty reference.
-    auto ref = tatami::row_variances(dense_row.get());
-    std::vector<double> expected(sparse_nrow), expectedm(sparse_nrow);
+    std::vector<double> ref(sparse_nrow), expectedm(sparse_nrow);
     for (size_t r = 0; r < sparse_nrow; ++r) {
         for (size_t c = 0; c < sparse_ncol; ++c) {
             double x = sparse_matrix[c + r * sparse_ncol];
             expectedm[r] += x;
-            expected[r] += x * x;
+            ref[r] += x * x;
         }
         expectedm[r] /= sparse_ncol;
-        expected[r] /= sparse_ncol;
-        expected[r] -= expectedm[r] * expectedm[r];
-        expected[r] *= sparse_ncol;
-        expected[r] /= sparse_ncol - 1;
+        ref[r] /= sparse_ncol;
+        ref[r] -= expectedm[r] * expectedm[r];
+        ref[r] *= sparse_ncol;
+        ref[r] /= sparse_ncol - 1;
     }
-    compare_double_vectors(ref, expected);
 
+    compare_double_vectors(ref, tatami::row_variances(dense_row.get()));
     compare_double_vectors(ref, tatami::row_variances(dense_column.get()));
     compare_double_vectors(ref, tatami::row_variances(sparse_row.get()));
     compare_double_vectors(ref, tatami::row_variances(sparse_column.get()));
+
+    // Same results from parallel code.
+    compare_double_vectors(ref, tatami::row_variances(dense_row.get(), 3));
+    compare_double_vectors(ref, tatami::row_variances(dense_column.get(), 3));
+    compare_double_vectors(ref, tatami::row_variances(sparse_row.get(), 3));
+    compare_double_vectors(ref, tatami::row_variances(sparse_column.get(), 3));
 }
 
 TEST(ComputingDimVariances, ColumnVariances) {
@@ -53,25 +63,30 @@ TEST(ComputingDimVariances, ColumnVariances) {
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     // Doing the difference of squares as a quick-and-dirty reference.
-    auto ref = tatami::column_variances(dense_row.get());
-    std::vector<double> expected(sparse_ncol), expectedm(sparse_ncol);
+    std::vector<double> ref(sparse_ncol), expectedm(sparse_ncol);
     for (size_t c = 0; c < sparse_ncol; ++c) {
         for (size_t r = 0; r < sparse_nrow; ++r) {
             double x = sparse_matrix[c + r * sparse_ncol];
             expectedm[c] += x;
-            expected[c] += x * x;
+            ref[c] += x * x;
         }
         expectedm[c] /= sparse_nrow;
-        expected[c] /= sparse_nrow;
-        expected[c] -= expectedm[c] * expectedm[c];
-        expected[c] *= sparse_nrow;
-        expected[c] /= sparse_nrow - 1;
+        ref[c] /= sparse_nrow;
+        ref[c] -= expectedm[c] * expectedm[c];
+        ref[c] *= sparse_nrow;
+        ref[c] /= sparse_nrow - 1;
     }
-    compare_double_vectors(ref, expected);
 
+    compare_double_vectors(ref, tatami::column_variances(dense_row.get()));
     compare_double_vectors(ref, tatami::column_variances(dense_column.get()));
     compare_double_vectors(ref, tatami::column_variances(sparse_row.get()));
     compare_double_vectors(ref, tatami::column_variances(sparse_column.get()));
+
+    // Same results from parallel code.
+    compare_double_vectors(ref, tatami::column_variances(dense_row.get(), 3));
+    compare_double_vectors(ref, tatami::column_variances(dense_column.get(), 3));
+    compare_double_vectors(ref, tatami::column_variances(sparse_row.get(), 3));
+    compare_double_vectors(ref, tatami::column_variances(sparse_column.get(), 3));
 }
 
 TEST(ComputingDimVariances, RowVariancesNaN) {

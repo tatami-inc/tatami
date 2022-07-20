@@ -4,13 +4,13 @@
 #include "../base/Matrix.hpp"
 #include "config.hpp"
 
-#include <cmath>
-#include <vector>
-#include <algorithm>
-
 #ifdef _OPENMP
 #include <omp.h>
 #endif
+
+#include <cmath>
+#include <vector>
+#include <algorithm>
 
 /**
  * @file apply.hpp
@@ -28,6 +28,7 @@ namespace tatami {
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param factory Instance of a factory.
+ * @param threads Number of threads to use for matrix traversal.
  *
  * @section apply_overview Overview
  * In this function, we consider the matrix to be a collection of "target vectors".
@@ -81,14 +82,16 @@ namespace tatami {
  * @section apply_parallel2 Caller parallelization
  * `apply()` supports parallelization via OpenMP by default, so callers can simply compile with `-fopenmp` to parallelize their code.
  * `apply()` will automatically distribute the calculations for each target vector across available threads.
- * The maximum number of threads can be controlled with `omp_set_max_threads()`.
+ * The maximum number of threads is defined by the `threads` argument.
  *
  * Advanced callers of `apply()` may specify their own parallelization scheme by defining a `TATAMI_CUSTOM_PARALLEL` macro.
- * This should be a function-like macro with two arguments: 
+ * This should be a function-like macro with three arguments: 
  *
  * - `n`, an integer specifying the total number of jobs.
  * - `f`, a lambda specifying the function to run on a range of jobs in `n`.
  *   This should take two `size_t` arguments specifying the start and one-past-the-end of the range.
+ * - `t`, an integer specifying the number of available threads. 
+ *   This is set to `threads`.
  * 
  * The `TATAMI_CUSTOM_PARALLEL` function is expected to split `n` into non-overlapping ranges where each range is assigned to a worker.
  * It should then call `f` within each worker on the corresponding range of jobs.
@@ -96,12 +99,12 @@ namespace tatami {
  *
  * ```cpp
  * template<class Function>
- * void parallelize(size_t n, Function f) {
- *     size_t jobs_per_worker = std::ceil(static_cast<double>(n) / 3);
+ * void parallelize(size_t n, Function f, size_t nworkers) {
+ *     size_t jobs_per_worker = std::ceil(static_cast<double>(n) / nworkers);
  *     size_t start = 0;
  *     std::vector<std::thread> jobs;
  *     
- *     for (size_t w = 0; w < 3; ++w) {
+ *     for (size_t w = 0; w < nworkers; ++w) {
  *         size_t end = std::min(n, start + jobs_per_worker);
  *         if (start >= end) {
  *             break;
@@ -140,7 +143,7 @@ namespace tatami {
  * These overloads are optional and the function will fall back to serial processing if they are not supplied (and the function decides perform a running calculation).
  */
 template<int MARGIN, typename T, typename IDX, class Factory>
-void apply(const Matrix<T, IDX>* p, Factory& factory) {
+void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
     /**
      * @cond
      */
@@ -167,8 +170,10 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
 #if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
                     if constexpr(stats::has_sparse_running_parallel<Factory>::value) {
 #ifndef TATAMI_CUSTOM_PARALLEL
-                        #pragma omp parallel
+                        #pragma omp parallel num_threads(threads)
                         {
+                            // We use the omp methods here to get the total number of threads, just in case something
+                            // causes us to have fewer threads than the number we requested.
                             size_t worker_size = std::ceil(static_cast<double>(dim) / omp_get_num_threads());
                             size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
 #else
@@ -194,7 +199,7 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
 #ifndef TATAMI_CUSTOM_PARALLEL
                         }
 #else
-                        });
+                        }, threads);
 #endif
                         return;
                     }
@@ -221,7 +226,7 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
 #if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
             if constexpr(stats::has_dense_running_parallel<Factory>::value) {
 #ifndef TATAMI_CUSTOM_PARALLEL
-                #pragma omp parallel
+                #pragma omp parallel num_threads(threads)
                 {
                     size_t worker_size = std::ceil(static_cast<double>(dim) / omp_get_num_threads());
                     size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
@@ -247,7 +252,7 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
 #ifndef TATAMI_CUSTOM_PARALLEL
                 }
 #else
-                });
+                }, threads);
 #endif
                 return;
             }
@@ -273,7 +278,7 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
     if constexpr(stats::has_sparse_direct<Factory>::value) {
         if (p->sparse()) {
 #ifndef TATAMI_CUSTOM_PARALLEL
-            #pragma omp parallel
+            #pragma omp parallel num_threads(threads)
             {
 #else
             TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
@@ -287,7 +292,9 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
                 constexpr SparseCopyMode copy_mode = stats::nonconst_sparse_compute_copy_mode<decltype(stat)>::value;
 
 #ifndef TATAMI_CUSTOM_PARALLEL
-                #pragma omp for schedule(static) 
+                // Without chunk size specification, static scheduling should distribute
+                // one chunk to each job, so everything is as contiguous as possible.
+                #pragma omp for schedule(static)
                 for (size_t i = 0; i < dim; ++i) {
 #else
                 for (size_t i = start; i < end; ++i) {
@@ -313,14 +320,14 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
 #ifndef TATAMI_CUSTOM_PARALLEL
             }
 #else
-            });
+            }, threads);
 #endif
             return;
         }
     }
 
 #ifndef TATAMI_CUSTOM_PARALLEL
-    #pragma omp parallel
+    #pragma omp parallel num_threads(threads)
     {
 #else
     TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
@@ -357,7 +364,7 @@ void apply(const Matrix<T, IDX>* p, Factory& factory) {
 #ifndef TATAMI_CUSTOM_PARALLEL            
     }
 #else
-    });
+    }, threads);
 #endif
 
     /**

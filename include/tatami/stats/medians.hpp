@@ -140,14 +140,15 @@ public:
  * @tparam IDX Type of the row/column indices.
  *
  * @param p Shared pointer to a `tatami::Matrix`.
+ * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of columns, containing the column medians.
  */
 template<typename Output = double, typename T, typename IDX>
-inline std::vector<Output> column_medians(const Matrix<T, IDX>* p) {
+inline std::vector<Output> column_medians(const Matrix<T, IDX>* p, int threads = 1) {
     std::vector<Output> output(p->ncol());
     stats::MedianFactory factory(output.data(), p->nrow());
-    apply<1>(p, factory);
+    apply<1>(p, factory, threads);
     return output;
 }
 
@@ -157,11 +158,12 @@ inline std::vector<Output> column_medians(const Matrix<T, IDX>* p) {
  * @tparam IDX Type of the row/column indices.
  *
  * @param p Shared pointer to a `tatami::Matrix`.
+ * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of rows, containing the row medians.
  */
 template<typename Output = double, typename T, typename IDX>
-inline std::vector<Output> row_medians(const Matrix<T, IDX>* p) {
+inline std::vector<Output> row_medians(const Matrix<T, IDX>* p, int threads = 1) {
     std::vector<Output> output(p->nrow());
     stats::MedianFactory factory(output.data(), p->ncol());
     apply<0>(p, factory);

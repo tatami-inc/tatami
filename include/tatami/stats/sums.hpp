@@ -116,14 +116,15 @@ public:
  * @tparam IDX Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
+ * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of columns, containing the column sums.
  */
 template<typename Output = double, typename T, typename IDX>
-std::vector<Output> column_sums(const Matrix<T, IDX>* p) {
+std::vector<Output> column_sums(const Matrix<T, IDX>* p, int threads = 1) {
     std::vector<Output> output(p->ncol());
     stats::SumFactory factory(output.data(), p->ncol(), p->nrow());
-    apply<1>(p, factory);
+    apply<1>(p, factory, threads);
     return output;
 }
 
@@ -133,14 +134,15 @@ std::vector<Output> column_sums(const Matrix<T, IDX>* p) {
  * @tparam IDX Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
+ * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of rows, containing the row sums.
  */
 template<typename Output = double, typename T, typename IDX>
-std::vector<Output> row_sums(const Matrix<T, IDX>* p) {
+std::vector<Output> row_sums(const Matrix<T, IDX>* p, int threads = 1) {
     std::vector<Output> output(p->nrow());
     stats::SumFactory factory(output.data(), p->nrow(), p->ncol());
-    apply<0>(p, factory);
+    apply<0>(p, factory, threads);
     return output;
 }
 

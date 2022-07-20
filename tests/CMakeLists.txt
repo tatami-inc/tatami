@@ -46,8 +46,13 @@ target_link_libraries(
 # Test custom parallelization during apply.
 add_executable(
     cuspartest 
-    src/stats/custom_parallel.cpp
+    src/stats/sums.cpp
+    src/stats/variances.cpp
+    src/stats/medians.cpp
+    src/stats/ranges.cpp
+    src/stats/apply.cpp
     src/data/data_sparse.cpp
+    src/data/data_triangular.cpp
 )
 
 target_link_libraries(
@@ -82,6 +87,8 @@ if (USE_OPENMP)
     target_link_libraries(exttest OpenMP::OpenMP_CXX)
     target_link_libraries(cuspartest OpenMP::OpenMP_CXX)
 endif()
+
+target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
 
 find_package(ZLIB)
 target_link_libraries(exttest ZLIB::ZLIB)

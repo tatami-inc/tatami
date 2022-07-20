@@ -2,6 +2,11 @@
 
 #include <vector>
 
+#ifdef CUSTOM_PARALLEL_TEST
+// Put this before any tatami apply imports.
+#include "custom_parallel.h"
+#endif
+
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/utils/convert_to_dense.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
@@ -15,19 +20,24 @@ TEST(ComputingDimMins, RowMins) {
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
-    auto ref = tatami::row_mins(dense_row.get());
-    std::vector<double> expected(sparse_nrow);
+    std::vector<double> ref(sparse_nrow);
     for (size_t r = 0; r < sparse_nrow; ++r) {
-        expected[r] = sparse_matrix[r * sparse_ncol];
+        ref[r] = sparse_matrix[r * sparse_ncol];
         for (size_t c = 1; c < sparse_ncol; ++c) {
-            expected[r] = std::min(expected[r], sparse_matrix[c + r * sparse_ncol]);
+            ref[r] = std::min(ref[r], sparse_matrix[c + r * sparse_ncol]);
         }
     }
-    EXPECT_EQ(ref, expected);
 
+    EXPECT_EQ(ref, tatami::row_mins(dense_row.get()));
     EXPECT_EQ(ref, tatami::row_mins(dense_column.get()));
     EXPECT_EQ(ref, tatami::row_mins(sparse_row.get()));
     EXPECT_EQ(ref, tatami::row_mins(sparse_column.get()));
+
+    // Same results from parallel code.
+    EXPECT_EQ(ref, tatami::row_mins(dense_row.get(), 3));
+    EXPECT_EQ(ref, tatami::row_mins(dense_column.get(), 3));
+    EXPECT_EQ(ref, tatami::row_mins(sparse_row.get(), 3));
+    EXPECT_EQ(ref, tatami::row_mins(sparse_column.get(), 3));
 }
 
 TEST(ComputingDimMins, ColumnMins) {
@@ -36,19 +46,24 @@ TEST(ComputingDimMins, ColumnMins) {
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
-    auto ref = tatami::column_mins(dense_row.get());
-    std::vector<double> expected(sparse_ncol);
+    std::vector<double> ref(sparse_ncol);
     for (size_t c = 0; c < sparse_ncol; ++c) {
-        expected[c] = sparse_matrix[c];
+        ref[c] = sparse_matrix[c];
         for (size_t r = 1; r < sparse_nrow; ++r) {
-            expected[c] = std::min(expected[c], sparse_matrix[c + r * sparse_ncol]);
+            ref[c] = std::min(ref[c], sparse_matrix[c + r * sparse_ncol]);
         }
     }
-    EXPECT_EQ(ref, expected);
 
+    EXPECT_EQ(ref, tatami::column_mins(dense_row.get()));
     EXPECT_EQ(ref, tatami::column_mins(dense_column.get()));
     EXPECT_EQ(ref, tatami::column_mins(sparse_row.get()));
     EXPECT_EQ(ref, tatami::column_mins(sparse_column.get()));
+
+    // Same results from parallel code.
+    EXPECT_EQ(ref, tatami::column_mins(dense_row.get(), 3));
+    EXPECT_EQ(ref, tatami::column_mins(dense_column.get(), 3));
+    EXPECT_EQ(ref, tatami::column_mins(sparse_row.get(), 3));
+    EXPECT_EQ(ref, tatami::column_mins(sparse_column.get(), 3));
 }
 
 TEST(ComputingDimMins, Configuration) {
@@ -78,19 +93,24 @@ TEST(ComputingDimMaxs, RowMaxs) {
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
-    auto ref = tatami::row_maxs(dense_row.get());
-    std::vector<double> expected(sparse_nrow);
+    std::vector<double> ref(sparse_nrow);
     for (size_t r = 0; r < sparse_nrow; ++r) {
-        expected[r] = sparse_matrix[r * sparse_ncol];
+        ref[r] = sparse_matrix[r * sparse_ncol];
         for (size_t c = 1; c < sparse_ncol; ++c) {
-            expected[r] = std::max(expected[r], sparse_matrix[c + r * sparse_ncol]);
+            ref[r] = std::max(ref[r], sparse_matrix[c + r * sparse_ncol]);
         }
     }
-    EXPECT_EQ(ref, expected);
 
+    EXPECT_EQ(ref, tatami::row_maxs(dense_row.get()));
     EXPECT_EQ(ref, tatami::row_maxs(dense_column.get()));
     EXPECT_EQ(ref, tatami::row_maxs(sparse_row.get()));
     EXPECT_EQ(ref, tatami::row_maxs(sparse_column.get()));
+
+    // Same results from parallel code.
+    EXPECT_EQ(ref, tatami::row_maxs(dense_row.get(), 3));
+    EXPECT_EQ(ref, tatami::row_maxs(dense_column.get(), 3));
+    EXPECT_EQ(ref, tatami::row_maxs(sparse_row.get(), 3));
+    EXPECT_EQ(ref, tatami::row_maxs(sparse_column.get(), 3));
 }
 
 TEST(ComputingDimMaxs, ColumnMaxs) {
@@ -99,19 +119,24 @@ TEST(ComputingDimMaxs, ColumnMaxs) {
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
-    auto ref = tatami::column_maxs(dense_row.get());
-    std::vector<double> expected(sparse_ncol);
+    std::vector<double> ref(sparse_ncol);
     for (size_t c = 0; c < sparse_ncol; ++c) {
-        expected[c] = sparse_matrix[c];
+        ref[c] = sparse_matrix[c];
         for (size_t r = 1; r < sparse_nrow; ++r) {
-            expected[c] = std::max(expected[c], sparse_matrix[c + r * sparse_ncol]);
+            ref[c] = std::max(ref[c], sparse_matrix[c + r * sparse_ncol]);
         }
     }
-    EXPECT_EQ(ref, expected);
 
+    EXPECT_EQ(ref, tatami::column_maxs(dense_row.get()));
     EXPECT_EQ(ref, tatami::column_maxs(dense_column.get()));
     EXPECT_EQ(ref, tatami::column_maxs(sparse_row.get()));
     EXPECT_EQ(ref, tatami::column_maxs(sparse_column.get()));
+
+    // Same results from parallel code.
+    EXPECT_EQ(ref, tatami::column_maxs(dense_row.get(), 3));
+    EXPECT_EQ(ref, tatami::column_maxs(dense_column.get(), 3));
+    EXPECT_EQ(ref, tatami::column_maxs(sparse_row.get(), 3));
+    EXPECT_EQ(ref, tatami::column_maxs(sparse_column.get(), 3));
 }
 
 /********************************************/
@@ -129,6 +154,12 @@ TEST(ComputingDimRanges, RowRanges) {
     EXPECT_EQ(ref, tatami::row_ranges(dense_column.get()));
     EXPECT_EQ(ref, tatami::row_ranges(sparse_row.get()));
     EXPECT_EQ(ref, tatami::row_ranges(sparse_column.get()));
+
+    // Same results from parallel code.
+    EXPECT_EQ(ref, tatami::row_ranges(dense_row.get(), 3));
+    EXPECT_EQ(ref, tatami::row_ranges(dense_column.get(), 3));
+    EXPECT_EQ(ref, tatami::row_ranges(sparse_row.get(), 3));
+    EXPECT_EQ(ref, tatami::row_ranges(sparse_column.get(), 3));
 }
 
 TEST(ComputingDimRanges, ColumnRanges) {
@@ -144,6 +175,12 @@ TEST(ComputingDimRanges, ColumnRanges) {
     EXPECT_EQ(ref, tatami::column_ranges(dense_column.get()));
     EXPECT_EQ(ref, tatami::column_ranges(sparse_row.get()));
     EXPECT_EQ(ref, tatami::column_ranges(sparse_column.get()));
+
+    // Same results from parallel code.
+    EXPECT_EQ(ref, tatami::column_ranges(dense_row.get(), 3));
+    EXPECT_EQ(ref, tatami::column_ranges(dense_column.get(), 3));
+    EXPECT_EQ(ref, tatami::column_ranges(sparse_row.get(), 3));
+    EXPECT_EQ(ref, tatami::column_ranges(sparse_column.get(), 3));
 }
 
 TEST(ComputingDimRanges, Configuration) {

@@ -2,6 +2,11 @@
 
 #include <vector>
 
+#ifdef CUSTOM_PARALLEL_TEST
+// Put this before any tatami apply imports.
+#include "custom_parallel.h"
+#endif
+
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/utils/convert_to_dense.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
@@ -15,17 +20,28 @@ TEST(ComputingDimMedians, SparseMedians) {
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
-    auto ref = tatami::row_medians(dense_row.get());
-    EXPECT_EQ(ref.size(), sparse_nrow);
-    EXPECT_EQ(ref, tatami::row_medians(dense_column.get()));
-    EXPECT_EQ(ref, tatami::row_medians(sparse_row.get()));
-    EXPECT_EQ(ref, tatami::row_medians(sparse_column.get()));
+    auto rref = tatami::row_medians(dense_row.get());
+    EXPECT_EQ(rref.size(), sparse_nrow);
+    EXPECT_EQ(rref, tatami::row_medians(dense_column.get()));
+    EXPECT_EQ(rref, tatami::row_medians(sparse_row.get()));
+    EXPECT_EQ(rref, tatami::row_medians(sparse_column.get()));
 
-    ref = tatami::column_medians(dense_row.get());
-    EXPECT_EQ(ref.size(), sparse_ncol);
-    EXPECT_EQ(ref, tatami::column_medians(dense_column.get()));
-    EXPECT_EQ(ref, tatami::column_medians(sparse_row.get()));
-    EXPECT_EQ(ref, tatami::column_medians(sparse_column.get()));
+    auto cref = tatami::column_medians(dense_row.get());
+    EXPECT_EQ(cref.size(), sparse_ncol);
+    EXPECT_EQ(cref, tatami::column_medians(dense_column.get()));
+    EXPECT_EQ(cref, tatami::column_medians(sparse_row.get()));
+    EXPECT_EQ(cref, tatami::column_medians(sparse_column.get()));
+
+    // Checking that the parallel code is the same.
+    EXPECT_EQ(rref, tatami::row_medians(dense_row.get(), 3));
+    EXPECT_EQ(rref, tatami::row_medians(dense_column.get(), 3));
+    EXPECT_EQ(rref, tatami::row_medians(sparse_row.get(), 3));
+    EXPECT_EQ(rref, tatami::row_medians(sparse_column.get(), 3));
+
+    EXPECT_EQ(cref, tatami::column_medians(dense_row.get(), 3));
+    EXPECT_EQ(cref, tatami::column_medians(dense_column.get(), 3));
+    EXPECT_EQ(cref, tatami::column_medians(sparse_row.get(), 3));
+    EXPECT_EQ(cref, tatami::column_medians(sparse_column.get(), 3));
 }
 
 /* Lots of additional checks necessary to account for the 
