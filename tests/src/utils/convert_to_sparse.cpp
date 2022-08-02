@@ -9,7 +9,7 @@ TEST(ConvertToSparse, RowToRow) {
     tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_sparse<true>(&mat);
-    auto converted2 = tatami::convert_to_sparse<true, decltype(mat), int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_sparse<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted->sparse());
     EXPECT_TRUE(converted->prefer_rows());
 
@@ -28,7 +28,7 @@ TEST(ConvertToSparse, ColumnToColumn) {
     tatami::CompressedSparseMatrix<false, double, int> mat(NR, NC, trip.value, trip.index, trip.ptr);
 
     auto converted = tatami::convert_to_sparse<false>(&mat);
-    auto converted2 = tatami::convert_to_sparse<false, decltype(mat), int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_sparse<false, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted->sparse());
     EXPECT_FALSE(converted->prefer_rows());
 
@@ -46,7 +46,7 @@ TEST(ConvertToSparse, RowToColumn) {
     tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_sparse<false>(&mat);
-    auto converted2 = tatami::convert_to_sparse<false, decltype(mat), int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_sparse<false, int, size_t>(&mat); // works for a different type.
     EXPECT_FALSE(converted->prefer_rows());
 
     for (size_t i = 0; i < NR; ++i) {
@@ -64,7 +64,7 @@ TEST(ConvertToSparse, ColumnToRow) {
     tatami::CompressedSparseMatrix<false, double, int> mat(NR, NC, trip.value, trip.index, trip.ptr);
 
     auto converted = tatami::convert_to_sparse<true>(&mat);
-    auto converted2 = tatami::convert_to_sparse<true, decltype(mat), int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_sparse<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted->prefer_rows());
 
     for (size_t i = 0; i < NC; ++i) {

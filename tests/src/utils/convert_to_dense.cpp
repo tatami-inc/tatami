@@ -9,7 +9,7 @@ TEST(ConvertToDense, RowToRow) {
     tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_dense<true>(&mat);
-    auto converted2 = tatami::convert_to_dense<true, decltype(mat), int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_dense<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted->prefer_rows());
 
     for (size_t i = 0; i < NR; ++i) {
@@ -27,7 +27,7 @@ TEST(ConvertToDense, ColumnToColumn) {
     tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_dense<false>(&mat);
-    auto converted2 = tatami::convert_to_dense<false, decltype(mat), int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_dense<false, int, size_t>(&mat); // works for a different type.
     EXPECT_FALSE(converted->prefer_rows());
 
     for (size_t i = 0; i < NC; ++i) {
@@ -45,7 +45,7 @@ TEST(ConvertToDense, RowToColumn) {
     tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_dense<false>(&mat);
-    auto converted2 = tatami::convert_to_dense<false, decltype(mat), int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_dense<false, int, size_t>(&mat); // works for a different type.
     EXPECT_FALSE(converted->prefer_rows());
 
     for (size_t i = 0; i < NR; ++i) {
@@ -63,7 +63,7 @@ TEST(ConvertToDense, ColumnToRow) {
     tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_dense<true>(&mat);
-    auto converted2 = tatami::convert_to_dense<true, decltype(mat), int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_dense<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted->prefer_rows());
 
     for (size_t i = 0; i < NC; ++i) {
