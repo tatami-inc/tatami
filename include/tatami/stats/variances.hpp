@@ -145,15 +145,19 @@ void compute_running(const T* ptr, size_t n, O* means, O* vars, int& count) {
  * @param[out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
  * @param[out] nonzeros Pointer to an array containing the running number of non-zero values for each target vector.
  * @param count Number of times this function has already been called.
+ * @param skip_zeros Whether non-structural zeros in `range.value` should be skipped.
+ * If `false`, the output `nonzeros` instead contains the number of _structural_ non-zero values in each target vector,
+ * which may be useful for informing further operations on the compressed sparse matrix structure.
+ * Note that this choice has no effect on the computed means or variances, besides some differences due to numeric imprecision.
  *
  * @return `means` and `vars` are updated with the corresponding elements from `range`.
  * `count` is incremented by 1.
  */
 template<typename T, typename IDX, typename O, typename Nz>
-void compute_running(const SparseRange<T, IDX>& range, O* means, O* vars, Nz* nonzeros, int& count) {
+void compute_running(const SparseRange<T, IDX>& range, O* means, O* vars, Nz* nonzeros, int& count, bool skip_zeros = true) {
     ++count;
     for (size_t j = 0; j < range.number; ++j) {
-        if (range.value[j]) { // skip observed zeros so 'nonzeros' is what it says.
+        if (!skip_zeros || range.value[j]) { 
             auto ri = range.index[j];
             auto& curM = means[ri];
             auto& curS = vars[ri];
