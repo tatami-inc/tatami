@@ -87,9 +87,9 @@ Functions</h2></td></tr>
 <tr class="memitem:adf0cf01902d7eb37ecedfdbf2519536f"><td class="memTemplParams" colspan="2">template&lt;typename T , typename O &gt; </td></tr>
 <tr class="memitem:adf0cf01902d7eb37ecedfdbf2519536f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#adf0cf01902d7eb37ecedfdbf2519536f">tatami::stats::variances::compute_running</a> (const T *ptr, size_t n, O *means, O *vars, int &amp;count)</td></tr>
 <tr class="separator:adf0cf01902d7eb37ecedfdbf2519536f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4819896e6e602b816cf354545287e922"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX , typename O , typename Nz &gt; </td></tr>
-<tr class="memitem:a4819896e6e602b816cf354545287e922"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#a4819896e6e602b816cf354545287e922">tatami::stats::variances::compute_running</a> (const SparseRange&lt; T, IDX &gt; &amp;range, O *means, O *vars, Nz *nonzeros, int &amp;count)</td></tr>
-<tr class="separator:a4819896e6e602b816cf354545287e922"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aacf56a5f79794794cee4034c102565d4"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX , typename O , typename Nz &gt; </td></tr>
+<tr class="memitem:aacf56a5f79794794cee4034c102565d4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#aacf56a5f79794794cee4034c102565d4">tatami::stats::variances::compute_running</a> (const SparseRange&lt; T, IDX &gt; &amp;range, O *means, O *vars, Nz *nonzeros, int &amp;count, bool skip_zeros=true)</td></tr>
+<tr class="separator:aacf56a5f79794794cee4034c102565d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34e1f6cd5406db80632d8dae5c5f8887"><td class="memTemplParams" colspan="2">template&lt;typename O &gt; </td></tr>
 <tr class="memitem:a34e1f6cd5406db80632d8dae5c5f8887"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#a34e1f6cd5406db80632d8dae5c5f8887">tatami::stats::variances::finish_running</a> (size_t n, O *means, O *vars, int count)</td></tr>
 <tr class="separator:a34e1f6cd5406db80632d8dae5c5f8887"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -246,8 +246,8 @@ template&lt;typename O  = double, typename T &gt; </div>
 
 </div>
 </div>
-<a id="a4819896e6e602b816cf354545287e922" name="a4819896e6e602b816cf354545287e922"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4819896e6e602b816cf354545287e922">&#9670;&nbsp;</a></span>compute_running() <span class="overload">[1/2]</span></h2>
+<a id="aacf56a5f79794794cee4034c102565d4" name="aacf56a5f79794794cee4034c102565d4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aacf56a5f79794794cee4034c102565d4">&#9670;&nbsp;</a></span>compute_running() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -282,7 +282,13 @@ template&lt;typename T , typename IDX , typename O , typename Nz &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int &amp;&#160;</td>
-          <td class="paramname"><em>count</em>&#160;</td>
+          <td class="paramname"><em>count</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>skip_zeros</em> = <code>true</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -307,7 +313,8 @@ template&lt;typename T , typename IDX , typename O , typename Nz &gt; </div>
     <tr><td class="paramdir">[out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">nonzeros</td><td>Pointer to an array containing the running number of non-zero values for each target vector. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times this function has already been called.</td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times this function has already been called. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">skip_zeros</td><td>Whether non-structural zeros in <code>range.value</code> should be skipped. If <code>false</code>, the output <code>nonzeros</code> instead contains the number of <em>structural</em> non-zero values in each target vector, which may be useful for informing further operations on the compressed sparse matrix structure. Note that this choice has no effect on the computed means or variances, besides some differences due to numeric imprecision.</td></tr>
   </table>
   </dd>
 </dl>
@@ -421,7 +428,7 @@ template&lt;typename O &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Finish the running variance calculations from <code><a class="el" href="variances_8hpp.html#a4819896e6e602b816cf354545287e922">compute_running()</a></code>.</p>
+<p >Finish the running variance calculations from <code><a class="el" href="variances_8hpp.html#aacf56a5f79794794cee4034c102565d4">compute_running()</a></code>.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">O</td><td>Type of the output data.</td></tr>
@@ -433,7 +440,7 @@ template&lt;typename O &gt; </div>
     <tr><td class="paramdir"></td><td class="paramname">n</td><td>Number of target vectors. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times the <code><a class="el" href="variances_8hpp.html#a4819896e6e602b816cf354545287e922">compute_running()</a></code> function was called.</td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times the <code><a class="el" href="variances_8hpp.html#aacf56a5f79794794cee4034c102565d4">compute_running()</a></code> function was called.</td></tr>
   </table>
   </dd>
 </dl>
@@ -486,7 +493,7 @@ template&lt;typename O , typename Nz &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p >Finish the running variance calculations from <code><a class="el" href="variances_8hpp.html#a4819896e6e602b816cf354545287e922">compute_running()</a></code> with sparse inputs.</p>
+<p >Finish the running variance calculations from <code><a class="el" href="variances_8hpp.html#aacf56a5f79794794cee4034c102565d4">compute_running()</a></code> with sparse inputs.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">O</td><td>Type of the output data. </td></tr>
@@ -500,7 +507,7 @@ template&lt;typename O , typename Nz &gt; </div>
     <tr><td class="paramdir">[out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">nonzeros</td><td>Pointer to an array containing the running number of non-zero values for each target vector. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times the <code><a class="el" href="variances_8hpp.html#a4819896e6e602b816cf354545287e922">compute_running()</a></code> function was called.</td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times the <code><a class="el" href="variances_8hpp.html#aacf56a5f79794794cee4034c102565d4">compute_running()</a></code> function was called.</td></tr>
   </table>
   </dd>
 </dl>
