@@ -78,29 +78,29 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a717ea0e4ea5c186bb24975ccefaa9cbc"><td class="memTemplParams" colspan="2">template&lt;bool row_, class MatrixIn , typename DataOut  = typename MatrixIn::data_type, typename IndexOut  = typename MatrixIn::index_type&gt; </td></tr>
-<tr class="memitem:a717ea0e4ea5c186bb24975ccefaa9cbc"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; DataOut, IndexOut &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="convert__to__dense_8hpp.html#a717ea0e4ea5c186bb24975ccefaa9cbc">tatami::convert_to_dense</a> (const MatrixIn *incoming)</td></tr>
-<tr class="separator:a717ea0e4ea5c186bb24975ccefaa9cbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a20e36f5046dee6e3ce56efa16658bb19"><td class="memTemplParams" colspan="2">template&lt;class MatrixIn , typename DataOut  = typename MatrixIn::data_type, typename IndexOut  = typename MatrixIn::index_type&gt; </td></tr>
-<tr class="memitem:a20e36f5046dee6e3ce56efa16658bb19"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; DataOut, IndexOut &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="convert__to__dense_8hpp.html#a20e36f5046dee6e3ce56efa16658bb19">tatami::convert_to_dense</a> (const MatrixIn *incoming, int order)</td></tr>
-<tr class="separator:a20e36f5046dee6e3ce56efa16658bb19"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5fd35b3b6f34a8b4965ef9a1cef6fc93"><td class="memTemplParams" colspan="2">template&lt;bool row, typename DataInterface  = double, typename Index  = int, typename DataStore  = DataInterface, class MatrixIn &gt; </td></tr>
+<tr class="memitem:a5fd35b3b6f34a8b4965ef9a1cef6fc93"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; DataInterface, Index &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="convert__to__dense_8hpp.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">tatami::convert_to_dense</a> (const MatrixIn *incoming)</td></tr>
+<tr class="separator:a5fd35b3b6f34a8b4965ef9a1cef6fc93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a1a033ef94ba9f52be54fbd86f85568"><td class="memTemplParams" colspan="2">template&lt;typename DataInterface  = double, typename Index  = int, typename DataStore  = DataInterface, class MatrixIn &gt; </td></tr>
+<tr class="memitem:a9a1a033ef94ba9f52be54fbd86f85568"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; DataInterface, Index &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="convert__to__dense_8hpp.html#a9a1a033ef94ba9f52be54fbd86f85568">tatami::convert_to_dense</a> (const MatrixIn *incoming, int order)</td></tr>
+<tr class="separator:a9a1a033ef94ba9f52be54fbd86f85568"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Convert a matrix into a dense format. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a717ea0e4ea5c186bb24975ccefaa9cbc" name="a717ea0e4ea5c186bb24975ccefaa9cbc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a717ea0e4ea5c186bb24975ccefaa9cbc">&#9670;&nbsp;</a></span>convert_to_dense() <span class="overload">[1/2]</span></h2>
+<a id="a5fd35b3b6f34a8b4965ef9a1cef6fc93" name="a5fd35b3b6f34a8b4965ef9a1cef6fc93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5fd35b3b6f34a8b4965ef9a1cef6fc93">&#9670;&nbsp;</a></span>convert_to_dense() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;bool row_, class MatrixIn , typename DataOut  = typename MatrixIn::data_type, typename IndexOut  = typename MatrixIn::index_type&gt; </div>
+template&lt;bool row, typename DataInterface  = double, typename Index  = int, typename DataStore  = DataInterface, class MatrixIn &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; Matrix&lt; DataOut, IndexOut &gt; &gt; tatami::convert_to_dense </td>
+          <td class="memname">std::shared_ptr&lt; Matrix&lt; DataInterface, Index &gt; &gt; tatami::convert_to_dense </td>
           <td>(</td>
           <td class="paramtype">const MatrixIn *&#160;</td>
           <td class="paramname"><em>incoming</em></td><td>)</td>
@@ -115,10 +115,11 @@ template&lt;bool row_, class MatrixIn , typename DataOut  = typename MatrixIn::d
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">row_</td><td>Whether to return a row-major matrix. </td></tr>
-    <tr><td class="paramname">MatrixIn</td><td>Input matrix class, most typically a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">Data</td><td>Type of data values in the output interface. </td></tr>
-    <tr><td class="paramname">Index</td><td>Integer type for the indices in the output interface.</td></tr>
+    <tr><td class="paramname">row</td><td>Whether to return a row-major matrix. </td></tr>
+    <tr><td class="paramname">DataInterface</td><td>Type of data values in the output interface. </td></tr>
+    <tr><td class="paramname">Index</td><td>Integer type for the indices in the output interface. </td></tr>
+    <tr><td class="paramname">DataStore</td><td>Type of data values to be stored in the output. </td></tr>
+    <tr><td class="paramname">MatrixIn</td><td>Input matrix class, most typically a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
@@ -132,16 +133,16 @@ template&lt;bool row_, class MatrixIn , typename DataOut  = typename MatrixIn::d
 
 </div>
 </div>
-<a id="a20e36f5046dee6e3ce56efa16658bb19" name="a20e36f5046dee6e3ce56efa16658bb19"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a20e36f5046dee6e3ce56efa16658bb19">&#9670;&nbsp;</a></span>convert_to_dense() <span class="overload">[2/2]</span></h2>
+<a id="a9a1a033ef94ba9f52be54fbd86f85568" name="a9a1a033ef94ba9f52be54fbd86f85568"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9a1a033ef94ba9f52be54fbd86f85568">&#9670;&nbsp;</a></span>convert_to_dense() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MatrixIn , typename DataOut  = typename MatrixIn::data_type, typename IndexOut  = typename MatrixIn::index_type&gt; </div>
+template&lt;typename DataInterface  = double, typename Index  = int, typename DataStore  = DataInterface, class MatrixIn &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; Matrix&lt; DataOut, IndexOut &gt; &gt; tatami::convert_to_dense </td>
+          <td class="memname">std::shared_ptr&lt; Matrix&lt; DataInterface, Index &gt; &gt; tatami::convert_to_dense </td>
           <td>(</td>
           <td class="paramtype">const MatrixIn *&#160;</td>
           <td class="paramname"><em>incoming</em>, </td>
@@ -162,9 +163,10 @@ template&lt;class MatrixIn , typename DataOut  = typename MatrixIn::data_type, t
 <p >This overload makes it easier to control the desired output order when it is not known at compile time.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">MatrixIn</td><td>Input matrix class, most typically a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">Data</td><td>Type of data values in the output interface. </td></tr>
-    <tr><td class="paramname">Index</td><td>Integer type for the indices in the output interface.</td></tr>
+    <tr><td class="paramname">DataInterface</td><td>Type of data values in the output interface. </td></tr>
+    <tr><td class="paramname">DataStore</td><td>Type of data values to be stored in the output. </td></tr>
+    <tr><td class="paramname">Index</td><td>Integer type for the indices in the output interface. </td></tr>
+    <tr><td class="paramname">MatrixIn</td><td>Input matrix class, most typically a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
