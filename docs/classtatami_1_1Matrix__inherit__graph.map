@@ -1,0 +1,5 @@
+<map id="tatami::Matrix&lt; T, IDX &gt;" name="tatami::Matrix&lt; T, IDX &gt;">
+<area shape="rect" id="node1" title="Virtual class for a matrix with a defined type." alt="" coords="5,49,128,89"/>
+<area shape="rect" id="node2" href="$classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation." alt="" coords="176,5,355,60"/>
+<area shape="rect" id="node3" href="$classtatami_1_1DenseMatrix.html" title="Dense matrix representation." alt="" coords="197,85,333,125"/>
+</map>
