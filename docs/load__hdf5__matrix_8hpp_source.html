@@ -106,20 +106,20 @@ $(function() {
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>{</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    H5::H5File file_handle(file, H5F_ACC_RDONLY);</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span> </div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">auto</span> dhandle = file_handle.openDataSet(vals);</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> nonzeros = HDF5::get_1d_array_length&lt;false&gt;(dhandle, <span class="stringliteral">&quot;vals&quot;</span>);</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>    <span class="keyword">auto</span> dhandle = HDF5::open_and_check_dataset&lt;false&gt;(file_handle, vals);</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> nonzeros = HDF5::get_array_dimensions&lt;1&gt;(dhandle, <span class="stringliteral">&quot;vals&quot;</span>)[0];</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    U x(nonzeros);</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    dhandle.read(x.data(), HDF5::define_mem_type&lt;typename U::value_type&gt;());</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    </div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keyword">auto</span> ihandle = file_handle.openDataSet(idx);</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordflow">if</span> (HDF5::get_1d_array_length&lt;true&gt;(ihandle, <span class="stringliteral">&quot;idx&quot;</span>) != nonzeros) {</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keyword">auto</span> ihandle = HDF5::open_and_check_dataset&lt;true&gt;(file_handle, idx);</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>    <span class="keywordflow">if</span> (HDF5::get_array_dimensions&lt;1&gt;(ihandle, <span class="stringliteral">&quot;idx&quot;</span>)[0] != nonzeros) {</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;number of non-zero elements is not consistent between &#39;data&#39; and &#39;idx&#39;&quot;</span>);</div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    }</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>    V i(nonzeros);</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    ihandle.read(i.data(), HDF5::define_mem_type&lt;typename V::value_type&gt;());</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span> </div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keyword">auto</span> phandle = file_handle.openDataSet(ptr);</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> ptr_size = HDF5::get_1d_array_length&lt;true&gt;(phandle, <span class="stringliteral">&quot;ptr&quot;</span>);</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keyword">auto</span> phandle = HDF5::open_and_check_dataset&lt;true&gt;(file_handle, ptr);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> ptr_size = HDF5::get_array_dimensions&lt;1&gt;(phandle, <span class="stringliteral">&quot;ptr&quot;</span>)[0];</div>
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordflow">if</span> (ptr_size != (ROW ? nr : nc) + 1) {</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;&#39;ptr&#39; dataset should have length equal to the number of &quot;</span> + (ROW ? std::string(<span class="stringliteral">&quot;rows&quot;</span>) : std::string(<span class="stringliteral">&quot;columns&quot;</span>)) + <span class="stringliteral">&quot; plus 1&quot;</span>);</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>    }</div>
@@ -144,16 +144,16 @@ $(function() {
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX = <span class="keywordtype">int</span>, <span class="keyword">class</span> V = std::vector&lt;T&gt;, <span class="keywordtype">bool</span> transpose = false&gt;</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno"><a class="line" href="load__hdf5__matrix_8hpp.html#ad13e199dab7f4ab7c4d3045a032f8cac">  111</a></span><a class="code hl_class" href="classtatami_1_1DenseMatrix.html">DenseMatrix&lt;!transpose, T, IDX, V&gt;</a> <a class="code hl_function" href="load__hdf5__matrix_8hpp.html#ad13e199dab7f4ab7c4d3045a032f8cac">load_hdf5_dense_matrix</a>(<span class="keyword">const</span> std::string&amp; file, <span class="keyword">const</span> std::string&amp; name) {</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>    H5::H5File fhandle(file, H5F_ACC_RDONLY);</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keyword">auto</span> dhandle = fhandle.openDataSet(name);</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keyword">auto</span> dhandle = HDF5::open_and_check_dataset&lt;false&gt;(fhandle, name);</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keyword">auto</span> dims = HDF5::get_2d_array_dims(dhandle, name);</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    V values(dims.first * dims.second);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    <span class="keyword">auto</span> dims = HDF5::get_array_dimensions&lt;2&gt;(dhandle, name);</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>    V values(dims[0] * dims[1]);</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>    dhandle.read(values.data(), HDF5::define_mem_type&lt;typename V::value_type&gt;());</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span> </div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(transpose) {</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        <span class="keywordflow">return</span> <a class="code hl_class" href="classtatami_1_1DenseMatrix.html">DenseMatrix&lt;false, T, IDX, V&gt;</a>(dims.second, dims.first, std::move(values));</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        <span class="keywordflow">return</span> <a class="code hl_class" href="classtatami_1_1DenseMatrix.html">DenseMatrix&lt;false, T, IDX, V&gt;</a>(dims[1], dims[0], std::move(values));</div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        <span class="keywordflow">return</span> <a class="code hl_class" href="classtatami_1_1DenseMatrix.html">DenseMatrix&lt;true, T, IDX, V&gt;</a>(dims.first, dims.second, std::move(values));</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        <span class="keywordflow">return</span> <a class="code hl_class" href="classtatami_1_1DenseMatrix.html">DenseMatrix&lt;true, T, IDX, V&gt;</a>(dims[0], dims[1], std::move(values));</div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>    }</div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>}</div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span> </div>

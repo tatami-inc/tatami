@@ -123,18 +123,18 @@ $(function() {
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        H5::H5File file_handle(file_name, H5F_ACC_RDONLY);</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="keyword">auto</span> dhandle = file_handle.openDataSet(data_name);</div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        <span class="keyword">const</span> <span class="keywordtype">size_t</span> nonzeros = HDF5::get_1d_array_length&lt;false&gt;(dhandle, <span class="stringliteral">&quot;vals&quot;</span>);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="keyword">auto</span> dhandle = HDF5::open_and_check_dataset&lt;false&gt;(file_handle, data_name);</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        <span class="keyword">const</span> <span class="keywordtype">size_t</span> nonzeros = HDF5::get_array_dimensions&lt;1&gt;(dhandle, <span class="stringliteral">&quot;vals&quot;</span>)[0];</div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
-<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="keyword">auto</span> ihandle = file_handle.openDataSet(index_name);</div>
-<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keywordflow">if</span> (HDF5::get_1d_array_length&lt;true&gt;(ihandle, <span class="stringliteral">&quot;idx&quot;</span>) != nonzeros) {</div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        <span class="keyword">auto</span> ihandle = HDF5::open_and_check_dataset&lt;true&gt;(file_handle, index_name);</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keywordflow">if</span> (HDF5::get_array_dimensions&lt;1&gt;(ihandle, <span class="stringliteral">&quot;idx&quot;</span>)[0] != nonzeros) {</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;number of non-zero elements is not consistent between &#39;data&#39; and &#39;idx&#39;&quot;</span>);</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        }</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span> </div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        total_element_size = dhandle.getDataType().getSize() + ihandle.getDataType().getSize();</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        <span class="keyword">auto</span> phandle = file_handle.openDataSet(ptr);</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        <span class="keyword">const</span> <span class="keywordtype">size_t</span> ptr_size = HDF5::get_1d_array_length&lt;true&gt;(phandle, <span class="stringliteral">&quot;ptr&quot;</span>);</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        <span class="keyword">auto</span> phandle = HDF5::open_and_check_dataset&lt;true&gt;(file_handle, ptr);</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>        <span class="keyword">const</span> <span class="keywordtype">size_t</span> ptr_size = HDF5::get_array_dimensions&lt;1&gt;(phandle, <span class="stringliteral">&quot;ptr&quot;</span>)[0];</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>        <span class="keywordflow">if</span> (ptr_size != pointers.size()) {</div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>            <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;&#39;ptr&#39; dataset should have length equal to the number of &quot;</span> + (ROW ? std::string(<span class="stringliteral">&quot;rows&quot;</span>) : std::string(<span class="stringliteral">&quot;columns&quot;</span>)) + <span class="stringliteral">&quot; plus 1&quot;</span>);</div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        }</div>
