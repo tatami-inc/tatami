@@ -9,7 +9,7 @@
 #include <cmath>
 
 #include "../base/Matrix.hpp"
-#include "HDF5DenseMatrix.hpp"
+#include "hdf5_utils.hpp"
 
 /**
  * @file HDF5CompressedSparseMatrix.hpp
@@ -88,37 +88,20 @@ public:
 
         H5::H5File file_handle(file_name, H5F_ACC_RDONLY);
 
-        auto check_size = [&](const H5::DataSet& handle, const std::string& name) -> size_t {
-            auto type = handle.getTypeClass();
-            if (type != H5T_INTEGER && type != H5T_FLOAT) { 
-                throw std::runtime_error(std::string("expected numeric values in the '") + name + "' dataset");
-            }
-            auto space = handle.getSpace();
-            
-            int ndim = space.getSimpleExtentNdims();
-            if (ndim != 1) {
-                throw std::runtime_error(std::string("'") + name + "' should be a one-dimensional array");
-            }
-
-            hsize_t dims_out[1];
-            space.getSimpleExtentDims(dims_out, NULL);
-            return dims_out[0];
-        };
-
         auto dhandle = file_handle.openDataSet(data_name);
-        const size_t nonzeros = check_size(dhandle, "vals");
+        const size_t nonzeros = HDF5::get_1d_array_length<false>(dhandle, "vals");
 
         auto ihandle = file_handle.openDataSet(index_name);
-        if (check_size(ihandle, "idx") != nonzeros) {
+        if (HDF5::get_1d_array_length<true>(ihandle, "idx") != nonzeros) {
             throw std::runtime_error("number of non-zero elements is not consistent between 'data' and 'idx'");
         }
 
         total_element_size = dhandle.getDataType().getSize() + ihandle.getDataType().getSize();
 
         auto phandle = file_handle.openDataSet(ptr);
-        const size_t ptr_size = check_size(phandle, "ptr");
+        const size_t ptr_size = HDF5::get_1d_array_length<true>(phandle, "ptr");
         if (ptr_size != pointers.size()) {
-            throw std::runtime_error("'ptr' is not of the appropriate length");
+            throw std::runtime_error("'ptr' dataset should have length equal to the number of " + (ROW ? std::string("rows") : std::string("columns")) + " plus 1");
         }
 
         // Checking the contents of the index pointers.

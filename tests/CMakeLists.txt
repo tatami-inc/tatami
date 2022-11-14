@@ -123,6 +123,7 @@ if (TEST_HDF5)
             h5test 
             src/ext/HDF5DenseMatrix.cpp
             src/ext/HDF5CompressedSparseMatrix.cpp
+            src/ext/load_hdf5_matrix.cpp
         )
 
         # Also checking the custom parallelization in the HDF5 libraries.
