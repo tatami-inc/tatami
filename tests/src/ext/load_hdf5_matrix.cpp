@@ -23,9 +23,6 @@ TEST(LoadHDF5MatrixTest, Sparse) {
     auto fpath = temp_file_path("tatami-sparse-test.h5");
     std::string name = "stuff";
     SparseDetails<double> triplets = simulate_sparse_triplets<double>(NR, NC, 0.05, 0, 100);
-    for (auto& v : triplets.value) {
-        v = std::round(v);
-    }
 
     {
         H5::H5File fhandle(fpath, H5F_ACC_TRUNC);
@@ -95,14 +92,19 @@ TEST(LoadHDF5MatrixTest, Sparse) {
             std::vector<uint64_t>
         >(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr");
 
+        std::vector<double> truncated = triplets.value;
+        for (auto& x : truncated) {
+            x = std::trunc(x);
+        }
+
         tatami::CompressedSparseMatrix<
             true, 
             double, 
             int, 
-            decltype(triplets.value), 
+            decltype(truncated), 
             decltype(triplets.index), 
             decltype(triplets.ptr)
-        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+        > ref(NR, NC, std::move(truncated), triplets.index, triplets.ptr);
 
         test_simple_column_access(&mat, &ref, true, 1);
     }
@@ -114,9 +116,6 @@ TEST(LoadHDF5MatrixTest, Dense) {
     std::string name = "stuff";
 
     std::vector<double> values = simulate_dense_vector<double>(NR * NC, 0, 100);
-    for (auto& v : values) {
-        v = std::round(v);
-    }
 
     {
         H5::H5File fhandle(fpath, H5F_ACC_TRUNC);
@@ -146,7 +145,13 @@ TEST(LoadHDF5MatrixTest, Dense) {
     // Trying a different storage type.
     {
         auto mat = tatami::load_hdf5_dense_matrix<double, int, std::vector<int32_t> >(fpath, name);
-        tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
+
+        std::vector<double> truncated = values;
+        for (auto& x : truncated) {
+            x = std::trunc(x);
+        }
+        tatami::DenseRowMatrix<double, int> ref(NR, NC, std::move(truncated));
+
         test_simple_column_access(&mat, &ref, true, 1);
     }
 }
