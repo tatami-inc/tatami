@@ -3,6 +3,10 @@
 
 #include "H5Cpp.h"
 #include <cstdint>
+#include <array>
+#include <string>
+#include <type_traits>
+#include <stdexcept>
 
 namespace tatami {
 
