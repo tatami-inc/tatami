@@ -56,20 +56,20 @@ CompressedSparseMatrix<ROW, T, IDX, U, V, W> load_hdf5_compressed_sparse_matrix(
 {
     H5::H5File file_handle(file, H5F_ACC_RDONLY);
 
-    auto dhandle = file_handle.openDataSet(vals);
-    const size_t nonzeros = HDF5::get_1d_array_length<false>(dhandle, "vals");
+    auto dhandle = HDF5::open_and_check_dataset<false>(file_handle, vals);
+    const size_t nonzeros = HDF5::get_array_dimensions<1>(dhandle, "vals")[0];
     U x(nonzeros);
     dhandle.read(x.data(), HDF5::define_mem_type<typename U::value_type>());
     
-    auto ihandle = file_handle.openDataSet(idx);
-    if (HDF5::get_1d_array_length<true>(ihandle, "idx") != nonzeros) {
+    auto ihandle = HDF5::open_and_check_dataset<true>(file_handle, idx);
+    if (HDF5::get_array_dimensions<1>(ihandle, "idx")[0] != nonzeros) {
         throw std::runtime_error("number of non-zero elements is not consistent between 'data' and 'idx'");
     }
     V i(nonzeros);
     ihandle.read(i.data(), HDF5::define_mem_type<typename V::value_type>());
 
-    auto phandle = file_handle.openDataSet(ptr);
-    const size_t ptr_size = HDF5::get_1d_array_length<true>(phandle, "ptr");
+    auto phandle = HDF5::open_and_check_dataset<true>(file_handle, ptr);
+    const size_t ptr_size = HDF5::get_array_dimensions<1>(phandle, "ptr")[0];
     if (ptr_size != (ROW ? nr : nc) + 1) {
         throw std::runtime_error("'ptr' dataset should have length equal to the number of " + (ROW ? std::string("rows") : std::string("columns")) + " plus 1");
     }
@@ -110,16 +110,16 @@ CompressedSparseMatrix<ROW, T, IDX, U, V, W> load_hdf5_compressed_sparse_matrix(
 template<typename T, typename IDX = int, class V = std::vector<T>, bool transpose = false>
 DenseMatrix<!transpose, T, IDX, V> load_hdf5_dense_matrix(const std::string& file, const std::string& name) {
     H5::H5File fhandle(file, H5F_ACC_RDONLY);
-    auto dhandle = fhandle.openDataSet(name);
+    auto dhandle = HDF5::open_and_check_dataset<false>(fhandle, name);
 
-    auto dims = HDF5::get_2d_array_dims(dhandle, name);
-    V values(dims.first * dims.second);
+    auto dims = HDF5::get_array_dimensions<2>(dhandle, name);
+    V values(dims[0] * dims[1]);
     dhandle.read(values.data(), HDF5::define_mem_type<typename V::value_type>());
 
     if constexpr(transpose) {
-        return DenseMatrix<false, T, IDX, V>(dims.second, dims.first, std::move(values));
+        return DenseMatrix<false, T, IDX, V>(dims[1], dims[0], std::move(values));
     } else {
-        return DenseMatrix<true, T, IDX, V>(dims.first, dims.second, std::move(values));
+        return DenseMatrix<true, T, IDX, V>(dims[0], dims[1], std::move(values));
     }
 }
 

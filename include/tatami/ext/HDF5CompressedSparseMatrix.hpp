@@ -88,18 +88,18 @@ public:
 
         H5::H5File file_handle(file_name, H5F_ACC_RDONLY);
 
-        auto dhandle = file_handle.openDataSet(data_name);
-        const size_t nonzeros = HDF5::get_1d_array_length<false>(dhandle, "vals");
+        auto dhandle = HDF5::open_and_check_dataset<false>(file_handle, data_name);
+        const size_t nonzeros = HDF5::get_array_dimensions<1>(dhandle, "vals")[0];
 
-        auto ihandle = file_handle.openDataSet(index_name);
-        if (HDF5::get_1d_array_length<true>(ihandle, "idx") != nonzeros) {
+        auto ihandle = HDF5::open_and_check_dataset<true>(file_handle, index_name);
+        if (HDF5::get_array_dimensions<1>(ihandle, "idx")[0] != nonzeros) {
             throw std::runtime_error("number of non-zero elements is not consistent between 'data' and 'idx'");
         }
 
         total_element_size = dhandle.getDataType().getSize() + ihandle.getDataType().getSize();
 
-        auto phandle = file_handle.openDataSet(ptr);
-        const size_t ptr_size = HDF5::get_1d_array_length<true>(phandle, "ptr");
+        auto phandle = HDF5::open_and_check_dataset<true>(file_handle, ptr);
+        const size_t ptr_size = HDF5::get_array_dimensions<1>(phandle, "ptr")[0];
         if (ptr_size != pointers.size()) {
             throw std::runtime_error("'ptr' dataset should have length equal to the number of " + (ROW ? std::string("rows") : std::string("columns")) + " plus 1");
         }

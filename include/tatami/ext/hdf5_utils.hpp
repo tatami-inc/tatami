@@ -59,10 +59,15 @@ const H5::PredType& define_mem_type() {
     static_assert("unsupported HDF5 type for template parameter 'T'");
 }
 
-template<bool integer_only>
-size_t get_1d_array_length(const H5::DataSet& handle, const std::string& name) {
-    auto type = handle.getTypeClass();
+template<bool integer_only, class GroupLike>
+H5::DataSet open_and_check_dataset(const GroupLike& handle, const std::string& name) {
+    // Avoid throwing H5 exceptions.
+    if (!H5Lexists(handle.getId(), name.c_str(), H5P_DEFAULT) || handle.childObjType(name) != H5O_TYPE_DATASET) {
+        throw std::runtime_error("no child dataset named '" + name + "'");
+    }
 
+    auto dhandle = handle.openDataSet(name);
+    auto type = dhandle.getTypeClass();
     if constexpr(integer_only) {
         if (type != H5T_INTEGER) {
             throw std::runtime_error(std::string("expected integer values in the '") + name + "' dataset");
@@ -73,34 +78,21 @@ size_t get_1d_array_length(const H5::DataSet& handle, const std::string& name) {
         }
     }
 
-    auto space = handle.getSpace();
-    int ndim = space.getSimpleExtentNdims();
-    if (ndim != 1) {
-        throw std::runtime_error(std::string("'") + name + "' should be a one-dimensional array");
-    }
-
-    hsize_t dims_out[1];
-    space.getSimpleExtentDims(dims_out, NULL);
-    return dims_out[0];
+    return dhandle;
 }
 
-inline std::pair<size_t, size_t> get_2d_array_dims(const H5::DataSet& handle, const std::string& name) {
+template<int N>
+std::array<hsize_t, N> get_array_dimensions(const H5::DataSet& handle, const std::string& name) {
     auto space = handle.getSpace();
 
     int ndim = space.getSimpleExtentNdims();
-    if (ndim != 2) {
-       throw std::runtime_error("'" + name + "' dataset is not a two-dimensional array");
+    if (ndim != N) {
+        throw std::runtime_error(std::string("'") + name + "' should be a " + std::to_string(N) + "-dimensional array");
     }
 
-    hsize_t dims_out[2];
-    space.getSimpleExtentDims(dims_out, NULL);
-
-    auto curtype = handle.getTypeClass();
-    if (curtype != H5T_INTEGER && curtype != H5T_FLOAT) { 
-        throw std::runtime_error("expected numeric data in the '" + name + "' dataset");
-    }
-
-    return std::pair<size_t, size_t>(dims_out[0], dims_out[1]);
+    std::array<hsize_t, N> dims_out;
+    space.getSimpleExtentDims(dims_out.data(), NULL);
+    return dims_out;
 }
 
 }

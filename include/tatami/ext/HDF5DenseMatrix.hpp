@@ -72,10 +72,10 @@ public:
 #endif
 
         H5::H5File fhandle(file_name, H5F_ACC_RDONLY);
-        auto dhandle = fhandle.openDataSet(dataset_name);
-        auto dims = HDF5::get_2d_array_dims(dhandle, dataset_name);
-        firstdim = dims.first;
-        seconddim = dims.second;
+        auto dhandle = HDF5::open_and_check_dataset<false>(fhandle, dataset_name);
+        auto dims = HDF5::get_array_dimensions<2>(dhandle, dataset_name);
+        firstdim = dims[0];
+        seconddim = dims[1];
 
         auto dparms = dhandle.getCreatePlist();
         if (dparms.getLayout() != H5D_CHUNKED) {
