@@ -100,7 +100,7 @@ $(function() {
 <div class="line"> </div>
 <div class="line"><span class="comment">// Extract the [5, 10) entries of the &#39;i&#39;-th column.</span></div>
 <div class="line"><span class="keyword">auto</span> ptr = mat-&gt;column(i, buffer.data(), 5, 10);</div>
-<div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:31</div></div>
+<div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:32</div></div>
 </div><!-- fragment --><p >The key idea here is that, once <code>mat</code> is created, the application does not need to worry about the exact format of the matrix referenced by the pointer. Application developers can write code that works interchangeably with a variety of different matrix representations.</p>
 <h1>Access patterns</h1>
 <p >The <b>tatami</b> API is designed for read-only access - it is not possible to alter the matrix contents via the API. This is especially relevant for matrices with delayed operations or those referring to remote data stores, where reading the matrix data is trivial but writing is not guaranteed to work. As a result, supported operations are limited to reading data from the matrix:</p>
