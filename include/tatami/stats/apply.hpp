@@ -291,10 +291,10 @@ void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Fa
  *   The returned `struct` should have a `compute()` method that accepts the index of the target vector and a `SparseRange` object containing the non-zero elements of the target vector.
  * - A `dense_running()` method that accepts no arguments and returns an arbitrary `struct`.
  *   The returned `struct` should have an `add()` method that accepts a pointer to a running vector.
- *   It should also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
+ *   It may also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
  * - A `sparse_running()` method that accepts no arguments and returns an arbitrary `struct`.
  *   The returned `struct` should have an `add()` method that accepts a `SparseRange` object specifying the non-zero elements at a running vector.
- *   It should also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
+ *   It may also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
  *
  * In the running calculations, the statistic for each target vector is computed incrementally as new values become available in successive running vectors.
  * The idea is that `apply()` will automatically choose the most appropriate calculation based on whether the matrix is sparse, whether it prefers row/column access,
@@ -322,6 +322,20 @@ void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Fa
  *
  * See the `MedianFactory` in `medians.hpp` for an example of a factory that mutates the buffer. 
  *
+ * @section method_prep Method-specific preparation
+ * The factory class may optionally implement any number of the following methods:
+ *
+ * - `prepare_dense_direct()`, which will be called once before any invocation of `dense_direct()`.
+ * - `prepare_dense_running()`, which will be called once before any invocation of `dense_running()`.
+ * - `prepare_sparse_direct()`, which will be called once before any invocation of `sparse_direct()`.
+ * - `prepare_sparse_running()`, which will be called once before any invocation of `sparse_running()`.
+ *
+ * This can be used by developers to perform any necessary preparation before iteration over the input matrix.
+ * Importantly, the manner of preparation can vary according to the chosen method of iteration.
+ * For example, running calculations will typically require more intermediate structures than their direct counterparts;
+ * the `prepare_*_running()` methods can be used to set up those intermediates as needed,
+ * without committing to the setup cost if a direct calculation is chosen.
+ * 
  * @section apply_parallel2 Caller parallelization
  * `apply()` supports parallelization via OpenMP by default, so callers can simply compile with `-fopenmp` to parallelize their code.
  * `apply()` will automatically distribute the calculations for each target vector across available threads.
@@ -377,11 +391,11 @@ void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Fa
  * - `dense_running()` now accepts two arguments: namely, the indices of the first and one-past-the-last target vectors to be processed.
  *   This should return a `struct` with an `add()` method that accepts a pointer to the subinterval of the running vector, corresponding to the target vectors to be processed; 
  *   plus a buffer of the same length as that subinterval.
- *   It should also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
+ *   It may also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
  * - `sparse_running()` now accepts two arguments: namely, the indices of the first and one-past-the-last target vectors to be processed.
  *   The returned `struct` should have an `add()` method that accepts a `SparseRange` object, specifying the non-zero elements in the subinterval of the running vector;
  *   plus two buffers of the same length as that subinterval (one for the non-zero values, another for their positional indices).
- *   It should also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
+ *   It may also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
  *
  * These overloads are optional and the function will fall back to serial processing if they are not supplied (and the function decides perform a running calculation).
  */
