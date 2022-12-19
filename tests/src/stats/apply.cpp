@@ -15,6 +15,7 @@
 struct SillyFactory {
 public:
     SillyFactory(double* o, size_t d1) : output(o), dim(d1) {}
+    int mode = 0;
 
 private:
     double* output;
@@ -32,6 +33,10 @@ public:
         double* output;
     };
 
+    void prepare_dense_direct() {
+        mode = 1;
+    }
+
     DenseDirect dense_direct() {
         return DenseDirect(output);
     }
@@ -48,6 +53,10 @@ public:
         double* output;
     };
 
+    void prepare_sparse_direct() {
+        mode = 2;
+    }
+
     SparseDirect sparse_direct() {
         return SparseDirect(output);
     }
@@ -62,12 +71,14 @@ public:
                 output[d] = 3;
             }
         }
-
-        void finish() {}
     private:
         double* output;
         size_t dim;
     };
+
+    void prepare_dense_running() {
+        mode = 3;
+    }
 
     DenseRunning dense_running() {
         return DenseRunning(output, dim);
@@ -87,12 +98,14 @@ public:
                 output[d] = 4;
             }
         }
-
-        void finish() {}
     private:
         double* output;
         size_t dim;
     };
+
+    void prepare_sparse_running() {
+        mode = 4;
+    }
 
     SparseRunning sparse_running() {
         return SparseRunning(output, dim);
@@ -115,6 +128,7 @@ TEST(ApplyCheck, VariableDispatchRows) {
         SillyFactory factory(output.data(), N);
         tatami::apply<0>(dense_row.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 1));
+        EXPECT_EQ(factory.mode, 1);
     }
 
     {
@@ -122,6 +136,7 @@ TEST(ApplyCheck, VariableDispatchRows) {
         SillyFactory factory(output.data(), N);
         tatami::apply<0>(sparse_row.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 2));
+        EXPECT_EQ(factory.mode, 2);
     }
 
     {
@@ -129,6 +144,7 @@ TEST(ApplyCheck, VariableDispatchRows) {
         SillyFactory factory(output.data(), N);
         tatami::apply<0>(dense_column.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 3));
+        EXPECT_EQ(factory.mode, 3);
     }
 
     {
@@ -136,6 +152,7 @@ TEST(ApplyCheck, VariableDispatchRows) {
         SillyFactory factory(output.data(), N);
         tatami::apply<0>(sparse_column.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 4));
+        EXPECT_EQ(factory.mode, 4);
     }
 }
 
@@ -151,6 +168,7 @@ TEST(ApplyCheck, VariableDispatchColumns) {
         SillyFactory factory(output.data(), N);
         tatami::apply<1>(dense_row.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 3));
+        EXPECT_EQ(factory.mode, 3);
     }
 
     {
@@ -158,6 +176,7 @@ TEST(ApplyCheck, VariableDispatchColumns) {
         SillyFactory factory(output.data(), N);
         tatami::apply<1>(sparse_row.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 4));
+        EXPECT_EQ(factory.mode, 4);
     }
 
     {
@@ -165,6 +184,7 @@ TEST(ApplyCheck, VariableDispatchColumns) {
         SillyFactory factory(output.data(), N);
         tatami::apply<1>(dense_column.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 1));
+        EXPECT_EQ(factory.mode, 1);
     }
 
     {
@@ -172,12 +192,14 @@ TEST(ApplyCheck, VariableDispatchColumns) {
         SillyFactory factory(output.data(), N);
         tatami::apply<1>(sparse_column.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 2));
+        EXPECT_EQ(factory.mode, 2);
     }
 }
 
 struct SillyFactoryCopy {
 public:
     SillyFactoryCopy(double* o, size_t d1) : output(o), dim(d1) {}
+    int mode = 0;
 
 private:
     double* output;
@@ -195,6 +217,10 @@ public:
         double* output;
     };
 
+    void prepare_dense_direct() {
+        mode = 1;
+    }
+
     DenseDirect dense_direct() {
         return DenseDirect(output);
     }
@@ -211,6 +237,10 @@ public:
         double* output;
     };
 
+    void prepare_sparse_direct() {
+        mode = 2;
+    }
+
     SparseDirect sparse_direct() {
         return SparseDirect(output);
     }
@@ -226,6 +256,7 @@ TEST(ApplyCheck, VariableDispatchRowsCopy) {
         SillyFactoryCopy factory(output.data(), N);
         tatami::apply<0>(dense_row.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 1));
+        EXPECT_EQ(factory.mode, 1);
     }
 
     {
@@ -233,6 +264,7 @@ TEST(ApplyCheck, VariableDispatchRowsCopy) {
         SillyFactoryCopy factory(output.data(), N);
         tatami::apply<0>(sparse_row.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 2));
+        EXPECT_EQ(factory.mode, 2);
     }
 }
 
@@ -246,6 +278,7 @@ TEST(ApplyCheck, VariableDispatchColumnsCopy) {
         SillyFactoryCopy factory(output.data(), N);
         tatami::apply<1>(dense_row.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 1));
+        EXPECT_EQ(factory.mode, 1);
     }
 
     {
@@ -253,5 +286,6 @@ TEST(ApplyCheck, VariableDispatchColumnsCopy) {
         SillyFactoryCopy factory(output.data(), N);
         tatami::apply<1>(sparse_row.get(), factory);
         EXPECT_EQ(output, std::vector<double>(N, 2));
+        EXPECT_EQ(factory.mode, 2);
     }
 }

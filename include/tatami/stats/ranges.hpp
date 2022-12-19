@@ -111,8 +111,6 @@ public:
                 }
             }
         }
-
-        void finish() {}
     private:
         O* output;
         size_t dim;
@@ -336,7 +334,6 @@ public:
             return;
         }
 
-        void finish() {};
     private:
         typename MinFactory<O>::DenseRunning mins;
         typename MaxFactory<O>::DenseRunning maxs;
