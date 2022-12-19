@@ -165,8 +165,16 @@ void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
     if constexpr(stats::has_sparse_running<Factory>::value || stats::has_dense_running<Factory>::value) {
         if (p->prefer_rows() != ROW){
 
+            /************************************
+             ********** Sparse running **********
+             ************************************/
+
             if constexpr(stats::has_sparse_running<Factory>::value) {
                 if (p->sparse()) {
+                    if constexpr(stats::has_prepare_sparse_running<Factory>::value) {
+                        factory.prepare_sparse_running();
+                    }
+
 #if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
                     if constexpr(stats::has_sparse_running_parallel<Factory>::value) {
 #ifndef TATAMI_CUSTOM_PARALLEL
@@ -194,7 +202,10 @@ void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
                                         stat.add(range);
                                     }
                                 }
-                                stat.finish();
+
+                                if constexpr(stats::has_finish<decltype(stat)>::value) {
+                                    stat.finish();
+                                }
                             }
 #ifndef TATAMI_CUSTOM_PARALLEL
                         }
@@ -218,9 +229,20 @@ void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
                             stat.add(range);
                         }
                     }
-                    stat.finish();
+
+                    if constexpr(stats::has_finish<decltype(stat)>::value) {
+                        stat.finish();
+                    }
                     return;
                 }
+            }
+
+            /***********************************
+             ********** Dense running **********
+             ***********************************/
+
+            if constexpr(stats::has_prepare_dense_running<Factory>::value) {
+                factory.prepare_dense_running();
             }
 
 #if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
@@ -247,7 +269,10 @@ void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
                                 stat.add(ptr);
                             }
                         }
-                        stat.finish();
+
+                        if constexpr(stats::has_finish<decltype(stat)>::value) {
+                            stat.finish();
+                        }
                     }
 #ifndef TATAMI_CUSTOM_PARALLEL
                 }
@@ -270,13 +295,20 @@ void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
                     stat.add(ptr);
                 }
             }
-            stat.finish();
+
+            if constexpr(stats::has_finish<decltype(stat)>::value) {
+                stat.finish();
+            }
             return;
         }
     }
 
     if constexpr(stats::has_sparse_direct<Factory>::value) {
         if (p->sparse()) {
+            if constexpr(stats::has_prepare_sparse_direct<Factory>::value) {
+                factory.prepare_sparse_direct();
+            }
+
 #ifndef TATAMI_CUSTOM_PARALLEL
             #pragma omp parallel num_threads(threads)
             {
@@ -324,6 +356,10 @@ void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
 #endif
             return;
         }
+    }
+
+    if constexpr(stats::has_prepare_dense_direct<Factory>::value) {
+        factory.prepare_dense_direct();
     }
 
 #ifndef TATAMI_CUSTOM_PARALLEL

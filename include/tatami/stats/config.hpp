@@ -8,6 +8,28 @@ namespace tatami {
 namespace stats {
 
 template<class V, typename = int>
+struct has_prepare_dense_direct {
+    static constexpr bool value = false;
+};
+
+template<class V>
+struct has_prepare_dense_direct<V, decltype((void) std::declval<V>().prepare_dense_direct(), 0)> {
+    static constexpr bool value = true;
+};
+
+/******************/
+
+template<class V, typename = int>
+struct has_prepare_sparse_direct {
+    static constexpr bool value = false;
+};
+
+template<class V>
+struct has_prepare_sparse_direct<V, decltype((void) std::declval<V>().prepare_sparse_direct(), 0)> {
+    static constexpr bool value = true;
+};
+
+template<class V, typename = int>
 struct has_sparse_direct {
     static constexpr bool value = false;
 };
@@ -20,6 +42,16 @@ struct has_sparse_direct<V, decltype((void) std::declval<V>().sparse_direct(), 0
 /******************/
 
 template<class V, typename = int>
+struct has_prepare_sparse_running {
+    static constexpr bool value = false;
+};
+
+template<class V>
+struct has_prepare_sparse_running<V, decltype((void) std::declval<V>().prepare_sparse_running(), 0)> {
+    static constexpr bool value = true;
+};
+
+template<class V, typename = int>
 struct has_sparse_running {
     static constexpr bool value = false;
 };
@@ -28,8 +60,6 @@ template<class V>
 struct has_sparse_running<V, decltype((void) std::declval<V>().sparse_running(), 0)> {
     static constexpr bool value = true;
 };
-
-/******************/
 
 template<class V, typename = int>
 struct has_sparse_running_parallel {
@@ -44,6 +74,16 @@ struct has_sparse_running_parallel<V, decltype((void) std::declval<V>().sparse_r
 /******************/
 
 template<class V, typename = int>
+struct has_prepare_dense_running {
+    static constexpr bool value = false;
+};
+
+template<class V>
+struct has_prepare_dense_running<V, decltype((void) std::declval<V>().prepare_dense_running(), 0)> {
+    static constexpr bool value = true;
+};
+
+template<class V, typename = int>
 struct has_dense_running {
     static constexpr bool value = false;
 };
@@ -53,8 +93,6 @@ struct has_dense_running<V, decltype((void) std::declval<V>().dense_running(), 0
     static constexpr bool value = true;
 };
 
-/******************/
-
 template<class V, typename = int>
 struct has_dense_running_parallel {
     static constexpr bool value = false;
@@ -62,6 +100,18 @@ struct has_dense_running_parallel {
 
 template<class V>
 struct has_dense_running_parallel<V, decltype((void) std::declval<V>().dense_running(0, 0), 0)> {
+    static constexpr bool value = true;
+};
+
+/******************/
+
+template<class V, typename = int>
+struct has_finish {
+    static constexpr bool value = false;
+};
+
+template<class V>
+struct has_finish<V, decltype((void) std::declval<V>().finish(), 0)> {
     static constexpr bool value = true;
 };
 
