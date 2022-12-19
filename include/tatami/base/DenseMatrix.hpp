@@ -6,6 +6,7 @@
 
 #include <vector>
 #include <algorithm>
+#include <stdexcept>
 
 /**
  * @file DenseMatrix.hpp

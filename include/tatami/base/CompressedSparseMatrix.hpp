@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <memory>
 #include <utility>
+#include <stdexcept>
 
 /**
  * @file CompressedSparseMatrix.hpp
