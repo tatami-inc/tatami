@@ -1,6 +1,7 @@
 #ifndef TEST_DATA_H
 #define TEST_DATA_H
 
+#include <cstddef>
 #include <vector>
 
 extern const std::vector<double> sparse_matrix;
