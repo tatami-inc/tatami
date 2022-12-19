@@ -20,6 +20,249 @@
 
 namespace tatami {
 
+namespace stats {
+
+/**
+ * @cond
+ */
+template<bool ROW, typename T, typename IDX, class Factory>
+void apply_sparse_running(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Factory& factory, int threads) {
+    if constexpr(stats::has_prepare_sparse_running<Factory>::value) {
+        factory.prepare_sparse_running();
+    }
+
+#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
+    if constexpr(stats::has_sparse_running_parallel<Factory>::value) {
+#ifndef TATAMI_CUSTOM_PARALLEL
+        #pragma omp parallel num_threads(threads)
+        {
+            // We use the omp methods here to get the total number of threads, just in case something
+            // causes us to have fewer threads than the number we requested.
+            size_t worker_size = std::ceil(static_cast<double>(dim) / omp_get_num_threads());
+            size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
+#else
+        TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
+#endif
+            if (start < end) {
+                std::vector<T> obuffer(end - start);
+                std::vector<IDX> ibuffer(obuffer.size());
+                auto wrk = p->new_workspace(!ROW);
+                auto stat = factory.sparse_running(start, end);
+
+                for (size_t i = 0; i < otherdim; ++i) {
+                    if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
+                        auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
+                        stat.add(range);
+                    } else {
+                        auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
+                        stat.add(range);
+                    }
+                }
+
+                if constexpr(stats::has_finish<decltype(stat)>::value) {
+                    stat.finish();
+                }
+            }
+#ifndef TATAMI_CUSTOM_PARALLEL
+        }
+#else
+        }, threads);
+#endif
+        return;
+    }
+#endif
+
+    auto stat = factory.sparse_running();
+    std::vector<T> obuffer(dim);
+    std::vector<IDX> ibuffer(dim);
+    auto wrk = p->new_workspace(!ROW);
+
+    for (size_t i = 0; i < otherdim; ++i) {
+        if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
+            auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
+            stat.add(range);
+        } else {
+            auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
+            stat.add(range);
+        }
+    }
+
+    if constexpr(stats::has_finish<decltype(stat)>::value) {
+        stat.finish();
+    }
+    return;
+}
+
+template<bool ROW, typename T, typename IDX, class Factory>
+void apply_dense_running(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Factory& factory, int threads) {
+    if constexpr(stats::has_prepare_dense_running<Factory>::value) {
+        factory.prepare_dense_running();
+    }
+
+#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
+    if constexpr(stats::has_dense_running_parallel<Factory>::value) {
+#ifndef TATAMI_CUSTOM_PARALLEL
+        #pragma omp parallel num_threads(threads)
+        {
+            size_t worker_size = std::ceil(static_cast<double>(dim) / omp_get_num_threads());
+            size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
+#else
+        TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
+#endif
+            if (start < end) {
+                auto stat = factory.dense_running(start, end);
+                std::vector<T> obuffer(end - start);
+                auto wrk = p->new_workspace(!ROW);
+
+                for (size_t i = 0; i < otherdim; ++i) {
+                    if constexpr(ROW) { // flipped around, see above.
+                        auto ptr = p->column(i, obuffer.data(), start, end, wrk.get());
+                        stat.add(ptr);
+                    } else {
+                        auto ptr = p->row(i, obuffer.data(), start, end, wrk.get());
+                        stat.add(ptr);
+                    }
+                }
+
+                if constexpr(stats::has_finish<decltype(stat)>::value) {
+                    stat.finish();
+                }
+            }
+#ifndef TATAMI_CUSTOM_PARALLEL
+        }
+#else
+        }, threads);
+#endif
+        return;
+    }
+#endif
+    auto stat = factory.dense_running();
+    std::vector<T> obuffer(dim);
+    auto wrk = p->new_workspace(!ROW);
+
+    for (size_t i = 0; i < otherdim; ++i) {
+        if constexpr(ROW) { // flipped around, see above.
+            auto ptr = p->column(i, obuffer.data(), wrk.get());
+            stat.add(ptr);
+        } else {
+            auto ptr = p->row(i, obuffer.data(), wrk.get());
+            stat.add(ptr);
+        }
+    }
+
+    if constexpr(stats::has_finish<decltype(stat)>::value) {
+        stat.finish();
+    }
+    return;
+}
+
+template<bool ROW, typename T, typename IDX, class Factory>
+void apply_sparse_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Factory& factory, int threads) {
+    if constexpr(stats::has_prepare_sparse_direct<Factory>::value) {
+        factory.prepare_sparse_direct();
+    }
+
+#ifndef TATAMI_CUSTOM_PARALLEL
+    #pragma omp parallel num_threads(threads)
+    {
+#else
+    TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
+#endif
+        std::vector<T> obuffer(otherdim);
+        auto wrk = p->new_workspace(ROW);
+        std::vector<IDX> ibuffer(otherdim);
+        auto stat = factory.sparse_direct();
+
+        constexpr bool do_copy = stats::has_nonconst_sparse_compute<decltype(stat), T, IDX>::value;
+        constexpr SparseCopyMode copy_mode = stats::nonconst_sparse_compute_copy_mode<decltype(stat)>::value;
+
+#ifndef TATAMI_CUSTOM_PARALLEL
+        // Without chunk size specification, static scheduling should distribute
+        // one chunk to each job, so everything is as contiguous as possible.
+        #pragma omp for schedule(static)
+        for (size_t i = 0; i < dim; ++i) {
+#else
+        for (size_t i = start; i < end; ++i) {
+#endif
+            if constexpr(ROW) {
+                if constexpr(do_copy) {
+                    auto range = p->sparse_row_copy(i, obuffer.data(), ibuffer.data(), copy_mode, wrk.get());
+                    stat.compute_copy(i, range.number, obuffer.data(), ibuffer.data());
+                } else {
+                    auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
+                    stat.compute(i, range);
+                }
+            } else {
+                if constexpr(do_copy) {
+                    auto range = p->sparse_column_copy(i, obuffer.data(), ibuffer.data(), copy_mode, wrk.get());
+                    stat.compute_copy(i, range.number, obuffer.data(), ibuffer.data());
+                } else {
+                    auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
+                    stat.compute(i, range);
+                }
+            }
+        }
+#ifndef TATAMI_CUSTOM_PARALLEL
+    }
+#else
+    }, threads);
+#endif
+}
+
+template<bool ROW, typename T, typename IDX, class Factory>
+void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Factory& factory, int threads) {
+    if constexpr(stats::has_prepare_dense_direct<Factory>::value) {
+        factory.prepare_dense_direct();
+    }
+
+#ifndef TATAMI_CUSTOM_PARALLEL
+    #pragma omp parallel num_threads(threads)
+    {
+#else
+    TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
+#endif
+        std::vector<T> obuffer(otherdim);
+        auto wrk = p->new_workspace(ROW);
+        auto stat = factory.dense_direct();
+        constexpr bool do_copy = stats::has_nonconst_dense_compute<decltype(stat), T>::value;
+
+#ifndef TATAMI_CUSTOM_PARALLEL
+        #pragma omp for schedule(static)
+        for (size_t i = 0; i < dim; ++i) {
+#else
+        for (size_t i = start; i < end; ++i) {
+#endif
+            if constexpr(ROW) {
+                if constexpr(do_copy) {
+                    auto ptr = p->row_copy(i, obuffer.data(), wrk.get());
+                    stat.compute_copy(i, obuffer.data());
+                } else {
+                    auto ptr = p->row(i, obuffer.data(), wrk.get());
+                    stat.compute(i, ptr);
+                }
+            } else {
+                if constexpr(do_copy) {
+                    auto ptr = p->column_copy(i, obuffer.data(), wrk.get());
+                    stat.compute_copy(i, obuffer.data());
+                } else {
+                    auto ptr = p->column(i, obuffer.data(), wrk.get());
+                    stat.compute(i, ptr);
+                }
+            }
+        }
+#ifndef TATAMI_CUSTOM_PARALLEL
+    }
+#else
+    }, threads);
+#endif
+    return;
+}
+/**
+ * @endcond
+ */
+
+}
+
 /**
  * @tparam MARGIN The dimension over which to apply the calculation of statistics, i.e., rows (0) or columns (1).
  * @tparam T Type of the matrix value, should be summable.
@@ -103,7 +346,7 @@ namespace tatami {
  *     size_t jobs_per_worker = std::ceil(static_cast<double>(n) / nworkers);
  *     size_t start = 0;
  *     std::vector<std::thread> jobs;
- *     
+ *
  *     for (size_t w = 0; w < nworkers; ++w) {
  *         size_t end = std::min(n, start + jobs_per_worker);
  *         if (start >= end) {
@@ -144,9 +387,6 @@ namespace tatami {
  */
 template<int MARGIN, typename T, typename IDX, class Factory>
 void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
-    /**
-     * @cond
-     */
     size_t NR = p->nrow(), NC = p->ncol();
 
     /* One might question why we use MARGIN in the template if we just convert
@@ -154,7 +394,7 @@ void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
      * something to the matrix; 'ROW' is used for the representation of the
      * matrix itself. I'm keeping the distinction clear in the interface.
      */
-    constexpr bool ROW = (MARGIN == 0);
+    constexpr bool ROW = MARGIN == 0;
 
     const size_t dim = (ROW ? NR : NC);
     const size_t otherdim = (ROW ? NC : NR);
@@ -164,248 +404,26 @@ void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
      */
     if constexpr(stats::has_sparse_running<Factory>::value || stats::has_dense_running<Factory>::value) {
         if (p->prefer_rows() != ROW){
-
-            /************************************
-             ********** Sparse running **********
-             ************************************/
-
             if constexpr(stats::has_sparse_running<Factory>::value) {
                 if (p->sparse()) {
-                    if constexpr(stats::has_prepare_sparse_running<Factory>::value) {
-                        factory.prepare_sparse_running();
-                    }
-
-#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
-                    if constexpr(stats::has_sparse_running_parallel<Factory>::value) {
-#ifndef TATAMI_CUSTOM_PARALLEL
-                        #pragma omp parallel num_threads(threads)
-                        {
-                            // We use the omp methods here to get the total number of threads, just in case something
-                            // causes us to have fewer threads than the number we requested.
-                            size_t worker_size = std::ceil(static_cast<double>(dim) / omp_get_num_threads());
-                            size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
-#else
-                        TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
-#endif
-                            if (start < end) {
-                                std::vector<T> obuffer(end - start);
-                                std::vector<IDX> ibuffer(obuffer.size());
-                                auto wrk = p->new_workspace(!ROW);
-                                auto stat = factory.sparse_running(start, end);
-
-                                for (size_t i = 0; i < otherdim; ++i) {
-                                    if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
-                                        auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
-                                        stat.add(range);
-                                    } else {
-                                        auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), start, end, wrk.get());
-                                        stat.add(range);
-                                    }
-                                }
-
-                                if constexpr(stats::has_finish<decltype(stat)>::value) {
-                                    stat.finish();
-                                }
-                            }
-#ifndef TATAMI_CUSTOM_PARALLEL
-                        }
-#else
-                        }, threads);
-#endif
-                        return;
-                    }
-#endif
-                    auto stat = factory.sparse_running();
-                    std::vector<T> obuffer(dim);
-                    std::vector<IDX> ibuffer(dim);
-                    auto wrk = p->new_workspace(!ROW);
-
-                    for (size_t i = 0; i < otherdim; ++i) {
-                        if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
-                            auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                            stat.add(range);
-                        } else {
-                            auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                            stat.add(range);
-                        }
-                    }
-
-                    if constexpr(stats::has_finish<decltype(stat)>::value) {
-                        stat.finish();
-                    }
+                    stats::apply_sparse_running<MARGIN == 0>(dim, otherdim, p, factory, threads);
                     return;
                 }
             }
 
-            /***********************************
-             ********** Dense running **********
-             ***********************************/
-
-            if constexpr(stats::has_prepare_dense_running<Factory>::value) {
-                factory.prepare_dense_running();
-            }
-
-#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
-            if constexpr(stats::has_dense_running_parallel<Factory>::value) {
-#ifndef TATAMI_CUSTOM_PARALLEL
-                #pragma omp parallel num_threads(threads)
-                {
-                    size_t worker_size = std::ceil(static_cast<double>(dim) / omp_get_num_threads());
-                    size_t start = worker_size * omp_get_thread_num(), end = std::min(dim, start + worker_size);
-#else
-                TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
-#endif                
-                    if (start < end) {
-                        auto stat = factory.dense_running(start, end);
-                        std::vector<T> obuffer(end - start);
-                        auto wrk = p->new_workspace(!ROW);
-
-                        for (size_t i = 0; i < otherdim; ++i) {
-                            if constexpr(ROW) { // flipped around, see above.
-                                auto ptr = p->column(i, obuffer.data(), start, end, wrk.get());
-                                stat.add(ptr);
-                            } else {
-                                auto ptr = p->row(i, obuffer.data(), start, end, wrk.get());
-                                stat.add(ptr);
-                            }
-                        }
-
-                        if constexpr(stats::has_finish<decltype(stat)>::value) {
-                            stat.finish();
-                        }
-                    }
-#ifndef TATAMI_CUSTOM_PARALLEL
-                }
-#else
-                }, threads);
-#endif
-                return;
-            }
-#endif
-            auto stat = factory.dense_running();
-            std::vector<T> obuffer(dim);
-            auto wrk = p->new_workspace(!ROW);
-
-            for (size_t i = 0; i < otherdim; ++i) {
-                if constexpr(ROW) { // flipped around, see above.
-                    auto ptr = p->column(i, obuffer.data(), wrk.get());
-                    stat.add(ptr);
-                } else {
-                    auto ptr = p->row(i, obuffer.data(), wrk.get());
-                    stat.add(ptr);
-                }
-            }
-
-            if constexpr(stats::has_finish<decltype(stat)>::value) {
-                stat.finish();
-            }
+            stats::apply_dense_running<MARGIN == 0>(dim, otherdim, p, factory, threads);
             return;
         }
     }
 
     if constexpr(stats::has_sparse_direct<Factory>::value) {
         if (p->sparse()) {
-            if constexpr(stats::has_prepare_sparse_direct<Factory>::value) {
-                factory.prepare_sparse_direct();
-            }
-
-#ifndef TATAMI_CUSTOM_PARALLEL
-            #pragma omp parallel num_threads(threads)
-            {
-#else
-            TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
-#endif
-                std::vector<T> obuffer(otherdim);
-                auto wrk = p->new_workspace(ROW);
-                std::vector<IDX> ibuffer(otherdim);
-                auto stat = factory.sparse_direct();
-
-                constexpr bool do_copy = stats::has_nonconst_sparse_compute<decltype(stat), T, IDX>::value;
-                constexpr SparseCopyMode copy_mode = stats::nonconst_sparse_compute_copy_mode<decltype(stat)>::value;
-
-#ifndef TATAMI_CUSTOM_PARALLEL
-                // Without chunk size specification, static scheduling should distribute
-                // one chunk to each job, so everything is as contiguous as possible.
-                #pragma omp for schedule(static)
-                for (size_t i = 0; i < dim; ++i) {
-#else
-                for (size_t i = start; i < end; ++i) {
-#endif
-                    if constexpr(ROW) {
-                        if constexpr(do_copy) {
-                            auto range = p->sparse_row_copy(i, obuffer.data(), ibuffer.data(), copy_mode, wrk.get());
-                            stat.compute_copy(i, range.number, obuffer.data(), ibuffer.data());
-                        } else {
-                            auto range = p->sparse_row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                            stat.compute(i, range);
-                        }
-                    } else {
-                        if constexpr(do_copy) {
-                            auto range = p->sparse_column_copy(i, obuffer.data(), ibuffer.data(), copy_mode, wrk.get());
-                            stat.compute_copy(i, range.number, obuffer.data(), ibuffer.data());
-                        } else {
-                            auto range = p->sparse_column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                            stat.compute(i, range);
-                        }
-                    }
-                }
-#ifndef TATAMI_CUSTOM_PARALLEL
-            }
-#else
-            }, threads);
-#endif
+            stats::apply_sparse_direct<MARGIN == 0>(dim, otherdim, p, factory, threads);
             return;
         }
     }
 
-    if constexpr(stats::has_prepare_dense_direct<Factory>::value) {
-        factory.prepare_dense_direct();
-    }
-
-#ifndef TATAMI_CUSTOM_PARALLEL
-    #pragma omp parallel num_threads(threads)
-    {
-#else
-    TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
-#endif
-        std::vector<T> obuffer(otherdim);
-        auto wrk = p->new_workspace(ROW);
-        auto stat = factory.dense_direct();
-        constexpr bool do_copy = stats::has_nonconst_dense_compute<decltype(stat), T>::value;
-
-#ifndef TATAMI_CUSTOM_PARALLEL
-        #pragma omp for schedule(static)
-        for (size_t i = 0; i < dim; ++i) {
-#else            
-        for (size_t i = start; i < end; ++i) {
-#endif
-            if constexpr(ROW) {
-                if constexpr(do_copy) {
-                    auto ptr = p->row_copy(i, obuffer.data(), wrk.get());
-                    stat.compute_copy(i, obuffer.data());
-                } else {
-                    auto ptr = p->row(i, obuffer.data(), wrk.get());
-                    stat.compute(i, ptr);
-                }
-            } else {
-                if constexpr(do_copy) {
-                    auto ptr = p->column_copy(i, obuffer.data(), wrk.get());
-                    stat.compute_copy(i, obuffer.data());
-                } else {
-                    auto ptr = p->column(i, obuffer.data(), wrk.get());
-                    stat.compute(i, ptr);
-                }
-            }
-        }
-#ifndef TATAMI_CUSTOM_PARALLEL            
-    }
-#else
-    }, threads);
-#endif
-
-    /**
-     * @endcond
-     */
+    stats::apply_dense_direct<MARGIN == 0>(dim, otherdim, p, factory, threads);
     return; 
 }
 

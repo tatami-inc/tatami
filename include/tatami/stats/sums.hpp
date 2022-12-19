@@ -68,8 +68,6 @@ public:
                 output[d] += ptr[d];
             }
         }
-
-        void finish() {}
     private:
         O* output;
         size_t dim;
@@ -93,8 +91,6 @@ public:
                 output[range.index[j]] += range.value[j];
             }
         }
-
-        void finish() {}
     private:
         O* output;
     };
