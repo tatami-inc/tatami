@@ -277,48 +277,62 @@ void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Fa
  * In this function, we consider the matrix to be a collection of "target vectors".
  * When `MARGIN = 0`, each row is a target vector, whereas when `MARGIN = 1`, each column is a target vector.
  * The goal is to compute some statistic along each of these target vectors, e.g., the per-row sums (`row_sums()`) or the per-column variances (`row_variances()`).
- * For brevity, we will refer to the vectors along the other dimension as "running vectors".
+ * (For brevity, we will refer to the vectors along the other dimension as "non-target vectors".)
+ *
+ * `apply()` will automatically choose the most efficient iteration strategy for the supplied matrix.
+ * This depends on whether the matrix is sparse or dense;
+ * whether the matrix prefers iteration across rows or columns;
+ * and whether the desired statistic must be computed directly (i.e., given one target vector at a time)
+ * or can be computed in a "running" fashion (i.e., given one non-target vector at a time).
  *
  * @section apply_factory Factory requirements 
- * Arbitrary computations are supported via the supplied instance of the factory class.
- * The factory class should have a `dense_direct()` method that accepts no arguments and returns an arbitrary `struct`.
- * The returned `struct` should have a `compute()` method that accepts the index of the target vector and a `const` pointer to the target vector. 
- * This will be used in a "direct" calculation, i.e., the statistic for a target vector is directly computed from the target vector's values in memory.
+ * Arbitrary computations are supported via the supplied `factory` instance of the factory class.
+ * The factory class should have a `dense_direct()` method that accepts no arguments and returns an arbitrary object (referred to here as a "worker").
+ * The worker should have a `compute()` method that accepts the index of the target vector and a `const` pointer to the target vector. 
+ * This will be used in the "direct" iteration strategy, i.e., the statistic for a target vector is directly computed from the target vector's values in memory.
  *
  * Optionally, the factory class may have one or more of:
  *
- * - A `sparse_direct()` method that accepts no arguments and returns an arbitrary `struct`.
- *   The returned `struct` should have a `compute()` method that accepts the index of the target vector and a `SparseRange` object containing the non-zero elements of the target vector.
- * - A `dense_running()` method that accepts no arguments and returns an arbitrary `struct`.
- *   The returned `struct` should have an `add()` method that accepts a pointer to a running vector.
- *   It may also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
- * - A `sparse_running()` method that accepts no arguments and returns an arbitrary `struct`.
- *   The returned `struct` should have an `add()` method that accepts a `SparseRange` object specifying the non-zero elements at a running vector.
- *   It may also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
+ * - A `sparse_direct()` method that accepts no arguments and returns an arbitrary worker (not necessarily of the same class as `dense_direct()`).
+ *   The worker should have a `compute()` method that accepts the index of the target vector and a `SparseRange` object containing the non-zero elements of the target vector.
+ *   This will be favored for direct iteration over a sparse matrix.
+ * - A `dense_running()` method that accepts no arguments and returns an arbitrary worker.
+ *   The worker should have an `add()` method that accepts a pointer to a non-target vector.
+ *   It may also have a `finish()` method, to be called to finalize any calculations after all non-target vectors are supplied.
+ *   This will be favored for running iteration over a dense matrix.
+ * - A `sparse_running()` method that accepts no arguments and returns an arbitrary worker.
+ *   The worker should have an `add()` method that accepts a `SparseRange` object specifying the non-zero elements of a non-target vector.
+ *   It may also have a `finish()` method, to be called to finalize any calculations after all non-target vectors are supplied.
+ *   This will be favored for running iteration over a sparse matrix.
  *
- * In the running calculations, the statistic for each target vector is computed incrementally as new values become available in successive running vectors.
- * The idea is that `apply()` will automatically choose the most appropriate calculation based on whether the matrix is sparse, whether it prefers row/column access,
- * whether we want row/column statistics, and whether the calculation supports sparse and/or running calculations (based on the availability of the methods above).
- * For example, if running calculations are feasible for a particular statistic, `apply()` can choose a more favorable access pattern.
+ * `apply()` will automatically choose the most appropriate iteration strategy based on the various inputs.
+ * If `MARGIN` is consistent with the matrix's preferred dimension for iteration, a direct strategy is used; otherwise a running strategy will be chosen.
+ * If the matrix is sparse, the `sparse_*()` versions of the methods above will be favored.
+ * If the factory does not implement the method for the best iteration strategy, `apply()` will attempt other strategies, finally falling back to the `dense_direct()` method.
+ * We assume that iteration in the non-preferred dimension is costly and will attempt to avoid this wherever possible.
  *
- * Each of these `compute()` and `add()` methods should modify the contents of `factory` by reference, 
- * which is usually achieved by passing pointers from `factory` to each returned `struct` and writing to those pointers in `compute()` and `add()`.
+ * Each of these `compute()` and `add()` methods should modify the contents of `factory` by reference.
+ * This is achieved by passing pointers from `factory` to each worker and writing to those pointers in `compute()` and `add()`.
  * Computed statistics can then be extracted from `factory` once `apply()` has finished running.
  * Results should be agnostic to the choice of calculation, notwithstanding minor differences due to numerical precision.
+ *
+ * In the running calculations, the statistic for each target vector should be computed incrementally as new values become available in successive non-target vectors.
+ * For example, if the matrix prefers row access but we want to compute column sums, `apply()` can use a running strategy to exploit the more efficient access pattern.
+ * This could be achieved in `add()` by iterating across the supplied non-target vector and adding each entry to the running statistic for the corresponding target vector.
  *
  * See the `VarianceFactory` in `variances.hpp` for an example of a valid factory class. 
  *
  * @section apply_mutable Mutating copies
- * In some applications, it may be necessary to mutate the buffers containing the contents of each row/column (e.g., sorting for quantile calculations).
- * This is accommodated by replacing the `compute()` method with a `compute_copy()` method for the `*_direct()` outputs.
+ * In some applications, it may be necessary to mutate the buffers containing the contents of each target vector (e.g., sorting for quantile calculations).
+ * This is accommodated by replacing the `compute()` method with a `compute_copy()` method for the `*_direct()` workers.
  *
  * - In the dense case, the `compute_copy()` method should accept the index of the target vector and a non-`const` pointer to a buffer with the values of the row/column.
  * - In the sparse case, the `compute_copy()` should accept the index of the target vector, the number of non-zero elements, 
  *   a non-`const` pointer to a buffer with the non-zero values, and a non-`const` pointer to the indices of the non-zero elements.
- *   The `struct` may also contain a static `copy_mode` member specifying whether one or both the values/indices should be copied into the buffers, see the options for a `SparseCopyMode`.
+ *   The worker may also contain a static `copy_mode` member specifying whether one or both the values/indices should be copied into the buffers, see the options for a `SparseCopyMode`.
  *
  * If a `compute_copy()` method is available, `apply()` will create a copy upon row/column extraction and the developer is free to modify the buffers inside the `compute_copy()` method.
- * Note that we do not provide a copyable option for the running calculations as this is rarely necessary.
+ * Note that we do not provide a copyable option for the `*_running()` workers, as there is nothing to mutate when the target vector is never instantiated.
  *
  * See the `MedianFactory` in `medians.hpp` for an example of a factory that mutates the buffer. 
  *
@@ -331,10 +345,10 @@ void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Fa
  * - `prepare_sparse_running()`, which will be called once before any invocation of `sparse_running()`.
  *
  * This can be used by developers to perform any necessary preparation before iteration over the input matrix.
- * Importantly, the manner of preparation can vary according to the chosen method of iteration.
+ * Importantly, the manner of preparation can vary according to the chosen iteration strategy.
  * For example, running calculations will typically require more intermediate structures than their direct counterparts;
  * the `prepare_*_running()` methods can be used to set up those intermediates as needed,
- * without committing to the setup cost if a direct calculation is chosen.
+ * without committing to the setup cost if `apply()` chooses to use a direct strategy.
  * 
  * @section apply_parallel2 Caller parallelization
  * `apply()` supports parallelization via OpenMP by default, so callers can simply compile with `-fopenmp` to parallelize their code.
@@ -379,9 +393,13 @@ void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Fa
  * ```
  *
  * @section apply_parallel Factory parallelization
- * Thread safety is _not_ required in each call to `compute()` and `add()` within the same instance of a returned `struct`.
- * However, there should be thread safety across instances, which is most relevant when results are being written back to the shared memory in `factory`.
- * This is usually easy to achieve as long as the memory spaces for the results of two target vectors do not overlap.
+ * Worker methods (i.e., `compute()`, `add()`, `finish()`) for a single worker instance do not have to be thread-safe.
+ * That is, methods for a single worker will only ever be called in a serial fashion, as each worker is local to a thread.
+ *
+ * However, worker methods should be thread-safe across multiple worker instances.
+ * For example, `apply()` may simultaneously call the `add()` method of different workers from different threads.
+ * This is most relevant when results are being written back to the shared memory in `factory`,
+ * and is usually easy to achieve as long as the memory spaces for the results of two target vectors do not overlap.
  *
  * The direct calculations are trivially parallelizable - it is assumed that they can be called independently for different target indices.
  * It is also assumed that each `compute()` call will only write to the shared memory at its supplied target index.
@@ -389,15 +407,15 @@ void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Fa
  * To support parallelization in the running calculations, we require some overloads to the `dense_running()` and `sparse_running()` methods:
  *
  * - `dense_running()` now accepts two arguments: namely, the indices of the first and one-past-the-last target vectors to be processed.
- *   This should return a `struct` with an `add()` method that accepts a pointer to the subinterval of the running vector, corresponding to the target vectors to be processed; 
- *   plus a buffer of the same length as that subinterval.
- *   It may also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
+ *   This should return a worker with an `add()` method that accepts a pointer to the subinterval of the non-target vector, corresponding to the target vectors to be processed.
+ *   It may also have a `finish()` method, to be called to finalize any calculations after all non-target vectors are supplied.
  * - `sparse_running()` now accepts two arguments: namely, the indices of the first and one-past-the-last target vectors to be processed.
- *   The returned `struct` should have an `add()` method that accepts a `SparseRange` object, specifying the non-zero elements in the subinterval of the running vector;
- *   plus two buffers of the same length as that subinterval (one for the non-zero values, another for their positional indices).
- *   It may also have a `finish()` method, to be called to finalize any calculations after all running vectors are supplied.
+ *   The returned worker should have an `add()` method that accepts a `SparseRange` object, specifying the non-zero elements in the subinterval of the non-target vector.
+ *   It may also have a `finish()` method, to be called to finalize any calculations after all non-target vectors are supplied.
  *
  * These overloads are optional and the function will fall back to serial processing if they are not supplied (and the function decides perform a running calculation).
+ *
+ * Calls to `dense_direct()` and counterparts should be thread-safe for any single instance of a factory class.
  */
 template<int MARGIN, typename T, typename IDX, class Factory>
 void apply(const Matrix<T, IDX>* p, Factory& factory, int threads = 1) {
