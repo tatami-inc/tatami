@@ -77,10 +77,14 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">CompressedSparseMatrix.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Compressed sparse matrix representation.  
+<a href="#details">More...</a></p>
 
 <p><a href="CompressedSparseMatrix_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -90,53 +94,25 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compressed sparse matrix representation.  <a href="classtatami_1_1CompressedSparseMatrix.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacetatami"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
+<tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
 <tr class="memitem:a3d1338ade036e38b6d363a6c8a704a2b"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX , class U  = std::vector&lt;T&gt;, class V  = std::vector&lt;IDX&gt;, class W  = std::vector&lt;size_t&gt;&gt; </td></tr>
-<tr class="memitem:a3d1338ade036e38b6d363a6c8a704a2b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="CompressedSparseMatrix_8hpp.html#a3d1338ade036e38b6d363a6c8a704a2b">tatami::CompressedSparseColumnMatrix</a> = CompressedSparseMatrix&lt; false, T, IDX, U, V, W &gt;</td></tr>
+<tr class="memitem:a3d1338ade036e38b6d363a6c8a704a2b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3d1338ade036e38b6d363a6c8a704a2b">tatami::CompressedSparseColumnMatrix</a> = CompressedSparseMatrix&lt; false, T, IDX, U, V, W &gt;</td></tr>
 <tr class="separator:a3d1338ade036e38b6d363a6c8a704a2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33a0b775b994304c942e990fe12e793e"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX , class U  = std::vector&lt;T&gt;, class V  = std::vector&lt;IDX&gt;, class W  = std::vector&lt;size_t&gt;&gt; </td></tr>
-<tr class="memitem:a33a0b775b994304c942e990fe12e793e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="CompressedSparseMatrix_8hpp.html#a33a0b775b994304c942e990fe12e793e">tatami::CompressedSparseRowMatrix</a> = CompressedSparseMatrix&lt; true, T, IDX, U, V, W &gt;</td></tr>
+<tr class="memitem:a33a0b775b994304c942e990fe12e793e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a33a0b775b994304c942e990fe12e793e">tatami::CompressedSparseRowMatrix</a> = CompressedSparseMatrix&lt; true, T, IDX, U, V, W &gt;</td></tr>
 <tr class="separator:a33a0b775b994304c942e990fe12e793e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Compressed sparse matrix representation, with <code>typedef</code>s for the usual row and column formats. </p>
-</div><h2 class="groupheader">Typedef Documentation</h2>
-<a id="a3d1338ade036e38b6d363a6c8a704a2b" name="a3d1338ade036e38b6d363a6c8a704a2b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d1338ade036e38b6d363a6c8a704a2b">&#9670;&#160;</a></span>CompressedSparseColumnMatrix</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename IDX , class U  = std::vector&lt;T&gt;, class V  = std::vector&lt;IDX&gt;, class W  = std::vector&lt;size_t&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="CompressedSparseMatrix_8hpp.html#a3d1338ade036e38b6d363a6c8a704a2b">tatami::CompressedSparseColumnMatrix</a> = typedef CompressedSparseMatrix&lt;false, T, IDX, U, V, W&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Compressed sparse column matrix. See <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">tatami::CompressedSparseMatrix</a></code> for details on the template parameters. </p>
-
-</div>
-</div>
-<a id="a33a0b775b994304c942e990fe12e793e" name="a33a0b775b994304c942e990fe12e793e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a33a0b775b994304c942e990fe12e793e">&#9670;&#160;</a></span>CompressedSparseRowMatrix</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename IDX , class U  = std::vector&lt;T&gt;, class V  = std::vector&lt;IDX&gt;, class W  = std::vector&lt;size_t&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="CompressedSparseMatrix_8hpp.html#a33a0b775b994304c942e990fe12e793e">tatami::CompressedSparseRowMatrix</a> = typedef CompressedSparseMatrix&lt;true, T, IDX, U, V, W&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Compressed sparse row matrix. See <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">tatami::CompressedSparseMatrix</a></code> for details on the template parameters. </p>
-
-</div>
-</div>
-</div><!-- contents -->
+<div class="textblock"><p>Compressed sparse matrix representation. </p>
+<p><code>typedef</code>s are provided for the usual row and column formats. </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6

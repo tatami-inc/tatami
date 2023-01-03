@@ -92,7 +92,7 @@ $(function() {
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span>tatami {</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">namespace </span>stats {</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
@@ -245,7 +245,7 @@ $(function() {
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>        <span class="keyword">auto</span> stat = factory.sparse_direct();</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
 <div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>        <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> do_copy = stats::has_nonconst_sparse_compute&lt;<span class="keyword">decltype</span>(stat), T, IDX&gt;::value;</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        <span class="keyword">constexpr</span> <a class="code hl_enumeration" href="SparseRange_8hpp.html#ac4dba1039cc39910b0dd3bcccfea0f71">SparseCopyMode</a> copy_mode = stats::nonconst_sparse_compute_copy_mode&lt;<span class="keyword">decltype</span>(stat)&gt;::value;</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        <span class="keyword">constexpr</span> <a class="code hl_enumeration" href="namespacetatami.html#ac4dba1039cc39910b0dd3bcccfea0f71">SparseCopyMode</a> copy_mode = stats::nonconst_sparse_compute_copy_mode&lt;<span class="keyword">decltype</span>(stat)&gt;::value;</div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span><span class="preprocessor">#ifndef TATAMI_CUSTOM_PARALLEL</span></div>
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        <span class="comment">// Without chunk size specification, static scheduling should distribute</span></div>
@@ -331,7 +331,7 @@ $(function() {
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>}</div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span> </div>
 <div class="line"><a id="l00420" name="l00420"></a><span class="lineno">  420</span><span class="keyword">template</span>&lt;<span class="keywordtype">int</span> MARGIN, <span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX, <span class="keyword">class</span> Factory&gt;</div>
-<div class="line"><a id="l00421" name="l00421"></a><span class="lineno"><a class="line" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">  421</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">apply</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;T, IDX&gt;</a>* p, Factory&amp; factory, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00421" name="l00421"></a><span class="lineno"><a class="line" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">  421</a></span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;T, IDX&gt;</a>* p, Factory&amp; factory, <span class="keywordtype">int</span> threads = 1) {</div>
 <div class="line"><a id="l00422" name="l00422"></a><span class="lineno">  422</span>    <span class="keywordtype">size_t</span> NR = p-&gt;<a class="code hl_function" href="classtatami_1_1Matrix.html#a48e1342556ff97cc8367b25d244195a9">nrow</a>(), NC = p-&gt;<a class="code hl_function" href="classtatami_1_1Matrix.html#a1049bd5cbe37b618db795787725930e4">ncol</a>();</div>
 <div class="line"><a id="l00423" name="l00423"></a><span class="lineno">  423</span> </div>
 <div class="line"><a id="l00424" name="l00424"></a><span class="lineno">  424</span>    <span class="comment">/* One might question why we use MARGIN in the template if we just convert</span></div>
@@ -375,13 +375,14 @@ $(function() {
 <div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>}</div>
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span> </div>
 <div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aSparseRange_8hpp_html_ac4dba1039cc39910b0dd3bcccfea0f71"><div class="ttname"><a href="SparseRange_8hpp.html#ac4dba1039cc39910b0dd3bcccfea0f71">tatami::SparseCopyMode</a></div><div class="ttdeci">SparseCopyMode</div><div class="ttdef"><b>Definition:</b> SparseRange.hpp:95</div></div>
-<div class="ttc" id="aapply_8hpp_html_a0692b6c82646df0131b9872431a11bf2"><div class="ttname"><a href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">tatami::apply</a></div><div class="ttdeci">void apply(const Matrix&lt; T, IDX &gt; *p, Factory &amp;factory, int threads=1)</div><div class="ttdef"><b>Definition:</b> apply.hpp:421</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="classtatami_1_1Matrix.html">tatami::Matrix</a></div><div class="ttdoc">Virtual class for a matrix with a defined type.</div><div class="ttdef"><b>Definition:</b> Matrix.hpp:22</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a05f69722541e0ed9a8f19aad2d44f1c4"><div class="ttname"><a href="classtatami_1_1Matrix.html#a05f69722541e0ed9a8f19aad2d44f1c4">tatami::Matrix::sparse</a></div><div class="ttdeci">virtual bool sparse() const</div><div class="ttdef"><b>Definition:</b> Matrix.hpp:88</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a1049bd5cbe37b618db795787725930e4"><div class="ttname"><a href="classtatami_1_1Matrix.html#a1049bd5cbe37b618db795787725930e4">tatami::Matrix::ncol</a></div><div class="ttdeci">virtual size_t ncol() const =0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a48e1342556ff97cc8367b25d244195a9"><div class="ttname"><a href="classtatami_1_1Matrix.html#a48e1342556ff97cc8367b25d244195a9">tatami::Matrix::nrow</a></div><div class="ttdeci">virtual size_t nrow() const =0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_ac31ddc309419b4b2f6a2d0a01837e7a3"><div class="ttname"><a href="classtatami_1_1Matrix.html#ac31ddc309419b4b2f6a2d0a01837e7a3">tatami::Matrix::prefer_rows</a></div><div class="ttdeci">virtual bool prefer_rows() const</div><div class="ttdef"><b>Definition:</b> Matrix.hpp:95</div></div>
+<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:12</div></div>
+<div class="ttc" id="anamespacetatami_html_a0692b6c82646df0131b9872431a11bf2"><div class="ttname"><a href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">tatami::apply</a></div><div class="ttdeci">void apply(const Matrix&lt; T, IDX &gt; *p, Factory &amp;factory, int threads=1)</div><div class="ttdef"><b>Definition:</b> apply.hpp:421</div></div>
+<div class="ttc" id="anamespacetatami_html_ac4dba1039cc39910b0dd3bcccfea0f71"><div class="ttname"><a href="namespacetatami.html#ac4dba1039cc39910b0dd3bcccfea0f71">tatami::SparseCopyMode</a></div><div class="ttdeci">SparseCopyMode</div><div class="ttdef"><b>Definition:</b> SparseRange.hpp:95</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

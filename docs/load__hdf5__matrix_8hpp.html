@@ -76,6 +76,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">load_hdf5_matrix.hpp File Reference</div></div>
 </div><!--header-->
@@ -86,145 +87,24 @@ $(function() {
 
 <p><a href="load__hdf5__matrix_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacetatami"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
+<tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a8e62b7595d4b0d1d06cb203952007b28"><td class="memTemplParams" colspan="2">template&lt;bool ROW, typename T , typename IDX  = int, class U  = std::vector&lt;T&gt;, class V  = std::vector&lt;IDX&gt;, class W  = std::vector&lt;size_t&gt;&gt; </td></tr>
-<tr class="memitem:a8e62b7595d4b0d1d06cb203952007b28"><td class="memTemplItemLeft" align="right" valign="top">CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="load__hdf5__matrix_8hpp.html#a8e62b7595d4b0d1d06cb203952007b28">tatami::load_hdf5_compressed_sparse_matrix</a> (size_t nr, size_t nc, const std::string &amp;file, const std::string &amp;vals, const std::string &amp;idx, const std::string &amp;ptr)</td></tr>
+<tr class="memitem:a8e62b7595d4b0d1d06cb203952007b28"><td class="memTemplItemLeft" align="right" valign="top">CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8e62b7595d4b0d1d06cb203952007b28">tatami::load_hdf5_compressed_sparse_matrix</a> (size_t nr, size_t nc, const std::string &amp;file, const std::string &amp;vals, const std::string &amp;idx, const std::string &amp;ptr)</td></tr>
 <tr class="separator:a8e62b7595d4b0d1d06cb203952007b28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad13e199dab7f4ab7c4d3045a032f8cac"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX  = int, class V  = std::vector&lt;T&gt;, bool transpose = false&gt; </td></tr>
-<tr class="memitem:ad13e199dab7f4ab7c4d3045a032f8cac"><td class="memTemplItemLeft" align="right" valign="top">DenseMatrix&lt;!transpose, T, IDX, V &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="load__hdf5__matrix_8hpp.html#ad13e199dab7f4ab7c4d3045a032f8cac">tatami::load_hdf5_dense_matrix</a> (const std::string &amp;file, const std::string &amp;name)</td></tr>
+<tr class="memitem:ad13e199dab7f4ab7c4d3045a032f8cac"><td class="memTemplItemLeft" align="right" valign="top">DenseMatrix&lt;!transpose, T, IDX, V &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ad13e199dab7f4ab7c4d3045a032f8cac">tatami::load_hdf5_dense_matrix</a> (const std::string &amp;file, const std::string &amp;name)</td></tr>
 <tr class="separator:ad13e199dab7f4ab7c4d3045a032f8cac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Load HDF5 data into <code>Matrix</code> objects. </p>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a8e62b7595d4b0d1d06cb203952007b28" name="a8e62b7595d4b0d1d06cb203952007b28"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8e62b7595d4b0d1d06cb203952007b28">&#9670;&#160;</a></span>load_hdf5_compressed_sparse_matrix()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;bool ROW, typename T , typename IDX  = int, class U  = std::vector&lt;T&gt;, class V  = std::vector&lt;IDX&gt;, class W  = std::vector&lt;size_t&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt; tatami::load_hdf5_compressed_sparse_matrix </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>nr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>nc</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>file</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>vals</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>idx</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>ptr</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Load a <code>CompressedSparseMatrix</code> from a HDF5 file.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">ROW</td><td>Whether the matrix is stored in compressed sparse row format. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix values in the <code>Matrix</code> interface. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices. </td></tr>
-    <tr><td class="paramname">U</td><td>Vector type for storing the values of the non-zero elements. Elements of this vector may be of a different type than <code>T</code> for more efficient storage. </td></tr>
-    <tr><td class="paramname">V</td><td>Vector type for storing the indices. Elements of this vector may be of a different type than <code>IDX</code> for more efficient storage. </td></tr>
-    <tr><td class="paramname">W</td><td>Vector type for storing the index pointers.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">nr</td><td>Number of rows in the matrix. </td></tr>
-    <tr><td class="paramname">nc</td><td>Number of columns in the matrix. </td></tr>
-    <tr><td class="paramname">file</td><td>Path to the file. </td></tr>
-    <tr><td class="paramname">vals</td><td>Name of the 1D dataset inside <code>file</code> containing the non-zero elements. </td></tr>
-    <tr><td class="paramname">idx</td><td>Name of the 1D dataset inside <code>file</code> containing the indices of the non-zero elements. If <code>ROW = true</code>, this should contain column indices sorted within each row, otherwise it should contain row indices sorted within each column. </td></tr>
-    <tr><td class="paramname">ptr</td><td>Name of the 1D dataset inside <code>file</code> containing the index pointers for the start and end of each row (if <code>ROW = true</code>) or column (otherwise). This should have length equal to the number of rows (if <code>ROW = true</code>) or columns (otherwise).</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>CompressedSparseMatrix</code> containing all values and indices in memory. This differs from a <code>HDF5CompressedSparseMatrix</code>, where the loading of data is deferred until requested. </dd></dl>
-
-</div>
-</div>
-<a id="ad13e199dab7f4ab7c4d3045a032f8cac" name="ad13e199dab7f4ab7c4d3045a032f8cac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad13e199dab7f4ab7c4d3045a032f8cac">&#9670;&#160;</a></span>load_hdf5_dense_matrix()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename IDX  = int, class V  = std::vector&lt;T&gt;, bool transpose = false&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">DenseMatrix&lt;!transpose, T, IDX, V &gt; tatami::load_hdf5_dense_matrix </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>file</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Load a <code>DenseMatrix</code> from a HDF5 DataSet.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>Type of the matrix values in the <code>Matrix</code> interface. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices. </td></tr>
-    <tr><td class="paramname">V</td><td>Vector type for storing the matrix values. This may be different from <code>T</code> for more efficient storage. </td></tr>
-    <tr><td class="paramname">transpose</td><td>Whether the dataset is transposed in its storage order, i.e., rows in HDF5 are columns in the matrix.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">file</td><td>Path to the HDF5 file. </td></tr>
-    <tr><td class="paramname">name</td><td>Name of the dataset inside the file. This should refer to a 2-dimensional dataset of integer or floating-point type.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>DenseMatrix</code> where all values are in memory. This differs from a <code>HDF5DenseMatrix</code>, where the loading of data is deferred until requested. </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6

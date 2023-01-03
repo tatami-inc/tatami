@@ -77,10 +77,14 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">DelayedSubset.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
+
+<p>Delayed subsetting by rows or columns.  
+<a href="#details">More...</a></p>
 
 <p><a href="DelayedSubset_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
@@ -90,63 +94,22 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed subsetting of a matrix.  <a href="classtatami_1_1DelayedSubset.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacetatami"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
+<tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:acd395c7ec8bb251ab11206166a972bbc"><td class="memTemplParams" colspan="2">template&lt;int MARGIN, class MAT , class V &gt; </td></tr>
-<tr class="memitem:acd395c7ec8bb251ab11206166a972bbc"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; MAT &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="DelayedSubset_8hpp.html#acd395c7ec8bb251ab11206166a972bbc">tatami::make_DelayedSubset</a> (std::shared_ptr&lt; MAT &gt; p, V idx)</td></tr>
+<tr class="memitem:acd395c7ec8bb251ab11206166a972bbc"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; MAT &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#acd395c7ec8bb251ab11206166a972bbc">tatami::make_DelayedSubset</a> (std::shared_ptr&lt; MAT &gt; p, V idx)</td></tr>
 <tr class="separator:acd395c7ec8bb251ab11206166a972bbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Delayed subsetting, equivalent to the <code>DelayedSubset</code> class in the <b>DelayedArray</b> package. </p>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="acd395c7ec8bb251ab11206166a972bbc" name="acd395c7ec8bb251ab11206166a972bbc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acd395c7ec8bb251ab11206166a972bbc">&#9670;&#160;</a></span>make_DelayedSubset()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int MARGIN, class MAT , class V &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; MAT &gt; tatami::make_DelayedSubset </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; MAT &gt;&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">V&#160;</td>
-          <td class="paramname"><em>idx</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">MARGIN</td><td>Dimension along which the subsetting is to occur. If 0, the subset is applied to the rows; if 1, the subset is applied to the columns. </td></tr>
-    <tr><td class="paramname">MAT</td><td>A specialized <code>Matrix</code>, to be automatically deducted. </td></tr>
-    <tr><td class="paramname">V</td><td>Vector containing the subset indices, to be automatically deducted.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code>Matrix</code>. </td></tr>
-    <tr><td class="paramname">idx</td><td>Instance of the index vector.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code>DelayedSubset</code> instance. </dd></dl>
-
-</div>
-</div>
-</div><!-- contents -->
+<div class="textblock"><p>Delayed subsetting by rows or columns. </p>
+<p>This is equivalent to the <code>DelayedSubset</code> class in the <b>DelayedArray</b> package. </p>
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6

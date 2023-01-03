@@ -76,6 +76,7 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">apply.hpp File Reference</div></div>
 </div><!--header-->
@@ -86,148 +87,21 @@ $(function() {
 
 <p><a href="apply_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacetatami"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
+<tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a0692b6c82646df0131b9872431a11bf2"><td class="memTemplParams" colspan="2">template&lt;int MARGIN, typename T , typename IDX , class Factory &gt; </td></tr>
-<tr class="memitem:a0692b6c82646df0131b9872431a11bf2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="apply_8hpp.html#a0692b6c82646df0131b9872431a11bf2">tatami::apply</a> (const Matrix&lt; T, IDX &gt; *p, Factory &amp;factory, int threads=1)</td></tr>
+<tr class="memitem:a0692b6c82646df0131b9872431a11bf2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">tatami::apply</a> (const Matrix&lt; T, IDX &gt; *p, Factory &amp;factory, int threads=1)</td></tr>
 <tr class="separator:a0692b6c82646df0131b9872431a11bf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Apply arbitrary calculations along rows or columns. </p>
-</div><h2 class="groupheader">Function Documentation</h2>
-<a id="a0692b6c82646df0131b9872431a11bf2" name="a0692b6c82646df0131b9872431a11bf2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0692b6c82646df0131b9872431a11bf2">&#9670;&#160;</a></span>apply()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int MARGIN, typename T , typename IDX , class Factory &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void tatami::apply </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Factory &amp;&#160;</td>
-          <td class="paramname"><em>factory</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">MARGIN</td><td>The dimension over which to apply the calculation of statistics, i.e., rows (0) or columns (1). </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be summable. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices. </td></tr>
-    <tr><td class="paramname">Factory</td><td>Factory class to create the statistic-calculating classes.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">factory</td><td>Instance of a factory. </td></tr>
-    <tr><td class="paramname">threads</td><td>Number of threads to use for matrix traversal.</td></tr>
-  </table>
-  </dd>
-</dl>
-<h1><a class="anchor" id="apply_overview"></a>
-Overview</h1>
-<p>In this function, we consider the matrix to be a collection of "target vectors". When <code>MARGIN = 0</code>, each row is a target vector, whereas when <code>MARGIN = 1</code>, each column is a target vector. The goal is to compute some statistic along each of these target vectors, e.g., the per-row sums (<code>row_sums()</code>) or the per-column variances (<code>row_variances()</code>). (For brevity, we will refer to the vectors along the other dimension as "non-target vectors".)</p>
-<p><code>apply()</code> will automatically choose the most efficient iteration strategy for the supplied matrix. This depends on whether the matrix is sparse or dense; whether the matrix prefers iteration across rows or columns; and whether the desired statistic must be computed directly (i.e., given one target vector at a time) or can be computed in a "running" fashion (i.e., given one non-target vector at a time).</p>
-<h1><a class="anchor" id="apply_factory"></a>
-Factory requirements</h1>
-<p>Arbitrary computations are supported via the supplied <code>factory</code> instance of the factory class. The factory class should have a <code>dense_direct()</code> method that accepts no arguments and returns an arbitrary object (referred to here as a "worker"). The worker should have a <code>compute()</code> method that accepts the index of the target vector and a <code>const</code> pointer to the target vector. This will be used in the "direct" iteration strategy, i.e., the statistic for a target vector is directly computed from the target vector's values in memory.</p>
-<p>Optionally, the factory class may have one or more of:</p>
-<ul>
-<li>A <code>sparse_direct()</code> method that accepts no arguments and returns an arbitrary worker (not necessarily of the same class as <code>dense_direct()</code>). The worker should have a <code>compute()</code> method that accepts the index of the target vector and a <code>SparseRange</code> object containing the non-zero elements of the target vector. This will be favored for direct iteration over a sparse matrix.</li>
-<li>A <code>dense_running()</code> method that accepts no arguments and returns an arbitrary worker. The worker should have an <code>add()</code> method that accepts a pointer to a non-target vector. It may also have a <code>finish()</code> method, to be called to finalize any calculations after all non-target vectors are supplied. This will be favored for running iteration over a dense matrix.</li>
-<li>A <code>sparse_running()</code> method that accepts no arguments and returns an arbitrary worker. The worker should have an <code>add()</code> method that accepts a <code>SparseRange</code> object specifying the non-zero elements of a non-target vector. It may also have a <code>finish()</code> method, to be called to finalize any calculations after all non-target vectors are supplied. This will be favored for running iteration over a sparse matrix.</li>
-</ul>
-<p><code>apply()</code> will automatically choose the most appropriate iteration strategy based on the various inputs. If <code>MARGIN</code> is consistent with the matrix's preferred dimension for iteration, a direct strategy is used; otherwise a running strategy will be chosen. If the matrix is sparse, the <code>sparse_*()</code> versions of the methods above will be favored. If the factory does not implement the method for the best iteration strategy, <code>apply()</code> will attempt other strategies, finally falling back to the <code>dense_direct()</code> method. We assume that iteration in the non-preferred dimension is costly and will attempt to avoid this wherever possible.</p>
-<p>Each of these <code>compute()</code> and <code>add()</code> methods should modify the contents of <code>factory</code> by reference. This is achieved by passing pointers from <code>factory</code> to each worker and writing to those pointers in <code>compute()</code> and <code>add()</code>. Computed statistics can then be extracted from <code>factory</code> once <code>apply()</code> has finished running. Results should be agnostic to the choice of calculation, notwithstanding minor differences due to numerical precision.</p>
-<p>In the running calculations, the statistic for each target vector should be computed incrementally as new values become available in successive non-target vectors. For example, if the matrix prefers row access but we want to compute column sums, <code>apply()</code> can use a running strategy to exploit the more efficient access pattern. This could be achieved in <code>add()</code> by iterating across the supplied non-target vector and adding each entry to the running statistic for the corresponding target vector.</p>
-<p>See the <code>VarianceFactory</code> in <code><a class="el" href="variances_8hpp.html">variances.hpp</a></code> for an example of a valid factory class.</p>
-<h1><a class="anchor" id="apply_mutable"></a>
-Mutating copies</h1>
-<p>In some applications, it may be necessary to mutate the buffers containing the contents of each target vector (e.g., sorting for quantile calculations). This is accommodated by replacing the <code>compute()</code> method with a <code>compute_copy()</code> method for the <code>*_direct()</code> workers.</p>
-<ul>
-<li>In the dense case, the <code>compute_copy()</code> method should accept the index of the target vector and a non-<code>const</code> pointer to a buffer with the values of the row/column.</li>
-<li>In the sparse case, the <code>compute_copy()</code> should accept the index of the target vector, the number of non-zero elements, a non-<code>const</code> pointer to a buffer with the non-zero values, and a non-<code>const</code> pointer to the indices of the non-zero elements. The worker may also contain a static <code>copy_mode</code> member specifying whether one or both the values/indices should be copied into the buffers, see the options for a <code>SparseCopyMode</code>.</li>
-</ul>
-<p>If a <code>compute_copy()</code> method is available, <code>apply()</code> will create a copy upon row/column extraction and the developer is free to modify the buffers inside the <code>compute_copy()</code> method. Note that we do not provide a copyable option for the <code>*_running()</code> workers, as there is nothing to mutate when the target vector is never instantiated.</p>
-<p>See the <code>MedianFactory</code> in <code><a class="el" href="medians_8hpp.html">medians.hpp</a></code> for an example of a factory that mutates the buffer.</p>
-<h1><a class="anchor" id="method_prep"></a>
-Method-specific preparation</h1>
-<p>The factory class may optionally implement any number of the following methods:</p>
-<ul>
-<li><code>prepare_dense_direct()</code>, which will be called once before any invocation of <code>dense_direct()</code>.</li>
-<li><code>prepare_dense_running()</code>, which will be called once before any invocation of <code>dense_running()</code>.</li>
-<li><code>prepare_sparse_direct()</code>, which will be called once before any invocation of <code>sparse_direct()</code>.</li>
-<li><code>prepare_sparse_running()</code>, which will be called once before any invocation of <code>sparse_running()</code>.</li>
-</ul>
-<p>This can be used by developers to perform any necessary preparation before iteration over the input matrix. Importantly, the manner of preparation can vary according to the chosen iteration strategy. For example, running calculations will typically require more intermediate structures than their direct counterparts; the <code>prepare_*_running()</code> methods can be used to set up those intermediates as needed, without committing to the setup cost if <code>apply()</code> chooses to use a direct strategy.</p>
-<h1><a class="anchor" id="apply_parallel2"></a>
-Caller parallelization</h1>
-<p><code>apply()</code> supports parallelization via OpenMP by default, so callers can simply compile with <code>-fopenmp</code> to parallelize their code. <code>apply()</code> will automatically distribute the calculations for each target vector across available threads. The maximum number of threads is defined by the <code>threads</code> argument.</p>
-<p>Advanced callers of <code>apply()</code> may specify their own parallelization scheme by defining a <code>TATAMI_CUSTOM_PARALLEL</code> macro. This should be a function-like macro with three arguments:</p>
-<ul>
-<li><code>n</code>, an integer specifying the total number of jobs.</li>
-<li><code>f</code>, a lambda specifying the function to run on a range of jobs in <code>n</code>. This should take two <code>size_t</code> arguments specifying the start and one-past-the-end of the range.</li>
-<li><code>t</code>, an integer specifying the number of available threads. This is set to <code>threads</code>.</li>
-</ul>
-<p>The <code>TATAMI_CUSTOM_PARALLEL</code> function is expected to split <code>n</code> into non-overlapping ranges where each range is assigned to a worker. It should then call <code>f</code> within each worker on the corresponding range of jobs. For example:</p>
-<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> Function&gt;</div>
-<div class="line"><span class="keywordtype">void</span> parallelize(<span class="keywordtype">size_t</span> n, Function f, <span class="keywordtype">size_t</span> nworkers) {</div>
-<div class="line">    <span class="keywordtype">size_t</span> jobs_per_worker = std::ceil(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(n) / nworkers);</div>
-<div class="line">    <span class="keywordtype">size_t</span> start = 0;</div>
-<div class="line">    std::vector&lt;std::thread&gt; jobs;</div>
-<div class="line"> </div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> w = 0; w &lt; nworkers; ++w) {</div>
-<div class="line">        <span class="keywordtype">size_t</span> end = std::min(n, start + jobs_per_worker);</div>
-<div class="line">        <span class="keywordflow">if</span> (start &gt;= end) {</div>
-<div class="line">            <span class="keywordflow">break</span>;</div>
-<div class="line">        }</div>
-<div class="line">        jobs.emplace_back(f, start, end);</div>
-<div class="line">        start += jobs_per_worker;</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; job : jobs) {</div>
-<div class="line">        job.join();</div>
-<div class="line">    }</div>
-<div class="line">}</div>
-<div class="line"> </div>
-<div class="line"><span class="preprocessor">#define TATAMI_CUSTOM_PARALLEL parallelize</span></div>
-</div><!-- fragment --><h1><a class="anchor" id="apply_parallel"></a>
-Factory parallelization</h1>
-<p>Worker methods (i.e., <code>compute()</code>, <code>add()</code>, <code>finish()</code>) for a single worker instance do not have to be thread-safe. That is, methods for a single worker will only ever be called in a serial fashion, as each worker is local to a thread.</p>
-<p>However, worker methods should be thread-safe across multiple worker instances. For example, <code>apply()</code> may simultaneously call the <code>add()</code> method of different workers from different threads. This is most relevant when results are being written back to the shared memory in <code>factory</code>, and is usually easy to achieve as long as the memory spaces for the results of two target vectors do not overlap.</p>
-<p>The direct calculations are trivially parallelizable - it is assumed that they can be called independently for different target indices. It is also assumed that each <code>compute()</code> call will only write to the shared memory at its supplied target index.</p>
-<p>To support parallelization in the running calculations, we require some overloads to the <code>dense_running()</code> and <code>sparse_running()</code> methods:</p>
-<ul>
-<li><code>dense_running()</code> now accepts two arguments: namely, the indices of the first and one-past-the-last target vectors to be processed. This should return a worker with an <code>add()</code> method that accepts a pointer to the subinterval of the non-target vector, corresponding to the target vectors to be processed. It may also have a <code>finish()</code> method, to be called to finalize any calculations after all non-target vectors are supplied.</li>
-<li><code>sparse_running()</code> now accepts two arguments: namely, the indices of the first and one-past-the-last target vectors to be processed. The returned worker should have an <code>add()</code> method that accepts a <code>SparseRange</code> object, specifying the non-zero elements in the subinterval of the non-target vector. It may also have a <code>finish()</code> method, to be called to finalize any calculations after all non-target vectors are supplied.</li>
-</ul>
-<p>These overloads are optional and the function will fall back to serial processing if they are not supplied (and the function decides perform a running calculation).</p>
-<p>Calls to <code>dense_direct()</code> and counterparts should be thread-safe for any single instance of a factory class. </p>
-
-</div>
-</div>
-</div><!-- contents -->
+</div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.6

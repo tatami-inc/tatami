@@ -26,10 +26,10 @@ var searchData=
   ['delayedsubtractvectorhelper_23',['DelayedSubtractVectorHelper',['../structtatami_1_1DelayedSubtractVectorHelper.html#ad9f4a928250416796f4ead2b451d0701',1,'tatami::DelayedSubtractVectorHelper::DelayedSubtractVectorHelper()'],['../structtatami_1_1DelayedSubtractVectorHelper.html',1,'tatami::DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;']]],
   ['delayedtranspose_24',['DelayedTranspose',['../classtatami_1_1DelayedTranspose.html#ae9b0a68fee18a7a4591c547a98e60ebc',1,'tatami::DelayedTranspose::DelayedTranspose()'],['../classtatami_1_1DelayedTranspose.html',1,'tatami::DelayedTranspose&lt; T, IDX &gt;']]],
   ['delayedtranspose_2ehpp_25',['DelayedTranspose.hpp',['../DelayedTranspose_8hpp.html',1,'']]],
-  ['densecolumnmatrix_26',['DenseColumnMatrix',['../DenseMatrix_8hpp.html#a1c118308300d626e53436a9540dd8bd9',1,'tatami']]],
+  ['densecolumnmatrix_26',['DenseColumnMatrix',['../namespacetatami.html#a1c118308300d626e53436a9540dd8bd9',1,'tatami']]],
   ['densematrix_27',['DenseMatrix',['../classtatami_1_1DenseMatrix.html#a520c63dd6f58dc7daaca05cbff960cae',1,'tatami::DenseMatrix::DenseMatrix(size_t nr, size_t nc, const V &amp;source)'],['../classtatami_1_1DenseMatrix.html#ab89adaca1dccbcce13c745191f506ba1',1,'tatami::DenseMatrix::DenseMatrix(size_t nr, size_t nc, V &amp;&amp;source)'],['../classtatami_1_1DenseMatrix.html',1,'tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;']]],
   ['densematrix_2ehpp_28',['DenseMatrix.hpp',['../DenseMatrix_8hpp.html',1,'']]],
-  ['denserowmatrix_29',['DenseRowMatrix',['../DenseMatrix_8hpp.html#ad4db75262ca90f85a4278b90f844cffd',1,'tatami']]],
+  ['denserowmatrix_29',['DenseRowMatrix',['../namespacetatami.html#ad4db75262ca90f85a4278b90f844cffd',1,'tatami']]],
   ['difference_5ftype_30',['difference_type',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#ae2439d56ee9c796afae3b07f70e1c3b1',1,'tatami::SomeNumericArray::Iterator']]],
   ['dimension_5fpreference_31',['dimension_preference',['../classtatami_1_1DelayedBind.html#ad2e7e7de5d4bfb9805c1ae30d6349a03',1,'tatami::DelayedBind::dimension_preference()'],['../classtatami_1_1Matrix.html#a8e0c04c5b051451af78a64e517aae0c1',1,'tatami::Matrix::dimension_preference()']]]
 ];

@@ -87,7 +87,7 @@ $(function() {
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &lt;deque&gt;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>tatami {</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span><span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>    <span class="keyword">typename</span> DataInterface = double,</div>
@@ -95,7 +95,7 @@ $(function() {
 <div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    <span class="keyword">typename</span> DataStore = DataInterface,</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keyword">class </span>MatrixIn</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>&gt;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="convert__to__dense_8hpp.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">   36</a></span><span class="keyword">inline</span> std::shared_ptr&lt;Matrix&lt;DataInterface, Index&gt; &gt; <a class="code hl_function" href="convert__to__dense_8hpp.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">convert_to_dense</a>(<span class="keyword">const</span> MatrixIn* incoming) {</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno"><a class="line" href="namespacetatami.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">   36</a></span><span class="keyword">inline</span> std::shared_ptr&lt;Matrix&lt;DataInterface, Index&gt; &gt; <a class="code hl_function" href="namespacetatami.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">convert_to_dense</a>(<span class="keyword">const</span> MatrixIn* incoming) {</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    <span class="keywordtype">size_t</span> NR = incoming-&gt;nrow();</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keywordtype">size_t</span> NC = incoming-&gt;ncol();</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">size_t</span> primary = (row ? NR : NC);</div>
@@ -157,7 +157,7 @@ $(function() {
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keyword">typename</span> DataStore = DataInterface,</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keyword">class </span>MatrixIn</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>&gt;</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno"><a class="line" href="convert__to__dense_8hpp.html#a9a1a033ef94ba9f52be54fbd86f85568">  112</a></span>std::shared_ptr&lt;Matrix&lt;DataInterface, Index&gt; &gt; <a class="code hl_function" href="convert__to__dense_8hpp.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">convert_to_dense</a>(<span class="keyword">const</span> MatrixIn* incoming, <span class="keywordtype">int</span> order) {</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno"><a class="line" href="namespacetatami.html#a9a1a033ef94ba9f52be54fbd86f85568">  112</a></span>std::shared_ptr&lt;Matrix&lt;DataInterface, Index&gt; &gt; <a class="code hl_function" href="namespacetatami.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">convert_to_dense</a>(<span class="keyword">const</span> MatrixIn* incoming, <span class="keywordtype">int</span> order) {</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keywordflow">if</span> (order &lt; 0) {</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        order = <span class="keyword">static_cast&lt;</span><span class="keywordtype">int</span><span class="keyword">&gt;</span>(!incoming-&gt;prefer_rows()); </div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>    }</div>
@@ -171,8 +171,9 @@ $(function() {
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>}</div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:32</div></div>
-<div class="ttc" id="aconvert__to__dense_8hpp_html_a5fd35b3b6f34a8b4965ef9a1cef6fc93"><div class="ttname"><a href="convert__to__dense_8hpp.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">tatami::convert_to_dense</a></div><div class="ttdeci">std::shared_ptr&lt; Matrix&lt; DataInterface, Index &gt; &gt; convert_to_dense(const MatrixIn *incoming)</div><div class="ttdef"><b>Definition:</b> convert_to_dense.hpp:36</div></div>
+<div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:34</div></div>
+<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:12</div></div>
+<div class="ttc" id="anamespacetatami_html_a5fd35b3b6f34a8b4965ef9a1cef6fc93"><div class="ttname"><a href="namespacetatami.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">tatami::convert_to_dense</a></div><div class="ttdeci">std::shared_ptr&lt; Matrix&lt; DataInterface, Index &gt; &gt; convert_to_dense(const MatrixIn *incoming)</div><div class="ttdef"><b>Definition:</b> convert_to_dense.hpp:36</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

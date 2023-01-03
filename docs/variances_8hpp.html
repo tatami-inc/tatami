@@ -76,13 +76,23 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">variances.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
+<p>Compute row and column variances from a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>.  
+<a href="#details">More...</a></p>
+
 <p><a href="variances_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
+Namespaces</h2></td></tr>
+<tr class="memitem:namespacetatami"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
+<tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
 <tr class="memitem:a1e160b3091770bab0d788dcdc9d647eb"><td class="memTemplParams" colspan="2">template&lt;typename O  = double, typename T &gt; </td></tr>
@@ -100,38 +110,38 @@ Functions</h2></td></tr>
 <tr class="memitem:a34e1f6cd5406db80632d8dae5c5f8887"><td class="memTemplParams" colspan="2">template&lt;typename O &gt; </td></tr>
 <tr class="memitem:a34e1f6cd5406db80632d8dae5c5f8887"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#a34e1f6cd5406db80632d8dae5c5f8887">tatami::stats::variances::finish_running</a> (size_t n, O *means, O *vars, int count)</td></tr>
 <tr class="separator:a34e1f6cd5406db80632d8dae5c5f8887"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52831de71032b77f466b9432aa61bbba"><td class="memTemplParams" colspan="2">template&lt;typename O , typename Nz &gt; </td></tr>
-<tr class="memitem:a52831de71032b77f466b9432aa61bbba"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#a52831de71032b77f466b9432aa61bbba">tatami::stats::variances::finish_running</a> (size_t n, O *means, O *vars, Nz *nonzeros, int count)</td></tr>
-<tr class="separator:a52831de71032b77f466b9432aa61bbba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5cd70ac4581956b43e3dc74573c97363"><td class="memTemplParams" colspan="2">template&lt;typename O , typename Nz &gt; </td></tr>
+<tr class="memitem:a5cd70ac4581956b43e3dc74573c97363"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#a5cd70ac4581956b43e3dc74573c97363">tatami::stats::variances::finish_running</a> (size_t n, O *means, O *vars, const Nz *nonzeros, int count)</td></tr>
+<tr class="separator:a5cd70ac4581956b43e3dc74573c97363"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a101a4123f87b6c4fd919004c2f3d3a91"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a101a4123f87b6c4fd919004c2f3d3a91"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#a101a4123f87b6c4fd919004c2f3d3a91">tatami::column_variances</a> (const Matrix&lt; T, IDX &gt; *p, int threads=1)</td></tr>
+<tr class="memitem:a101a4123f87b6c4fd919004c2f3d3a91"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a101a4123f87b6c4fd919004c2f3d3a91">tatami::column_variances</a> (const Matrix&lt; T, IDX &gt; *p, int threads=1)</td></tr>
 <tr class="separator:a101a4123f87b6c4fd919004c2f3d3a91"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2aa54193cf4c92ace983cba8c118ca1a"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a2aa54193cf4c92ace983cba8c118ca1a"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="variances_8hpp.html#a2aa54193cf4c92ace983cba8c118ca1a">tatami::row_variances</a> (const Matrix&lt; T, IDX &gt; *p, int threads=1)</td></tr>
+<tr class="memitem:a2aa54193cf4c92ace983cba8c118ca1a"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a2aa54193cf4c92ace983cba8c118ca1a">tatami::row_variances</a> (const Matrix&lt; T, IDX &gt; *p, int threads=1)</td></tr>
 <tr class="separator:a2aa54193cf4c92ace983cba8c118ca1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Compute row and column variances from a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a101a4123f87b6c4fd919004c2f3d3a91" name="a101a4123f87b6c4fd919004c2f3d3a91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a101a4123f87b6c4fd919004c2f3d3a91">&#9670;&#160;</a></span>column_variances()</h2>
+<a id="a1e160b3091770bab0d788dcdc9d647eb" name="a1e160b3091770bab0d788dcdc9d647eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e160b3091770bab0d788dcdc9d647eb">&#9670;&#160;</a></span>compute_direct() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename O  = double, typename T &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::column_variances </td>
+          <td class="memname">std::pair&lt; O, O &gt; tatami::stats::variances::compute_direct </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
+          <td class="paramtype">const T *&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -140,28 +150,27 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>This uses the usual algorithm for matrices where <code><a class="el" href="classtatami_1_1Matrix.html#ac31ddc309419b4b2f6a2d0a01837e7a3">tatami::Matrix::prefer_rows()</a></code> is false, otherwise it uses Welford's algorithm. As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.</p>
+<p>Compute the mean and variance along a vector. We use the numerically stable calculation involving the sum of squared differences rather than taking the difference of squares.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be numeric. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">O</td><td>Type of the output data. </td></tr>
+    <tr><td class="paramname">T</td><td>Type of the input data.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">threads</td><td>Number of threads to use.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ptr</td><td>Pointer to an array of values of length <code>n</code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Size of the array.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A vector of length equal to the number of columns, containing the column variances. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The sample mean and variance of values in <code>[ptr, ptr + n)</code>. If <code>n == 0</code>, the mean is set to NaN, and if <code>n &lt; 2</code>, the variance is set to NaN. </dd></dl>
 
 </div>
 </div>
 <a id="a1fea8f76ae8a2c7f7e9587c25a3c3e80" name="a1fea8f76ae8a2c7f7e9587c25a3c3e80"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1fea8f76ae8a2c7f7e9587c25a3c3e80">&#9670;&#160;</a></span>compute_direct() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fea8f76ae8a2c7f7e9587c25a3c3e80">&#9670;&#160;</a></span>compute_direct() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -207,16 +216,16 @@ template&lt;typename O  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a1e160b3091770bab0d788dcdc9d647eb" name="a1e160b3091770bab0d788dcdc9d647eb"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1e160b3091770bab0d788dcdc9d647eb">&#9670;&#160;</a></span>compute_direct() <span class="overload">[2/2]</span></h2>
+<a id="adf0cf01902d7eb37ecedfdbf2519536f" name="adf0cf01902d7eb37ecedfdbf2519536f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf0cf01902d7eb37ecedfdbf2519536f">&#9670;&#160;</a></span>compute_running() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename O  = double, typename T &gt; </div>
+template&lt;typename T , typename O &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt; O, O &gt; tatami::stats::variances::compute_direct </td>
+          <td class="memname">void tatami::stats::variances::compute_running </td>
           <td>(</td>
           <td class="paramtype">const T *&#160;</td>
           <td class="paramname"><em>ptr</em>, </td>
@@ -225,7 +234,25 @@ template&lt;typename O  = double, typename T &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>n</em>&#160;</td>
+          <td class="paramname"><em>n</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">O *&#160;</td>
+          <td class="paramname"><em>means</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">O *&#160;</td>
+          <td class="paramname"><em>vars</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int &amp;&#160;</td>
+          <td class="paramname"><em>count</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -234,27 +261,29 @@ template&lt;typename O  = double, typename T &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Compute the mean and variance along a vector. We use the numerically stable calculation involving the sum of squared differences rather than taking the difference of squares.</p>
+<p>Compute running means and variances from dense data using Welford's method. This considers a scenario involving a set of equilength "target" vectors [V1, V2, V3, ..., Vn], where <code>n</code> is defined as below and <code>ptr[i]</code> contains the <code>count</code>-th element for target vector Vi. The aim is to compute the mean and variance for each target vector, by repeatedly calling this function with different <code>ptr</code> containing successive elements of all target vectors.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">O</td><td>Type of the output data. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the input data.</td></tr>
+    <tr><td class="paramname">T</td><td>Type of the input data. </td></tr>
+    <tr><td class="paramname">O</td><td>Type of the output data.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">ptr</td><td>Pointer to an array of values of length <code>n</code>. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Size of the array.</td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">ptr</td><td>Pointer to an array of values of length <code>n</code>, with one value per target vector. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Size of the array referenced by <code>ptr</code>. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times this function has already been called. This is incremented by 1 upon return. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The sample mean and variance of values in <code>[ptr, ptr + n)</code>. If <code>n == 0</code>, the mean is set to NaN, and if <code>n &lt; 2</code>, the variance is set to NaN. </dd></dl>
 
 </div>
 </div>
 <a id="aacf56a5f79794794cee4034c102565d4" name="aacf56a5f79794794cee4034c102565d4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aacf56a5f79794794cee4034c102565d4">&#9670;&#160;</a></span>compute_running() <span class="overload">[1/2]</span></h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aacf56a5f79794794cee4034c102565d4">&#9670;&#160;</a></span>compute_running() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -304,7 +333,7 @@ template&lt;typename T , typename IDX , typename O , typename Nz &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Compute a running mean and variance from sparse data using Welford's method. This considers a set of "target vectors" that grow by one with each call to this function; the mean and variance of each target vector is computed.</p>
+<p>Compute a running mean and variance from sparse data using Welford's method. This does the same as its dense overload.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">T</td><td>Type of the input data. </td></tr>
@@ -317,82 +346,14 @@ template&lt;typename T , typename IDX , typename O , typename Nz &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">range</td><td>A <code>SparseRange</code> object specifying the number, indices and values of all non-zero elements. Each element is assigned to a target vector based on its index. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">nonzeros</td><td>Pointer to an array containing the running number of non-zero values for each target vector. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">nonzeros</td><td>Pointer to an array containing the running number of non-zero values for each target vector. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times this function has already been called. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">skip_zeros</td><td>Whether non-structural zeros in <code>range.value</code> should be skipped. If <code>false</code>, the output <code>nonzeros</code> instead contains the number of <em>structural</em> non-zero values in each target vector, which may be useful for informing further operations on the compressed sparse matrix structure. Note that this choice has no effect on the computed means or variances, besides some differences due to numeric imprecision.</td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">skip_zeros</td><td>Whether non-structural zeros in <code>range.value</code> should be skipped. If <code>false</code>, the output <code>nonzeros</code> instead contains the number of <em>structural</em> non-zero values in each target vector, which may be useful for informing further operations on the compressed sparse matrix structure. Note that this choice has no effect on the computed means or variances, besides some differences due to numeric imprecision. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><code>means</code> and <code>vars</code> are updated with the corresponding elements from <code>range</code>. <code>count</code> is incremented by 1. </dd></dl>
-
-</div>
-</div>
-<a id="adf0cf01902d7eb37ecedfdbf2519536f" name="adf0cf01902d7eb37ecedfdbf2519536f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adf0cf01902d7eb37ecedfdbf2519536f">&#9670;&#160;</a></span>compute_running() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T , typename O &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void tatami::stats::variances::compute_running </td>
-          <td>(</td>
-          <td class="paramtype">const T *&#160;</td>
-          <td class="paramname"><em>ptr</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>n</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">O *&#160;</td>
-          <td class="paramname"><em>means</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">O *&#160;</td>
-          <td class="paramname"><em>vars</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int &amp;&#160;</td>
-          <td class="paramname"><em>count</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Compute a running mean and variance from dense data using Welford's method. This considers a set of "target vectors" that grow by one with each call to this function; the mean and variance of each target vector is computed.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">T</td><td>Type of the input data. </td></tr>
-    <tr><td class="paramname">O</td><td>Type of the output data.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">ptr</td><td>Pointer to an array of values of length <code>n</code>, with one value per target vector. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Size of the array referenced by <code>ptr</code>. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times this function has already been called.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd><code>means</code> and <code>vars</code> are updated with the corresponding elements from <code>ptr</code>. <code>count</code> is incremented by 1. </dd></dl>
 
 </div>
 </div>
@@ -435,7 +396,7 @@ template&lt;typename O &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Finish the running variance calculations from <code>compute_running()</code>.</p>
+<p>Finish the running variance calculations from <code>compute_running()</code>. Elements in <code>vars</code> are divided by <code>count - 1</code>, unless if <code>count &lt; 2</code>, in which case it is filled with NaNs. If <code>count</code> is zero, <code>means</code> will also be filled with NaNs.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">O</td><td>Type of the output data.</td></tr>
@@ -445,18 +406,17 @@ template&lt;typename O &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">n</td><td>Number of target vectors. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times the <code>compute_running()</code> function was called.</td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times the <code>compute_running()</code> function was called. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Elements in <code>vars</code> are divided by <code>count - 1</code>. For low values of <code>count</code>, <code>means</code> and/or <code>vars</code> may be filled with NaNs. </dd></dl>
 
 </div>
 </div>
-<a id="a52831de71032b77f466b9432aa61bbba" name="a52831de71032b77f466b9432aa61bbba"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a52831de71032b77f466b9432aa61bbba">&#9670;&#160;</a></span>finish_running() <span class="overload">[2/2]</span></h2>
+<a id="a5cd70ac4581956b43e3dc74573c97363" name="a5cd70ac4581956b43e3dc74573c97363"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5cd70ac4581956b43e3dc74573c97363">&#9670;&#160;</a></span>finish_running() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -484,7 +444,7 @@ template&lt;typename O , typename Nz &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">Nz *&#160;</td>
+          <td class="paramtype">const Nz *&#160;</td>
           <td class="paramname"><em>nonzeros</em>, </td>
         </tr>
         <tr>
@@ -500,7 +460,7 @@ template&lt;typename O , typename Nz &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Finish the running variance calculations from <code>compute_running()</code> with sparse inputs.</p>
+<p>Finish the running variance calculations from <code>compute_running()</code> with sparse inputs. Elements in <code>vars</code> are divided by <code>count - 1</code>, unless if <code>count &lt; 2</code>, in which case it is filled with NaNs. If <code>count</code> is zero, <code>means</code> will also be filled with NaNs.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">O</td><td>Type of the output data. </td></tr>
@@ -511,61 +471,13 @@ template&lt;typename O , typename Nz &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">n</td><td>Number of target vectors. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">nonzeros</td><td>Pointer to an array containing the running number of non-zero values for each target vector. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times the <code>compute_running()</code> function was called.</td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">means</td><td>Pointer to an array containing the running means for each target vector. </td></tr>
+    <tr><td class="paramdir">[in,out]</td><td class="paramname">vars</td><td>Pointer to an array containing the running sum of squared differences from the mean for each target vector. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">nonzeros</td><td>Pointer to an array containing the running number of non-zero values for each target vector. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">count</td><td>Number of times the <code>compute_running()</code> function was called. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Elements in <code>vars</code> are divided by <code>count - 1</code>. For low values of <code>count</code>, <code>means</code> and/or <code>vars</code> may be filled with NaNs. </dd></dl>
-
-</div>
-</div>
-<a id="a2aa54193cf4c92ace983cba8c118ca1a" name="a2aa54193cf4c92ace983cba8c118ca1a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2aa54193cf4c92ace983cba8c118ca1a">&#9670;&#160;</a></span>row_variances()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::row_variances </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>This uses the usual algorithm for matrices where <code><a class="el" href="classtatami_1_1Matrix.html#ac31ddc309419b4b2f6a2d0a01837e7a3">tatami::Matrix::prefer_rows()</a></code> is true, otherwise it uses Welford's algorithm. As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be numeric. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">threads</td><td>Number of threads to use.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A vector of length equal to the number of rows, containing the row variances. </dd></dl>
 
 </div>
 </div>

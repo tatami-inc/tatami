@@ -85,7 +85,7 @@ $(function() {
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &lt;algorithm&gt;</span></div>
 <div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &lt;numeric&gt;</span></div>
 <div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span>tatami {</div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
 <div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
 <div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">namespace </span>compress_triplets {</div>
 <div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span> </div>
@@ -142,7 +142,7 @@ $(function() {
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>}</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> ROW, <span class="keyword">class</span> U, <span class="keyword">class</span> V, <span class="keyword">class</span> W&gt;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="compress__sparse__triplets_8hpp.html#ab17e92414b0bff60f7b7a6431ac8a330">   97</a></span>std::vector&lt;size_t&gt; <a class="code hl_function" href="compress__sparse__triplets_8hpp.html#ab17e92414b0bff60f7b7a6431ac8a330">compress_sparse_triplets</a>(<span class="keywordtype">size_t</span> nr, <span class="keywordtype">size_t</span> nc, U&amp; values, V&amp; rows, W&amp; cols) {</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="namespacetatami.html#ab17e92414b0bff60f7b7a6431ac8a330">   97</a></span>std::vector&lt;size_t&gt; <a class="code hl_function" href="namespacetatami.html#ab17e92414b0bff60f7b7a6431ac8a330">compress_sparse_triplets</a>(<span class="keywordtype">size_t</span> nr, <span class="keywordtype">size_t</span> nc, U&amp; values, V&amp; rows, W&amp; cols) {</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> N = rows.size();</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordflow">if</span> (N != cols.size() || values.size() != N) { </div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;&#39;rows&#39;, &#39;cols&#39; and &#39;values&#39; should have the same length&quot;</span>);</div>
@@ -211,7 +211,8 @@ $(function() {
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>}</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="acompress__sparse__triplets_8hpp_html_ab17e92414b0bff60f7b7a6431ac8a330"><div class="ttname"><a href="compress__sparse__triplets_8hpp.html#ab17e92414b0bff60f7b7a6431ac8a330">tatami::compress_sparse_triplets</a></div><div class="ttdeci">std::vector&lt; size_t &gt; compress_sparse_triplets(size_t nr, size_t nc, U &amp;values, V &amp;rows, W &amp;cols)</div><div class="ttdef"><b>Definition:</b> compress_sparse_triplets.hpp:97</div></div>
+<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:12</div></div>
+<div class="ttc" id="anamespacetatami_html_ab17e92414b0bff60f7b7a6431ac8a330"><div class="ttname"><a href="namespacetatami.html#ab17e92414b0bff60f7b7a6431ac8a330">tatami::compress_sparse_triplets</a></div><div class="ttdeci">std::vector&lt; size_t &gt; compress_sparse_triplets(size_t nr, size_t nc, U &amp;values, V &amp;rows, W &amp;cols)</div><div class="ttdef"><b>Definition:</b> compress_sparse_triplets.hpp:97</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

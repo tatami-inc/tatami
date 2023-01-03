@@ -71,7 +71,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>tatami</b></li><li class="navelem"><a class="el" href="structtatami_1_1SomeNumericArray.html">SomeNumericArray</a></li><li class="navelem"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacetatami.html">tatami</a></li><li class="navelem"><a class="el" href="structtatami_1_1SomeNumericArray.html">SomeNumericArray</a></li><li class="navelem"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -153,6 +153,23 @@ Friends</h2></td></tr>
 struct tatami::SomeNumericArray&lt; T &gt;::Iterator</div><p>Random-access iterator class. </p>
 <p>This mimics the const iterators for <code>std::vector</code> types. </p>
 </div><h2 class="groupheader">Member Typedef Documentation</h2>
+<a id="aaf0075ceb671a85fc42404298baeed07" name="aaf0075ceb671a85fc42404298baeed07"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf0075ceb671a85fc42404298baeed07">&#9670;&#160;</a></span>iterator_category</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::iterator_category =  std::random_access_iterator_tag</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Random access iterator tag. </p>
+
+</div>
+</div>
 <a id="ae2439d56ee9c796afae3b07f70e1c3b1" name="ae2439d56ee9c796afae3b07f70e1c3b1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae2439d56ee9c796afae3b07f70e1c3b1">&#9670;&#160;</a></span>difference_type</h2>
 
@@ -170,8 +187,8 @@ template&lt;typename T  = double&gt; </div>
 
 </div>
 </div>
-<a id="aaf0075ceb671a85fc42404298baeed07" name="aaf0075ceb671a85fc42404298baeed07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaf0075ceb671a85fc42404298baeed07">&#9670;&#160;</a></span>iterator_category</h2>
+<a id="a452df712534d47fdb8543805affd038b" name="a452df712534d47fdb8543805affd038b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a452df712534d47fdb8543805affd038b">&#9670;&#160;</a></span>value_type</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -179,11 +196,11 @@ template&lt;typename T  = double&gt; </div>
 template&lt;typename T  = double&gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::iterator_category =  std::random_access_iterator_tag</td>
+          <td class="memname">using <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::value_type =  T</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Random access iterator tag. </p>
+<p>Value type. </p>
 
 </div>
 </div>
@@ -218,23 +235,6 @@ template&lt;typename T  = double&gt; </div>
       </table>
 </div><div class="memdoc">
 <p>Reference type, note the <code>const</code>. </p>
-
-</div>
-</div>
-<a id="a452df712534d47fdb8543805affd038b" name="a452df712534d47fdb8543805affd038b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a452df712534d47fdb8543805affd038b">&#9670;&#160;</a></span>value_type</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::value_type =  T</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Value type. </p>
 
 </div>
 </div>
@@ -314,6 +314,104 @@ template&lt;typename T  = double&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="adadc4fec22839e1d7f826594eb605fc1" name="adadc4fec22839e1d7f826594eb605fc1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adadc4fec22839e1d7f826594eb605fc1">&#9670;&#160;</a></span>operator*()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html#a452df712534d47fdb8543805affd038b">value_type</a> <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator* </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>The value at the current position of the iterator on the parental <code><a class="el" href="structtatami_1_1SomeNumericArray.html" title="Array of some numeric type, determined at runtime.">SomeNumericArray</a></code> object. </dd></dl>
+
+</div>
+</div>
+<a id="a220df2018efe0af029200950bf8f2656" name="a220df2018efe0af029200950bf8f2656"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a220df2018efe0af029200950bf8f2656">&#9670;&#160;</a></span>operator[]()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html#a452df712534d47fdb8543805affd038b">value_type</a> <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator[] </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>i</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">i</td><td>The number of elements to add to the current position of the iterator to obtain a new position. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The value at the new position on the parental <code><a class="el" href="structtatami_1_1SomeNumericArray.html" title="Array of some numeric type, determined at runtime.">SomeNumericArray</a></code> object. </dd></dl>
+
+</div>
+</div>
+<a id="afd39145d4998f6c0fc3d2cdc1f0ecd64" name="afd39145d4998f6c0fc3d2cdc1f0ecd64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afd39145d4998f6c0fc3d2cdc1f0ecd64">&#9670;&#160;</a></span>operator==()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator== </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
+          <td class="paramname"><em>right</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator and <code>right</code> are pointing to the same position. </dd></dl>
+
+</div>
+</div>
 <a id="acab7e46b690f81ad367780bd6cb33ebd" name="acab7e46b690f81ad367780bd6cb33ebd"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#acab7e46b690f81ad367780bd6cb33ebd">&#9670;&#160;</a></span>operator!=()</h2>
 
@@ -349,8 +447,8 @@ template&lt;typename T  = double&gt; </div>
 
 </div>
 </div>
-<a id="adadc4fec22839e1d7f826594eb605fc1" name="adadc4fec22839e1d7f826594eb605fc1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adadc4fec22839e1d7f826594eb605fc1">&#9670;&#160;</a></span>operator*()</h2>
+<a id="a3a0271b552cbd873c9598740d472e00e" name="a3a0271b552cbd873c9598740d472e00e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3a0271b552cbd873c9598740d472e00e">&#9670;&#160;</a></span>operator&lt;()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -361,38 +459,10 @@ template&lt;typename T  = double&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html#a452df712534d47fdb8543805affd038b">value_type</a> <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator* </td>
+          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator&lt; </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>The value at the current position of the iterator on the parental <code><a class="el" href="structtatami_1_1SomeNumericArray.html" title="Array of some numeric type, determined at runtime.">SomeNumericArray</a></code> object. </dd></dl>
-
-</div>
-</div>
-<a id="af692b5785cec55d153341dfabe197bc3" name="af692b5785cec55d153341dfabe197bc3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af692b5785cec55d153341dfabe197bc3">&#9670;&#160;</a></span>operator+()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator+ </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>n</em></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
+          <td class="paramname"><em>right</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -404,11 +474,151 @@ template&lt;typename T  = double&gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">n</td><td>Number of elements to advance the iterator. </td></tr>
+    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A new iterator is returned at the position of the current iterator plus <code>n</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator is pointing to an earlier position than <code>right</code>. </dd></dl>
+
+</div>
+</div>
+<a id="a82077d04886a5a0088372b03707d2fca" name="a82077d04886a5a0088372b03707d2fca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a82077d04886a5a0088372b03707d2fca">&#9670;&#160;</a></span>operator&gt;=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator&gt;= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
+          <td class="paramname"><em>right</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator is pointing to an equal or later position than <code>right</code>. </dd></dl>
+
+</div>
+</div>
+<a id="a4296f53f8ed91bb3324e9a681b2d3c35" name="a4296f53f8ed91bb3324e9a681b2d3c35"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4296f53f8ed91bb3324e9a681b2d3c35">&#9670;&#160;</a></span>operator&gt;()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator&gt; </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
+          <td class="paramname"><em>right</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator is pointing to a later position than <code>right</code>. </dd></dl>
+
+</div>
+</div>
+<a id="aed25f7d5d5e8252746cac7c2ad2fccd6" name="aed25f7d5d5e8252746cac7c2ad2fccd6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed25f7d5d5e8252746cac7c2ad2fccd6">&#9670;&#160;</a></span>operator&lt;=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator&lt;= </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
+          <td class="paramname"><em>right</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator is pointing to an equal or earlier position than <code>right</code>. </dd></dl>
+
+</div>
+</div>
+<a id="a631fc3c3234a2229f01944127ec58988" name="a631fc3c3234a2229f01944127ec58988"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a631fc3c3234a2229f01944127ec58988">&#9670;&#160;</a></span>operator+=()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp; <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator+= </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">n</td><td>Number of elements to advance the current iterator. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The iterator's position is moved forward by <code>n</code>, and a reference to the iterator is returned. </dd></dl>
 
 </div>
 </div>
@@ -469,8 +679,8 @@ template&lt;typename T  = double&gt; </div>
 
 </div>
 </div>
-<a id="a631fc3c3234a2229f01944127ec58988" name="a631fc3c3234a2229f01944127ec58988"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a631fc3c3234a2229f01944127ec58988">&#9670;&#160;</a></span>operator+=()</h2>
+<a id="a45ee8f9680f7184067f58cf8835ea0ce" name="a45ee8f9680f7184067f58cf8835ea0ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45ee8f9680f7184067f58cf8835ea0ce">&#9670;&#160;</a></span>operator-=()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -481,7 +691,7 @@ template&lt;typename T  = double&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp; <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator+= </td>
+          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp; <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator-= </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
@@ -496,81 +706,11 @@ template&lt;typename T  = double&gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">n</td><td>Number of elements to advance the current iterator. </td></tr>
+    <tr><td class="paramname">n</td><td>Number of elements to move back the current iterator. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The iterator's position is moved forward by <code>n</code>, and a reference to the iterator is returned. </dd></dl>
-
-</div>
-</div>
-<a id="a87e797f6c5fc8e7433ba17eb89c6d18b" name="a87e797f6c5fc8e7433ba17eb89c6d18b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a87e797f6c5fc8e7433ba17eb89c6d18b">&#9670;&#160;</a></span>operator-() <span class="overload">[1/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::ptrdiff_t <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator- </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
-          <td class="paramname"><em>right</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The difference in positions of the two iterators. </dd></dl>
-
-</div>
-</div>
-<a id="acfb66b80475de1ad9aa1233ccf224691" name="acfb66b80475de1ad9aa1233ccf224691"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acfb66b80475de1ad9aa1233ccf224691">&#9670;&#160;</a></span>operator-() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator- </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>n</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">n</td><td>Number of elements to move back the iterator. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A new iterator is returned at the position of the current iterator minus <code>n</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The iterator's position is moved backward by <code>n</code>, and a reference to the iterator is returned. </dd></dl>
 
 </div>
 </div>
@@ -631,8 +771,8 @@ template&lt;typename T  = double&gt; </div>
 
 </div>
 </div>
-<a id="a45ee8f9680f7184067f58cf8835ea0ce" name="a45ee8f9680f7184067f58cf8835ea0ce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45ee8f9680f7184067f58cf8835ea0ce">&#9670;&#160;</a></span>operator-=()</h2>
+<a id="af692b5785cec55d153341dfabe197bc3" name="af692b5785cec55d153341dfabe197bc3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af692b5785cec55d153341dfabe197bc3">&#9670;&#160;</a></span>operator+()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -643,45 +783,10 @@ template&lt;typename T  = double&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp; <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator-= </td>
+          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator+ </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">n</td><td>Number of elements to move back the current iterator. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>The iterator's position is moved backward by <code>n</code>, and a reference to the iterator is returned. </dd></dl>
-
-</div>
-</div>
-<a id="a3a0271b552cbd873c9598740d472e00e" name="a3a0271b552cbd873c9598740d472e00e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a0271b552cbd873c9598740d472e00e">&#9670;&#160;</a></span>operator&lt;()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator&lt; </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
-          <td class="paramname"><em>right</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -693,16 +798,16 @@ template&lt;typename T  = double&gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
+    <tr><td class="paramname">n</td><td>Number of elements to advance the iterator. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator is pointing to an earlier position than <code>right</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A new iterator is returned at the position of the current iterator plus <code>n</code>. </dd></dl>
 
 </div>
 </div>
-<a id="aed25f7d5d5e8252746cac7c2ad2fccd6" name="aed25f7d5d5e8252746cac7c2ad2fccd6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aed25f7d5d5e8252746cac7c2ad2fccd6">&#9670;&#160;</a></span>operator&lt;=()</h2>
+<a id="acfb66b80475de1ad9aa1233ccf224691" name="acfb66b80475de1ad9aa1233ccf224691"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acfb66b80475de1ad9aa1233ccf224691">&#9670;&#160;</a></span>operator-() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -713,150 +818,10 @@ template&lt;typename T  = double&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator&lt;= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
-          <td class="paramname"><em>right</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator is pointing to an equal or earlier position than <code>right</code>. </dd></dl>
-
-</div>
-</div>
-<a id="afd39145d4998f6c0fc3d2cdc1f0ecd64" name="afd39145d4998f6c0fc3d2cdc1f0ecd64"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afd39145d4998f6c0fc3d2cdc1f0ecd64">&#9670;&#160;</a></span>operator==()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator== </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
-          <td class="paramname"><em>right</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator and <code>right</code> are pointing to the same position. </dd></dl>
-
-</div>
-</div>
-<a id="a4296f53f8ed91bb3324e9a681b2d3c35" name="a4296f53f8ed91bb3324e9a681b2d3c35"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4296f53f8ed91bb3324e9a681b2d3c35">&#9670;&#160;</a></span>operator&gt;()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator&gt; </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
-          <td class="paramname"><em>right</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator is pointing to a later position than <code>right</code>. </dd></dl>
-
-</div>
-</div>
-<a id="a82077d04886a5a0088372b03707d2fca" name="a82077d04886a5a0088372b03707d2fca"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a82077d04886a5a0088372b03707d2fca">&#9670;&#160;</a></span>operator&gt;=()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator&gt;= </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
-          <td class="paramname"><em>right</em></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Whether the current iterator is pointing to an equal or later position than <code>right</code>. </dd></dl>
-
-</div>
-</div>
-<a id="a220df2018efe0af029200950bf8f2656" name="a220df2018efe0af029200950bf8f2656"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a220df2018efe0af029200950bf8f2656">&#9670;&#160;</a></span>operator[]()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html#a452df712534d47fdb8543805affd038b">value_type</a> <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator[] </td>
+          <td class="memname"><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator- </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>i</em></td><td>)</td>
+          <td class="paramname"><em>n</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -868,11 +833,46 @@ template&lt;typename T  = double&gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">i</td><td>The number of elements to add to the current position of the iterator to obtain a new position. </td></tr>
+    <tr><td class="paramname">n</td><td>Number of elements to move back the iterator. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The value at the new position on the parental <code><a class="el" href="structtatami_1_1SomeNumericArray.html" title="Array of some numeric type, determined at runtime.">SomeNumericArray</a></code> object. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A new iterator is returned at the position of the current iterator minus <code>n</code>. </dd></dl>
+
+</div>
+</div>
+<a id="a87e797f6c5fc8e7433ba17eb89c6d18b" name="a87e797f6c5fc8e7433ba17eb89c6d18b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87e797f6c5fc8e7433ba17eb89c6d18b">&#9670;&#160;</a></span>operator-() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::ptrdiff_t <a class="el" href="structtatami_1_1SomeNumericArray.html">tatami::SomeNumericArray</a>&lt; T &gt;::Iterator::operator- </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html">Iterator</a> &amp;&#160;</td>
+          <td class="paramname"><em>right</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">right</td><td>Another <code><a class="el" href="structtatami_1_1SomeNumericArray_1_1Iterator.html" title="Random-access iterator class.">Iterator</a></code> object referencing the same parental array. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>The difference in positions of the two iterators. </dd></dl>
 
 </div>
 </div>

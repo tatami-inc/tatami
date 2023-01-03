@@ -88,10 +88,10 @@ $(function() {
 <div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;../base/DelayedSubset.hpp&quot;</span></div>
 <div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;../base/DelayedBind.hpp&quot;</span></div>
 <div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span> </div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span>tatami {</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {</div>
 <div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span> </div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">template</span>&lt;<span class="keywordtype">int</span> margin, <span class="keyword">class</span> Matrix, <span class="keyword">typename</span> Id&gt;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="bind__intersection_8hpp.html#a87c52cf8a974ad0025550b002d391d39">   38</a></span>std::pair&lt;std::shared_ptr&lt;Matrix&gt;, std::vector&lt;size_t&gt; &gt; <a class="code hl_function" href="bind__intersection_8hpp.html#a87c52cf8a974ad0025550b002d391d39">bind_intersection</a>(<span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Matrix&gt; &gt;&amp; inputs, <span class="keyword">const</span> std::vector&lt;const Id*&gt;&amp; ids) {</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno"><a class="line" href="namespacetatami.html#a87c52cf8a974ad0025550b002d391d39">   38</a></span>std::pair&lt;std::shared_ptr&lt;Matrix&gt;, std::vector&lt;size_t&gt; &gt; <a class="code hl_function" href="namespacetatami.html#a87c52cf8a974ad0025550b002d391d39">bind_intersection</a>(<span class="keyword">const</span> std::vector&lt;std::shared_ptr&lt;Matrix&gt; &gt;&amp; inputs, <span class="keyword">const</span> std::vector&lt;const Id*&gt;&amp; ids) {</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    <span class="keywordtype">size_t</span> n = inputs.size();</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keywordflow">if</span> (n == 0) {</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;at least one matrix must be supplied for binding&quot;</span>);</div>
@@ -168,7 +168,8 @@ $(function() {
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="abind__intersection_8hpp_html_a87c52cf8a974ad0025550b002d391d39"><div class="ttname"><a href="bind__intersection_8hpp.html#a87c52cf8a974ad0025550b002d391d39">tatami::bind_intersection</a></div><div class="ttdeci">std::pair&lt; std::shared_ptr&lt; Matrix &gt;, std::vector&lt; size_t &gt; &gt; bind_intersection(const std::vector&lt; std::shared_ptr&lt; Matrix &gt; &gt; &amp;inputs, const std::vector&lt; const Id * &gt; &amp;ids)</div><div class="ttdef"><b>Definition:</b> bind_intersection.hpp:38</div></div>
+<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:12</div></div>
+<div class="ttc" id="anamespacetatami_html_a87c52cf8a974ad0025550b002d391d39"><div class="ttname"><a href="namespacetatami.html#a87c52cf8a974ad0025550b002d391d39">tatami::bind_intersection</a></div><div class="ttdeci">std::pair&lt; std::shared_ptr&lt; Matrix &gt;, std::vector&lt; size_t &gt; &gt; bind_intersection(const std::vector&lt; std::shared_ptr&lt; Matrix &gt; &gt; &amp;inputs, const std::vector&lt; const Id * &gt; &amp;ids)</div><div class="ttdef"><b>Definition:</b> bind_intersection.hpp:38</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
