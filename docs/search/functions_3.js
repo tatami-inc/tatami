@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['data_0',['data',['../classtatami_1_1NakedArray.html#aa9f77d7d82e805da34bae3d5593417d1',1,'tatami::NakedArray::data()'],['../classtatami_1_1ArrayView.html#a6a02f0144809d21ff20cc6018279f218',1,'tatami::ArrayView::data()']]],
+  ['data_0',['data',['../classtatami_1_1ArrayView.html#a6a02f0144809d21ff20cc6018279f218',1,'tatami::ArrayView']]],
   ['delayedaddscalarhelper_1',['DelayedAddScalarHelper',['../structtatami_1_1DelayedAddScalarHelper.html#a038479e8924a7acc01587a2ea0508a1b',1,'tatami::DelayedAddScalarHelper']]],
   ['delayedaddvectorhelper_2',['DelayedAddVectorHelper',['../structtatami_1_1DelayedAddVectorHelper.html#ab4d8c15e312b6b3bafdcd7e9f8f2513e',1,'tatami::DelayedAddVectorHelper']]],
   ['delayedbind_3',['DelayedBind',['../classtatami_1_1DelayedBind.html#a9002da85ffa279f5424299ec12cc6695',1,'tatami::DelayedBind::DelayedBind(std::vector&lt; std::shared_ptr&lt; const Matrix&lt; T, IDX &gt; &gt; &gt; ps)'],['../classtatami_1_1DelayedBind.html#a94d7630d8bd498a91581cae3c10f5dd8',1,'tatami::DelayedBind::DelayedBind(const std::vector&lt; std::shared_ptr&lt; Matrix&lt; T, IDX &gt; &gt; &gt; &amp;ps)']]],
@@ -8,7 +8,7 @@ var searchData=
   ['delayeddividevectorhelper_5',['DelayedDivideVectorHelper',['../structtatami_1_1DelayedDivideVectorHelper.html#adf8bad6ea3dd7523dee92f050ae33b13',1,'tatami::DelayedDivideVectorHelper']]],
   ['delayedisometricop_6',['DelayedIsometricOp',['../classtatami_1_1DelayedIsometricOp.html#ac35c661c2c7ca2de94468b43aee46a54',1,'tatami::DelayedIsometricOp']]],
   ['delayedlog1phelper_7',['DelayedLog1pHelper',['../structtatami_1_1DelayedLog1pHelper.html#a54be07a933d88fa1bfcd54d383a6b327',1,'tatami::DelayedLog1pHelper::DelayedLog1pHelper()'],['../structtatami_1_1DelayedLog1pHelper.html#ae1fbc1aaae2c404dd4a88b6a15034978',1,'tatami::DelayedLog1pHelper::DelayedLog1pHelper(double base)']]],
-  ['delayedloghelper_8',['DelayedLogHelper',['../structtatami_1_1DelayedLogHelper.html#a506aca4f5b63bcdaad3ddab4231fd0f7',1,'tatami::DelayedLogHelper::DelayedLogHelper(double base)'],['../structtatami_1_1DelayedLogHelper.html#aad43deb006798a17b736adf7cbaa60ef',1,'tatami::DelayedLogHelper::DelayedLogHelper()']]],
+  ['delayedloghelper_8',['DelayedLogHelper',['../structtatami_1_1DelayedLogHelper.html#aad43deb006798a17b736adf7cbaa60ef',1,'tatami::DelayedLogHelper::DelayedLogHelper()'],['../structtatami_1_1DelayedLogHelper.html#a506aca4f5b63bcdaad3ddab4231fd0f7',1,'tatami::DelayedLogHelper::DelayedLogHelper(double base)']]],
   ['delayedmultiplyscalarhelper_9',['DelayedMultiplyScalarHelper',['../structtatami_1_1DelayedMultiplyScalarHelper.html#ae3e6b355cb53636374b5d229eb75c2e1',1,'tatami::DelayedMultiplyScalarHelper']]],
   ['delayedmultiplyvectorhelper_10',['DelayedMultiplyVectorHelper',['../structtatami_1_1DelayedMultiplyVectorHelper.html#a264178e8902ffd7b728816ca0968e73d',1,'tatami::DelayedMultiplyVectorHelper']]],
   ['delayedsubset_11',['DelayedSubset',['../classtatami_1_1DelayedSubset.html#a5bb7d75a101b561bc4dc7fcc7b89fe0c',1,'tatami::DelayedSubset']]],

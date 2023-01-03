@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['data_0',['data',['../classtatami_1_1NakedArray.html#aa9f77d7d82e805da34bae3d5593417d1',1,'tatami::NakedArray::data()'],['../classtatami_1_1ArrayView.html#a6a02f0144809d21ff20cc6018279f218',1,'tatami::ArrayView::data()']]],
+  ['data_0',['data',['../classtatami_1_1ArrayView.html#a6a02f0144809d21ff20cc6018279f218',1,'tatami::ArrayView']]],
   ['data_5ftype_1',['data_type',['../classtatami_1_1Matrix.html#a8f97683e1dbef330caadc258b0c404b5',1,'tatami::Matrix']]],
   ['delayedabshelper_2',['DelayedAbsHelper',['../structtatami_1_1DelayedAbsHelper.html',1,'tatami']]],
   ['delayedaddscalarhelper_3',['DelayedAddScalarHelper',['../structtatami_1_1DelayedAddScalarHelper.html#a038479e8924a7acc01587a2ea0508a1b',1,'tatami::DelayedAddScalarHelper::DelayedAddScalarHelper()'],['../structtatami_1_1DelayedAddScalarHelper.html',1,'tatami::DelayedAddScalarHelper&lt; T &gt;']]],
@@ -20,7 +20,7 @@ var searchData=
   ['delayedsqrthelper_17',['DelayedSqrtHelper',['../structtatami_1_1DelayedSqrtHelper.html',1,'tatami']]],
   ['delayedsubset_18',['DelayedSubset',['../classtatami_1_1DelayedSubset.html#a5bb7d75a101b561bc4dc7fcc7b89fe0c',1,'tatami::DelayedSubset::DelayedSubset()'],['../classtatami_1_1DelayedSubset.html',1,'tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;']]],
   ['delayedsubset_2ehpp_19',['DelayedSubset.hpp',['../DelayedSubset_8hpp.html',1,'']]],
-  ['delayedsubsetblock_20',['DelayedSubsetBlock',['../classtatami_1_1DelayedSubsetBlock.html#af2801013a362df1968ecf4729868f461',1,'tatami::DelayedSubsetBlock::DelayedSubsetBlock(std::shared_ptr&lt; Matrix&lt; T, IDX &gt; &gt; p, size_t f, size_t l)'],['../classtatami_1_1DelayedSubsetBlock.html#a5b1bad056db4389c27901d47946f9a79',1,'tatami::DelayedSubsetBlock::DelayedSubsetBlock(std::shared_ptr&lt; const Matrix&lt; T, IDX &gt; &gt; p, size_t f, size_t l)'],['../classtatami_1_1DelayedSubsetBlock.html',1,'tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;']]],
+  ['delayedsubsetblock_20',['DelayedSubsetBlock',['../classtatami_1_1DelayedSubsetBlock.html#a5b1bad056db4389c27901d47946f9a79',1,'tatami::DelayedSubsetBlock::DelayedSubsetBlock(std::shared_ptr&lt; const Matrix&lt; T, IDX &gt; &gt; p, size_t f, size_t l)'],['../classtatami_1_1DelayedSubsetBlock.html#af2801013a362df1968ecf4729868f461',1,'tatami::DelayedSubsetBlock::DelayedSubsetBlock(std::shared_ptr&lt; Matrix&lt; T, IDX &gt; &gt; p, size_t f, size_t l)'],['../classtatami_1_1DelayedSubsetBlock.html',1,'tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;']]],
   ['delayedsubsetblock_2ehpp_21',['DelayedSubsetBlock.hpp',['../DelayedSubsetBlock_8hpp.html',1,'']]],
   ['delayedsubtractscalarhelper_22',['DelayedSubtractScalarHelper',['../structtatami_1_1DelayedSubtractScalarHelper.html#abf2792fab8a48f9a89ee50ad6c6d8da3',1,'tatami::DelayedSubtractScalarHelper::DelayedSubtractScalarHelper()'],['../structtatami_1_1DelayedSubtractScalarHelper.html',1,'tatami::DelayedSubtractScalarHelper&lt; RIGHT, T &gt;']]],
   ['delayedsubtractvectorhelper_23',['DelayedSubtractVectorHelper',['../structtatami_1_1DelayedSubtractVectorHelper.html#ad9f4a928250416796f4ead2b451d0701',1,'tatami::DelayedSubtractVectorHelper::DelayedSubtractVectorHelper()'],['../structtatami_1_1DelayedSubtractVectorHelper.html',1,'tatami::DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;']]],
