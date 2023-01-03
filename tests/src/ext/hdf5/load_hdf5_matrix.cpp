@@ -1,20 +1,20 @@
 #include <gtest/gtest.h>
 
 #ifdef TEST_CUSTOM_PARALLEL // make sure this is included before tatami::apply.
-#include "../stats/custom_parallel.h"
+#include "../../stats/custom_parallel.h"
 #include "hdf5_custom_lock.h"
 #endif
 
 #include "H5Cpp.h"
-#include "tatami/ext/load_hdf5_matrix.hpp"
+#include "tatami/ext/hdf5/load_hdf5_matrix.hpp"
 
-#include "temp_file_path.h"
+#include "../temp_file_path.h"
 #include <vector>
 #include <random>
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/simulate_vector.h"
+#include "../../_tests/test_column_access.h"
+#include "../../_tests/test_row_access.h"
+#include "../../_tests/simulate_vector.h"
 
 TEST(LoadHDF5MatrixTest, Sparse) {
     const size_t NR = 200, NC = 100;

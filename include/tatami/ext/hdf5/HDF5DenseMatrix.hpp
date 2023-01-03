@@ -8,8 +8,8 @@
 #include <type_traits>
 #include <cmath>
 
-#include "../base/Matrix.hpp"
-#include "hdf5_utils.hpp"
+#include "../../base/Matrix.hpp"
+#include "utils.hpp"
 
 /**
  * @file HDF5DenseMatrix.hpp

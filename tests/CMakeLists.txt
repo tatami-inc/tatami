@@ -13,6 +13,7 @@ enable_testing()
 # Main test executable.
 add_executable(
     libtest 
+
     src/base/DenseMatrix.cpp
     src/base/CompressedSparseMatrix.cpp
     src/base/DelayedBind.cpp
@@ -23,16 +24,20 @@ add_executable(
     src/base/arith_scalar_helpers.cpp
     src/base/math_helpers.cpp
     src/base/compress_sparse_triplets.cpp
+
     src/stats/sums.cpp
     src/stats/variances.cpp
     src/stats/medians.cpp
     src/stats/ranges.cpp
     src/stats/apply.cpp
+
     src/utils/wrap_shared_ptr.cpp
-    src/utils/NakedArray.cpp
+    src/utils/SomeNumericArray.cpp
+    src/utils/ArrayView.cpp
     src/utils/convert_to_dense.cpp
     src/utils/convert_to_sparse.cpp
     src/utils/bind_intersection.cpp
+
     src/data/data_sparse.cpp
     src/data/data_triangular.cpp
 )
@@ -64,12 +69,12 @@ target_link_libraries(
 # Test extensions
 add_executable(
     exttest 
-    src/ext/MatrixMarketBuffer.cpp
-    src/ext/MatrixMarketText.cpp
-    src/ext/MatrixMarketGzip.cpp
-    src/ext/convert_to_layered_sparse.cpp
-    src/ext/SomeNumericArray.cpp
-    src/ext/ArrayView.cpp
+
+    src/ext/MatrixMarket/from_buffer.cpp
+    src/ext/MatrixMarket/from_text.cpp
+    src/ext/MatrixMarket/from_gzip.cpp
+
+    src/ext/layered/convert_to_layered_sparse.cpp
 )
 
 target_link_libraries(
@@ -121,16 +126,16 @@ if (TEST_HDF5)
     if (HDF5_FOUND) 
         add_executable(
             h5test 
-            src/ext/HDF5DenseMatrix.cpp
-            src/ext/HDF5CompressedSparseMatrix.cpp
-            src/ext/load_hdf5_matrix.cpp
+            src/ext/hdf5/HDF5DenseMatrix.cpp
+            src/ext/hdf5/HDF5CompressedSparseMatrix.cpp
+            src/ext/hdf5/load_hdf5_matrix.cpp
         )
 
         # Also checking the custom parallelization in the HDF5 libraries.
         add_executable(
             cusparh5test
-            src/ext/HDF5DenseMatrix.cpp
-            src/ext/HDF5CompressedSparseMatrix.cpp
+            src/ext/hdf5/HDF5DenseMatrix.cpp
+            src/ext/hdf5/HDF5CompressedSparseMatrix.cpp
         )
         target_compile_definitions(cusparh5test PRIVATE TEST_CUSTOM_PARALLEL=1)
 

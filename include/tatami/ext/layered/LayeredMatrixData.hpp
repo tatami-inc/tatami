@@ -3,7 +3,7 @@
 
 #include <memory>
 #include <vector>
-#include "../base/Matrix.hpp"
+#include "../../base/Matrix.hpp"
 
 /**
  * @file LayeredMatrixData.hpp

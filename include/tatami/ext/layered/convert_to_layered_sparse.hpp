@@ -2,14 +2,19 @@
 #define TATAMI_CONVERT_TO_LAYERED_SPARSE_HPP
 
 #include "LayeredMatrixData.hpp"
-#include "layered_utils.hpp"
-#include "../base/CompressedSparseMatrix.hpp"
-#include "../base/DelayedBind.hpp"
-#include "../utils/compress_sparse_triplets.hpp"
+#include "utils.hpp"
+#include "../../base/CompressedSparseMatrix.hpp"
+#include "../../base/DelayedBind.hpp"
+#include "../../utils/compress_sparse_triplets.hpp"
 
 #include <cstdint>
 #include <vector>
 #include <memory>
+
+/**
+ * @file convert_to_layered_sparse.hpp
+ * @brief Create a layered sparse matrix for non-negative integers.
+ */
 
 namespace tatami {
 

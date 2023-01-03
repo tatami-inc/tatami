@@ -6,13 +6,13 @@
 #include <algorithm>
 #include <vector>
 
-#include "../base/CompressedSparseMatrix.hpp"
-#include "../base/DelayedBind.hpp"
-#include "../utils/compress_sparse_triplets.hpp"
+#include "../../base/CompressedSparseMatrix.hpp"
+#include "../../base/DelayedBind.hpp"
+#include "../../utils/compress_sparse_triplets.hpp"
 
-#include "MatrixMarket.hpp"
-#include "LayeredMatrixData.hpp"
-#include "layered_utils.hpp"
+#include "simple.hpp"
+#include "../layered/LayeredMatrixData.hpp"
+#include "../layered/utils.hpp"
 
 #include "byteme/RawFileReader.hpp"
 #include "byteme/RawBufferReader.hpp"
@@ -25,7 +25,7 @@
 #endif
 
 /**
- * @file MatrixMarket_layered.hpp
+ * @file layered.hpp
  *
  * @brief Create a layered sparse matrix from the Matrix Market coordinate format.
  */

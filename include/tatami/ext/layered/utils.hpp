@@ -5,9 +5,9 @@
 #include <vector>
 #include <numeric>
 
-#include "../base/Matrix.hpp"
-#include "../base/DelayedBind.hpp"
-#include "../base/CompressedSparseMatrix.hpp"
+#include "../../base/Matrix.hpp"
+#include "../../base/DelayedBind.hpp"
+#include "../../base/CompressedSparseMatrix.hpp"
 
 namespace tatami {
 

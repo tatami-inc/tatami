@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
 #include "tatami/ext/MatrixMarket.hpp"
-#include "tatami/ext/MatrixMarket_layered.hpp"
 
 #include <cstdio>
 #include "zlib.h"
@@ -9,7 +8,7 @@
 #include <limits>
 #include <random>
 
-#include "temp_file_path.h"
+#include "../temp_file_path.h"
 #include "write_matrix_market.h"
 
 class MatrixMarketGzipTest : public ::testing::TestWithParam<int> {

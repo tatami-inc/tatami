@@ -1,23 +1,23 @@
 #include <gtest/gtest.h>
 
 #ifdef TEST_CUSTOM_PARALLEL // make sure this is included before tatami::apply.
-#include "../stats/custom_parallel.h"
+#include "../../stats/custom_parallel.h"
 #include "hdf5_custom_lock.h"
 #endif
 
 #include "H5Cpp.h"
 #include "tatami/base/CompressedSparseMatrix.hpp"
 #include "tatami/base/DelayedTranspose.hpp"
-#include "tatami/ext/HDF5CompressedSparseMatrix.hpp"
+#include "tatami/ext/hdf5/HDF5CompressedSparseMatrix.hpp"
 #include "tatami/stats/sums.hpp"
 
-#include "temp_file_path.h"
+#include "../temp_file_path.h"
 #include <vector>
 #include <random>
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/simulate_vector.h"
+#include "../../_tests/test_column_access.h"
+#include "../../_tests/test_row_access.h"
+#include "../../_tests/simulate_vector.h"
 
 class HDF5SparseMatrixTestMethods {
 protected:

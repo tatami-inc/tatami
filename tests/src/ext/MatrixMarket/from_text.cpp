@@ -1,9 +1,8 @@
 #include <gtest/gtest.h>
 
 #include "tatami/ext/MatrixMarket.hpp"
-#include "tatami/ext/MatrixMarket_layered.hpp"
 #include "write_matrix_market.h"
-#include "temp_file_path.h"
+#include "../temp_file_path.h"
 
 #include <limits>
 #include <fstream>

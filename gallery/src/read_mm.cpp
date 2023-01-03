@@ -12,7 +12,7 @@
  * input file; floats and negative values are not supported.
  */
 
-#include "tatami/ext/MatrixMarket_layered.hpp"
+#include "tatami/ext/MatrixMarket.hpp"
 
 int main(int argc, char* argv[]) {
     if (argc!=2) {

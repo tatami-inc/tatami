@@ -2,13 +2,12 @@
 
 #include "write_matrix_market.h"
 #include "tatami/ext/MatrixMarket.hpp"
-#include "tatami/ext/MatrixMarket_layered.hpp"
 
 #include <limits>
 #include <string>
 #include <vector>
 
-#include "mock_layered_sparse_data.h"
+#include "../layered/mock_layered_sparse_data.h"
 
 const unsigned char* to_pointer(const std::string& x) {
     return reinterpret_cast<const unsigned char*>(x.c_str());

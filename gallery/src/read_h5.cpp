@@ -14,8 +14,7 @@
 
 #include "H5Cpp.h"
 #include "tatami/stats/sums.hpp"
-#include "tatami/ext/HDF5DenseMatrix.hpp"
-#include "tatami/ext/HDF5CompressedSparseMatrix.hpp"
+#include "tatami/ext/hdf5.hpp"
 
 int main(int argc, char* argv[]) {
     if (argc != 3) {

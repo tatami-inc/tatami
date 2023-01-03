@@ -2,7 +2,7 @@
 
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/base/CompressedSparseMatrix.hpp"
-#include "tatami/ext/convert_to_layered_sparse.hpp"
+#include "tatami/ext/layered.hpp"
 
 #include "mock_layered_sparse_data.h"
 

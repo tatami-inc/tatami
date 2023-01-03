@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #ifdef TEST_CUSTOM_PARALLEL // make sure this is included before tatami::apply.
-#include "../stats/custom_parallel.h"
+#include "../../stats/custom_parallel.h"
 #include "hdf5_custom_lock.h"
 std::mutex hdf5_lock; // declared in hdf5_custom_lock.h, defined here.
 #endif
@@ -9,16 +9,16 @@ std::mutex hdf5_lock; // declared in hdf5_custom_lock.h, defined here.
 #include "H5Cpp.h"
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/base/DelayedTranspose.hpp"
-#include "tatami/ext/HDF5DenseMatrix.hpp"
+#include "tatami/ext/hdf5/HDF5DenseMatrix.hpp"
 #include "tatami/stats/sums.hpp"
 
-#include "temp_file_path.h"
+#include "../temp_file_path.h"
 #include <vector>
 #include <random>
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/simulate_vector.h"
+#include "../../_tests/test_column_access.h"
+#include "../../_tests/test_row_access.h"
+#include "../../_tests/simulate_vector.h"
 
 const size_t NR = 200, NC = 100;
 
