@@ -1,4 +1,4 @@
-#include "tatami/tatami.h"
+#include "tatami/tatami.hpp"
 #include <vector>
 #include <iostream>
 #include <numeric>

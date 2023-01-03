@@ -26,7 +26,7 @@ Currently supported representations include:
 **tatami** is a header-only library, so it can be easily used by just `#include`ing the relevant source files:
 
 ```cpp
-#include "tatami/tatami.h"
+#include "tatami/tatami.hpp"
 
 std::shared_ptr<tatami::NumericMatrix> mat(new tatami::DenseRowMatrix<double>(nrows, ncols, vals));
 
