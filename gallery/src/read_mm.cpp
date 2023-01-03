@@ -20,7 +20,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    auto x = tatami::MatrixMarket::load_layered_sparse_matrix(argv[1]);
+    auto x = tatami::MatrixMarket::load_layered_sparse_matrix_from_file(argv[1]);
     std::cout << "Dimensions: " << x.matrix->nrow() << " x " << x.matrix->ncol() << std::endl;
     return 0;
 }

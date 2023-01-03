@@ -8,7 +8,9 @@
 /**
  * @file DelayedBind.hpp
  *
- * Delayed combining, equivalent to the `DelayedAbind` class in the **DelayedArray** package.
+ * @brief Delayed combining of multiple `tatami::Matrix` objects.
+ *
+ * This is equivalent to the `DelayedAbind` class in the **DelayedArray** package.
  */
 
 namespace tatami {

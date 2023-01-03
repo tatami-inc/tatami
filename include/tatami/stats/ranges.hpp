@@ -9,7 +9,7 @@
 /**
  * @file ranges.hpp
  *
- * Compute row and column ranges from a `tatami::Matrix`.
+ * @brief Compute row and column ranges from a `tatami::Matrix`.
  */
 
 namespace tatami {

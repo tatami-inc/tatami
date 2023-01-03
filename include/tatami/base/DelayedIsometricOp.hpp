@@ -7,7 +7,9 @@
 /**
  * @file DelayedIsometricOp.hpp
  *
- * Delayed isometric operations, equivalent to the class of the same name in the **DelayedArray** package.
+ * @brief Delayed isometric operations.
+ *
+ * This is equivalent to the class of the same name in the **DelayedArray** package.
  */
 
 namespace tatami {

@@ -6,7 +6,7 @@
 /**
  * @file Workspace.hpp
  *
- * Defines the virtual base `Workspace` class.
+ * @brief Virtual class for workspaces.
  */
 
 namespace tatami {
@@ -14,7 +14,10 @@ namespace tatami {
 /**
  * @brief Virtual workspace class.
  *
- * Instances of this class cannot be constructed; it is only provided as a base class for `matrix::new_workspace()` methods to return appropriate objects.
+ * Workspaces allow `Matrix` instances to persist information across certain method calls within the same thread,
+ * allowing implementations to cache bits and pieces of information for non-random access patterns.
+ *
+ * Instances of this class cannot be constructed; it is only provided as a base class for `Matrix::new_workspace()` methods to return appropriate objects.
  */
 class Workspace {
 public:

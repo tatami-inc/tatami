@@ -7,7 +7,7 @@
 /**
  * @file SparseRange.hpp
  *
- * Defines the `SparseRange` class to hold information about extracted sparse elements.
+ * @brief Store information about extracted sparse elements.
  */
 
 using std::size_t;

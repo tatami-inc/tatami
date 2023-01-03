@@ -7,7 +7,7 @@
 /**
  * @file Matrix.hpp
  *
- * Virtual class for a matrix with a defined type.
+ * @brief Virtual class for a matrix of some numeric type.
  */
 
 namespace tatami {

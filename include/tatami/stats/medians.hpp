@@ -12,7 +12,7 @@
 /**
  * @file medians.hpp
  *
- * Compute row and column medians from a `tatami::Matrix`.
+ * @brief Compute row and column medians from a `tatami::Matrix`.
  */
 
 namespace tatami {

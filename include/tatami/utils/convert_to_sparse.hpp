@@ -10,7 +10,7 @@
 /**
  * @file convert_to_sparse.hpp
  *
- * Convert a matrix into a compressed sparse format.
+ * @brief Convert a matrix into a compressed sparse format.
  */
 
 namespace tatami {

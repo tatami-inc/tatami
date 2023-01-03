@@ -529,12 +529,6 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_from_file(const char * file
     return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::RawFileReader(filepath, bufsize); });
 }
 
-// For back-compatibility.
-template<typename T = double, typename IDX = int>
-LayeredMatrixData<T, IDX> load_layered_sparse_matrix(const char * filepath, size_t bufsize = 65536) {
-    return load_layered_sparse_matrix_from_file(filepath, 0, bufsize);
-}
-
 /**
  * @param buffer Array containing the contents of a Matrix Market file.
  * The file should contain integer data in the coordinate format, stored in text without any compression.
@@ -565,20 +559,6 @@ LayeredMatrixData<T, IDX> load_layered_sparse_matrix_from_buffer(const unsigned 
     }
     return load_layered_sparse_matrix_internal<T, IDX>([&]() -> auto { return byteme::RawBufferReader(buffer, n); });
 }
-
-#ifdef TATAMI_USE_ZLIB
-
-template<typename T = double, typename IDX = int>
-LayeredMatrixData<T, IDX> load_layered_sparse_matrix_gzip(const char * filepath, int bufsize = 65536) {
-    return load_layered_sparse_matrix_from_file(filepath, 1, bufsize);
-}
-
-template<typename T = double, typename IDX = int>
-LayeredMatrixData<T, IDX> load_layered_sparse_matrix_from_buffer_gzip(const unsigned char* buffer, size_t n, size_t bufsize = 65536) {
-    return load_layered_sparse_matrix_from_buffer(buffer, n, 1, bufsize);
-}
-
-#endif
 
 }
 

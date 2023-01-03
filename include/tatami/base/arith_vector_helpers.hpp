@@ -4,8 +4,10 @@
 /**
  * @file arith_vector_helpers.hpp
  *
- * Helper functions focusing on arithmetic operations with a vector parallel to the rows or columns,
- * to be used as the `OP` in the `DelayedIsometricOp` class.
+ * @brief Helper classes for vector arithmetic operations.
+ *
+ * These classes perform arithmetic operations with a vector parallel to the rows or columns.
+ * Classes defined here should be used as the `OP` in the `DelayedIsometricOp` class.
  */
 
 #include <vector>

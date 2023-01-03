@@ -22,13 +22,17 @@
 #endif
 
 /**
- * @file MatrixMarket.hpp
+ * @file simple.hpp
  *
- * @brief Read a sparse non-negative integer matrix in the Matrix Market coordinate format.
+ * @brief Read a sparse non-negative integer matrix from the Matrix Market coordinate format.
  */
 
 namespace tatami {
 
+/**
+ * @namespace tatami::MatrixMarket
+ * @brief Classes and utilites to handle Matrix Market files.
+ */
 namespace MatrixMarket {
 
 /**
@@ -423,7 +427,7 @@ std::shared_ptr<tatami::Matrix<T, IDX> > load_sparse_matrix_from_buffer_gzip(con
 #endif
 
 /**
- * @brief Details extracted from a MatrixMarket header.
+ * @brief Details extracted from a Matrix Market header.
  */
 struct HeaderDetails {
     /**

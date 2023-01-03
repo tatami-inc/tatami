@@ -9,7 +9,7 @@
 /**
  * @file sums.hpp
  *
- * Compute row and column sums from a `tatami::Matrix`.
+ * @brief Compute row and column sums from a `tatami::Matrix`.
  */
 
 namespace tatami {

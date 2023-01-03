@@ -10,7 +10,7 @@
 /**
  * @file convert_to_dense.hpp
  *
- * Convert a matrix into a dense format.
+ * @brief Convert a matrix into a dense format.
  */
 
 namespace tatami {

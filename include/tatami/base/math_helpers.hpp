@@ -4,8 +4,9 @@
 /**
  * @file math_helpers.hpp
  *
- * Helper functions focusing on unary math operations,
- * to be used as the `OP` in the `DelayedIsometricOp` class.
+ * @brief Helpers for unary math operations.
+ *
+ * These classes should be used as the `OP` in the `DelayedIsometricOp` class.
  */
 
 #include <cmath>

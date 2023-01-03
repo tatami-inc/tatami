@@ -4,6 +4,12 @@
 #include <memory>
 #include "../base/Matrix.hpp"
 
+/**
+ * @file wrap_shared_ptr.hpp
+ *
+ * @brief Wrap a raw `tatami::Matrix` pointer inside a mock shared pointer.
+ */
+
 namespace tatami {
 
 /**

@@ -25,4 +25,15 @@
 #define TATAMI_VERSION_MINOR 0
 #define TATAMI_VERSION_PATCH 0
 
+/**
+ * @file tatami.hpp
+ * @brief Flexible representations of matrix data
+ */
+
+/**
+ * @namespace tatami
+ * @brief Flexible representations for matrix data
+ */
+namespace tatami {}
+
 #endif

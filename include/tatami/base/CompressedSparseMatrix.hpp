@@ -14,7 +14,9 @@
 /**
  * @file CompressedSparseMatrix.hpp
  *
- * Compressed sparse matrix representation, with `typedef`s for the usual row and column formats.
+ * @brief Compressed sparse matrix representation. 
+ *
+ * `typedef`s are provided for the usual row and column formats. 
  */
 
 namespace tatami {

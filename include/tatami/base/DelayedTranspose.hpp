@@ -7,7 +7,9 @@
 /**
  * @file DelayedTranspose.hpp
  *
- * Delayed transpose, equivalent to the `DelayedAperm` class in the **DelayedArray** package.
+ * @brief Delayed transposition.
+ *
+ * This is equivalent to the `DelayedAperm` class in the **DelayedArray** package.
  */
 
 namespace tatami {

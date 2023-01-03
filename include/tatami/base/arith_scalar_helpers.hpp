@@ -4,9 +4,9 @@
 /**
  * @file arith_scalar_helpers.hpp
  *
- * Helper functions focusing on arithmetic operations with a scalar value,
- * to be used as the `OP` in the `DelayedIsometricOp` class.
+ * @brief Helper classes for scalar arithmetic operations.
  * 
+ * Classes defined here should be used as the `OP` in the `DelayedIsometricOp` class.
  */
 
 namespace tatami {

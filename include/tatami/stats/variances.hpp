@@ -12,7 +12,7 @@
 /**
  * @file variances.hpp
  *
- * Compute row and column variances from a `tatami::Matrix`.
+ * @brief Compute row and column variances from a `tatami::Matrix`.
  */
 
 namespace tatami {
@@ -103,21 +103,21 @@ std::pair<O, O> compute_direct(const SparseRange<T, IDX>& range, size_t n) {
 }
 
 /**
- * Compute a running mean and variance from dense data using Welford's method.
- * This considers a set of "target vectors" that grow by one with each call to this function;
- * the mean and variance of each target vector is computed. 
+ * Compute running means and variances from dense data using Welford's method.
+ * This considers a scenario involving a set of equilength "target" vectors [V1, V2, V3, ..., Vn],
+ * where `n` is defined as below and `ptr[i]` contains the `count`-th element for target vector Vi.
+ * The aim is to compute the mean and variance for each target vector,
+ * by repeatedly calling this function with different `ptr` containing successive elements of all target vectors.
  *
  * @tparam T Type of the input data.
  * @tparam O Type of the output data.
  *
  * @param[in] ptr Pointer to an array of values of length `n`, with one value per target vector.
  * @param n Size of the array referenced by `ptr`.
- * @param[out] means Pointer to an array containing the running means for each target vector.
- * @param[out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
+ * @param[in,out] means Pointer to an array containing the running means for each target vector.
+ * @param[in,out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
  * @param count Number of times this function has already been called.
- *
- * @return `means` and `vars` are updated with the corresponding elements from `ptr`.
- * `count` is incremented by 1.
+ * This is incremented by 1 upon return.
  */
 template<typename T, typename O>
 void compute_running(const T* ptr, size_t n, O* means, O* vars, int& count) { 
@@ -131,8 +131,7 @@ void compute_running(const T* ptr, size_t n, O* means, O* vars, int& count) {
 
 /**
  * Compute a running mean and variance from sparse data using Welford's method.
- * This considers a set of "target vectors" that grow by one with each call to this function;
- * the mean and variance of each target vector is computed. 
+ * This does the same as its dense overload.
  *
  * @tparam T Type of the input data.
  * @tparam IDX Type of the indices.
@@ -141,17 +140,14 @@ void compute_running(const T* ptr, size_t n, O* means, O* vars, int& count) {
  *
  * @param range A `SparseRange` object specifying the number, indices and values of all non-zero elements.
  * Each element is assigned to a target vector based on its index.
- * @param[out] means Pointer to an array containing the running means for each target vector.
- * @param[out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
- * @param[out] nonzeros Pointer to an array containing the running number of non-zero values for each target vector.
+ * @param[in,out] means Pointer to an array containing the running means for each target vector.
+ * @param[in,out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
+ * @param[in,out] nonzeros Pointer to an array containing the running number of non-zero values for each target vector.
  * @param count Number of times this function has already been called.
  * @param skip_zeros Whether non-structural zeros in `range.value` should be skipped.
  * If `false`, the output `nonzeros` instead contains the number of _structural_ non-zero values in each target vector,
  * which may be useful for informing further operations on the compressed sparse matrix structure.
  * Note that this choice has no effect on the computed means or variances, besides some differences due to numeric imprecision.
- *
- * @return `means` and `vars` are updated with the corresponding elements from `range`.
- * `count` is incremented by 1.
  */
 template<typename T, typename IDX, typename O, typename Nz>
 void compute_running(const SparseRange<T, IDX>& range, O* means, O* vars, Nz* nonzeros, int& count, bool skip_zeros = true) {
@@ -174,16 +170,16 @@ void compute_running(const SparseRange<T, IDX>& range, O* means, O* vars, Nz* no
 
 /**
  * Finish the running variance calculations from `compute_running()`.
+ * Elements in `vars` are divided by `count - 1`, unless if `count < 2`, in which case it is filled with NaNs.
+ * If `count` is zero, `means` will also be filled with NaNs.
  *
  * @tparam O Type of the output data.
  *
  * @param n Number of target vectors.
- * @param[out] means Pointer to an array containing the running means for each target vector.
- * @param[out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
+ * @param[in,out] means Pointer to an array containing the running means for each target vector.
+ * @param[in,out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
  * @param count Number of times the `compute_running()` function was called.
  *
- * @return Elements in `vars` are divided by `count - 1`.
- * For low values of `count`, `means` and/or `vars` may be filled with NaNs.
  */
 template<typename O>
 void finish_running(size_t n, O* means, O* vars, int count) {
@@ -201,21 +197,20 @@ void finish_running(size_t n, O* means, O* vars, int count) {
 
 /**
  * Finish the running variance calculations from `compute_running()` with sparse inputs.
+ * Elements in `vars` are divided by `count - 1`, unless if `count < 2`, in which case it is filled with NaNs.
+ * If `count` is zero, `means` will also be filled with NaNs.
  *
  * @tparam O Type of the output data.
  * @tparam Nz Type fo the non-zero counts.
  *
  * @param n Number of target vectors.
- * @param[out] means Pointer to an array containing the running means for each target vector.
- * @param[out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
- * @param[out] nonzeros Pointer to an array containing the running number of non-zero values for each target vector.
+ * @param[in,out] means Pointer to an array containing the running means for each target vector.
+ * @param[in,out] vars Pointer to an array containing the running sum of squared differences from the mean for each target vector.
+ * @param[in] nonzeros Pointer to an array containing the running number of non-zero values for each target vector.
  * @param count Number of times the `compute_running()` function was called.
- *
- * @return Elements in `vars` are divided by `count - 1`.
- * For low values of `count`, `means` and/or `vars` may be filled with NaNs.
  */
 template<typename O, typename Nz>
-void finish_running(size_t n, O* means, O* vars, Nz* nonzeros, int count) {
+void finish_running(size_t n, O* means, O* vars, const Nz* nonzeros, int count) {
     if (count) {
         for (size_t i = 0; i < n; ++i) {
             const double curNZ = nonzeros[i];

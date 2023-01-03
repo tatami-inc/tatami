@@ -8,7 +8,7 @@
 /**
  * @file compress_sparse_triplets.hpp
  *
- * Convert sparse data in triplet format to a compressed sparse row/column format.
+ * @brief Convert sparse data in triplet format to a compressed sparse row/column format.
  */
 
 namespace tatami {

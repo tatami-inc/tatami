@@ -8,7 +8,8 @@
 /**
  * @file DelayedSubsetBlock.hpp
  *
- * Delayed subsetting to a single contiguous block.
+ * @brief Delayed subsetting to a single contiguous block.
+ *
  * This is a specialized implementation that is more efficient than the `tatami::DelayedSubset` class.
  */
 

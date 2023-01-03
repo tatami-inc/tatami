@@ -11,7 +11,9 @@
 /**
  * @file DenseMatrix.hpp
  *
- * Dense matrix representation, with `typedef`s for the usual row- and column-major formats.
+ * @brief Dense matrix representation.
+ *
+ * `typedef`s are provided for the usual row- and column-major formats.
  */
 
 namespace tatami {

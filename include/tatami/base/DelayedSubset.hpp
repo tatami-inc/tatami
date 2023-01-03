@@ -8,7 +8,9 @@
 /**
  * @file DelayedSubset.hpp
  *
- * Delayed subsetting, equivalent to the `DelayedSubset` class in the **DelayedArray** package.
+ * @brief Delayed subsetting by rows or columns.
+ *
+ * This is equivalent to the `DelayedSubset` class in the **DelayedArray** package.
  */
 
 namespace tatami {
