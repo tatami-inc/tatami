@@ -110,6 +110,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedBind.html">DelayedBind</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed combining of a matrix.  <a href="classtatami_1_1DelayedBind.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedCast.html">DelayedCast</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recast a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> to a different interface type.  <a href="classtatami_1_1DelayedCast.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">DelayedDivideScalarHelper</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Divide a scalar from all values of a matrix, or vice versa.  <a href="structtatami_1_1DelayedDivideScalarHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -225,6 +228,9 @@ Functions</h2></td></tr>
 <tr class="memitem:ac019a143af4fd0eb34f530527a424888"><td class="memTemplParams" colspan="2">template&lt;int MARGIN, class MAT &gt; </td></tr>
 <tr class="memitem:ac019a143af4fd0eb34f530527a424888"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; MAT &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac019a143af4fd0eb34f530527a424888">make_DelayedBind</a> (std::vector&lt; std::shared_ptr&lt; MAT &gt; &gt; ps)</td></tr>
 <tr class="separator:ac019a143af4fd0eb34f530527a424888"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83170fbdceea0e9a7e0074f1b193c66b"><td class="memTemplParams" colspan="2">template&lt;typename T_out , typename IDX_out , typename T_in , typename IDX_in &gt; </td></tr>
+<tr class="memitem:a83170fbdceea0e9a7e0074f1b193c66b"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T_out, IDX_out &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a83170fbdceea0e9a7e0074f1b193c66b">make_DelayedCast</a> (const std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T_in, IDX_in &gt; &gt; p)</td></tr>
+<tr class="separator:a83170fbdceea0e9a7e0074f1b193c66b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e2cd6fd2c5bba7eb83582619ffc9cea"><td class="memTemplParams" colspan="2">template&lt;class MAT , class OP &gt; </td></tr>
 <tr class="memitem:a0e2cd6fd2c5bba7eb83582619ffc9cea"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; MAT &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a0e2cd6fd2c5bba7eb83582619ffc9cea">make_DelayedIsometricOp</a> (std::shared_ptr&lt; MAT &gt; p, OP op)</td></tr>
 <tr class="separator:a0e2cd6fd2c5bba7eb83582619ffc9cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -523,6 +529,43 @@ template&lt;int MARGIN, class MAT &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code> instance. </dd></dl>
+
+</div>
+</div>
+<a id="a83170fbdceea0e9a7e0074f1b193c66b" name="a83170fbdceea0e9a7e0074f1b193c66b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83170fbdceea0e9a7e0074f1b193c66b">&#9670;&#160;</a></span>make_DelayedCast()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T_out , typename IDX_out , typename T_in , typename IDX_in &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T_out, IDX_out &gt; &gt; tatami::make_DelayedCast </td>
+          <td>(</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T_in, IDX_in &gt; &gt;&#160;</td>
+          <td class="paramname"><em>p</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Recast a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> to a different interface type.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">T_out</td><td>Data type to cast to. </td></tr>
+    <tr><td class="paramname">IDX_out</td><td>Index type to cast to. </td></tr>
+    <tr><td class="paramname">T_in</td><td>Data type to cast from. </td></tr>
+    <tr><td class="paramname">IDX_in</td><td>Index type to cast from.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Pointer to the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance to cast from. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance of the desired interface type. </dd></dl>
 
 </div>
 </div>
