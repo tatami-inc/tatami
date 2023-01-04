@@ -7,6 +7,7 @@
 #include "base/DelayedSubset.hpp"
 #include "base/DelayedSubsetBlock.hpp"
 #include "base/DelayedBind.hpp"
+#include "base/DelayedCast.hpp"
 #include "base/DelayedTranspose.hpp"
 
 #include "utils/compress_sparse_triplets.hpp"
