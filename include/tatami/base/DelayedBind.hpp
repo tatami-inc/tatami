@@ -80,14 +80,46 @@ public:
 
     using Matrix<T, IDX>::row;
 
+public:
+    // Declaring it here so that it can be used in the method signature.
+    struct BindWorkspace : public Workspace {
+        BindWorkspace(std::vector<std::shared_ptr<Workspace> > w) : workspaces(std::move(w)), last_segment(0) {}
+        std::vector<std::shared_ptr<Workspace> > workspaces;
+        size_t last_segment;
+    };
+
 private:
+    size_t choose_segment(size_t i) const {
+        return std::upper_bound(cumulative.begin(), cumulative.end(), i) - cumulative.begin() - 1;
+    }
+
+    size_t choose_segment(size_t i, BindWorkspace* work) const {
+        if (cumulative[work->last_segment] > i) {
+            if (work->last_segment && cumulative[work->last_segment - 1] <= i) {
+                --(work->last_segment);
+            } else {
+                work->last_segment = choose_segment(i);
+            }
+        } else if (cumulative[work->last_segment + 1] <= i) {
+            if (work->last_segment + 2 < cumulative.size() && cumulative[work->last_segment + 2] > i) {
+                ++(work->last_segment);
+            } else {
+                work->last_segment = choose_segment(i);
+            }
+        }
+        return work->last_segment;
+    }
+
     template<bool ROW>
     const T* extract_one_dimension(size_t i, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        size_t chosen = std::upper_bound(cumulative.begin(), cumulative.end(), i) - cumulative.begin() - 1;
+        size_t chosen;
 
         if (work != nullptr) {
             auto work2 = static_cast<BindWorkspace*>(work);
+            chosen = choose_segment(i, work2);
             work = work2->workspaces[chosen].get();
+        } else {
+            chosen = choose_segment(i);
         }
 
         if constexpr(ROW) {
@@ -106,7 +138,11 @@ private:
         
         size_t left = 0;
         if (start) {
-            left = std::upper_bound(cumulative.begin(), cumulative.end(), start) - cumulative.begin() - 1;
+            if (work2) {
+                left = choose_segment(start, work2);
+            } else {
+                left = choose_segment(start);
+            }
         }
 
         size_t current = start;
@@ -160,11 +196,14 @@ public:
 private:
     template<bool ROW>
     SparseRange<T, IDX> extract_one_dimension_sparse(size_t i, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
-        size_t chosen = std::upper_bound(cumulative.begin(), cumulative.end(), i) - cumulative.begin() - 1;
+        size_t chosen;
 
         if (work != nullptr) {
             auto work2 = static_cast<BindWorkspace*>(work);
+            chosen = choose_segment(i, work2);
             work = work2->workspaces[chosen].get();
+        } else {
+            chosen = choose_segment(i);
         }
 
         if constexpr(ROW) {
@@ -183,7 +222,11 @@ private:
         
         size_t left = 0;
         if (start) {
-            left = std::upper_bound(cumulative.begin(), cumulative.end(), start) - cumulative.begin() - 1;
+            if (work2) {
+                left = choose_segment(start, work2);
+            } else {
+                left = choose_segment(start);
+            }
         }
 
         size_t current = start;
@@ -251,11 +294,6 @@ public:
     }
 
 public:
-    struct BindWorkspace : public Workspace {
-        BindWorkspace(std::vector<std::shared_ptr<Workspace> > w) : workspaces(std::move(w)) {}
-        std::vector<std::shared_ptr<Workspace> > workspaces;
-    };
-
     /**
      * @param row Should a workspace be created for row-wise extraction?
      *
