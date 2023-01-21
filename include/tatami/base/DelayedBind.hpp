@@ -41,6 +41,8 @@ public:
             }
             cumulative[i+1] += cumulative[i];
         }
+
+        set_constants();
     }
 
     /**
@@ -54,6 +56,27 @@ public:
                 cumulative[i+1] = mats[i]->ncol();
             }
             cumulative[i+1] += cumulative[i];
+        }
+
+        set_constants();
+    }
+
+private:
+    void set_constants() {
+        sparse_ = true;
+        for (const auto& x : mats) {
+            if (!(x->sparse())) {
+                sparse_ = false;
+                break;
+            }
+        }
+
+        dimension_preference_.first = 0;
+        dimension_preference_.second = 0;
+        for (const auto& x : mats) {
+            auto current = x->dimension_preference();
+            dimension_preference_.first += current.first;
+            dimension_preference_.second += current.second;
         }
     }
 
@@ -312,11 +335,7 @@ public:
      * If any individual matrix is not sparse, the combination is also considered to be non-sparse.
      */
     bool sparse() const {
-        bool is_sparse = true;
-        for (const auto& x : mats) {
-            is_sparse &= x->sparse();
-        }
-        return is_sparse;
+        return sparse_;
     }
 
     /**
@@ -326,7 +345,7 @@ public:
      * according to `dimension_preference()`.
      */
     bool prefer_rows() const {
-        auto dimpref = dimension_preference();
+        const auto& dimpref = dimension_preference_;
         return dimpref.first > dimpref.second;
     }
 
@@ -337,18 +356,15 @@ public:
      * This aims to provide `prefer_rows()` with a more nuanced preference that accounts for potential differences in access patterns amongst the underlying matrices.
      */
     std::pair<double, double> dimension_preference() const {
-        std::pair<double, double> output;
-        for (const auto& x : mats) {
-            auto current = x->dimension_preference();
-            output.first += current.first;
-            output.second += current.second;
-        }
-        return output;
+        return dimension_preference_;
     }
 
 private:
     std::vector<std::shared_ptr<const Matrix<T, IDX> > > mats;
     std::vector<size_t> cumulative;
+
+    bool sparse_;
+    std::pair<double, double> dimension_preference_;
 };
 
 /**
