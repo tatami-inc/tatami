@@ -11,155 +11,124 @@
 #include "../data/data.h"
 #include "TestCore.h"
 
-const double MULT1 = 10, MULT2 = 1.5;
+#include "../_tests/test_row_access.h"
+#include "../_tests/test_column_access.h"
+#include "../_tests/simulate_vector.h"
 
-template<class PARAM>
-class BindTest: public TestCore<::testing::TestWithParam<PARAM> > {
+class DelayedBindTestMethods {
 protected:
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse, bound;
-protected:
-    void SetUp() {
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
-        sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
-    }
+    size_t nrow = 200, ncol = 100;
+    std::shared_ptr<tatami::NumericMatrix> bound_dense, bound_sparse, manual;
 
-    void extra_assemble(const PARAM& param) {
-        std::shared_ptr<tatami::NumericMatrix> one, two;
+    void assemble(const std::vector<int>& lengths, int dim, bool row) {
+        std::vector<double> concat;
+        size_t n_total = 0;
+        std::vector<std::shared_ptr<tatami::NumericMatrix> > collected_dense, collected_sparse;
 
-        // Multiplying to make sure we're actually extracting from a different submatrix.
-        if (std::get<0>(param)) {
-            one = sparse;
-        } else {
-            one = dense;            
+        for (size_t i = 0; i < lengths.size(); ++i) {
+            auto to_add = simulate_sparse_vector<double>(lengths[i] * dim, 0.05);
+            concat.insert(concat.end(), to_add.begin(), to_add.end());
+            n_total += lengths[i];
+
+            if (row) {
+                collected_dense.emplace_back(new tatami::DenseRowMatrix<double, int>(lengths[i], dim, to_add));
+            } else {
+                collected_dense.emplace_back(new tatami::DenseColumnMatrix<double, int>(dim, lengths[i], to_add));
+            }
+            collected_sparse.push_back(tatami::convert_to_sparse<false>(collected_dense.back().get())); // always CSC
         }
-        one = tatami::make_DelayedIsometricOp(one, tatami::DelayedMultiplyScalarHelper(MULT1));
 
-        if (std::get<1>(param)) {
-            two = sparse;
+        if (row) {
+            bound_dense = tatami::make_DelayedBind<0>(std::move(collected_dense));
+            bound_sparse = tatami::make_DelayedBind<0>(std::move(collected_sparse));
+            manual.reset(new tatami::DenseRowMatrix<double, int>(n_total, dim, std::move(concat)));
         } else {
-            two = dense;            
-        }
-        two = tatami::make_DelayedIsometricOp(two, tatami::DelayedMultiplyScalarHelper(MULT2));
-
-        if (std::get<2>(param)) {
-            bound = tatami::make_DelayedBind<0>(std::vector{ one, two });
-        } else {
-            bound = tatami::make_DelayedBind<1>(std::vector{ one, two });
+            bound_dense = tatami::make_DelayedBind<1>(std::move(collected_dense));
+            bound_sparse = tatami::make_DelayedBind<1>(std::move(collected_sparse));
+            manual.reset(new tatami::DenseColumnMatrix<double, int>(dim, n_total, std::move(concat)));
         }
 
         return;
     }
-
-    std::vector<double> harvest_expected_row(size_t i, bool rbind) {
-        std::vector<double> expected;
-        if (rbind) {
-            const size_t NR = dense->nrow();
-            expected = this->template extract_dense<true>(dense.get(), i % NR);
-            for (auto& e : expected) { e *= (i < NR ? MULT1 : MULT2); }
-        } else {
-            expected = this->template extract_dense<true>(dense.get(), i);
-            auto expected2 = expected;
-            for (auto& e : expected) { e *= MULT1; }
-            for (auto& e : expected2) { e *= MULT2; }
-            expected.insert(expected.end(), expected2.begin(), expected2.end());
-        }
-        return expected;
-    }
-
-    std::vector<double> harvest_expected_column(size_t i, bool rbind) {
-        std::vector<double> expected;
-        if (rbind) {
-            expected = this->template extract_dense<false>(dense.get(), i);
-            auto expected2 = expected;
-            for (auto& e : expected) { e *= MULT1; }
-            for (auto& e : expected2) { e *= MULT2; }
-            expected.insert(expected.end(), expected2.begin(), expected2.end());
-        } else {
-            const size_t NC = dense->ncol();
-            expected = this->template extract_dense<false>(dense.get(), i % NC);
-            for (auto& e : expected) { e *= (i < NC ? MULT1 : MULT2); }
-        }
-        return expected;
-    }
 };
+
+class DelayedBindUtilsTest : public ::testing::Test, public DelayedBindTestMethods {};
+
+TEST_F(DelayedBindUtilsTest, ByRow) {
+    assemble({ 10, 20, 5 }, 20, true);
+
+    EXPECT_EQ(bound_dense->nrow(), 35);
+    EXPECT_EQ(bound_dense->ncol(), 20);
+    EXPECT_FALSE(bound_dense->sparse());
+    EXPECT_TRUE(bound_dense->prefer_rows());
+
+    EXPECT_EQ(bound_sparse->nrow(), 35);
+    EXPECT_EQ(bound_sparse->ncol(), 20);
+    EXPECT_TRUE(bound_sparse->sparse());
+    EXPECT_FALSE(bound_sparse->prefer_rows());
+}
+
+TEST_F(DelayedBindUtilsTest, ByColumn) {
+    assemble({ 10, 20, 5 }, 20, false);
+
+    EXPECT_EQ(bound_dense->nrow(), 20);
+    EXPECT_EQ(bound_dense->ncol(), 35);
+    EXPECT_FALSE(bound_dense->sparse());
+    EXPECT_FALSE(bound_dense->prefer_rows());
+
+    EXPECT_EQ(bound_sparse->nrow(), 20);
+    EXPECT_EQ(bound_sparse->ncol(), 35);
+    EXPECT_TRUE(bound_sparse->sparse());
+    EXPECT_FALSE(bound_dense->prefer_rows());
+}
+
+TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
+    assemble({ 10, 20, 5 }, 20, true); // bound_sparse is CSC, bound_dense is row-major.
+    auto combined = tatami::make_DelayedBind<1>(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ bound_sparse, bound_dense });
+    auto preference = combined->dimension_preference();
+
+    EXPECT_TRUE(preference.first > 0);
+    EXPECT_TRUE(preference.second > 0);
+    EXPECT_EQ(preference.first, preference.second);
+
+    EXPECT_FALSE(combined->sparse());
+}
 
 /****************************
  ****************************/
 
-using BindFullAccessTest = BindTest<std::tuple<bool, bool, bool, size_t> >;
+class DelayedBindFullAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int> >, public DelayedBindTestMethods {};
 
-TEST_P(BindFullAccessTest, RowAccess) {
+TEST_P(DelayedBindFullAccessTest, Basic) {
     auto param = GetParam();
-    extra_assemble(param);
+    assemble(std::get<0>(param), 50, std::get<1>(param));
+    int FORWARD = std::get<2>(param);
+    int JUMP = std::get<3>(param);
 
-    size_t NR = dense->nrow();
-    size_t NC = dense->ncol();
-    if (std::get<2>(param)) {
-        EXPECT_EQ(bound->ncol(), dense->ncol());
-        EXPECT_EQ(bound->nrow(), 2 * NR);
-    } else {
-        EXPECT_EQ(bound->nrow(), dense->nrow());
-        EXPECT_EQ(bound->ncol(), 2 * NC);
-    }
+    test_simple_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP);
+    test_simple_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP);
 
-    if (std::get<0>(param)!=std::get<1>(param)) {
-        // only true if we're combining dense (row major) with sparse (column-major).
-        auto preference = bound->dimension_preference();
-        EXPECT_EQ(preference.first, preference.second);
-    }
-    EXPECT_EQ(bound->sparse(), std::get<0>(param) && std::get<1>(param));
-
-    auto work_bound = bound->new_workspace(true);
-
-    for (size_t i = 0; i < bound->nrow(); i += std::get<3>(param)) {
-        auto expected = harvest_expected_row(i, std::get<2>(param));
-
-        auto outputD = extract_dense<true>(bound.get(), i);
-        EXPECT_EQ(outputD, expected);
-
-        auto outputDW = extract_dense<true>(bound.get(), i, work_bound.get());
-        EXPECT_EQ(outputDW, expected);
-
-        auto outputS = extract_sparse<true>(bound.get(), i);
-        EXPECT_EQ(outputS, expected);
-
-        auto outputSW = extract_sparse<true>(bound.get(), i, work_bound.get());
-        EXPECT_EQ(outputSW, expected);
-    }
+    test_simple_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP);
+    test_simple_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP);
 }
 
-TEST_P(BindFullAccessTest, ColumnAccess) {
-    auto param = GetParam();
-    extra_assemble(param);
-
-    size_t NR = dense->nrow();
-    size_t NC = dense->ncol();
-    auto work_bound = bound->new_workspace(false);
-
-    for (size_t i = 0; i < bound->ncol(); i += std::get<3>(param)) {
-        auto expected = harvest_expected_column(i, std::get<2>(param));
-
-        auto outputD = extract_dense<false>(bound.get(), i);
-        EXPECT_EQ(outputD, expected);
-
-        auto outputDW = extract_dense<false>(bound.get(), i, work_bound.get());
-        EXPECT_EQ(outputDW, expected);
-
-        auto outputS = extract_sparse<false>(bound.get(), i);
-        EXPECT_EQ(outputS, expected);
-
-        auto outputSW = extract_sparse<false>(bound.get(), i, work_bound.get());
-        EXPECT_EQ(outputSW, expected);
-    }
+static auto spawn_bind_scenarios () {
+    return ::testing::Values(
+        std::vector<int>{ 10 },
+        std::vector<int>{ 10, 20 },
+        std::vector<int>{ 5, 2, 5 },
+        std::vector<int>{ 5, 10, 20 },
+        std::vector<int>{ 5, 0, 5 }
+    );
 }
 
 INSTANTIATE_TEST_CASE_P(
     DelayedBind,
-    BindFullAccessTest,
+    DelayedBindFullAccessTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // use dense or sparse for the first matrix.
-        ::testing::Values(true, false), // use dense or sparse for the second matrix.
+        spawn_bind_scenarios(),
         ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(true, false), // forward or backward traversal.
         ::testing::Values(1, 3) // jump, to test the workspace's memory.
     )
 );
@@ -167,80 +136,30 @@ INSTANTIATE_TEST_CASE_P(
 /****************************
  ****************************/
 
-using BindSubsetAccessTest = BindTest<std::tuple<bool, bool, bool, size_t, std::vector<size_t> > >;
+class DelayedBindSlicedAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int, std::vector<size_t> > >, public DelayedBindTestMethods {};
 
-TEST_P(BindSubsetAccessTest, RowAccess) {
+TEST_P(DelayedBindSlicedAccessTest, Basic) {
     auto param = GetParam();
-    extra_assemble(param);
-
-    size_t JUMP = std::get<3>(param);
+    assemble(std::get<0>(param), 50, std::get<1>(param));
+    int FORWARD = std::get<2>(param);
+    int JUMP = std::get<3>(param);
     auto interval_info = std::get<4>(param);
     size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
 
-    auto work_bound = bound->new_workspace(true);
+    test_sliced_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
+    test_sliced_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
 
-    for (size_t i = 0; i < bound->nrow(); i += JUMP, FIRST += SHIFT) {
-        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
-        size_t start = interval.first, end = interval.second;
-
-        auto expected_raw = harvest_expected_row(i, std::get<2>(param));
-        std::vector<double> expected(expected_raw.begin() + start, expected_raw.begin() + end);
-
-        auto outputD = extract_dense<true>(bound.get(), i, start, end);
-        EXPECT_EQ(outputD, expected);
-
-        auto outputDW = extract_dense<true>(bound.get(), i, start, end, work_bound.get());
-        EXPECT_EQ(outputDW, expected);
-
-        auto outputS = extract_sparse<true>(bound.get(), i, start, end);
-        EXPECT_EQ(outputS, expected);
-
-        auto outputSW = extract_sparse<true>(bound.get(), i, start, end, work_bound.get());
-        EXPECT_EQ(outputSW, expected);
-    }
-}
-
-TEST_P(BindSubsetAccessTest, ColumnAccess) {
-    auto param = GetParam();
-    extra_assemble(param);
-
-    size_t NR = dense->nrow();
-    size_t NC = dense->ncol();
-
-    size_t JUMP = std::get<3>(param);
-    auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
-
-    auto work_bound = bound->new_workspace(true);
-
-    for (size_t i = 0; i < bound->ncol(); i += JUMP, FIRST += SHIFT) {
-        auto interval = wrap_intervals(FIRST, FIRST + LEN, dense->ncol());
-        size_t start = interval.first, end = interval.second;
-
-        auto expected_raw = harvest_expected_column(i, std::get<2>(param));
-        std::vector<double> expected(expected_raw.begin() + start, expected_raw.begin() + end);
-      
-        auto outputD = extract_dense<false>(bound.get(), i, start, end);
-        EXPECT_EQ(outputD, expected);
-
-        auto outputDW = extract_dense<false>(bound.get(), i, start, end, work_bound.get());
-        EXPECT_EQ(outputDW, expected);
-
-        auto outputS = extract_sparse<false>(bound.get(), i, start, end);
-        EXPECT_EQ(outputS, expected);
-
-        auto outputSW = extract_sparse<false>(bound.get(), i, start, end, work_bound.get());
-        EXPECT_EQ(outputSW, expected);
-    }
+    test_sliced_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
+    test_sliced_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
 }
 
 INSTANTIATE_TEST_CASE_P(
     DelayedBind,
-    BindSubsetAccessTest,
+    DelayedBindSlicedAccessTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // use sparse or dense for the first matrix.
-        ::testing::Values(true, false), // use sparse or dense for the second matrix.
+        spawn_bind_scenarios(),
         ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(true, false), // forward or backward traversal.
         ::testing::Values(1, 3), // jump, to test the workspace's memory.
         ::testing::Values(
             std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
