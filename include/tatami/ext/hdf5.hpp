@@ -9,5 +9,6 @@
 #include "hdf5/HDF5CompressedSparseMatrix.hpp"
 #include "hdf5/HDF5DenseMatrix.hpp"
 #include "hdf5/load_hdf5_matrix.hpp"
+#include "hdf5/write_sparse_matrix_to_hdf5.hpp"
 
 #endif
