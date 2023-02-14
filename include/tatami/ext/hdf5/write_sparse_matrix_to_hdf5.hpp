@@ -159,6 +159,7 @@ bool fits_lower_limit(int64_t min) {
 /**
  * Write a sparse matrix inside a HDF5 group.
  * On return, `location` will be populated with three datasets containing the matrix contents in a compressed sparse format.
+ * Storage of dimensions and other metadata (e.g., related to column versus row layout) is left to the caller. 
  *
  * @tparam T Type of the matrix values.
  * @tparam IDX Type of the row/column indices.
@@ -318,6 +319,7 @@ void write_sparse_matrix_to_hdf5(const Matrix<T, IDX>* mat, H5::Group& location,
 /**
  * Write a sparse matrix inside a HDF5 group.
  * On return, `location` will be populated with three datasets containing the matrix contents in a compressed sparse format.
+ * Storage of dimensions and other metadata (e.g., related to column versus row layout) is left to the caller. 
  *
  * @tparam T Type of the matrix values.
  * @tparam IDX Type of the row/column indices.
