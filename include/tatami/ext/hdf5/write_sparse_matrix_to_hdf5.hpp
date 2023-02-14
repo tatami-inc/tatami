@@ -72,6 +72,14 @@ struct WriteSparseMatrixToHdf5Parameters {
     StorageType data_type = StorageType::AUTOMATIC;
 
     /**
+     * Whether to force non-integer floating point values into an integer storage mode.
+     * Only relevant if `data_type` is set to `AUTOMATIC`.
+     * If `true` and/or all values are integers, the smallest integer storage mode that fits the (truncated) floats is used.
+     * If `false` and any non-integer values are detected, the `DOUBLE` storage mode is used instead.
+     */
+    bool force_integer = false;
+
+    /**
      * Storage type for the data values.
      * If `AUTOMATIC`, it is automatically determined from the range of the indices in the input matrix.
      */
@@ -221,7 +229,7 @@ void write_sparse_matrix_to_hdf5(const Matrix<T, IDX>* mat, H5::Group& location,
     // Choosing the types.
     auto data_type = params.data_type;
     if (data_type == WriteSparseMatrixToHdf5Parameters::StorageType::AUTOMATIC) {
-        if (non_integer) {
+        if (non_integer && !params.force_integer) {
             data_type = WriteSparseMatrixToHdf5Parameters::StorageType::DOUBLE;
         } else {
             if (lower_data < 0) {

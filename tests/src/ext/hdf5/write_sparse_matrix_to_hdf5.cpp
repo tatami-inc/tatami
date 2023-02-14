@@ -22,7 +22,7 @@
 /*****************************************
  *****************************************/
 
-TEST(WriteSparseMatrixToHdf5Test, Sparse) {
+TEST(WriteSparseMatrixToHdf5Test, SparseColumn) {
     const size_t NR = 200, NC = 100;
     SparseDetails<double> triplets = simulate_sparse_triplets<double>(NC, NR, 0.05, 0, 100);
     tatami::CompressedSparseMatrix<false, double, int> mat(NR, NC, std::move(triplets.value), std::move(triplets.index), std::move(triplets.ptr));
@@ -54,6 +54,34 @@ TEST(WriteSparseMatrixToHdf5Test, Sparse) {
         auto matrow = mat.row(r);
         auto relrow = reloaded.row(r);
         EXPECT_EQ(matrow, relrow);
+    }
+
+    // Forcing it to be integer.
+    {
+        H5::H5File fhandle(fpath, H5F_ACC_TRUNC);
+        auto mhandle = fhandle.createGroup("matrix");
+        tatami::WriteSparseMatrixToHdf5Parameters params;
+        params.force_integer = true;
+        params.columnar = tatami::WriteSparseMatrixToHdf5Parameters::StorageLayout::COLUMN;
+        tatami::write_sparse_matrix_to_hdf5(&mat, mhandle, params);
+    }
+
+    {
+        H5::H5File fhandle(fpath, H5F_ACC_RDONLY);
+        auto dhandle = fhandle.openDataSet("matrix/data");
+        EXPECT_EQ(dhandle.getDataType().getClass(), H5T_INTEGER);
+    }
+
+    {
+        auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
+        for (size_t r = 0; r < NR; ++r) {
+            auto matrow = mat.row(r);
+            for (auto& x : matrow) {
+                x = static_cast<int>(x);
+            }
+            auto relrow = reloaded.row(r);
+            EXPECT_EQ(matrow, relrow);
+        }
     }
 }
 
