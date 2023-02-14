@@ -13,5 +13,7 @@ var searchData=
   ['sparserange_10',['SparseRange',['../structtatami_1_1SparseRange.html#ada01bb7f91c610bf5d191280efcba500',1,'tatami::SparseRange::SparseRange(size_t n, const T *v=NULL, const IDX *i=NULL)'],['../structtatami_1_1SparseRange.html#aca5f817610bf09d0a81dd565abd33459',1,'tatami::SparseRange::SparseRange()'],['../structtatami_1_1SparseRange.html',1,'tatami::SparseRange&lt; T, IDX &gt;']]],
   ['sparserange_2ehpp_11',['SparseRange.hpp',['../SparseRange_8hpp.html',1,'']]],
   ['sparserangecopy_12',['SparseRangeCopy',['../structtatami_1_1SparseRangeCopy.html#ae1c1cf4105e456edd364343c09412aa7',1,'tatami::SparseRangeCopy::SparseRangeCopy()'],['../structtatami_1_1SparseRangeCopy.html',1,'tatami::SparseRangeCopy&lt; T, IDX &gt;']]],
-  ['sums_2ehpp_13',['sums.hpp',['../sums_8hpp.html',1,'']]]
+  ['storagelayout_13',['StorageLayout',['../structtatami_1_1WriteSparseMatrixToHdf5Parameters.html#a1a229bd407ce10584b3942d041e7d4d8',1,'tatami::WriteSparseMatrixToHdf5Parameters']]],
+  ['storagetype_14',['StorageType',['../structtatami_1_1WriteSparseMatrixToHdf5Parameters.html#a34d8b00af861ae14a889873018b1c9a9',1,'tatami::WriteSparseMatrixToHdf5Parameters']]],
+  ['sums_2ehpp_15',['sums.hpp',['../sums_8hpp.html',1,'']]]
 ];
