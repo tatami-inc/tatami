@@ -9,88 +9,76 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
     size_t NC = ptr->ncol();
     ASSERT_EQ(NC, ref->ncol());
 
-    auto wrk = ptr->new_workspace(true);
-    auto wrk_bi = ptr->new_workspace(true);
+    auto rwork = ref->new_row_workspace();
+    auto pwork = ptr->new_row_workspace();
+    auto swork = ptr->new_row_workspace();
+    auto pwork_bi = ptr->new_row_workspace();
+    auto rwork_bi = ref->new_row_workspace();
 
     for (size_t i = 0; i < NR; i += jump) {
         size_t r = (forward ? i : NR - i - 1);
 
-        auto expected = ref->row(r);
+        auto expected = ref->row(r, rwork.get());
+        EXPECT_EQ(expected.size(), NC);
         {
-            auto observed = ptr->row(r);
+            auto observed = ptr->row(r, pwork.get());
             EXPECT_EQ(expected, observed);
-
-            // Now with a workspace.
-            auto observedW = ptr->row(r, wrk.get());
-            EXPECT_EQ(expected, observedW);
         }
-
         {
-            auto observed = ptr->sparse_row(r);
+            auto observed = ptr->sparse_row(r, swork.get());
             EXPECT_EQ(expected, expand(observed, NC));
-
-            // Now with a workspace.
-            auto observedW = ptr->sparse_row(r, wrk.get());
-            EXPECT_EQ(expected, expand(observedW, NC));
         }
 
         // Check workspace caching when access is bidirectional,
         // i.e., not purely increasing or decreasing.
         if (jump > 1 && i) {
-            auto observed = ptr->row(r, wrk_bi.get());
+            auto observed = ptr->row(r, pwork_bi.get());
             EXPECT_EQ(expected, observed);
 
             auto subr = (forward ? r-1 : r+1);
-            auto observedm1 = ptr->row(subr, wrk_bi.get());
-            auto expectedm1 = ref->row(subr);
+            auto observedm1 = ptr->row(subr, pwork_bi.get());
+            auto expectedm1 = ptr->row(subr, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
     }
 }
 
 template<class Matrix, class Matrix2>
-void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, size_t first, size_t len, size_t shift) {
+void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, size_t start, size_t end) {
     size_t NR = ptr->nrow();
     ASSERT_EQ(NR, ref->nrow());
     size_t NC = ptr->ncol();
     ASSERT_EQ(NC, ref->ncol());
 
-    auto wrk = ptr->new_workspace(true);
-    auto wrk_bi = ptr->new_workspace(true);
+    auto rwork = ref->new_row_workspace();
+    auto pwork = ptr->new_row_workspace(start, end - start);
+    auto swork = ptr->new_row_workspace(start, end - start);
+    auto pwork_bi = ptr->new_row_workspace(start, end - start);
+    auto rwork_bi = ref->new_row_workspace(start, end - start);
 
-    for (size_t i = 0; i < NR; i += jump, first += shift) {
+    for (size_t i = 0; i < NR; i += jump) {
         size_t r = (forward ? i : NR - i - 1);
-        auto interval = wrap_intervals(first, first + len, NC);
-        size_t start = interval.first, end = interval.second;
 
-        auto expected = ref->row(r, start, end);
+        auto raw_expected = ref->row(r, rwork.get());
+        std::vector<typename Matrix::data_type> expected(raw_expected.begin() + start, raw_expected.begin() + end);
         {
-            auto observed = ptr->row(r, start, end);
+            auto observed = ptr->row(r, pwork.get());
             EXPECT_EQ(expected, observed);
-
-            // Now with a workspace.
-            auto observedW = ptr->row(r, start, end, wrk.get());
-            EXPECT_EQ(expected, observedW);
         }
-
         {
-            auto observed = ptr->sparse_row(r, start, end);
+            auto observed = ptr->sparse_row(r, swork.get());
             EXPECT_EQ(expected, expand(observed, start, end));
-
-            // Now with a workspace.
-            auto observedW = ptr->sparse_row(r, start, end, wrk.get());
-            EXPECT_EQ(expected, expand(observedW, start, end));
         }
 
         // Check workspace caching when access is bidirectional,
         // i.e., not purely increasing or decreasing.
         if (jump > 1 && i) {
-            auto observed = ptr->row(r, start, end, wrk_bi.get());
+            auto observed = ptr->row(r, pwork_bi.get());
             EXPECT_EQ(expected, observed);
 
             auto subr = (forward ? r-1 : r+1);
-            auto observedm1 = ptr->row(subr, start, end, wrk_bi.get());
-            auto expectedm1 = ref->row(subr, start, end);
+            auto observedm1 = ptr->row(subr, pwork_bi.get());
+            auto expectedm1 = ptr->row(subr, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
     }

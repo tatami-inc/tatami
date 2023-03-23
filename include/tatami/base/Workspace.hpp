@@ -25,7 +25,6 @@ protected:
     /**
      * @cond
      */
-    RowWorkspace() = default;
     virtual ~RowWorkspace() = default;
 
     // Defining the other constructors for rule of 5. The move constructors
@@ -40,6 +39,12 @@ protected:
     /**
      * @endcond
      */
+
+public:
+    /**
+     * Default constructor.
+     */
+    RowWorkspace() = default;
 };
 
 /**
@@ -53,8 +58,7 @@ protected:
     /**
      * @cond
      */
-    ColumnWorkspace() = default;
-    virtual ~Columnkspace() = default;
+    virtual ~ColumnWorkspace() = default;
     ColumnWorkspace(ColumnWorkspace&&) = default;
     ColumnWorkspace& operator=(ColumnWorkspace&&) = default;
     ColumnWorkspace(const ColumnWorkspace&) = default;
@@ -62,6 +66,12 @@ protected:
     /**
      * @endcond
      */
+
+public:
+    /**
+     * Default constructor.
+     */
+    ColumnWorkspace() = default;
 };
 
 /**
@@ -76,7 +86,6 @@ protected:
     /**
      * @cond
      */
-    RowBlockWorkspace() = default;
     virtual ~RowBlockWorkspace() = default;
     RowBlockWorkspace(RowBlockWorkspace&&) = default;
     RowBlockWorkspace& operator=(RowBlockWorkspace&&) = default;
@@ -87,6 +96,17 @@ protected:
      */
 
 public:
+    /**
+     * Default constructor.
+     */
+    RowBlockWorkspace() = default;
+
+    /**
+     * @param s First column in the block.
+     * @param l Number of columns in the block.
+     */
+    RowBlockWorkspace(size_t s, size_t l) : start(s), length(l) {}
+
     /**
      * Index of the first column in the block.
      */
@@ -110,7 +130,6 @@ protected:
     /**
      * @cond
      */
-    ColumnBlockWorkspace() = default;
     virtual ~ColumnBlockWorkspace() = default;
     ColumnBlockWorkspace(ColumnBlockWorkspace&&) = default;
     ColumnBlockWorkspace& operator=(ColumnBlockWorkspace&&) = default;
@@ -121,6 +140,17 @@ protected:
      */
 
 public:
+    /**
+     * Default constructor.
+     */
+    ColumnBlockWorkspace() = default;
+
+    /**
+     * @param s First row in the block.
+     * @param l Number of rows in the block.
+     */
+    ColumnBlockWorkspace(size_t s, size_t l) : start(s), length(l) {}
+
     /**
      * Index of the first row in the block.
      */
@@ -146,7 +176,6 @@ protected:
     /**
      * @cond
      */
-    RowIndexWorkspace() = default;
     virtual ~RowIndexWorkspace() = default;
     RowIndexWorkspace(RowIndexWorkspace&&) = default;
     RowIndexWorkspace& operator=(RowIndexWorkspace&&) = default;
@@ -158,12 +187,24 @@ protected:
 
 public:
     /**
+     * Default constructor.
+     */
+    RowIndexWorkspace() = default;
+
+    /**
+     * @param l Number of columns in the subset.
+     * @param i Pointer to an array of sorted and unique column indices.
+     */
+    RowIndexWorkspace(size_t l, const IDX* i) : length(l), indices(i) {}
+
+    /**
      * Number of columns in the subset.
      */
     size_t length;
 
     /**
      * Pointer to an array of length `length`, containing sorted and unique indices for columns in the subset.
+     * It is assumed that the lifetime of the array exceeds that of this object.
      */
     const IDX* indices;
 };
@@ -182,7 +223,6 @@ protected:
     /**
      * @cond
      */
-    ColumnIndexWorkspace() = default;
     virtual ~ColumnIndexWorkspace() = default;
     ColumnIndexWorkspace(ColumnIndexWorkspace&&) = default;
     ColumnIndexWorkspace& operator=(ColumnIndexWorkspace&&) = default;
@@ -194,12 +234,24 @@ protected:
 
 public:
     /**
+     * Default constructor.
+     */
+    ColumnIndexWorkspace() = default;
+
+    /**
+     * @param l Number of rows in the subset.
+     * @param i Pointer to an array of sorted and unique row indices.
+     */
+    ColumnIndexWorkspace(size_t l, const IDX* i) : length(l), indices(i) {}
+
+    /**
      * Number of rows in the subset.
      */
     size_t length;
 
     /**
      * Pointer to an array of length `length`, containing sorted and unique indices for rows in the subset.
+     * It is assumed that the lifetime of the array exceeds that of this object.
      */
     const IDX* indices;
 };
