@@ -203,8 +203,9 @@ public:
 
 private:
     const T* primary_indexed(size_t c, T* buffer, size_t n, const IDX* indices, size_t dim_secondary) const {
+        auto offset = c * dim_secondary;
         for (size_t i = 0; i < n; ++i, ++indices) {
-            buffer[i] = values[*indices];
+            buffer[i] = values[*indices + offset];
         }
         return buffer;
     }

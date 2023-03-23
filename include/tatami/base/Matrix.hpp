@@ -353,6 +353,36 @@ public:
         return output;
     }
 
+    /**
+     * A more convenient but less efficient version of the `row()` method.
+     * Callers do not have to supply `buffer`; instead a new allocation is performed every time.
+     *
+     * @param r Index of the row.
+     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     *
+     * @return A vector containing all values of row `r`.
+     */
+    std::vector<T> row(size_t r, RowIndexWorkspace<IDX>* work) const {
+        std::vector<T> output(work->length);
+        row(r, output.data(), work);
+        return output;
+    }
+
+    /**
+     * A more convenient but less efficient version of the `column()` method.
+     * Callers do not have to supply `buffer`; instead a new allocation is performed every time.
+     *
+     * @param c Index of the column.
+     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     *
+     * @return A vector containing all values of column `c`.
+     */
+    std::vector<T> column(size_t c, ColumnIndexWorkspace<IDX>* work) const {
+        std::vector<T> output(work->length);
+        column(c, output.data(), work);
+        return output;
+    }
+
     /**********************************
      ***** Sparse virtual methods *****
      **********************************/
@@ -510,7 +540,7 @@ public:
         for (size_t i = 0, end = work->length; i < end; ++i) {
             ibuffer[i] = work->indices[i];
         }
-        return SparseRange(nrow(), val, ibuffer); 
+        return SparseRange(work->length, val, ibuffer); 
     }
 
     /**************************************
