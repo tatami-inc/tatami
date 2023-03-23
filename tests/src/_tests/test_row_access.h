@@ -37,7 +37,7 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
 
             auto subr = (forward ? r-1 : r+1);
             auto observedm1 = ptr->row(subr, pwork_bi.get());
-            auto expectedm1 = ptr->row(subr, rwork_bi.get());
+            auto expectedm1 = ref->row(subr, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
     }
