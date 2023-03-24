@@ -144,7 +144,7 @@ private:
         typedef typename std::remove_reference<decltype(std::declval<W>()[0])>::type indptr_type;
         typedef typename std::remove_reference<decltype(std::declval<V>()[0])>::type index_type;
 
-        SecondaryWorkspaceBase(size_t max_index, const V& idx, const W& idp, size_t start, size_t length) : current_indptrs(idp.begin() + start, idp.begin() + length), current_indices(length) {
+        SecondaryWorkspaceBase(size_t max_index, const V& idx, const W& idp, size_t start, size_t length) : current_indptrs(idp.begin() + start, idp.begin() + start + length), current_indices(length) {
             /* Here, the general idea is to store a local copy of the actual
              * row indices (for CSC matrices; column indices, for CSR matrices)
              * so that we don't have to keep on doing cache-unfriendly look-ups
@@ -315,16 +315,14 @@ public:
     }
 
 private:
-    std::pair<size_t, size_t> primary_dimension(size_t i, size_t first, size_t last, size_t otherdim) const {
-        const auto pstart = indptrs[i];
-        auto iIt = indices.begin() + pstart, 
-             eIt = indices.begin() + indptrs[i + 1]; 
-        auto xIt = values.begin() + pstart;
+    std::pair<size_t, size_t> primary_dimension(size_t i, size_t start, size_t length, size_t otherdim) const {
+        auto iIt = indices.begin() + indptrs[i], eIt = indices.begin() + indptrs[i + 1]; 
 
-        if (first) { // Jumping ahead if non-zero.
-            iIt = std::lower_bound(iIt, eIt, first);
+        if (start) { // Jumping ahead if non-zero.
+            iIt = std::lower_bound(iIt, eIt, start);
         } 
 
+        auto last = start + length;
         if (last != otherdim) { // Jumping to last element.
             eIt = std::lower_bound(iIt, eIt, last);
         }
@@ -332,8 +330,8 @@ private:
         return std::make_pair(iIt - indices.begin(), eIt - iIt);
     }
 
-    SparseRange<T, IDX> primary_dimension_raw(size_t i, size_t first, size_t last, size_t otherdim, T* out_values, IDX* out_indices) const {
-        auto obtained = primary_dimension(i, first, last, otherdim);
+    SparseRange<T, IDX> primary_dimension_raw(size_t i, size_t start, size_t length, size_t otherdim, T* out_values, IDX* out_indices) const {
+        auto obtained = primary_dimension(i, start, length, otherdim);
         SparseRange<T, IDX> output(obtained.second);
 
         if constexpr(has_data<T, U>::value) {
@@ -355,13 +353,13 @@ private:
         return output;
     }
 
-    void primary_dimension_expanded(size_t i, size_t first, size_t last, size_t otherdim, T* out_values) const {
-        std::fill(out_values, out_values + (last - first), static_cast<T>(0));
-        auto obtained = primary_dimension(i, first, last, otherdim);
+    void primary_dimension_expanded(size_t i, size_t start, size_t length, size_t otherdim, T* out_values) const {
+        std::fill(out_values, out_values + length, static_cast<T>(0));
+        auto obtained = primary_dimension(i, start, length, otherdim);
         auto vIt = values.begin() + obtained.first;
         auto iIt = indices.begin() + obtained.first;
         for (size_t x = 0; x < obtained.second; ++x, ++vIt, ++iIt) {
-            out_values[*iIt - first] = *vIt;            
+            out_values[*iIt - start] = *vIt;
         }
         return;
     }
@@ -432,6 +430,8 @@ private:
 
         if (secondary == curdex) { // assuming secondary < max_index, of course.
             output.add(primary, values[curptr]);
+        } else {
+            output.skip(primary);
         }
     }
 
@@ -477,6 +477,8 @@ private:
 
         if (secondary == curdex) { // assuming i < max_index, of course.
             output.add(primary, values[curptr]);
+        } else {
+            output.skip(primary);
         }
     }
 
@@ -494,8 +496,7 @@ private:
                 work.store_below = true;
                 work.below_indices.resize(length);
                 for (size_t j = 0; j < length; ++j) {
-                    auto secondary = start + j;
-                    work.below_indices[j] = define_below_index(secondary, work.current_indptrs[j]);
+                    work.below_indices[j] = define_below_index(j + start, work.current_indptrs[j]);
                 }
             }
 
@@ -520,6 +521,7 @@ private:
             ++out_values;
             return;
         }
+        void skip(IDX) {} 
     };
 
     SparseRange<T, IDX> secondary_dimension_raw(IDX i, size_t start, size_t length, SecondaryWorkspaceBase& work, T* out_values, IDX* out_indices) const {
@@ -532,11 +534,12 @@ private:
 
     struct expanded_store {
         T* out_values;
-        size_t first;
-        void add(size_t i, T val) {
+        IDX first;
+        void add(IDX i, T val) {
             out_values[i - first] = val;
             return;
         }
+        void skip(IDX) {} 
     };
 
     void secondary_dimension_expanded(IDX i, size_t start, size_t length, SecondaryWorkspaceBase& work, T* out_values) const {
@@ -618,10 +621,7 @@ public:
 private:
     template<class Store>
     void primary_dimension(size_t i, size_t length, const IDX* subset, Store& store) const {
-        const auto pstart = indptrs[i];
-        auto iIt = indices.begin() + pstart, 
-             eIt = indices.begin() + indptrs[i + 1]; 
-        auto xIt = values.begin() + pstart;
+        auto iIt = indices.begin() + indptrs[i], eIt = indices.begin() + indptrs[i + 1]; 
 
         if (length && subset[0]) { // Jumping ahead if non-zero.
             iIt = std::lower_bound(iIt, eIt, subset[0]);
@@ -634,16 +634,17 @@ private:
         while (counter < length) {
             auto current = subset[counter];
 
-            while (current > *iIt) {
+            while (iIt != eIt && current > *iIt) {
                 ++iIt;
-                ++xIt;
             }
             if (iIt == eIt) {
                 break;
             }
 
             if (current == *iIt) {
-                store.add(current, *xIt);
+                store.add(current, values[iIt - indices.begin()]);
+            } else {
+                store.skip(current);
             }
             ++counter;
         }
@@ -661,10 +662,13 @@ private:
 
     struct expanded_store2 {
         T* out_values;
-        void add(size_t i, T val) {
+        void add(IDX, T val) {
             *out_values = val;
             ++out_values;
             return;
+        }
+        void skip(IDX) {
+            ++out_values;
         }
     };
 
@@ -681,20 +685,21 @@ private:
     void secondary_dimension(IDX i, size_t length, const IDX* subset, SecondaryWorkspaceBase& work, STORE& output) const {
         IDX prev_i = work.previous_request;
 
-        for (size_t current = 0; current < length; ++current) {
-            if (i > prev_i) {
+        if (i >= prev_i) {
+            for (size_t current = 0; current < length; ++current) {
                 secondary_dimension_above(i, subset[current], current, work, output);
-
-            } else if (i < prev_i) {
-                // Backfilling everything so that all uses of 'below_indices' are valid.
-                if (!work.store_below) {
-                    work.store_below = true;
-                    work.below_indices.resize(length);
-                    for (size_t j = 0; j < length; ++j) {
-                        work.below_indices[j] = define_below_index(subset[j], work.current_indptrs[subset[j]]);
-                    }
+            }
+        } else {
+            // Backfilling everything so that all uses of 'below_indices' are valid.
+            if (!work.store_below) {
+                work.store_below = true;
+                work.below_indices.resize(length);
+                for (size_t j = 0; j < length; ++j) {
+                    work.below_indices[j] = define_below_index(subset[j], work.current_indptrs[j]);
                 }
+            }
 
+            for (size_t current = 0; current < length; ++current) {
                 secondary_dimension_below(i, subset[current], current, work, output);
             }
         }

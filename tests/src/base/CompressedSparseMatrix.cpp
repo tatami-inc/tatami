@@ -168,7 +168,7 @@ TEST_P(SparseSlicedAccessTest, Column) {
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
-    size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
+    size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
     test_sliced_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
     test_sliced_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
@@ -198,3 +198,53 @@ INSTANTIATE_TEST_CASE_P(
         )
     )
 );
+
+/*************************************
+ *************************************/
+
+class SparseIndexedAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<double> > >, public SparseTestMethods {
+protected:
+    void SetUp() {
+        assemble();
+        return;
+    }
+};
+
+TEST_P(SparseIndexedAccessTest, Column) {
+    auto param = GetParam(); 
+
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+    size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
+
+    test_indexed_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+    test_indexed_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+}
+
+TEST_P(SparseIndexedAccessTest, Row) {
+    auto param = GetParam(); 
+
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+    size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
+
+    test_indexed_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+    test_indexed_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    CompressedSparseMatrix,
+    SparseIndexedAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<double>({ 0, 0.05 }),
+            std::vector<double>({ 0.2, 0.1 }), 
+            std::vector<double>({ 0.7, 0.03 })
+        )
+    )
+);
+
