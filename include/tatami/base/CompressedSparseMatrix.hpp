@@ -384,28 +384,41 @@ private:
     }
 
     template<class Store>
-    void secondary_dimension_above(IDX primary, size_t secondary, size_t index_secondary, SecondaryWorkspaceBase& work, Store& output) const {
-        auto& curdex = work.current_indices[index_secondary];
-        auto& curptr = work.current_indptrs[index_secondary];
+    void secondary_dimension_above(IDX secondary, size_t primary, size_t index_primary, SecondaryWorkspaceBase& work, Store& output) const {
+        auto& curdex = work.current_indices[index_primary];
+        auto& curptr = work.current_indptrs[index_primary];
 
         // Remember that we already store the index corresponding to the current indptr.
         // So, we only need to do more work if the request is greater than that index.
-        if (primary > curdex) {
+        if (secondary > curdex) {
             auto max_index = max_secondary_index();
+            auto limit = indptrs[primary + 1];
 
             // Having a peek at the index of the next non-zero
             // element; maybe we're lucky enough that the requested
             // index is below this, as would be the case for
             // consecutive or near-consecutive accesses.
             ++curptr;
-            auto limit = indptrs[secondary + 1];
             if (curptr < limit) {
                 auto candidate = indices[curptr];
-                if (candidate >= primary) {
+                if (candidate >= secondary) {
                     curdex = candidate;
+
+                } else if (secondary + 1 == max_index) {
+                    // Special case if the requested index is at the end of the matrix,
+                    // in which case we can just jump there directly rather than 
+                    // doing an unnecessary binary search.
+                    curptr = limit - 1;
+                    if (indices[curptr] == secondary) {
+                        curdex = indices[curptr];
+                    } else {
+                        ++curptr;
+                        curdex = max_index;
+                    }
+
                 } else {
                     // Otherwise we need to search.
-                    curptr = std::lower_bound(indices.begin() + curptr, indices.begin() + limit, primary) - indices.begin();
+                    curptr = std::lower_bound(indices.begin() + curptr, indices.begin() + limit, secondary) - indices.begin();
                     curdex = (curptr < limit ? indices[curptr] : max_index);
                 }
             } else {
@@ -413,50 +426,57 @@ private:
             }
 
             if (work.store_below) {
-                work.below_indices[index_secondary] = define_below_index(secondary, curptr);
+                work.below_indices[index_primary] = define_below_index(primary, curptr);
             }
         }
 
-        if (primary == curdex) { // assuming primary < max_index, of course.
-            output.add(secondary, values[curptr]);
+        if (secondary == curdex) { // assuming secondary < max_index, of course.
+            output.add(primary, values[curptr]);
         }
     }
 
     template<class Store>
-    void secondary_dimension_below(IDX primary, size_t secondary, size_t index_secondary, SecondaryWorkspaceBase& work, Store& output) const {
-        auto& curdex = work.current_indices[index_secondary];
-        auto& curptr = work.current_indptrs[index_secondary];
+    void secondary_dimension_below(IDX secondary, size_t primary, size_t index_primary, SecondaryWorkspaceBase& work, Store& output) const {
+        auto& curdex = work.current_indices[index_primary];
+        auto& curptr = work.current_indptrs[index_primary];
 
         // Remember that below_indices stores 'indices[curptr - 1] + 1'.
         // So, we only need to do more work if the request is less than this;
         // otherwise the curptr remains unchanged. We also skip if curptr is
-        // equal to 'indptrs[index_secondary]' because decreasing is impossible.
-        auto& prevdex = work.below_indices[index_secondary];
-        auto limit = indptrs[secondary];
-        if (primary < prevdex && curptr > limit) {
+        // equal to 'indptrs[index_primary]' because decreasing is impossible.
+        auto& prevdex = work.below_indices[index_primary];
+        auto limit = indptrs[primary];
+        if (secondary < prevdex && curptr > limit) {
 
             // Having a peek at the index of the non-zero element below us.
             // Maybe we're lucky and the requested index is equal to this,
             // in which case we can use it directly. This would be the case
             // for consecutive accesses in the opposite direction.
             auto candidate = indices[curptr - 1];
-            if (candidate == primary) {
+            if (candidate == secondary) {
                 --curptr;
                 curdex = candidate;
-            } else if (candidate < primary) {
-                // Do nothing... though we should have never gotten here 
-                // in the first place, as it would imply that 'primary >= prevdex'.
+
+            } else if (secondary == 0) {
+                // Special case if the requested index is at the start of the matrix,
+                // in which case we can just jump there directly rather than 
+                // doing an unnecessary binary search. 
+                curdex = indices[limit];
+                curptr = limit;
+
             } else {
-                // Otherwise we need to search.
-                curptr = std::lower_bound(indices.begin() + limit, indices.begin() + curptr - 1, primary) - indices.begin();
+                // Otherwise we need to search. Note that there's no need to
+                // handle candidate < secondary, as that would imply that
+                // 'secondary >= prevdex', which isn't possible.
+                curptr = std::lower_bound(indices.begin() + limit, indices.begin() + curptr - 1, secondary) - indices.begin();
                 curdex = indices[curptr]; // guaranteed to be valid as curptr - 1 >= limit.
             }
 
-            prevdex = define_below_index(secondary, curptr);
+            prevdex = define_below_index(primary, curptr);
         }
 
-        if (primary == curdex) { // assuming i < max_index, of course.
-            output.add(secondary, values[curptr]);
+        if (secondary == curdex) { // assuming i < max_index, of course.
+            output.add(primary, values[curptr]);
         }
     }
 
