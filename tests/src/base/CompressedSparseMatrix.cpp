@@ -108,20 +108,21 @@ TEST_P(SparseFullAccessTest, Details) {
     size_t JUMP = std::get<1>(param);
 
     auto work_row = sparse_row->new_column_workspace();
-    auto fetch_offsets = [&]() -> std::vector<size_t> {
-        return dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::CompressedSparseSecondaryWorkspace*>(work_row.get())->core.current_indptrs;
+    auto fetch_offsets = [](const auto* ptr) -> std::vector<size_t> {
+        return dynamic_cast<const tatami::CompressedSparseRowMatrix<double, int>::CompressedSparseSecondaryWorkspace*>(ptr)->core.current_indptrs;
     };
     auto work_col = sparse_column->new_column_workspace();
+    auto work_row2 = sparse_row->new_column_workspace();
 
     for (size_t i = 0; i < NC; i += JUMP) {
         size_t c = (FORWARD ? i : NC - i - 1);
 
         // Checking that CSR extraction actually has an effect on the latest indptrs.
-        std::vector<size_t> old_offsets = fetch_offsets();
+        std::vector<size_t> old_offsets = fetch_offsets(work_row.get());
         sparse_row->column(c, work_row.get());
+        std::vector<size_t> new_offsets = fetch_offsets(work_row.get());
 
         if (!FORWARD || c != 0) {
-            std::vector<size_t> new_offsets = fetch_offsets();
             EXPECT_NE(old_offsets, new_offsets); 
         }
 
@@ -129,15 +130,16 @@ TEST_P(SparseFullAccessTest, Details) {
         std::vector<double> outval(sparse_column->nrow());
         std::vector<int> outidx(sparse_column->nrow());
 
-        auto x = sparse_column->sparse_column(i, outval.data(), outidx.data(), work_col.get());
+        auto x = sparse_column->sparse_column(c, outval.data(), outidx.data(), work_col.get());
         EXPECT_TRUE(x.number < NR);
         EXPECT_FALSE(outval.data()==x.value); // points to internal data.
         EXPECT_FALSE(outidx.data()==x.index);
 
-        auto y = sparse_row->sparse_column(i, outval.data(), outidx.data(), work_row.get());
+        auto y = sparse_row->sparse_column(c, outval.data(), outidx.data(), work_row2.get());
         EXPECT_TRUE(y.number < NR);
         EXPECT_TRUE(outval.data()==y.value); // points to buffer.
         EXPECT_TRUE(outidx.data()==y.index);
+        EXPECT_EQ(new_offsets, fetch_offsets(work_row2.get()));
     }
 }
 

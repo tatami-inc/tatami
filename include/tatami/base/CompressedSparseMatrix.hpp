@@ -426,7 +426,6 @@ private:
     void secondary_dimension_below(IDX primary, size_t secondary, size_t index_secondary, SecondaryWorkspaceBase& work, Store& output) const {
         auto& curdex = work.current_indices[index_secondary];
         auto& curptr = work.current_indptrs[index_secondary];
-        std::cout << "\told: " << curptr << std::endl;
 
         // Remember that below_indices stores 'indices[curptr - 1] + 1'.
         // So, we only need to do more work if the request is less than this;
@@ -447,7 +446,6 @@ private:
             } else if (candidate < primary) {
                 // Do nothing... though we should have never gotten here 
                 // in the first place, as it would imply that 'primary >= prevdex'.
-                throw std::runtime_error("WHEEE");
             } else {
                 // Otherwise we need to search.
                 curptr = std::lower_bound(indices.begin() + limit, indices.begin() + curptr - 1, primary) - indices.begin();
@@ -456,7 +454,6 @@ private:
 
             prevdex = define_below_index(secondary, curptr);
         }
-        std::cout << "\tnew: " << curptr << std::endl;
 
         if (primary == curdex) { // assuming i < max_index, of course.
             output.add(secondary, values[curptr]);
