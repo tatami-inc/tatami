@@ -131,7 +131,7 @@ private:
     const T* operate_on_row(size_t r, size_t start, size_t end, T* buffer, SomeWorkspace* work) const {
         const T* raw = mat->row(r, buffer, work);
         for (size_t i = start; i < end; ++i, ++raw) {
-            buffer[i] = operation(r, i, *raw);
+            buffer[i - start] = operation(r, i, *raw);
         }
         return buffer;
     }
@@ -140,7 +140,7 @@ private:
     const T* operate_on_column(size_t c, size_t start, size_t end, T* buffer, SomeWorkspace* work) const {
         const T* raw = mat->column(c, buffer, work);
         for (size_t i = start; i < end; ++i, ++raw) {
-            buffer[i] = operation(i, c, *raw);
+            buffer[i - start] = operation(i, c, *raw);
         }
         return buffer;
     }

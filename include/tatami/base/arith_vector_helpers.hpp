@@ -196,6 +196,7 @@ struct DelayedDivideVectorHelper {
     /**
      * @param v Vector of values to use for division.
      * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number of columns.
+     * All values should be non-zero.
      */
     DelayedDivideVectorHelper(V v) : vec(std::move(v)) {}
 
@@ -212,22 +213,33 @@ struct DelayedDivideVectorHelper {
             if constexpr(RIGHT) {
                 return val / vec[r];
             } else {
-                return vec[r] / val;
+                if (val) {
+                    return vec[r] / val;
+                } else {
+                    return std::numeric_limits<double>::infinity();
+                }
             }
         } else {
             if constexpr(RIGHT) {
                 return val / vec[c];
             } else {
-                return vec[c] / val;
+                if (val) {
+                    return vec[c] / val;
+                } else {
+                    return std::numeric_limits<double>::infinity();
+                }
             }
         }
     }
 
     /**
-     * Division is always assumed to preserve structural sparsity.
+     * Division on the right is always assumed to preserve structural sparsity.
      * Non-finite or zero `scalar` values are not considered here.
+     *
+     * Division of the scalar by the matrix value is assumed to discard structural sparsity,
+     * as any matrix zeros will yield an infinite value for a non-zero scalar.
      */
-    static const bool sparse = true;
+    static const bool sparse = RIGHT;
 private:
     const V vec;
 };
