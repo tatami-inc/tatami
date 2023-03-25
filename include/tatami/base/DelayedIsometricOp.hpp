@@ -3,6 +3,7 @@
 
 #include <memory>
 #include "Matrix.hpp"
+#include "Workspace.hpp"
 
 /**
  * @file DelayedIsometricOp.hpp
@@ -34,69 +35,10 @@ public:
      */
     DelayedIsometricOp(std::shared_ptr<const Matrix<T, IDX> > p, OP op) : mat(p), operation(std::move(op)) {}
 
-public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        const T* raw = mat->row(r, buffer, start, end, work);
-        for (size_t i = start; i < end; ++i, ++raw) {
-            buffer[i - start] = operation(r, i, *raw);
-        }
-        return buffer;
-    }
-
-    const T* column(size_t c, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        const T* raw = mat->column(c, buffer, start, end, work);
-        for (size_t i = start; i < end; ++i, ++raw) {
-            buffer[i - start] = operation(i, c, *raw);
-        }
-        return buffer;
-    }
-
-    using Matrix<T, IDX>::column;
-
-    using Matrix<T, IDX>::row;
-
-public:
-    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
-        if constexpr(OP::sparse) {
-            auto raw = mat->sparse_row(r, vbuffer, ibuffer, start, end, work, sorted);
-            for (size_t i = 0; i < raw.number; ++i) {
-                vbuffer[i] = operation(r, raw.index[i], raw.value[i]);
-            }
-            return SparseRange<T, IDX>(raw.number, vbuffer, raw.index);
-        } else {
-            auto ptr = mat->row(r, vbuffer, start, end, work);
-            auto original_values = vbuffer;
-            auto original_indices = ibuffer;
-            for (size_t i = start; i < end; ++i, ++vbuffer, ++ibuffer, ++ptr) {
-                (*vbuffer) = operation(r, i, *ptr);
-                (*ibuffer) = i;
-            }
-            return SparseRange<T, IDX>(end - start, original_values, original_indices); 
-        }
-    }
-
-    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
-        if constexpr(OP::sparse) {
-            auto raw = mat->sparse_column(c, vbuffer, ibuffer, start, end, work, sorted);
-            for (size_t i = 0; i < raw.number; ++i) {
-                vbuffer[i] = operation(raw.index[i], c, raw.value[i]);
-            }
-            return SparseRange<T, IDX>(raw.number, vbuffer, raw.index);
-        } else {
-            auto ptr = mat->column(c, vbuffer, start, end, work);
-            auto original_values = vbuffer;
-            auto original_indices = ibuffer;
-            for (size_t i = start; i < end; ++i, ++vbuffer, ++ibuffer, ++ptr) {
-                (*vbuffer) = operation(i, c, *ptr);
-                (*ibuffer) = i;
-            }
-            return SparseRange<T, IDX>(end - start, original_values, original_indices); 
-        }
-    }
-
-    using Matrix<T, IDX>::sparse_column;
-
-    using Matrix<T, IDX>::sparse_row;
+private:
+    std::shared_ptr<const Matrix<T, IDX> > mat;
+    OP operation;
+    static_assert(std::is_same<T, decltype(operation(0, 0, 0))>::value);
 
 public:
     size_t nrow() const {
@@ -108,29 +50,203 @@ public:
     }
 
     /**
-     * @return A null pointer or a shared pointer to a `Workspace` object, depending on the underlying (pre-operation) matrix.
-     */
-    std::shared_ptr<Workspace> new_workspace(bool row) const {
-        return mat->new_workspace(row);
-    }
-
-    /**
      * @return `true` if both the underlying (pre-operation) matrix is sparse and the operation preserves sparsity.
      * Otherwise returns `false`.
      */
     bool sparse() const {
-        return mat->sparse() && OP::sparse;
+        if constexpr(OP::sparse) {
+            return mat->sparse();
+        } else {
+            return false;
+        }
     }
 
     /**
      * @return `true` if row-wise extraction is preferred by the underlying (pre-operation) matrix, otherwise returns `false`.
      */
-    bool prefer_rows() const { return mat->prefer_rows(); }
+    bool prefer_rows() const { 
+        return mat->prefer_rows();
+    }
+
+    using Matrix<T, IDX>::column;
+
+    using Matrix<T, IDX>::row;
+
+    using Matrix<T, IDX>::sparse_column;
+
+    using Matrix<T, IDX>::sparse_row;
+
+public:
+    std::shared_ptr<RowWorkspace> new_row_workspace() const {
+        return mat->new_row_workspace();
+    }
+
+    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
+        return mat->new_column_workspace();
+    }
+
+    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
+        return operate_on_row(r, 0, mat->ncol(), buffer, work);
+    }
+
+    const T* column(size_t c, T* buffer, ColumnWorkspace* work) const {
+        return operate_on_column(c, 0, mat->nrow(), buffer, work);
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowWorkspace* work, bool sorted=true) const {
+        return operate_on_row(r, vbuffer, ibuffer, work, 0, mat->ncol(), sorted);
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnWorkspace* work, bool sorted=true) const {
+        return operate_on_column(c, vbuffer, ibuffer, work, 0, mat->nrow(), sorted);
+    }
+
+public:
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const {
+        return mat->new_row_workspace(start, length);
+    }
+
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const {
+        return mat->new_column_workspace(start, length);
+    }
+
+    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
+        return operate_on_row(r, work->start, work->start + work->length, buffer, work);
+    }
+
+    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
+        return operate_on_column(c, work->start, work->start + work->length, buffer, work);
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work, bool sorted=true) const {
+        return operate_on_row(r, vbuffer, ibuffer, work, work->start, work->start + work->length, sorted);
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted=true) const {
+        return operate_on_column(c, vbuffer, ibuffer, work, work->start, work->start + work->length, sorted);
+    }
 
 private:
-    std::shared_ptr<const Matrix<T, IDX> > mat;
-    OP operation;
-    static_assert(std::is_same<T, decltype(operation(0, 0, 0))>::value);
+    template<class SomeWorkspace>
+    const T* operate_on_row(size_t r, size_t start, size_t end, T* buffer, SomeWorkspace* work) const {
+        const T* raw = mat->row(r, buffer, work);
+        for (size_t i = start; i < end; ++i, ++raw) {
+            buffer[i] = operation(r, i, *raw);
+        }
+        return buffer;
+    }
+
+    template<class SomeWorkspace>
+    const T* operate_on_column(size_t c, size_t start, size_t end, T* buffer, SomeWorkspace* work) const {
+        const T* raw = mat->column(c, buffer, work);
+        for (size_t i = start; i < end; ++i, ++raw) {
+            buffer[i] = operation(i, c, *raw);
+        }
+        return buffer;
+    }
+
+    template<class SomeWorkspace> 
+    SparseRange<T, IDX> operate_on_row(size_t r, T* vbuffer, IDX* ibuffer, SomeWorkspace* work, bool sorted) const {
+        auto raw = mat->sparse_row(r, vbuffer, ibuffer, work, sorted);
+        for (size_t i = 0; i < raw.number; ++i) {
+            vbuffer[i] = operation(r, raw.index[i], raw.value[i]);
+        }
+        return SparseRange<T, IDX>(raw.number, vbuffer, raw.index);
+    }
+
+    template<class SomeWorkspace>
+    SparseRange<T, IDX> operate_on_row(size_t r, T* vbuffer, IDX* ibuffer, SomeWorkspace* work, size_t start, size_t end, bool sorted) const {
+        if constexpr(OP::sparse) {
+            return operate_on_row(r, vbuffer, ibuffer, work, sorted);
+        } else {
+            auto ptr = mat->row(r, vbuffer, work);
+            auto original_vbuffer = vbuffer;
+            auto original_ibuffer = ibuffer;
+            for (size_t i = start; i < end; ++i, ++vbuffer, ++ibuffer, ++ptr) {
+                (*vbuffer) = operation(r, i, *ptr);
+                (*ibuffer) = i;
+            }
+            return SparseRange<T, IDX>(end - start, original_vbuffer, original_ibuffer); 
+        }
+    }
+
+    template<class SomeWorkspace>
+    SparseRange<T, IDX> operate_on_column(size_t c, T* vbuffer, IDX* ibuffer, SomeWorkspace* work, bool sorted) const {
+        auto raw = mat->sparse_column(c, vbuffer, ibuffer, work, sorted);
+        for (size_t i = 0; i < raw.number; ++i) {
+            vbuffer[i] = operation(raw.index[i], c, raw.value[i]);
+        }
+        return SparseRange<T, IDX>(raw.number, vbuffer, raw.index);
+    }
+
+    template<class SomeWorkspace>
+    SparseRange<T, IDX> operate_on_column(size_t c, T* vbuffer, IDX* ibuffer, SomeWorkspace* work, size_t start, size_t end, bool sorted) const {
+        if constexpr(OP::sparse) {
+            return operate_on_column(c, vbuffer, ibuffer, work, sorted);
+        } else {
+            auto ptr = mat->column(c, vbuffer, work);
+            auto original_vbuffer = vbuffer;
+            auto original_ibuffer = ibuffer;
+            for (size_t i = start; i < end; ++i, ++vbuffer, ++ibuffer, ++ptr) {
+                (*vbuffer) = operation(i, c, *ptr);
+                (*ibuffer) = i;
+            }
+            return SparseRange<T, IDX>(end - start, original_vbuffer, original_ibuffer); 
+        }
+    }
+
+public:
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t length, const IDX* indices) const {
+        return mat->new_row_workspace(length, indices);
+    }
+
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t length, const IDX* indices) const {
+        return mat->new_column_workspace(length, indices);
+    }
+
+    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
+        const T* raw = mat->row(r, buffer, work);
+        for (size_t i = 0; i < work->length; ++i, ++raw) {
+            buffer[i] = operation(r, work->indices[i], *raw);
+        }
+        return buffer;
+    }
+
+    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
+        const T* raw = mat->column(c, buffer, work);
+        for (size_t i = 0; i < work->length; ++i, ++raw) {
+            buffer[i] = operation(work->indices[i], c, *raw);
+        }
+        return buffer;
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(OP::sparse) {
+            return operate_on_row(r, vbuffer, ibuffer, work, sorted);
+        } else {
+            auto ptr = mat->row(r, vbuffer, work);
+            auto original_vbuffer = vbuffer;
+            for (size_t i = 0; i < work->length; ++i, ++vbuffer, ++ptr) {
+                (*vbuffer) = operation(r, work->indices[i], *ptr);
+            }
+            std::copy(work->indices, work->indices + work->length, ibuffer); // avoid lifetime issues with RowIndexWorkspace's indices.
+            return SparseRange<T, IDX>(work->length, original_vbuffer, ibuffer);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(OP::sparse) {
+            return operate_on_column(c, vbuffer, ibuffer, work, sorted);
+        } else {
+            auto ptr = mat->column(c, vbuffer, work);
+            auto original_vbuffer = vbuffer;
+            for (size_t i = 0; i < work->length; ++i, ++vbuffer, ++ptr) {
+                (*vbuffer) = operation(work->indices[i], c, *ptr);
+            }
+            std::copy(work->indices, work->indices + work->length, ibuffer); // avoid lifetime issues with ColumnIndexWorkspace's indices.
+            return SparseRange<T, IDX>(work->length, original_vbuffer, ibuffer); 
+        }
+    }
 };
 
 /**

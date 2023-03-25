@@ -22,7 +22,7 @@ add_executable(
 #    src/base/DelayedTranspose.cpp
 #    src/base/DelayedCast.cpp
 #    src/base/arith_vector_helpers.cpp
-#    src/base/arith_scalar_helpers.cpp
+    src/base/arith_scalar_helpers.cpp
 #    src/base/math_helpers.cpp
 #    src/base/compress_sparse_triplets.cpp
 #
