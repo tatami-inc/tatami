@@ -777,6 +777,74 @@ public:
  */
 using NumericMatrix = Matrix<double, int>;
 
+/**
+ * Create a new workspace for extraction of full rows or columns.
+ * This is a convenience wrapper for switching between rows/columns at compile time.
+ *
+ * @tparam ROW Whether to create a workspace for row extraction.
+ * @tparam T Type of the matrix data.
+ * @tparam IDX Type of the row/column indices.
+ *
+ * @param ptr Pointer to a `Matrix` instance.
+ *
+ * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
+ */
+template<bool ROW, typename T, typename IDX>
+std::shared_ptr<Workspace<ROW> > new_workspace(const Matrix<T, IDX>* ptr) {
+    if constexpr(ROW) {
+        return ptr->new_row_workspace();
+    } else {
+        return ptr->new_column_workspace();
+    }
+}
+
+/**
+ * Create a new workspace for extraction of a contiguous block from each row or column. 
+ * This is a convenience wrapper for switching between rows/columns at compile time.
+ *
+ * @tparam ROW Whether to create a workspace for row extraction.
+ * @tparam T Type of the matrix data.
+ * @tparam IDX Type of the row/column indices.
+ *
+ * @param ptr Pointer to a `Matrix` instance.
+ * @param start Index of the first column (if `ROW = true`) or column (otherwise) in the block.
+ * @param length Number of columns (if `ROW = true`) or rows (otherwise) in the block.
+ *
+ * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
+ */
+template<bool ROW, typename T, typename IDX>
+std::shared_ptr<BlockWorkspace<ROW> > new_workspace(const Matrix<T, IDX>* ptr, size_t start, size_t length) {
+    if constexpr(ROW) {
+        return ptr->new_row_workspace(start, length);
+    } else {
+        return ptr->new_column_workspace(start, length);
+    }
+}
+
+/**
+ * Create a new workspace for extraction of a subset of entries from each row or column. 
+ * This is a convenience wrapper for switching between rows/columns at compile time.
+ *
+ * @tparam ROW Whether to create a workspace for row extraction.
+ * @tparam T Type of the matrix data.
+ * @tparam IDX Type of the row/column indices.
+ *
+ * @param ptr Pointer to a `Matrix` instance.
+ * @param length Number of columns (if `ROW = true`) or rows (otherwise) in the subset.
+ * @param[in] indices Pointer to an array of indices for columns (if `ROW = true`) or rows (otherwise) in the subset.
+ * The lifetime of the array is expected to exceed that of the returned workspace.
+ *
+ * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
+ */
+template<bool ROW, typename T, typename IDX>
+std::shared_ptr<BlockWorkspace<ROW> > new_workspace(const Matrix<T, IDX>* ptr, size_t length, const IDX* indices) {
+    if constexpr(ROW) {
+        return ptr->new_row_workspace(length, indices);
+    } else {
+        return ptr->new_column_workspace(length, indices);
+    }
+}
+
 }
 
 #endif

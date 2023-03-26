@@ -7,7 +7,9 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/variances.hpp"
 
-#include "../data/data.h"
+#include "../_tests/test_column_access.h"
+#include "../_tests/test_row_access.h"
+#include "../_tests/simulate_vector.h"
 
 /* This suite of tests just checks that we actually 
  * get different results under each mode. */
@@ -117,7 +119,8 @@ public:
 };
 
 TEST(ApplyCheck, VariableDispatchRows) {
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    size_t NR = 99, NC = 52;
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
@@ -157,7 +160,8 @@ TEST(ApplyCheck, VariableDispatchRows) {
 }
 
 TEST(ApplyCheck, VariableDispatchColumns) {
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    size_t NR = 81, NC = 133;
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
@@ -247,7 +251,8 @@ public:
 };
 
 TEST(ApplyCheck, VariableDispatchRowsCopy) {
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    size_t NR = 101, NC = 95;
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
 
     size_t N = dense_row->nrow();
@@ -269,7 +274,8 @@ TEST(ApplyCheck, VariableDispatchRowsCopy) {
 }
 
 TEST(ApplyCheck, VariableDispatchColumnsCopy) {
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    size_t NR = 63, NC = 155;
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
 
     size_t N = dense_row->ncol();

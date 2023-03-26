@@ -12,18 +12,22 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/sums.hpp"
 
-#include "../data/data.h"
+#include "../_tests/test_column_access.h"
+#include "../_tests/test_row_access.h"
+#include "../_tests/simulate_vector.h"
 
-TEST(ComputingDimsums, RowSums) {
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+TEST(ComputingDimSums, RowSums) {
+    size_t NR = 99, NC = 152;
+    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
-    std::vector<double> ref(sparse_nrow);
-    for (size_t r = 0; r < sparse_nrow; ++r) {
-        for (size_t c = 0; c < sparse_ncol; ++c) {
-            ref[r] += sparse_matrix[c + r * sparse_ncol];
+    std::vector<double> ref(NR);
+    for (size_t r = 0; r < NR; ++r) {
+        for (size_t c = 0; c < NC; ++c) {
+            ref[r] += dump[c + r * NC];
         }
     }
 
@@ -39,16 +43,18 @@ TEST(ComputingDimsums, RowSums) {
     EXPECT_EQ(ref, tatami::row_sums(sparse_column.get(), 3));
 }
 
-TEST(ComputingDimsums, ColumnSums) {
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+TEST(ComputingDimSums, ColumnSums) {
+    size_t NR = 79, NC = 62;
+    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
-    std::vector<double> ref(sparse_ncol);
-    for (size_t c = 0; c < sparse_ncol; ++c) {
-        for (size_t r = 0; r < sparse_nrow; ++r) {
-            ref[c] += sparse_matrix[c + r * sparse_ncol];
+    std::vector<double> ref(NC);
+    for (size_t c = 0; c < NC; ++c) {
+        for (size_t r = 0; r < NR; ++r) {
+            ref[c] += dump[c + r * NC];
         }
     }
 
@@ -64,7 +70,7 @@ TEST(ComputingDimsums, ColumnSums) {
     EXPECT_EQ(ref, tatami::column_sums(sparse_column.get(), 3));
 }
 
-TEST(ComputingDimsums, Configuration) {
+TEST(ComputingDimSums, Configuration) {
     typedef tatami::stats::SumFactory<double> SumFact;
 
     EXPECT_TRUE(tatami::stats::has_sparse_running<SumFact>::value);
