@@ -38,43 +38,45 @@ public:
         mat(std::move(p)), 
         indices(std::move(idx))
     {
-        bool unsorted = false;
         for (size_t i = 0; i < indices.size(); ++i) {
             if (i) {
                 if (indices[i] < indices[i-1]) {
-                    unsorted = true;
+                    is_unsorted = true;
                 } else if (indices[i] == indices[i-1]) {
                     has_duplicates = true;
                 }
-                if (has_duplicates && unsorted) {
+                if (has_duplicates && is_unsorted) {
                     break; // nothing else to do here.
                 }
             }
         }
 
-        if (!unsorted) {
+        if (!has_duplicates) {
+            mapping_single.resize(MARGIN == 0 ? mat->nrow() : mat->ncol());
+            for (size_t i = 0, end = indices.size(); i < end; ++i) {
+                mapping_single[indices[i]] = i;
+            }
+        }
+
+        if (!is_unsorted) {
             if (!has_duplicates) {
                 if constexpr(use_unique_and_sorted) {
                     unique_and_sorted.insert(unique_and_sorted.end(), indices.begin(), indices.end());
                 }
-
-                mapping_single.resize(MARGIN == 0 ? mat->nrow() : mat->ncol());
-                for (size_t i = 0, end = indices.size(); i < end; ++i) {
-                    mapping_single[indices[i]] = i;
-                }
-
             } else {
                 unique_and_sorted.reserve(indices.size());
+                reverse_mapping.reserve(indices.size());
                 mapping_duplicates.resize(MARGIN == 0 ? mat->nrow() : mat->ncol());
-                duplicate_mapping_indices.reserve(indices.size());
+                mapping_duplicates_pool.reserve(indices.size());
 
                 for (size_t i = 0, end = indices.size(); i < end; ++i) {
                     auto& current = mapping_duplicates[indices[i]];
                     if (!i || indices[i] != indices[i-1]) {
                         unique_and_sorted.push_back(indices[i]);
-                        current.first = duplicate_mapping_indices.size();
+                        current.first = mapping_duplicates_pool.size();
                     }
-                    duplicate_mapping_indices.push_back(i);
+                    mapping_duplicates_pool.push_back(i);
+                    reverse_mapping.push_back(unique_and_sorted.size() - 1);
                     ++current.second;
                 }
             }
@@ -89,23 +91,24 @@ public:
 
             unique_and_sorted.reserve(indices.size());
             if (!has_duplicates) {
-                mapping_single.resize(MARGIN == 0 ? mat->nrow() : mat->ncol());
                 for (size_t i = 0, end = collected.size(); i < end; ++i) {
-                    mapping_single[collected[i].first] = collected[i].second;
                     unique_and_sorted.push_back(collected[i].first);
+                    reverse_mapping.push_back(unique_and_sorted.size() - 1);
                 }
-
             } else {
+                unique_and_sorted.reserve(indices.size());
+                reverse_mapping.reserve(indices.size());
                 mapping_duplicates.resize(MARGIN == 0 ? mat->nrow() : mat->ncol());
-                duplicate_mapping_indices.reserve(indices.size());
+                mapping_duplicates_pool.reserve(indices.size());
 
                 for (size_t i = 0, end = collected.size(); i < end; ++i) {
                     auto& current = mapping_duplicates[collected[i].first];
                     if (!i || collected[i].first != collected[i-1].first) {
                         unique_and_sorted.push_back(collected[i].first);
-                        current.first = duplicate_mapping_indices.size();
+                        current.first = mapping_duplicates_pool.size();
                     }
-                    duplicate_mapping_indices.push_back(i);
+                    mapping_duplicates_pool.push_back(collected[i].second);
+                    reverse_mapping.push_back(unique_and_sorted.size() - 1);
                     ++current.second;
                 }
             }
@@ -117,14 +120,17 @@ public:
 private:
     std::shared_ptr<const Matrix<T, IDX> > mat;
     V indices;
-    std::vector<size_t> mapping_single;
+
+    bool is_unsorted = false;
+    std::vector<size_t> reverse_mapping;
 
     static bool use_unique_and_sorted = !std::is_same<V, std::vector<IDX> >::value;
     std::vector<IDX> unique_and_sorted;
 
     bool has_duplicates = false;
-    std::vector<std:pair<size_t, size_t> > mapping_duplicates; // holds (position, size)
-    std::vector<size_t> duplicate_mapping_indices; // position in mapping_duplicates refers to a slice of duplicate_mapping_indices.
+    std::vector<size_t> mapping_single;
+    std::vector<std:pair<size_t, size_t> > mapping_duplicates; // holds (position, size) in the pool.
+    std::vector<size_t> mapping_duplicates_pool; 
 
 public:
     const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
