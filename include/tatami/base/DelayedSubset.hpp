@@ -358,7 +358,7 @@ private:
             raw = mat->sparse_column(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get(), raw_sorted);
         }
 
-        if (has_duplicates) {
+        if (!is_unsorted && has_duplicates) {
             return extract_sparse_duplicates(raw, vbuffer, ibuffer);
         }
 
@@ -410,7 +410,7 @@ public:
      */
     template<bool ROW>
     struct AlongBlockWorkspace : public BlockWorkspace<ROW> {
-        AlongBlockWorkspace(size_t start, size_t length, size_t n) : BlockWorkspace<ROW>(start, length), vbuffer(n) {}
+        AlongBlockWorkspace(size_t start, size_t length) : BlockWorkspace<ROW>(start, length) {}
 
         std::vector<T> vbuffer;
         std::vector<IDX> ibuffer;
@@ -428,8 +428,7 @@ public:
         if constexpr(MARGIN == 0) {
             return mat->new_row_workspace(start, length);
         } else {
-            size_t buffer_size = (is_unsorted || has_duplicates ? length : 0);
-            auto ptr = new AlongBlockWorkspace<true>(start, length, buffer_size);
+            auto ptr = new AlongBlockWorkspace<true>(start, length);
             std::shared_ptr<RowBlockWorkspace> output(ptr);
 
             if (!is_unsorted && !has_duplicates) {
@@ -437,6 +436,7 @@ public:
             } else {
                 auto& local = ptr->local_unique_and_sorted;
                 transplant_indices(local, ptr->local_reverse_mapping, start, length);
+                ptr->vbuffer.resize(local.size());
                 ptr->internal = mat->new_row_workspace(local.size(), local.data());
             }
 
@@ -446,8 +446,7 @@ public:
 
     std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const {
         if constexpr(MARGIN == 0) {
-            size_t buffer_size = (is_unsorted || has_duplicates ? length : 0);
-            auto ptr = new AlongBlockWorkspace<false>(start, length, buffer_size);
+            auto ptr = new AlongBlockWorkspace<false>(start, length);
             std::shared_ptr<ColumnBlockWorkspace> output(ptr);
 
             if (!is_unsorted && !has_duplicates) {
@@ -455,6 +454,7 @@ public:
             } else {
                 auto& local = ptr->local_unique_and_sorted;
                 transplant_indices(local, ptr->local_reverse_mapping, start, length);
+                ptr->vbuffer.resize(local.size());
                 ptr->internal = mat->new_column_workspace(local.size(), local.data());
             }
 
@@ -504,6 +504,7 @@ private:
     template<class Sortspace>
     void transplant_indices(std::vector<IDX>& local_unique_and_sorted, std::vector<size_t>& local_reverse_mapping, Sortspace& collected) const {
         std::sort(collected.begin(), collected.end());
+        local_reverse_mapping.resize(collected.size());
 
         if (!has_duplicates) {
             for (size_t i = 0, end = collected.size(); i < end; ++i) {
@@ -523,10 +524,10 @@ private:
 
     void transplant_indices(std::vector<IDX>& local_unique_and_sorted, std::vector<size_t>& local_reverse_mapping, size_t start, size_t length) const {
         local_unique_and_sorted.reserve(length);
-        local_reverse_mapping.reserve(length);
         size_t end = start + length;
 
         if (!is_unsorted) {
+            local_reverse_mapping.reserve(length);
             for (size_t i = start; i < end; ++i) {
                 if (local_unique_and_sorted.empty() || indices[i] != local_unique_and_sorted.back()) {
                     local_unique_and_sorted.push_back(indices[i]);
@@ -660,8 +661,6 @@ private:
             for (size_t i = 0; i < length; ++i) {
                 collected.emplace_back(indices[subset[i]], i);
             }
-
-            local_reverse_mapping.reserve(length);
             transplant_indices(local_unique_and_sorted, local_reverse_mapping, collected);
         }
     }
