@@ -22,7 +22,7 @@ namespace tatami {
  * This is a specialized implementation that is more efficient than the `tatami::DelayedSubset` class.
  * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
  *
- * @tparam MARGIN Dimension along which the addition is to occur.
+ * @tparam MARGIN Dimension along which the subsetting is to occur.
  * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
  * @tparam T Type of matrix value.
  * @tparam IDX Type of index value.
@@ -35,50 +35,49 @@ public:
      * @param f Index of the start of the block. This should be a row index if `MARGIN = 0` and a column index otherwise.
      * @param l Index of the one-past-the-end of the block.
      */
-    DelayedSubsetBlock(std::shared_ptr<const Matrix<T, IDX> > p, size_t f, size_t l) : mat(p), first(f), last(l) {}
+    DelayedSubsetBlock(std::shared_ptr<const Matrix<T, IDX> > p, size_t f, size_t l) : mat(p), block_start(f), block_length(l - f) {}
 
     /**
      * @copydoc DelayedSubsetBlock
      */
-    DelayedSubsetBlock(std::shared_ptr<Matrix<T, IDX> > p, size_t f, size_t l) : mat(p), first(f), last(l) {}
+    DelayedSubsetBlock(std::shared_ptr<Matrix<T, IDX> > p, size_t f, size_t l) : mat(p), block_start(f), block_length(l - f) {}
+
+private:
+    std::shared_ptr<const Matrix<T, IDX> > mat;
+    size_t block_start, block_length;
 
 public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        if constexpr(MARGIN == 0) {
-            return mat->row(first + r, buffer, start, end, work);
+    size_t nrow() const {
+        if constexpr(MARGIN==0) {
+            return block_length;
         } else {
-            return mat->row(r, buffer, first + start, first + end, work);
+            return mat->nrow();
         }
     }
 
-    const T* column(size_t c, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        if constexpr(MARGIN == 0) {
-            return mat->column(c, buffer, first + start, first + end, work);
+    size_t ncol() const {
+        if constexpr(MARGIN==0) {
+            return mat->ncol();
         } else {
-            return mat->column(first + c, buffer, start, end, work);
+            return block_length;
         }
+    }
+
+    bool sparse() const {
+        return mat->sparse();
+    }
+
+    bool prefer_rows() const {
+        return mat->prefer_rows();
+    }
+
+    std::pair<double, double> dimension_preference() const {
+        return mat->dimension_preference();
     }
 
     using Matrix<T, IDX>::column;
 
     using Matrix<T, IDX>::row;
-
-public:
-    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
-        if constexpr(MARGIN==0) {
-            return mat->sparse_row(first + r, out_values, out_indices, start, end, work, sorted);
-        } else {
-            return subset_sparse<true>(r, out_values, out_indices, start, end, work, sorted);
-        }
-    }
-
-    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
-        if constexpr(MARGIN==0) {
-            return subset_sparse<false>(c, out_values, out_indices, start, end, work, sorted);
-        } else {
-            return mat->sparse_column(c + first, out_values, out_indices, start, end, work, sorted);
-        }
-    }
 
     using Matrix<T, IDX>::sparse_column;
 
@@ -86,75 +85,232 @@ public:
 
 public:
     /**
-     * @return Number of rows after any subsetting is applied.
+     * @cond
      */
-    size_t nrow() const {
-        if constexpr(MARGIN==0) {
-            return last - first;
+    template<bool ROW>
+    struct AlongWorkspace : public Workspace<ROW> {
+        AlongWorkspace(std::shared_ptr<BlockWorkspace<ROW> > w) : internal(std::move(w)) {}
+        std::shared_ptr<BlockWorkspace<ROW> > internal;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowWorkspace> new_row_workspace() const {
+        if constexpr(MARGIN == 0) {
+            return mat->new_row_workspace();
         } else {
-            return mat->nrow();
+            return std::shared_ptr<RowWorkspace>(new AlongWorkspace<true>(mat->new_row_workspace(block_start, block_length)));
         }
     }
-    
-    /**
-     * @return Number of columns after any subsetting is applied.
-     */
-    size_t ncol() const {
-        if constexpr(MARGIN==0) {
-            return mat->ncol();
+
+    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
+        if constexpr(MARGIN == 0) {
+            return std::shared_ptr<ColumnWorkspace>(new AlongWorkspace<false>(mat->new_column_workspace(block_start, block_length)));
         } else {
-            return last - first;
+            return mat->new_column_workspace();
         }
     }
 
-    /**
-     * @param row Should a workspace be created for row-wise extraction?
-     * 
-     * @return A null pointer or a shared pointer to a `Workspace` object, depending on the underlying (pre-subsetted) matrix.
-     */
-    std::shared_ptr<Workspace> new_workspace(bool row) const {
-        return mat->new_workspace(row);
+    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
+        if constexpr(MARGIN == 0) {
+            return mat->row(block_start + r, buffer, work);
+        } else {
+            return mat->row(r, buffer, static_cast<AlongWorkspace<true>*>(work)->internal.get());
+        }
     }
 
-    /**
-     * @return The sparsity status of the underlying (pre-subsetted) matrix.
-     */
-    bool sparse() const {
-        return mat->sparse();
+    const T* column(size_t c, T* buffer, ColumnWorkspace* work) const {
+        if constexpr(MARGIN == 0) {
+            return mat->column(c, buffer, static_cast<AlongWorkspace<false>*>(work)->internal.get());
+        } else {
+            return mat->column(block_start + c, buffer, work);
+        }
     }
 
-    /**
-     * @return Whether the underlying (pre-subsetted) matrix prefers row access.
-     */
-    bool prefer_rows() const {
-        return mat->prefer_rows();
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return mat->sparse_row(block_start + r, out_values, out_indices, work, sorted);
+        } else {
+            return subset_sparse<true>(r, out_values, out_indices, static_cast<AlongWorkspace<true>*>(work)->internal.get(), sorted);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return subset_sparse<false>(c, out_values, out_indices, static_cast<AlongWorkspace<false>*>(work)->internal.get(), sorted);
+        } else {
+            return mat->sparse_column(block_start + c, out_values, out_indices, work, sorted);
+        }
     }
 
 private:
-    std::shared_ptr<const Matrix<T, IDX> > mat;
-    size_t first, last;
-
-    template<bool ROW>
-    SparseRange<T, IDX> subset_sparse(size_t i, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work, bool sorted) const {
+    template<bool ROW, class InputWorkspace>
+    SparseRange<T, IDX> subset_sparse(size_t i, T* out_values, IDX* out_indices, InputWorkspace* work, bool sorted) const {
         SparseRange<T, IDX> output;
 
         if constexpr(ROW) {
-            output = mat->sparse_row(i, out_values, out_indices, start + first, end + first, work, sorted);
+            output = mat->sparse_row(i, out_values, out_indices, work, sorted);
         } else {
-            output = mat->sparse_column(i, out_values, out_indices, start + first, end + first, work, sorted);
+            output = mat->sparse_column(i, out_values, out_indices, work, sorted);
         }
 
-        if (first) {
+        if (block_start) {
             if (out_indices != output.index) {
                 std::copy(output.index, output.index + output.number, out_indices);
                 output.index = out_indices;
             }
             for (size_t i = 0; i < output.number; ++i) {
-                out_indices[i] -= first;
+                out_indices[i] -= block_start;
             }
         }
 
         return output;
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct AlongBlockWorkspace : public BlockWorkspace<ROW> {
+        AlongBlockWorkspace(size_t s, size_t l, std::shared_ptr<BlockWorkspace<ROW> > w) : BlockWorkspace<ROW>(s, l), internal(std::move(w)) {}
+        std::shared_ptr<BlockWorkspace<ROW> > internal;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start_, size_t length_) const {
+        if constexpr(MARGIN == 0) {
+            return mat->new_row_workspace(start_, length_);
+        } else {
+            return std::shared_ptr<RowBlockWorkspace>(new AlongBlockWorkspace<true>(start_, length_, mat->new_row_workspace(block_start + start_, length_)));
+        }
+    }
+
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start_, size_t length_) const {
+        if constexpr(MARGIN == 0) {
+            return std::shared_ptr<ColumnBlockWorkspace>(new AlongBlockWorkspace<false>(start_, length_, mat->new_column_workspace(block_start + start_, length_)));
+        } else {
+            return mat->new_column_workspace(start_, length_);
+        }
+    }
+
+    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
+        if constexpr(MARGIN == 0) {
+            return mat->row(block_start + r, buffer, work);
+        } else {
+            return mat->row(r, buffer, static_cast<AlongBlockWorkspace<true>*>(work)->internal.get());
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
+        if constexpr(MARGIN == 0) {
+            return mat->column(c, buffer, static_cast<AlongBlockWorkspace<false>*>(work)->internal.get());
+        } else {
+            return mat->column(block_start + c, buffer, work);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowBlockWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return mat->sparse_row(block_start + r, out_values, out_indices, work, sorted);
+        } else {
+            return subset_sparse<true>(r, out_values, out_indices, static_cast<AlongBlockWorkspace<true>*>(work)->internal.get(), sorted);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnBlockWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return subset_sparse<false>(c, out_values, out_indices, static_cast<AlongBlockWorkspace<false>*>(work)->internal.get(), sorted);
+        } else {
+            return mat->sparse_column(block_start + c, out_values, out_indices, work, sorted);
+        }
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct AlongIndexWorkspace : public IndexWorkspace<IDX, ROW> {
+        AlongIndexWorkspace(size_t l, const IDX* i, size_t s) : IndexWorkspace<IDX, ROW>(l, i) {
+            if (s) {
+                more_indices.reserve(l);
+                for (size_t x = 0; x < l; ++x) {
+                    more_indices.push_back(i[x] + s);
+                }
+            }
+        }
+
+        const IDX* host_indices() const {
+            if (more_indices.empty()) {
+                return this->indices;
+            } else {
+                return more_indices.data();
+            }
+        }
+
+        std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
+        std::vector<IDX> more_indices;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t length_, const IDX* indices_) const {
+        if constexpr(MARGIN == 0) {
+            return mat->new_row_workspace(length_, indices_);
+        } else {
+            auto ptr = new AlongIndexWorkspace<true>(length_, indices_, block_start);
+            std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
+            ptr->internal = mat->new_row_workspace(length_, ptr->host_indices());
+            return output;
+        }
+    }
+
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t length_, const IDX* indices_) const {
+        if constexpr(MARGIN == 0) {
+            auto ptr = new AlongIndexWorkspace<false>(length_, indices_, block_start);
+            std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
+            ptr->internal = mat->new_column_workspace(length_, ptr->host_indices());
+            return output;
+        } else {
+            return mat->new_column_workspace(length_, indices_);
+        }
+    }
+
+    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
+        if constexpr(MARGIN == 0) {
+            return mat->row(block_start + r, buffer, work);
+        } else {
+            return mat->row(r, buffer, static_cast<AlongIndexWorkspace<true>*>(work)->internal.get());
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
+        if constexpr(MARGIN == 0) {
+            return mat->column(c, buffer, static_cast<AlongIndexWorkspace<false>*>(work)->internal.get());
+        } else {
+            return mat->column(block_start + c, buffer, work);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return mat->sparse_row(block_start + r, out_values, out_indices, work, sorted);
+        } else {
+            return subset_sparse<true>(r, out_values, out_indices, static_cast<AlongIndexWorkspace<true>*>(work)->internal.get(), sorted);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return subset_sparse<false>(c, out_values, out_indices, static_cast<AlongIndexWorkspace<false>*>(work)->internal.get(), sorted);
+        } else {
+            return mat->sparse_column(block_start + c, out_values, out_indices, work, sorted);
+        }
     }
 };
 

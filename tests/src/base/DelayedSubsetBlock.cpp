@@ -4,46 +4,48 @@
 #include <memory>
 
 #include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedSubset.hpp"
 #include "tatami/base/DelayedSubsetBlock.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
-#include "../data/data.h"
-#include "TestCore.h"
+#include "../_tests/test_column_access.h"
+#include "../_tests/test_row_access.h"
+#include "../_tests/simulate_vector.h"
 
 template<class PARAM> 
-class SubsetBlockTest : public TestCore<::testing::TestWithParam<PARAM> > {
+class SubsetBlockTest : public ::testing::TestWithParam<PARAM> {
 protected:
+    size_t NR = 192, NC = 132;
     std::shared_ptr<tatami::NumericMatrix> dense, sparse, ref, dense_block, sparse_block;
+    std::vector<double> simulated;
 
-    size_t first, last;
-    std::vector<size_t> sub;
+    size_t block_length;
 protected:
     void SetUp() {
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+        simulated = simulate_sparse_vector<double>(NR * NC, 0.2);
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulated));
         sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
         return;
     }
 
     void extra_assemble(const PARAM& param) {
-        size_t full;
-        if (std::get<0>(param)) {
-            full = dense->nrow(); 
-        } else {
-            full = dense->ncol();
-        }
-
-        first = static_cast<double>(full) * std::get<1>(param).first;
-        last = static_cast<double>(full) * std::get<1>(param).second;
-        sub.resize(last - first);
-        for (size_t i = 0; i < sub.size(); ++i) { sub[i] = i + first; }
+        double full =  (std::get<0>(param) ? NR : NC);
+        size_t first = full * std::get<1>(param).first;
+        size_t last = full * std::get<1>(param).second;
+        block_length = last - first;
 
         if (std::get<0>(param)) {
-            ref = tatami::make_DelayedSubset<0>(dense, sub);
+            std::vector<double> sub(simulated.data() + first * NC, simulated.data() + last * NC);
+            ref.reset(new tatami::DenseRowMatrix<double>(block_length, NC, std::move(sub)));
             dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, last);
             sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, first, last);
         } else {
-            ref = tatami::make_DelayedSubset<1>(dense, sub);
+            std::vector<double> sub;
+            sub.reserve(NR * block_length);
+            for (size_t r = 0; r < NR; ++r) {
+                auto row = simulated.data() + r * NC;
+                sub.insert(sub.end(), row + first, row + last);
+            }
+            ref.reset(new tatami::DenseRowMatrix<double>(NR, block_length, std::move(sub)));
             dense_block = tatami::make_DelayedSubsetBlock<1>(dense, first, last);
             sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, first, last);
         }
@@ -53,20 +55,20 @@ protected:
 /*****************************
  *****************************/
 
-using SubsetBlockFullAccessTest = SubsetBlockTest<std::tuple<bool, std::pair<double, double>, size_t> >;
+using SubsetBlockFullAccessTest = SubsetBlockTest<std::tuple<bool, std::pair<double, double>, bool, size_t> >;
 
-TEST_P(SubsetBlockFullAccessTest, RowAccess) {
+TEST_P(SubsetBlockFullAccessTest, Row) {
     auto param = GetParam();
     extra_assemble(param);
 
     EXPECT_EQ(ref->nrow(), dense_block->nrow());
     EXPECT_EQ(ref->ncol(), dense_block->ncol());
     if (std::get<0>(param)) {
-        EXPECT_EQ(sub.size(), dense_block->nrow());
+        EXPECT_EQ(block_length, dense_block->nrow());
         EXPECT_EQ(dense->ncol(), dense_block->ncol());
     } else {
         EXPECT_EQ(dense->nrow(), dense_block->nrow());
-        EXPECT_EQ(sub.size(), dense_block->ncol());
+        EXPECT_EQ(block_length, dense_block->ncol());
     }
 
     EXPECT_TRUE(dense_block->prefer_rows());
@@ -74,58 +76,20 @@ TEST_P(SubsetBlockFullAccessTest, RowAccess) {
     EXPECT_FALSE(dense_block->sparse());
     EXPECT_TRUE(sparse_block->sparse());
 
-    auto work_dense = dense_block->new_workspace(true);
-    auto work_sparse = dense_block->new_workspace(true);
-
-    for (size_t i = 0; i < dense_block->nrow(); i += std::get<2>(param)) {
-        auto expected = extract_dense<true>(ref.get(), i);
-        auto output = extract_dense<true>(dense_block.get(), i);
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        auto output2 = extract_dense<true>(sparse_block.get(), i);
-        EXPECT_EQ(output2, expected);
-
-        // Works in sparse mode as well.
-        auto outputS = extract_sparse<true>(sparse_block.get(), i);
-        EXPECT_EQ(outputS, expected);
-
-        // Passes along the workspace.
-        auto outputDW = extract_dense<true>(dense_block.get(), i, work_dense.get());
-        EXPECT_EQ(outputDW, expected);
-
-        auto outputSW = extract_sparse<true>(sparse_block.get(), i, work_sparse.get());
-        EXPECT_EQ(outputSW, expected);
-    }
+    bool FORWARD = std::get<2>(param);
+    bool JUMP = std::get<3>(param);
+    test_simple_row_access(dense_block.get(), ref.get(), FORWARD, JUMP);
+    test_simple_row_access(sparse_block.get(), ref.get(), FORWARD, JUMP);
 }
 
-TEST_P(SubsetBlockFullAccessTest, ColumnAccess) {
+TEST_P(SubsetBlockFullAccessTest, Column) {
     auto param = GetParam();
     extra_assemble(param);
+    bool FORWARD = std::get<2>(param);
+    bool JUMP = std::get<3>(param);
 
-    auto work_dense = dense_block->new_workspace(false);
-    auto work_sparse = dense_block->new_workspace(false);
-
-    for (size_t i = 0; i < dense_block->ncol(); i += std::get<2>(param)) {
-        auto expected = extract_dense<false>(ref.get(), i);
-        auto output = extract_dense<false>(dense_block.get(), i);
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        auto output2 = extract_dense<false>(sparse_block.get(), i);
-        EXPECT_EQ(output2, expected);
-
-        // Works in sparse mode as well.
-        auto outputS = extract_sparse<false>(sparse_block.get(), i);
-        EXPECT_EQ(outputS, expected);
-
-        // Passes along the workspace.
-        auto outputDW = extract_dense<false>(dense_block.get(), i, work_dense.get());
-        EXPECT_EQ(outputDW, expected);
-
-        auto outputSW = extract_sparse<false>(sparse_block.get(), i, work_sparse.get());
-        EXPECT_EQ(outputSW, expected);
-    }
+    test_simple_column_access(dense_block.get(), ref.get(), FORWARD, JUMP);
+    test_simple_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -138,6 +102,7 @@ INSTANTIATE_TEST_CASE_P(
             std::make_pair(0.25, 0.8),
             std::make_pair(0.4, 1)
         ),
+        ::testing::Values(true, false), // iterate forwards or backwards.
         ::testing::Values(1, 3) // jump, to check the workspace memory
     )
 );
@@ -145,76 +110,32 @@ INSTANTIATE_TEST_CASE_P(
 /*****************************
  *****************************/
 
-using SubsetBlockSlicedAccessTest = SubsetBlockTest<std::tuple<bool, std::pair<double, double>, size_t, std::vector<size_t> > >;
+using SubsetBlockSlicedAccessTest = SubsetBlockTest<std::tuple<bool, std::pair<double, double>, bool, size_t, std::vector<double> > >;
 
-TEST_P(SubsetBlockSlicedAccessTest, RowAccess) {
+TEST_P(SubsetBlockSlicedAccessTest, Row) {
     auto param = GetParam();
     extra_assemble(param);
 
-    auto slice = std::get<3>(GetParam());
-    size_t FIRST = slice[0], LEN = slice[1], SHIFT = slice[2];
+    bool FORWARD = std::get<2>(param);
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0] * dense_block->ncol(), LAST = interval_info[1] * dense_block->ncol();
 
-    auto work_dense = dense_block->new_workspace(true);
-    auto work_sparse = dense_block->new_workspace(true);
-
-    for (size_t i = 0; i < dense_block->nrow(); i += std::get<2>(param), FIRST += SHIFT) {
-        auto interval = wrap_intervals(FIRST, FIRST + SHIFT, dense_block->ncol());
-        size_t first = interval.first, last = interval.second;
-
-        auto expected = extract_dense<true>(ref.get(), i, first, last);
-        auto output = extract_dense<true>(dense_block.get(), i, first, last);
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        auto output2 = extract_dense<true>(sparse_block.get(), i, first, last);
-        EXPECT_EQ(output2, expected);
-
-        // Works in sparse mode as well.
-        auto outputS = extract_sparse<true>(sparse_block.get(), i, first, last);
-        EXPECT_EQ(outputS, expected);
-
-        // Passes along the workspace.
-        auto outputDW = extract_dense<true>(dense_block.get(), i, first, last, work_dense.get());
-        EXPECT_EQ(outputDW, expected);
-
-        auto outputSW = extract_sparse<true>(sparse_block.get(), i, first, last, work_sparse.get());
-        EXPECT_EQ(outputSW, expected);
-    }
+    test_sliced_row_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    test_sliced_row_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
-TEST_P(SubsetBlockSlicedAccessTest, ColumnAccess) {
+TEST_P(SubsetBlockSlicedAccessTest, Column) {
     auto param = GetParam();
     extra_assemble(param);
 
-    auto slice = std::get<3>(GetParam());
-    size_t FIRST = slice[0], LEN = slice[1], SHIFT = slice[2];
+    bool FORWARD = std::get<2>(param);
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0] * dense_block->nrow(), LAST = interval_info[1] * dense_block->nrow();
 
-    auto work_dense = dense_block->new_workspace(false);
-    auto work_sparse = dense_block->new_workspace(false);
-
-    for (size_t i = 0; i < dense_block->ncol(); i += std::get<2>(param), FIRST += SHIFT) {
-        auto interval = wrap_intervals(FIRST, FIRST + SHIFT, dense_block->nrow());
-        size_t first = interval.first, last = interval.second;
-
-        auto expected = extract_dense<false>(ref.get(), i, first, last);
-        auto output = extract_dense<false>(dense_block.get(), i, first, last);
-        EXPECT_EQ(output, expected);
-
-        // Same result regardless of the backend.
-        auto output2 = extract_dense<false>(sparse_block.get(), i, first, last);
-        EXPECT_EQ(output2, expected);
-
-        // Works in sparse mode as well.
-        auto outputS = extract_sparse<false>(sparse_block.get(), i, first, last);
-        EXPECT_EQ(outputS, expected);
-
-        // Passes along the workspace.
-        auto outputDW = extract_dense<false>(dense_block.get(), i, first, last, work_dense.get());
-        EXPECT_EQ(outputDW, expected);
-
-        auto outputSW = extract_sparse<false>(sparse_block.get(), i, first, last, work_sparse.get());
-        EXPECT_EQ(outputSW, expected);
-    }
+    test_sliced_column_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    test_sliced_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -227,10 +148,63 @@ INSTANTIATE_TEST_CASE_P(
             std::make_pair(0.25, 0.8),
             std::make_pair(0.4, 1)
         ),
+        ::testing::Values(true, false), // iterate forwards or backwards.
         ::testing::Values(1, 3), // jump, to check the workspace memory
         ::testing::Values(
-            std::vector<size_t>({ 0, 10, 1 }), // start, length, shift
-            std::vector<size_t>({ 3, 5, 0 })
+            std::vector<double>({ 0, 0.45 }), 
+            std::vector<double>({ 0.33, 0.66 }),
+            std::vector<double>({ 0.56, 1 })
+        )        
+    )
+);
+
+/*****************************
+ *****************************/
+
+using SubsetBlockIndexedAccessTest = SubsetBlockTest<std::tuple<bool, std::pair<double, double>, bool, size_t, std::vector<double> > >;
+
+TEST_P(SubsetBlockIndexedAccessTest, Row) {
+    auto param = GetParam();
+    extra_assemble(param);
+
+    bool FORWARD = std::get<2>(param);
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0] * dense_block->ncol(), STEP = interval_info[1] * dense_block->ncol();
+
+    test_indexed_row_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    test_indexed_row_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+}
+
+TEST_P(SubsetBlockIndexedAccessTest, Column) {
+    auto param = GetParam();
+    extra_assemble(param);
+
+    bool FORWARD = std::get<2>(param);
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+    size_t FIRST = interval_info[0] * dense_block->nrow(), STEP = interval_info[1] * dense_block->nrow();
+
+    test_indexed_column_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    test_indexed_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubsetBlock,
+    SubsetBlockIndexedAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // row or column subsetting, respectively.
+        ::testing::Values(
+            std::make_pair(0.0, 0.5),
+            std::make_pair(0.25, 0.8),
+            std::make_pair(0.4, 1)
+        ),
+        ::testing::Values(true, false), // iterate forwards or backwards.
+        ::testing::Values(1, 3), // jump, to check the workspace memory
+        ::testing::Values(
+            std::vector<double>({ 0, 0.05 }), 
+            std::vector<double>({ 0.33, 0.06 }),
+            std::vector<double>({ 0.56, 0.02 })
         )        
     )
 );

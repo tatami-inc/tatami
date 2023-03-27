@@ -18,7 +18,7 @@ add_executable(
     src/base/CompressedSparseMatrix.cpp
 #    src/base/DelayedBind.cpp
 #    src/base/DelayedSubset.cpp
-#    src/base/DelayedSubsetBlock.cpp
+    src/base/DelayedSubsetBlock.cpp
     src/base/DelayedTranspose.cpp
     src/base/DelayedCast.cpp
     src/base/arith_vector_helpers.cpp
