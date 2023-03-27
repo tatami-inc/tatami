@@ -35,29 +35,96 @@ public:
      * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
      */
     DelayedSubset(std::shared_ptr<const Matrix<T, IDX> > p, V idx) : 
-        mat(p), 
-        indices(std::move(idx)),
-        reverse_indices(MARGIN==1 ? mat->ncol() : mat->nrow(), indices.size())
+        mat(std::move(p)), 
+        indices(std::move(idx))
     {
+        bool unsorted = false;
         for (size_t i = 0; i < indices.size(); ++i) {
-            if (i && indices[i] < indices[i-1]) {
-                // unsorted, we give up.
-                reverse_indices.clear();
-                break;
+            if (i) {
+                if (indices[i] < indices[i-1]) {
+                    unsorted = true;
+                } else if (indices[i] == indices[i-1]) {
+                    has_duplicates = true;
+                }
+                if (has_duplicates && unsorted) {
+                    break; // nothing else to do here.
+                }
             }
-
-            auto& chosen = reverse_indices[indices[i]];
-            if (chosen != indices.size()) {
-                // duplicates, we give up.
-                reverse_indices.clear(); 
-                break;
-            }
-
-            chosen = i;
         }
-       
+
+        if (!unsorted) {
+            if (!has_duplicates) {
+                if constexpr(use_unique_and_sorted) {
+                    unique_and_sorted.insert(unique_and_sorted.end(), indices.begin(), indices.end());
+                }
+
+                mapping_single.resize(MARGIN == 0 ? mat->nrow() : mat->ncol());
+                for (size_t i = 0, end = indices.size(); i < end; ++i) {
+                    mapping_single[indices[i]] = i;
+                }
+
+            } else {
+                unique_and_sorted.reserve(indices.size());
+                mapping_duplicates.resize(MARGIN == 0 ? mat->nrow() : mat->ncol());
+                duplicate_mapping_indices.reserve(indices.size());
+
+                for (size_t i = 0, end = indices.size(); i < end; ++i) {
+                    auto& current = mapping_duplicates[indices[i]];
+                    if (!i || indices[i] != indices[i-1]) {
+                        unique_and_sorted.push_back(indices[i]);
+                        current.first = duplicate_mapping_indices.size();
+                    }
+                    duplicate_mapping_indices.push_back(i);
+                    ++current.second;
+                }
+            }
+
+        } else {
+            std::vector<std::pair<typename std::remove_reference<decltype(indices[0])>::type, size_t> > collected;
+            collected.reserve(indices.size());
+            for (size_t i = 0, end = indices.size(); i < end; ++i) {
+                collected.emplace_back(indices[i], i);
+            }
+            std::sort(collected.begin(), collected.end());
+
+            unique_and_sorted.reserve(indices.size());
+            if (!has_duplicates) {
+                mapping_single.resize(MARGIN == 0 ? mat->nrow() : mat->ncol());
+                for (size_t i = 0, end = collected.size(); i < end; ++i) {
+                    mapping_single[collected[i].first] = collected[i].second;
+                    unique_and_sorted.push_back(collected[i].first);
+                }
+
+            } else {
+                mapping_duplicates.resize(MARGIN == 0 ? mat->nrow() : mat->ncol());
+                duplicate_mapping_indices.reserve(indices.size());
+
+                for (size_t i = 0, end = collected.size(); i < end; ++i) {
+                    auto& current = mapping_duplicates[collected[i].first];
+                    if (!i || collected[i].first != collected[i-1].first) {
+                        unique_and_sorted.push_back(collected[i].first);
+                        current.first = duplicate_mapping_indices.size();
+                    }
+                    duplicate_mapping_indices.push_back(i);
+                    ++current.second;
+                }
+            }
+        }
+      
         return;
     }
+
+private:
+    std::shared_ptr<const Matrix<T, IDX> > mat;
+    V indices;
+    std::vector<size_t> mapping_single;
+
+    static bool use_unique_and_sorted = !std::is_same<V, std::vector<IDX> >::value;
+    std::vector<IDX> unique_and_sorted;
+
+    bool has_duplicates = false;
+    std::vector<std:pair<size_t, size_t> > mapping_duplicates; // holds (position, size)
+    std::vector<size_t> duplicate_mapping_indices; // position in mapping_duplicates refers to a slice of duplicate_mapping_indices.
 
 public:
     const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
@@ -200,10 +267,6 @@ private:
     };
 
 private:
-    std::shared_ptr<const Matrix<T, IDX> > mat;
-    V indices;
-    std::vector<IDX> reverse_indices;
-
     template<bool ROW>
     void subset_expanded(size_t r, T* buffer, size_t start, size_t end, Workspace* work) const {
         if (start >= end) {
