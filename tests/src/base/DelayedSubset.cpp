@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <gmock/gmock.h>
 
 #include <vector>
 #include <memory>
@@ -281,4 +282,91 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
+/****************************************************
+ ****************************************************/
 
+class SubsetConstructorTest : public SubsetTest<std::tuple<bool, bool> > {};
+
+TEST_P(SubsetConstructorTest, SortedUnique) {
+    auto param = GetParam();
+    bool duplicate = std::get<0>(param);
+    bool sorted = std::get<1>(param);
+    auto sub = spawn_indices<size_t>(5, NR, duplicate, sorted);
+
+    if (sorted && !duplicate) {
+        tatami::DelayedSubsetSortedUnique<0, double, int, decltype(sub)> manual(dense, sub);
+        auto ref = reference_on_rows(sub);
+        test_simple_row_access(&manual, ref.get(), true, 1);
+        test_simple_column_access(&manual, ref.get(), true, 1);
+    } else {
+        try {
+            tatami::DelayedSubsetSortedUnique<0, double, int, decltype(sub)> manual(dense, sub);
+            FAIL() << "expected exception during construction";
+        } catch (std::exception& e) {
+            EXPECT_THAT(e.what(), ::testing::HasSubstr("unique"));
+        }
+    }
+}
+
+TEST_P(SubsetConstructorTest, Sorted) {
+    auto param = GetParam();
+    bool duplicate = std::get<0>(param);
+    bool sorted = std::get<1>(param);
+    auto sub = spawn_indices<size_t>(5, NR, duplicate, sorted);
+
+    if (sorted) {
+        tatami::DelayedSubsetSorted<0, double, int, decltype(sub)> manual(dense, sub);
+        auto ref = reference_on_rows(sub);
+        test_simple_row_access(&manual, ref.get(), true, 1);
+        test_simple_column_access(&manual, ref.get(), true, 1);
+    } else {
+        try {
+            tatami::DelayedSubsetSortedUnique<0, double, int, decltype(sub)> manual(dense, sub); // '<' breaks EXPECT_ANY_THROW macro.
+            FAIL() << "expected exception during construction";
+        } catch (std::exception& e) {
+            EXPECT_THAT(e.what(), ::testing::HasSubstr("sorted"));
+        }
+    }
+}
+
+TEST_P(SubsetConstructorTest, Unique) {
+    auto param = GetParam();
+    bool duplicate = std::get<0>(param);
+    bool sorted = std::get<1>(param);
+    auto sub = spawn_indices<size_t>(5, NR, duplicate, sorted);
+
+    if (!duplicate) {
+        tatami::DelayedSubsetUnique<0, double, int, decltype(sub)> manual(dense, sub);
+        auto ref = reference_on_rows(sub);
+        test_simple_row_access(&manual, ref.get(), true, 1);
+        test_simple_column_access(&manual, ref.get(), true, 1);
+    } else {
+        try {
+            tatami::DelayedSubsetSortedUnique<0, double, int, decltype(sub)> manual(dense, sub);
+            FAIL() << "expected exception during construction";
+        } catch (std::exception& e) {
+            EXPECT_THAT(e.what(), ::testing::HasSubstr("sorted"));
+        }
+    }
+}
+
+TEST_P(SubsetConstructorTest, Any) {
+    auto param = GetParam();
+    bool duplicate = std::get<0>(param);
+    bool sorted = std::get<1>(param);
+    auto sub = spawn_indices<size_t>(5, NR, duplicate, sorted);
+
+    tatami::DelayedSubset<0, double, int, decltype(sub)> manual(dense, sub);
+    auto ref = reference_on_rows(sub);
+    test_simple_row_access(&manual, ref.get(), true, 1);
+    test_simple_column_access(&manual, ref.get(), true, 1);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubset,
+    SubsetConstructorTest,
+    ::testing::Combine(
+        ::testing::Values(false, true), // whether to support duplicate indices.
+        ::testing::Values(true, false)  // whether to require sorted indices.
+    )
+);
