@@ -93,6 +93,7 @@ TEST_P(SubsetFullAccessTest, OnRow) {
     auto sub = spawn_indices<size_t>(std::get<0>(param), NR, std::get<1>(param), std::get<2>(param));
     auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
     auto sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
+    auto sparse_subbed2 = tatami::make_DelayedSubset<0>(sparse, std::vector<int>(sub.begin(), sub.end())); // check that eliding the copy works.
     auto ref = reference_on_rows(sub);
 
     EXPECT_EQ(sub.size(), dense_subbed->nrow());
@@ -106,9 +107,11 @@ TEST_P(SubsetFullAccessTest, OnRow) {
     size_t JUMP = std::get<4>(param);
     test_simple_row_access(dense_subbed.get(), ref.get(), FORWARD, JUMP);
     test_simple_row_access(sparse_subbed.get(), ref.get(), FORWARD, JUMP);
+    test_simple_row_access(sparse_subbed2.get(), ref.get(), FORWARD, JUMP);
 
     test_simple_column_access(dense_subbed.get(), ref.get(), FORWARD, JUMP);
     test_simple_column_access(sparse_subbed.get(), ref.get(), FORWARD, JUMP);
+    test_simple_column_access(sparse_subbed2.get(), ref.get(), FORWARD, JUMP);
 }
 
 TEST_P(SubsetFullAccessTest, OnColumn) {
@@ -116,6 +119,7 @@ TEST_P(SubsetFullAccessTest, OnColumn) {
     auto sub = spawn_indices<size_t>(std::get<0>(param), NC, std::get<1>(param), std::get<2>(param));
     auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
     auto sparse_subbed = tatami::make_DelayedSubset<1>(sparse, sub);
+    auto sparse_subbed2 = tatami::make_DelayedSubset<1>(sparse, std::vector<int>(sub.begin(), sub.end())); // check that eliding the copy works.
     auto ref = reference_on_columns(sub);
 
     EXPECT_EQ(dense->nrow(), dense_subbed->nrow());
@@ -129,9 +133,11 @@ TEST_P(SubsetFullAccessTest, OnColumn) {
     size_t JUMP = std::get<4>(param);
     test_simple_row_access(dense_subbed.get(), ref.get(), FORWARD, JUMP);
     test_simple_row_access(sparse_subbed.get(), ref.get(), FORWARD, JUMP);
+    test_simple_row_access(sparse_subbed2.get(), ref.get(), FORWARD, JUMP);
 
     test_simple_column_access(dense_subbed.get(), ref.get(), FORWARD, JUMP);
     test_simple_column_access(sparse_subbed.get(), ref.get(), FORWARD, JUMP);
+    test_simple_column_access(sparse_subbed2.get(), ref.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -157,6 +163,7 @@ TEST_P(SubsetSlicedAccessTest, OnRow) {
 
     auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
     auto sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
+    auto sparse_subbed2 = tatami::make_DelayedSubset<0>(sparse, std::vector<int>(sub.begin(), sub.end())); // check that eliding the copy works.
     auto ref = reference_on_rows(sub);
 
     size_t JUMP = std::get<3>(param);
@@ -166,16 +173,20 @@ TEST_P(SubsetSlicedAccessTest, OnRow) {
 
     test_sliced_row_access(dense_subbed.get(), ref.get(), true, JUMP, CFIRST, CLAST);
     test_sliced_row_access(sparse_subbed.get(), ref.get(), true, JUMP, CFIRST, CLAST);
+    test_sliced_row_access(sparse_subbed2.get(), ref.get(), true, JUMP, CFIRST, CLAST);
 
     test_sliced_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, RLAST);
     test_sliced_column_access(sparse_subbed.get(), ref.get(), true, JUMP, RFIRST, RLAST);
+    test_sliced_column_access(sparse_subbed2.get(), ref.get(), true, JUMP, RFIRST, RLAST);
 }
 
 TEST_P(SubsetSlicedAccessTest, OnColumn) {
     auto param = GetParam();
     auto sub = spawn_indices<size_t>(std::get<0>(param), NC, std::get<1>(param), std::get<2>(param));
+
     auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
     auto sparse_subbed = tatami::make_DelayedSubset<1>(sparse, sub);
+    auto sparse_subbed2 = tatami::make_DelayedSubset<1>(sparse, std::vector<int>(sub.begin(), sub.end())); // check that eliding the copy works.
     auto ref = reference_on_columns(sub);
 
     size_t JUMP = std::get<3>(param);
@@ -185,9 +196,11 @@ TEST_P(SubsetSlicedAccessTest, OnColumn) {
 
     test_sliced_row_access(dense_subbed.get(), ref.get(), true, JUMP, CFIRST, CLAST);
     test_sliced_row_access(sparse_subbed.get(), ref.get(), true, JUMP, CFIRST, CLAST);
+    test_sliced_row_access(sparse_subbed2.get(), ref.get(), true, JUMP, CFIRST, CLAST);
 
     test_sliced_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, RLAST);
     test_sliced_column_access(sparse_subbed.get(), ref.get(), true, JUMP, RFIRST, RLAST);
+    test_sliced_column_access(sparse_subbed2.get(), ref.get(), true, JUMP, RFIRST, RLAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
