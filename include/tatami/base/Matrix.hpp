@@ -292,6 +292,36 @@ public:
         return buffer;
     }
 
+    /**
+     * @param r Index of the row.
+     * @param buffer Pointer to an array with enough space for at least `RowIndexWorkspace<IDX>::length` values.
+     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     *
+     * @return The array pointed to by `buffer` is filled with a block of values from row `r`.
+     * `buffer` itself is returned.
+     */
+    const T* row_copy(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
+        // Indexed extraction should almost certainly copy, but we'll just make sure.
+        auto ptr = row(r, buffer, work);
+        copy_over(ptr, buffer, work->length);
+        return buffer;
+    }
+
+    /**
+     * @param c Index of the column.
+     * @param buffer Pointer to an array with enough space for at least `ColumnIndexWorkspace<IDX>::length` values.
+     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     *
+     * @return The array pointed to by `buffer` is filled with a block of values from column `c`.
+     * `buffer` itself is returned.
+     */
+    const T* column_copy(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
+        // Indexed extraction should almost certainly copy, but we'll just make sure.
+        auto ptr = column(c, buffer, work);
+        copy_over(ptr, buffer, work->length);
+        return buffer;
+    }
+
 public:
     /**
      * A more convenient but less efficient version of the `row()` method.
@@ -364,7 +394,7 @@ public:
      */
     std::vector<T> row(size_t r, RowIndexWorkspace<IDX>* work) const {
         std::vector<T> output(work->length);
-        row(r, output.data(), work);
+        row_copy(r, output.data(), work);
         return output;
     }
 
@@ -379,7 +409,7 @@ public:
      */
     std::vector<T> column(size_t c, ColumnIndexWorkspace<IDX>* work) const {
         std::vector<T> output(work->length);
-        column(c, output.data(), work);
+        column_copy(c, output.data(), work);
         return output;
     }
 

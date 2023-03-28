@@ -62,6 +62,12 @@ public:
     }
 
 private:
+    std::vector<std::shared_ptr<const Matrix<T, IDX> > > mats;
+    std::vector<size_t> cumulative;
+
+    bool sparse_;
+    std::pair<double, double> dimension_preference_;
+
     void set_constants() {
         sparse_ = true;
         for (const auto& x : mats) {
@@ -81,42 +87,131 @@ private:
     }
 
 public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        if constexpr(MARGIN==1) {
-            assemble_along_dimension<true>(r, buffer, start, end, work);
-            return buffer;
+    size_t nrow() const {
+        if constexpr(MARGIN==0) {
+            return cumulative.back();
         } else {
-            return extract_one_dimension<true>(r, buffer, start, end, work);
+            return mats.front()->nrow();
         }
     }
 
-    const T* column(size_t c, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        if constexpr(MARGIN==1) {
-            return extract_one_dimension<false>(c, buffer, start, end, work);
+    size_t ncol() const {
+        if constexpr(MARGIN==0) {
+            return mats.front()->ncol();
         } else {
-            assemble_along_dimension<false>(c, buffer, start, end, work);
-            return buffer;
+            return cumulative.back();
         }
+    }
+
+    bool sparse() const {
+        return sparse_;
+    }
+
+    bool prefer_rows() const {
+        const auto& dimpref = dimension_preference_;
+        return dimpref.first > dimpref.second;
+    }
+
+    std::pair<double, double> dimension_preference() const {
+        return dimension_preference_;
     }
 
     using Matrix<T, IDX>::column;
 
     using Matrix<T, IDX>::row;
 
+    using Matrix<T, IDX>::sparse_column;
+
+    using Matrix<T, IDX>::sparse_row;
+
 public:
-    // Declaring it here so that it can be used in the method signature.
-    struct BindWorkspace : public Workspace {
-        BindWorkspace(std::vector<std::shared_ptr<Workspace> > w) : workspaces(std::move(w)), last_segment(0) {}
-        std::vector<std::shared_ptr<Workspace> > workspaces;
-        size_t last_segment;
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct PerpendicularWorkspace : public Workspace<ROW> {
+        PerpendicularWorkspace(std::vector<std::shared_ptr<Workspace<ROW> > > w) : workspaces(std::move(w)) {}
+        std::vector<std::shared_ptr<Workspace<ROW> > > workspaces;
+        size_t last_segment = 0;
     };
 
+    template<bool ROW>
+    struct ParallelWorkspace : public Workspace<ROW> {
+        ParallelWorkspace(std::vector<std::shared_ptr<Workspace<ROW> > > w) : workspaces(std::move(w)) {}
+        std::vector<std::shared_ptr<Workspace<ROW> > > workspaces;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowWorkspace> new_row_workspace() const {
+        return new_workspace<true>();
+    }
+
+    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
+        return new_workspace<false>();
+    }
+
+    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            return extract_one_dimension<true>(r, buffer, static_cast<PerpendicularWorkspace<true>*>(work));
+        } else {
+            assemble_along_dimension_simple<true>(r, buffer, static_cast<ParallelWorkspace<true>*>(work));
+            return buffer;
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            assemble_along_dimension_simple<false>(c, buffer, static_cast<ParallelWorkspace<false>*>(work));
+            return buffer;
+        } else {
+            return extract_one_dimension<false>(c, buffer, static_cast<PerpendicularWorkspace<false>*>(work));
+        }
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return extract_one_dimension<true>(r, out_values, out_indices, static_cast<PerpendicularWorkspace<true>*>(work), sorted);
+        } else {
+            return assemble_along_dimension_simple<true>(r, out_values, out_indices, static_cast<ParallelWorkspace<true>*>(work), sorted);
+        }
+    }
+
+    SparseRange<T, IDX> simple_column(size_t c, T* out_values, IDX* out_indices, ColumnWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return assemble_along_dimension_simple<false>(c, out_values, out_indices, static_cast<ParallelWorkspace<false>*>(work), sorted);
+        } else {
+            return extract_one_dimension<false>(c, out_values, out_indices, static_cast<PerpendicularWorkspace<false>*>(work), sorted);
+        }
+    }
+
 private:
+    template<bool ROW>
+    std::shared_ptr<Workspace<ROW> > new_workspace() const {
+        std::vector<std::shared_ptr<Workspace<ROW> > > workspaces;
+        workspaces.reserve(mats.size());
+        for (const auto& x : mats) {
+            if constexpr(ROW) {
+                workspaces.push_back(x->new_row_workspace());
+            } else {
+                workspaces.push_back(x->new_column_workspace());
+            }
+        }
+
+        if constexpr((MARGIN == 0) == ROW) {
+            return std::shared_ptr<Workspace<ROW> >(new PerpendicularWorkspace<ROW>(std::move(workspaces)));
+        } else {
+            return std::shared_ptr<Workspace<ROW> >(new ParallelWorkspace<ROW>(std::move(workspaces)));
+        }
+    }
+
     size_t choose_segment(size_t i) const {
         return std::upper_bound(cumulative.begin(), cumulative.end(), i) - cumulative.begin() - 1;
     }
 
-    size_t choose_segment(size_t i, BindWorkspace* work) const {
+    template<class PerpendicularWorkspace_> 
+    size_t choose_segment(size_t i, PerpendicularWorkspace_* work) const {
         if (cumulative[work->last_segment] > i) {
             if (work->last_segment && cumulative[work->last_segment - 1] <= i) {
                 --(work->last_segment);
@@ -133,238 +228,366 @@ private:
         return work->last_segment;
     }
 
-    template<bool ROW>
-    const T* extract_one_dimension(size_t i, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        size_t chosen;
-
-        if (work != nullptr) {
-            auto work2 = static_cast<BindWorkspace*>(work);
-            chosen = choose_segment(i, work2);
-            work = work2->workspaces[chosen].get();
-        } else {
-            chosen = choose_segment(i);
-        }
-
+    template<bool ROW, class PerpendicularWorkspace_>
+    const T* extract_one_dimension(size_t i, T* buffer, PerpendicularWorkspace_* work) const {
+        size_t chosen = choose_segment(i, work);
+        auto work2 = work->workspaces[chosen].get();
         if constexpr(ROW) {
-            return mats[chosen]->row(i - cumulative[chosen], buffer, start, end, work);
+            return mats[chosen]->row(i - cumulative[chosen], buffer, work2);
         } else {
-            return mats[chosen]->column(i - cumulative[chosen], buffer, start, end, work);
+            return mats[chosen]->column(i - cumulative[chosen], buffer, work2);
         }
     }
 
-    template<bool ROW>
-    void assemble_along_dimension(size_t i, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        BindWorkspace* work2 = NULL;
-        if (work != nullptr) {
-            work2 = static_cast<BindWorkspace*>(work);
-        }
-        
-        size_t left = 0;
-        if (start) {
-            if (work2) {
-                left = choose_segment(start, work2);
-            } else {
-                left = choose_segment(start);
-            }
-        }
-
-        size_t current = start;
-        while (current < end) {
-            size_t curstart = current - cumulative[left];
-            size_t curend = std::min(cumulative[left + 1], end) - cumulative[left];
-
-            Workspace* curwork = NULL;
-            if (work2 != NULL) {
-                curwork = work2->workspaces[left].get();
-            }
-
-            const T * ptr;
+    template<bool ROW, class ParallelWorkspace_>
+    void assemble_along_dimension_simple(size_t i, T* buffer, ParallelWorkspace_* work) const {
+        for (size_t m = 0; m < mats.size(); ++m) {
+            auto curwork = work->workspaces[m].get();
+            const auto& curmat = mats[m];
             if constexpr(ROW) {
-                ptr = mats[left]->row(i, buffer, curstart, curend, curwork);
+                curmat->row_copy(i, buffer, curwork);
+                buffer += curmat->ncol();
             } else {
-                ptr = mats[left]->column(i, buffer, curstart, curend, curwork);
+                curmat->column_copy(i, buffer, curwork);
+                buffer += curmat->nrow();
+            }
+        }
+    }
+
+    template<bool ROW, class AlongWorkspace>
+    SparseRange<T, IDX> extract_one_dimension(size_t i, T* out_values, IDX* out_indices, AlongWorkspace* work, bool sorted=true) const {
+        size_t chosen = choose_segment(i, work);
+        auto work2 = work->workspaces[chosen].get();
+        if constexpr(ROW) {
+            return mats[chosen]->sparse_row(i - cumulative[chosen], out_values, out_indices, work2, sorted);
+        } else {
+            return mats[chosen]->sparse_column(i - cumulative[chosen], out_values, out_indices, work2, sorted);
+        }
+    }
+
+    template<bool ROW, class ParallelWorkspace_>
+    SparseRange<T, IDX> assemble_along_dimension_simple(size_t i, T* out_values, IDX* out_indices, ParallelWorkspace_* work, bool sorted=true) const {
+        size_t total = 0;
+        auto originali = out_indices;
+        auto originalv = out_values;
+
+        for (size_t m = 0; m < mats.size(); ++m) {
+            auto curwork = work->workspaces[m].get();
+            const auto& curmat = mats[m];
+
+            SparseRange<T, IDX> found;
+            if constexpr(ROW) {
+                found = curmat->sparse_row_copy(i, out_values, out_indices, curwork, SPARSE_COPY_BOTH, sorted);
+            } else {
+                found = curmat->sparse_column_copy(i, out_values, out_indices, curwork, SPARSE_COPY_BOTH, sorted);
             }
 
-            size_t filled = curend - curstart;
-            if (buffer != ptr) {
-                std::copy(ptr, ptr + filled, buffer);
+            for (size_t i = 0; i < found.number; ++i) {
+                out_indices[i] += cumulative[m];
             }
-            current += filled;
-            buffer += filled;
-            ++left;
+            out_values += found.number;
+            out_indices += found.number;
+            total += found.number;
         }
+
+        return SparseRange<T, IDX>(total, originalv, originali);
     }
 
 public:
-    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
-        if constexpr(MARGIN==1) {
-            return assemble_along_dimension_sparse<true>(r, out_values, out_indices, start, end, work, sorted);
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct PerpendicularBlockWorkspace : public BlockWorkspace<ROW> {
+        PerpendicularBlockWorkspace(size_t start, size_t length, std::vector<std::shared_ptr<BlockWorkspace<ROW> > > w) : 
+            BlockWorkspace<ROW>(start, length), workspaces(std::move(w)) {}
+        std::vector<std::shared_ptr<BlockWorkspace<ROW> > > workspaces;
+        size_t last_segment = 0;
+    };
+
+    template<bool ROW>
+    struct ParallelBlockWorkspace : public BlockWorkspace<ROW> {
+        ParallelBlockWorkspace(size_t start, size_t length, std::vector<std::shared_ptr<BlockWorkspace<ROW> > > w, std::vector<size_t> k) : 
+            BlockWorkspace<ROW>(start, length), workspaces(std::move(w)), kept(std::move(k)) {}
+        std::vector<std::shared_ptr<BlockWorkspace<ROW> > > workspaces;
+        std::vector<size_t> kept;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const {
+        return new_workspace<true>(start, length);
+    }
+
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const {
+        return new_workspace<false>(start, length);
+    }
+
+    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            return extract_one_dimension<true>(r, buffer, static_cast<PerpendicularBlockWorkspace<true>*>(work));
         } else {
-            return extract_one_dimension_sparse<true>(r, out_values, out_indices, start, end, work, sorted);
+            assemble_along_dimension_complex<true>(r, buffer, static_cast<ParallelBlockWorkspace<true>*>(work));
+            return buffer;
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
-        if constexpr(MARGIN==1) {
-            return extract_one_dimension_sparse<false>(c, out_values, out_indices, start, end, work, sorted);
+    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            assemble_along_dimension_complex<false>(c, buffer, static_cast<ParallelBlockWorkspace<false>*>(work));
+            return buffer;
         } else {
-            return assemble_along_dimension_sparse<false>(c, out_values, out_indices, start, end, work, sorted);
+            return extract_one_dimension<false>(c, buffer, static_cast<PerpendicularBlockWorkspace<false>*>(work));
         }
     }
 
-    using Matrix<T, IDX>::sparse_column;
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowBlockWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return extract_one_dimension<true>(r, out_values, out_indices, static_cast<PerpendicularBlockWorkspace<true>*>(work), sorted);
+        } else {
+            return assemble_along_dimension_complex<true>(r, out_values, out_indices, static_cast<ParallelBlockWorkspace<true>*>(work), sorted);
+        }
+    }
 
-    using Matrix<T, IDX>::sparse_row;
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnBlockWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return assemble_along_dimension_complex<false>(c, out_values, out_indices, static_cast<ParallelBlockWorkspace<false>*>(work), sorted);
+        } else {
+            return extract_one_dimension<false>(c, out_values, out_indices, static_cast<PerpendicularBlockWorkspace<false>*>(work), sorted);
+        }
+    }
 
 private:
     template<bool ROW>
-    SparseRange<T, IDX> extract_one_dimension_sparse(size_t i, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
-        size_t chosen;
+    std::shared_ptr<BlockWorkspace<ROW> > new_workspace(size_t start, size_t length) const {
+        if constexpr((MARGIN == 0) == ROW) {
+            std::vector<std::shared_ptr<BlockWorkspace<ROW> > > workspaces;
+            workspaces.reserve(mats.size());
 
-        if (work != nullptr) {
-            auto work2 = static_cast<BindWorkspace*>(work);
-            chosen = choose_segment(i, work2);
-            work = work2->workspaces[chosen].get();
-        } else {
-            chosen = choose_segment(i);
-        }
+            for (const auto& x : mats) {
+                if constexpr(ROW) {
+                    workspaces.push_back(x->new_row_workspace(start, length));
+                } else {
+                    workspaces.push_back(x->new_column_workspace(start, length));
+                }
+            }
 
-        if constexpr(ROW) {
-            return mats[chosen]->sparse_row(i - cumulative[chosen], out_values, out_indices, start, end, work, sorted);
+            return std::shared_ptr<BlockWorkspace<ROW> >(new PerpendicularBlockWorkspace<ROW>(start, length, std::move(workspaces)));
+
         } else {
-            return mats[chosen]->sparse_column(i - cumulative[chosen], out_values, out_indices, start, end, work, sorted);
+            std::vector<std::shared_ptr<BlockWorkspace<ROW> > > workspaces;
+            std::vector<size_t> kept;
+
+            if (length) {
+                workspaces.reserve(mats.size());
+                kept.reserve(mats.size());
+
+                size_t index = std::upper_bound(cumulative.begin(), cumulative.end(), start) - cumulative.begin() - 1; // finding the first matrix.
+                size_t actual_start = start - cumulative[index];
+                size_t end = start + length;
+
+                for (; index < mats.size(); ++index) {
+                    size_t actual_end = end;
+                    bool not_final = (end > cumulative[index + 1]);
+                    if (not_final) {
+                        actual_end = cumulative[index + 1];
+                    }
+                    actual_end -= cumulative[index];
+
+                    size_t len = actual_end - actual_start;
+                    const auto& x = mats[index];
+                    if constexpr(ROW) {
+                        workspaces.push_back(x->new_row_workspace(actual_start, len));
+                    } else {
+                        workspaces.push_back(x->new_column_workspace(actual_start, len));
+                    }
+                    kept.push_back(index);
+
+                    if (!not_final) {
+                        break;
+                    }
+                    actual_start = 0;
+                }
+            }
+
+            return std::shared_ptr<BlockWorkspace<ROW> >(new ParallelBlockWorkspace<ROW>(start, length, std::move(workspaces), std::move(kept)));
         }
     }
+
+    template<bool ROW, class ParallelWorkspace_>
+    void assemble_along_dimension_complex(size_t i, T* buffer, ParallelWorkspace_* work) const {
+        for (size_t j = 0, end = work->kept.size(); j < end; ++j) {
+            auto curwork = work->workspaces[j].get();
+            size_t m = work->kept[j];
+            const auto& curmat = mats[m];
+            if constexpr(ROW) {
+                curmat->row_copy(i, buffer, curwork);
+                buffer += curwork->length;
+            } else {
+                curmat->column_copy(i, buffer, curwork);
+                buffer += curwork->length;
+            }
+        }
+    }
+
+    template<bool ROW, class ParallelWorkspace_>
+    SparseRange<T, IDX> assemble_along_dimension_complex(size_t i, T* out_values, IDX* out_indices, ParallelWorkspace_* work, bool sorted=true) const {
+        size_t total = 0;
+        auto originali = out_indices;
+        auto originalv = out_values;
+
+        for (size_t j = 0, end = work->kept.size(); j < end; ++j) {
+            auto curwork = work->workspaces[j].get();
+            size_t m = work->kept[j];
+            const auto& curmat = mats[m];
+
+            SparseRange<T, IDX> found;
+            if constexpr(ROW) {
+                found = curmat->sparse_row_copy(i, out_values, out_indices, curwork, SPARSE_COPY_BOTH, sorted);
+            } else {
+                found = curmat->sparse_column_copy(i, out_values, out_indices, curwork, SPARSE_COPY_BOTH, sorted);
+            }
+
+            for (size_t k = 0; k < found.number; ++k) {
+                out_indices[k] += cumulative[m];
+            }
+            out_values += found.number;
+            out_indices += found.number;
+            total += found.number;
+        }
+
+        return SparseRange<T, IDX>(total, originalv, originali);
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct PerpendicularIndexWorkspace : public IndexWorkspace<IDX, ROW> {
+        PerpendicularIndexWorkspace(size_t length, const IDX* subset, std::vector<std::shared_ptr<IndexWorkspace<IDX, ROW> > > w) : 
+            IndexWorkspace<IDX, ROW>(length, subset), workspaces(std::move(w)) {}
+
+        std::vector<std::shared_ptr<IndexWorkspace<IDX, ROW> > > workspaces;
+        size_t last_segment = 0;
+    };
 
     template<bool ROW>
-    SparseRange<T, IDX> assemble_along_dimension_sparse(size_t i, T* out_values, IDX* out_indices, size_t start, size_t end, Workspace* work=nullptr, bool sorted=true) const {
-        BindWorkspace* work2 = NULL;
-        if (work != nullptr) {
-            work2 = static_cast<BindWorkspace*>(work);
-        }
-        
-        size_t left = 0;
-        if (start) {
-            if (work2) {
-                left = choose_segment(start, work2);
-            } else {
-                left = choose_segment(start);
-            }
-        }
+    struct ParallelIndexWorkspace : public IndexWorkspace<IDX, ROW> {
+        ParallelIndexWorkspace(size_t length, const IDX* subset) : IndexWorkspace<IDX, ROW>(length, subset) {}
+        std::vector<std::shared_ptr<IndexWorkspace<IDX, ROW> > > workspaces;
+        std::vector<std::vector<IDX> > slices;
+        std::vector<size_t> kept;
+    };
+    /**
+     * @endcond
+     */
 
-        size_t current = start;
-        SparseRange<T, IDX> output(0, out_values, out_indices);
-        auto& ntotal = output.number;
-
-        while (current < end) {
-            size_t curstart = current - cumulative[left];
-            size_t curend = std::min(cumulative[left + 1], end) - cumulative[left];
-
-            Workspace* curwork = NULL;
-            if (work2 != NULL) {
-                curwork = work2->workspaces[left].get();
-            }
-
-            SparseRange<T, IDX> range;
-            if constexpr(ROW) {
-                range = mats[left]->sparse_row(i, out_values, out_indices, curstart, curend, curwork);
-            } else {
-                range = mats[left]->sparse_column(i, out_values, out_indices, curstart, curend, curwork);
-            }
-
-            if (range.value != out_values) {
-                std::copy(range.value, range.value + range.number, out_values);
-            }
-            if (range.index != out_indices) {
-                std::copy(range.index, range.index + range.number, out_indices);
-            }
-            for (size_t i = 0; i < range.number; ++i) {
-                out_indices[i] += cumulative[left];
-            }
-            ntotal += range.number;
-
-            current += curend - curstart;
-            out_indices += range.number;
-            out_values += range.number;
-            ++left;
-        }
-
-        return output;
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t length, const IDX* subset) const {
+        return new_workspace<true>(length, subset);
     }
 
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t length, const IDX* subset) const {
+        return new_workspace<false>(length, subset);
+    }
 
-public:
-    /**
-     * @return Number of rows after any combining is applied.
-     */
-    size_t nrow() const {
+    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
         if constexpr(MARGIN==0) {
-            return cumulative.back();
+            return extract_one_dimension<true>(r, buffer, static_cast<PerpendicularIndexWorkspace<true>*>(work));
         } else {
-            return mats.front()->nrow();
+            assemble_along_dimension_complex<true>(r, buffer, static_cast<ParallelIndexWorkspace<true>*>(work));
+            return buffer;
         }
     }
-    
-    /**
-     * @return Number of columns after any combining is applied.
-     */
-    size_t ncol() const {
+
+    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
         if constexpr(MARGIN==0) {
-            return mats.front()->ncol();
+            assemble_along_dimension_complex<false>(c, buffer, static_cast<ParallelIndexWorkspace<false>*>(work));
+            return buffer;
         } else {
-            return cumulative.back();
+            return extract_one_dimension<false>(c, buffer, static_cast<PerpendicularIndexWorkspace<false>*>(work));
         }
     }
 
-public:
-    /**
-     * @param row Should a workspace be created for row-wise extraction?
-     *
-     * @return A null pointer or a shared pointer to a `Workspace` object.
-     */
-    std::shared_ptr<Workspace> new_workspace(bool row) const {
-        std::vector<std::shared_ptr<Workspace> > workspaces;
-        for (const auto& x : mats) {
-            workspaces.push_back(x->new_workspace(row));
-        }           
-        return std::shared_ptr<Workspace>(new BindWorkspace(std::move(workspaces)));
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return extract_one_dimension<true>(r, out_values, out_indices, static_cast<PerpendicularIndexWorkspace<true>*>(work), sorted);
+        } else {
+            return assemble_along_dimension_complex<true>(r, out_values, out_indices, static_cast<ParallelIndexWorkspace<true>*>(work), sorted);
+        }
     }
 
-    /**
-     * @return The sparsity status of the underlying matrices.
-     * If any individual matrix is not sparse, the combination is also considered to be non-sparse.
-     */
-    bool sparse() const {
-        return sparse_;
-    }
-
-    /**
-     * @return Whether the underlying matrices prefers row access.
-     *
-     * The preference is defined as the access pattern that is favored by a majority of matrix elements,
-     * according to `dimension_preference()`.
-     */
-    bool prefer_rows() const {
-        const auto& dimpref = dimension_preference_;
-        return dimpref.first > dimpref.second;
-    }
-
-    /**
-     * @return A `pair` containing the total number of matrix entries that prefer row-level access (`first`) or column-level access (`second`).
-     *
-     * The number of entries for each preference is obtained from each matrix, and the values are summed across all of matrices to be combined.
-     * This aims to provide `prefer_rows()` with a more nuanced preference that accounts for potential differences in access patterns amongst the underlying matrices.
-     */
-    std::pair<double, double> dimension_preference() const {
-        return dimension_preference_;
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return assemble_along_dimension_complex<false>(c, out_values, out_indices, static_cast<ParallelIndexWorkspace<false>*>(work), sorted);
+        } else {
+            return extract_one_dimension<false>(c, out_values, out_indices, static_cast<PerpendicularIndexWorkspace<false>*>(work), sorted);
+        }
     }
 
 private:
-    std::vector<std::shared_ptr<const Matrix<T, IDX> > > mats;
-    std::vector<size_t> cumulative;
+    template<bool ROW>
+    std::shared_ptr<IndexWorkspace<IDX, ROW> > new_workspace(size_t length, const IDX* subset) const {
+        if constexpr((MARGIN == 0) == ROW) {
+            std::vector<std::shared_ptr<IndexWorkspace<IDX, ROW> > > workspaces;
+            workspaces.reserve(mats.size());
 
-    bool sparse_;
-    std::pair<double, double> dimension_preference_;
+            for (const auto& x : mats) {
+                if constexpr(ROW) {
+                    workspaces.push_back(x->new_row_workspace(length, subset));
+                } else {
+                    workspaces.push_back(x->new_column_workspace(length, subset));
+                }
+            }
+
+            return std::shared_ptr<IndexWorkspace<IDX, ROW> >(new PerpendicularIndexWorkspace<ROW>(length, subset, std::move(workspaces)));
+
+        } else {
+            auto ptr = new ParallelIndexWorkspace<ROW>(length, subset);
+            std::shared_ptr<IndexWorkspace<IDX, ROW> > output(ptr);
+
+            if (length) {
+                auto& workspaces = ptr->workspaces;
+                auto& kept = ptr->kept;
+                auto& slices = ptr->slices;
+
+                workspaces.reserve(mats.size());
+                kept.reserve(mats.size());
+                slices.reserve(mats.size());
+
+                size_t index = std::upper_bound(cumulative.begin(), cumulative.end(), subset[0]) - cumulative.begin() - 1; // finding the first matrix.
+                size_t counter = 0;
+
+                for (; index < mats.size(); ++index) {
+                    IDX lower = cumulative[index];
+                    IDX upper = cumulative[index + 1];
+
+                    std::vector<IDX> curslice;
+                    while (counter < length && subset[counter] < upper) {
+                        curslice.push_back(subset[counter] - lower);
+                        ++counter;
+                    }
+                    slices.push_back(std::move(curslice));
+                    const auto& refslice = slices.back();
+
+                    const auto& x = mats[index];
+                    if constexpr(ROW) {
+                        workspaces.push_back(x->new_row_workspace(refslice.size(), refslice.data()));
+                    } else {
+                        workspaces.push_back(x->new_column_workspace(refslice.size(), refslice.data()));
+                    }
+                    kept.push_back(index);
+
+                    if (counter == length) {
+                        break;
+                    }
+                }
+            }
+
+            return output;
+        }
+    }
 };
 
 /**

@@ -8,16 +8,12 @@
 #include "tatami/base/DelayedIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
-#include "../data/data.h"
-#include "TestCore.h"
-
 #include "../_tests/test_row_access.h"
 #include "../_tests/test_column_access.h"
 #include "../_tests/simulate_vector.h"
 
 class DelayedBindTestMethods {
 protected:
-    size_t nrow = 200, ncol = 100;
     std::shared_ptr<tatami::NumericMatrix> bound_dense, bound_sparse, manual;
 
     void assemble(const std::vector<int>& lengths, int dim, bool row) {
@@ -26,7 +22,7 @@ protected:
         std::vector<std::shared_ptr<tatami::NumericMatrix> > collected_dense, collected_sparse;
 
         for (size_t i = 0; i < lengths.size(); ++i) {
-            auto to_add = simulate_sparse_vector<double>(lengths[i] * dim, 0.05);
+            auto to_add = simulate_sparse_vector<double>(lengths[i] * dim, 0.2, /* lower = */ -10, /* upper = */ 10, /* seed = */ i * 1000);
             concat.insert(concat.end(), to_add.begin(), to_add.end());
             n_total += lengths[i];
 
@@ -136,21 +132,23 @@ INSTANTIATE_TEST_CASE_P(
 /****************************
  ****************************/
 
-class DelayedBindSlicedAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int, std::vector<size_t> > >, public DelayedBindTestMethods {};
+class DelayedBindSlicedAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int, std::vector<double> > >, public DelayedBindTestMethods {};
 
 TEST_P(DelayedBindSlicedAccessTest, Basic) {
     auto param = GetParam();
     assemble(std::get<0>(param), 50, std::get<1>(param));
     int FORWARD = std::get<2>(param);
     int JUMP = std::get<3>(param);
+
     auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+    size_t RFIRST = interval_info[0] * manual->nrow(), RLAST = interval_info[1] * manual->nrow();
+    size_t CFIRST = interval_info[0] * manual->ncol(), CLAST = interval_info[1] * manual->ncol();
 
-    test_sliced_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
-    test_sliced_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
+    test_sliced_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
+    test_sliced_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
 
-    test_sliced_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
-    test_sliced_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
+    test_sliced_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
+    test_sliced_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -162,9 +160,48 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(true, false), // forward or backward traversal.
         ::testing::Values(1, 3), // jump, to test the workspace's memory.
         ::testing::Values(
-            std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
-            std::vector<size_t>({ 1, 4, 4 }), // non-overlapping shifts
-            std::vector<size_t>({ 3, 10, 0 })
+            std::vector<double>({ 0, 0.6 }), 
+            std::vector<double>({ 0.25, 0.75 }), 
+            std::vector<double>({ 0.55, 1 })
+        )
+    )
+);
+
+/****************************
+ ****************************/
+
+class DelayedBindIndexedAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int, std::vector<double> > >, public DelayedBindTestMethods {};
+
+TEST_P(DelayedBindIndexedAccessTest, Basic) {
+    auto param = GetParam();
+    assemble(std::get<0>(param), 50, std::get<1>(param));
+    int FORWARD = std::get<2>(param);
+    int JUMP = std::get<3>(param);
+
+    auto interval_info = std::get<4>(param);
+    size_t RFIRST = interval_info[0] * manual->nrow(),
+        CFIRST = interval_info[0] * manual->ncol(), 
+        STEP = interval_info[1];
+
+    test_indexed_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
+    test_indexed_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
+
+    test_indexed_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
+    test_indexed_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    DelayedBind,
+    DelayedBindIndexedAccessTest,
+    ::testing::Combine(
+        spawn_bind_scenarios(),
+        ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(true, false), // forward or backward traversal.
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<double>({ 0, 5 }), 
+            std::vector<double>({ 0.33, 3 }),
+            std::vector<double>({ 0.5, 2 })
         )
     )
 );
