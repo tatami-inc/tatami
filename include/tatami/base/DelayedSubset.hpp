@@ -684,7 +684,7 @@ private:
     template<class InputWorkspace>
     void transplant_indices(InputWorkspace& work, size_t length, const IDX* subset) const {
         if (is_unsorted) {
-            std::vector<std::pair<V_type, size_t> > collected;
+            auto& collected = work.sortspace;
             collected.reserve(length);
             for (size_t i = 0; i < length; ++i) {
                 collected.emplace_back(indices[subset[i]], i);

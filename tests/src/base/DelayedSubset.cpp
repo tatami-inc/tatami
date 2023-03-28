@@ -221,14 +221,15 @@ TEST_P(SubsetIndexedAccessTest, OnRow) {
 
     size_t JUMP = std::get<3>(param);
     auto interval_info = std::get<4>(param);
-    size_t RFIRST = interval_info[0] * sub.size(), RSTEP = interval_info[1] * sub.size();
-    size_t CFIRST = interval_info[0] * NC, CSTEP = interval_info[1] * NC;
+    size_t RFIRST = interval_info[0] * sub.size(), 
+        CFIRST = interval_info[0] * NC, 
+        STEP = interval_info[1];
 
-//    test_indexed_row_access(dense_subbed.get(), ref.get(), true, JUMP, CFIRST, CSTEP);
-//    test_indexed_row_access(sparse_subbed.get(), ref.get(), true, JUMP, CFIRST, CSTEP);
+    test_indexed_row_access(dense_subbed.get(), ref.get(), true, JUMP, CFIRST, STEP);
+    test_indexed_row_access(sparse_subbed.get(), ref.get(), true, JUMP, CFIRST, STEP);
 
-    test_indexed_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, RSTEP);
-//    test_indexed_column_access(sparse_subbed.get(), ref.get(), true, JUMP, RFIRST, RSTEP);
+    test_indexed_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, STEP);
+    test_indexed_column_access(sparse_subbed.get(), ref.get(), true, JUMP, RFIRST, STEP);
 }
 
 TEST_P(SubsetIndexedAccessTest, OnColumn) {
@@ -240,14 +241,15 @@ TEST_P(SubsetIndexedAccessTest, OnColumn) {
 
     size_t JUMP = std::get<3>(param);
     auto interval_info = std::get<4>(param);
-    size_t RFIRST = interval_info[0] * NR, RSTEP = interval_info[1] * NR;
-    size_t CFIRST = interval_info[0] * sub.size(), CSTEP = interval_info[1] * sub.size();
+    size_t RFIRST = interval_info[0] * NR, 
+        CFIRST = interval_info[0] * sub.size(), 
+        STEP = interval_info[1];
 
-//    test_indexed_row_access(dense_subbed.get(), ref.get(), true, JUMP, CFIRST, CSTEP);
-//    test_indexed_row_access(sparse_subbed.get(), ref.get(), true, JUMP, CFIRST, CSTEP);
+    test_indexed_row_access(dense_subbed.get(), ref.get(), true, JUMP, CFIRST, STEP);
+    test_indexed_row_access(sparse_subbed.get(), ref.get(), true, JUMP, CFIRST, STEP);
 
-    test_indexed_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, RSTEP);
-    test_indexed_column_access(sparse_subbed.get(), ref.get(), true, JUMP, RFIRST, RSTEP);
+    test_indexed_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, STEP);
+    test_indexed_column_access(sparse_subbed.get(), ref.get(), true, JUMP, RFIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -259,9 +261,9 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(true, false), // whether to require sorted indices.
         ::testing::Values(1, 3), // jump, to check the workspace memory
         ::testing::Values(
-            std::vector<double>({ 0, 0.06 }), 
-            std::vector<double>({ 0.33, 0.03 }),
-            std::vector<double>({ 0.5, 0.05 })
+            std::vector<double>({ 0, 5 }), 
+            std::vector<double>({ 0.33, 3 }),
+            std::vector<double>({ 0.5, 2 })
         )
     )
 );
