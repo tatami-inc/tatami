@@ -63,6 +63,9 @@ void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward,
         std::vector<typename Matrix::data_type> expected(raw_expected.begin() + start, raw_expected.begin() + end);
         {
             auto observed = ptr->row(r, pwork.get());
+            for (size_t i = 0; i < observed.size(); ++i) {
+                std::cout << i << "\t" << expected[i] << "\t" << observed[i] << std::endl;
+            }
             EXPECT_EQ(expected, observed);
         }
         {
