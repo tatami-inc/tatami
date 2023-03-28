@@ -12,6 +12,7 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
     auto rwork = ref->new_row_workspace();
     auto pwork = ptr->new_row_workspace();
     auto swork = ptr->new_row_workspace();
+    auto swork_so = ptr->new_row_workspace();
     auto pwork_bi = ptr->new_row_workspace();
     auto rwork_bi = ref->new_row_workspace();
 
@@ -24,10 +25,16 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
             auto observed = ptr->row(r, pwork.get());
             EXPECT_EQ(expected, observed);
         }
+
         {
             auto observed = ptr->sparse_row(r, swork.get());
             EXPECT_EQ(expected, expand(observed, NC));
+            EXPECT_TRUE(is_increasing(observed.index));
         }
+        {
+            auto observed = ptr->sparse_row(r, swork_so.get(), false);
+            EXPECT_EQ(expected, expand(observed, NC));
+        } 
 
         // Check workspace caching when access is bidirectional,
         // i.e., not purely increasing or decreasing.
@@ -53,6 +60,7 @@ void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward,
     auto rwork = ref->new_row_workspace();
     auto pwork = ptr->new_row_workspace(start, end - start);
     auto swork = ptr->new_row_workspace(start, end - start);
+    auto swork_so = ptr->new_row_workspace(start, end - start);
     auto pwork_bi = ptr->new_row_workspace(start, end - start);
     auto rwork_bi = ref->new_row_workspace(start, end - start);
 
@@ -65,10 +73,16 @@ void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward,
             auto observed = ptr->row(r, pwork.get());
             EXPECT_EQ(expected, observed);
         }
+
         {
             auto observed = ptr->sparse_row(r, swork.get());
             EXPECT_EQ(expected, expand(observed, start, end));
+            EXPECT_TRUE(is_increasing(observed.index));
         }
+        {
+            auto observed = ptr->sparse_row(r, swork_so.get(), false);
+            EXPECT_EQ(expected, expand(observed, start, end));
+        } 
 
         // Check workspace caching when access is bidirectional,
         // i.e., not purely increasing or decreasing.
@@ -103,6 +117,7 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
     auto rwork = ref->new_row_workspace();
     auto pwork = ptr->new_row_workspace(indices.size(), indices.data());
     auto swork = ptr->new_row_workspace(indices.size(), indices.data());
+    auto swork_so = ptr->new_row_workspace(indices.size(), indices.data());
     auto pwork_bi = ptr->new_row_workspace(indices.size(), indices.data());
     auto rwork_bi = ref->new_row_workspace(indices.size(), indices.data());
 
@@ -120,8 +135,11 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
             auto observed = ptr->row(r, pwork.get());
             EXPECT_EQ(expected, observed);
         }
+
         {
             auto observed = ptr->sparse_row(r, swork.get());
+            EXPECT_TRUE(is_increasing(observed.index));
+
             auto full = expand(observed, NC);
             std::vector<double> sub;
             sub.reserve(indices.size());
@@ -129,6 +147,10 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
                 sub.push_back(full[idx]);
             }
             EXPECT_EQ(expected, sub);
+
+            auto observed2 = ptr->sparse_row(r, swork_so.get(), false);
+            auto full2 = expand(observed2, NC);
+            EXPECT_EQ(full, full2);
         }
 
         // Check workspace caching when access is bidirectional,
