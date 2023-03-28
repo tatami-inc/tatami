@@ -24,7 +24,6 @@ add_executable(
     src/base/arith_vector_helpers.cpp
     src/base/arith_scalar_helpers.cpp
     src/base/math_helpers.cpp
-    src/base/compress_sparse_triplets.cpp
 
     src/stats/sums.cpp
     src/stats/variances.cpp
@@ -38,6 +37,7 @@ add_executable(
     src/utils/convert_to_dense.cpp
     src/utils/convert_to_sparse.cpp
     src/utils/bind_intersection.cpp
+    src/utils/compress_sparse_triplets.cpp
 
     src/data/data_sparse.cpp
     src/data/data_triangular.cpp
