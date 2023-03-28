@@ -476,10 +476,8 @@ public:
 
     const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
         if constexpr(MARGIN==0) {
-            std::cout << "xFOO" << std::endl;
             return mat->row(indices[r], buffer, work);
         } else {
-            std::cout << "xFOO2" << std::endl;
             auto wptr = static_cast<AlongBlockWorkspace<true>*>(work);
             return expand_dense<true>(r, buffer, wptr, wptr->local_reverse_mapping);
         }
@@ -496,10 +494,8 @@ public:
 
     SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowBlockWorkspace* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
-            std::cout << "FOO" << std::endl;
             return mat->sparse_row(indices[r], out_values, out_indices, work, sorted);
         } else {
-            std::cout << "FOO2" << std::endl;
             auto wptr = static_cast<AlongBlockWorkspace<true>*>(work);
             return extract_sparse<true>(r, out_values, out_indices, wptr, wptr->local_mapping_duplicates, wptr->local_mapping_duplicates_pool, sorted);
         }
@@ -554,7 +550,7 @@ private:
         size_t end = start + length;
 
         if (is_unsorted) {
-            std::vector<std::pair<V_type, size_t> > collected;
+            auto& collected = work.sortspace;
             collected.reserve(length);
             for (size_t i = start; i < end; ++i) {
                 collected.emplace_back(indices[i], i - start);
