@@ -158,7 +158,11 @@ private:
         if constexpr(use_unique_and_sorted) {
             return unique_and_sorted.size();
         } else {
-            return indices.size();
+            if (!is_unsorted && !has_duplicates) {
+                return indices.size();
+            } else {
+                return unique_and_sorted.size();
+            }
         }
     }
 
@@ -166,7 +170,11 @@ private:
         if constexpr(use_unique_and_sorted) {
             return unique_and_sorted.data();
         } else {
-            return indices.data();
+            if (!is_unsorted && !has_duplicates) {
+                return indices.data();
+            } else {
+                return unique_and_sorted.data();
+            }
         }
     }
 
@@ -229,14 +237,14 @@ public:
         if constexpr(MARGIN == 0) {
             return mat->new_row_workspace();
         } else {
-            size_t buffer_size = (is_unsorted || has_duplicates ? unique_and_sorted.size() : 0);
+            size_t buffer_size = (is_unsorted || has_duplicates ? host_length() : 0);
             return std::shared_ptr<RowWorkspace>(new AlongWorkspace<true>(buffer_size, mat->new_row_workspace(host_length(), host_indices())));
         }
     }
 
     std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
         if constexpr(MARGIN == 0) {
-            size_t buffer_size = (is_unsorted || has_duplicates ? unique_and_sorted.size() : 0);
+            size_t buffer_size = (is_unsorted || has_duplicates ? host_length() : 0);
             return std::shared_ptr<ColumnWorkspace>(new AlongWorkspace<false>(buffer_size, mat->new_column_workspace(host_length(), host_indices())));
         } else {
             return mat->new_column_workspace();
