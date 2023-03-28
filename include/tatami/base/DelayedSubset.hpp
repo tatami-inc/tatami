@@ -15,6 +15,772 @@
 
 namespace tatami {
 
+template<int MARGIN, typename T, typename IDX, class V>
+class DelayedSubsetSortedUnique : public Matrix<T, IDX> {
+public:
+    DelayedSubsetSortedUnique(std::shared_ptr<const Matrix<T, IDX> > p, V idx, bool check = true) : mat(std::move(p)), original_indices(std::move(idx)) {
+        if (check) {
+            for (size_t i = 1, end = original_indices.size(); i < end; ++i) {
+                if (original_indices[i] <= original_indices[i-1]) {
+                    throw std::runtime_error("indices should be unique and sorted");
+                }
+            }
+        }
+
+        size_t mapping_dim = MARGIN == 0 ? mat->nrow() : mat->ncol();
+        mapping_single.resize(mapping_dim);
+        for (size_t i = 0, end = original_indices.size(); i < end; ++i) {
+            mapping_single[original_indices[i]] = i;
+        }
+
+        if constexpr(use_unique_and_sorted) {
+            unique_and_sorted.insert(unique_and_sorted.end(), original_indices.begin(), original_indices.end());
+            original_indices.clear(); // freeing up some memory.
+        }
+    }
+
+private:
+    std::shared_ptr<const Matrix<T, IDX> > mat;
+    V original_indices;
+
+    static constexpr bool use_unique_and_sorted = !std::is_same<V, std::vector<IDX> >::value;
+    std::vector<IDX> unique_and_sorted;
+    std::vector<size_t> mapping_single;
+
+    size_t host_length() const {
+        if constexpr(use_unique_and_sorted) {
+            return unique_and_sorted.size();
+        } else {
+            return original_indices.size();
+        }
+    }
+
+    const IDX* host_indices() const {
+        if constexpr(use_unique_and_sorted) {
+            return unique_and_sorted.data();
+        } else {
+            return original_indices.data();
+        }
+    }
+
+    IDX host_index(size_t x) const {
+        if constexpr(use_unique_and_sorted) {
+            return unique_and_sorted[x];
+        } else {
+            return original_indices[x];
+        }
+    }
+
+public:
+    size_t nrow() const {
+        if constexpr(MARGIN==0) {
+            return host_length();
+        } else {
+            return mat->nrow();
+        }
+    }
+
+    size_t ncol() const {
+        if constexpr(MARGIN==0) {
+            return mat->ncol();
+        } else {
+            return host_length();
+        }
+    }
+
+    bool sparse() const {
+        return mat->sparse();
+    }
+
+    bool prefer_rows() const {
+        return mat->prefer_rows();
+    }
+
+    std::pair<double, double> dimension_preference() const {
+        return mat->dimension_preference();
+    }
+
+    using Matrix<T, IDX>::column;
+
+    using Matrix<T, IDX>::row;
+
+    using Matrix<T, IDX>::sparse_column;
+
+    using Matrix<T, IDX>::sparse_row;
+
+public:
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct AlongWorkspace : public Workspace<ROW> {
+        AlongWorkspace(std::shared_ptr<IndexWorkspace<IDX, ROW> > i) : internal(std::move(i)) {}
+        std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowWorkspace> new_row_workspace() const {
+        if constexpr(MARGIN == 0) {
+            return mat->new_row_workspace();
+        } else {
+            return std::shared_ptr<RowWorkspace>(new AlongWorkspace<true>(mat->new_row_workspace(host_length(), host_indices())));
+        }
+    }
+
+    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
+        if constexpr(MARGIN == 0) {
+            return std::shared_ptr<ColumnWorkspace>(new AlongWorkspace<false>(mat->new_column_workspace(host_length(), host_indices())));
+        } else {
+            return mat->new_column_workspace();
+        }
+    }
+
+    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            return mat->row(host_index(r), buffer, work);
+        } else {
+            auto wptr = static_cast<AlongWorkspace<true>*>(work);
+            return mat->row(r, buffer, wptr->internal.get());
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongWorkspace<false>*>(work);
+            return mat->column(c, buffer, wptr->internal.get());
+        } else {
+            return mat->column(host_index(c), buffer, work);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return mat->sparse_row(host_index(r), out_values, out_indices, work, sorted);
+        } else {
+            auto wptr = static_cast<AlongWorkspace<true>*>(work);
+            auto raw = mat->sparse_row(r, out_values, out_indices, wptr->internal.get(), sorted);
+            return remap_indices(raw, out_indices);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongWorkspace<false>*>(work);
+            auto raw = mat->sparse_column(c, out_values, out_indices, wptr->internal.get(), sorted);
+            return remap_indices(raw, out_indices);
+        } else {
+            return mat->sparse_column(host_index(c), out_values, out_indices, work, sorted);
+        }
+    }
+
+private:
+    SparseRange<T, IDX> remap_indices(const SparseRange<T, IDX>& raw, IDX* ibuffer) const {
+        auto originali = ibuffer;
+        for (size_t i = 0; i < raw.number; ++i, ++ibuffer) {
+            *ibuffer = mapping_single[raw.index[i]];
+        }
+        return SparseRange<T, IDX>(raw.number, raw.value, originali);
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct AlongBlockWorkspace : public BlockWorkspace<ROW> {
+        AlongBlockWorkspace(size_t start, size_t length, std::shared_ptr<IndexWorkspace<IDX, ROW> > i) : BlockWorkspace<ROW>(start, length), internal(std::move(i)) {}
+        std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const {
+        if constexpr(MARGIN == 0) {
+            return mat->new_row_workspace(start, length);
+        } else {
+            return std::shared_ptr<RowBlockWorkspace>(new AlongBlockWorkspace<true>(start, length, mat->new_row_workspace(length, host_indices() + start)));
+        }
+    }
+
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const {
+        if constexpr(MARGIN == 0) {
+            return std::shared_ptr<ColumnBlockWorkspace>(new AlongBlockWorkspace<false>(start, length, mat->new_column_workspace(length, host_indices() + start)));
+        } else {
+            return mat->new_column_workspace(start, length);
+        }
+    }
+
+    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            return mat->row(host_index(r), buffer, work);
+        } else {
+            auto wptr = static_cast<AlongBlockWorkspace<true>*>(work);
+            return mat->row(r, buffer, wptr->internal.get());
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongBlockWorkspace<false>*>(work);
+            return mat->column(c, buffer, wptr->internal.get());
+        } else {
+            return mat->column(host_index(c), buffer, work);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowBlockWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return mat->sparse_row(host_index(r), out_values, out_indices, work, sorted);
+        } else {
+            auto wptr = static_cast<AlongBlockWorkspace<true>*>(work);
+            auto raw = mat->sparse_row(r, out_values, out_indices, wptr->internal.get(), sorted);
+            return remap_indices(raw, out_indices);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnBlockWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongBlockWorkspace<false>*>(work);
+            auto raw = mat->sparse_column(c, out_values, out_indices, wptr->internal.get(), sorted);
+            return remap_indices(raw, out_indices);
+        } else {
+            return mat->sparse_column(host_index(c), out_values, out_indices, work, sorted);
+        }
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct AlongIndexWorkspace : public IndexWorkspace<IDX, ROW> {
+        AlongIndexWorkspace(size_t length, const IDX* subset) : IndexWorkspace<IDX, ROW>(length, subset) {}
+        std::vector<IDX> local_unique_and_sorted;
+        std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t length, const IDX* subset) const {
+        if constexpr(MARGIN == 0) {
+            return mat->new_row_workspace(length, subset);
+        } else {
+            auto ptr = new AlongIndexWorkspace<true>(length, subset);
+            std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
+
+            // We can use the local indices directly; if 'subset' is sorted and unique,
+            // and 'indices' is sorted and unique, then 'local' must also be sorted and unique. 
+            transplant_indices(*ptr, length, subset);
+            auto& local = ptr->local_unique_and_sorted;
+            ptr->internal = mat->new_row_workspace(local.size(), local.data());
+
+            return output;
+        }
+    }
+
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t length, const IDX* subset) const {
+        if constexpr(MARGIN == 0) {
+            auto ptr = new AlongIndexWorkspace<false>(length, subset);
+            std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
+
+            transplant_indices(*ptr, length, subset);
+            auto& local = ptr->local_unique_and_sorted;
+            ptr->internal = mat->new_column_workspace(local.size(), local.data());
+
+            return output;
+        } else {
+            return mat->new_column_workspace(length, subset);
+        }
+    }
+
+    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
+        if constexpr(MARGIN==0) {
+            return mat->row(host_index(r), buffer, work);
+        } else {
+            auto wptr = static_cast<AlongIndexWorkspace<true>*>(work);
+            return mat->row(r, buffer, wptr->internal.get());
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongIndexWorkspace<false>*>(work);
+            return mat->column(c, buffer, wptr->internal.get());
+        } else {
+            return mat->column(host_index(c), buffer, work);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return mat->sparse_row(host_index(r), out_values, out_indices, work, sorted);
+        } else {
+            auto wptr = static_cast<AlongIndexWorkspace<true>*>(work);
+            auto raw = mat->sparse_row(r, out_values, out_indices, wptr->internal.get());
+            return remap_indices(raw, out_indices);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongIndexWorkspace<false>*>(work);
+            auto raw = mat->sparse_column(c, out_values, out_indices, wptr->internal.get());
+            return remap_indices(raw, out_indices);
+        } else {
+            return mat->sparse_column(host_index(c), out_values, out_indices, work, sorted);
+        }
+    }
+
+private:
+    template<class InputWorkspace>
+    void transplant_indices(InputWorkspace& work, size_t length, const IDX* subset) const {
+        work.local_unique_and_sorted.reserve(length);
+        for (size_t i = 0; i < length; ++i) {
+            work.local_unique_and_sorted.push_back(host_index(subset[i])); 
+        }
+    }
+};
+
+namespace subset_utils {
+
+template<bool ROW, typename T, typename IDX, class InputWorkspace>
+const T* extract_dense(const Matrix<T, IDX>* mat, size_t i, T* buffer, InputWorkspace* work, const std::vector<size_t>& rmapping) {
+    const T* dump;
+    if constexpr(ROW) {
+        dump = mat->row(i, work->vbuffer.data(), work->internal.get());
+    } else {
+        dump = mat->column(i, work->vbuffer.data(), work->internal.get());
+    }
+
+    auto temp = buffer;
+    for (auto i : rmapping) {
+        *temp = dump[i];
+        ++temp;
+    } 
+
+    return buffer;
+}
+
+template<bool ROW, typename T, typename IDX, class InputWorkspace>
+SparseRange<T, IDX> extract_sparse(
+    const Matrix<T, IDX>* mat, 
+    size_t i, 
+    T* vbuffer, 
+    IDX* ibuffer, 
+    InputWorkspace* work, 
+    const std::vector<std::pair<size_t, size_t> >& dups, 
+    const std::vector<IDX>& pool,
+    bool sorted)
+{
+    if (work->ibuffer.empty()) {
+        work->ibuffer.resize(work->vbuffer.size());
+    }
+
+    SparseRange<T, IDX> raw;
+    if constexpr(ROW) {
+        raw = mat->sparse_row(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get(), sorted);
+    } else {
+        raw = mat->sparse_column(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get(), sorted);
+    }
+
+    auto originalv = vbuffer;
+    auto originali = ibuffer;
+    size_t counter = 0;
+
+    for (size_t i = 0; i < raw.number; ++i) {
+        const auto& pool_pos = dups[raw.index[i]];
+        size_t pool_end = pool_pos.first + pool_pos.second;
+        for (size_t j = pool_pos.first; j < pool_end; ++j, ++counter, ++vbuffer, ++ibuffer) {
+            *vbuffer = raw.value[i];
+            *ibuffer = pool[j];
+        }
+    }
+
+    return SparseRange<T, IDX>(counter, originalv, originali);
+}
+
+}
+
+template<int MARGIN, typename T, typename IDX, class V>
+class DelayedSubsetSorted : public Matrix<T, IDX> {
+public:
+    DelayedSubsetSorted(std::shared_ptr<const Matrix<T, IDX> > p, V idx, bool check = true) : mat(std::move(p)), indices(std::move(idx)) {
+        if (check) {
+            for (size_t i = 1, end = indices.size(); i < end; ++i) {
+                if (indices[i] < indices[i-1]) {
+                    throw std::runtime_error("indices should be sorted");
+                }
+            }
+        }
+
+        size_t mapping_dim = MARGIN == 0 ? mat->nrow() : mat->ncol();
+        unique_and_sorted.reserve(indices.size());
+        reverse_mapping.reserve(indices.size());
+        mapping_duplicates.resize(mapping_dim);
+        mapping_duplicates_pool.reserve(indices.size());
+
+        for (size_t i = 0, end = indices.size(); i < end; ++i) {
+            IDX curdex = indices[i];
+            auto& range = mapping_duplicates[curdex];
+            if (unique_and_sorted.empty() || curdex != unique_and_sorted.back()) {
+                unique_and_sorted.push_back(curdex);
+                range.first = mapping_duplicates_pool.size();
+            }
+            mapping_duplicates_pool.push_back(i);
+            reverse_mapping.push_back(unique_and_sorted.size() - 1);
+            ++range.second;
+        }
+    }
+
+private:
+    std::shared_ptr<const Matrix<T, IDX> > mat;
+    V indices;
+
+    std::vector<IDX> unique_and_sorted;
+    std::vector<size_t> reverse_mapping;
+    std::vector<std::pair<size_t, size_t> > mapping_duplicates; // holds (position, size) in the pool.
+    std::vector<IDX> mapping_duplicates_pool; 
+
+public:
+    size_t nrow() const {
+        if constexpr(MARGIN==0) {
+            return indices.size();
+        } else {
+            return mat->nrow();
+        }
+    }
+
+    size_t ncol() const {
+        if constexpr(MARGIN==0) {
+            return mat->ncol();
+        } else {
+            return indices.size();
+        }
+    }
+
+    bool sparse() const {
+        return mat->sparse();
+    }
+
+    bool prefer_rows() const {
+        return mat->prefer_rows();
+    }
+
+    std::pair<double, double> dimension_preference() const {
+        return mat->dimension_preference();
+    }
+
+    using Matrix<T, IDX>::column;
+
+    using Matrix<T, IDX>::row;
+
+    using Matrix<T, IDX>::sparse_column;
+
+    using Matrix<T, IDX>::sparse_row;
+
+public:
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct AlongWorkspace : public Workspace<ROW> {
+        AlongWorkspace(size_t n, std::shared_ptr<IndexWorkspace<IDX, ROW> > i) : vbuffer(n), internal(std::move(i)) {}
+        std::vector<T> vbuffer;
+        std::vector<IDX> ibuffer;
+        std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowWorkspace> new_row_workspace() const {
+        if constexpr(MARGIN == 0) {
+            return mat->new_row_workspace();
+        } else {
+            size_t buffer_size = unique_and_sorted.size();
+            return std::shared_ptr<RowWorkspace>(new AlongWorkspace<true>(buffer_size, mat->new_row_workspace(buffer_size, unique_and_sorted.data())));
+        }
+    }
+
+    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
+        if constexpr(MARGIN == 0) {
+            size_t buffer_size = unique_and_sorted.size();
+            return std::shared_ptr<ColumnWorkspace>(new AlongWorkspace<false>(buffer_size, mat->new_column_workspace(buffer_size, unique_and_sorted.data())));
+        } else {
+            return mat->new_column_workspace();
+        }
+    }
+
+    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            return mat->row(indices[r], buffer, work);
+        } else {
+            auto wptr = static_cast<AlongWorkspace<true>*>(work);
+            return subset_utils::extract_dense<true>(mat.get(), r, buffer, wptr, reverse_mapping);
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongWorkspace<false>*>(work);
+            return subset_utils::extract_dense<false>(mat.get(), c, buffer, wptr, reverse_mapping);
+        } else {
+            return mat->column(indices[c], buffer, work);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return mat->sparse_row(indices[r], out_values, out_indices, work, sorted);
+        } else {
+            auto wptr = static_cast<AlongWorkspace<true>*>(work);
+            return subset_utils::extract_sparse<true>(mat.get(), r, out_values, out_indices, wptr, mapping_duplicates, mapping_duplicates_pool, sorted);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongWorkspace<false>*>(work);
+            return subset_utils::extract_sparse<false>(mat.get(), c, out_values, out_indices, wptr, mapping_duplicates, mapping_duplicates_pool, sorted);
+        } else {
+            return mat->sparse_column(indices[c], out_values, out_indices, work, sorted);
+        }
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct AlongBlockWorkspace : public BlockWorkspace<ROW> {
+        AlongBlockWorkspace(size_t start, size_t length) : BlockWorkspace<ROW>(start, length) {}
+
+        std::vector<T> vbuffer;
+        std::vector<IDX> ibuffer;
+
+        std::vector<IDX> local_unique_and_sorted;
+        std::vector<size_t> local_reverse_mapping;
+        std::vector<std::pair<size_t, size_t> > local_mapping_duplicates; 
+        std::vector<IDX> local_mapping_duplicates_pool; 
+
+        std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const {
+        if constexpr(MARGIN == 0) {
+            return mat->new_row_workspace(start, length);
+        } else {
+            auto ptr = new AlongBlockWorkspace<true>(start, length);
+            std::shared_ptr<RowBlockWorkspace> output(ptr);
+
+            transplant_indices(*ptr, start, length);
+
+            auto& local = ptr->local_unique_and_sorted;
+            ptr->vbuffer.resize(local.size());
+            ptr->internal = mat->new_row_workspace(local.size(), local.data());
+
+            return output;
+        }
+    }
+
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const {
+        if constexpr(MARGIN == 0) {
+            auto ptr = new AlongBlockWorkspace<false>(start, length);
+            std::shared_ptr<ColumnBlockWorkspace> output(ptr);
+
+            transplant_indices(*ptr, start, length);
+
+            auto& local = ptr->local_unique_and_sorted;
+            ptr->vbuffer.resize(local.size());
+            ptr->internal = mat->new_column_workspace(local.size(), local.data());
+
+            return output;
+        } else {
+            return mat->new_column_workspace(start, length);
+        }
+    }
+
+    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            return mat->row(indices[r], buffer, work);
+        } else {
+            auto wptr = static_cast<AlongBlockWorkspace<true>*>(work);
+            return subset_utils::extract_dense<true>(mat.get(), r, buffer, wptr, wptr->local_reverse_mapping);
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongBlockWorkspace<false>*>(work);
+            return subset_utils::extract_dense<false>(mat.get(), c, buffer, wptr, wptr->local_reverse_mapping);
+        } else {
+            return mat->column(indices[c], buffer, work);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowBlockWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return mat->sparse_row(indices[r], out_values, out_indices, work, sorted);
+        } else {
+            auto wptr = static_cast<AlongBlockWorkspace<true>*>(work);
+            return subset_utils::extract_sparse<true>(mat.get(), r, out_values, out_indices, wptr, wptr->local_mapping_duplicates, wptr->local_mapping_duplicates_pool, sorted);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnBlockWorkspace* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongBlockWorkspace<false>*>(work);
+            return subset_utils::extract_sparse<false>(mat.get(), c, out_values, out_indices, wptr, wptr->local_mapping_duplicates, wptr->local_mapping_duplicates_pool, sorted);
+        } else {
+            return mat->sparse_column(indices[c], out_values, out_indices, work, sorted);
+        }
+    }
+
+private:
+    template<class InputWorkspace>
+    void transplant_indices(InputWorkspace& work, size_t start, size_t length) const {
+        size_t mapping_dim = MARGIN == 0 ? mat->nrow() : mat->ncol();
+        work.local_mapping_duplicates.resize(mapping_dim);
+        work.local_mapping_duplicates_pool.reserve(length);
+        work.local_unique_and_sorted.reserve(length);
+        work.local_reverse_mapping.reserve(length);
+
+        size_t end = start + length;
+        for (size_t i = start; i < end; ++i) {
+            auto& range = work.local_mapping_duplicates[indices[i]];
+            if (work.local_unique_and_sorted.empty() || indices[i] != work.local_unique_and_sorted.back()) {
+                work.local_unique_and_sorted.push_back(indices[i]);
+                range.first = work.local_mapping_duplicates_pool.size();
+            }
+
+            work.local_reverse_mapping.push_back(work.local_unique_and_sorted.size() - 1);
+            work.local_mapping_duplicates_pool.push_back(i);
+            ++range.second;
+        }
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<bool ROW>
+    struct AlongIndexWorkspace : public IndexWorkspace<IDX, ROW> {
+        AlongIndexWorkspace(size_t length, const IDX* indices) : IndexWorkspace<IDX, ROW>(length, indices) {}
+
+        std::vector<T> vbuffer;
+        std::vector<IDX> ibuffer;
+
+        std::vector<IDX> local_unique_and_sorted;
+        std::vector<size_t> local_reverse_mapping;
+        std::vector<std::pair<size_t, size_t> > local_mapping_duplicates; 
+        std::vector<IDX> local_mapping_duplicates_pool; 
+
+        std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t length, const IDX* indices) const {
+        if constexpr(MARGIN == 0) {
+            return mat->new_row_workspace(length, indices);
+        } else {
+            auto ptr = new AlongIndexWorkspace<true>(length, indices);
+            std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
+
+            transplant_indices(*ptr, length, indices);
+
+            auto& local = ptr->local_unique_and_sorted;
+            ptr->internal = mat->new_row_workspace(local.size(), local.data());
+            ptr->vbuffer.resize(local.size());
+
+            return output;
+        }
+    }
+
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t length, const IDX* indices) const {
+        if constexpr(MARGIN == 0) {
+            auto ptr = new AlongIndexWorkspace<false>(length, indices);
+            std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
+
+            transplant_indices(*ptr, length, indices);
+
+            auto& local = ptr->local_unique_and_sorted;
+            ptr->internal = mat->new_column_workspace(local.size(), local.data());
+            ptr->vbuffer.resize(local.size());
+
+            return output;
+        } else {
+            return mat->new_column_workspace(length, indices);
+        }
+    }
+
+    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
+        if constexpr(MARGIN==0) {
+            return mat->row(indices[r], buffer, work);
+        } else {
+            auto wptr = static_cast<AlongIndexWorkspace<true>*>(work);
+            return subset_utils::extract_dense<true>(mat.get(), r, buffer, wptr, wptr->local_reverse_mapping);
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongIndexWorkspace<false>*>(work);
+            return subset_utils::extract_dense<false>(mat.get(), c, buffer, wptr, wptr->local_reverse_mapping);
+        } else {
+            return mat->column(indices[c], buffer, work);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            return mat->sparse_row(indices[r], out_values, out_indices, work, sorted);
+        } else {
+            auto wptr = static_cast<AlongIndexWorkspace<true>*>(work);
+            return subset_utils::extract_sparse<true>(mat.get(), r, out_values, out_indices, wptr, wptr->local_mapping_duplicates, wptr->local_mapping_duplicates_pool, sorted);
+        }
+    }
+
+    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
+        if constexpr(MARGIN==0) {
+            auto wptr = static_cast<AlongIndexWorkspace<false>*>(work);
+            return subset_utils::extract_sparse<false>(mat.get(), c, out_values, out_indices, wptr, wptr->local_mapping_duplicates, wptr->local_mapping_duplicates_pool, sorted);
+        } else {
+            return mat->sparse_column(indices[c], out_values, out_indices, work, sorted);
+        }
+    }
+
+private:
+    template<class InputWorkspace>
+    void transplant_indices(InputWorkspace& work, size_t length, const IDX* subset) const {
+        size_t mapping_dim = MARGIN == 0 ? mat->nrow() : mat->ncol();
+        work.local_mapping_duplicates.resize(mapping_dim);
+        work.local_mapping_duplicates_pool.reserve(indices.size());
+        work.local_unique_and_sorted.reserve(length);
+        work.local_reverse_mapping.reserve(length);
+
+        for (size_t i = 0; i < length; ++i) {
+            auto s = subset[i];
+            auto& range = work.local_mapping_duplicates[indices[s]];
+            if (work.local_unique_and_sorted.empty() || indices[s] != work.local_unique_and_sorted.back()) {
+                work.local_unique_and_sorted.push_back(indices[s]);
+                range.first = work.local_mapping_duplicates_pool.size();
+            }
+            work.local_reverse_mapping.push_back(work.local_unique_and_sorted.size() - 1);
+            work.local_mapping_duplicates_pool.push_back(s);
+            ++range.second;
+        }
+    }
+};
+
 /**
  * @brief Delayed subsetting of a matrix.
  *
@@ -745,6 +1511,38 @@ private:
  */
 template<int MARGIN, class MAT, class V>
 std::shared_ptr<MAT> make_DelayedSubset(std::shared_ptr<MAT> p, V idx) {
+    bool is_unsorted = false;
+    for (size_t i = 0, end = idx.size(); i < end; ++i) {
+        if (i) {
+            if (idx[i] < idx[i-1]) {
+                is_unsorted = true;
+                break;
+            }
+        }
+    }
+
+    if (!is_unsorted) {
+        bool has_duplicates = false;
+        for (size_t i = 0, end = idx.size(); i < end; ++i) {
+            if (i) {
+                if (idx[i] == idx[i-1]) {
+                    has_duplicates = true;
+                    break;
+                }
+            }
+        }
+
+        if (!has_duplicates) {
+            return std::shared_ptr<MAT>(
+                new DelayedSubsetSortedUnique<MARGIN, typename MAT::data_type, typename MAT::index_type, typename std::remove_reference<V>::type>(p, std::move(idx))
+            );
+        } else {
+            return std::shared_ptr<MAT>(
+                new DelayedSubsetSorted<MARGIN, typename MAT::data_type, typename MAT::index_type, typename std::remove_reference<V>::type>(p, std::move(idx))
+            );
+        }
+    }
+
     return std::shared_ptr<MAT>(
         new DelayedSubset<MARGIN, typename MAT::data_type, typename MAT::index_type, typename std::remove_reference<V>::type>(
             p,
