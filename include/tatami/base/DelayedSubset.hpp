@@ -306,7 +306,7 @@ private:
         return buffer;
     }
 
-    SparseRange<T, IDX> extract_sparse_unique(SparseRange<T, IDX> raw, T* vbuffer, IDX* ibuffer) const {
+    SparseRange<T, IDX> extract_sparse_unique(const SparseRange<T, IDX>& raw, T* vbuffer, IDX* ibuffer) const {
         auto originalv = vbuffer;
         auto originali = ibuffer;
         for (size_t i = 0; i < raw.number; ++i, ++vbuffer, ++ibuffer) {
@@ -316,17 +316,17 @@ private:
         return SparseRange<T, IDX>(raw.number, originalv, originali);
     }
 
-    SparseRange<T, IDX> extract_sparse_duplicates(SparseRange<T, IDX> raw, T* vbuffer, IDX* ibuffer) const {
+    SparseRange<T, IDX> extract_sparse_duplicates(const SparseRange<T, IDX>& raw, T* vbuffer, IDX* ibuffer, const std::vector<std::pair<size_t, size_t> >& dups, const std::vector<size_t>& pool) const {
         auto originalv = vbuffer;
         auto originali = ibuffer;
         size_t counter = 0;
 
         for (size_t i = 0; i < raw.number; ++i) {
-            const auto& pool_pos = mapping_duplicates[raw.index[i]];
+            const auto& pool_pos = dups[raw.index[i]];
             size_t pool_end = pool_pos.first + pool_pos.second;
             for (size_t j = pool_pos.first; j < pool_end; ++j, ++counter, ++vbuffer, ++ibuffer) {
                 *vbuffer = raw.value[i];
-                *ibuffer = mapping_duplicates_pool[j];
+                *ibuffer = pool[j];
             }
         }
 
@@ -334,7 +334,7 @@ private:
     }
 
     template<bool ROW, class InputWorkspace>
-    SparseRange<T, IDX> extract_sparse(size_t i, T* vbuffer, IDX* ibuffer, InputWorkspace* work, bool sorted) const {
+    SparseRange<T, IDX> extract_sparse(size_t i, T* vbuffer, IDX* ibuffer, InputWorkspace* work, const std::vector<std::pair<size_t, size_t> >& dups, const std::vector<size_t>& pool, bool sorted) const {
         SparseRange<T, IDX> raw;
         if (!is_unsorted && !has_duplicates) {
             if constexpr(ROW) {
@@ -359,14 +359,14 @@ private:
         }
 
         if (!is_unsorted && has_duplicates) {
-            return extract_sparse_duplicates(raw, vbuffer, ibuffer);
+            return extract_sparse_duplicates(raw, vbuffer, ibuffer, dups, pool);
         }
 
         if (!sorted) {
             if (!has_duplicates) {
                 return extract_sparse_unique(raw, vbuffer, ibuffer);
             } else {
-                return extract_sparse_duplicates(raw, vbuffer, ibuffer);
+                return extract_sparse_duplicates(raw, vbuffer, ibuffer, dups, pool);
             }
         }
 
@@ -382,10 +382,10 @@ private:
         } else {
             sortspace.reserve(indices.size());
             for (size_t i = 0; i < raw.number; ++i) {
-                const auto& pool_pos = mapping_duplicates[raw.index[i]];
+                const auto& pool_pos = dups[raw.index[i]];
                 size_t pool_end = pool_pos.first + pool_pos.second;
                 for (size_t j = pool_pos.first; j < pool_end; ++j) {
-                    sortspace.emplace_back(mapping_duplicates_pool[j], raw.value[i]);
+                    sortspace.emplace_back(pool[j], raw.value[i]);
                 }
             }
         }
@@ -404,6 +404,11 @@ private:
         return SparseRange<T, IDX>(sortspace.size(), originalv, originali);
     }
 
+    template<bool ROW, class InputWorkspace>
+    SparseRange<T, IDX> extract_sparse(size_t i, T* vbuffer, IDX* ibuffer, InputWorkspace* work, bool sorted) const {
+        return extract_sparse<ROW>(i, vbuffer, ibuffer, work, mapping_duplicates, mapping_duplicates_pool, sorted);
+    }
+
 public:
     /**
      * @cond
@@ -418,6 +423,9 @@ public:
 
         std::vector<IDX> local_unique_and_sorted;
         std::vector<size_t> local_reverse_mapping;
+        std::vector<std::pair<size_t, size_t> > local_mapping_duplicates; 
+        std::vector<size_t> local_mapping_duplicates_pool; 
+
         std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
     };
     /**
@@ -434,8 +442,9 @@ public:
             if (!is_unsorted && !has_duplicates) {
                 ptr->internal = mat->new_row_workspace(length, host_indices() + start);
             } else {
+                transplant_indices(*ptr, start, length);
+
                 auto& local = ptr->local_unique_and_sorted;
-                transplant_indices(local, ptr->local_reverse_mapping, start, length);
                 ptr->vbuffer.resize(local.size());
                 ptr->internal = mat->new_row_workspace(local.size(), local.data());
             }
@@ -452,8 +461,9 @@ public:
             if (!is_unsorted && !has_duplicates) {
                 ptr->internal = mat->new_column_workspace(length, host_indices() + start);
             } else {
+                transplant_indices(*ptr, start, length);
+
                 auto& local = ptr->local_unique_and_sorted;
-                transplant_indices(local, ptr->local_reverse_mapping, start, length);
                 ptr->vbuffer.resize(local.size());
                 ptr->internal = mat->new_column_workspace(local.size(), local.data());
             }
@@ -466,8 +476,10 @@ public:
 
     const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
         if constexpr(MARGIN==0) {
+            std::cout << "xFOO" << std::endl;
             return mat->row(indices[r], buffer, work);
         } else {
+            std::cout << "xFOO2" << std::endl;
             auto wptr = static_cast<AlongBlockWorkspace<true>*>(work);
             return expand_dense<true>(r, buffer, wptr, wptr->local_reverse_mapping);
         }
@@ -484,64 +496,98 @@ public:
 
     SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowBlockWorkspace* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
+            std::cout << "FOO" << std::endl;
             return mat->sparse_row(indices[r], out_values, out_indices, work, sorted);
         } else {
+            std::cout << "FOO2" << std::endl;
             auto wptr = static_cast<AlongBlockWorkspace<true>*>(work);
-            return extract_sparse<true>(r, out_values, out_indices, wptr, sorted);
+            return extract_sparse<true>(r, out_values, out_indices, wptr, wptr->local_mapping_duplicates, wptr->local_mapping_duplicates_pool, sorted);
         }
     }
 
     SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnBlockWorkspace* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
             auto wptr = static_cast<AlongBlockWorkspace<false>*>(work);
-            return extract_sparse<false>(c, out_values, out_indices, wptr, sorted);
+            return extract_sparse<false>(c, out_values, out_indices, wptr, wptr->local_mapping_duplicates, wptr->local_mapping_duplicates_pool, sorted);
         } else {
             return mat->sparse_column(indices[c], out_values, out_indices, work, sorted);
         }
     }
 
 private:
-    template<class Sortspace>
-    void transplant_indices(std::vector<IDX>& local_unique_and_sorted, std::vector<size_t>& local_reverse_mapping, Sortspace& collected) const {
+    template<class InputWorkspace, class Function>
+    void transplant_indices(InputWorkspace& work, Function to_index) const {
+        auto& collected = work.sortspace;
         std::sort(collected.begin(), collected.end());
-        local_reverse_mapping.resize(collected.size());
+
+        work.local_unique_and_sorted.reserve(collected.size());
+        work.local_reverse_mapping.resize(collected.size());
 
         if (!has_duplicates) {
             for (size_t i = 0, end = collected.size(); i < end; ++i) {
-                local_unique_and_sorted.push_back(collected[i].first);
-                local_reverse_mapping[collected[i].second] = local_unique_and_sorted.size() - 1;
+                work.local_unique_and_sorted.push_back(collected[i].first);
+                work.local_reverse_mapping[collected[i].second] = work.local_unique_and_sorted.size() - 1;
             }
+
         } else {
+            size_t mapping_dim = MARGIN == 0 ? mat->nrow() : mat->ncol();
+            work.local_mapping_duplicates.resize(mapping_dim);
+            work.local_mapping_duplicates_pool.reserve(collected.size());
+
             for (size_t i = 0, end = collected.size(); i < end; ++i) {
                 const auto& current = collected[i];
-                if (local_unique_and_sorted.empty() || current.first != local_unique_and_sorted.back()) {
-                    local_unique_and_sorted.push_back(current.first);
+                auto& range = work.local_mapping_duplicates[current.first];
+                if (work.local_unique_and_sorted.empty() || current.first != work.local_unique_and_sorted.back()) {
+                    work.local_unique_and_sorted.push_back(current.first);
+                    range.first = work.local_mapping_duplicates_pool.size();
                 }
-                local_reverse_mapping[current.second] = local_unique_and_sorted.size() - 1;
+
+                work.local_reverse_mapping[current.second] = work.local_unique_and_sorted.size() - 1;
+                work.local_mapping_duplicates_pool.push_back(to_index(current.second));
+                ++range.second;
             }
         }
     }
 
-    void transplant_indices(std::vector<IDX>& local_unique_and_sorted, std::vector<size_t>& local_reverse_mapping, size_t start, size_t length) const {
-        local_unique_and_sorted.reserve(length);
+    template<class InputWorkspace>
+    void transplant_indices(InputWorkspace& work, size_t start, size_t length) const {
         size_t end = start + length;
 
-        if (!is_unsorted) {
-            local_reverse_mapping.reserve(length);
-            for (size_t i = start; i < end; ++i) {
-                if (local_unique_and_sorted.empty() || indices[i] != local_unique_and_sorted.back()) {
-                    local_unique_and_sorted.push_back(indices[i]);
-                }
-                local_reverse_mapping.push_back(local_unique_and_sorted.size() - 1);
-            }
-
-        } else {
+        if (is_unsorted) {
             std::vector<std::pair<V_type, size_t> > collected;
             collected.reserve(length);
             for (size_t i = start; i < end; ++i) {
                 collected.emplace_back(indices[i], i - start);
             }
-            transplant_indices(local_unique_and_sorted, local_reverse_mapping, collected);
+            transplant_indices(work, [&](size_t i) -> size_t { return i + start; });
+
+        } else {
+            work.local_unique_and_sorted.reserve(length);
+            work.local_reverse_mapping.reserve(length);
+
+            if (!has_duplicates) {
+                for (size_t i = start; i < end; ++i) {
+                    work.local_unique_and_sorted.push_back(indices[i]);
+                    work.local_reverse_mapping.push_back(work.local_unique_and_sorted.size() - 1);
+                }
+
+            } else {
+                size_t mapping_dim = MARGIN == 0 ? mat->nrow() : mat->ncol();
+                work.local_mapping_duplicates.resize(mapping_dim);
+                work.local_mapping_duplicates_pool.reserve(length);
+
+                for (size_t i = start; i < end; ++i) {
+                    auto& range = work.local_mapping_duplicates[indices[i]];
+                    if (work.local_unique_and_sorted.empty() || indices[i] != work.local_unique_and_sorted.back()) {
+                        work.local_unique_and_sorted.push_back(indices[i]);
+                        range.first = work.local_mapping_duplicates_pool.size();
+                    }
+
+                    work.local_reverse_mapping.push_back(work.local_unique_and_sorted.size() - 1);
+                    work.local_mapping_duplicates_pool.push_back(i);
+                    ++range.second;
+                }
+            }
         }
     }
 
@@ -551,7 +597,7 @@ public:
      */
     template<bool ROW>
     struct AlongIndexWorkspace : public IndexWorkspace<IDX, ROW> {
-        AlongIndexWorkspace(size_t length, const IDX* indices, size_t n) : IndexWorkspace<IDX, ROW>(length, indices), vbuffer(n) {}
+        AlongIndexWorkspace(size_t length, const IDX* indices) : IndexWorkspace<IDX, ROW>(length, indices) {}
 
         std::vector<T> vbuffer;
         std::vector<IDX> ibuffer;
@@ -559,8 +605,10 @@ public:
 
         std::vector<IDX> local_unique_and_sorted;
         std::vector<size_t> local_reverse_mapping;
-        std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
+        std::vector<std::pair<size_t, size_t> > local_mapping_duplicates; 
+        std::vector<size_t> local_mapping_duplicates_pool; 
 
+        std::shared_ptr<IndexWorkspace<IDX, ROW> > internal;
     };
     /**
      * @endcond
@@ -570,13 +618,14 @@ public:
         if constexpr(MARGIN == 0) {
             return mat->new_row_workspace(length, indices);
         } else {
-            size_t buffer_size = (is_unsorted || has_duplicates ? length : 0);
-            auto ptr = new AlongIndexWorkspace<true>(length, indices, buffer_size);
+            auto ptr = new AlongIndexWorkspace<true>(length, indices);
             std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
 
+            transplant_indices(*ptr, length, indices);
+
             auto& local = ptr->local_unique_and_sorted;
-            transplant_indices(local, ptr->local_reverse_mapping, length, indices);
             ptr->internal = mat->new_row_workspace(local.size(), local.data());
+            ptr->vbuffer.resize(local.size());
 
             return output;
         }
@@ -584,13 +633,14 @@ public:
 
     std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t length, const IDX* indices) const {
         if constexpr(MARGIN == 0) {
-            size_t buffer_size = (is_unsorted || has_duplicates ? length : 0);
-            auto ptr = new AlongIndexWorkspace<false>(length, indices, buffer_size);
+            auto ptr = new AlongIndexWorkspace<false>(length, indices);
             std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
 
+            transplant_indices(*ptr, length, indices);
+
             auto& local = ptr->local_unique_and_sorted;
-            transplant_indices(local, ptr->local_reverse_mapping, length, indices);
             ptr->internal = mat->new_column_workspace(local.size(), local.data());
+            ptr->vbuffer.resize(local.size());
 
             return output;
         } else {
@@ -621,47 +671,57 @@ public:
             return mat->sparse_row(indices[r], out_values, out_indices, work, sorted);
         } else {
             auto wptr = static_cast<AlongIndexWorkspace<true>*>(work);
-            return extract_sparse<true>(r, out_values, out_indices, wptr, sorted);
+            return extract_sparse<true>(r, out_values, out_indices, wptr, wptr->local_mapping_duplicates, wptr->local_mapping_duplicates_pool, sorted);
         }
     }
 
     SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
             auto wptr = static_cast<AlongIndexWorkspace<false>*>(work);
-            return extract_sparse<false>(c, out_values, out_indices, wptr, sorted);
+            return extract_sparse<false>(c, out_values, out_indices, wptr, wptr->local_mapping_duplicates, wptr->local_mapping_duplicates_pool, sorted);
         } else {
             return mat->sparse_column(indices[c], out_values, out_indices, work, sorted);
         }
     }
 
 private:
-    void transplant_indices(std::vector<IDX>& local_unique_and_sorted, std::vector<size_t>& local_reverse_mapping, size_t length, const IDX* subset) const {
-        local_unique_and_sorted.reserve(length);
-
-        if (!is_unsorted) {
-            if (!has_duplicates) {
-                for (size_t i = 0; i < length; ++i) {
-                    local_unique_and_sorted.push_back(indices[subset[i]]); 
-                }
-
-            } else {
-                local_reverse_mapping.reserve(length);
-                for (size_t i = 0; i < length; ++i) {
-                    auto s = subset[i];
-                    if (local_unique_and_sorted.empty() || indices[s] != local_unique_and_sorted.back()) {
-                        local_unique_and_sorted.push_back(indices[s]);
-                    }
-                    local_reverse_mapping.push_back(local_unique_and_sorted.size() - 1);
-                }
-            }
-
-        } else {
+    template<class InputWorkspace>
+    void transplant_indices(InputWorkspace& work, size_t length, const IDX* subset) const {
+        if (is_unsorted) {
             std::vector<std::pair<V_type, size_t> > collected;
             collected.reserve(length);
             for (size_t i = 0; i < length; ++i) {
                 collected.emplace_back(indices[subset[i]], i);
             }
-            transplant_indices(local_unique_and_sorted, local_reverse_mapping, collected);
+            transplant_indices(work, [&](size_t i) -> size_t { return subset[i]; });
+
+        } else {
+            work.local_unique_and_sorted.reserve(length);
+            work.local_reverse_mapping.reserve(length);
+
+            if (!has_duplicates) {
+                for (size_t i = 0; i < length; ++i) {
+                    work.local_unique_and_sorted.push_back(indices[subset[i]]); 
+                    work.local_reverse_mapping.push_back(work.local_unique_and_sorted.size() - 1);
+                }
+
+            } else {
+                size_t mapping_dim = MARGIN == 0 ? mat->nrow() : mat->ncol();
+                work.local_mapping_duplicates.resize(mapping_dim);
+                work.local_mapping_duplicates_pool.reserve(indices.size());
+
+                for (size_t i = 0; i < length; ++i) {
+                    auto s = subset[i];
+                    auto& range = work.local_mapping_duplicates[indices[s]];
+                    if (work.local_unique_and_sorted.empty() || indices[s] != work.local_unique_and_sorted.back()) {
+                        work.local_unique_and_sorted.push_back(indices[s]);
+                        range.first = work.local_mapping_duplicates_pool.size();
+                    }
+                    work.local_reverse_mapping.push_back(work.local_unique_and_sorted.size() - 1);
+                    work.local_mapping_duplicates_pool.push_back(s);
+                    ++range.second;
+                }
+            }
         }
     }
 };

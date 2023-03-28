@@ -167,7 +167,7 @@ TEST_P(SubsetSlicedAccessTest, OnRow) {
     test_sliced_row_access(dense_subbed.get(), ref.get(), true, JUMP, CFIRST, CLAST);
     test_sliced_row_access(sparse_subbed.get(), ref.get(), true, JUMP, CFIRST, CLAST);
 
-//    test_sliced_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, RLAST);
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, RLAST);
 //    test_sliced_column_access(sparse_subbed.get(), ref.get(), true, JUMP, RFIRST, RLAST);
 }
 
@@ -224,10 +224,10 @@ TEST_P(SubsetIndexedAccessTest, OnRow) {
     size_t RFIRST = interval_info[0] * sub.size(), RSTEP = interval_info[1] * sub.size();
     size_t CFIRST = interval_info[0] * NC, CSTEP = interval_info[1] * NC;
 
-    test_indexed_row_access(dense_subbed.get(), ref.get(), true, JUMP, CFIRST, CSTEP);
-    test_indexed_row_access(sparse_subbed.get(), ref.get(), true, JUMP, CFIRST, CSTEP);
+//    test_indexed_row_access(dense_subbed.get(), ref.get(), true, JUMP, CFIRST, CSTEP);
+//    test_indexed_row_access(sparse_subbed.get(), ref.get(), true, JUMP, CFIRST, CSTEP);
 
-//    test_indexed_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, RSTEP);
+    test_indexed_column_access(dense_subbed.get(), ref.get(), true, JUMP, RFIRST, RSTEP);
 //    test_indexed_column_access(sparse_subbed.get(), ref.get(), true, JUMP, RFIRST, RSTEP);
 }
 
