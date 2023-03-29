@@ -27,6 +27,7 @@ protected:
     /**
      * @cond
      */
+    Workspace() = default;
     virtual ~Workspace() = default;
 
     // Defining the other constructors for rule of 5. The move constructors
@@ -41,12 +42,6 @@ protected:
     /**
      * @endcond
      */
-
-public:
-    /**
-     * Default constructor.
-     */
-    Workspace() = default;
 };
 
 /**
@@ -74,6 +69,7 @@ protected:
     /**
      * @cond
      */
+    BlockWorkspace() = default;
     virtual ~BlockWorkspace() = default;
     BlockWorkspace(BlockWorkspace&&) = default;
     BlockWorkspace& operator=(BlockWorkspace&&) = default;
@@ -85,25 +81,17 @@ protected:
 
 public:
     /**
-     * Default constructor.
+     * @return Pair containing (i) the index of the first row/column in the block,
+     * and (ii) the number of rows/columns in the block.
      */
-    BlockWorkspace() = default;
+    virtual const std::pair<size_t, size_t>& block() const = 0;
 
     /**
-     * @param s Index of the first row/column in the block.
-     * @param l Number of rows/columns in the block.
+     * @param Number of rows/columns in the block.
      */
-    BlockWorkspace(size_t s, size_t l) : start(s), length(l) {}
-
-    /**
-     * Index of the first row/column in the block.
-     */
-    size_t start;
-
-    /**
-     * Number of rows/columns in the block.
-     */
-    size_t length;
+    size_t length() const {
+        return block().second;
+    }
 };
 
 /**
@@ -133,6 +121,7 @@ protected:
     /**
      * @cond
      */
+    IndexWorkspace() = default;
     virtual ~IndexWorkspace() = default;
     IndexWorkspace(IndexWorkspace&&) = default;
     IndexWorkspace& operator=(IndexWorkspace&&) = default;
@@ -144,26 +133,16 @@ protected:
 
 public:
     /**
-     * Default constructor.
+     * @return Vector containing sorted and unique indices for rows/columns in the subset.
      */
-    IndexWorkspace() = default;
+    virtual const std::vector<IDX>& indices() const = 0;
 
     /**
-     * @param l Number of rows/columns in the subset.
-     * @param i Pointer to an array of sorted and unique row/column indices.
+     * @param Number of rows/columns in the subset.
      */
-    IndexWorkspace(std::vector<IDX> i) : length(i.size()), indices(std::move(i)) {}
-
-    /**
-     * Number of row/columns in the subset.
-     * This is provided for compile-time interoperability with the `BlockWorkspace` class.
-     */
-    size_t length;
-
-    /**
-     * Vector of length `length`, containing sorted and unique indices for rows/columns in the subset.
-     */
-    std::vector<IDX> indices;
+    size_t length() const {
+        return indices().size();
+    }
 };
 
 /**

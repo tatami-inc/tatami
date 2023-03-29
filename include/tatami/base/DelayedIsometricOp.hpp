@@ -111,19 +111,27 @@ public:
     }
 
     const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
-        return operate_on_row(r, work->start, work->start + work->length, buffer, work);
+        const auto& deets = work->block();
+        size_t start = deets.first, end = start + deets.second;
+        return operate_on_row(r, start, end, buffer, work);
     }
 
     const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
-        return operate_on_column(c, work->start, work->start + work->length, buffer, work);
+        const auto& deets = work->block();
+        size_t start = deets.first, end = start + deets.second;
+        return operate_on_column(c, start, end, buffer, work);
     }
 
     SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work, bool sorted=true) const {
-        return operate_on_row(r, vbuffer, ibuffer, work, work->start, work->start + work->length, sorted);
+        const auto& deets = work->block();
+        size_t start = deets.first, end = start + deets.second;
+        return operate_on_row(r, vbuffer, ibuffer, work, start, end, sorted);
     }
 
     SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted=true) const {
-        return operate_on_column(c, vbuffer, ibuffer, work, work->start, work->start + work->length, sorted);
+        const auto& deets = work->block();
+        size_t start = deets.first, end = start + deets.second;
+        return operate_on_column(c, vbuffer, ibuffer, work, start, end, sorted);
     }
 
 private:
@@ -196,26 +204,28 @@ private:
     }
 
 public:
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t length, const IDX* indices) const {
-        return mat->new_row_workspace(length, indices);
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> indices) const {
+        return mat->new_row_workspace(std::move(indices));
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t length, const IDX* indices) const {
-        return mat->new_column_workspace(length, indices);
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> indices) const {
+        return mat->new_column_workspace(std::move(indices));
     }
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
         const T* raw = mat->row(r, buffer, work);
-        for (size_t i = 0; i < work->length; ++i, ++raw) {
-            buffer[i] = operation(r, work->indices[i], *raw);
+        const auto& indices = work->indices();
+        for (size_t i = 0, end = indices.size(); i < end; ++i, ++raw) {
+            buffer[i] = operation(r, indices[i], *raw);
         }
         return buffer;
     }
 
     const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
         const T* raw = mat->column(c, buffer, work);
-        for (size_t i = 0; i < work->length; ++i, ++raw) {
-            buffer[i] = operation(work->indices[i], c, *raw);
+        const auto& indices = work->indices();
+        for (size_t i = 0, end = indices.size(); i < end; ++i, ++raw) {
+            buffer[i] = operation(indices[i], c, *raw);
         }
         return buffer;
     }
@@ -225,12 +235,16 @@ public:
             return operate_on_row(r, vbuffer, ibuffer, work, sorted);
         } else {
             auto ptr = mat->row(r, vbuffer, work);
+            const auto& indices = work->indices();
+            size_t len = indices.size();
+
             auto original_vbuffer = vbuffer;
-            for (size_t i = 0; i < work->length; ++i, ++vbuffer, ++ptr) {
-                (*vbuffer) = operation(r, work->indices[i], *ptr);
+            for (size_t i = 0; i < len; ++i, ++vbuffer, ++ptr) {
+                (*vbuffer) = operation(r, indices[i], *ptr);
             }
-            std::copy(work->indices, work->indices + work->length, ibuffer); // avoid lifetime issues with RowIndexWorkspace's indices.
-            return SparseRange<T, IDX>(work->length, original_vbuffer, ibuffer);
+            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with RowIndexWorkspace's indices.
+
+            return SparseRange<T, IDX>(len, original_vbuffer, ibuffer);
         }
     }
 
@@ -239,12 +253,16 @@ public:
             return operate_on_column(c, vbuffer, ibuffer, work, sorted);
         } else {
             auto ptr = mat->column(c, vbuffer, work);
+            const auto& indices = work->indices();
+            size_t len = indices.size();
+
             auto original_vbuffer = vbuffer;
-            for (size_t i = 0; i < work->length; ++i, ++vbuffer, ++ptr) {
-                (*vbuffer) = operation(work->indices[i], c, *ptr);
+            for (size_t i = 0; i < len; ++i, ++vbuffer, ++ptr) {
+                (*vbuffer) = operation(indices[i], c, *ptr);
             }
-            std::copy(work->indices, work->indices + work->length, ibuffer); // avoid lifetime issues with ColumnIndexWorkspace's indices.
-            return SparseRange<T, IDX>(work->length, original_vbuffer, ibuffer); 
+            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with RowIndexWorkspace's indices.
+
+            return SparseRange<T, IDX>(len, original_vbuffer, ibuffer); 
         }
     }
 };
