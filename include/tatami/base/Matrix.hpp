@@ -3,6 +3,8 @@
 
 #include "SparseRange.hpp"
 #include "Workspace.hpp"
+#include <algorithm>
+#include <numeric>
 
 /**
  * @file Matrix.hpp
@@ -466,10 +468,8 @@ public:
      */
     virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnWorkspace* work, bool sorted = true) const {
         const T* val = column(c, vbuffer, work);
-        const auto& deets = work->block();
-        size_t start = deets.first, len = deets.second;
-        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
-        return SparseRange(len, val, ibuffer); 
+        std::iota(ibuffer, ibuffer + nrow(), static_cast<IDX>(0));
+        return SparseRange(nrow(), val, ibuffer); 
     }
 
     /**
@@ -520,8 +520,9 @@ public:
      */
     virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted = true) const {
         const T* val = column(c, vbuffer, work);
-        size_t len = work->length();
-        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(work->start()));
+        const auto& deets = work->block();
+        size_t start = deets.first, len = deets.second;
+        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
         return SparseRange(len, val, ibuffer); 
     }
 
@@ -545,7 +546,7 @@ public:
         const T* val = row(r, vbuffer, work);
         const auto& indices = work->indices();
         std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
-        return SparseRange(len, val, ibuffer); 
+        return SparseRange(indices.size(), val, ibuffer); 
     }
 
     /**
@@ -568,7 +569,7 @@ public:
         const T* val = column(c, vbuffer, work);
         const auto& indices = work->indices();
         std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
-        return SparseRange(len, val, ibuffer); 
+        return SparseRange(indices.size(), val, ibuffer); 
     }
 
     /**************************************

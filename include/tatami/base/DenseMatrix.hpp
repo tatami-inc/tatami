@@ -102,8 +102,8 @@ public:
     /**
      * @cond
      */
-    template<bool ROW>
-    struct DenseBlockWorkspace : public BlockWorkspace<ROW> {
+    template<bool WORKROW>
+    struct DenseBlockWorkspace : public BlockWorkspace<WORKROW> {
         DenseBlockWorkspace(size_t s, size_t l) : details(s, l) {};
         std::pair<size_t, size_t> details;
         const std::pair<size_t, size_t>& block() const { return details; }
@@ -165,8 +165,8 @@ public:
     /**
      * @cond
      */
-    template<bool ROW>
-    struct DenseIndexWorkspace : public IndexWorkspace<IDX, ROW> {
+    template<bool WORKROW>
+    struct DenseIndexWorkspace : public IndexWorkspace<IDX, WORKROW> {
         DenseIndexWorkspace(std::vector<IDX> i) : indices_(std::move(i)) {}
         std::vector<IDX> indices_;
         const std::vector<IDX>& indices() const { return indices_; }

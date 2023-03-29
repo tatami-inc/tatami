@@ -115,11 +115,11 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
     }
 
     auto rwork = ref->new_row_workspace();
-    auto pwork = ptr->new_row_workspace(indices.size(), indices.data());
-    auto swork = ptr->new_row_workspace(indices.size(), indices.data());
-    auto swork_so = ptr->new_row_workspace(indices.size(), indices.data());
-    auto pwork_bi = ptr->new_row_workspace(indices.size(), indices.data());
-    auto rwork_bi = ref->new_row_workspace(indices.size(), indices.data());
+    auto pwork = ptr->new_row_workspace(indices);
+    auto swork = ptr->new_row_workspace(indices);
+    auto swork_so = ptr->new_row_workspace(indices);
+    auto pwork_bi = ptr->new_row_workspace(indices);
+    auto rwork_bi = ref->new_row_workspace(indices);
 
     for (size_t i = 0; i < NR; i += jump) {
         size_t r = (forward ? i : NR - i - 1);
