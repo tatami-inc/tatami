@@ -466,8 +466,16 @@ public:
      */
     template<bool ROW>
     struct PerpendicularIndexWorkspace : public IndexWorkspace<IDX, ROW> {
-        PerpendicularIndexWorkspace(size_t length, const IDX* subset, std::vector<std::shared_ptr<IndexWorkspace<IDX, ROW> > > w) : 
-            IndexWorkspace<IDX, ROW>(length, subset), workspaces(std::move(w)) {}
+        PerpendicularIndexWorkspace() = default;
+
+        std::vector<IDX> indices_;
+        const std::vector<IDX>& indices() const { 
+            if (!workspaces.empty()) {
+                return workspaces.front()->indices(); 
+            } else {
+                return indices_;
+            }
+        }
 
         std::vector<std::shared_ptr<IndexWorkspace<IDX, ROW> > > workspaces;
         size_t last_segment = 0;
@@ -475,21 +483,24 @@ public:
 
     template<bool ROW>
     struct ParallelIndexWorkspace : public IndexWorkspace<IDX, ROW> {
-        ParallelIndexWorkspace(size_t length, const IDX* subset) : IndexWorkspace<IDX, ROW>(length, subset) {}
+        ParallelIndexWorkspace(std::vector<IDX> subset) : indices_(std::move(subset)) {}
+
+        std::vector<IDX> indices_;
+        const std::vector<IDX>& indices() const { return indices_; }
+
         std::vector<std::shared_ptr<IndexWorkspace<IDX, ROW> > > workspaces;
-        std::vector<std::vector<IDX> > slices;
         std::vector<size_t> kept;
     };
     /**
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t length, const IDX* subset) const {
-        return new_workspace<true>(length, subset);
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> subset) const {
+        return new_workspace<true>(std::move(subset));
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t length, const IDX* subset) const {
-        return new_workspace<false>(length, subset);
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> subset) const {
+        return new_workspace<false>(std::move(subset));
     }
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
@@ -528,26 +539,32 @@ public:
 
 private:
     template<bool ROW>
-    std::shared_ptr<IndexWorkspace<IDX, ROW> > new_workspace(size_t length, const IDX* subset) const {
+    std::shared_ptr<IndexWorkspace<IDX, ROW> > new_workspace(std::vector<IDX> i) const {
         if constexpr((MARGIN == 0) == ROW) {
-            std::vector<std::shared_ptr<IndexWorkspace<IDX, ROW> > > workspaces;
-            workspaces.reserve(mats.size());
+            auto ptr = new PerpendicularIndexWorkspace<ROW>;
+            std::shared_ptr<IndexWorkspace<IDX, ROW> > output(ptr);
+            ptr->workspaces.reserve(mats.size());
 
             for (const auto& x : mats) {
                 if constexpr(ROW) {
-                    workspaces.push_back(x->new_row_workspace(length, subset));
+                    ptr->workspaces.push_back(x->new_row_workspace(i)); // deliberate copies here.
                 } else {
-                    workspaces.push_back(x->new_column_workspace(length, subset));
+                    ptr->workspaces.push_back(x->new_column_workspace(i));
                 }
             }
 
-            return std::shared_ptr<IndexWorkspace<IDX, ROW> >(new PerpendicularIndexWorkspace<ROW>(length, subset, std::move(workspaces)));
+            if (mats.empty()) { // make sure we can provide the indices if there are no matrices.
+                ptr->indices_ = std::move(i);
+            }
+            return output;
 
         } else {
-            auto ptr = new ParallelIndexWorkspace<ROW>(length, subset);
+            auto ptr = new ParallelIndexWorkspace<ROW>(std::move(i));
             std::shared_ptr<IndexWorkspace<IDX, ROW> > output(ptr);
+            const auto& subset = ptr->indices_;
+            size_t length = subset.size();
 
-            if (length) {
+            if (!subset.empty()) {
                 auto& workspaces = ptr->workspaces;
                 auto& kept = ptr->kept;
                 auto& slices = ptr->slices;
