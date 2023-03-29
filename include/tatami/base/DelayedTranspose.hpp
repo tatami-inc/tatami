@@ -162,12 +162,12 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t length, const IDX* indices) const {
-        return std::shared_ptr<RowIndexWorkspace<IDX> >(new TransposedRowIndexWorkspace(mat->new_column_workspace(length, indices)));
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> subset) const {
+        return std::shared_ptr<RowIndexWorkspace<IDX> >(new TransposedRowIndexWorkspace(mat->new_column_workspace(std::move(subset))));
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t length, const IDX* indices) const {
-        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new TransposedColumnIndexWorkspace(mat->new_row_workspace(length, indices)));
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> subset) const {
+        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new TransposedColumnIndexWorkspace(mat->new_row_workspace(std::move(subset))));
     }
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {

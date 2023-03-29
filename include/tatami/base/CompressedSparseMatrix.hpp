@@ -160,9 +160,9 @@ private:
             return;
         } 
 
-        SecondaryWorkspaceBase(size_t max_index, const V& idx, const W& idp, size_t length, const IDX* indices) : current_indptrs(length), current_indices(length) {
-            for (size_t i0 = 0; i0 < length; ++i0) {
-                auto i = indices[i0];
+        SecondaryWorkspaceBase(size_t max_index, const V& idx, const W& idp, const std::vector<IDX>& subset) : current_indptrs(subset.size()), current_indices(subset.size()) {
+            for (size_t i0 = 0, end = subset.size(); i0 < end; ++i0) {
+                auto i = subset[i0];
                 current_indptrs[i0] = idp[i];
                 current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
             }
