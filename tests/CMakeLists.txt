@@ -31,16 +31,13 @@ add_executable(
     src/stats/ranges.cpp
     src/stats/apply.cpp
 
-#    src/utils/wrap_shared_ptr.cpp
-#    src/utils/SomeNumericArray.cpp
-#    src/utils/ArrayView.cpp
-#    src/utils/convert_to_dense.cpp
-#    src/utils/convert_to_sparse.cpp
-#    src/utils/bind_intersection.cpp
-#    src/base/compress_sparse_triplets.cpp
-#
-#    src/data/data_sparse.cpp
-#    src/data/data_triangular.cpp
+    src/utils/wrap_shared_ptr.cpp
+    src/utils/SomeNumericArray.cpp
+    src/utils/ArrayView.cpp
+    src/utils/convert_to_dense.cpp
+    src/utils/convert_to_sparse.cpp
+    src/utils/bind_intersection.cpp
+    src/utils/compress_sparse_triplets.cpp
 )
 
 target_link_libraries(

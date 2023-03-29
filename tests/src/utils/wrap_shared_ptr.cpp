@@ -2,6 +2,9 @@
 #include "tatami/utils/wrap_shared_ptr.hpp"
 #include "tatami/base/DenseMatrix.hpp"
 
+#include "../_tests/test_row_access.h"
+#include "../_tests/test_column_access.h"
+
 TEST(WrapSharedPtrTest, Simple) {
     std::vector<double> contents(200);
     double counter = -105;
@@ -15,8 +18,8 @@ TEST(WrapSharedPtrTest, Simple) {
         EXPECT_EQ(wrap->nrow(), 10);
         EXPECT_EQ(wrap->ncol(), 20);
 
-        EXPECT_EQ(wrap->column(0), mat.column(0));
-        EXPECT_EQ(wrap->row(0), mat.row(0));
+        test_simple_row_access(wrap.get(), &mat);
+        test_simple_column_access(wrap.get(), &mat);
     }
 
     // Still runs properly as wrapped pointer deletion is a no-op.
