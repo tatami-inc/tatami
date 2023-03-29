@@ -260,7 +260,7 @@ public:
 
     struct CompressedSparseSecondaryBlockWorkspace : public BlockWorkspace<!ROW> {
         CompressedSparseSecondaryBlockWorkspace(size_t s, size_t l, size_t max_index, const V& idx, const W& idp) : 
-            details(s, l), core(max_index, idx, idp, start, length) {}
+            details(s, l), core(max_index, idx, idp, s, l) {}
 
         std::pair<size_t, size_t> details;
         const std::pair<size_t, size_t>& block() const { return details; }
@@ -739,7 +739,7 @@ private:
     }
 
     void secondary_dimension_expanded(IDX i, const std::vector<IDX>& subset, SecondaryWorkspaceBase& work, T* out_values) const {
-        std::fill(out_values, out_values + length, static_cast<T>(0));
+        std::fill(out_values, out_values + subset.size(), static_cast<T>(0));
         expanded_store2 store;
         store.out_values = out_values;
         secondary_dimension(i, subset, work, store);
