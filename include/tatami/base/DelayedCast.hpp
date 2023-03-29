@@ -298,7 +298,7 @@ private:
     template<bool WORKROW>
     std::shared_ptr<IndexWorkspace<IDX_out, WORKROW> > new_workspace(std::vector<IDX_out> indices) const { 
         size_t nv = 0;
-        if constexpr(!same_IDX_type) {
+        if constexpr(!same_T_type) {
             nv = indices.size();
         }
 

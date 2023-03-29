@@ -578,12 +578,12 @@ public:
 
     struct CompressedSparseSecondaryIndexWorkspace : public IndexWorkspace<IDX, !ROW> {
         CompressedSparseSecondaryIndexWorkspace(std::vector<IDX> subset, size_t max_index, const V& idx, const W& idp) : 
-            indices_(std::move(subset)), core(max_index, idx, idp, std::move(subset)) {}
-
-        std::vector<IDX> indices_;
-        const std::vector<IDX>& indices() const { return indices_; }
+            core(max_index, idx, idp, subset), indices_(std::move(subset)) {}
 
         SecondaryWorkspaceBase core;
+
+        std::vector<IDX> indices_; // must be after 'core', as we're moving 'subset' after 'core' is done with it.
+        const std::vector<IDX>& indices() const { return indices_; }
     };
     /**
      * @endcond
