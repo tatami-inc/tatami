@@ -133,23 +133,26 @@ public:
      */
     virtual std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const = 0;
 
+    // Note to self: we use a vector rather than taking a pointer to the
+    // indices. This is because workspaces of wrapper matrices may need to
+    // construct their own vectors, in which case the validity of the pointers
+    // is ambiguous, e.g., is the saved pointer to a vector still valid after
+    // the vector is moved to a new location? See also discussion at:
+    // https://stackoverflow.com/questions/11021764/does-moving-a-vector-invalidate-iterators
+
     /**
-     * @param n Number of indices.
-     * @param[in] indices Pointer to an array of length `n`, containing sorted and unique column indices.
-     * It is assumed that this array's lifetime exceeds that of the returned workspace.
+     * @param indices Vector containing sorted and unique column indices.
      *
      * @return A shared pointer to a `RowIndexWorkspace` for row-wise extraction of data from a subset of columns defined by `indices`, or a null pointer if no workspace is required.
      */
-    virtual std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t n, const IDX* indices) const = 0;
+    virtual std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> indices) const = 0;
 
     /**
-     * @param n Number of indices.
-     * @param[in] indices Pointer to an array of length `n`, containing sorted and unique row indices.
-     * It is assumed that this array's lifetime exceeds that of the returned workspace.
+     * @param indices Vector containing sorted and unique row indices.
      *
      * @return A shared pointer to a `ColumnIndexWorkspace` for column-wise extraction of data from a subset of rows defined by `indices`, or a null pointer if no workspace is required.
      */
-    virtual std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t n, const IDX* indices) const = 0;
+    virtual std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX>* indices) const = 0;
 
     /*********************************
      ***** Dense virtual methods *****
