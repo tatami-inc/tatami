@@ -165,53 +165,53 @@ public:
      * @cond
      */
     struct DenseRowIndexWorkspace : public RowIndexWorkspace<IDX> {
-        DenseRowIndexWorkspace(size_t n, const IDX* i) : RowIndexWorkspace<IDX>(n, i) {}
+        DenseRowIndexWorkspace(std::vector<IDX> i) : RowIndexWorkspace<IDX>(std::move(i)) {}
     };
 
     struct DenseColumnIndexWorkspace : public ColumnIndexWorkspace<IDX> {
-        DenseColumnIndexWorkspace(size_t n, const IDX* i) : ColumnIndexWorkspace<IDX>(n, i) {}
+        DenseColumnIndexWorkspace(std::vector<IDX> i) : ColumnIndexWorkspace<IDX>(std::move(i)) {}
     };
     /**
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(size_t n, const IDX* i) const {
-        return std::shared_ptr<RowIndexWorkspace<IDX> >(new DenseRowIndexWorkspace(n, i));
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i) const {
+        return std::shared_ptr<RowIndexWorkspace<IDX> >(new DenseRowIndexWorkspace(std::move(i)));
     }
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
-            return primary_indexed(r, buffer, work->length, work->indices, ncols);
+            return primary_indexed(r, buffer, work->indices, ncols);
         } else {
-            secondary_indexed(r, buffer, work->length, work->indices, nrows);
+            secondary_indexed(r, buffer, work->indices, nrows);
             return buffer;
         }
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(size_t n, const IDX* i) const {
-        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new DenseColumnIndexWorkspace(n, i));
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i) const {
+        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new DenseColumnIndexWorkspace(std::move(i)));
     }
 
     const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
-            secondary_indexed(c, buffer, work->length, work->indices, ncols);
+            secondary_indexed(c, buffer, work->indices, ncols);
             return buffer;
         } else {
-            return primary_indexed(c, buffer, work->length, work->indices, nrows);
+            return primary_indexed(c, buffer, work->indices, nrows);
         }
     }
 
 private:
-    const T* primary_indexed(size_t c, T* buffer, size_t n, const IDX* indices, size_t dim_secondary) const {
+    const T* primary_indexed(size_t c, T* buffer, const std::vector<IDX>& indices, size_t dim_secondary) const {
         auto offset = c * dim_secondary;
-        for (size_t i = 0; i < n; ++i, ++indices) {
-            buffer[i] = values[*indices + offset];
+        for (size_t i = 0, end = indices.size(); i < end; ++i) {
+            buffer[i] = values[indices[i] + offset];
         }
         return buffer;
     }
 
-    void secondary_indexed(size_t r, T* buffer, size_t n, const IDX* indices, size_t dim_secondary) const {
-        for (size_t i = 0; i < n; ++i, ++buffer) {
+    void secondary_indexed(size_t r, T* buffer, const std::vector<IDX>& indices, size_t dim_secondary) const {
+        for (size_t i = 0, end = indices.size(); i < end; ++i, ++buffer) {
             *buffer = values[indices[i] * dim_secondary + r]; 
         }
         return;

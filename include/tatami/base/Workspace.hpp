@@ -152,18 +152,18 @@ public:
      * @param l Number of rows/columns in the subset.
      * @param i Pointer to an array of sorted and unique row/column indices.
      */
-    IndexWorkspace(size_t l, const IDX* i) : length(l), indices(i) {}
+    IndexWorkspace(std::vector<IDX> i) : length(i.size()), indices(std::move(i)) {}
 
     /**
      * Number of row/columns in the subset.
+     * This is provided for compile-time interoperability with the `BlockWorkspace` class.
      */
     size_t length;
 
     /**
-     * Pointer to an array of length `length`, containing sorted and unique indices for rows/columns in the subset.
-     * It is assumed that the lifetime of the array exceeds that of this object.
+     * Vector of length `length`, containing sorted and unique indices for rows/columns in the subset.
      */
-    const IDX* indices;
+    std::vector<IDX> indices;
 };
 
 /**
