@@ -768,7 +768,7 @@ public:
 private:
     template<bool WORKROW>
     std::shared_ptr<IndexWorkspace<IDX, WORKROW> > new_workspace(std::vector<IDX> subset_) const {
-        if constexpr(MARGIN == 0) {
+        if constexpr((MARGIN == 0) == WORKROW) {
             if constexpr(WORKROW) {
                 return mat->new_row_workspace(std::move(subset_));
             } else {
@@ -1634,7 +1634,7 @@ private:
 
     template<bool WORKROW>
     std::shared_ptr<BlockWorkspace<WORKROW> > new_workspace(size_t start, size_t length) const {
-        if constexpr(MARGIN == 0) {
+        if constexpr((MARGIN == 0) == WORKROW) {
             if constexpr(WORKROW) {
                 return mat->new_row_workspace(start, length);
             } else {
@@ -1742,7 +1742,7 @@ public:
 private:
     template<bool WORKROW>
     std::shared_ptr<IndexWorkspace<IDX, WORKROW> > new_workspace(std::vector<IDX> subset_) const {
-        if constexpr(MARGIN == 0) {
+        if constexpr((MARGIN == 0) == WORKROW) {
             if constexpr(WORKROW) {
                 return mat->new_row_workspace(std::move(subset_));
             } else {
