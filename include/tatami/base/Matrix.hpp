@@ -152,7 +152,7 @@ public:
      *
      * @return A shared pointer to a `ColumnIndexWorkspace` for column-wise extraction of data from a subset of rows defined by `indices`, or a null pointer if no workspace is required.
      */
-    virtual std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX>* indices) const = 0;
+    virtual std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> indices) const = 0;
 
     /*********************************
      ***** Dense virtual methods *****
@@ -277,7 +277,7 @@ public:
      */
     const T* row_copy(size_t r, T* buffer, RowBlockWorkspace* work) const {
         auto ptr = row(r, buffer, work);
-        copy_over(ptr, buffer, work->length);
+        copy_over(ptr, buffer, work->length());
         return buffer;
     }
 
@@ -291,7 +291,7 @@ public:
      */
     const T* column_copy(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
         auto ptr = column(c, buffer, work);
-        copy_over(ptr, buffer, work->length);
+        copy_over(ptr, buffer, work->length());
         return buffer;
     }
 
@@ -306,7 +306,7 @@ public:
     const T* row_copy(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
         // Indexed extraction should almost certainly copy, but we'll just make sure.
         auto ptr = row(r, buffer, work);
-        copy_over(ptr, buffer, work->length);
+        copy_over(ptr, buffer, work->length());
         return buffer;
     }
 
@@ -321,7 +321,7 @@ public:
     const T* column_copy(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
         // Indexed extraction should almost certainly copy, but we'll just make sure.
         auto ptr = column(c, buffer, work);
-        copy_over(ptr, buffer, work->length);
+        copy_over(ptr, buffer, work->length());
         return buffer;
     }
 
@@ -366,7 +366,7 @@ public:
      * @return A vector containing all values of row `r`.
      */
     std::vector<T> row(size_t r, RowBlockWorkspace* work) const {
-        std::vector<T> output(work->length);
+        std::vector<T> output(work->length());
         row_copy(r, output.data(), work);
         return output;
     }
@@ -381,7 +381,7 @@ public:
      * @return A vector containing all values of column `c`.
      */
     std::vector<T> column(size_t c, ColumnBlockWorkspace* work) const {
-        std::vector<T> output(work->length);
+        std::vector<T> output(work->length());
         column_copy(c, output.data(), work);
         return output;
     }
@@ -396,7 +396,7 @@ public:
      * @return A vector containing all values of row `r`.
      */
     std::vector<T> row(size_t r, RowIndexWorkspace<IDX>* work) const {
-        std::vector<T> output(work->length);
+        std::vector<T> output(work->length());
         row_copy(r, output.data(), work);
         return output;
     }
@@ -411,7 +411,7 @@ public:
      * @return A vector containing all values of column `c`.
      */
     std::vector<T> column(size_t c, ColumnIndexWorkspace<IDX>* work) const {
-        std::vector<T> output(work->length);
+        std::vector<T> output(work->length());
         column_copy(c, output.data(), work);
         return output;
     }
@@ -441,9 +441,7 @@ public:
      */
     virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowWorkspace* work, bool sorted = true) const {
         const T* val = row(r, vbuffer, work);
-        for (size_t i = 0, end = ncol(); i < end; ++i) {
-            ibuffer[i] = i;
-        }
+        std::iota(ibuffer, ibuffer + ncol(), static_cast<IDX>(0));
         return SparseRange(ncol(), val, ibuffer); 
     }
 
@@ -468,10 +466,10 @@ public:
      */
     virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnWorkspace* work, bool sorted = true) const {
         const T* val = column(c, vbuffer, work);
-        for (size_t i = 0, end = nrow(); i < end; ++i) {
-            ibuffer[i] = i;
-        }
-        return SparseRange(nrow(), val, ibuffer); 
+        const auto& deets = work->block();
+        size_t start = deets.first, len = deets.second;
+        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
+        return SparseRange(len, val, ibuffer); 
     }
 
     /**
@@ -495,10 +493,10 @@ public:
      */
     virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work, bool sorted = true) const {
         const T* val = row(r, vbuffer, work);
-        for (size_t i = 0, end = work->length; i < end; ++i) {
-            ibuffer[i] = i + work->start;
-        }
-        return SparseRange(work->length, val, ibuffer); 
+        const auto& deets = work->block();
+        size_t start = deets.first, len = deets.second;
+        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
+        return SparseRange(len, val, ibuffer); 
     }
 
     /**
@@ -522,10 +520,9 @@ public:
      */
     virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted = true) const {
         const T* val = column(c, vbuffer, work);
-        for (size_t i = 0, end = work->length; i < end; ++i) {
-            ibuffer[i] = i + work->start;
-        }
-        return SparseRange(work->length, val, ibuffer); 
+        size_t len = work->length();
+        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(work->start()));
+        return SparseRange(len, val, ibuffer); 
     }
 
     /**
@@ -546,10 +543,9 @@ public:
      */
     virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, bool sorted = true) const {
         const T* val = row(r, vbuffer, work);
-        for (size_t i = 0, end = work->length; i < end; ++i) {
-            ibuffer[i] = work->indices[i];
-        }
-        return SparseRange(work->length, val, ibuffer); 
+        const auto& indices = work->indices();
+        std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
+        return SparseRange(len, val, ibuffer); 
     }
 
     /**
@@ -570,10 +566,9 @@ public:
      */
     virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, bool sorted = true) const {
         const T* val = column(c, vbuffer, work);
-        for (size_t i = 0, end = work->length; i < end; ++i) {
-            ibuffer[i] = work->indices[i];
-        }
-        return SparseRange(work->length, val, ibuffer); 
+        const auto& indices = work->indices();
+        std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
+        return SparseRange(len, val, ibuffer); 
     }
 
     /**************************************
@@ -743,7 +738,7 @@ public:
      * @return A `SparseRangeCopy` object containing the contents of a block of columns in row `r`.
      */
     SparseRangeCopy<T, IDX> sparse_row(size_t r, RowBlockWorkspace* work, bool sorted = true) const {
-        SparseRangeCopy<T, IDX> output(work->length);
+        SparseRangeCopy<T, IDX> output(work->length());
         auto ret = sparse_row_copy(r, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
@@ -761,7 +756,7 @@ public:
      * @return A `SparseRangeCopy` object containing the contents of a block of rows in column `c`.
      */
     SparseRangeCopy<T, IDX> sparse_column(size_t c, ColumnBlockWorkspace* work, bool sorted = true) const {
-        SparseRangeCopy<T, IDX> output(work->length);
+        SparseRangeCopy<T, IDX> output(work->length());
         auto ret = sparse_column_copy(c, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
@@ -779,7 +774,7 @@ public:
      * @return A `SparseRangeCopy` object containing the contents of a subset of columns in row `r`.
      */
     SparseRangeCopy<T, IDX> sparse_row(size_t r, RowIndexWorkspace<IDX>* work, bool sorted = true) const {
-        SparseRangeCopy<T, IDX> output(work->length);
+        SparseRangeCopy<T, IDX> output(work->length());
         auto ret = sparse_row_copy(r, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
@@ -797,7 +792,7 @@ public:
      * @return A `SparseRangeCopy` object containing the contents of a subset of rows in column `c`.
      */
     SparseRangeCopy<T, IDX> sparse_column(size_t c, ColumnIndexWorkspace<IDX>* work, bool sorted = true) const {
-        SparseRangeCopy<T, IDX> output(work->length);
+        SparseRangeCopy<T, IDX> output(work->length());
         auto ret = sparse_column_copy(c, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
@@ -863,18 +858,16 @@ std::shared_ptr<BlockWorkspace<ROW> > new_workspace(const Matrix<T, IDX>* ptr, s
  * @tparam IDX Type of the row/column indices.
  *
  * @param ptr Pointer to a `Matrix` instance.
- * @param length Number of columns (if `ROW = true`) or rows (otherwise) in the subset.
- * @param[in] indices Pointer to an array of indices for columns (if `ROW = true`) or rows (otherwise) in the subset.
- * The lifetime of the array is expected to exceed that of the returned workspace.
+ * @param indices Vector of unique and sorted indices for columns (if `ROW = true`) or rows (otherwise) in the subset.
  *
  * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
  */
 template<bool ROW, typename T, typename IDX>
-std::shared_ptr<BlockWorkspace<ROW> > new_workspace(const Matrix<T, IDX>* ptr, size_t length, const IDX* indices) {
+std::shared_ptr<BlockWorkspace<ROW> > new_workspace(const Matrix<T, IDX>* ptr, std::vector<IDX> indices) {
     if constexpr(ROW) {
-        return ptr->new_row_workspace(length, indices);
+        return ptr->new_row_workspace(std::move(indices));
     } else {
-        return ptr->new_column_workspace(length, indices);
+        return ptr->new_column_workspace(std::move(indices));
     }
 }
 

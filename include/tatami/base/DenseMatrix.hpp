@@ -71,8 +71,14 @@ public:
      */
     bool prefer_rows() const { return ROW; }
 
+    using Matrix<T, IDX>::row;
+
+    using Matrix<T, IDX>::column;
+
 public:
     std::shared_ptr<RowWorkspace> new_row_workspace() const { return nullptr; }
+
+    std::shared_ptr<ColumnWorkspace> new_column_workspace() const { return nullptr; }
 
     const T* row(size_t r, T* buffer, RowWorkspace* work) const {
         if constexpr(ROW) {
@@ -83,8 +89,6 @@ public:
         }
     }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace() const { return nullptr; }
-
     const T* column(size_t c, T* buffer, ColumnWorkspace* work=nullptr) const {
         if constexpr(ROW) {
             secondary(c, buffer, 0, nrows, ncols);
@@ -94,50 +98,47 @@ public:
         }
     }
 
-    using Matrix<T, IDX>::row;
-
-    using Matrix<T, IDX>::column;
-
 public:
     /**
      * @cond
      */
-    struct DenseRowBlockWorkspace : public RowBlockWorkspace {
-        DenseRowBlockWorkspace(size_t s, size_t l) : RowBlockWorkspace(s, l) {}
-    };
-
-    struct DenseColumnBlockWorkspace : public ColumnBlockWorkspace {
-        DenseColumnBlockWorkspace(size_t s, size_t l) : ColumnBlockWorkspace(s, l) {}
+    template<bool ROW>
+    struct DenseBlockWorkspace : public BlockWorkspace<ROW> {
+        DenseBlockWorkspace(size_t s, size_t l) : details(s, l) {};
+        std::pair<size_t, size_t> details;
+        const std::pair<size_t, size_t>& block() const { return details; }
     };
     /**
      * @endcond
      */
 
     std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t len) const {
-        return std::shared_ptr<RowBlockWorkspace>(new DenseRowBlockWorkspace(start, len));
+        return std::shared_ptr<RowBlockWorkspace>(new DenseBlockWorkspace<true>(start, len));
+    }
+
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t len) const {
+        return std::shared_ptr<ColumnBlockWorkspace>(new DenseBlockWorkspace<false>(start, len));
     }
 
     const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
-        auto end = work->start + work->length;
+        const auto& deets = work->block();
+        size_t start = deets.first, end = start + deets.second;
         if constexpr(ROW) {
-            return primary(r, buffer, work->start, end, ncols);
+            return primary(r, buffer, start, end, ncols);
         } else {
-            secondary(r, buffer, work->start, end, nrows);
+            secondary(r, buffer, start, end, nrows);
             return buffer;
         }
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t len) const {
-        return std::shared_ptr<ColumnBlockWorkspace>(new DenseColumnBlockWorkspace(start, len));
-    }
-
     const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
-        auto end = work->start + work->length;
+        const auto& deets = work->block();
+        size_t start = deets.first, end = start + deets.second;
         if constexpr(ROW) {
-            secondary(c, buffer, work->start, end, ncols);
+            secondary(c, buffer, start, end, ncols);
             return buffer;
         } else {
-            return primary(c, buffer, work->start, end, nrows);
+            return primary(c, buffer, start, end, nrows);
         }
     }
 
@@ -164,40 +165,39 @@ public:
     /**
      * @cond
      */
-    struct DenseRowIndexWorkspace : public RowIndexWorkspace<IDX> {
-        DenseRowIndexWorkspace(std::vector<IDX> i) : RowIndexWorkspace<IDX>(std::move(i)) {}
-    };
-
-    struct DenseColumnIndexWorkspace : public ColumnIndexWorkspace<IDX> {
-        DenseColumnIndexWorkspace(std::vector<IDX> i) : ColumnIndexWorkspace<IDX>(std::move(i)) {}
+    template<bool ROW>
+    struct DenseIndexWorkspace : public IndexWorkspace<IDX, ROW> {
+        DenseIndexWorkspace(std::vector<IDX> i) : indices_(std::move(i)) {}
+        std::vector<IDX> indices_;
+        const std::vector<IDX>& indices() const { return indices_; }
     };
     /**
      * @endcond
      */
 
     std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i) const {
-        return std::shared_ptr<RowIndexWorkspace<IDX> >(new DenseRowIndexWorkspace(std::move(i)));
+        return std::shared_ptr<RowIndexWorkspace<IDX> >(new DenseIndexWorkspace<true>(std::move(i)));
+    }
+
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i) const {
+        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new DenseIndexWorkspace<false>(std::move(i)));
     }
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
-            return primary_indexed(r, buffer, work->indices, ncols);
+            return primary_indexed(r, buffer, work->indices(), ncols);
         } else {
-            secondary_indexed(r, buffer, work->indices, nrows);
+            secondary_indexed(r, buffer, work->indices(), nrows);
             return buffer;
         }
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i) const {
-        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new DenseColumnIndexWorkspace(std::move(i)));
-    }
-
     const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
-            secondary_indexed(c, buffer, work->indices, ncols);
+            secondary_indexed(c, buffer, work->indices(), ncols);
             return buffer;
         } else {
-            return primary_indexed(c, buffer, work->indices, nrows);
+            return primary_indexed(c, buffer, work->indices(), nrows);
         }
     }
 

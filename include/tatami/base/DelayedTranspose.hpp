@@ -110,8 +110,9 @@ public:
      */
     template<bool ROW>
     struct TransposedBlockWorkspace : public BlockWorkspace<ROW> {
-        TransposedBlockWorkspace(std::shared_ptr<BlockWorkspace<!ROW> > w) : BlockWorkspace<ROW>(w->start, w->length), base(std::move(w)) {}
+        TransposedBlockWorkspace(std::shared_ptr<BlockWorkspace<!ROW> > w) : base(std::move(w)) {}
         std::shared_ptr<BlockWorkspace<!ROW> > base;
+        const std::pair<size_t, size_t>& block() const { return base->block(); }
     };
 
     typedef TransposedBlockWorkspace<true> TransposedRowBlockWorkspace;
@@ -150,8 +151,9 @@ public:
      */
     template<bool ROW>
     struct TransposedIndexWorkspace : public IndexWorkspace<IDX, ROW> {
-        TransposedIndexWorkspace(std::shared_ptr<IndexWorkspace<IDX, !ROW> > w) : IndexWorkspace<IDX, ROW>(w->length, w->indices), base(std::move(w)) {}
+        TransposedIndexWorkspace(std::shared_ptr<IndexWorkspace<IDX, !ROW> > w) : base(std::move(w)) {}
         std::shared_ptr<IndexWorkspace<IDX, !ROW> > base;
+        const std::vector<IDX>& indices() const { return base->indices(); }
     };
 
     typedef TransposedIndexWorkspace<true> TransposedRowIndexWorkspace;

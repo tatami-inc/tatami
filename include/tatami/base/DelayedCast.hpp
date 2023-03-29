@@ -57,6 +57,7 @@ public:
 
 private:
     std::shared_ptr<Matrix<T_in, IDX_in> > ptr;
+    static constexpr bool same_IDX_type = std::is_same<T_in, T_out>::value;
 
 public:
     /**
@@ -78,7 +79,7 @@ public:
 
     std::shared_ptr<RowWorkspace> new_row_workspace() const { 
         size_t nv = 0;
-        if constexpr(!std::is_same<T_in, T_out>::value) {
+        if constexpr(!same_IDX_type) {
             nv = this->ncol();
         }
         return std::shared_ptr<RowWorkspace>(new CastRowWorkspace(nv, ptr->new_row_workspace()));
@@ -86,7 +87,7 @@ public:
 
     std::shared_ptr<ColumnWorkspace> new_column_workspace() const { 
         size_t nv = 0;
-        if constexpr(!std::is_same<T_in, T_out>::value) {
+        if constexpr(!same_IDX_type) {
             nv = this->nrow();
         }
         return std::shared_ptr<ColumnWorkspace>(new CastColumnWorkspace(nv, ptr->new_column_workspace()));
@@ -111,7 +112,7 @@ public:
 private:
     template<bool ROW, class InputWorkspace>
     const T_out* cast_dense(size_t i, T_out* buffer, size_t length, InputWorkspace* work) const {
-        if constexpr(std::is_same<T_in, T_out>::value) {
+        if constexpr(same_IDX_type) {
             if constexpr(ROW) {
                 return ptr->row(i, buffer, work->internal.get()); 
             } else {
@@ -132,7 +133,7 @@ private:
     template<bool ROW, class InputWorkspace>
     SparseRange<T_out, IDX_out> cast_sparse(size_t i, T_out* vbuffer, IDX_out* ibuffer, size_t length, InputWorkspace* work) const {
         if constexpr(std::is_same<T_in, T_out>::value) {
-            if constexpr(std::is_same<IDX_in, IDX_out>::value) {
+            if constexpr(same_IDX_type) {
                 if constexpr(ROW) {
                     return ptr->sparse_row(i, vbuffer, ibuffer, work->internal.get());
                 } else {
@@ -152,7 +153,7 @@ private:
                 return SparseRange<T_out, IDX_out>(out.number, out.value, ibuffer);
             }
         } else {
-            if constexpr(std::is_same<IDX_in, IDX_out>::value) {
+            if constexpr(same_IDX_type) {
                 SparseRange<T_in, IDX_in> out;
                 if constexpr(ROW) {
                     out = ptr->sparse_row(i, work->vbuffer.data(), ibuffer, work->internal.get());
@@ -184,12 +185,13 @@ public:
      */
     template<bool ROW>
     struct CastBlockWorkspace : BlockWorkspace<ROW> {
-        CastBlockWorkspace(size_t start, size_t length, size_t nv, std::shared_ptr<BlockWorkspace<ROW> > p) : 
-            BlockWorkspace<ROW>(start, length), vbuffer(nv), internal(std::move(p)) {}
+        CastBlockWorkspace(size_t nv, std::shared_ptr<BlockWorkspace<ROW> > p) : vbuffer(nv), internal(std::move(p)) {}
 
         std::vector<T_in> vbuffer;
         std::vector<IDX_in> ibuffer;
         std::shared_ptr<BlockWorkspace<ROW> > internal;
+
+        const std::vector<size_t, size_t>& block() const { return internal->block(); }
     };
 
     typedef CastBlockWorkspace<true> CastRowBlockWorkspace;
@@ -200,34 +202,38 @@ public:
 
     std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const { 
         size_t nv = 0;
-        if constexpr(!std::is_same<T_in, T_out>::value) {
+        if constexpr(!same_IDX_type) {
             nv = length;
         }
-        return std::shared_ptr<RowBlockWorkspace>(new CastRowBlockWorkspace(start, length, nv, ptr->new_row_workspace(start, length)));
+        return std::shared_ptr<RowBlockWorkspace>(new CastRowBlockWorkspace(nv, ptr->new_row_workspace(start, length)));
     }
 
     std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const { 
         size_t nv = 0;
-        if constexpr(!std::is_same<T_in, T_out>::value) {
+        if constexpr(!same_IDX_type) {
             nv = length;
         }
-        return std::shared_ptr<ColumnBlockWorkspace>(new CastColumnBlockWorkspace(start, length, nv, ptr->new_column_workspace(start, length)));
+        return std::shared_ptr<ColumnBlockWorkspace>(new CastColumnBlockWorkspace(nv, ptr->new_column_workspace(start, length)));
     }
 
     const T_out* row(size_t r, T_out* buffer, RowBlockWorkspace* work) const {
-        return cast_dense<true>(r, buffer, work->length, static_cast<CastRowBlockWorkspace*>(work));
+        auto wptr = static_cast<CastRowBlockWorkspace*>(work);
+        return cast_dense<true>(r, buffer, wptr->internal->length(), wptr);
     }
 
     const T_out* column(size_t c, T_out* buffer, ColumnBlockWorkspace* work) const {
-        return cast_dense<false>(c, buffer, work->length, static_cast<CastColumnBlockWorkspace*>(work));
+        auto wptr = static_cast<CastColumnBlockWorkspace*>(work);
+        return cast_dense<false>(c, buffer, wptr->internal->length(), wptr);
     }
 
     SparseRange<T_out, IDX_out> sparse_row(size_t r, T_out* vbuffer, IDX_out* ibuffer, RowBlockWorkspace* work, bool sorted=true) const {
-        return cast_sparse<true>(r, vbuffer, ibuffer, work->length, static_cast<CastRowBlockWorkspace*>(work));
+        auto wptr = static_cast<CastRowBlockWorkspace*>(work);
+        return cast_sparse<true>(r, vbuffer, ibuffer, work->internal->length(), wptr);
     }
 
     SparseRange<T_out, IDX_out> sparse_column(size_t c, T_out* vbuffer, IDX_out* ibuffer, ColumnBlockWorkspace* work, bool sorted=true) const {
-        return cast_sparse<false>(c, vbuffer, ibuffer, work->length, static_cast<CastColumnBlockWorkspace*>(work));
+        auto wptr = static_cast<CastColumnBlockWorkspace*>(work);
+        return cast_sparse<false>(c, vbuffer, ibuffer, work->internal->length, wptr);
     }
 
 public:
@@ -236,24 +242,20 @@ public:
      */
     template<bool ROW>
     struct CastIndexWorkspace : IndexWorkspace<IDX_out, ROW> {
-        CastIndexWorkspace(size_t length, const IDX_out* indices, size_t nv) : IndexWorkspace<IDX_out, ROW>(length, indices), vbuffer(nv) {
-            if constexpr(!std::is_same<IDX_in, IDX_out>::value) {
-                more_indices.resize(length);
-                std::copy(indices, indices + length, more_indices.begin());
-            }
-        }
+        CastIndexWorkspace(size_t nv) : vbuffer(nv) {}
 
-        const IDX_in* host_indices() const {
-            if constexpr(!std::is_same<IDX_in, IDX_out>::value) {
-                return more_indices.data();
+        std::vector<IDX_out> indices_;
+        const std::vector<IDX_out>& indices() const { 
+            if constexpr(same_IDX_type) {
+                return internal->indices();
             } else {
-                return this->indices;
+                return indices_; 
             }
         }
-
-        std::vector<IDX_in> more_indices;
+        
         std::vector<T_in> vbuffer;
         std::vector<IDX_in> ibuffer;
+
         std::shared_ptr<IndexWorkspace<IDX_in, ROW> > internal;
     };
 
@@ -263,45 +265,63 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX_out> > new_row_workspace(size_t length, const IDX_out* indices) const { 
-        size_t nv = 0;
-        if constexpr(!std::is_same<T_in, T_out>::value) {
-            nv = length;
-        }
-
-        auto wptr = new CastRowIndexWorkspace(length, indices, nv);
-        auto output = std::shared_ptr<RowIndexWorkspace<IDX_out> >(wptr);
-        wptr->internal = ptr->new_row_workspace(length, wptr->host_indices());
-        return output;
+    std::shared_ptr<RowIndexWorkspace<IDX_out> > new_row_workspace(std::vector<IDX_out> indices) const { 
+        return new_workspace<true>(std::move(indices));
     }
 
     std::shared_ptr<ColumnIndexWorkspace<IDX_out> > new_column_workspace(size_t length, const IDX_out* indices) const { 
-        size_t nv = 0;
-        if constexpr(!std::is_same<T_in, T_out>::value) {
-            nv = length;
-        }
-
-        auto wptr = new CastColumnIndexWorkspace(length, indices, nv);
-        auto output = std::shared_ptr<ColumnIndexWorkspace<IDX_out> >(wptr);
-        wptr->internal = ptr->new_column_workspace(length, wptr->host_indices());
-        return output;
+        return new_workspace<false>(std::move(indices));
     }
 
     const T_out* row(size_t r, T_out* buffer, RowIndexWorkspace<IDX_out>* work) const {
-        return cast_dense<true>(r, buffer, work->length, static_cast<CastRowIndexWorkspace*>(work));
+        auto wptr = static_cast<CastRowIndexWorkspace*>(work);
+        return cast_dense<true>(r, buffer, wptr->internal->length(), wptr);
     }
 
     const T_out* column(size_t c, T_out* buffer, ColumnIndexWorkspace<IDX_out>* work) const {
-        return cast_dense<false>(c, buffer, work->length, static_cast<CastColumnIndexWorkspace*>(work));
+        auto wptr = static_cast<CastColumnIndexWorkspace*>(work);
+        return cast_dense<false>(c, buffer, work->internal->length(), wptr);
     }
 
     SparseRange<T_out, IDX_out> sparse_row(size_t r, T_out* vbuffer, IDX_out* ibuffer, RowIndexWorkspace<IDX_out>* work, bool sorted=true) const {
-        return cast_sparse<true>(r, vbuffer, ibuffer, work->length, static_cast<CastRowIndexWorkspace*>(work));
+        auto wptr = static_cast<CastRowIndexWorkspace*>(work);
+        return cast_sparse<true>(r, vbuffer, ibuffer, wptr->internal->length(), wptr);
     }
 
     SparseRange<T_out, IDX_out> sparse_column(size_t c, T_out* vbuffer, IDX_out* ibuffer, ColumnIndexWorkspace<IDX_out>* work, bool sorted=true) const {
-        return cast_sparse<false>(c, vbuffer, ibuffer, work->length, static_cast<CastColumnIndexWorkspace*>(work));
+        auto wptr = static_cast<CastColumnIndexWorkspace*>(work);
+        return cast_sparse<false>(c, vbuffer, ibuffer, wptr->internal->length(), wptr);
     }
+
+private:
+    template<bool ROW>
+    std::shared_ptr<IndexWorkspace<IDX_out, ROW> > new_workspace(std::vector<IDX_out> indices) const { 
+        size_t nv = 0;
+        if constexpr(!same_IDX_type) {
+            nv = indices.size();
+        }
+
+        auto wptr = new CastIndexWorkspace<ROW>(nv);
+        auto output = std::shared_ptr<IndexWorkspace<ROW, IDX_out> >(wptr);
+
+        if constexpr(!same_IDX_type) {
+            wptr->indices_ = std::move(indices);
+            if constexpr(ROW) {
+                wptr->internal = ptr->new_row_workspace(std::vector<IDX_out>(wptr->indices_.begin(), wptr->indices_.end()));
+            } else {
+                wptr->internal = ptr->new_column_workspace(std::vector<IDX_out>(wptr->indices_.begin(), wptr->indices_.end()));
+            }
+        } else {
+            if constexpr(ROW) {
+                wptr->internal = ptr->new_row_workspace(std::move(indices));
+            } else {
+                wptr->internal = ptr->new_column_workspace(std::move(indices));
+            }
+        }
+
+        return output;
+    }
+
 };
 
 /**

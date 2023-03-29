@@ -253,11 +253,18 @@ public:
      * @cond
      */
     struct CompressedSparsePrimaryBlockWorkspace : public BlockWorkspace<ROW> {
-        CompressedSparsePrimaryBlockWorkspace(size_t start, size_t length) : BlockWorkspace<ROW>(start, length) {}
+        CompressedSparsePrimaryBlockWorkspace(size_t s, size_t l) : details(s, l) {}
+        std::pair<size_t, size_t> details;
+        const std::pair<size_t, size_t>& block() const { return details; }
     };
 
     struct CompressedSparseSecondaryBlockWorkspace : public BlockWorkspace<!ROW> {
-        CompressedSparseSecondaryBlockWorkspace(size_t start, size_t length, size_t max_index, const V& idx, const W& idp) : BlockWorkspace<!ROW>(start, length), core(max_index, idx, idp, start, length) {}
+        CompressedSparseSecondaryBlockWorkspace(size_t s, size_t l, size_t max_index, const V& idx, const W& idp) : 
+            details(s, l), core(max_index, idx, idp, start, length) {}
+
+        std::pair<size_t, size_t> details;
+        const std::pair<size_t, size_t>& block() const { return details; }
+
         SecondaryWorkspaceBase core;
     };
     /**
@@ -281,36 +288,44 @@ public:
     }
 
     const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
+        const auto& deets = work->block();
+        size_t start = deets.first, len = deets.second;
         if constexpr(ROW) {
-            primary_dimension_expanded(r, work->start, work->length, ncols, buffer);
+            primary_dimension_expanded(r, start, len, ncols, buffer);
         } else {
-            secondary_dimension_expanded(r, work->start, work->length, static_cast<CompressedSparseSecondaryBlockWorkspace*>(work)->core, buffer);
+            secondary_dimension_expanded(r, start, len, static_cast<CompressedSparseSecondaryBlockWorkspace*>(work)->core, buffer);
         }
         return buffer;
     }
 
     const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
+        const auto& deets = work->block();
+        size_t start = deets.first, len = deets.second;
         if constexpr(ROW) {
-            secondary_dimension_expanded(c, work->start, work->length, static_cast<CompressedSparseSecondaryBlockWorkspace*>(work)->core, buffer);
+            secondary_dimension_expanded(c, start, len, static_cast<CompressedSparseSecondaryBlockWorkspace*>(work)->core, buffer);
         } else {
-            primary_dimension_expanded(c, work->start, work->length, nrows, buffer);
+            primary_dimension_expanded(c, start, len, nrows, buffer);
         }
         return buffer;
     }
 
     SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work) const {
+        const auto& deets = work->block();
+        size_t start = deets.first, len = deets.second;
         if constexpr(ROW) {
-            return primary_dimension_raw(r, work->start, work->length, ncols, vbuffer, ibuffer);
+            return primary_dimension_raw(r, start, len, ncols, vbuffer, ibuffer);
         } else {
-            return secondary_dimension_raw(r, work->start, work->length, static_cast<CompressedSparseSecondaryBlockWorkspace*>(work)->core, vbuffer, ibuffer);
+            return secondary_dimension_raw(r, start, len, static_cast<CompressedSparseSecondaryBlockWorkspace*>(work)->core, vbuffer, ibuffer);
         }
     }
 
     SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work) const {
+        const auto& deets = work->block();
+        size_t start = deets.first, len = deets.second;
         if constexpr(ROW) {
-            return secondary_dimension_raw(c, work->start, work->length, static_cast<CompressedSparseSecondaryBlockWorkspace*>(work)->core, vbuffer, ibuffer);
+            return secondary_dimension_raw(c, start, len, static_cast<CompressedSparseSecondaryBlockWorkspace*>(work)->core, vbuffer, ibuffer);
         } else {
-            return primary_dimension_raw(c, work->start, work->length, nrows, vbuffer, ibuffer);
+            return primary_dimension_raw(c, start, len, nrows, vbuffer, ibuffer);
         }
     }
 
@@ -556,11 +571,17 @@ public:
      * @cond
      */
     struct CompressedSparsePrimaryIndexWorkspace : public IndexWorkspace<IDX, ROW> {
-        CompressedSparsePrimaryIndexWorkspace(std::vector<IDX> subset) : IndexWorkspace<IDX, ROW>(std::move(subset)) {}
+        CompressedSparsePrimaryIndexWorkspace(std::vector<IDX> subset) : indices_(std::move(subset)) {}
+        std::vector<IDX> indices_;
+        const std::vector<IDX>& indices() const { return indices_; }
     };
 
     struct CompressedSparseSecondaryIndexWorkspace : public IndexWorkspace<IDX, !ROW> {
-        CompressedSparseSecondaryIndexWorkspace(std::vector<IDX> subset, size_t max_index, const V& idx, const W& idp) : IndexWorkspace<IDX, !ROW>(std::move(subset)), core(max_index, idx, idp, std::move(subset)) {}
+        CompressedSparseSecondaryIndexWorkspace(std::vector<IDX> subset, size_t max_index, const V& idx, const W& idp) : 
+            indices_(std::move(subset)), core(max_index, idx, idp, std::move(subset)) {}
+
+        std::vector<IDX> indices_;
+        const std::vector<IDX>& indices() const { return indices_; }
 
         SecondaryWorkspaceBase core;
     };
@@ -586,35 +607,35 @@ public:
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
-            primary_dimension_expanded(r, work->indices, ncols, buffer);
+            primary_dimension_expanded(r, work->indices(), ncols, buffer);
         } else {
-            secondary_dimension_expanded(r, work->indices, static_cast<CompressedSparseSecondaryIndexWorkspace*>(work)->core, buffer);
+            secondary_dimension_expanded(r, work->indices(), static_cast<CompressedSparseSecondaryIndexWorkspace*>(work)->core, buffer);
         }
         return buffer;
     }
 
     const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
-            secondary_dimension_expanded(c, work->indices, static_cast<CompressedSparseSecondaryIndexWorkspace*>(work)->core, buffer);
+            secondary_dimension_expanded(c, work->indices(), static_cast<CompressedSparseSecondaryIndexWorkspace*>(work)->core, buffer);
         } else {
-            primary_dimension_expanded(c, work->indices, nrows, buffer);
+            primary_dimension_expanded(c, work->indices(), nrows, buffer);
         }
         return buffer;
     }
 
     SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
-            return primary_dimension_raw(r, work->indices, ncols, vbuffer, ibuffer);
+            return primary_dimension_raw(r, work->indices(), ncols, vbuffer, ibuffer);
         } else {
-            return secondary_dimension_raw(r, work->indices, static_cast<CompressedSparseSecondaryIndexWorkspace*>(work)->core, vbuffer, ibuffer);
+            return secondary_dimension_raw(r, work->indices(), static_cast<CompressedSparseSecondaryIndexWorkspace*>(work)->core, vbuffer, ibuffer);
         }
     }
 
     SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
-            return secondary_dimension_raw(c, work->indices, static_cast<CompressedSparseSecondaryIndexWorkspace*>(work)->core, vbuffer, ibuffer);
+            return secondary_dimension_raw(c, work->indices(), static_cast<CompressedSparseSecondaryIndexWorkspace*>(work)->core, vbuffer, ibuffer);
         } else {
-            return primary_dimension_raw(c, work->indices, nrows, vbuffer, ibuffer);
+            return primary_dimension_raw(c, work->indices(), nrows, vbuffer, ibuffer);
         }
     }
 
@@ -623,7 +644,7 @@ private:
     void primary_dimension(size_t i, const std::vector<IDX>& subset, Store& store) const {
         auto iIt = indices.begin() + indptrs[i], eIt = indices.begin() + indptrs[i + 1]; 
 
-        if (length && subset[0]) { // Jumping ahead if non-zero.
+        if (!subset.empty() && subset[0]) { // Jumping ahead if non-zero.
             iIt = std::lower_bound(iIt, eIt, subset[0]);
         } 
         if (iIt == eIt) {
@@ -656,7 +677,7 @@ private:
         raw_store store;
         store.out_values = out_values;
         store.out_indices = out_indices;
-        primary_dimension(i, length, subset, store);
+        primary_dimension(i, subset, store);
         return SparseRange<T, IDX>(store.n, out_values, out_indices);
     }
 
@@ -676,7 +697,7 @@ private:
         std::fill(out_values, out_values + subset.size(), static_cast<T>(0));
         expanded_store2 store;
         store.out_values = out_values;
-        primary_dimension(i, length, subset, store);
+        primary_dimension(i, subset, store);
         return;
     }
 
