@@ -47,77 +47,75 @@ target_link_libraries(
     tatami
 )
 
-## Test custom parallelization during apply.
-#add_executable(
-#    cuspartest 
-#    src/stats/sums.cpp
-#    src/stats/variances.cpp
-#    src/stats/medians.cpp
-#    src/stats/ranges.cpp
-#    src/stats/apply.cpp
-#    src/data/data_sparse.cpp
-#    src/data/data_triangular.cpp
-#)
-#
-#target_link_libraries(
-#    cuspartest 
-#    gtest_main
-#    tatami
-#)
-#
-## Test extensions
-#add_executable(
-#    exttest 
-#
-#    src/ext/MatrixMarket/from_buffer.cpp
-#    src/ext/MatrixMarket/from_text.cpp
-#    src/ext/MatrixMarket/from_gzip.cpp
-#
-#    src/ext/layered/convert_to_layered_sparse.cpp
-#)
-#
-#target_link_libraries(
-#    exttest
-#    gtest_main
-#    tatami
-#)
+# Test custom parallelization during apply.
+add_executable(
+    cuspartest 
+    src/stats/sums.cpp
+    src/stats/variances.cpp
+    src/stats/medians.cpp
+    src/stats/ranges.cpp
+    src/stats/apply.cpp
+)
 
-## Checking whether to add OpenMP support. This is turned off
-## by default to make it easier to debug test failures.
-#set(USE_OPENMP OFF CACHE BOOL "Compile with OpenMP support")
-#if (USE_OPENMP)
-#    find_package(OpenMP)
-#    target_link_libraries(libtest OpenMP::OpenMP_CXX)
-#    target_link_libraries(exttest OpenMP::OpenMP_CXX)
-#    target_link_libraries(cuspartest OpenMP::OpenMP_CXX)
-#endif()
-#
-#target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
-#
-#find_package(ZLIB)
-#target_link_libraries(exttest ZLIB::ZLIB)
-#target_compile_definitions(exttest PRIVATE TATAMI_USE_ZLIB=1)
-#
-#include(CheckIncludeFiles)
-#check_include_files(filesystem HAVE_CXX_FS)
-#if (NOT HAVE_CXX_FS) 
-#    target_link_libraries(exttest stdc++fs) 
-#endif()
-#
-#set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
-#if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-#    target_compile_options(libtest PRIVATE -O0 -g --coverage)
-#    target_compile_options(exttest PRIVATE -O0 -g --coverage)
-#    target_link_options(libtest PRIVATE --coverage)
-#    target_link_options(exttest PRIVATE --coverage)
-#endif()
-#
-## Making the tests discoverable.
-#include(GoogleTest)
-#gtest_discover_tests(libtest)
-#gtest_discover_tests(exttest)
-#gtest_discover_tests(cuspartest)
-#
+target_link_libraries(
+    cuspartest 
+    gtest_main
+    tatami
+)
+
+# Test extensions
+add_executable(
+    exttest 
+
+    src/ext/MatrixMarket/from_buffer.cpp
+    src/ext/MatrixMarket/from_text.cpp
+    src/ext/MatrixMarket/from_gzip.cpp
+
+    src/ext/layered/convert_to_layered_sparse.cpp
+)
+
+target_link_libraries(
+    exttest
+    gtest_main
+    tatami
+)
+
+# Checking whether to add OpenMP support. This is turned off
+# by default to make it easier to debug test failures.
+set(USE_OPENMP OFF CACHE BOOL "Compile with OpenMP support")
+if (USE_OPENMP)
+    find_package(OpenMP)
+    target_link_libraries(libtest OpenMP::OpenMP_CXX)
+    target_link_libraries(exttest OpenMP::OpenMP_CXX)
+    target_link_libraries(cuspartest OpenMP::OpenMP_CXX)
+endif()
+
+target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
+
+find_package(ZLIB)
+target_link_libraries(exttest ZLIB::ZLIB)
+target_compile_definitions(exttest PRIVATE TATAMI_USE_ZLIB=1)
+
+include(CheckIncludeFiles)
+check_include_files(filesystem HAVE_CXX_FS)
+if (NOT HAVE_CXX_FS) 
+    target_link_libraries(exttest stdc++fs) 
+endif()
+
+set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
+if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    target_compile_options(libtest PRIVATE -O0 -g --coverage)
+    target_compile_options(exttest PRIVATE -O0 -g --coverage)
+    target_link_options(libtest PRIVATE --coverage)
+    target_link_options(exttest PRIVATE --coverage)
+endif()
+
+# Making the tests discoverable.
+include(GoogleTest)
+gtest_discover_tests(libtest)
+gtest_discover_tests(exttest)
+gtest_discover_tests(cuspartest)
+
 ## Test HDF5 capabilities.
 #set(TEST_HDF5 ON CACHE BOOL "Test HDF5 support")
 #if (TEST_HDF5) 

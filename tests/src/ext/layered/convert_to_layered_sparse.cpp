@@ -32,9 +32,12 @@ TEST_P(ConvertToLayeredSparseTest, FromCSC) {
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
+
+    auto rwrk = ref->new_row_workspace();
+    auto owrk = out.matrix->new_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
-        auto stuff = out.matrix->row(out.permutation[i]);
-        EXPECT_EQ(stuff, ref->row(i));
+        auto stuff = out.matrix->row(out.permutation[i], owrk.get());
+        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
     }
 }
 
@@ -46,9 +49,12 @@ TEST_P(ConvertToLayeredSparseTest, FromCSR) {
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(cols), std::move(indptrs))); 
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
+
+    auto rwrk = ref->new_row_workspace();
+    auto owrk = out.matrix->new_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
-        auto stuff = out.matrix->row(out.permutation[i]);
-        EXPECT_EQ(stuff, ref->row(i));
+        auto stuff = out.matrix->row(out.permutation[i], owrk.get());
+        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
     }
 }
 
@@ -63,9 +69,12 @@ TEST_P(ConvertToLayeredSparseTest, FromDenseColumn) {
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new DenseMat(NR, NC, std::move(full)));
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
+
+    auto rwrk = ref->new_row_workspace();
+    auto owrk = out.matrix->new_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
-        auto stuff = out.matrix->row(out.permutation[i]);
-        EXPECT_EQ(stuff, ref->row(i));
+        auto stuff = out.matrix->row(out.permutation[i], owrk.get());
+        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
     }
 }
 
@@ -80,9 +89,12 @@ TEST_P(ConvertToLayeredSparseTest, FromDenseRow) {
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new DenseMat(NR, NC, std::move(full)));
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
+
+    auto rwrk = ref->new_row_workspace();
+    auto owrk = out.matrix->new_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
-        auto stuff = out.matrix->row(out.permutation[i]);
-        EXPECT_EQ(stuff, ref->row(i));
+        auto stuff = out.matrix->row(out.permutation[i], owrk.get());
+        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
     }
 }
 
@@ -158,9 +170,12 @@ TEST_P(ConvertToLayeredSparseHardTest, Complex) {
         auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
 
         auto out = tatami::convert_to_layered_sparse(ref.get());
+
+        auto rwrk = ref->new_row_workspace();
+        auto owrk = out.matrix->new_row_workspace();
         for (size_t i = 0; i < NR; ++i) {
-            auto stuff = out.matrix->row(out.permutation[i]);
-            EXPECT_EQ(stuff, ref->row(i));
+            auto stuff = out.matrix->row(out.permutation[i], owrk.get());
+            EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
         }
     }
 
@@ -175,9 +190,12 @@ TEST_P(ConvertToLayeredSparseHardTest, Complex) {
         auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(cols), std::move(indptrs))); 
 
         auto out = tatami::convert_to_layered_sparse(ref.get());
+
+        auto rwrk = ref->new_row_workspace();
+        auto owrk = out.matrix->new_row_workspace();
         for (size_t i = 0; i < NR; ++i) {
-            auto stuff = out.matrix->row(out.permutation[i]);
-            EXPECT_EQ(stuff, ref->row(i));
+            auto stuff = out.matrix->row(out.permutation[i], owrk.get());
+            EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
         }
     }
 }

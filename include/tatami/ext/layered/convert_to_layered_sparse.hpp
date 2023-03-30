@@ -42,7 +42,7 @@ RowRemapping<RowIndex> convert_by_row(
         return create_empty<RowIndex>(NR);
     }
 
-    auto wrk = incoming->new_workspace(true);
+    auto wrk = incoming->new_row_workspace();
     std::vector<int> category(NR);
     std::vector<DataIn> dbuffer(NC);
     std::vector<IndexIn> ibuffer;
@@ -206,7 +206,7 @@ RowRemapping<RowIndex> convert_by_column(
         return create_empty<RowIndex>(NR);
     }
 
-    auto wrk = incoming->new_workspace(false);
+    auto wrk = incoming->new_column_workspace();
     std::vector<DataIn> dbuffer(NR);
     std::vector<IndexIn> ibuffer;
     std::vector<DataIn> mins(NR), maxs(NR);

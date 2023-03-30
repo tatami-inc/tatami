@@ -61,11 +61,13 @@ TEST_P(MatrixMarketGzipTest, SimpleTest) {
     typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs)));
 
+    auto lwrk = loaded->new_column_workspace();
+    auto lwrk2 = auto_loaded->new_column_workspace();
+    auto rwrk = ref->new_column_workspace();
     for (size_t i = 0; i < NC; ++i) {
-        auto stuff = loaded->column(i);
-        EXPECT_EQ(stuff, ref->column(i));
-        auto auto_stuff = auto_loaded->column(i);
-        EXPECT_EQ(auto_stuff, ref->column(i));
+        auto expected = ref->column(i, rwrk.get());
+        EXPECT_EQ(expected, loaded->column(i, lwrk.get()));
+        EXPECT_EQ(expected, auto_loaded->column(i, lwrk2.get()));
     }
 }
 
@@ -89,11 +91,13 @@ TEST_P(MatrixMarketGzipTest, SimpleBufferTest) {
     EXPECT_EQ(obs_auto->nrow(), NR);
     EXPECT_EQ(obs_auto->ncol(), NC);
 
+    auto owrk = obs->new_column_workspace();
+    auto owrk2 = obs_auto->new_column_workspace();
+    auto rwrk = ref->new_column_workspace();
     for (size_t i = 0; i < NC; ++i) {
-        auto stuff = obs->column(i);
-        EXPECT_EQ(stuff, ref->column(i));
-        auto auto_stuff = obs_auto->column(i);
-        EXPECT_EQ(auto_stuff, ref->column(i));
+        auto expected = ref->column(i, rwrk.get());
+        EXPECT_EQ(expected, obs->column(i, owrk.get()));
+        EXPECT_EQ(expected, obs_auto->column(i, owrk2.get()));
     }
 }
 
@@ -116,13 +120,17 @@ TEST_P(MatrixMarketGzipTest, LayeredTest) {
     EXPECT_FALSE(loaded.matrix->prefer_rows());
     EXPECT_FALSE(loaded_gz.matrix->prefer_rows());
 
+    auto lwrk = loaded.matrix->new_column_workspace();
+    auto gwrk = loaded_gz.matrix->new_column_workspace();
+    auto rwrk = ref->new_column_workspace();
+
     for (size_t i = 0; i < NC; ++i) {
         int adjusted = loaded.permutation[i];
         EXPECT_EQ(adjusted, loaded_gz.permutation[i]);
 
-        auto stuff = loaded.matrix->column(adjusted);
-        EXPECT_EQ(stuff, loaded_gz.matrix->column(adjusted));
-        EXPECT_EQ(stuff, ref->column(i));
+        auto expected = ref->column(i, rwrk.get());
+        EXPECT_EQ(expected, loaded.matrix->column(adjusted, lwrk.get()));
+        EXPECT_EQ(expected, loaded_gz.matrix->column(adjusted, gwrk.get()));
     }
 
     // Auto-detection also works.
@@ -147,9 +155,11 @@ TEST_P(MatrixMarketGzipTest, LayeredBufferTest) {
     EXPECT_EQ(obs.matrix->nrow(), NR);
     EXPECT_EQ(obs.matrix->ncol(), NC);
 
+    auto owrk = obs.matrix->new_column_workspace();
+    auto rwrk = ref.matrix->new_column_workspace();
     for (size_t i = 0; i < NC; ++i) {
-        auto stuff = obs.matrix->column(i);
-        EXPECT_EQ(stuff, ref.matrix->column(i));
+        auto stuff = obs.matrix->column(i, owrk.get());
+        EXPECT_EQ(stuff, ref.matrix->column(i, rwrk.get()));
     }
 
     EXPECT_EQ(obs.permutation, ref.permutation);
