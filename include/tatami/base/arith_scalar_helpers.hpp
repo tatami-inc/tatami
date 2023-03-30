@@ -1,6 +1,8 @@
 #ifndef TATAMI_ARITH_SCALAR_HELPERS_H
 #define TATAMI_ARITH_SCALAR_HELPERS_H
 
+#include <limits>
+
 /**
  * @file arith_scalar_helpers.hpp
  *

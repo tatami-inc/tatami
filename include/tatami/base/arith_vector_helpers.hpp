@@ -11,6 +11,7 @@
  */
 
 #include <vector>
+#include <limits>
 
 namespace tatami {
 
