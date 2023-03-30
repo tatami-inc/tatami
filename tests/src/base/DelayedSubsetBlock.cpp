@@ -76,6 +76,14 @@ TEST_P(SubsetBlockFullAccessTest, Row) {
     EXPECT_FALSE(dense_block->sparse());
     EXPECT_TRUE(sparse_block->sparse());
 
+    auto cprefs = sparse_block->dimension_preference();
+    EXPECT_TRUE(cprefs.first == 0);
+    EXPECT_TRUE(cprefs.second > 0);
+
+    auto rprefs = dense_block->dimension_preference();
+    EXPECT_TRUE(rprefs.first > 0);
+    EXPECT_TRUE(rprefs.second == 0);
+
     bool FORWARD = std::get<2>(param);
     bool JUMP = std::get<3>(param);
     test_simple_row_access(dense_block.get(), ref.get(), FORWARD, JUMP);

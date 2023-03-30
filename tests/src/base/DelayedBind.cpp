@@ -79,7 +79,9 @@ TEST_F(DelayedBindUtilsTest, ByColumn) {
 }
 
 TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
-    assemble({ 10, 20, 5 }, 20, true); // bound_sparse is CSC, bound_dense is row-major.
+    assemble({ 10, 20, 5 }, 20, true); 
+
+    // Bound_sparse is CSC, bound_dense is row-major.
     auto combined = tatami::make_DelayedBind<1>(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ bound_sparse, bound_dense });
     auto preference = combined->dimension_preference();
 
@@ -88,6 +90,37 @@ TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
     EXPECT_EQ(preference.first, preference.second);
 
     EXPECT_FALSE(combined->sparse());
+}
+
+TEST_F(DelayedBindUtilsTest, EmptyBind) {
+    assemble({}, 20, true); 
+    EXPECT_EQ(bound_dense->nrow(), 0);
+    EXPECT_EQ(bound_dense->ncol(), 0);
+
+    // Checking that empty workspaces can be constructed.
+    {
+        auto rthing = bound_dense->new_row_workspace();
+        EXPECT_NE(rthing.get(), nullptr);
+
+        auto cthing = bound_dense->new_column_workspace();
+        EXPECT_NE(cthing.get(), nullptr);
+    }
+
+    {
+        auto rthing = bound_dense->new_row_workspace(0, 0);
+        EXPECT_NE(rthing.get(), nullptr);
+
+        auto cthing = bound_dense->new_column_workspace(0, 0);
+        EXPECT_NE(cthing.get(), nullptr);
+    }
+
+    {
+        auto rthing = bound_dense->new_row_workspace(std::vector<int>());
+        EXPECT_NE(rthing.get(), nullptr);
+
+        auto cthing = bound_dense->new_column_workspace(std::vector<int>());
+        EXPECT_NE(cthing.get(), nullptr);
+    }
 }
 
 /****************************

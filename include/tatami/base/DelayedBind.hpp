@@ -91,13 +91,21 @@ public:
         if constexpr(MARGIN==0) {
             return cumulative.back();
         } else {
-            return mats.front()->nrow();
+            if (mats.empty()) {
+                return 0;
+            } else {
+                return mats.front()->nrow();
+            }
         }
     }
 
     size_t ncol() const {
         if constexpr(MARGIN==0) {
-            return mats.front()->ncol();
+            if (mats.empty()) {
+                return 0;
+            } else {
+                return mats.front()->ncol();
+            }
         } else {
             return cumulative.back();
         }

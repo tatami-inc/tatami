@@ -65,6 +65,14 @@ TEST_F(SparseUtilsTest, Basic) {
     EXPECT_FALSE(sparse_column->prefer_rows());
     EXPECT_TRUE(sparse_row->prefer_rows());
 
+    auto cprefs = sparse_column->dimension_preference();
+    EXPECT_TRUE(cprefs.first == 0);
+    EXPECT_TRUE(cprefs.second > 0);
+
+    auto rprefs = sparse_row->dimension_preference();
+    EXPECT_TRUE(rprefs.first > 0);
+    EXPECT_TRUE(rprefs.second == 0);
+
     // Checking that the workspace is null for column extraction of a CSC matrix.
     auto work_column = sparse_column->new_column_workspace();
     EXPECT_EQ(work_column.get(), nullptr);
