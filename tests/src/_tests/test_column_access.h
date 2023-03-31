@@ -92,7 +92,7 @@ void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
 
             auto subc = (forward ? c-1 : c+1);
             auto observedm1 = ptr->column(subc, pwork_bi.get());
-            auto expectedm1 = ref->column(subc, pwork_bi.get());
+            auto expectedm1 = ref->column(subc, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
     }
@@ -161,7 +161,7 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
 
             auto subc = (forward ? c-1 : c+1);
             auto observedm1 = ptr->column(subc, pwork_bi.get());
-            auto expectedm1 = ref->column(subc, pwork_bi.get());
+            auto expectedm1 = ref->column(subc, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
     }

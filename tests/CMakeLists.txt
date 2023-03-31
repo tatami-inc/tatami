@@ -116,42 +116,42 @@ gtest_discover_tests(libtest)
 gtest_discover_tests(exttest)
 gtest_discover_tests(cuspartest)
 
-## Test HDF5 capabilities.
-#set(TEST_HDF5 ON CACHE BOOL "Test HDF5 support")
-#if (TEST_HDF5) 
-#    find_package(HDF5 COMPONENTS C CXX)
-#    if (HDF5_FOUND) 
-#        add_executable(
-#            h5test 
-#            src/ext/hdf5/HDF5DenseMatrix.cpp
+# Test HDF5 capabilities.
+set(TEST_HDF5 ON CACHE BOOL "Test HDF5 support")
+if (TEST_HDF5) 
+    find_package(HDF5 COMPONENTS C CXX)
+    if (HDF5_FOUND) 
+        add_executable(
+            h5test 
+            src/ext/hdf5/HDF5DenseMatrix.cpp
 #            src/ext/hdf5/HDF5CompressedSparseMatrix.cpp
 #            src/ext/hdf5/load_hdf5_matrix.cpp
 #            src/ext/hdf5/write_sparse_matrix_to_hdf5.cpp
-#        )
-#
-#        # Also checking the custom parallelization in the HDF5 libraries.
-#        add_executable(
-#            cusparh5test
-#            src/ext/hdf5/HDF5DenseMatrix.cpp
+        )
+
+        # Also checking the custom parallelization in the HDF5 libraries.
+        add_executable(
+            cusparh5test
+            src/ext/hdf5/HDF5DenseMatrix.cpp
 #            src/ext/hdf5/HDF5CompressedSparseMatrix.cpp
-#        )
-#        target_compile_definitions(cusparh5test PRIVATE TEST_CUSTOM_PARALLEL=1)
-#
-#        target_link_libraries(h5test gtest_main tatami hdf5::hdf5 hdf5::hdf5_cpp)
-#        target_link_libraries(cusparh5test gtest_main tatami hdf5::hdf5 hdf5::hdf5_cpp)
-#
-#        if (NOT HAVE_CXX_FS) 
-#            target_link_libraries(h5test stdc++fs) 
-#            target_link_libraries(cusparh5test stdc++fs) 
-#        endif()
-#
-#        if (USE_OPENMP)
-#            # Assume that the package has already been found.
-#            target_link_libraries(h5test OpenMP::OpenMP_CXX)
-#        endif()
-#
-#        gtest_discover_tests(h5test)
-#        gtest_discover_tests(cusparh5test)
-#    endif()
-#endif()
+        )
+        target_compile_definitions(cusparh5test PRIVATE TEST_CUSTOM_PARALLEL=1)
+
+        target_link_libraries(h5test gtest_main tatami hdf5::hdf5 hdf5::hdf5_cpp)
+        target_link_libraries(cusparh5test gtest_main tatami hdf5::hdf5 hdf5::hdf5_cpp)
+
+        if (NOT HAVE_CXX_FS) 
+            target_link_libraries(h5test stdc++fs) 
+            target_link_libraries(cusparh5test stdc++fs) 
+        endif()
+
+        if (USE_OPENMP)
+            # Assume that the package has already been found.
+            target_link_libraries(h5test OpenMP::OpenMP_CXX)
+        endif()
+
+        gtest_discover_tests(h5test)
+        gtest_discover_tests(cusparh5test)
+    endif()
+endif()
 
