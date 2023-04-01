@@ -231,8 +231,57 @@ private:
 #endif
     }
 
-    template<bool ROW>
-    const T* extract(size_t i, T* buffer, size_t start, size_t length, Hdf5WorkspaceBase& work) const {
+    template<bool ROW, typename ExtractType>
+    const T* extract(size_t primary_start, size_t primary_length, T* target, const ExtractType& extract_value, size_t extract_length, Hdf5WorkspaceBase& work) const {
+        hsize_t offset[2];
+        hsize_t count[2];
+
+        constexpr int dimdex = (ROW != transpose);
+        offset[1-dimdex] = primary_start;
+        count[1-dimdex] = primary_length;
+
+        constexpr bool indexed = std::is_same<ExtractType, std::vector<IDX> >::value;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
+        if constexpr(indexed) {
+            // Take slices across the current chunk for each index. This should be okay if consecutive,
+            // but hopefully they've fixed the problem with non-consecutive slices in:
+            // https://forum.hdfgroup.org/t/union-of-non-consecutive-hyperslabs-is-very-slow/5062
+            count[dimdex] = 1;
+            work.dataspace.selectNone();
+            for (auto idx : extract_value) {
+                offset[dimdex] = idx;
+                work.dataspace.selectHyperslab(H5S_SELECT_OR, count, offset);
+            }
+            count[dimdex] = extract_length; // for the memspace setter.
+        } else {
+            offset[dimdex] = extract_value;
+            count[dimdex] = extract_length;
+            work.dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
+        }
+
+        // HDF5 is a lot faster when the memspace and dataspace match in dimensionality.
+        // Presumably there is some shuffling that happens inside when dimensions don't match.
+        work.memspace.setExtentSimple(2, count);
+        work.memspace.selectAll();
+
+        work.dataset.read(target, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+        }
+#else
+        });
+#endif
+    }
+
+    template<bool ROW, typename ExtractType>
+    const T* extract(size_t i, T* buffer, const ExtractType& extract_value, size_t extract_length, Hdf5WorkspaceBase& work) const {
         // Figuring out which chunk the request belongs to.
         hsize_t cache_mydim, chunk_otherdim, mydim, otherdim;
         if constexpr(ROW != transpose) {
@@ -247,36 +296,9 @@ private:
             otherdim = firstdim;
         }
 
-        hsize_t offset[2];
-        hsize_t count[2];
-        constexpr int dimdex = (ROW != transpose);
-        offset[dimdex] = start;
-        count[dimdex] = length;
-
         // No caching can be done here, so we just extract directly.
         if (cache_mydim == 0) {
-            offset[1-dimdex] = i;
-            count[1-dimdex] = 1;
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-            #pragma omp critical
-            {
-#else
-            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
-#endif
-
-            // Serial locks are applied in callers.
-            work.dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
-            work.memspace.setExtentSimple(2, count);
-            work.memspace.selectAll();
-
-            work.dataset.read(buffer, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-            }
-#else
-            });
-#endif
+            extract<ROW>(i, 1, buffer, extract_value, extract_length, work);
             return buffer;
         }
 
@@ -287,7 +309,7 @@ private:
             hsize_t cache_mydim_start = chunk * cache_mydim;
             hsize_t cache_mydim_end = std::min(mydim, cache_mydim_start + cache_mydim);
             hsize_t cache_mydim_actual = cache_mydim_end - cache_mydim_start;
-            size_t new_cache_size = length * cache_mydim_actual;
+            size_t new_cache_size = extract_length * cache_mydim_actual;
 
             T* destination;
             work.cache.resize(new_cache_size);
@@ -298,36 +320,13 @@ private:
                 destination = work.buffer.data();
             }
 
-            offset[1-dimdex] = cache_mydim_start;
-            count[1-dimdex] = cache_mydim_actual;
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-            #pragma omp critical
-            {
-#else
-            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
-#endif
-
-            work.dataspace.selectHyperslab(H5S_SELECT_SET, count, offset);
-
-            // HDF5 is a lot faster when the memspace and dataspace match in dimensionality.
-            // Presumably there is some shuffling that happens inside when dimensions don't match.
-            work.memspace.setExtentSimple(2, count);
-            work.memspace.selectAll();
-
-            work.dataset.read(destination, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-            }
-#else
-            });
-#endif
+            extract<ROW>(cache_mydim_start, cache_mydim_actual, destination, extract_value, extract_length, work);
 
             if constexpr(ROW == transpose) {
                 auto output = work.cache.begin();
-                for (hsize_t x = 0; x < cache_mydim_actual; ++x, output += length) {
+                for (hsize_t x = 0; x < cache_mydim_actual; ++x, output += extract_length) {
                     auto in = work.buffer.begin() + x;
-                    for (hsize_t y = 0; y < length; ++y, in += cache_mydim_actual) {
+                    for (hsize_t y = 0; y < extract_length; ++y, in += cache_mydim_actual) {
                         *(output + y) = *in;
                     }
                 }
@@ -337,8 +336,8 @@ private:
         }
 
         size_t index = i % cache_mydim;
-        auto wIt = work.cache.begin() + index * length;
-        std::copy(wIt, wIt + length, buffer);
+        auto wIt = work.cache.begin() + index * extract_length;
+        std::copy(wIt, wIt + extract_length, buffer);
         return buffer;
     }
 
@@ -416,136 +415,12 @@ public:
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
         auto ptr = static_cast<Hdf5IndexWorkspace<true>*>(work);
-        return extract<true>(r, buffer, ptr->indices_, ptr->base);
+        return extract<true>(r, buffer, ptr->indices_, ptr->indices_.size(), ptr->base);
     }
 
     const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
         auto ptr = static_cast<Hdf5IndexWorkspace<false>*>(work);
-        return extract<false>(c, buffer, ptr->indices_, ptr->base);
-    }
-
-private:
-    template<bool ROW>
-    const T* extract(size_t i, T* buffer, const std::vector<IDX>& indices, Hdf5WorkspaceBase& work) const {
-        // Figuring out which chunk the request belongs to.
-        hsize_t cache_mydim, chunk_otherdim, mydim, otherdim;
-        if constexpr(ROW != transpose) {
-            cache_mydim = cache_firstdim;
-            chunk_otherdim = chunk_seconddim;
-            mydim = firstdim;
-            otherdim = seconddim;
-        } else {
-            cache_mydim = cache_seconddim;
-            chunk_otherdim = chunk_firstdim;
-            mydim = seconddim;
-            otherdim = firstdim;
-        }
-
-        hsize_t offset[2];
-        hsize_t count[2];
-        constexpr int dimdex = (ROW != transpose);
-        count[dimdex] = 1;
-        hsize_t length = indices.size();
-
-        // No caching can be done here, so we just extract directly.
-        if (cache_mydim == 0) {
-            offset[1-dimdex] = i;
-            count[1-dimdex] = 1;
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-            #pragma omp critical
-            {
-#else
-            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
-#endif
-
-            // Serial locks are applied in callers.
-            work.dataspace.selectNone();
-            for (auto idx : indices) {
-                offset[dimdex] = idx;
-                work.dataspace.selectHyperslab(H5S_SELECT_OR, count, offset);
-            }
-
-            count[dimdex] = length;
-            work.memspace.setExtentSimple(2, count);
-            work.memspace.selectAll();
-
-            work.dataset.read(buffer, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-            }
-#else
-            });
-#endif
-            return buffer;
-        }
-
-        size_t chunk = i / cache_mydim;
-        if (chunk != work.cached_chunk || work.init) {
-            work.init = false;
-
-            hsize_t cache_mydim_start = chunk * cache_mydim;
-            hsize_t cache_mydim_end = std::min(mydim, cache_mydim_start + cache_mydim);
-            hsize_t cache_mydim_actual = cache_mydim_end - cache_mydim_start;
-            size_t new_cache_size = indices.size() * cache_mydim_actual;
-
-            T* destination;
-            work.cache.resize(new_cache_size);
-            if constexpr(ROW != transpose) {
-                destination = work.cache.data();
-            } else {
-                work.buffer.resize(new_cache_size);
-                destination = work.buffer.data();
-            }
-
-            offset[1-dimdex] = cache_mydim_start;
-            count[1-dimdex] = cache_mydim_actual;
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-            #pragma omp critical
-            {
-#else
-            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
-#endif
-
-            // Take slices across the current chunk for each index. This should be okay if consecutive,
-            // but hopefully they've fixed the problem with non-consecutive slices in:
-            // https://forum.hdfgroup.org/t/union-of-non-consecutive-hyperslabs-is-very-slow/5062
-            work.dataspace.selectNone();
-            for (auto idx : indices) {
-                offset[dimdex] = idx;
-                work.dataspace.selectHyperslab(H5S_SELECT_OR, count, offset);
-            }
-
-            count[dimdex] = length;
-            work.memspace.setExtentSimple(2, count);
-            work.memspace.selectAll();
-
-            work.dataset.read(destination, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-            }
-#else
-            });
-#endif
-
-            if constexpr(ROW == transpose) {
-                auto output = work.cache.begin();
-                for (hsize_t x = 0; x < cache_mydim_actual; ++x, output += length) {
-                    auto in = work.buffer.begin() + x;
-                    for (hsize_t y = 0; y < length; ++y, in += cache_mydim_actual) {
-                        *(output + y) = *in;
-                    }
-                }
-            }
-
-            work.cached_chunk = chunk;
-        }
-
-        size_t index = i % cache_mydim;
-        auto start = work.cache.begin() + index * length;
-        std::copy(start, start + length, buffer);
-        return buffer;
+        return extract<false>(c, buffer, ptr->indices_, ptr->indices_.size(), ptr->base);
     }
 };
 
