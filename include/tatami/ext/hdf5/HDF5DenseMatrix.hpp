@@ -47,7 +47,6 @@ class HDF5DenseMatrix : public tatami::Matrix<T, IDX> {
     size_t firstdim, seconddim;
     std::string file_name, dataset_name;
 
-    hsize_t chunk_firstdim, chunk_seconddim;
     hsize_t cache_firstdim, cache_seconddim;
     bool prefer_firstdim;
 
@@ -77,6 +76,7 @@ public:
         firstdim = dims[0];
         seconddim = dims[1];
 
+        hsize_t chunk_firstdim, chunk_seconddim;
         auto dparms = dhandle.getCreatePlist();
         if (dparms.getLayout() != H5D_CHUNKED) {
             // If contiguous, each firstdim is treated as a chunk.
@@ -89,15 +89,15 @@ public:
             chunk_seconddim = chunk_dims[1];
         }
 
-        auto limit_cache = [](size_t chunk_dim, size_t mydim, size_t otherdim, size_t type_size, size_t limit) -> size_t {
-            size_t nelements_along_chunkdim = std::min(mydim, limit / (type_size * otherdim));
+        auto limit_cache = [](size_t chunk_dim, size_t mydim, size_t otherdim, size_t limit) -> size_t {
+            double size_along_otherdim = sizeof(T) * otherdim;
+            size_t nelements_along_chunkdim = std::min(mydim, static_cast<size_t>(limit / size_along_otherdim));
             size_t nchunks = nelements_along_chunkdim / chunk_dim;
             return std::min(nelements_along_chunkdim, nchunks * chunk_dim); 
         };
 
-        size_t data_size = dhandle.getDataType().getSize();
-        cache_firstdim = limit_cache(chunk_firstdim, firstdim, seconddim, data_size, cache_limit);
-        cache_seconddim = limit_cache(chunk_seconddim, seconddim, firstdim, data_size, cache_limit);
+        cache_firstdim = limit_cache(chunk_firstdim, firstdim, seconddim, cache_limit);
+        cache_seconddim = limit_cache(chunk_seconddim, seconddim, firstdim, cache_limit);
 
         // Favoring extraction along the first dimension if it's not crippled
         // by the chunking. This favors pulling of contiguous sections along
@@ -283,15 +283,13 @@ private:
     template<bool ROW, typename ExtractType>
     const T* extract(size_t i, T* buffer, const ExtractType& extract_value, size_t extract_length, Hdf5WorkspaceBase& work) const {
         // Figuring out which chunk the request belongs to.
-        hsize_t cache_mydim, chunk_otherdim, mydim, otherdim;
+        hsize_t cache_mydim, mydim, otherdim;
         if constexpr(ROW != transpose) {
             cache_mydim = cache_firstdim;
-            chunk_otherdim = chunk_seconddim;
             mydim = firstdim;
             otherdim = seconddim;
         } else {
             cache_mydim = cache_seconddim;
-            chunk_otherdim = chunk_firstdim;
             mydim = seconddim;
             otherdim = firstdim;
         }

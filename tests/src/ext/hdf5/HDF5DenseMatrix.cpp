@@ -79,20 +79,29 @@ TEST_F(HDF5DenseUtilsTest, Preference) {
         dump(std::make_pair<int, int>(10, 10));
         tatami::HDF5DenseMatrix<double, int> mat(fpath, name);
         EXPECT_TRUE(mat.prefer_rows());
+
+        tatami::HDF5DenseMatrix<double, int, true> tmat(fpath, name);
+        EXPECT_FALSE(tmat.prefer_rows());
     }
 
     {
         // First dimension is compromised, switching to the second dimension.
         dump(std::make_pair<int, int>(NR, 1));
-        tatami::HDF5DenseMatrix<double, int> mat(fpath, name, NR);
+        tatami::HDF5DenseMatrix<double, int> mat(fpath, name, NR * sizeof(double));
         EXPECT_FALSE(mat.prefer_rows());
+
+        tatami::HDF5DenseMatrix<double, int, true> tmat(fpath, name, NR * sizeof(double));
+        EXPECT_TRUE(tmat.prefer_rows());
     }
 
     {
         // Second dimension is compromised, but we just use the first anyway.
         dump(std::make_pair<int, int>(1, NC));
-        tatami::HDF5DenseMatrix<double, int> mat(fpath, name, NC);
+        tatami::HDF5DenseMatrix<double, int> mat(fpath, name, NC * sizeof(double));
         EXPECT_TRUE(mat.prefer_rows());
+
+        tatami::HDF5DenseMatrix<double, int, true> tmat(fpath, name, NC * sizeof(double));
+        EXPECT_FALSE(tmat.prefer_rows());
     }
 
     {
@@ -100,13 +109,9 @@ TEST_F(HDF5DenseUtilsTest, Preference) {
         dump(std::make_pair<int, int>(10, 10));
         tatami::HDF5DenseMatrix<double, int> mat(fpath, name, 0);
         EXPECT_TRUE(mat.prefer_rows());
-    }
 
-    {
-        // Transposed.
-        dump(std::make_pair<int, int>(10, 10));
-        tatami::HDF5DenseMatrix<double, int, true> mat(fpath, name);
-        EXPECT_FALSE(mat.prefer_rows());
+        tatami::HDF5DenseMatrix<double, int, true> tmat(fpath, name, 0);
+        EXPECT_FALSE(tmat.prefer_rows());
     }
 }
 
