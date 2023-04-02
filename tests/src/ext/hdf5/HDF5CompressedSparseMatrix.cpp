@@ -24,7 +24,7 @@ protected:
     std::vector<double> values;
     std::string fpath;
     std::string name;
-    SparseDetails<double> triplets;
+    CompressedSparseDetails<double> triplets;
 
     void dump(const int& caching, size_t NR, size_t NC) {
         fpath = temp_file_path("tatami-sparse-test.h5");
@@ -32,7 +32,7 @@ protected:
         name = "stuff";
         auto ghandle = fhandle.createGroup(name);
 
-        triplets = simulate_sparse_triplets<double>(NR, NC, 0.05, 0, 100);
+        triplets = simulate_sparse_compressed<double>(NR, NC, 0.05, 0, 100);
         for (auto& v : triplets.value) {
             v = std::round(v);
         }
@@ -211,14 +211,13 @@ INSTANTIATE_TEST_CASE_P(
 /*************************************
  *************************************/
 
-class HDF5SparseSlicedTest : public ::testing::TestWithParam<std::tuple<bool, int, std::vector<int>, int> >, public HDF5SparseMatrixTestMethods {};
+class HDF5SparseSlicedTest : public ::testing::TestWithParam<std::tuple<bool, int, std::vector<double>, int> >, public HDF5SparseMatrixTestMethods {};
 
 TEST_P(HDF5SparseSlicedTest, Primary) {
     auto param = GetParam();
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
-    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
 
     auto caching = std::get<3>(param);
     const size_t NR = 200, NC = 100;
@@ -235,7 +234,8 @@ TEST_P(HDF5SparseSlicedTest, Primary) {
             decltype(triplets.ptr)
         > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
 
-        test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
+        size_t FIRST = interval_info[0] * NC, LAST = interval_info[1] * NC;
+        test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LAST);
     }
 
     {
@@ -249,7 +249,8 @@ TEST_P(HDF5SparseSlicedTest, Primary) {
             decltype(triplets.ptr)
         > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
 
-        test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
+        size_t FIRST = interval_info[0] * NC, LAST = interval_info[1] * NC; // NC is deliberate, due to the transposition.
+        test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LAST);
     }
 }
 
@@ -258,7 +259,7 @@ TEST_P(HDF5SparseSlicedTest, Secondary) {
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
-    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+
 
     auto caching = std::get<3>(param);
     const size_t NR = 50, NC = 10; // much smaller for the secondary dimension.
@@ -275,7 +276,8 @@ TEST_P(HDF5SparseSlicedTest, Secondary) {
             decltype(triplets.ptr)
         > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
 
-        test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
+        size_t FIRST = interval_info[0] * NR, LAST = interval_info[1] * NR;
+        test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LAST);
     }
 
     {
@@ -289,7 +291,8 @@ TEST_P(HDF5SparseSlicedTest, Secondary) {
             decltype(triplets.ptr)
         > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
 
-        test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LEN, SHIFT);
+        size_t FIRST = interval_info[0] * NC, LAST = interval_info[1] * NC;
+        test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LAST);
     }
 }
 
@@ -300,9 +303,111 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(true, false),
         ::testing::Values(1, 3),
         ::testing::Values(
-            std::vector<int>({ 0, 8, 3 }), // overlapping shifts
-            std::vector<int>({ 1, 4, 4 }), // non-overlapping shifts
-            std::vector<int>({ 3, 10, 0 })
+            std::vector<double>({ 0, 0.333 }), 
+            std::vector<double>({ 0.222, 0.888 }), 
+            std::vector<double>({ 0.555, 1 })
+        ),
+        ::testing::Values(0, 10, 100) // chunk size
+    )
+);
+
+/*************************************
+ *************************************/
+
+class HDF5SparseIndexedTest : public ::testing::TestWithParam<std::tuple<bool, int, std::vector<double>, int> >, public HDF5SparseMatrixTestMethods {};
+
+TEST_P(HDF5SparseIndexedTest, Primary) {
+    auto param = GetParam();
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+
+    auto caching = std::get<3>(param);
+    const size_t NR = 200, NC = 100;
+    dump(caching, NR, NC);
+
+    {
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NR * 1.5);
+        tatami::CompressedSparseMatrix<
+            true, 
+            double, 
+            int, 
+            decltype(triplets.value), 
+            decltype(triplets.index), 
+            decltype(triplets.ptr)
+        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+
+        size_t FIRST = interval_info[0] * NC, STEP = interval_info[1];
+        test_indexed_row_access(&mat, &ref, FORWARD, JUMP, FIRST, STEP);
+    }
+
+    {
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 1);
+        tatami::CompressedSparseMatrix<
+            false, 
+            double, 
+            int, 
+            decltype(triplets.value), 
+            decltype(triplets.index), 
+            decltype(triplets.ptr)
+        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
+
+        size_t FIRST = interval_info[0] * NC, STEP = interval_info[1]; // NC is deliberate, due to the transposition.
+        test_indexed_column_access(&mat, &ref, FORWARD, JUMP, FIRST, STEP);
+    }
+}
+
+TEST_P(HDF5SparseIndexedTest, Secondary) {
+    auto param = GetParam();
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+
+    auto caching = std::get<3>(param);
+    const size_t NR = 50, NC = 10; // much smaller for the secondary dimension.
+    dump(caching, NR, NC);
+
+    {
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NC * 1.5);
+        tatami::CompressedSparseMatrix<
+            true, 
+            double, 
+            int, 
+            decltype(triplets.value), 
+            decltype(triplets.index), 
+            decltype(triplets.ptr)
+        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+
+        size_t FIRST = interval_info[0] * NR, STEP = interval_info[1];
+        test_indexed_column_access(&mat, &ref, FORWARD, JUMP, FIRST, STEP);
+    }
+
+    {
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 2);
+        tatami::CompressedSparseMatrix<
+            false, 
+            double, 
+            int, 
+            decltype(triplets.value), 
+            decltype(triplets.index), 
+            decltype(triplets.ptr)
+        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
+
+        size_t FIRST = interval_info[0] * NC, STEP = interval_info[1];
+        test_indexed_row_access(&mat, &ref, FORWARD, JUMP, FIRST, STEP);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    HDF5SparseMatrix,
+    HDF5SparseIndexedTest,
+    ::testing::Combine(
+        ::testing::Values(true, false),
+        ::testing::Values(1, 3),
+        ::testing::Values(
+            std::vector<double>({ 0.3, 5 }), 
+            std::vector<double>({ 0.322, 8 }), 
+            std::vector<double>({ 0.455, 9 })
         ),
         ::testing::Values(0, 10, 100) // chunk size
     )
