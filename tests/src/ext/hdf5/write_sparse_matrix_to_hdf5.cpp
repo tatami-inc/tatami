@@ -24,7 +24,7 @@
 
 TEST(WriteSparseMatrixToHdf5Test, SparseColumn) {
     const size_t NR = 200, NC = 100;
-    SparseDetails<double> triplets = simulate_sparse_triplets<double>(NC, NR, 0.05, 0, 100);
+    auto triplets = simulate_sparse_compressed<double>(NC, NR, 0.05, 0, 100);
     tatami::CompressedSparseMatrix<false, double, int> mat(NR, NC, std::move(triplets.value), std::move(triplets.index), std::move(triplets.ptr));
 
     // Dumping it.
@@ -49,11 +49,16 @@ TEST(WriteSparseMatrixToHdf5Test, SparseColumn) {
     }
 
     // Roundtripping.
-    auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
-    for (size_t r = 0; r < NR; ++r) {
-        auto matrow = mat.row(r);
-        auto relrow = reloaded.row(r);
-        EXPECT_EQ(matrow, relrow);
+    {
+        auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
+
+        auto mwrk = mat.new_row_workspace();
+        auto rwrk = reloaded.new_row_workspace();
+        for (size_t r = 0; r < NR; ++r) {
+            auto matrow = mat.row(r, mwrk.get());
+            auto relrow = reloaded.row(r, rwrk.get());
+            EXPECT_EQ(matrow, relrow);
+        }
     }
 
     // Forcing it to be integer.
@@ -74,12 +79,15 @@ TEST(WriteSparseMatrixToHdf5Test, SparseColumn) {
 
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
+
+        auto mwrk = mat.new_row_workspace();
+        auto rwrk = reloaded.new_row_workspace();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r);
+            auto matrow = mat.row(r, mwrk.get());
             for (auto& x : matrow) {
                 x = static_cast<int>(x);
             }
-            auto relrow = reloaded.row(r);
+            auto relrow = reloaded.row(r, rwrk.get());
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -87,7 +95,7 @@ TEST(WriteSparseMatrixToHdf5Test, SparseColumn) {
 
 TEST(WriteSparseMatrixToHdf5Test, SparseRow) {
     const size_t NR = 200, NC = 100;
-    SparseDetails<double> triplets = simulate_sparse_triplets<double>(NR, NC, 0.05, 0, 100);
+    auto triplets = simulate_sparse_compressed<double>(NR, NC, 0.05, 0, 100);
     tatami::CompressedSparseMatrix<true, double, int> mat(NR, NC, std::move(triplets.value), std::move(triplets.index), std::move(triplets.ptr));
 
     // Dumping it.
@@ -111,9 +119,12 @@ TEST(WriteSparseMatrixToHdf5Test, SparseRow) {
     // Roundtripping.
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<true, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
+
+        auto mwrk = mat.new_row_workspace();
+        auto rwrk = reloaded.new_row_workspace();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r);
-            auto relrow = reloaded.row(r);
+            auto matrow = mat.row(r, mwrk.get());
+            auto relrow = reloaded.row(r, rwrk.get());
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -138,9 +149,12 @@ TEST(WriteSparseMatrixToHdf5Test, SparseRow) {
 
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
+
+        auto mwrk = mat.new_row_workspace();
+        auto rwrk = reloaded.new_row_workspace();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r);
-            auto relrow = reloaded.row(r);
+            auto matrow = mat.row(r, mwrk.get());
+            auto relrow = reloaded.row(r, rwrk.get());
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -155,7 +169,7 @@ TEST_P(WriteSparseMatrixToHdf5UnsignedDataTypeTest, Check) {
     const size_t NR = 200, NC = 100;
     auto type = GetParam();
 
-    SparseDetails<double> triplets = simulate_sparse_triplets<double>(NC, NR, 0.05, 0, 100);
+    auto triplets = simulate_sparse_compressed<double>(NC, NR, 0.05, 0, 100);
     for (auto& x : triplets.value) {
         x = std::round(x);
         if (type == tatami::WriteSparseMatrixToHdf5Parameters::StorageType::UINT16) {
@@ -192,11 +206,16 @@ TEST_P(WriteSparseMatrixToHdf5UnsignedDataTypeTest, Check) {
     }
 
     // Roundtripping.
-    auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
-    for (size_t r = 0; r < NR; ++r) {
-        auto matrow = mat.row(r);
-        auto relrow = reloaded.row(r);
-        EXPECT_EQ(matrow, relrow);
+    {
+        auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
+
+        auto mwrk = mat.new_row_workspace();
+        auto rwrk = reloaded.new_row_workspace();
+        for (size_t r = 0; r < NR; ++r) {
+            auto matrow = mat.row(r, mwrk.get());
+            auto relrow = reloaded.row(r, rwrk.get());
+            EXPECT_EQ(matrow, relrow);
+        }
     }
 
     // But we can always force it to a float.
@@ -216,9 +235,12 @@ TEST_P(WriteSparseMatrixToHdf5UnsignedDataTypeTest, Check) {
 
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
+
+        auto mwrk = mat.new_row_workspace();
+        auto rwrk = reloaded.new_row_workspace();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r);
-            auto relrow = reloaded.row(r);
+            auto matrow = mat.row(r, mwrk.get());
+            auto relrow = reloaded.row(r, rwrk.get());
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -243,7 +265,7 @@ TEST_P(WriteSparseMatrixToHdf5SignedDataTypeTest, Check) {
     const size_t NR = 200, NC = 100;
     auto type = GetParam();
 
-    SparseDetails<double> triplets = simulate_sparse_triplets<double>(NC, NR, 0.05, -100, 100);
+    auto triplets = simulate_sparse_compressed<double>(NC, NR, 0.05, -100, 100);
     for (auto& x : triplets.value) {
         x = std::round(x);
         if (type == tatami::WriteSparseMatrixToHdf5Parameters::StorageType::INT16) {
@@ -281,9 +303,12 @@ TEST_P(WriteSparseMatrixToHdf5SignedDataTypeTest, Check) {
 
     // Roundtripping.
     auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
+
+    auto mwrk = mat.new_row_workspace();
+    auto rwrk = reloaded.new_row_workspace();
     for (size_t r = 0; r < NR; ++r) {
-        auto matrow = mat.row(r);
-        auto relrow = reloaded.row(r);
+        auto matrow = mat.row(r, mwrk.get());
+        auto relrow = reloaded.row(r, rwrk.get());
         EXPECT_EQ(matrow, relrow);
     }
 }
@@ -314,7 +339,7 @@ TEST_P(WriteSparseMatrixToHdf5IndexTypeTest, Check) {
         NR = 100000;
     }
 
-    SparseDetails<double> triplets = simulate_sparse_triplets<double>(NC, NR, 0.05, -100, 100);
+    auto triplets = simulate_sparse_compressed<double>(NC, NR, 0.05, -100, 100);
     tatami::CompressedSparseMatrix<false, double, int> mat(NR, NC, std::move(triplets.value), std::move(triplets.index), std::move(triplets.ptr));
 
     // Dumping it.
@@ -344,9 +369,12 @@ TEST_P(WriteSparseMatrixToHdf5IndexTypeTest, Check) {
 
     // Roundtripping.
     auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
+
+    auto mwrk = mat.new_column_workspace();
+    auto rwrk = reloaded.new_column_workspace();
     for (size_t c = 0; c < NC; ++c) {
-        auto matrow = mat.column(c);
-        auto relrow = reloaded.column(c);
+        auto matrow = mat.column(c, mwrk.get());
+        auto relrow = reloaded.column(c, rwrk.get());
         EXPECT_EQ(matrow, relrow);
     }
 }

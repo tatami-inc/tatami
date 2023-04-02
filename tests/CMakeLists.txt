@@ -125,15 +125,15 @@ if (TEST_HDF5)
             h5test 
             src/ext/hdf5/HDF5DenseMatrix.cpp
             src/ext/hdf5/HDF5CompressedSparseMatrix.cpp
-#            src/ext/hdf5/load_hdf5_matrix.cpp
-#            src/ext/hdf5/write_sparse_matrix_to_hdf5.cpp
+            src/ext/hdf5/load_hdf5_matrix.cpp
+            src/ext/hdf5/write_sparse_matrix_to_hdf5.cpp
         )
 
         # Also checking the custom parallelization in the HDF5 libraries.
         add_executable(
             cusparh5test
             src/ext/hdf5/HDF5DenseMatrix.cpp
-#            src/ext/hdf5/HDF5CompressedSparseMatrix.cpp
+            src/ext/hdf5/HDF5CompressedSparseMatrix.cpp
         )
         target_compile_definitions(cusparh5test PRIVATE TEST_CUSTOM_PARALLEL=1)
 
