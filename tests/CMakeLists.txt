@@ -124,7 +124,7 @@ if (TEST_HDF5)
         add_executable(
             h5test 
             src/ext/hdf5/HDF5DenseMatrix.cpp
-#            src/ext/hdf5/HDF5CompressedSparseMatrix.cpp
+            src/ext/hdf5/HDF5CompressedSparseMatrix.cpp
 #            src/ext/hdf5/load_hdf5_matrix.cpp
 #            src/ext/hdf5/write_sparse_matrix_to_hdf5.cpp
         )

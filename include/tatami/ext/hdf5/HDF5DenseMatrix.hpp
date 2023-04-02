@@ -167,7 +167,7 @@ private:
         H5::DataSpace memspace;
 
         std::vector<T> cache;
-        size_t cached_chunk;
+        size_t cached_chunk = 0;
         bool init = true;
 
         std::vector<T> buffer; // buffer is provided for transpositions for easier extraction.
