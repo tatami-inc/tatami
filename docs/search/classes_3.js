@@ -1,6 +1,27 @@
 var searchData=
 [
-  ['hdf5compressedsparsematrix_0',['HDF5CompressedSparseMatrix',['../classtatami_1_1HDF5CompressedSparseMatrix.html',1,'tatami']]],
-  ['hdf5densematrix_1',['HDF5DenseMatrix',['../classtatami_1_1HDF5DenseMatrix.html',1,'tatami']]],
-  ['headerdetails_2',['HeaderDetails',['../structtatami_1_1MatrixMarket_1_1HeaderDetails.html',1,'tatami::MatrixMarket']]]
+  ['delayedabshelper_0',['DelayedAbsHelper',['../structtatami_1_1DelayedAbsHelper.html',1,'tatami']]],
+  ['delayedaddscalarhelper_1',['DelayedAddScalarHelper',['../structtatami_1_1DelayedAddScalarHelper.html',1,'tatami']]],
+  ['delayedaddvectorhelper_2',['DelayedAddVectorHelper',['../structtatami_1_1DelayedAddVectorHelper.html',1,'tatami']]],
+  ['delayedbind_3',['DelayedBind',['../classtatami_1_1DelayedBind.html',1,'tatami']]],
+  ['delayedcast_4',['DelayedCast',['../classtatami_1_1DelayedCast.html',1,'tatami']]],
+  ['delayeddividescalarhelper_5',['DelayedDivideScalarHelper',['../structtatami_1_1DelayedDivideScalarHelper.html',1,'tatami']]],
+  ['delayeddividevectorhelper_6',['DelayedDivideVectorHelper',['../structtatami_1_1DelayedDivideVectorHelper.html',1,'tatami']]],
+  ['delayedexphelper_7',['DelayedExpHelper',['../structtatami_1_1DelayedExpHelper.html',1,'tatami']]],
+  ['delayedisometricop_8',['DelayedIsometricOp',['../classtatami_1_1DelayedIsometricOp.html',1,'tatami']]],
+  ['delayedlog1phelper_9',['DelayedLog1pHelper',['../structtatami_1_1DelayedLog1pHelper.html',1,'tatami']]],
+  ['delayedloghelper_10',['DelayedLogHelper',['../structtatami_1_1DelayedLogHelper.html',1,'tatami']]],
+  ['delayedmultiplyscalarhelper_11',['DelayedMultiplyScalarHelper',['../structtatami_1_1DelayedMultiplyScalarHelper.html',1,'tatami']]],
+  ['delayedmultiplyvectorhelper_12',['DelayedMultiplyVectorHelper',['../structtatami_1_1DelayedMultiplyVectorHelper.html',1,'tatami']]],
+  ['delayedroundhelper_13',['DelayedRoundHelper',['../structtatami_1_1DelayedRoundHelper.html',1,'tatami']]],
+  ['delayedsqrthelper_14',['DelayedSqrtHelper',['../structtatami_1_1DelayedSqrtHelper.html',1,'tatami']]],
+  ['delayedsubset_15',['DelayedSubset',['../classtatami_1_1DelayedSubset.html',1,'tatami']]],
+  ['delayedsubsetblock_16',['DelayedSubsetBlock',['../classtatami_1_1DelayedSubsetBlock.html',1,'tatami']]],
+  ['delayedsubsetsorted_17',['DelayedSubsetSorted',['../classtatami_1_1DelayedSubsetSorted.html',1,'tatami']]],
+  ['delayedsubsetsortedunique_18',['DelayedSubsetSortedUnique',['../classtatami_1_1DelayedSubsetSortedUnique.html',1,'tatami']]],
+  ['delayedsubsetunique_19',['DelayedSubsetUnique',['../classtatami_1_1DelayedSubsetUnique.html',1,'tatami']]],
+  ['delayedsubtractscalarhelper_20',['DelayedSubtractScalarHelper',['../structtatami_1_1DelayedSubtractScalarHelper.html',1,'tatami']]],
+  ['delayedsubtractvectorhelper_21',['DelayedSubtractVectorHelper',['../structtatami_1_1DelayedSubtractVectorHelper.html',1,'tatami']]],
+  ['delayedtranspose_22',['DelayedTranspose',['../classtatami_1_1DelayedTranspose.html',1,'tatami']]],
+  ['densematrix_23',['DenseMatrix',['../classtatami_1_1DenseMatrix.html',1,'tatami']]]
 ];

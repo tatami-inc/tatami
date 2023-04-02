@@ -97,7 +97,7 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a1f9882e33a8dc933074eb16b00cd17fa"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#a1f9882e33a8dc933074eb16b00cd17fa">sparse</a> = true</td></tr>
+<tr class="memitem:a1f9882e33a8dc933074eb16b00cd17fa"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#a1f9882e33a8dc933074eb16b00cd17fa">sparse</a> = RIGHT</td></tr>
 <tr class="separator:a1f9882e33a8dc933074eb16b00cd17fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -139,7 +139,7 @@ template&lt;bool RIGHT, typename T  = double&gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">s</td><td>Scalar value to use in the division. </td></tr>
+    <tr><td class="paramname">s</td><td>Scalar value to use in the division. This should be non-zero. </td></tr>
   </table>
   </dd>
 </dl>
@@ -197,7 +197,7 @@ template&lt;bool RIGHT, typename T  = double&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd><code>val</code> divided by the scalar if <code>RIGHT = true</code>, otherwise the scalar is divided by <code>val</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd><code>val</code> divided by the scalar if <code>RIGHT = true</code>, otherwise the scalar is divided by <code>val</code>. If <code>RIGHT = false</code> and <code>val = 0</code>, an infinite value is returned. </dd></dl>
 
 </div>
 </div>
@@ -214,7 +214,7 @@ template&lt;bool RIGHT, typename T  = double&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; RIGHT, T &gt;::sparse = true</td>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; RIGHT, T &gt;::sparse = RIGHT</td>
         </tr>
       </table>
   </td>
@@ -223,7 +223,8 @@ template&lt;bool RIGHT, typename T  = double&gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Division is always assumed to preserve structural sparsity. Non-finite or zero <code>scalar</code> values are not considered here. </p>
+<p>Division on the right is always assumed to preserve structural sparsity. Non-finite or zero <code>scalar</code> values are not considered here.</p>
+<p>Division of the scalar by the matrix value is assumed to discard structural sparsity, as any matrix zeros will yield an infinite value for a non-zero scalar. </p>
 
 </div>
 </div>

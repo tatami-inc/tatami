@@ -77,20 +77,27 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
-<a href="#namespaces">Namespaces</a>  </div>
+<a href="#namespaces">Namespaces</a> &#124;
+<a href="#typedef-members">Typedefs</a>  </div>
   <div class="headertitle"><div class="title">Workspace.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Virtual class for workspaces.  
+<p>Base workspace classes.  
 <a href="#details">More...</a></p>
 
 <p><a href="Workspace_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Workspace.html">tatami::Workspace</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual workspace class.  <a href="classtatami_1_1Workspace.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Workspace.html">tatami::Workspace&lt; ROW &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base workspace class.  <a href="classtatami_1_1Workspace.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1BlockWorkspace.html">tatami::BlockWorkspace&lt; ROW &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base workspace class for block extraction.  <a href="classtatami_1_1BlockWorkspace.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1IndexWorkspace.html">tatami::IndexWorkspace&lt; IDX, ROW &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Base workspace class for indexed extraction.  <a href="classtatami_1_1IndexWorkspace.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -98,9 +105,27 @@ Namespaces</h2></td></tr>
 <tr class="memitem:namespacetatami"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
 <tr class="memdesc:namespacetatami"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flexible representations for matrix data. <br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
+Typedefs</h2></td></tr>
+<tr class="memitem:a4a4650628564a58b961b7df8e2a83ac8"><td class="memItemLeft" align="right" valign="top">typedef Workspace&lt; true &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">tatami::RowWorkspace</a></td></tr>
+<tr class="separator:a4a4650628564a58b961b7df8e2a83ac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60a9117c28a1c409e7b7b3836be9531a"><td class="memItemLeft" align="right" valign="top">typedef Workspace&lt; false &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">tatami::ColumnWorkspace</a></td></tr>
+<tr class="separator:a60a9117c28a1c409e7b7b3836be9531a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a100a9dd1056492a6687199cc1b341c08"><td class="memItemLeft" align="right" valign="top">typedef BlockWorkspace&lt; true &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">tatami::RowBlockWorkspace</a></td></tr>
+<tr class="separator:a100a9dd1056492a6687199cc1b341c08"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f0f1615a5c86e37678138caef489563"><td class="memItemLeft" align="right" valign="top">typedef BlockWorkspace&lt; false &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">tatami::ColumnBlockWorkspace</a></td></tr>
+<tr class="separator:a1f0f1615a5c86e37678138caef489563"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8dacf3f8e448e211c63056656e24d0b8"><td class="memTemplParams" colspan="2">template&lt;typename IDX &gt; </td></tr>
+<tr class="memitem:a8dacf3f8e448e211c63056656e24d0b8"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">tatami::RowIndexWorkspace</a> = IndexWorkspace&lt; IDX, true &gt;</td></tr>
+<tr class="separator:a8dacf3f8e448e211c63056656e24d0b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9de74505bea2d3c1139479047b133f3d"><td class="memTemplParams" colspan="2">template&lt;typename IDX &gt; </td></tr>
+<tr class="memitem:a9de74505bea2d3c1139479047b133f3d"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">tatami::ColumnIndexWorkspace</a> = IndexWorkspace&lt; IDX, false &gt;</td></tr>
+<tr class="separator:a9de74505bea2d3c1139479047b133f3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Virtual class for workspaces. </p>
+<div class="textblock"><p>Base workspace classes. </p>
+<p>Workspaces allow <code>Matrix</code> instances to persist information across certain method calls within the same thread. <code>Matrix</code> subclass implementations can then cache bits and pieces of information for repeated accesses. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -107,8 +107,8 @@ $(function() {
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span> </div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keywordflow">if</span> (row == incoming-&gt;prefer_rows()) {</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keyword">auto</span> bptr = buffer.data();</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keyword">auto</span> wrk = incoming-&gt;new_workspace(row);</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        </div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        <span class="keyword">auto</span> wrk = new_workspace&lt;row&gt;(incoming);</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span> </div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> p = 0; p &lt; primary; ++p, bptr += secondary) {</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(std::is_same&lt;DataIn, DataStore&gt;::value) {</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(row) {</div>
@@ -132,7 +132,7 @@ $(function() {
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="comment">// under the assumption that it may be arbitrarily costly to</span></div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>        <span class="comment">// extract in the non-preferred dim; it is thus cheaper to</span></div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>        <span class="comment">// do cache-unfriendly inserts into the output buffer.</span></div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="keyword">auto</span> wrk = incoming-&gt;new_workspace(!row);</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        <span class="keyword">auto</span> wrk = new_workspace&lt;!row&gt;(incoming);</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> s = 0; s &lt; secondary; ++s) {</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>            <span class="keyword">const</span> DataIn* ptr;</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(row) {</div>
@@ -172,7 +172,7 @@ $(function() {
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
 <div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:34</div></div>
-<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:12</div></div>
+<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:14</div></div>
 <div class="ttc" id="anamespacetatami_html_a5fd35b3b6f34a8b4965ef9a1cef6fc93"><div class="ttname"><a href="namespacetatami.html#a5fd35b3b6f34a8b4965ef9a1cef6fc93">tatami::convert_to_dense</a></div><div class="ttdeci">std::shared_ptr&lt; Matrix&lt; DataInterface, Index &gt; &gt; convert_to_dense(const MatrixIn *incoming)</div><div class="ttdef"><b>Definition:</b> convert_to_dense.hpp:36</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

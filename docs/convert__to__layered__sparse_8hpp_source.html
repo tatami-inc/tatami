@@ -114,7 +114,7 @@ $(function() {
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="keywordflow">return</span> create_empty&lt;RowIndex&gt;(NR);</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    }</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">auto</span> wrk = incoming-&gt;new_workspace(<span class="keyword">true</span>);</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">auto</span> wrk = incoming-&gt;new_row_workspace();</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    std::vector&lt;int&gt; category(NR);</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>    std::vector&lt;DataIn&gt; dbuffer(NC);</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    std::vector&lt;IndexIn&gt; ibuffer;</div>
@@ -278,7 +278,7 @@ $(function() {
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        <span class="keywordflow">return</span> create_empty&lt;RowIndex&gt;(NR);</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    }</div>
 <div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span> </div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keyword">auto</span> wrk = incoming-&gt;new_workspace(<span class="keyword">false</span>);</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keyword">auto</span> wrk = incoming-&gt;new_column_workspace();</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    std::vector&lt;DataIn&gt; dbuffer(NR);</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    std::vector&lt;IndexIn&gt; ibuffer;</div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    std::vector&lt;DataIn&gt; mins(NR), maxs(NR);</div>
@@ -480,7 +480,7 @@ $(function() {
 <div class="line"><a id="l00429" name="l00429"></a><span class="lineno">  429</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aLayeredMatrixData_8hpp_html"><div class="ttname"><a href="LayeredMatrixData_8hpp.html">LayeredMatrixData.hpp</a></div><div class="ttdoc">Defines the layered sparse matrix data structure.</div></div>
 <div class="ttc" id="aconvert__to__layered__sparse_8hpp_html_a8a10c9d0fdbf5076e8583d1068a7f6d6"><div class="ttname"><a href="convert__to__layered__sparse_8hpp.html#a8a10c9d0fdbf5076e8583d1068a7f6d6">convert_to_layered_sparse</a></div><div class="ttdeci">LayeredMatrixData&lt; T, IDX &gt; convert_to_layered_sparse(const Matrix *incoming)</div><div class="ttdef"><b>Definition:</b> convert_to_layered_sparse.hpp:418</div></div>
-<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:12</div></div>
+<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:14</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

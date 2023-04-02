@@ -1,4 +1,13 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="5,13,152,53"/>
-<area shape="rect" id="node2" href="$classtatami_1_1DelayedCast.html" title="Recast a Matrix to a different interface type." alt="" coords="200,5,337,60"/>
+<area shape="rect" id="node1" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="5,293,128,333"/>
+<area shape="rect" id="node2" href="$classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix." alt="" coords="211,5,353,45"/>
+<area shape="rect" id="node3" href="$classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix." alt="" coords="200,69,364,109"/>
+<area shape="rect" id="node4" href="$classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices." alt="" coords="203,133,361,173"/>
+<area shape="rect" id="node5" href="$classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block." alt="" coords="190,197,374,237"/>
+<area shape="rect" id="node6" href="$classtatami_1_1DelayedSubsetSorted.html" title="Delayed subsetting of a matrix with sorted indices." alt="" coords="187,261,377,301"/>
+<area shape="rect" id="node7" href="$classtatami_1_1DelayedSubsetSortedUnique.html" title="Delayed subsetting of a matrix with sorted, unique indices." alt="" coords="183,325,381,365"/>
+<area shape="rect" id="node8" href="$classtatami_1_1DelayedSubsetUnique.html" title="Delayed subsetting of a matrix with unique indices." alt="" coords="186,389,378,429"/>
+<area shape="rect" id="node9" href="$classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix." alt="" coords="197,453,367,493"/>
+<area shape="rect" id="node10" href="$classtatami_1_1HDF5CompressedSparseMatrix.html" title="Compressed sparse matrix in a HDF5 file." alt="" coords="176,517,388,557"/>
+<area shape="rect" id="node11" href="$classtatami_1_1HDF5DenseMatrix.html" title="Dense matrix backed by a DataSet in a HDF5 file." alt="" coords="197,581,367,621"/>
 </map>

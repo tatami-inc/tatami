@@ -78,7 +78,8 @@ $(function() {
   <div class="summary">
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
-<a href="#typedef-members">Typedefs</a>  </div>
+<a href="#typedef-members">Typedefs</a> &#124;
+<a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">Matrix.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
@@ -104,6 +105,18 @@ Namespaces</h2></td></tr>
 Typedefs</h2></td></tr>
 <tr class="memitem:a35c670894994f1d620abb55953f98441"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a35c670894994f1d620abb55953f98441">tatami::NumericMatrix</a> = Matrix&lt; double, int &gt;</td></tr>
 <tr class="separator:a35c670894994f1d620abb55953f98441"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
+Functions</h2></td></tr>
+<tr class="memitem:ae41160b554ba04cccd3a01630faa663a"><td class="memTemplParams" colspan="2">template&lt;bool ROW, typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:ae41160b554ba04cccd3a01630faa663a"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Workspace&lt; ROW &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ae41160b554ba04cccd3a01630faa663a">tatami::new_workspace</a> (const Matrix&lt; T, IDX &gt; *ptr)</td></tr>
+<tr class="separator:ae41160b554ba04cccd3a01630faa663a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31b31c4ea7e6445369125724d980247c"><td class="memTemplParams" colspan="2">template&lt;bool ROW, typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:a31b31c4ea7e6445369125724d980247c"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; BlockWorkspace&lt; ROW &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a31b31c4ea7e6445369125724d980247c">tatami::new_workspace</a> (const Matrix&lt; T, IDX &gt; *ptr, size_t start, size_t length)</td></tr>
+<tr class="separator:a31b31c4ea7e6445369125724d980247c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad02e87fba259af3e54d176d3be1fff4e"><td class="memTemplParams" colspan="2">template&lt;bool ROW, typename T , typename IDX &gt; </td></tr>
+<tr class="memitem:ad02e87fba259af3e54d176d3be1fff4e"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; BlockWorkspace&lt; ROW &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ad02e87fba259af3e54d176d3be1fff4e">tatami::new_workspace</a> (const Matrix&lt; T, IDX &gt; *ptr, std::vector&lt; IDX &gt; indices)</td></tr>
+<tr class="separator:ad02e87fba259af3e54d176d3be1fff4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Virtual class for a matrix of some numeric type. </p>
