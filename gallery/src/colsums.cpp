@@ -14,8 +14,13 @@
 
 /* ATTEMPT 1:
  *
- * This is the simplest implementation whereby we just loop across all
- * columns, extract each column and compute the sum. 
+ * This is the simplest implementation whereby we just loop across all columns,
+ * extract each column and compute the sum. This uses a "workspace" that shares
+ * data/information between columns for more efficient extraction. The exact
+ * nature of the sharing (if any) depends on the underlying matrix
+ * implementation, e.g., open file handles, pointers to memory locations. This
+ * mechanism also makes extraction easy to parallelize as each thread/process
+ * gets it own workspace and the underlying matrix is const on read access.
  */
 std::vector<double> colsums_simple(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
@@ -28,34 +33,10 @@ std::vector<double> colsums_simple(std::shared_ptr<tatami::NumericMatrix> p) {
      */
     std::vector<double> buffer(NR);
 
-    for (size_t i = 0; i < NC; ++i) {
-        auto ptr = p->column(i, buffer.data());
-        output[i] = std::accumulate(ptr, ptr + NR, 0.0);
-    }
-
-    return output;
-}
-
-/* ATTEMPT 2:
- *
- * For extraction of consecutive columns, we can supply a "workspace" that
- * shares data/information between columns for more efficient extraction. The
- * exact nature of the sharing (if any) depends on the underlying matrix
- * implementation, e.g., open file handles, pointers to memory locations. This
- * mechanism also makes extraction easy to parallelize as each thread/process
- * gets it own workspace and the underlying matrix is const on read access.
- */
-std::vector<double> colsums_work(std::shared_ptr<tatami::NumericMatrix> p) {
-    size_t NR = p->nrow(), NC = p->ncol();
-    std::vector<double> output(NC);
-    std::vector<double> buffer(NR);
-
-    /* We set 'false' here to indicate that we want our workspace to operate
-     * for column extraction, not for row extraction. For example, no workspace
-     * is necessary when performing column-wise extraction on a column-major
-     * matrix, in which case the returned 'wrk' will be a null pointer.
+    /* Constructing the workspace for column-wise extraction. Other workspaces
+     * can be constructed that only extract a slice from each column.
      */
-    auto wrk = p->new_workspace(false);
+    auto wrk = p->new_column_workspace();
 
     for (size_t i = 0; i < NC; ++i) {
         auto ptr = p->column(i, buffer.data(), wrk.get());
@@ -65,7 +46,7 @@ std::vector<double> colsums_work(std::shared_ptr<tatami::NumericMatrix> p) {
     return output;
 }
 
-/* ATTEMPT 3:
+/* ATTEMPT 2:
  *
  * If our matrix is sparse, we can speed up the entire process by only extracting
  * and computing column sums on the non-zero elements. This requires a separate
@@ -77,7 +58,7 @@ std::vector<double> colsums_sparse(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
     std::vector<double> output(NC);
     std::vector<double> buffer(NR);
-    auto wrk = p->new_workspace(false);
+    auto wrk = p->new_column_workspace();
 
     /* When performing sparse extractions, we need an additional buffer for the
      * indices - in this case, the row indices of the non-zero elements.
@@ -125,7 +106,7 @@ std::vector<double> colsums_preferred(std::shared_ptr<tatami::NumericMatrix> p) 
     // Deciding whether or not to perform row-wise extraction.
     if (p->prefer_rows()) {
         std::vector<double> buffer(NC);
-        auto wrk = p->new_workspace(true);
+        auto wrk = p->new_row_workspace();
         std::vector<int> ibuffer(NC);
 
         for (size_t i = 0; i < NR; ++i) {
@@ -143,7 +124,7 @@ std::vector<double> colsums_preferred(std::shared_ptr<tatami::NumericMatrix> p) 
         }
     } else {
         std::vector<double> buffer(NR);
-        auto wrk = p->new_workspace(false);
+        auto wrk = p->new_column_workspace();
         std::vector<int> ibuffer(NR);
 
         for (size_t i = 0; i < NC; ++i) {
@@ -175,8 +156,9 @@ int main(int argc, char** argv) {
 
     std::cout << "Matrix preview: " << std::endl;
     std::vector<double> buffer(mat->ncol());
+    auto wrk = mat->new_row_workspace();
     for (size_t i = 0; i < mat->nrow(); ++i) {
-        auto ptr = mat->row(i, buffer.data());
+        auto ptr = mat->row(i, buffer.data(), wrk.get());
         print_vector(ptr, ptr + mat->ncol());
     }
     std::cout << std::endl;
@@ -184,13 +166,6 @@ int main(int argc, char** argv) {
     {
         std::cout << "Simple:" << std::endl;
         auto cs = colsums_simple(mat); 
-        print_vector(cs.begin(), cs.end());
-        std::cout << std::endl;
-    }
-    
-    {
-        std::cout << "Workspace:" << std::endl;
-        auto cs = colsums_work(mat); 
         print_vector(cs.begin(), cs.end());
         std::cout << std::endl;
     }

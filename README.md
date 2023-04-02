@@ -35,11 +35,13 @@ size_t NR = mat->nrow(), NC = mat->ncol();
 
 // Extract a column 'i':
 std::vector<double> buffer(NR);
-auto ptr = mat->column(i, buffer.data());
+auto workspace = mat->new_column_workspace();
+auto ptr = mat->column(i, buffer.data(), workspace.get());
 ptr[0]; // first element of the column.
 
-// Extract the [5, 10) entries of the 'i'-th column.
-auto ptr = mat->column(i, buffer.data(), 5, 10);
+// Extract the [5, 10) rows of the 'i'-th column.
+auto slicedwork = mat->new_column_workspace(5, 5)
+auto ptr = mat->column(i, buffer.data(), slicedwork.get());
 ```
 
 The key idea here is that, once `mat` is created, the application does not need to worry about the exact format of the matrix referenced by the pointer.
@@ -57,7 +59,8 @@ As a result, supported operations are limited to reading data from the matrix:
 
 ```cpp
 std::vector<double> ibuffer(NC), vbuffer(NC);
-auto indexed = mat->sparse_row(i, vbuffer.data(), ibuffer.data());
+auto rowspace = mat->new_row_workspace();
+auto indexed = mat->sparse_row(i, vbuffer.data(), ibuffer.data(), rowspace.get());
 for (size_t i = 0; i < indexed.number; ++i) {
     indexed.index[i]; // index of the element
     indexed.value[i]; // value of the element
@@ -79,7 +82,7 @@ This can be used to cache information across calls for greater efficiency, e.g.,
 run the [`sparse_workspace.cpp`](https://github.com/LTLA/tatami/tree/master/gallery/src/sparse_workspace.cpp) example to compare performance.
 
 ```cpp
-auto wrk = mat->new_workspace(true);
+auto wrk = mat->new_row_workspace();
 std::vector<double> buffer2(NC);
 for (size_t i = 0; i < mat->nrow(); ++i) {
     auto ptr = mat->row(i, buffer2.data(), wrk.get());

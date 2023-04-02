@@ -209,7 +209,7 @@ void write_sparse_matrix_to_hdf5(const Matrix<T, IDX>* mat, H5::Group& location,
     };
 
     if (mat->prefer_rows()) {
-        auto wrk = mat->new_workspace(true);
+        auto wrk = mat->new_row_workspace();
         std::vector<T> xbuffer(NC);
         std::vector<IDX> ibuffer(NC);
         for (size_t r = 0; r < NR; ++r) {
@@ -217,7 +217,7 @@ void write_sparse_matrix_to_hdf5(const Matrix<T, IDX>* mat, H5::Group& location,
             update_stats(extracted);
         }
     } else {
-        auto wrk = mat->new_workspace(false);
+        auto wrk = mat->new_column_workspace();
         std::vector<T> xbuffer(NR);
         std::vector<IDX> ibuffer(NR);
         for (size_t c = 0; c < NC; ++c) {
@@ -295,7 +295,7 @@ void write_sparse_matrix_to_hdf5(const Matrix<T, IDX>* mat, H5::Group& location,
     std::vector<hsize_t> ptrs;
     if (layout == WriteSparseMatrixToHdf5Parameters::StorageLayout::ROW) {
         ptrs.resize(NR + 1);
-        auto wrk = mat->new_workspace(true);
+        auto wrk = mat->new_row_workspace();
         std::vector<T> xbuffer(NC);
         std::vector<IDX> ibuffer(NC);
         for (size_t r = 0; r < NR; ++r) {
@@ -305,7 +305,7 @@ void write_sparse_matrix_to_hdf5(const Matrix<T, IDX>* mat, H5::Group& location,
         }
     } else {
         ptrs.resize(NC + 1);
-        auto wrk = mat->new_workspace(false);
+        auto wrk = mat->new_column_workspace();
         std::vector<T> xbuffer(NR);
         std::vector<IDX> ibuffer(NR);
         for (size_t c = 0; c < NC; ++c) {

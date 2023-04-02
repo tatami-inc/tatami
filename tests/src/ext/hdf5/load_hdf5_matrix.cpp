@@ -22,7 +22,7 @@ TEST(LoadHDF5MatrixTest, Sparse) {
     // Dumping a sparse matrix.
     auto fpath = temp_file_path("tatami-sparse-test.h5");
     std::string name = "stuff";
-    SparseDetails<double> triplets = simulate_sparse_triplets<double>(NR, NC, 0.05, 0, 100);
+    auto triplets = simulate_sparse_compressed<double>(NR, NC, 0.05, 0, 100);
 
     {
         H5::H5File fhandle(fpath, H5F_ACC_TRUNC);

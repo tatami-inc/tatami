@@ -38,14 +38,12 @@ add_executable(
     src/utils/convert_to_sparse.cpp
     src/utils/bind_intersection.cpp
     src/utils/compress_sparse_triplets.cpp
-
-    src/data/data_sparse.cpp
-    src/data/data_triangular.cpp
 )
 
 target_link_libraries(
     libtest
     gtest_main
+    gmock_main
     tatami
 )
 
@@ -57,8 +55,6 @@ add_executable(
     src/stats/medians.cpp
     src/stats/ranges.cpp
     src/stats/apply.cpp
-    src/data/data_sparse.cpp
-    src/data/data_triangular.cpp
 )
 
 target_link_libraries(

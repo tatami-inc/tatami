@@ -51,7 +51,7 @@ int main() {
     std::vector<int> ibuffer(mat->ncol());
 
     auto start = std::chrono::high_resolution_clock::now();
-    auto wrk = mat->new_workspace(true);
+    auto wrk = mat->new_row_workspace();
     int sum = 0;
     for (size_t r = 0; r < mat->nrow(); ++r) {
         auto range = mat->sparse_row(r, xbuffer.data(), ibuffer.data(), wrk.get());
@@ -59,17 +59,31 @@ int main() {
     }
     auto stop = std::chrono::high_resolution_clock::now();
     auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "Workspace access time:" << "\t" << duration.count() << " for " << sum << " non-zero elements" << std::endl;
+    std::cout << "Workspace access time: " << duration.count() << " for " << sum << " non-zero elements" << std::endl;
 
+    // The latest version of tatami mandates a workspace for all calls, so the
+    // times are somewhat inflated by repeated allocations for the workspace.
     start = std::chrono::high_resolution_clock::now();
     sum = 0;
     for (size_t r = 0; r < mat->nrow(); ++r) {
-        auto range = mat->sparse_row(r, xbuffer.data(), ibuffer.data());
+        auto wrk = mat->new_row_workspace(); 
+        auto range = mat->sparse_row(r, xbuffer.data(), ibuffer.data(), wrk.get());
         sum += range.number;
     }
     stop = std::chrono::high_resolution_clock::now();
     duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
-    std::cout << "No workspace access time:" << "\t" << duration.count() << " for " << sum << " non-zero elements" << std::endl;
+    std::cout << "No workspace access time: " << duration.count() << " for " << sum << " non-zero elements" << std::endl;
+
+    // Testing the inflation in time.
+    start = std::chrono::high_resolution_clock::now();
+    tatami::RowWorkspace* ptr;
+    for (size_t r = 0; r < mat->nrow(); ++r) {
+        auto wrk = mat->new_row_workspace(); 
+        ptr = wrk.get(); // avoid optimizing out the entire loop.
+    }
+    stop = std::chrono::high_resolution_clock::now();
+    duration = std::chrono::duration_cast<std::chrono::milliseconds>(stop - start);
+    std::cout << "  (Inflation from workspace creation time:" << " " << duration.count() << ")" << std::endl; 
 
     return 0;
 }

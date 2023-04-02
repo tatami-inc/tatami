@@ -10,38 +10,13 @@
  * other mechanisms, e.g., with std::thread or Intel TBB.
  */
 
-/* ATTEMPT 1:
- *
- * This is the simplest implementation whereby we just loop across all rows,
- * extract each row and compute the sum. We parallelize using the simple openMP
- * for pragma; nothing too dramatic happening here. This is thread-safe as all
- * tatami methods are read-only; there are no problems due to state changes
- * inside 'p'. Note that the buffer needs to be created per thread inside the
- * parallel region.
- */
-std::vector<double> rowsums_simple(std::shared_ptr<tatami::NumericMatrix> p) {
-    size_t NR = p->nrow(), NC = p->ncol();
-    std::vector<double> output(NR);
-
-    # pragma omp parallel
-    {
-        std::vector<double> buffer(NC);
-
-        #pragma omp for 
-        for (size_t i = 0; i < NR; ++i) {
-            auto ptr = p->row(i, buffer.data());
-            output[i] = std::accumulate(ptr, ptr + NR, 0.0);
-        }
-    }
-
-    return output;
-}
-
-/* ATTEMPT 2:
- *
- * A more complex approach is to use workspaces to share information between
- * calls. We create one workspace per thread within an OpenMP parallel region,
- * and then we distribute work acros the loop as usual. 
+/* 
+ * Here, the idea is that we just loop across all rows, extract each row and
+ * compute the sum. We parallelize using the simple openMP for pragma; nothing
+ * too dramatic happening here. This is thread-safe as all tatami methods are
+ * read-only; there are no problems due to state changes inside 'p'. Note that
+ * a separate buffer and workspace needs to be created for each thread inside
+ * the parallel region.
  *
  * Notice how we use a static schedule with no chunk size arguments. This is
  * because workspaces are generally most beneficial when dealing with
@@ -50,14 +25,14 @@ std::vector<double> rowsums_simple(std::shared_ptr<tatami::NumericMatrix> p) {
  * course, if extraction is cheap compared to the actual calculation, other
  * schedules may be preferable.
  */
-std::vector<double> rowsums_work(std::shared_ptr<tatami::NumericMatrix> p) {
+std::vector<double> rowsums_parallel(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
     std::vector<double> output(NR);
 
-    #pragma omp parallel
+    # pragma omp parallel
     {
         std::vector<double> buffer(NC);
-        auto wrk = p->new_workspace(true);
+        auto wrk = p->new_row_workspace();
 
         #pragma omp for schedule(static)
         for (size_t i = 0; i < NR; ++i) {
@@ -79,22 +54,16 @@ int main(int argc, char** argv) {
 
     std::cout << "Matrix preview: " << std::endl;
     std::vector<double> buffer(mat->ncol());
+    auto wrk = mat->new_row_workspace();
     for (size_t i = 0; i < mat->nrow(); ++i) {
-        auto ptr = mat->row(i, buffer.data());
+        auto ptr = mat->row(i, buffer.data(), wrk.get());
         print_vector(ptr, ptr + mat->ncol());
     }
     std::cout << std::endl;
 
     {
-        std::cout << "Simple:" << std::endl;
-        auto cs = rowsums_simple(mat); 
-        print_vector(cs.begin(), cs.end());
-        std::cout << std::endl;
-    }
-
-    {
-        std::cout << "Workspaced:" << std::endl;
-        auto cs = rowsums_work(mat); 
+        std::cout << "Row sums:" << std::endl;
+        auto cs = rowsums_parallel(mat); 
         print_vector(cs.begin(), cs.end());
         std::cout << std::endl;
     }

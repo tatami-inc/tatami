@@ -65,12 +65,20 @@ TEST_F(SparseUtilsTest, Basic) {
     EXPECT_FALSE(sparse_column->prefer_rows());
     EXPECT_TRUE(sparse_row->prefer_rows());
 
+    auto cprefs = sparse_column->dimension_preference();
+    EXPECT_TRUE(cprefs.first == 0);
+    EXPECT_TRUE(cprefs.second > 0);
+
+    auto rprefs = sparse_row->dimension_preference();
+    EXPECT_TRUE(rprefs.first > 0);
+    EXPECT_TRUE(rprefs.second == 0);
+
     // Checking that the workspace is null for column extraction of a CSC matrix.
-    auto work_column = sparse_column->new_workspace(false);
+    auto work_column = sparse_column->new_column_workspace();
     EXPECT_EQ(work_column.get(), nullptr);
 
     // ... and vice versa.
-    auto work_row = sparse_row->new_workspace(true);
+    auto work_row = sparse_row->new_row_workspace();
     EXPECT_EQ(work_row.get(), nullptr);
 }
 
@@ -85,14 +93,18 @@ protected:
     }
 };
 
-TEST_P(SparseFullAccessTest, Basic) {
+TEST_P(SparseFullAccessTest, Column) {
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
-
     test_simple_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP);
     test_simple_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
+}
 
+TEST_P(SparseFullAccessTest, Row) {
+    auto param = GetParam(); 
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
     test_simple_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP);
     test_simple_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
 }
@@ -103,20 +115,22 @@ TEST_P(SparseFullAccessTest, Details) {
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
 
-    auto work_row = sparse_row->new_workspace(false);
-    auto fetch_offsets = [&]() -> std::vector<size_t> {
-        return dynamic_cast<tatami::CompressedSparseRowMatrix<double, int>::CompressedSparseWorkspace*>(work_row.get())->current_indptrs;
+    auto work_row = sparse_row->new_column_workspace();
+    auto fetch_offsets = [](const auto* ptr) -> std::vector<size_t> {
+        return dynamic_cast<const tatami::CompressedSparseRowMatrix<double, int>::CompressedSparseSecondaryWorkspace*>(ptr)->core.current_indptrs;
     };
+    auto work_col = sparse_column->new_column_workspace();
+    auto work_row2 = sparse_row->new_column_workspace();
 
     for (size_t i = 0; i < NC; i += JUMP) {
         size_t c = (FORWARD ? i : NC - i - 1);
 
         // Checking that CSR extraction actually has an effect on the latest indptrs.
-        std::vector<size_t> old_offsets = fetch_offsets();
+        std::vector<size_t> old_offsets = fetch_offsets(work_row.get());
         sparse_row->column(c, work_row.get());
+        std::vector<size_t> new_offsets = fetch_offsets(work_row.get());
 
         if (!FORWARD || c != 0) {
-            std::vector<size_t> new_offsets = fetch_offsets();
             EXPECT_NE(old_offsets, new_offsets); 
         }
 
@@ -124,15 +138,16 @@ TEST_P(SparseFullAccessTest, Details) {
         std::vector<double> outval(sparse_column->nrow());
         std::vector<int> outidx(sparse_column->nrow());
 
-        auto x = sparse_column->sparse_column(i, outval.data(), outidx.data());
+        auto x = sparse_column->sparse_column(c, outval.data(), outidx.data(), work_col.get());
         EXPECT_TRUE(x.number < NR);
         EXPECT_FALSE(outval.data()==x.value); // points to internal data.
         EXPECT_FALSE(outidx.data()==x.index);
 
-        auto y = sparse_row->sparse_column(i, outval.data(), outidx.data());
+        auto y = sparse_row->sparse_column(c, outval.data(), outidx.data(), work_row2.get());
         EXPECT_TRUE(y.number < NR);
         EXPECT_TRUE(outval.data()==y.value); // points to buffer.
         EXPECT_TRUE(outidx.data()==y.index);
+        EXPECT_EQ(new_offsets, fetch_offsets(work_row2.get()));
     }
 }
 
@@ -148,7 +163,7 @@ INSTANTIATE_TEST_CASE_P(
 /*************************************
  *************************************/
 
-class SparseSlicedAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<size_t> > >, public SparseTestMethods {
+class SparseSlicedAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<double> > >, public SparseTestMethods {
 protected:
     void SetUp() {
         assemble();
@@ -156,18 +171,26 @@ protected:
     }
 };
 
-TEST_P(SparseSlicedAccessTest, Basic) {
+TEST_P(SparseSlicedAccessTest, Column) {
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
-    size_t FIRST = interval_info[0], LEN = interval_info[1], SHIFT = interval_info[2];
+    size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    test_sliced_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
-    test_sliced_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
+    test_sliced_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
+    test_sliced_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
+}
 
-    test_sliced_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
-    test_sliced_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LEN, SHIFT);
+TEST_P(SparseSlicedAccessTest, Row) {
+    auto param = GetParam(); 
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+    size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
+
+    test_sliced_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
+    test_sliced_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -177,9 +200,59 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
         ::testing::Values(1, 3), // jump, to test the workspace's memory.
         ::testing::Values(
-            std::vector<size_t>({ 0, 8, 3 }), // overlapping shifts
-            std::vector<size_t>({ 1, 4, 4 }), // non-overlapping shifts
-            std::vector<size_t>({ 3, 10, 0 })
+            std::vector<double>({ 0, 0.51 }),
+            std::vector<double>({ 0.25, 0.9 }), 
+            std::vector<double>({ 0.63, 1 })
         )
     )
 );
+
+/*************************************
+ *************************************/
+
+class SparseIndexedAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<double> > >, public SparseTestMethods {
+protected:
+    void SetUp() {
+        assemble();
+        return;
+    }
+};
+
+TEST_P(SparseIndexedAccessTest, Column) {
+    auto param = GetParam(); 
+
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+    size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
+
+    test_indexed_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+    test_indexed_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+}
+
+TEST_P(SparseIndexedAccessTest, Row) {
+    auto param = GetParam(); 
+
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+    size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
+
+    test_indexed_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+    test_indexed_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    CompressedSparseMatrix,
+    SparseIndexedAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<double>({ 0, 0.05 }),
+            std::vector<double>({ 0.2, 0.1 }), 
+            std::vector<double>({ 0.7, 0.03 })
+        )
+    )
+);
+

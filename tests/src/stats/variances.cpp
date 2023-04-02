@@ -12,7 +12,9 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/variances.hpp"
 
-#include "../data/data.h"
+#include "../_tests/test_column_access.h"
+#include "../_tests/test_row_access.h"
+#include "../_tests/simulate_vector.h"
 
 template<class L, class R>
 void compare_double_vectors (const L& left, const R& right) {
@@ -24,24 +26,26 @@ void compare_double_vectors (const L& left, const R& right) {
 }
 
 TEST(ComputingDimVariances, RowVariances) {
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    size_t NR = 109, NC = 82;
+    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     // Doing the difference of squares as a quick-and-dirty reference.
-    std::vector<double> ref(sparse_nrow), expectedm(sparse_nrow);
-    for (size_t r = 0; r < sparse_nrow; ++r) {
-        for (size_t c = 0; c < sparse_ncol; ++c) {
-            double x = sparse_matrix[c + r * sparse_ncol];
+    std::vector<double> ref(NR), expectedm(NR);
+    for (size_t r = 0; r < NR; ++r) {
+        for (size_t c = 0; c < NC; ++c) {
+            double x = dump[c + r * NC];
             expectedm[r] += x;
             ref[r] += x * x;
         }
-        expectedm[r] /= sparse_ncol;
-        ref[r] /= sparse_ncol;
+        expectedm[r] /= NC;
+        ref[r] /= NC;
         ref[r] -= expectedm[r] * expectedm[r];
-        ref[r] *= sparse_ncol;
-        ref[r] /= sparse_ncol - 1;
+        ref[r] *= NC;
+        ref[r] /= NC - 1;
     }
 
     compare_double_vectors(ref, tatami::row_variances(dense_row.get()));
@@ -57,24 +61,26 @@ TEST(ComputingDimVariances, RowVariances) {
 }
 
 TEST(ComputingDimVariances, ColumnVariances) {
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    size_t NR = 99, NC = 92;
+    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     // Doing the difference of squares as a quick-and-dirty reference.
-    std::vector<double> ref(sparse_ncol), expectedm(sparse_ncol);
-    for (size_t c = 0; c < sparse_ncol; ++c) {
-        for (size_t r = 0; r < sparse_nrow; ++r) {
-            double x = sparse_matrix[c + r * sparse_ncol];
+    std::vector<double> ref(NC), expectedm(NC);
+    for (size_t c = 0; c < NC; ++c) {
+        for (size_t r = 0; r < NR; ++r) {
+            double x = dump[c + r * NC];
             expectedm[c] += x;
             ref[c] += x * x;
         }
-        expectedm[c] /= sparse_nrow;
-        ref[c] /= sparse_nrow;
+        expectedm[c] /= NR;
+        ref[c] /= NR;
         ref[c] -= expectedm[c] * expectedm[c];
-        ref[c] *= sparse_nrow;
-        ref[c] /= sparse_nrow - 1;
+        ref[c] *= NR;
+        ref[c] /= NR - 1;
     }
 
     compare_double_vectors(ref, tatami::column_variances(dense_row.get()));
@@ -90,14 +96,13 @@ TEST(ComputingDimVariances, ColumnVariances) {
 }
 
 TEST(ComputingDimVariances, RowVariancesNaN) {
-    auto copy = sparse_matrix;
-    copy.resize(0);
-    auto dense = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, 0, copy));
+    auto dense = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(111, 0, std::vector<double>()));
 
     auto cref = tatami::column_variances(dense.get());
     EXPECT_EQ(cref.size(), 0);
     
     auto rref = tatami::row_variances(dense.get());
+    EXPECT_TRUE(rref.size() > 0);
     EXPECT_TRUE(std::isnan(rref.front()));
     EXPECT_TRUE(std::isnan(rref.back()));
 }
@@ -121,12 +126,11 @@ TEST(ComputingDimVariances, Configuration) {
 }
 
 TEST(RunningVariances, SensibleZeros) {
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sparse_nrow, sparse_ncol, sparse_matrix));
+    size_t NR = 55, NC = 52;
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
-    size_t NR = sparse_column->nrow();
-    size_t NC = sparse_column->ncol();
 
-    // We force the first value to be zero, and we check that 
+    // We force the first (non-zero) value to be zero, and we check that 
     // the number of non-zeros is still correctly reported.
     std::vector<double> running_vars(NR);
     std::vector<double> running_means(NR);
@@ -134,10 +138,11 @@ TEST(RunningVariances, SensibleZeros) {
     {
         std::vector<int> ibuffer(NR);
         std::vector<double> vbuffer(NR);
-
         std::vector<int> ref_nzeros(NR);
+        auto wrk = sparse_column->new_column_workspace();
+
         for (int c = 0; c < static_cast<int>(NC); ++c) {
-            auto range = sparse_column->sparse_column_copy(c, vbuffer.data(), ibuffer.data(), tatami::SPARSE_COPY_VALUE);
+            auto range = sparse_column->sparse_column_copy(c, vbuffer.data(), ibuffer.data(), wrk.get(), tatami::SPARSE_COPY_VALUE);
             vbuffer[0] = 0; 
             tatami::stats::variances::compute_running(range, running_means.data(), running_vars.data(), running_nzeros.data(), c);
             for (size_t r = 1; r < range.number; ++r) {
@@ -156,10 +161,11 @@ TEST(RunningVariances, SensibleZeros) {
     {
         std::vector<int> ibuffer(NR);
         std::vector<double> vbuffer(NR);
-
         std::vector<int> ref_nzeros(NR);
+        auto wrk = sparse_column->new_column_workspace();
+
         for (int c = 0; c < static_cast<int>(NC); ++c) {
-            auto range = sparse_column->sparse_column_copy(c, vbuffer.data(), ibuffer.data(), tatami::SPARSE_COPY_VALUE);
+            auto range = sparse_column->sparse_column_copy(c, vbuffer.data(), ibuffer.data(), wrk.get(), tatami::SPARSE_COPY_VALUE);
             vbuffer[0] = 0; 
             tatami::stats::variances::compute_running(range, running_means2.data(), running_vars2.data(), running_nzeros2.data(), c, false);
             for (size_t r = 0; r < range.number; ++r) {

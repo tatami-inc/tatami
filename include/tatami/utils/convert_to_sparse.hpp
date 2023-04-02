@@ -55,7 +55,12 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
         output_v.reserve(reservation);
         output_i.reserve(reservation);
 
-        auto wrk = incoming->new_workspace(row);
+        std::shared_ptr<Workspace<row> > wrk;
+        if constexpr(row) {
+            wrk = incoming->new_row_workspace();
+        } else {
+            wrk = incoming->new_column_workspace();
+        }
         std::vector<DataIn> buffer_v(secondary);
 
         if (incoming->sparse()) {
@@ -113,7 +118,12 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
             store_i[p].reserve(reservation);
         }
 
-        auto wrk = incoming->new_workspace(!row);
+        std::shared_ptr<Workspace<!row> > wrk;
+        if constexpr(row) {
+            wrk = incoming->new_column_workspace();
+        } else {
+            wrk = incoming->new_row_workspace();
+        }
         std::vector<DataIn> buffer_v(primary);
 
         if (incoming->sparse()) {

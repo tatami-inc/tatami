@@ -1,6 +1,8 @@
 #ifndef TATAMI_ARITH_SCALAR_HELPERS_H
 #define TATAMI_ARITH_SCALAR_HELPERS_H
 
+#include <limits>
+
 /**
  * @file arith_scalar_helpers.hpp
  *
@@ -136,6 +138,7 @@ template<bool RIGHT, typename T = double>
 struct DelayedDivideScalarHelper { 
     /**
      * @param s Scalar value to use in the division.
+     * This should be non-zero.
      */
     DelayedDivideScalarHelper(T s) : scalar(s) {}
 
@@ -147,20 +150,28 @@ struct DelayedDivideScalarHelper {
      * @param val Matrix value to use in the division.
      *
      * @return `val` divided by the scalar if `RIGHT = true`, otherwise the scalar is divided by `val`.
+     * If `RIGHT = false` and `val = 0`, an infinite value is returned.
      */
     T operator()(size_t r, size_t c, T val) const { 
         if constexpr(RIGHT) {
             return val / scalar; 
         } else {
-            return scalar / val;
+            if (val) {
+                return scalar / val;
+            } else {
+                return std::numeric_limits<T>::infinity();
+            }
         }
     }
 
     /**
-     * Division is always assumed to preserve structural sparsity.
+     * Division on the right is always assumed to preserve structural sparsity.
      * Non-finite or zero `scalar` values are not considered here.
+     *
+     * Division of the scalar by the matrix value is assumed to discard structural sparsity,
+     * as any matrix zeros will yield an infinite value for a non-zero scalar.
      */
-    static const bool sparse = true;
+    static const bool sparse = RIGHT;
 private:
     const T scalar;
 };

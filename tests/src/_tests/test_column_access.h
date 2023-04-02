@@ -9,88 +9,159 @@ void test_simple_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
     size_t NC = ptr->ncol();
     ASSERT_EQ(NC, ref->ncol());
 
-    auto wrk = ptr->new_workspace(false);
-    auto wrk_bi = ptr->new_workspace(false);
+    auto rwork = ref->new_column_workspace();
+    auto pwork = ptr->new_column_workspace();
+    auto swork = ptr->new_column_workspace();
+    auto swork_so = ptr->new_column_workspace();
+    auto pwork_bi = ptr->new_column_workspace();
+    auto rwork_bi = ref->new_column_workspace();
 
     for (size_t i = 0; i < NC; i += jump) {
         size_t c = (forward ? i : NC - i - 1);
 
-        auto expected = ref->column(c);
+        auto expected = ref->column(c, rwork.get());
+        EXPECT_EQ(expected.size(), NR);
         {
-            auto observed = ptr->column(c);
+            auto observed = ptr->column(c, pwork.get());
             EXPECT_EQ(expected, observed);
-
-            // Now with a workspace.
-            auto observedW = ptr->column(c, wrk.get());
-            EXPECT_EQ(expected, observedW);
         }
 
         {
-            auto observed = ptr->sparse_column(c);
+            auto observed = ptr->sparse_column(c, swork.get());
             EXPECT_EQ(expected, expand(observed, NR));
-
-            // Now with a workspace.
-            auto observedW = ptr->sparse_column(c, wrk.get());
-            EXPECT_EQ(expected, expand(observedW, NR));
+            EXPECT_TRUE(is_increasing(observed.index));
         }
+        {
+            auto observed = ptr->sparse_column(c, swork_so.get(), false);
+            EXPECT_EQ(expected, expand(observed, NR));
+        } 
 
         // Check workspace caching when access is bidirectional,
         // i.e., not purely increasing or decreasing.
         if (jump > 1 && i) {
-            auto observed = ptr->column(c, wrk_bi.get());
+            auto observed = ptr->column(c, pwork_bi.get());
             EXPECT_EQ(expected, observed);
 
             auto subc = (forward ? c-1 : c+1);
-            auto observedm1 = ptr->column(subc, wrk_bi.get());
-            auto expectedm1 = ref->column(subc);
+            auto observedm1 = ptr->column(subc, pwork_bi.get());
+            auto expectedm1 = ref->column(subc, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
     }
 }
 
 template<class Matrix, class Matrix2>
-void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, size_t first, size_t len, size_t shift) {
+void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, size_t start, size_t end) {
     size_t NR = ptr->nrow();
     ASSERT_EQ(NR, ref->nrow());
     size_t NC = ptr->ncol();
     ASSERT_EQ(NC, ref->ncol());
 
-    auto wrk = ptr->new_workspace(false);
-    auto wrk_bi = ptr->new_workspace(false);
+    auto rwork = ref->new_column_workspace();
+    auto pwork = ptr->new_column_workspace(start, end - start);
+    auto swork = ptr->new_column_workspace(start, end - start);
+    auto swork_so = ptr->new_column_workspace(start, end - start);
+    auto pwork_bi = ptr->new_column_workspace(start, end - start);
+    auto rwork_bi = ref->new_column_workspace(start, end - start);
 
-    for (size_t i = 0; i < NC; i += jump, first += shift) {
+    for (size_t i = 0; i < NC; i += jump) {
         size_t c = (forward ? i : NC - i - 1);
-        auto interval = wrap_intervals(first, first + len, NR);
-        size_t start = interval.first, end = interval.second;
 
-        auto expected = ref->column(c, start, end);
+        auto raw_expected = ref->column(c, rwork.get());
+        std::vector<typename Matrix::data_type> expected(raw_expected.begin() + start, raw_expected.begin() + end);
         {
-            auto observed = ptr->column(c, start, end);
+            auto observed = ptr->column(c, pwork.get());
             EXPECT_EQ(expected, observed);
-
-            // Now with a workspace.
-            auto observedW = ptr->column(c, start, end, wrk.get());
-            EXPECT_EQ(expected, observedW);
         }
 
         {
-            auto observed = ptr->sparse_column(c, start, end);
+            auto observed = ptr->sparse_column(c, swork.get());
             EXPECT_EQ(expected, expand(observed, start, end));
+            EXPECT_TRUE(is_increasing(observed.index));
+        }
+        {
+            auto observed = ptr->sparse_column(c, swork_so.get(), false);
+            EXPECT_EQ(expected, expand(observed, start, end));
+        } 
 
-            // Now with a workspace.
-            auto observedW = ptr->sparse_column(c, start, end, wrk.get());
-            EXPECT_EQ(expected, expand(observedW, start, end));
+        // Check workspace caching when access is bidirectional,
+        // i.e., not purely increasing or decreasing.
+        if (jump > 1 && i) {
+            auto observed = ptr->column(c, pwork_bi.get());
+            EXPECT_EQ(expected, observed);
+
+            auto subc = (forward ? c-1 : c+1);
+            auto observedm1 = ptr->column(subc, pwork_bi.get());
+            auto expectedm1 = ref->column(subc, rwork_bi.get());
+            EXPECT_EQ(expectedm1, observedm1);
+        }
+    }
+}
+
+template<class Matrix, class Matrix2>
+void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, size_t start, size_t step) {
+    size_t NR = ptr->nrow();
+    ASSERT_EQ(NR, ref->nrow());
+    size_t NC = ptr->ncol();
+    ASSERT_EQ(NC, ref->ncol());
+
+    std::vector<typename Matrix::index_type> indices;
+    {
+        int counter = start;
+        while (counter < NR) {
+            indices.push_back(counter);
+            counter += step;
+        }
+    }
+
+    auto rwork = ref->new_column_workspace();
+    auto pwork = ptr->new_column_workspace(indices);
+    auto swork = ptr->new_column_workspace(indices);
+    auto swork_so = ptr->new_column_workspace(indices);
+    auto pwork_bi = ptr->new_column_workspace(indices);
+    auto rwork_bi = ref->new_column_workspace(indices);
+
+    for (size_t i = 0; i < NC; i += jump) {
+        size_t c = (forward ? i : NC - i - 1);
+
+        auto raw_expected = ref->column(c, rwork.get());
+        std::vector<typename Matrix::data_type> expected;
+        expected.reserve(indices.size());
+        for (auto idx : indices) {
+            expected.push_back(raw_expected[idx]);
+        }
+
+        {
+            auto observed = ptr->column(c, pwork.get());
+            EXPECT_EQ(expected, observed);
+        }
+
+        {
+            auto observed = ptr->sparse_column(c, swork.get());
+            EXPECT_TRUE(is_increasing(observed.index));
+
+            auto full = expand(observed, NR);
+            std::vector<double> sub;
+            sub.reserve(indices.size());
+            for (auto idx : indices) {
+                sub.push_back(full[idx]);
+            }
+            EXPECT_EQ(expected, sub);
+
+            auto observed2 = ptr->sparse_column(c, swork_so.get(), false);
+            auto full2 = expand(observed2, NR);
+            EXPECT_EQ(full, full2);
         }
 
         // Check workspace caching when access is bidirectional,
         // i.e., not purely increasing or decreasing.
         if (jump > 1 && i) {
-            auto observed = ptr->column(c, start, end, wrk_bi.get());
+            auto observed = ptr->column(c, pwork_bi.get());
             EXPECT_EQ(expected, observed);
 
             auto subc = (forward ? c-1 : c+1);
-            auto observedm1 = ptr->column(subc, start, end, wrk_bi.get());
-            auto expectedm1 = ref->column(subc, start, end);
+            auto observedm1 = ptr->column(subc, pwork_bi.get());
+            auto expectedm1 = ref->column(subc, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
     }

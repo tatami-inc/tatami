@@ -8,10 +8,10 @@
 #include "tatami/utils/compress_sparse_triplets.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
-#include "../data/data.h"
+#include "../_tests/simulate_vector.h"
 
 template<class V, class U>
-void permuter(U& values, V& rows, V& cols, U& values2, V& rows2, V& cols2) {
+void permuter(const U& values, const V& rows, const V& cols, U& values2, V& rows2, V& cols2) {
     // Creating a shuffling permutator.
     std::vector<int> permutation(rows.size());
     std::iota(permutation.begin(), permutation.end(), 0);
@@ -31,21 +31,16 @@ void permuter(U& values, V& rows, V& cols, U& values2, V& rows2, V& cols2) {
     return;
 }
 
-
 TEST(compress_sparse_triplets, CompressionByColumn) {
-    tatami::DenseRowMatrix<double> dense(sparse_nrow, sparse_ncol, sparse_matrix);
-    auto sparse = tatami::convert_to_sparse<false>(&dense);
+    size_t NR = 100, NC = 50;
+    auto simulated = simulate_sparse_compressed<double>(NC, NR, 0.1);
+    const auto& rows = simulated.index;
+    const auto& values = simulated.value;
 
-    std::vector<int> rows, cols;
-    std::vector<double> values;
-    std::vector<int> ibuffer(sparse->nrow());
-    std::vector<double> vbuffer(sparse->nrow());
-
-    for (size_t c = 0; c < sparse->ncol(); ++c) {
-        auto range = sparse->sparse_column(c, vbuffer.data(), ibuffer.data()); 
-        rows.insert(rows.end(), range.index, range.index + range.number);
-        values.insert(values.end(), range.value, range.value + range.number);
-        cols.insert(cols.end(), range.number, c);
+    std::vector<int> cols;
+    for (size_t c = 0; c < NC; ++c) {
+        size_t n = simulated.ptr[c + 1] - simulated.ptr[c];
+        cols.insert(cols.end(), n, c);
     }
 
     // Permuting.
@@ -58,26 +53,23 @@ TEST(compress_sparse_triplets, CompressionByColumn) {
     EXPECT_NE(values2, values);
 
     // Unpermuting them.
-    auto output = tatami::compress_sparse_triplets<false>(sparse_nrow, sparse_ncol, values2, rows2, cols2);
+    auto output = tatami::compress_sparse_triplets<false>(NR, NC, values2, rows2, cols2);
     EXPECT_EQ(rows2, rows);
     EXPECT_EQ(cols2, cols);
     EXPECT_EQ(values2, values);
+    EXPECT_EQ(output, simulated.ptr);
 }
 
 TEST(compress_sparse_triplets, CompressionByRow) {
-    tatami::DenseRowMatrix<double> dense(sparse_nrow, sparse_ncol, sparse_matrix);
-    auto sparse = tatami::convert_to_sparse<true>(&dense);
+    size_t NR = 80, NC = 60;
+    auto simulated = simulate_sparse_compressed<double>(NR, NC, 0.1);
+    const auto& cols = simulated.index;
+    const auto& values = simulated.value;
 
-    std::vector<int> rows, cols;
-    std::vector<double> values;
-    std::vector<int> ibuffer(sparse->ncol());
-    std::vector<double> vbuffer(sparse->ncol());
-
-    for (size_t r = 0; r < sparse->nrow(); ++r) {
-        auto range = sparse->sparse_row(r, vbuffer.data(), ibuffer.data()); 
-        cols.insert(cols.end(), range.index, range.index + range.number);
-        values.insert(values.end(), range.value, range.value + range.number);
-        rows.insert(rows.end(), range.number, r);
+    std::vector<int> rows;
+    for (size_t r = 0; r < NR; ++r) {
+        size_t n = simulated.ptr[r + 1] - simulated.ptr[r];
+        rows.insert(rows.end(), n, r);
     }
 
     // Permuting.
@@ -90,8 +82,9 @@ TEST(compress_sparse_triplets, CompressionByRow) {
     EXPECT_NE(values2, values);
 
     // Unpermuting them.
-    auto output = tatami::compress_sparse_triplets<true>(sparse_nrow, sparse_ncol, values2, rows2, cols2);
+    auto output = tatami::compress_sparse_triplets<true>(NR, NC, values2, rows2, cols2);
     EXPECT_EQ(rows2, rows);
     EXPECT_EQ(cols2, cols);
     EXPECT_EQ(values2, values);
+    EXPECT_EQ(output, simulated.ptr);
 }

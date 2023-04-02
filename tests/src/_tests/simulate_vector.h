@@ -34,19 +34,19 @@ std::vector<T> simulate_sparse_vector(size_t length, double density, double lowe
 }
 
 template<typename T>
-struct SparseDetails {
+struct CompressedSparseDetails {
     std::vector<T> value;
     std::vector<int> index;
     std::vector<size_t> ptr;
 };
 
 template<typename T>
-SparseDetails<T> simulate_sparse_triplets(size_t primary, size_t secondary, double density, double lower = -10, double upper = 10, size_t seed = 1234567890) {
+CompressedSparseDetails<T> simulate_sparse_compressed(size_t primary, size_t secondary, double density, double lower = -10, double upper = 10, size_t seed = 1234567890) {
     std::mt19937_64 rng(seed);
     std::uniform_real_distribution<> nonzero(0.0, 1.0);
     std::uniform_real_distribution<> unif(lower, upper);
 
-    SparseDetails<T> output;
+    CompressedSparseDetails<T> output;
     output.ptr.resize(primary + 1);
     for (size_t p = 0; p < primary; ++p) {
         auto& idx = output.ptr[p + 1];

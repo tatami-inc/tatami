@@ -29,4 +29,14 @@ std::vector<T> expand(const tatami::SparseRangeCopy<T, IDX>& sparse, size_t star
     return output;
 }
 
+template<typename IDX>
+bool is_increasing(const std::vector<IDX>& indices) {
+    for (size_t i = 1; i < indices.size(); ++i) {
+        if (indices[i] <= indices[i-1]) {
+            return false;
+        }
+    }
+    return true;
+}
+
 #endif

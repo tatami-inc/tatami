@@ -2,6 +2,10 @@
 #include "tatami/utils/SomeNumericArray.hpp"
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/base/CompressedSparseMatrix.hpp"
+
+#include "../_tests/test_row_access.h"
+#include "../_tests/test_column_access.h"
+
 #include <cstdint>
 #include <numeric>
 
@@ -112,17 +116,8 @@ TEST(SomeNumericArray, DenseMatrix) {
     tatami::SomeNumericArray<int> arr(values.data(), values.size());
     tatami::DenseColumnMatrix<double, int, decltype(arr)> alt(nr, nc, arr);
 
-    for (int c = 0; c < nc; ++c) {
-        auto rcol = ref.column(c);
-        auto acol = alt.column(c);
-        EXPECT_EQ(rcol, acol);
-    }
-
-    for (int r = 0; r < nr; ++r) {
-        auto rrow = ref.row(r);
-        auto arow = alt.row(r);
-        EXPECT_EQ(rrow, arow);
-    }
+    test_simple_row_access(&alt, &ref);
+    test_simple_column_access(&alt, &ref);
 }
 
 TEST(SomeNumericArray, SparseMatrix) {
@@ -137,15 +132,6 @@ TEST(SomeNumericArray, SparseMatrix) {
     tatami::SomeNumericArray<size_t> indarr(indptrs.data(), indptrs.size());
     tatami::CompressedSparseColumnMatrix<double, int, decltype(varr), decltype(iarr), decltype(indarr)> alt(nr, nc, varr, iarr, indarr);
 
-    for (int c = 0; c < nc; ++c) {
-        auto rcol = ref.column(c);
-        auto acol = alt.column(c);
-        EXPECT_EQ(rcol, acol);
-    }
-
-    for (int r = 0; r < nr; ++r) {
-        auto rrow = ref.row(r);
-        auto arow = alt.row(r);
-        EXPECT_EQ(rrow, arow);
-    }
+    test_simple_row_access(&alt, &ref);
+    test_simple_column_access(&alt, &ref);
 }

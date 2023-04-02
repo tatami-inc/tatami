@@ -45,8 +45,8 @@ inline std::shared_ptr<Matrix<DataInterface, Index> > convert_to_dense(const Mat
 
     if (row == incoming->prefer_rows()) {
         auto bptr = buffer.data();
-        auto wrk = incoming->new_workspace(row);
-        
+        auto wrk = new_workspace<row>(incoming);
+
         for (size_t p = 0; p < primary; ++p, bptr += secondary) {
             if constexpr(std::is_same<DataIn, DataStore>::value) {
                 if constexpr(row) {
@@ -70,7 +70,7 @@ inline std::shared_ptr<Matrix<DataInterface, Index> > convert_to_dense(const Mat
         // under the assumption that it may be arbitrarily costly to
         // extract in the non-preferred dim; it is thus cheaper to
         // do cache-unfriendly inserts into the output buffer.
-        auto wrk = incoming->new_workspace(!row);
+        auto wrk = new_workspace<!row>(incoming);
         for (size_t s = 0; s < secondary; ++s) {
             const DataIn* ptr;
             if constexpr(row) {

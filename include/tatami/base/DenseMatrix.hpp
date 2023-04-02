@@ -57,6 +57,10 @@ public:
         return;
     }
 
+private: 
+    size_t nrows, ncols;
+    V values;
+
 public:
     size_t nrow() const { return nrows; }
 
@@ -67,48 +71,148 @@ public:
      */
     bool prefer_rows() const { return ROW; }
 
-public:
-    const T* row(size_t r, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        if constexpr(ROW) {
-            return primary(r, buffer, start, end, work, ncols);
-        } else {
-            secondary(r, buffer, start, end, work, nrows);
-            return buffer;
-        }
-    }
-
-    const T* column(size_t c, T* buffer, size_t start, size_t end, Workspace* work=nullptr) const {
-        if constexpr(ROW) {
-            secondary(c, buffer, start, end, work, ncols);
-            return buffer;
-        } else {
-            return primary(c, buffer, start, end, work, nrows);
-        }
-    }
-
     using Matrix<T, IDX>::row;
 
     using Matrix<T, IDX>::column;
 
-private: 
-    size_t nrows, ncols;
-    V values;
+public:
+    std::shared_ptr<RowWorkspace> new_row_workspace() const { return nullptr; }
 
-    const T* primary(size_t c, T* buffer, size_t start, size_t end, Workspace* work, size_t dim_secondary) const {
+    std::shared_ptr<ColumnWorkspace> new_column_workspace() const { return nullptr; }
+
+    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
+        if constexpr(ROW) {
+            return primary(r, buffer, 0, ncols, ncols);
+        } else {
+            secondary(r, buffer, 0, ncols, nrows);
+            return buffer;
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnWorkspace* work=nullptr) const {
+        if constexpr(ROW) {
+            secondary(c, buffer, 0, nrows, ncols);
+            return buffer;
+        } else {
+            return primary(c, buffer, 0, nrows, nrows);
+        }
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<bool WORKROW>
+    struct DenseBlockWorkspace : public BlockWorkspace<WORKROW> {
+        DenseBlockWorkspace(size_t s, size_t l) : details(s, l) {};
+        std::pair<size_t, size_t> details;
+        const std::pair<size_t, size_t>& block() const { return details; }
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t len) const {
+        return std::shared_ptr<RowBlockWorkspace>(new DenseBlockWorkspace<true>(start, len));
+    }
+
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t len) const {
+        return std::shared_ptr<ColumnBlockWorkspace>(new DenseBlockWorkspace<false>(start, len));
+    }
+
+    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
+        const auto& deets = work->block();
+        size_t start = deets.first, end = start + deets.second;
+        if constexpr(ROW) {
+            return primary(r, buffer, start, end, ncols);
+        } else {
+            secondary(r, buffer, start, end, nrows);
+            return buffer;
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
+        const auto& deets = work->block();
+        size_t start = deets.first, end = start + deets.second;
+        if constexpr(ROW) {
+            secondary(c, buffer, start, end, ncols);
+            return buffer;
+        } else {
+            return primary(c, buffer, start, end, nrows);
+        }
+    }
+
+private:
+    const T* primary(size_t c, T* buffer, size_t start, size_t end, size_t dim_secondary) const {
         size_t shift = c * dim_secondary;
         if constexpr(has_data<T, V>::value) {
             return values.data() + shift + start;
         } else {
-            end = std::min(end, dim_secondary);
             std::copy(values.begin() + shift + start, values.begin() + shift + end, buffer);
             return buffer;
         }
     }
 
-    void secondary(size_t r, T* buffer, size_t start, size_t end, Workspace* work, size_t dim_secondary) const {
+    void secondary(size_t r, T* buffer, size_t start, size_t end, size_t dim_secondary) const {
         auto it = values.begin() + r + start * dim_secondary;
-        for (size_t i = start; i < end; ++i, ++buffer, it+=dim_secondary) {
+        for (size_t i = start; i < end; ++i, ++buffer, it += dim_secondary) {
             *buffer = *it; 
+        }
+        return;
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<bool WORKROW>
+    struct DenseIndexWorkspace : public IndexWorkspace<IDX, WORKROW> {
+        DenseIndexWorkspace(std::vector<IDX> i) : indices_(std::move(i)) {}
+        std::vector<IDX> indices_;
+        const std::vector<IDX>& indices() const { return indices_; }
+    };
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i) const {
+        return std::shared_ptr<RowIndexWorkspace<IDX> >(new DenseIndexWorkspace<true>(std::move(i)));
+    }
+
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i) const {
+        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new DenseIndexWorkspace<false>(std::move(i)));
+    }
+
+    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
+        if constexpr(ROW) {
+            return primary_indexed(r, buffer, work->indices(), ncols);
+        } else {
+            secondary_indexed(r, buffer, work->indices(), nrows);
+            return buffer;
+        }
+    }
+
+    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
+        if constexpr(ROW) {
+            secondary_indexed(c, buffer, work->indices(), ncols);
+            return buffer;
+        } else {
+            return primary_indexed(c, buffer, work->indices(), nrows);
+        }
+    }
+
+private:
+    const T* primary_indexed(size_t c, T* buffer, const std::vector<IDX>& indices, size_t dim_secondary) const {
+        auto offset = c * dim_secondary;
+        for (size_t i = 0, end = indices.size(); i < end; ++i) {
+            buffer[i] = values[indices[i] + offset];
+        }
+        return buffer;
+    }
+
+    void secondary_indexed(size_t r, T* buffer, const std::vector<IDX>& indices, size_t dim_secondary) const {
+        for (size_t i = 0, end = indices.size(); i < end; ++i, ++buffer) {
+            *buffer = values[indices[i] * dim_secondary + r]; 
         }
         return;
     }
