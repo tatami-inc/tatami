@@ -1,14 +1,26 @@
 #include <gtest/gtest.h>
 
 #include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/CompressedSparseMatrix.hpp"
 #include "tatami/utils/convert_to_dense.hpp"
 
 #include "../_tests/simulate_vector.h"
 #include "../_tests/test_row_access.h"
 #include "../_tests/test_column_access.h"
 
-TEST(ConvertToDense, RowToRow) {
-    size_t NR = 20, NC = 10;
+class ConvertToDenseTest : public ::testing::TestWithParam<std::tuple<int, int> > {
+protected:
+    size_t NR, NC;
+
+    template<class Param>
+    void assemble(const Param& param) {
+        NR = std::get<0>(param);
+        NC = std::get<1>(param);
+    }
+};
+
+TEST_P(ConvertToDenseTest, RowToRow) {
+    assemble(GetParam());
     auto vec = simulate_dense_vector<double>(NR * NC);
     tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
 
@@ -30,8 +42,8 @@ TEST(ConvertToDense, RowToRow) {
     }
 }
 
-TEST(ConvertToDense, ColumnToColumn) {
-    size_t NR = 20, NC = 10;
+TEST_P(ConvertToDenseTest, ColumnToColumn) {
+    assemble(GetParam());
     auto vec = simulate_dense_vector<double>(NR * NC);
     tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
 
@@ -53,8 +65,8 @@ TEST(ConvertToDense, ColumnToColumn) {
     }
 }
 
-TEST(ConvertToDense, RowToColumn) {
-    size_t NR = 70, NC = 50;
+TEST_P(ConvertToDenseTest, RowToColumn) {
+    assemble(GetParam());
     auto vec = simulate_dense_vector<double>(NR * NC);
     tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
 
@@ -76,8 +88,8 @@ TEST(ConvertToDense, RowToColumn) {
     }
 }
 
-TEST(ConvertToDense, ColumnToRow) {
-    size_t NR = 70, NC = 50;
+TEST_P(ConvertToDenseTest, ColumnToRow) {
+    assemble(GetParam());
     auto vec = simulate_dense_vector<double>(NR * NC);
     tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
 
@@ -99,8 +111,8 @@ TEST(ConvertToDense, ColumnToRow) {
     }
 }
 
-TEST(ConvertToDense, Automatic) {
-    size_t NR = 70, NC = 50;
+TEST_P(ConvertToDenseTest, Automatic) {
+    assemble(GetParam());
     auto vec = simulate_dense_vector<double>(NR * NC);
 
     {
@@ -115,3 +127,61 @@ TEST(ConvertToDense, Automatic) {
         EXPECT_TRUE(converted->prefer_rows());
     }
 }
+
+TEST_P(ConvertToDenseTest, FromSparse) {
+    assemble(GetParam());
+
+    // From a row-major sparse matrix.
+    {
+        auto vec = simulate_sparse_compressed<double>(NR, NC, 0.2);
+        tatami::CompressedSparseRowMatrix<double, int> smat(NR, NC, std::move(vec.value), std::move(vec.index), std::move(vec.ptr));
+
+        {
+            auto converted = tatami::convert_to_dense<true>(&smat);
+            EXPECT_TRUE(converted->prefer_rows());
+            EXPECT_FALSE(converted->sparse());
+            test_simple_row_access(converted.get(), &smat);
+            test_simple_column_access(converted.get(), &smat);
+        }
+
+        {
+            auto converted = tatami::convert_to_dense<false>(&smat);
+            EXPECT_FALSE(converted->prefer_rows());
+            EXPECT_FALSE(converted->sparse());
+            test_simple_row_access(converted.get(), &smat);
+            test_simple_column_access(converted.get(), &smat);
+        }
+    }
+
+    // From a row-major sparse matrix.
+    {
+        auto vec = simulate_sparse_compressed<double>(NC, NR, 0.2);
+        tatami::CompressedSparseColumnMatrix<double, int> smat(NR, NC, std::move(vec.value), std::move(vec.index), std::move(vec.ptr));
+
+        {
+            auto converted = tatami::convert_to_dense<true>(&smat);
+            EXPECT_TRUE(converted->prefer_rows());
+            EXPECT_FALSE(converted->sparse());
+            test_simple_row_access(converted.get(), &smat);
+            test_simple_column_access(converted.get(), &smat);
+        }
+
+        {
+            auto converted = tatami::convert_to_dense<false>(&smat);
+            EXPECT_FALSE(converted->prefer_rows());
+            EXPECT_FALSE(converted->sparse());
+            test_simple_row_access(converted.get(), &smat);
+            test_simple_column_access(converted.get(), &smat);
+        }
+    }
+}
+
+
+INSTANTIATE_TEST_CASE_P(
+    ConvertToDense,
+    ConvertToDenseTest,
+    ::testing::Combine(
+        ::testing::Values(10, 50, 100), // number of rows
+        ::testing::Values(10, 50, 100)  // number of columns
+    )
+);

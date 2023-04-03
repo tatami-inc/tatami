@@ -32,11 +32,11 @@ void convert_to_dense(const MatrixIn* incoming, DataStore* store) {
     size_t NC = incoming->ncol();
     size_t primary = (row ? NR : NC);
     size_t secondary = (row ? NC : NR);
-    std::vector<DataIn> temp(secondary);
 
     if (row == incoming->prefer_rows()) {
         auto wrk = new_workspace<row>(incoming);
         constexpr bool same_type = std::is_same<DataIn, DataStore>::value;
+        std::vector<DataIn> temp(same_type ? 0 : secondary);
 
         for (size_t p = 0; p < primary; ++p, store += secondary) {
             if constexpr(same_type) {
@@ -62,6 +62,7 @@ void convert_to_dense(const MatrixIn* incoming, DataStore* store) {
         // extract in the non-preferred dim; it is thus cheaper to
         // do cache-unfriendly inserts into the output buffer.
         auto wrk = new_workspace<!row>(incoming);
+        std::vector<DataIn> temp(primary);
 
         for (size_t s = 0; s < secondary; ++s) {
             const DataIn* ptr;
