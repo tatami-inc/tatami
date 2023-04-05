@@ -214,6 +214,11 @@ private:
         std::vector<size_t> starts;
     };
 
+    void fill_base(PrimarySparseWorkspaceBase& base, size_t cache_size) const {
+        fill_base(base);
+        base.starts.resize(cache_size, -1);
+    }
+
 public:
     /**
      * @cond
@@ -505,10 +510,7 @@ public:
         if constexpr(ROW) {
             auto ptr = new HDF5PrimarySparseBlockWorkspace<true>(s, l);
             std::shared_ptr<RowBlockWorkspace> output(ptr);
-            fill_base(ptr->base);
-            if (cache) {
-                ptr->base.starts.resize(nrows);
-            }
+            fill_base(ptr->base, cache ? nrows : 0);
             return output;
         } else {
             auto ptr = new HDF5SecondarySparseBlockWorkspace<true>(s, l);
@@ -527,10 +529,7 @@ public:
         } else {
             auto ptr = new HDF5PrimarySparseBlockWorkspace<false>(s, l);
             std::shared_ptr<ColumnBlockWorkspace> output(ptr);
-            fill_base(ptr->base);
-            if (cache) {
-                ptr->base.starts.resize(ncols);
-            }
+            fill_base(ptr->base, cache ? ncols : 0);
             return output;
         }
     }
@@ -610,10 +609,7 @@ public:
         if constexpr(ROW) {
             auto ptr = new HDF5PrimarySparseIndexWorkspace<true>(std::move(i));
             std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
-            fill_base(ptr->base);
-            if (cache) {
-                ptr->base.starts.resize(nrows);
-            }
+            fill_base(ptr->base, cache ? nrows : 0);
             return output;
         } else {
             auto ptr = new HDF5SecondarySparseIndexWorkspace<true>(std::move(i));
@@ -632,10 +628,7 @@ public:
         } else {
             auto ptr = new HDF5PrimarySparseIndexWorkspace<false>(std::move(i));
             std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
-            fill_base(ptr->base);
-            if (cache) {
-                ptr->base.starts.resize(ncols);
-            }
+            fill_base(ptr->base, cache ? ncols : 0);
             return output;
         }
     }
