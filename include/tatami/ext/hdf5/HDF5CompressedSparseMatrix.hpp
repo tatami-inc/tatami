@@ -210,7 +210,14 @@ private:
         std::vector<T> data_cache;
         size_t current_cache_id = 0;
         bool init = false;
+
+        std::vector<size_t> starts;
     };
+
+    void fill_base(PrimarySparseWorkspaceBase& base, size_t cache_size) const {
+        fill_base(base);
+        base.starts.resize(cache_size, -1);
+    }
 
 public:
     /**
@@ -229,7 +236,7 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowWorkspace> new_row_workspace() const {
+    std::shared_ptr<RowWorkspace> new_row_workspace(bool = false) const {
         if constexpr(ROW) {
             auto ptr = new HDF5PrimarySparseWorkspace<true>;
             std::shared_ptr<RowWorkspace> output(ptr);
@@ -243,7 +250,7 @@ public:
         }
     }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
+    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool = false) const {
         if constexpr(ROW) {
             auto ptr = new HDF5SecondarySparseWorkspace<false>;
             std::shared_ptr<ColumnWorkspace> output(ptr);
@@ -354,7 +361,19 @@ private:
         auto istart = work.index_cache.begin() + offset;
         auto dstart = work.data_cache.begin() + offset;
 
-        size_t request_start = (start > *istart ? std::lower_bound(istart, istart + primary_length, start) - istart : 0);
+        size_t request_start = 0;
+        if (start > *istart) { // 'istart' guaranteed to be valid from length check above.
+            bool do_cache = !work.starts.empty();
+            if (do_cache && work.starts[i] != -1) {
+                request_start = work.starts[i];
+            } else {
+                request_start = std::lower_bound(istart, istart + primary_length, start) - istart;
+                if (do_cache) {
+                    work.starts[i] = request_start;
+                }
+            }
+        }
+
         istart += request_start;
         dstart += request_start;
 
@@ -487,11 +506,11 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t s, size_t l) const {
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t s, size_t l, bool cache = false) const {
         if constexpr(ROW) {
             auto ptr = new HDF5PrimarySparseBlockWorkspace<true>(s, l);
             std::shared_ptr<RowBlockWorkspace> output(ptr);
-            fill_base(ptr->base);
+            fill_base(ptr->base, cache ? nrows : 0);
             return output;
         } else {
             auto ptr = new HDF5SecondarySparseBlockWorkspace<true>(s, l);
@@ -501,7 +520,7 @@ public:
         }
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t s, size_t l) const {
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t s, size_t l, bool cache = false) const {
         if constexpr(ROW) {
             auto ptr = new HDF5SecondarySparseBlockWorkspace<false>(s, l);
             std::shared_ptr<ColumnBlockWorkspace> output(ptr);
@@ -510,7 +529,7 @@ public:
         } else {
             auto ptr = new HDF5PrimarySparseBlockWorkspace<false>(s, l);
             std::shared_ptr<ColumnBlockWorkspace> output(ptr);
-            fill_base(ptr->base);
+            fill_base(ptr->base, cache ? ncols : 0);
             return output;
         }
     }
@@ -586,11 +605,11 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i) const {
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i, bool cache = false) const {
         if constexpr(ROW) {
             auto ptr = new HDF5PrimarySparseIndexWorkspace<true>(std::move(i));
             std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
-            fill_base(ptr->base);
+            fill_base(ptr->base, cache ? nrows : 0);
             return output;
         } else {
             auto ptr = new HDF5SecondarySparseIndexWorkspace<true>(std::move(i));
@@ -600,7 +619,7 @@ public:
         }
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i) const {
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i, bool cache = false) const {
         if constexpr(ROW) {
             auto ptr = new HDF5SecondarySparseIndexWorkspace<false>(std::move(i));
             std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
@@ -609,7 +628,7 @@ public:
         } else {
             auto ptr = new HDF5PrimarySparseIndexWorkspace<false>(std::move(i));
             std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
-            fill_base(ptr->base);
+            fill_base(ptr->base, cache ? ncols : 0);
             return output;
         }
     }
@@ -674,8 +693,19 @@ private:
         auto dstart = work.data_cache.begin() + offset;
         auto iend = istart + primary_length;
 
-        // Guaranteed to be of non-zero length from check above.
-        size_t quick_shift = (indices[0] > *istart ? std::lower_bound(istart, istart + primary_length, indices[0]) - istart : 0);
+        size_t quick_shift = 0;
+        if (indices[0] > *istart) { // Both are guaranteed to valid, from length check above.
+            bool do_cache = !work.starts.empty();
+            if (do_cache && work.starts[i] != -1) {
+                quick_shift = work.starts[i];
+            } else {
+                quick_shift = std::lower_bound(istart, istart + primary_length, indices[0]) - istart;
+                if (do_cache) {
+                    work.starts[i] = quick_shift;
+                }
+            }
+        }
+
         istart += quick_shift;
         dstart += quick_shift;
 

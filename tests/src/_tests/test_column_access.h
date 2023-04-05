@@ -15,6 +15,7 @@ void test_simple_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
     auto swork_so = ptr->new_column_workspace();
     auto pwork_bi = ptr->new_column_workspace();
     auto rwork_bi = ref->new_column_workspace();
+    auto cwork = ptr->new_column_workspace(true); 
 
     for (size_t i = 0; i < NC; i += jump) {
         size_t c = (forward ? i : NC - i - 1);
@@ -36,7 +37,7 @@ void test_simple_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
             EXPECT_EQ(expected, expand(observed, NR));
         } 
 
-        // Check workspace caching when access is bidirectional,
+        // Check for proper workspace behavior when access is bidirectional,
         // i.e., not purely increasing or decreasing.
         if (jump > 1 && i) {
             auto observed = ptr->column(c, pwork_bi.get());
@@ -47,6 +48,19 @@ void test_simple_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
             auto expectedm1 = ref->column(subc, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
+
+        {
+            auto observed = ptr->column(c, cwork.get());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    // Check that the caching gives the same results as uncached pass.
+    for (size_t i = 0; i < NC; i += jump) {
+        size_t c = (forward ? i : NC - i - 1);
+        auto expected = ptr->column(c, pwork.get());
+        auto observed = ptr->column(c, cwork.get());
+        EXPECT_EQ(expected, observed);
     }
 }
 
@@ -63,6 +77,7 @@ void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
     auto swork_so = ptr->new_column_workspace(start, end - start);
     auto pwork_bi = ptr->new_column_workspace(start, end - start);
     auto rwork_bi = ref->new_column_workspace(start, end - start);
+    auto cwork = ptr->new_column_workspace(start, end - start, true);
 
     for (size_t i = 0; i < NC; i += jump) {
         size_t c = (forward ? i : NC - i - 1);
@@ -84,7 +99,7 @@ void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
             EXPECT_EQ(expected, expand(observed, start, end));
         } 
 
-        // Check workspace caching when access is bidirectional,
+        // Check for proper workspace behavior when access is bidirectional,
         // i.e., not purely increasing or decreasing.
         if (jump > 1 && i) {
             auto observed = ptr->column(c, pwork_bi.get());
@@ -95,6 +110,19 @@ void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
             auto expectedm1 = ref->column(subc, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
+
+        {
+            auto observed = ptr->column(c, cwork.get());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    // Check that the caching gives the same results as uncached pass.
+    for (size_t i = 0; i < NC; i += jump) {
+        size_t c = (forward ? i : NC - i - 1);
+        auto expected = ptr->column(c, pwork.get());
+        auto observed = ptr->column(c, cwork.get());
+        EXPECT_EQ(expected, observed);
     }
 }
 
@@ -120,6 +148,7 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
     auto swork_so = ptr->new_column_workspace(indices);
     auto pwork_bi = ptr->new_column_workspace(indices);
     auto rwork_bi = ref->new_column_workspace(indices);
+    auto cwork = ptr->new_column_workspace(indices, true);
 
     for (size_t i = 0; i < NC; i += jump) {
         size_t c = (forward ? i : NC - i - 1);
@@ -153,7 +182,7 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
             EXPECT_EQ(full, full2);
         }
 
-        // Check workspace caching when access is bidirectional,
+        // Check for proper workspace behavior when access is bidirectional,
         // i.e., not purely increasing or decreasing.
         if (jump > 1 && i) {
             auto observed = ptr->column(c, pwork_bi.get());
@@ -164,6 +193,19 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
             auto expectedm1 = ref->column(subc, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
+
+        {
+            auto observed = ptr->column(c, cwork.get());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    // Check that the caching gives the same results as uncached pass.
+    for (size_t i = 0; i < NC; i += jump) {
+        size_t c = (forward ? i : NC - i - 1);
+        auto expected = ptr->column(c, pwork.get());
+        auto observed = ptr->column(c, cwork.get());
+        EXPECT_EQ(expected, observed);
     }
 }
 

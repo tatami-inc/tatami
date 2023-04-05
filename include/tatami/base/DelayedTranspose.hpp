@@ -80,12 +80,12 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowWorkspace> new_row_workspace() const {
-        return std::shared_ptr<RowWorkspace>(new TransposedRowWorkspace(mat->new_column_workspace()));
+    std::shared_ptr<RowWorkspace> new_row_workspace(bool cache = false) const {
+        return std::shared_ptr<RowWorkspace>(new TransposedRowWorkspace(mat->new_column_workspace(cache)));
     }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
-        return std::shared_ptr<ColumnWorkspace>(new TransposedColumnWorkspace(mat->new_row_workspace()));
+    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool cache = false) const {
+        return std::shared_ptr<ColumnWorkspace>(new TransposedColumnWorkspace(mat->new_row_workspace(cache)));
     }
 
     const T* row(size_t r, T* buffer, RowWorkspace* work) const {
@@ -121,12 +121,12 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const {
-        return std::shared_ptr<RowBlockWorkspace>(new TransposedRowBlockWorkspace(mat->new_column_workspace(start, length)));
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length, bool cache = false) const {
+        return std::shared_ptr<RowBlockWorkspace>(new TransposedRowBlockWorkspace(mat->new_column_workspace(start, length, cache)));
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const {
-        return std::shared_ptr<ColumnBlockWorkspace>(new TransposedColumnBlockWorkspace(mat->new_row_workspace(start, length)));
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length, bool cache = false) const {
+        return std::shared_ptr<ColumnBlockWorkspace>(new TransposedColumnBlockWorkspace(mat->new_row_workspace(start, length, cache)));
     }
 
     const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
@@ -162,12 +162,12 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> subset) const {
-        return std::shared_ptr<RowIndexWorkspace<IDX> >(new TransposedRowIndexWorkspace(mat->new_column_workspace(std::move(subset))));
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> subset, bool cache = false) const {
+        return std::shared_ptr<RowIndexWorkspace<IDX> >(new TransposedRowIndexWorkspace(mat->new_column_workspace(std::move(subset), cache)));
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> subset) const {
-        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new TransposedColumnIndexWorkspace(mat->new_row_workspace(std::move(subset))));
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> subset, bool cache = false) const {
+        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new TransposedColumnIndexWorkspace(mat->new_row_workspace(std::move(subset), cache)));
     }
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {

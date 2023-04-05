@@ -77,12 +77,12 @@ public:
     using Matrix<T, IDX>::sparse_row;
 
 public:
-    std::shared_ptr<RowWorkspace> new_row_workspace() const {
-        return mat->new_row_workspace();
+    std::shared_ptr<RowWorkspace> new_row_workspace(bool cache = false) const {
+        return mat->new_row_workspace(cache);
     }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
-        return mat->new_column_workspace();
+    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool cache = false) const {
+        return mat->new_column_workspace(cache);
     }
 
     const T* row(size_t r, T* buffer, RowWorkspace* work) const {
@@ -102,12 +102,12 @@ public:
     }
 
 public:
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const {
-        return mat->new_row_workspace(start, length);
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length, bool cache = false) const {
+        return mat->new_row_workspace(start, length, cache);
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const {
-        return mat->new_column_workspace(start, length);
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length, bool cache = false) const {
+        return mat->new_column_workspace(start, length, cache);
     }
 
     const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
@@ -204,12 +204,12 @@ private:
     }
 
 public:
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> indices) const {
-        return mat->new_row_workspace(std::move(indices));
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> indices, bool cache = false) const {
+        return mat->new_row_workspace(std::move(indices), cache);
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> indices) const {
-        return mat->new_column_workspace(std::move(indices));
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> indices, bool cache = false) const {
+        return mat->new_column_workspace(std::move(indices), cache);
     }
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {

@@ -152,12 +152,12 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowWorkspace> new_row_workspace() const {
-        return new_workspace<true>();
+    std::shared_ptr<RowWorkspace> new_row_workspace(bool cache = false) const {
+        return new_workspace<true>(cache);
     }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
-        return new_workspace<false>();
+    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool cache = false) const {
+        return new_workspace<false>(cache);
     }
 
     const T* row(size_t r, T* buffer, RowWorkspace* work) const {
@@ -196,14 +196,14 @@ public:
 
 private:
     template<bool WORKROW>
-    std::shared_ptr<Workspace<WORKROW> > new_workspace() const {
+    std::shared_ptr<Workspace<WORKROW> > new_workspace(bool cache) const {
         std::vector<std::shared_ptr<Workspace<WORKROW> > > workspaces;
         workspaces.reserve(mats.size());
         for (const auto& x : mats) {
             if constexpr(WORKROW) {
-                workspaces.push_back(x->new_row_workspace());
+                workspaces.push_back(x->new_row_workspace(cache));
             } else {
-                workspaces.push_back(x->new_column_workspace());
+                workspaces.push_back(x->new_column_workspace(cache));
             }
         }
 
@@ -330,12 +330,12 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const {
-        return new_workspace<true>(start, length);
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length, bool cache = false) const {
+        return new_workspace<true>(start, length, cache);
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const {
-        return new_workspace<false>(start, length);
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length, bool cache = false) const {
+        return new_workspace<false>(start, length, cache);
     }
 
     const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
@@ -374,16 +374,16 @@ public:
 
 private:
     template<bool WORKROW>
-    std::shared_ptr<BlockWorkspace<WORKROW> > new_workspace(size_t start, size_t length) const {
+    std::shared_ptr<BlockWorkspace<WORKROW> > new_workspace(size_t start, size_t length, bool cache) const {
         if constexpr((MARGIN == 0) == WORKROW) {
             std::vector<std::shared_ptr<BlockWorkspace<WORKROW> > > workspaces;
             workspaces.reserve(mats.size());
 
             for (const auto& x : mats) {
                 if constexpr(WORKROW) {
-                    workspaces.push_back(x->new_row_workspace(start, length));
+                    workspaces.push_back(x->new_row_workspace(start, length, cache));
                 } else {
-                    workspaces.push_back(x->new_column_workspace(start, length));
+                    workspaces.push_back(x->new_column_workspace(start, length, cache));
                 }
             }
 
@@ -412,9 +412,9 @@ private:
                     size_t len = actual_end - actual_start;
                     const auto& x = mats[index];
                     if constexpr(WORKROW) {
-                        workspaces.push_back(x->new_row_workspace(actual_start, len));
+                        workspaces.push_back(x->new_row_workspace(actual_start, len, cache));
                     } else {
-                        workspaces.push_back(x->new_column_workspace(actual_start, len));
+                        workspaces.push_back(x->new_column_workspace(actual_start, len, cache));
                     }
                     kept.push_back(index);
 
@@ -509,12 +509,12 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> subset) const {
-        return new_workspace<true>(std::move(subset));
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> subset, bool cache = false) const {
+        return new_workspace<true>(std::move(subset), cache);
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> subset) const {
-        return new_workspace<false>(std::move(subset));
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> subset, bool cache = false) const {
+        return new_workspace<false>(std::move(subset), cache);
     }
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
@@ -553,7 +553,7 @@ public:
 
 private:
     template<bool WORKROW>
-    std::shared_ptr<IndexWorkspace<IDX, WORKROW> > new_workspace(std::vector<IDX> i) const {
+    std::shared_ptr<IndexWorkspace<IDX, WORKROW> > new_workspace(std::vector<IDX> i, bool cache) const {
         if constexpr((MARGIN == 0) == WORKROW) {
             auto ptr = new PerpendicularIndexWorkspace<WORKROW>;
             std::shared_ptr<IndexWorkspace<IDX, WORKROW> > output(ptr);
@@ -561,9 +561,9 @@ private:
 
             for (const auto& x : mats) {
                 if constexpr(WORKROW) {
-                    ptr->workspaces.push_back(x->new_row_workspace(i)); // deliberate copies here.
+                    ptr->workspaces.push_back(x->new_row_workspace(i, cache)); // deliberate copies here.
                 } else {
-                    ptr->workspaces.push_back(x->new_column_workspace(i));
+                    ptr->workspaces.push_back(x->new_column_workspace(i, cache));
                 }
             }
 
@@ -600,9 +600,9 @@ private:
 
                     const auto& x = mats[index];
                     if constexpr(WORKROW) {
-                        workspaces.push_back(x->new_row_workspace(std::move(curslice)));
+                        workspaces.push_back(x->new_row_workspace(std::move(curslice), cache));
                     } else {
-                        workspaces.push_back(x->new_column_workspace(std::move(curslice)));
+                        workspaces.push_back(x->new_column_workspace(std::move(curslice), cache));
                     }
                     kept.push_back(index);
 

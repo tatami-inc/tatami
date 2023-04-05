@@ -110,30 +110,34 @@ public:
      ****************************************/
 public:
     /**
+     * @param cache Whether to cache information from each call to `row()` with this workspace, for faster iterations if the same row is extracted during multiple passes over the matrix.
      * @return A shared pointer to a `RowWorkspace` for row-wise data extraction, or a null pointer if no workspace is required.
      */
-    virtual std::shared_ptr<RowWorkspace> new_row_workspace() const = 0;
+    virtual std::shared_ptr<RowWorkspace> new_row_workspace(bool cache = false) const = 0;
 
     /**
+     * @param cache Whether to cache information from each call to `column()` with this workspace, for faster iterations if the same column is extracted during multiple passes over the matrix.
      * @return A shared pointer to a `ColumnWorkspace` for column-wise data extraction, or a null pointer if no workspace is required.
      */
-    virtual std::shared_ptr<ColumnWorkspace> new_column_workspace() const = 0;
+    virtual std::shared_ptr<ColumnWorkspace> new_column_workspace(bool cache = false) const = 0;
 
     /**
      * @param start Index of the first column in the block.
      * @param length Number of columns in the block.
+     * @param cache Whether to cache information from each call to `row()` with this workspace, for faster iterations if the same row is extracted during multiple passes over the matrix.
      *
      * @return A shared pointer to a `RowBlockWorkspace` for row-wise extraction of data from a contiguous block of columns from `[start, start + length)`. 
      */
-    virtual std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const = 0;
+    virtual std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length, bool cache = false) const = 0;
 
     /**
      * @param start Index of the first row in the block.
      * @param length Number of rows in the block.
+     * @param cache Whether to cache information from each call to `column()` with this workspace, for faster iterations if the same column is extracted during multiple passes over the matrix.
      *
      * @return A shared pointer to a `RowBlockWorkspace` for column-wise extraction of data from a contiguous block of rows from `[start, start + length)`.
      */
-    virtual std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const = 0;
+    virtual std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length, bool cache = false) const = 0;
 
     // Note to self: we use a vector rather than taking a pointer to the
     // indices. This is because workspaces of wrapper matrices may need to
@@ -144,17 +148,19 @@ public:
 
     /**
      * @param indices Vector containing sorted and unique column indices.
+     * @param cache Whether to cache information from each call to `row()` with this workspace, for faster iterations if the same row is extracted during multiple passes over the matrix.
      *
      * @return A shared pointer to a `RowIndexWorkspace` for row-wise extraction of data from a subset of columns defined by `indices`, or a null pointer if no workspace is required.
      */
-    virtual std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> indices) const = 0;
+    virtual std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> indices, bool cache = false) const = 0;
 
     /**
      * @param indices Vector containing sorted and unique row indices.
+     * @param cache Whether to cache information from each call to `column()` with this workspace, for faster iterations if the same column is extracted during multiple passes over the matrix.
      *
      * @return A shared pointer to a `ColumnIndexWorkspace` for column-wise extraction of data from a subset of rows defined by `indices`, or a null pointer if no workspace is required.
      */
-    virtual std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> indices) const = 0;
+    virtual std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> indices, bool cache = false) const = 0;
 
     /*********************************
      ***** Dense virtual methods *****
