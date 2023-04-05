@@ -15,6 +15,7 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
     auto swork_so = ptr->new_row_workspace();
     auto pwork_bi = ptr->new_row_workspace();
     auto rwork_bi = ref->new_row_workspace();
+    auto cwork = ptr->new_row_workspace(true);
 
     for (size_t i = 0; i < NR; i += jump) {
         size_t r = (forward ? i : NR - i - 1);
@@ -47,6 +48,19 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
             auto expectedm1 = ref->row(subr, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
+
+        {
+            auto observed = ptr->row(r, cwork.get());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    // Check that the caching gives the same results as uncached pass.
+    for (size_t i = 0; i < NR; i += jump) {
+        size_t r = (forward ? i : NR - i - 1);
+        auto expected = ptr->row(r, pwork.get());
+        auto observed = ptr->row(r, cwork.get());
+        EXPECT_EQ(expected, observed);
     }
 }
 
@@ -63,6 +77,7 @@ void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward,
     auto swork_so = ptr->new_row_workspace(start, end - start);
     auto pwork_bi = ptr->new_row_workspace(start, end - start);
     auto rwork_bi = ref->new_row_workspace(start, end - start);
+    auto cwork = ptr->new_row_workspace(start, end - start, true);
 
     for (size_t i = 0; i < NR; i += jump) {
         size_t r = (forward ? i : NR - i - 1);
@@ -95,6 +110,19 @@ void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward,
             auto expectedm1 = ref->row(subr, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
+
+        {
+            auto observed = ptr->row(r, cwork.get());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    // Check that the caching gives the same results as uncached pass.
+    for (size_t i = 0; i < NR; i += jump) {
+        size_t r = (forward ? i : NR - i - 1);
+        auto expected = ptr->row(r, pwork.get());
+        auto observed = ptr->row(r, cwork.get());
+        EXPECT_EQ(expected, observed);
     }
 }
 
@@ -120,6 +148,7 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
     auto swork_so = ptr->new_row_workspace(indices);
     auto pwork_bi = ptr->new_row_workspace(indices);
     auto rwork_bi = ref->new_row_workspace(indices);
+    auto cwork = ptr->new_row_workspace(indices, true);
 
     for (size_t i = 0; i < NR; i += jump) {
         size_t r = (forward ? i : NR - i - 1);
@@ -164,6 +193,19 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
             auto expectedm1 = ref->row(subr, rwork_bi.get());
             EXPECT_EQ(expectedm1, observedm1);
         }
+
+        {
+            auto observed = ptr->row(r, cwork.get());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    // Check that the caching gives the same results as uncached pass.
+    for (size_t i = 0; i < NR; i += jump) {
+        size_t r = (forward ? i : NR - i - 1);
+        auto expected = ptr->row(r, pwork.get());
+        auto observed = ptr->row(r, cwork.get());
+        EXPECT_EQ(expected, observed);
     }
 }
 

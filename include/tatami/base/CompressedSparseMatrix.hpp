@@ -684,7 +684,7 @@ private:
             bool do_cache = !work.starts.empty();
             if (do_cache) {
                 if (work.starts[i] != -1) { // retrieving the jump from cache, if we came here before.
-                    iIt = indices.begin() + work.starts[i];
+                    iIt += work.starts[i];
                 } else {
                     auto iIt2 = std::lower_bound(iIt, eIt, subset[0]);
                     work.starts[i] = iIt2 - iIt;
