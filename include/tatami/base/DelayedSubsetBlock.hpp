@@ -96,19 +96,19 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowWorkspace> new_row_workspace() const {
+    std::shared_ptr<RowWorkspace> new_row_workspace(bool cache = false) const {
         if constexpr(MARGIN == 0) {
-            return mat->new_row_workspace();
+            return mat->new_row_workspace(cache);
         } else {
-            return std::shared_ptr<RowWorkspace>(new AlongWorkspace<true>(mat->new_row_workspace(block_start, block_length)));
+            return std::shared_ptr<RowWorkspace>(new AlongWorkspace<true>(mat->new_row_workspace(block_start, block_length, cache)));
         }
     }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
+    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool cache = false) const {
         if constexpr(MARGIN == 0) {
-            return std::shared_ptr<ColumnWorkspace>(new AlongWorkspace<false>(mat->new_column_workspace(block_start, block_length)));
+            return std::shared_ptr<ColumnWorkspace>(new AlongWorkspace<false>(mat->new_column_workspace(block_start, block_length, cache)));
         } else {
-            return mat->new_column_workspace();
+            return mat->new_column_workspace(cache);
         }
     }
 
@@ -183,19 +183,19 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start_, size_t length_) const {
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start_, size_t length_, bool cache) const {
         if constexpr(MARGIN == 0) {
-            return mat->new_row_workspace(start_, length_);
+            return mat->new_row_workspace(start_, length_, cache);
         } else {
-            return std::shared_ptr<RowBlockWorkspace>(new AlongBlockWorkspace<true>(start_, length_, mat->new_row_workspace(block_start + start_, length_)));
+            return std::shared_ptr<RowBlockWorkspace>(new AlongBlockWorkspace<true>(start_, length_, mat->new_row_workspace(block_start + start_, length_, cache)));
         }
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start_, size_t length_) const {
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start_, size_t length_, bool cache) const {
         if constexpr(MARGIN == 0) {
-            return std::shared_ptr<ColumnBlockWorkspace>(new AlongBlockWorkspace<false>(start_, length_, mat->new_column_workspace(block_start + start_, length_)));
+            return std::shared_ptr<ColumnBlockWorkspace>(new AlongBlockWorkspace<false>(start_, length_, mat->new_column_workspace(block_start + start_, length_, cache)));
         } else {
-            return mat->new_column_workspace(start_, length_);
+            return mat->new_column_workspace(start_, length_, cache);
         }
     }
 
@@ -254,12 +254,12 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> indices_) const {
-        return new_workspace<true>(std::move(indices_));
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> indices_, bool cache) const {
+        return new_workspace<true>(std::move(indices_), cache);
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> indices_) const {
-        return new_workspace<false>(std::move(indices_));
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> indices_, bool cache) const {
+        return new_workspace<false>(std::move(indices_), cache);
     }
 
     const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
@@ -296,12 +296,12 @@ public:
 
 private:
     template<bool WORKROW>
-    std::shared_ptr<IndexWorkspace<IDX, WORKROW> > new_workspace(std::vector<IDX> subset) const {
+    std::shared_ptr<IndexWorkspace<IDX, WORKROW> > new_workspace(std::vector<IDX> subset, bool cache) const {
         if constexpr((MARGIN == 0) == WORKROW) {
             if constexpr(WORKROW) {
-                return mat->new_row_workspace(std::move(subset));
+                return mat->new_row_workspace(std::move(subset), cache);
             } else {
-                return mat->new_column_workspace(std::move(subset));
+                return mat->new_column_workspace(std::move(subset), cache);
             }
         } else {
             auto ptr = new AlongIndexWorkspace<WORKROW>(std::move(subset));
@@ -313,15 +313,15 @@ private:
                     x += block_start;
                 }
                 if constexpr(WORKROW) {
-                    ptr->internal = mat->new_row_workspace(std::move(copy));
+                    ptr->internal = mat->new_row_workspace(std::move(copy), cache);
                 } else {
-                    ptr->internal = mat->new_column_workspace(std::move(copy));
+                    ptr->internal = mat->new_column_workspace(std::move(copy), cache);
                 }
             } else {
                 if constexpr(WORKROW) {
-                    ptr->internal = mat->new_row_workspace(std::move(ptr->indices_));
+                    ptr->internal = mat->new_row_workspace(std::move(ptr->indices_), cache);
                 } else {
-                    ptr->internal = mat->new_column_workspace(std::move(ptr->indices_));
+                    ptr->internal = mat->new_column_workspace(std::move(ptr->indices_), cache);
                 }
                 ptr->indices_.clear();
             }

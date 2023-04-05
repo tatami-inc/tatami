@@ -78,20 +78,20 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowWorkspace> new_row_workspace() const { 
+    std::shared_ptr<RowWorkspace> new_row_workspace(bool cache = false) const { 
         size_t nv = 0;
         if constexpr(!same_T_type) {
             nv = this->ncol();
         }
-        return std::shared_ptr<RowWorkspace>(new CastRowWorkspace(nv, ptr->new_row_workspace()));
+        return std::shared_ptr<RowWorkspace>(new CastRowWorkspace(nv, ptr->new_row_workspace(cache)));
     }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace() const { 
+    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool cache = false) const { 
         size_t nv = 0;
         if constexpr(!same_T_type) {
             nv = this->nrow();
         }
-        return std::shared_ptr<ColumnWorkspace>(new CastColumnWorkspace(nv, ptr->new_column_workspace()));
+        return std::shared_ptr<ColumnWorkspace>(new CastColumnWorkspace(nv, ptr->new_column_workspace(cache)));
     }
 
     const T_out* row(size_t r, T_out* buffer, RowWorkspace* work) const {
@@ -201,20 +201,20 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length) const { 
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length, bool cache = false) const { 
         size_t nv = 0;
         if constexpr(!same_T_type) {
             nv = length;
         }
-        return std::shared_ptr<RowBlockWorkspace>(new CastRowBlockWorkspace(nv, ptr->new_row_workspace(start, length)));
+        return std::shared_ptr<RowBlockWorkspace>(new CastRowBlockWorkspace(nv, ptr->new_row_workspace(start, length, cache)));
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length) const { 
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length, bool cache = false) const { 
         size_t nv = 0;
         if constexpr(!same_T_type) {
             nv = length;
         }
-        return std::shared_ptr<ColumnBlockWorkspace>(new CastColumnBlockWorkspace(nv, ptr->new_column_workspace(start, length)));
+        return std::shared_ptr<ColumnBlockWorkspace>(new CastColumnBlockWorkspace(nv, ptr->new_column_workspace(start, length, cache)));
     }
 
     const T_out* row(size_t r, T_out* buffer, RowBlockWorkspace* work) const {
@@ -266,12 +266,12 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX_out> > new_row_workspace(std::vector<IDX_out> indices) const { 
-        return new_workspace<true>(std::move(indices));
+    std::shared_ptr<RowIndexWorkspace<IDX_out> > new_row_workspace(std::vector<IDX_out> indices, bool cache = false) const { 
+        return new_workspace<true>(std::move(indices), cache);
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX_out> > new_column_workspace(std::vector<IDX_out> indices) const {
-        return new_workspace<false>(std::move(indices));
+    std::shared_ptr<ColumnIndexWorkspace<IDX_out> > new_column_workspace(std::vector<IDX_out> indices, bool cache = false) const {
+        return new_workspace<false>(std::move(indices), cache);
     }
 
     const T_out* row(size_t r, T_out* buffer, RowIndexWorkspace<IDX_out>* work) const {
@@ -296,7 +296,7 @@ public:
 
 private:
     template<bool WORKROW>
-    std::shared_ptr<IndexWorkspace<IDX_out, WORKROW> > new_workspace(std::vector<IDX_out> indices) const { 
+    std::shared_ptr<IndexWorkspace<IDX_out, WORKROW> > new_workspace(std::vector<IDX_out> indices, bool cache) const { 
         size_t nv = 0;
         if constexpr(!same_T_type) {
             nv = indices.size();
@@ -308,15 +308,15 @@ private:
         if constexpr(!same_IDX_type) {
             wptr->indices_ = std::move(indices);
             if constexpr(WORKROW) {
-                wptr->internal = ptr->new_row_workspace(std::vector<IDX_in>(wptr->indices_.begin(), wptr->indices_.end()));
+                wptr->internal = ptr->new_row_workspace(std::vector<IDX_in>(wptr->indices_.begin(), wptr->indices_.end()), cache);
             } else {
-                wptr->internal = ptr->new_column_workspace(std::vector<IDX_in>(wptr->indices_.begin(), wptr->indices_.end()));
+                wptr->internal = ptr->new_column_workspace(std::vector<IDX_in>(wptr->indices_.begin(), wptr->indices_.end()), cache);
             }
         } else {
             if constexpr(WORKROW) {
-                wptr->internal = ptr->new_row_workspace(std::move(indices));
+                wptr->internal = ptr->new_row_workspace(std::move(indices), cache);
             } else {
-                wptr->internal = ptr->new_column_workspace(std::move(indices));
+                wptr->internal = ptr->new_column_workspace(std::move(indices), cache);
             }
         }
 

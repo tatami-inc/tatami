@@ -76,9 +76,9 @@ public:
     using Matrix<T, IDX>::column;
 
 public:
-    std::shared_ptr<RowWorkspace> new_row_workspace() const { return nullptr; }
+    std::shared_ptr<RowWorkspace> new_row_workspace(bool = false) const { return nullptr; }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace() const { return nullptr; }
+    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool = false) const { return nullptr; }
 
     const T* row(size_t r, T* buffer, RowWorkspace* work) const {
         if constexpr(ROW) {
@@ -112,11 +112,11 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t len) const {
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t len, bool = false) const {
         return std::shared_ptr<RowBlockWorkspace>(new DenseBlockWorkspace<true>(start, len));
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t len) const {
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t len, bool = false) const {
         return std::shared_ptr<ColumnBlockWorkspace>(new DenseBlockWorkspace<false>(start, len));
     }
 
@@ -175,11 +175,11 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i) const {
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i, bool = false) const {
         return std::shared_ptr<RowIndexWorkspace<IDX> >(new DenseIndexWorkspace<true>(std::move(i)));
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i) const {
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i, bool = false) const {
         return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new DenseIndexWorkspace<false>(std::move(i)));
     }
 
