@@ -185,14 +185,14 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowWorkspace> new_row_workspace() const {
+    std::shared_ptr<RowWorkspace> new_row_workspace(bool = false) const {
         auto ptr = new Hdf5Workspace<true>;
         std::shared_ptr<RowWorkspace> output(ptr);
         fill_base(ptr->base);
         return output;
     }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace() const {
+    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool = false) const {
         auto ptr = new Hdf5Workspace<false>;
         std::shared_ptr<ColumnWorkspace> output(ptr);
         fill_base(ptr->base);
@@ -356,14 +356,14 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t s, size_t l) const {
+    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t s, size_t l, bool = false) const {
         auto ptr = new Hdf5BlockWorkspace<true>(s, l);
         std::shared_ptr<RowBlockWorkspace> output(ptr);
         fill_base(ptr->base);
         return output;
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t s, size_t l) const {
+    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t s, size_t l, bool = false) const {
         auto ptr = new Hdf5BlockWorkspace<false>(s, l);
         std::shared_ptr<ColumnBlockWorkspace> output(ptr);
         fill_base(ptr->base);
@@ -397,14 +397,14 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i) const { 
+    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i, bool = false) const { 
         auto ptr = new Hdf5IndexWorkspace<true>(std::move(i));
         std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
         fill_base(ptr->base);
         return output;
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i) const { 
+    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i, bool = false) const { 
         auto ptr = new Hdf5IndexWorkspace<false>(std::move(i));
         std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
         fill_base(ptr->base);
