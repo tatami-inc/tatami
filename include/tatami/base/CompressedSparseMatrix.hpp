@@ -329,7 +329,7 @@ public:
         return buffer;
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work, bool sorted = true) const {
         const auto& deets = work->block();
         size_t start = deets.first, len = deets.second;
         if constexpr(ROW) {
@@ -339,7 +339,7 @@ public:
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted = true) const {
         const auto& deets = work->block();
         size_t start = deets.first, len = deets.second;
         if constexpr(ROW) {
@@ -674,7 +674,7 @@ public:
         return buffer;
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, bool sorted = true) const {
         if constexpr(ROW) {
             return primary_dimension_raw(r, work->indices(), ncols, extract_primary_core(work), vbuffer, ibuffer);
         } else {
@@ -682,7 +682,7 @@ public:
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, bool sorted = true) const {
         if constexpr(ROW) {
             return secondary_dimension_raw(c, work->indices(), extract_secondary_core(work), vbuffer, ibuffer);
         } else {
