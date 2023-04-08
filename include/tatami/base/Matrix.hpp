@@ -441,15 +441,19 @@ public:
      *
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `ncol()` values.
+     * Alternatively a null pointer, in which case the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `ncol()` indices.
+     * Alternatively a null pointer, in which case the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_row_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of row `r`.
      */
     virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowWorkspace* work, bool sorted = true) const {
-        const T* val = row(r, vbuffer, work);
-        std::iota(ibuffer, ibuffer + ncol(), static_cast<IDX>(0));
+        const T* val = (vbuffer ? row(r, vbuffer, work) : NULL);
+        if (ibuffer) {
+            std::iota(ibuffer, ibuffer + ncol(), static_cast<IDX>(0));
+        }
         return SparseRange(ncol(), val, ibuffer); 
     }
 
@@ -466,15 +470,19 @@ public:
      *
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `nrow()` values.
+     * Alternatively a null pointer, in which case the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `nrow()` indices.
+     * Alternatively a null pointer, in which case the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of column `c`.
      */
     virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnWorkspace* work, bool sorted = true) const {
-        const T* val = column(c, vbuffer, work);
-        std::iota(ibuffer, ibuffer + nrow(), static_cast<IDX>(0));
+        const T* val = (vbuffer ? column(c, vbuffer, work) : NULL);
+        if (ibuffer) {
+            std::iota(ibuffer, ibuffer + nrow(), static_cast<IDX>(0));
+        }
         return SparseRange(nrow(), val, ibuffer); 
     }
 
@@ -491,17 +499,21 @@ public:
      *
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` values.
+     * Alternatively a null pointer, in which case the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` indices.
+     * Alternatively a null pointer, in which case the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_row_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of a block of columns in row `r`.
      */
     virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work, bool sorted = true) const {
-        const T* val = row(r, vbuffer, work);
+        const T* val = (vbuffer ? row(r, vbuffer, work) : NULL);
         const auto& deets = work->block();
         size_t start = deets.first, len = deets.second;
-        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
+        if (ibuffer) {
+            std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
+        }
         return SparseRange(len, val, ibuffer); 
     }
 
@@ -518,17 +530,21 @@ public:
      *
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` values.
+     * Alternatively a null pointer, in which case the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` indices.
+     * Alternatively a null pointer, in which case the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_column_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of a block of rows in column `c`.
      */
     virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted = true) const {
-        const T* val = column(c, vbuffer, work);
+        const T* val = (vbuffer ? column(c, vbuffer, work) : NULL);
         const auto& deets = work->block();
         size_t start = deets.first, len = deets.second;
-        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
+        if (ibuffer) {
+            std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
+        }
         return SparseRange(len, val, ibuffer); 
     }
 
@@ -541,7 +557,9 @@ public:
      *
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `RowIndexWorkspace::length` values.
+     * Alternatively a null pointer, in which case the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `RowIndexWorkspace::length` indices.
+     * Alternatively a null pointer, in which case the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_row_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
@@ -549,9 +567,11 @@ public:
      * `vbuffer` is set as `SparseRange::value`, while `ibuffer` is set as `SparseRange::index`.
      */
     virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, bool sorted = true) const {
-        const T* val = row(r, vbuffer, work);
+        const T* val = (vbuffer ? row(r, vbuffer, work) : NULL);
         const auto& indices = work->indices();
-        std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
+        if (ibuffer) {
+            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
+        }
         return SparseRange(indices.size(), val, ibuffer); 
     }
 
@@ -564,7 +584,9 @@ public:
      *
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `ColumnIndexWorkspace::length` values.
+     * Alternatively a null pointer, in which case the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `ColumnIndexWorkspace::length` indices.
+     * Alternatively a null pointer, in which case no copy is made and the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_column_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
@@ -572,9 +594,11 @@ public:
      * `vbuffer` is set as `SparseRange::value`, while `ibuffer` is set as `SparseRange::index`.
      */
     virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, bool sorted = true) const {
-        const T* val = column(c, vbuffer, work);
+        const T* val = (vbuffer ? column(c, vbuffer, work) : NULL);
         const auto& indices = work->indices();
-        std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
+        if (ibuffer) {
+            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
+        }
         return SparseRange(indices.size(), val, ibuffer); 
     }
 
@@ -583,14 +607,18 @@ public:
      **************************************/
 private:
     static void copy_over(SparseRange<T, IDX>& output, T* vbuffer, IDX* ibuffer, SparseCopyMode copy) {
-        if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_INDEX) && output.index != ibuffer) {
-            copy_over(output.index, ibuffer, output.number);
-            output.index = ibuffer;
+        if (ibuffer) {
+            if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_INDEX) && output.index != ibuffer) {
+                copy_over(output.index, ibuffer, output.number);
+                output.index = ibuffer;
+            }
         }
 
-        if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_VALUE) && output.value != vbuffer) {
-            copy_over(output.value, vbuffer, output.number);
-            output.value = vbuffer;
+        if (vbuffer) {
+            if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_VALUE) && output.value != vbuffer) {
+                copy_over(output.value, vbuffer, output.number);
+                output.value = vbuffer;
+            }
         }
     }
     
@@ -598,7 +626,9 @@ public:
     /**
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `ncol()` values.
+     * Alternatively a null pointer, in which case no copy is made and the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `ncol()` indices.
+     * Alternatively a null pointer, in which case no copy is made and the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_row_workspace()`.
      * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
      * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_row()` for details.
@@ -615,7 +645,9 @@ public:
     /**
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `nrow()` values.
+     * Alternatively a null pointer, in which case no copy is made and the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `nrow()` indices.
+     * Alternatively a null pointer, in which case no copy is made and the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_column_workspace()`.
      * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
      * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_column()` for details.
@@ -632,7 +664,9 @@ public:
     /**
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` values.
+     * Alternatively a null pointer, in which case no copy is made and the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` indices.
+     * Alternatively a null pointer, in which case no copy is made and the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_row_workspace()`.
      * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
      * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_row()` for details.
@@ -649,7 +683,9 @@ public:
     /**
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` values.
+     * Alternatively a null pointer, in which case no copy is made and the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` indices.
+     * Alternatively a null pointer, in which case no copy is made and the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_row_workspace()`.
      * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
      * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_column()` for details.
@@ -666,7 +702,9 @@ public:
     /**
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `RowIndexWorkspace::length` values.
+     * Alternatively a null pointer, in which case no copy is made and the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `RowIndexWorkspace::length` indices.
+     * Alternatively a null pointer, in which case no copy is made and the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_row_workspace()`.
      * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
      * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_row()` for details.
@@ -683,7 +721,9 @@ public:
     /**
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `ColumnIndexWorkspace::length` values.
+     * Alternatively a null pointer, in which case no copy is made and the output `value` field is set to `NULL`.
      * @param ibuffer Pointer to an array with enough space for at least `ColumnIndexWorkspace::length` indices.
+     * Alternatively a null pointer, in which case no copy is made and the output `index` field is set to `NULL`.
      * @param work Pointer to a workspace created with `new_row_workspace()`.
      * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
      * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_column()` for details.

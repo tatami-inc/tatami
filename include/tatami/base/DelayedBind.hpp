@@ -290,11 +290,17 @@ private:
                 found = curmat->sparse_column_copy(i, out_values, out_indices, curwork, SPARSE_COPY_BOTH, sorted);
             }
 
-            for (size_t i = 0; i < found.number; ++i) {
-                out_indices[i] += cumulative[m];
+            if (out_indices) {
+                for (size_t i = 0; i < found.number; ++i) {
+                    out_indices[i] += cumulative[m];
+                }
+                out_indices += found.number;
             }
-            out_values += found.number;
-            out_indices += found.number;
+
+            if (out_values) {
+                out_values += found.number;
+            }
+
             total += found.number;
         }
 
@@ -463,11 +469,17 @@ private:
                 found = curmat->sparse_column_copy(i, out_values, out_indices, curwork, SPARSE_COPY_BOTH, sorted);
             }
 
-            for (size_t k = 0; k < found.number; ++k) {
-                out_indices[k] += cumulative[m];
+            if (out_indices) {
+                for (size_t k = 0; k < found.number; ++k) {
+                    out_indices[k] += cumulative[m];
+                }
+                out_indices += found.number;
             }
-            out_values += found.number;
-            out_indices += found.number;
+
+            if (out_values) {
+                out_values += found.number;
+            }
+
             total += found.number;
         }
 

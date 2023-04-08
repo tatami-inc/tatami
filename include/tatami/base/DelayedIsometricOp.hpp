@@ -153,11 +153,13 @@ private:
         return buffer;
     }
 
-    template<class SomeWorkspace> 
+    template<class SomeWorkspace>
     SparseRange<T, IDX> operate_on_row(size_t r, T* vbuffer, IDX* ibuffer, SomeWorkspace* work, bool sorted) const {
         auto raw = mat->sparse_row(r, vbuffer, ibuffer, work, sorted);
-        for (size_t i = 0; i < raw.number; ++i) {
-            vbuffer[i] = operation(r, raw.index[i], raw.value[i]);
+        if (vbuffer) {
+            for (size_t i = 0; i < raw.number; ++i) {
+                vbuffer[i] = operation(r, raw.index[i], raw.value[i]);
+            }
         }
         return SparseRange<T, IDX>(raw.number, vbuffer, raw.index);
     }
@@ -166,23 +168,30 @@ private:
     SparseRange<T, IDX> operate_on_row(size_t r, T* vbuffer, IDX* ibuffer, SomeWorkspace* work, size_t start, size_t end, bool sorted) const {
         if constexpr(OP::sparse) {
             return operate_on_row(r, vbuffer, ibuffer, work, sorted);
-        } else {
-            auto ptr = mat->row(r, vbuffer, work);
-            auto original_vbuffer = vbuffer;
-            auto original_ibuffer = ibuffer;
-            for (size_t i = start; i < end; ++i, ++vbuffer, ++ibuffer, ++ptr) {
-                (*vbuffer) = operation(r, i, *ptr);
-                (*ibuffer) = i;
-            }
-            return SparseRange<T, IDX>(end - start, original_vbuffer, original_ibuffer); 
         }
+
+        if (vbuffer) {
+            auto ptr = mat->row(r, vbuffer, work);
+            auto vcopy = vbuffer;
+            for (size_t i = start; i < end; ++i, ++vcopy, ++ptr) {
+                (*vcopy) = operation(r, i, *ptr);
+            }
+        }
+
+        if (ibuffer) {
+            std::iota(ibuffer, ibuffer + (end - start), start);
+        }
+
+        return SparseRange<T, IDX>(end - start, vbuffer, ibuffer);
     }
 
     template<class SomeWorkspace>
     SparseRange<T, IDX> operate_on_column(size_t c, T* vbuffer, IDX* ibuffer, SomeWorkspace* work, bool sorted) const {
         auto raw = mat->sparse_column(c, vbuffer, ibuffer, work, sorted);
-        for (size_t i = 0; i < raw.number; ++i) {
-            vbuffer[i] = operation(raw.index[i], c, raw.value[i]);
+        if (vbuffer) {
+            for (size_t i = 0; i < raw.number; ++i) {
+                vbuffer[i] = operation(raw.index[i], c, raw.value[i]);
+            }
         }
         return SparseRange<T, IDX>(raw.number, vbuffer, raw.index);
     }
@@ -191,16 +200,21 @@ private:
     SparseRange<T, IDX> operate_on_column(size_t c, T* vbuffer, IDX* ibuffer, SomeWorkspace* work, size_t start, size_t end, bool sorted) const {
         if constexpr(OP::sparse) {
             return operate_on_column(c, vbuffer, ibuffer, work, sorted);
-        } else {
-            auto ptr = mat->column(c, vbuffer, work);
-            auto original_vbuffer = vbuffer;
-            auto original_ibuffer = ibuffer;
-            for (size_t i = start; i < end; ++i, ++vbuffer, ++ibuffer, ++ptr) {
-                (*vbuffer) = operation(i, c, *ptr);
-                (*ibuffer) = i;
-            }
-            return SparseRange<T, IDX>(end - start, original_vbuffer, original_ibuffer); 
         }
+
+        if (vbuffer) {
+            auto ptr = mat->column(c, vbuffer, work);
+            auto vcopy = vbuffer;
+            for (size_t i = start; i < end; ++i, ++vcopy, ++ptr) {
+                (*vcopy) = operation(i, c, *ptr);
+            }
+        }
+
+        if (ibuffer) {
+            std::iota(ibuffer, ibuffer + (end - start), start);
+        }
+
+        return SparseRange<T, IDX>(end - start, vbuffer, ibuffer);
     }
 
 public:
@@ -233,37 +247,47 @@ public:
     SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
         if constexpr(OP::sparse) {
             return operate_on_row(r, vbuffer, ibuffer, work, sorted);
-        } else {
-            auto ptr = mat->row(r, vbuffer, work);
-            const auto& indices = work->indices();
-            size_t len = indices.size();
-
-            auto original_vbuffer = vbuffer;
-            for (size_t i = 0; i < len; ++i, ++vbuffer, ++ptr) {
-                (*vbuffer) = operation(r, indices[i], *ptr);
-            }
-            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with RowIndexWorkspace's indices.
-
-            return SparseRange<T, IDX>(len, original_vbuffer, ibuffer);
         }
+
+        const auto& indices = work->indices();
+        size_t len = indices.size();
+
+        if (vbuffer) {
+            auto ptr = mat->row(r, vbuffer, work);
+            auto vcopy = vbuffer;
+            for (size_t i = 0; i < len; ++i, ++vcopy, ++ptr) {
+                (*vcopy) = operation(r, indices[i], *ptr);
+            }
+        }
+
+        if (ibuffer) {
+            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with RowIndexWorkspace's indices.
+        }
+
+        return SparseRange<T, IDX>(len, vbuffer, ibuffer);
     }
 
     SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
         if constexpr(OP::sparse) {
             return operate_on_column(c, vbuffer, ibuffer, work, sorted);
-        } else {
-            auto ptr = mat->column(c, vbuffer, work);
-            const auto& indices = work->indices();
-            size_t len = indices.size();
-
-            auto original_vbuffer = vbuffer;
-            for (size_t i = 0; i < len; ++i, ++vbuffer, ++ptr) {
-                (*vbuffer) = operation(indices[i], c, *ptr);
-            }
-            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with RowIndexWorkspace's indices.
-
-            return SparseRange<T, IDX>(len, original_vbuffer, ibuffer); 
         }
+
+        const auto& indices = work->indices();
+        size_t len = indices.size();
+
+        if (vbuffer) {
+            auto ptr = mat->column(c, vbuffer, work);
+            auto vcopy = vbuffer;
+            for (size_t i = 0; i < len; ++i, ++vcopy, ++ptr) {
+                (*vcopy) = operation(indices[i], c, *ptr);
+            }
+        }
+
+        if (ibuffer) {
+            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with RowIndexWorkspace's indices.
+        }
+
+        return SparseRange<T, IDX>(len, vbuffer, ibuffer);
     }
 };
 

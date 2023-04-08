@@ -128,40 +128,40 @@ public:
         }
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowWorkspace* work, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowWorkspace* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
-            return mat->sparse_row(block_start + r, out_values, out_indices, work, sorted);
+            return mat->sparse_row(block_start + r, vbuffer, ibuffer, work, sorted);
         } else {
-            return subset_sparse<true>(r, out_values, out_indices, static_cast<AlongWorkspace<true>*>(work)->internal.get(), sorted);
+            return subset_sparse<true>(r, vbuffer, ibuffer, static_cast<AlongWorkspace<true>*>(work)->internal.get(), sorted);
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnWorkspace* work, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnWorkspace* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
-            return subset_sparse<false>(c, out_values, out_indices, static_cast<AlongWorkspace<false>*>(work)->internal.get(), sorted);
+            return subset_sparse<false>(c, vbuffer, ibuffer, static_cast<AlongWorkspace<false>*>(work)->internal.get(), sorted);
         } else {
-            return mat->sparse_column(block_start + c, out_values, out_indices, work, sorted);
+            return mat->sparse_column(block_start + c, vbuffer, ibuffer, work, sorted);
         }
     }
 
 private:
     template<bool WORKROW, class InputWorkspace>
-    SparseRange<T, IDX> subset_sparse(size_t i, T* out_values, IDX* out_indices, InputWorkspace* work, bool sorted) const {
+    SparseRange<T, IDX> subset_sparse(size_t i, T* vbuffer, IDX* ibuffer, InputWorkspace* work, bool sorted) const {
         SparseRange<T, IDX> output;
 
         if constexpr(WORKROW) {
-            output = mat->sparse_row(i, out_values, out_indices, work, sorted);
+            output = mat->sparse_row(i, vbuffer, ibuffer, work, sorted);
         } else {
-            output = mat->sparse_column(i, out_values, out_indices, work, sorted);
+            output = mat->sparse_column(i, vbuffer, ibuffer, work, sorted);
         }
 
-        if (block_start) {
-            if (out_indices != output.index) {
-                std::copy(output.index, output.index + output.number, out_indices);
-                output.index = out_indices;
+        if (block_start && ibuffer) {
+            if (ibuffer != output.index) {
+                std::copy(output.index, output.index + output.number, ibuffer);
+                output.index = ibuffer;
             }
             for (size_t i = 0; i < output.number; ++i) {
-                out_indices[i] -= block_start;
+                ibuffer[i] -= block_start;
             }
         }
 
@@ -215,19 +215,19 @@ public:
         }
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowBlockWorkspace* work, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
-            return mat->sparse_row(block_start + r, out_values, out_indices, work, sorted);
+            return mat->sparse_row(block_start + r, vbuffer, ibuffer, work, sorted);
         } else {
-            return subset_sparse<true>(r, out_values, out_indices, static_cast<AlongBlockWorkspace<true>*>(work)->internal.get(), sorted);
+            return subset_sparse<true>(r, vbuffer, ibuffer, static_cast<AlongBlockWorkspace<true>*>(work)->internal.get(), sorted);
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnBlockWorkspace* work, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
-            return subset_sparse<false>(c, out_values, out_indices, static_cast<AlongBlockWorkspace<false>*>(work)->internal.get(), sorted);
+            return subset_sparse<false>(c, vbuffer, ibuffer, static_cast<AlongBlockWorkspace<false>*>(work)->internal.get(), sorted);
         } else {
-            return mat->sparse_column(block_start + c, out_values, out_indices, work, sorted);
+            return mat->sparse_column(block_start + c, vbuffer, ibuffer, work, sorted);
         }
     }
 
@@ -278,19 +278,19 @@ public:
         }
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
-            return mat->sparse_row(block_start + r, out_values, out_indices, work, sorted);
+            return mat->sparse_row(block_start + r, vbuffer, ibuffer, work, sorted);
         } else {
-            return subset_sparse<true>(r, out_values, out_indices, static_cast<AlongIndexWorkspace<true>*>(work)->internal.get(), sorted);
+            return subset_sparse<true>(r, vbuffer, ibuffer, static_cast<AlongIndexWorkspace<true>*>(work)->internal.get(), sorted);
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
+    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
         if constexpr(MARGIN==0) {
-            return subset_sparse<false>(c, out_values, out_indices, static_cast<AlongIndexWorkspace<false>*>(work)->internal.get(), sorted);
+            return subset_sparse<false>(c, vbuffer, ibuffer, static_cast<AlongIndexWorkspace<false>*>(work)->internal.get(), sorted);
         } else {
-            return mat->sparse_column(block_start + c, out_values, out_indices, work, sorted);
+            return mat->sparse_column(block_start + c, vbuffer, ibuffer, work, sorted);
         }
     }
 

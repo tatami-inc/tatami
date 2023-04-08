@@ -131,6 +131,17 @@ private:
         }
     }
 
+    template<typename X>
+    static X* get_pointer(std::vector<X>& buffer, size_t length, bool use) {
+        if (use) {
+            if (buffer.empty()) {
+                buffer.resize(length);
+            }
+            return buffer.data();
+        }
+        return NULL;
+    }
+
     template<bool WORKROW, class InputWorkspace>
     SparseRange<T_out, IDX_out> cast_sparse(size_t i, T_out* vbuffer, IDX_out* ibuffer, size_t length, InputWorkspace* work) const {
         if constexpr(same_T_type) {
@@ -140,41 +151,57 @@ private:
                 } else {
                     return ptr->sparse_column(i, vbuffer, ibuffer, work->internal.get());
                 }
+
             } else {
-                if (work->ibuffer.empty()) {
-                    work->ibuffer.resize(length);
-                }
+                IDX_in* iin = get_pointer(work->ibuffer, length, ibuffer);
+
                 SparseRange<T_in, IDX_in> out;
                 if constexpr(WORKROW) {
-                    out = ptr->sparse_row(i, vbuffer, work->ibuffer.data(), work->internal.get());
+                    out = ptr->sparse_row(i, vbuffer, iin, work->internal.get());
                 } else {
-                    out = ptr->sparse_column(i, vbuffer, work->ibuffer.data(), work->internal.get());
+                    out = ptr->sparse_column(i, vbuffer, iin, work->internal.get());
                 }
-                std::copy(out.index, out.index + out.number, ibuffer);
+
+                if (ibuffer) {
+                    std::copy(out.index, out.index + out.number, ibuffer);
+                }
+
                 return SparseRange<T_out, IDX_out>(out.number, out.value, ibuffer);
             }
+
         } else {
+            T_in* vin = (vbuffer ? work->vbuffer.data() : NULL);
+
             if constexpr(same_IDX_type) {
                 SparseRange<T_in, IDX_in> out;
                 if constexpr(WORKROW) {
-                    out = ptr->sparse_row(i, work->vbuffer.data(), ibuffer, work->internal.get());
+                    out = ptr->sparse_row(i, vin, ibuffer, work->internal.get());
                 } else {
-                    out = ptr->sparse_column(i, work->vbuffer.data(), ibuffer, work->internal.get());
+                    out = ptr->sparse_column(i, vin, ibuffer, work->internal.get());
                 }
-                std::copy(out.value, out.value + out.number, vbuffer);
+
+                if (vbuffer) {
+                    std::copy(out.value, out.value + out.number, vbuffer);
+                }
                 return SparseRange<T_out, IDX_out>(out.number, vbuffer, out.index);
+
             } else {
-                if (work->ibuffer.empty()) {
-                    work->ibuffer.resize(length);
-                }
+                IDX_in* iin = get_pointer(work->ibuffer, length, ibuffer);
+
                 SparseRange<T_in, IDX_in> out;
                 if constexpr(WORKROW) {
-                    out = ptr->sparse_row(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get());
+                    out = ptr->sparse_row(i, vin, iin, work->internal.get());
                 } else {
-                    out = ptr->sparse_column(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get());
+                    out = ptr->sparse_column(i, vin, iin, work->internal.get());
                 }
-                std::copy(out.value, out.value + out.number, vbuffer);
-                std::copy(out.index, out.index + out.number, ibuffer);
+
+                if (vbuffer) {
+                    std::copy(out.value, out.value + out.number, vbuffer);
+                }
+                if (ibuffer) {
+                    std::copy(out.index, out.index + out.number, ibuffer);
+                }
+
                 return SparseRange<T_out, IDX_out>(out.number, vbuffer, ibuffer);
             }
         }

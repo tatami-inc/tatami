@@ -384,20 +384,28 @@ private:
         auto obtained = primary_dimension(i, start, length, otherdim, work);
         SparseRange<T, IDX> output(obtained.second);
 
-        if constexpr(has_data<T, U>::value) {
-            output.value = values.data() + obtained.first;
+        if (out_values) {
+            if constexpr(has_data<T, U>::value) {
+                output.value = values.data() + obtained.first;
+            } else {
+                auto vIt = values.begin() + obtained.first;
+                std::copy(vIt, vIt + obtained.second, out_values);
+                output.value = out_values;
+            }
         } else {
-            auto vIt = values.begin() + obtained.first;
-            std::copy(vIt, vIt + obtained.second, out_values);
-            output.value = out_values;
+            output.value = NULL;
         }
 
-        if constexpr(has_data<IDX, V>::value) {
-            output.index = indices.data() + obtained.first;
+        if (out_indices) {
+            if constexpr(has_data<IDX, V>::value) {
+                output.index = indices.data() + obtained.first;
+            } else {
+                auto iIt = indices.begin() + obtained.first;
+                std::copy(iIt, iIt + obtained.second, out_indices);
+                output.index = out_indices;
+            }
         } else {
-            auto iIt = indices.begin() + obtained.first;
-            std::copy(iIt, iIt + obtained.second, out_indices);
-            output.index = out_indices;
+            output.index = NULL;
         }
 
         return output;
@@ -429,6 +437,18 @@ private:
         // holding 1-past-the-immediately-below-index; if it is zero,
         // nothing remaings below 'curptr'.
         return (curptr > indptrs[pos] ? indices[curptr - 1] + 1 : 0);
+    }
+
+    template<class Store>
+    void add_to_store(size_t primary, size_t curptr, Store& output) const {
+        // If the value isn't actually needed, we don't want to do a look-up on 'values'.
+        if constexpr(Store::can_ignore_values) {
+            if (output.ignore_values()) {
+                output.add(primary);
+                return;
+            }
+        }
+        output.add(primary, values[curptr]);
     }
 
     template<class Store>
@@ -479,7 +499,7 @@ private:
         }
 
         if (secondary == curdex) { // assuming secondary < max_index, of course.
-            output.add(primary, values[curptr]);
+            add_to_store(primary, curptr, output);
         } else {
             output.skip(primary);
         }
@@ -526,7 +546,7 @@ private:
         }
 
         if (secondary == curdex) { // assuming i < max_index, of course.
-            output.add(primary, values[curptr]);
+            add_to_store(primary, curptr, output);
         } else {
             output.skip(primary);
         }
@@ -559,18 +579,43 @@ private:
         return;
     }
 
+    // Overview of the Store contract:
     struct raw_store {
         T* out_values;
         IDX* out_indices;
         size_t n = 0;
-        void add(IDX i, T val) {
+
+        // Whether or not 'values' might be ignored, typically
+        // because a NULL pointer is supplied in the 'vbuffer'
+        static constexpr bool can_ignore_values = true;
+
+        // If 'can_ignore_values = true', we need this method
+        // to define whether the values are ignored for this instance.
+        bool ignore_values() const {
+            return !out_values;
+        }
+
+        // If 'can_ignore_values = true', we need this method to handle
+        // hits, but _without_ a costly fetch of the value from memory.
+        void add(IDX i) {
             ++n;
-            *out_indices = i;
-            ++out_indices;
+            if (out_indices) {
+                *out_indices = i;
+                ++out_indices;
+            }
+        }
+
+        // Storing a hit in terms of its index and its value. If 'can_ignore_values = true',
+        // it can be assumed that 'skip_values()' is false if this method is called. Note 
+        // that add() and skip() is always called on indices in increasing order.
+        void add(IDX i, T val) {
+            add(i);
             *out_values = val;
             ++out_values;
             return;
         }
+
+        // Skip an index if it isn't found in the data. 
         void skip(IDX) {} 
     };
 
@@ -585,10 +630,14 @@ private:
     struct expanded_store {
         T* out_values;
         IDX first;
+
+        static constexpr bool can_ignore_values = false;
+
         void add(IDX i, T val) {
             out_values[i - first] = val;
             return;
         }
+
         void skip(IDX) {} 
     };
 
@@ -726,7 +775,7 @@ private:
             }
 
             if (current == *iIt) {
-                store.add(current, values[iIt - indices.begin()]);
+                add_to_store(current, iIt - indices.begin(), store);
             } else {
                 store.skip(current);
             }
@@ -746,11 +795,15 @@ private:
 
     struct expanded_store2 {
         T* out_values;
+
+        static constexpr bool can_ignore_values = false;
+
         void add(IDX, T val) {
             *out_values = val;
             ++out_values;
             return;
         }
+
         void skip(IDX) {
             ++out_values;
         }

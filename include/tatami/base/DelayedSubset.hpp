@@ -173,11 +173,13 @@ public:
 
 private:
     SparseRange<T, IDX> remap_indices(const SparseRange<T, IDX>& raw, IDX* ibuffer) const {
-        auto originali = ibuffer;
-        for (size_t i = 0; i < raw.number; ++i, ++ibuffer) {
-            *ibuffer = mapping_single[raw.index[i]];
+        if (ibuffer) {
+            auto icopy = ibuffer;
+            for (size_t i = 0; i < raw.number; ++i, ++icopy) {
+                *icopy = mapping_single[raw.index[i]];
+            }
         }
-        return SparseRange<T, IDX>(raw.number, raw.value, originali);
+        return SparseRange<T, IDX>(raw.number, raw.value, ibuffer);
     }
 
 public:
@@ -379,6 +381,17 @@ const T* extract_dense(const Matrix<T, IDX>* mat, size_t i, T* buffer, InputWork
     return buffer;
 }
 
+template<typename X>
+X* get_pointer(std::vector<X>& buffer, size_t length, bool use) {
+    if (use) {
+        if (buffer.empty()) {
+            buffer.resize(length);
+        }
+        return buffer.data();
+    }
+    return NULL;
+}
+
 template<bool WORKROW, typename T, typename IDX, class InputWorkspace>
 SparseRange<T, IDX> extract_sparse(
     const Matrix<T, IDX>* mat, 
@@ -390,31 +403,37 @@ SparseRange<T, IDX> extract_sparse(
     const std::vector<IDX>& pool,
     bool sorted)
 {
-    if (work->ibuffer.empty()) {
-        work->ibuffer.resize(work->vbuffer.size());
-    }
+    T* vin = (vbuffer ? work->vbuffer.data() : NULL);
+    auto iin = get_pointer(work->ibuffer, work->vbuffer.size(), ibuffer);
 
     SparseRange<T, IDX> raw;
     if constexpr(WORKROW) {
-        raw = mat->sparse_row(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get(), sorted);
+        raw = mat->sparse_row(i, vin, iin, work->internal.get(), sorted);
     } else {
-        raw = mat->sparse_column(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get(), sorted);
+        raw = mat->sparse_column(i, vin, iin, work->internal.get(), sorted);
     }
 
-    auto originalv = vbuffer;
-    auto originali = ibuffer;
+    auto vcopy = vbuffer;
+    auto icopy = ibuffer;
     size_t counter = 0;
 
     for (size_t i = 0; i < raw.number; ++i) {
         const auto& pool_pos = dups[raw.index[i]];
-        size_t pool_end = pool_pos.first + pool_pos.second;
-        for (size_t j = pool_pos.first; j < pool_end; ++j, ++counter, ++vbuffer, ++ibuffer) {
-            *vbuffer = raw.value[i];
-            *ibuffer = pool[j];
+        counter += pool_pos.second;
+
+        if (vcopy) {
+            std::fill(vcopy, vcopy + pool_pos.second, raw.value[i]);
+            vcopy += pool_pos.second;
+        }
+
+        if (icopy) {
+            auto istart = pool.begin() + pool_pos.first;
+            std::copy(istart, istart + pool_pos.second, icopy);
+            icopy += pool_pos.second;
         }
     }
 
-    return SparseRange<T, IDX>(counter, originalv, originali);
+    return SparseRange<T, IDX>(counter, vbuffer, ibuffer);
 }
 
 }
@@ -1027,46 +1046,69 @@ private:
     SparseRange<T, IDX> extract_sparse(size_t i, T* vbuffer, IDX* ibuffer, InputWorkspace* work, bool sorted) const {
         SparseRange<T, IDX> raw;
 
-        if (work->ibuffer.empty()) {
-            work->ibuffer.resize(work->vbuffer.size());
-        }
+        {
+            T* vin = (vbuffer ? work->vbuffer.data() : NULL);
 
-        // no need for sorting if it's unsorted, as we'll need to sort again anyway.
-        if constexpr(WORKROW) {
-            raw = mat->sparse_row(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get(), false);
-        } else {
-            raw = mat->sparse_column(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get(), false);
-        }
+            // Indices must be available if we want sorted output for the values.
+            IDX* iin = subset_utils::get_pointer(work->ibuffer, work->vbuffer.size(), ibuffer || (sorted && vbuffer));
 
-        if (!sorted) {
-            auto originali = ibuffer;
-            auto originalv = vbuffer;
-            for (size_t i = 0; i < raw.number; ++i, ++ibuffer, ++vbuffer) {
-                *ibuffer = mapping_single[raw.index[i]];
-                *vbuffer = raw.value[i];
+            // No need for sorting if it's unsorted, as we'll need to sort again anyway.
+            if constexpr(WORKROW) {
+                raw = mat->sparse_row(i, vin, iin, work->internal.get(), false);
+            } else {
+                raw = mat->sparse_column(i, vin, iin, work->internal.get(), false);
             }
-            return SparseRange<T, IDX>(raw.number, originalv, originali);
+        }
+
+        if (!sorted || (!ibuffer && !vbuffer)) {
+            if (vbuffer) {
+                std::copy(raw.value, raw.value + raw.number, vbuffer);
+            }
+
+            if (ibuffer) {
+                auto icopy = ibuffer;
+                for (size_t i = 0; i < raw.number; ++i, ++icopy) {
+                    *icopy = mapping_single[raw.index[i]];
+                }
+            }
+
+            return SparseRange<T, IDX>(raw.number, vbuffer, ibuffer);
         }
 
         auto& sortspace = work->sortspace;
         sortspace.clear();
         sortspace.reserve(raw.number);
-        for (size_t i = 0; i < raw.number; ++i) {
-            sortspace.emplace_back(mapping_single[raw.index[i]], raw.value[i]);
-        }
 
-        auto originalv = vbuffer;
-        auto originali = ibuffer;
+        // raw.index is guaranteed to be valid if sorted=true and either ibuffer or vbuffer is valid.
+        if (raw.value) {
+            for (size_t i = 0; i < raw.number; ++i) {
+                sortspace.emplace_back(mapping_single[raw.index[i]], raw.value[i]);
+            }
+        } else {
+            for (size_t i = 0; i < raw.number; ++i) {
+                sortspace.emplace_back(mapping_single[raw.index[i]], 0);
+            }
+        }
 
         std::sort(sortspace.begin(), sortspace.end());
-        for (const auto& x : sortspace) {
-            *vbuffer = x.second;
-            *ibuffer = x.first;
-            ++vbuffer;
-            ++ibuffer;
+
+        if (vbuffer) {
+            auto vcopy = vbuffer;
+            for (const auto& x : sortspace) {
+                *vcopy = x.second;
+                ++vcopy;
+            }
         }
 
-        return SparseRange<T, IDX>(raw.number, originalv, originali);
+        if (ibuffer) {
+            auto icopy = ibuffer;
+            for (const auto& x : sortspace) {
+                *icopy = x.first;
+                ++icopy;
+            }
+        }
+
+        return SparseRange<T, IDX>(raw.number, vbuffer, ibuffer);
     }
 
 public:
@@ -1498,40 +1540,57 @@ private:
         }
 
         SparseRange<T, IDX> raw;
-        if (work->ibuffer.empty()) {
-            work->ibuffer.resize(work->vbuffer.size());
-        }
 
-        // no need for sorting if it's unsorted, as we'll need to sort again anyway.
+        T* vin = (vbuffer ? work->vbuffer.data() : NULL);
+
+        // Indices must be available if we want sorted output for the values.
+        IDX* iin = subset_utils::get_pointer(work->ibuffer, work->vbuffer.size(), ibuffer || vbuffer);
+
+        // No need for sorting if it's unsorted, as we'll need to sort again anyway.
         if constexpr(WORKROW) {
-            raw = mat->sparse_row(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get(), false);
+            raw = mat->sparse_row(i, vin, iin, work->internal.get(), false);
         } else {
-            raw = mat->sparse_column(i, work->vbuffer.data(), work->ibuffer.data(), work->internal.get(), false);
+            raw = mat->sparse_column(i, vin, iin, work->internal.get(), false);
         }
 
         auto& sortspace = work->sortspace;
         sortspace.clear();
         sortspace.reserve(indices.size());
+
         for (size_t i = 0; i < raw.number; ++i) {
             const auto& pool_pos = dups[raw.index[i]];
             size_t pool_end = pool_pos.first + pool_pos.second;
-            for (size_t j = pool_pos.first; j < pool_end; ++j) {
-                sortspace.emplace_back(pool[j], raw.value[i]);
+
+            if (raw.value) {
+                for (size_t j = pool_pos.first; j < pool_end; ++j) {
+                    sortspace.emplace_back(pool[j], raw.value[i]);
+                }
+            } else {
+                for (size_t j = pool_pos.first; j < pool_end; ++j) {
+                    sortspace.emplace_back(pool[j], 0);
+                }
             }
         }
 
-        auto originalv = vbuffer;
-        auto originali = ibuffer;
-
         std::sort(sortspace.begin(), sortspace.end());
-        for (const auto& x : sortspace) {
-            *vbuffer = x.second;
-            *ibuffer = x.first;
-            ++vbuffer;
-            ++ibuffer;
+
+        if (ibuffer) {
+            auto icopy = ibuffer;
+            for (const auto& x : sortspace) {
+                *icopy= x.first;
+                ++icopy;
+            }
         }
 
-        return SparseRange<T, IDX>(sortspace.size(), originalv, originali);
+        if (vbuffer) {
+            auto vcopy = vbuffer;
+            for (const auto& x : sortspace) {
+                *vcopy = x.second;
+                ++vcopy;
+            }
+        }
+
+        return SparseRange<T, IDX>(sortspace.size(), vbuffer, ibuffer);
     }
 
 public:
