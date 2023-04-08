@@ -225,7 +225,7 @@ typedef SparseBlockWorkspace<false> SparseColumnBlockWorkspace;
  * Developers of `Matrix` implementations should define workspaces that inherit from this class's derived subclasses for dense/sparse extraction.
  */
 template<typename IDX, bool ROW>
-class IndexWorkspace : public Workspace<ROW> {
+class IndexWorkspace : public Workspace {
 protected:
     /**
      * @cond
