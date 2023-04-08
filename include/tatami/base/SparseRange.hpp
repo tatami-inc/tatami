@@ -104,6 +104,23 @@ inline bool sparse_extract_index(SparseExtractMode m) {
 inline bool sparse_extract_value(SparseExtractMode m) {
     return m == SparseExtractMode::BOTH || m == SparseExtractMode::VALUE;
 }
+
+template<typename T, typename IDX>
+void nullify_sparse_extract_pointers(SparseExtractMode m, T*& vbuffer, IDX*& ibuffer) {
+    switch (m) {
+        case SparseExtractMode::NONE:
+            vbuffer = NULL;
+            ibuffer = NULL;
+            break;
+        case SparseExtractMode::INDEX:
+            vbuffer = NULL;
+            break;
+        case SparseExtractMode::VALUE:
+            ibuffer = NULL;
+            break;
+    }
+}
+
 /**
  * @endcond
  */

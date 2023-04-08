@@ -135,16 +135,22 @@ public:
 
     using Matrix<T, IDX>::column;
 
-    using Matrix<T, IDX>::sparse_row;
+    using Matrix<T, IDX>::dense_row_workspace;
 
-    using Matrix<T, IDX>::sparse_column;
+    using Matrix<T, IDX>::dense_column_workspace;
+
+    using Matrix<T, IDX>::sparse_row_workspace;
+
+    using Matrix<T, IDX>::sparse_column_workspace;
 
 private:
     struct SecondaryWorkspaceBase {
         typedef typename std::remove_reference<decltype(std::declval<W>()[0])>::type indptr_type;
         typedef typename std::remove_reference<decltype(std::declval<V>()[0])>::type index_type;
 
-        SecondaryWorkspaceBase(size_t max_index, const V& idx, const W& idp, size_t start, size_t length) : current_indptrs(idp.begin() + start, idp.begin() + start + length), current_indices(length) {
+        SecondaryWorkspaceBase(size_t max_index, const V& idx, const W& idp, size_t start, size_t length) : 
+            current_indptrs(idp.begin() + start, idp.begin() + start + length), current_indices(length) 
+        {
             /* Here, the general idea is to store a local copy of the actual
              * row indices (for CSC matrices; column indices, for CSR matrices)
              * so that we don't have to keep on doing cache-unfriendly look-ups
@@ -159,6 +165,8 @@ private:
             }
             return;
         } 
+
+        SecondaryWorkspaceBase(size_t max_index, const V& idx, const W& idp) : SecondaryWorkspaceBase(max_index, idx, idp, 0, idp.size() - 1) {}
 
         SecondaryWorkspaceBase(size_t max_index, const V& idx, const W& idp, const std::vector<IDX>& subset) : current_indptrs(subset.size()), current_indices(subset.size()) {
             for (size_t i0 = 0, end = subset.size(); i0 < end; ++i0) {
@@ -188,44 +196,48 @@ public:
     /**
      * @cond
      */
-    struct CompressedSparseSecondaryWorkspace : public Workspace<!ROW> {
-        CompressedSparseSecondaryWorkspace(size_t max_index, const V& idx, const W& idp) : core(max_index, idx, idp, 0, idp.size() - 1) {}
+    struct CompressedSparsePrimaryDenseWorkspace : public DenseWorkspace<ROW> {
+        CompressedSparsePrimaryDenseWorkspace() = default;
+    };
+
+    struct CompressedSparseSecondaryDenseWorkspace : public DenseWorkspace<!ROW> {
+        CompressedSparseSecondaryDenseWorkspace(size_t max_index, const V& idx, const W& idp) : core(max_index, idx, idp) {}
         SecondaryWorkspaceBase core;
     };
 
-    static SecondaryWorkspaceBase& extract_secondary_core(Workspace<!ROW>* wrk) {
-        return static_cast<CompressedSparseSecondaryWorkspace*>(wrk)->core;
+    static SecondaryWorkspaceBase& extract_secondary_core(DenseWorkspace<!ROW>* wrk) {
+        return static_cast<CompressedSparseSecondaryDenseWorkspace*>(wrk)->core;
     }
     /**
      * @endcond
      */
 
-    std::shared_ptr<RowWorkspace> new_row_workspace(bool = false) const {
+    std::shared_ptr<DenseRowWorkspace> dense_row_workspace(const WorkspaceOptions&) const {
         if constexpr(ROW) {
-            return nullptr; // you never need caching here, as the pointers contain the start.
+            return std::shared_ptr<DenseRowWorkspace>(new CompressedSparsePrimaryDenseWorkspace());
         } else {
-            return std::shared_ptr<RowWorkspace>(new CompressedSparseSecondaryWorkspace(nrows, indices, indptrs));
+            return std::shared_ptr<DenseRowWorkspace>(new CompressedSparseSecondaryDenseWorkspace(nrows, indices, indptrs));
         }
     }
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool = false) const {
+    std::shared_ptr<DenseColumnWorkspace> dense_column_workspace(const WorkspaceOptions&) const {
         if constexpr(ROW) {
-            return std::shared_ptr<ColumnWorkspace>(new CompressedSparseSecondaryWorkspace(ncols, indices, indptrs));
+            return std::shared_ptr<DenseColumnWorkspace>(new CompressedSparseSecondaryDenseWorkspace(ncols, indices, indptrs));
         } else {
-            return nullptr; // you never need caching here, as the pointers contain the start.
+            return std::shared_ptr<DenseColumnWorkspace>(new CompressedSparsePrimaryDenseWorkspace());
         }
     }
 
-    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
+    const T* row(size_t r, T* buffer, DenseRowWorkspace* work) const {
         if constexpr(ROW) {
-             primary_dimension_expanded(r, 0, ncols, ncols, nullptr, buffer);
+            primary_dimension_expanded(r, 0, ncols, ncols, nullptr, buffer);
         } else {
             secondary_dimension_expanded(r, 0, ncols, extract_secondary_core(work), buffer);
         }
         return buffer;
     }
 
-    const T* column(size_t c, T* buffer, ColumnWorkspace* work) const {
+    const T* column(size_t c, T* buffer, DenseColumnWorkspace* work) const {
         if constexpr(ROW) {
             secondary_dimension_expanded(c, 0, nrows, extract_secondary_core(work), buffer);
         } else {
@@ -234,8 +246,48 @@ public:
         return buffer;
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowWorkspace* work, bool sorted=true) const {
-        // It's always sorted anyway, no need to pass along 'sorted'.
+public:
+    /**
+     * @cond
+     */
+    struct CompressedSparsePrimarySparseWorkspace : public SparseWorkspace<ROW> {
+        CompressedSparsePrimarySparseWorkspace(const WorkspaceOptions& opt) : SparseWorkspace<ROW>(opt.mode, opt.sorted) {}
+    };
+
+    struct CompressedSparseSecondarySparseWorkspace : public SparseWorkspace<!ROW> {
+        CompressedSparseSecondarySparseWorkspace(const WorkspaceOptions& opt, size_t max_index, const V& idx, const W& idp) : 
+            SparseWorkspace<!ROW>(opt.mode, opt.sorted), core(max_index, idx, idp) {}
+
+        SecondaryWorkspaceBase core;
+    };
+
+    static SecondaryWorkspaceBase& extract_secondary_core(SparseWorkspace<!ROW>* wrk) {
+        return static_cast<CompressedSparseSecondarySparseWorkspace*>(wrk)->core;
+    }
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<SparseRowWorkspace> sparse_row_workspace(const WorkspaceOptions& opt) const {
+        if constexpr(ROW) {
+            return std::shared_ptr<SparseRowWorkspace>(new CompressedSparsePrimarySparseWorkspace(opt));
+        } else {
+            return std::shared_ptr<SparseRowWorkspace>(new CompressedSparseSecondarySparseWorkspace(opt, nrows, indices, indptrs));
+        }
+    }
+
+    std::shared_ptr<SparseColumnWorkspace> sparse_column_workspace(const WorkspaceOptions& opt) const {
+        if constexpr(ROW) {
+            return std::shared_ptr<SparseColumnWorkspace>(new CompressedSparseSecondarySparseWorkspace(opt, ncols, indices, indptrs));
+        } else {
+            return std::shared_ptr<SparseColumnWorkspace>(new CompressedSparsePrimarySparseWorkspace(opt));
+        }
+    }
+
+    SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowWorkspace* work) const {
+        nullify_sparse_extract_pointers(work->mode, vbuffer, ibuffer);
+
+        // It's always sorted anyway, no need to consider along 'sorted'.
         if constexpr(ROW) {
             return primary_dimension_raw(r, 0, ncols, ncols, nullptr, vbuffer, ibuffer);
         } else {
@@ -243,7 +295,9 @@ public:
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnWorkspace* work, bool sorted=true) const {
+    SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnWorkspace* work) const {
+        nullify_sparse_extract_pointers(work->mode, vbuffer, ibuffer);
+
         // It's always sorted anyway, no need to pass along 'sorted'.
         if constexpr(ROW) {
             return secondary_dimension_raw(c, 0, nrows, extract_secondary_core(work), vbuffer, ibuffer); 
@@ -261,55 +315,49 @@ public:
         std::vector<std::pair<size_t, size_t> > cached;
     };
 
-    struct CompressedSparsePrimaryBlockWorkspace : public BlockWorkspace<ROW> {
-        CompressedSparsePrimaryBlockWorkspace(size_t s, size_t l, size_t cache_size) : details(s, l), core(cache_size) {}
-
-        std::pair<size_t, size_t> details;
-        const std::pair<size_t, size_t>& block() const { return details; }
+    struct CompressedSparsePrimaryDenseBlockWorkspace : public DenseBlockWorkspace<ROW> {
+        CompressedSparsePrimaryDenseBlockWorkspace(size_t s, size_t l, const WorkspaceOptions& opt, size_t maxdim) : 
+            DenseBlockWorkspace<ROW>(s, l), core(opt.cache ? maxdim : 0) {}
 
         PrimaryBlockWorkspaceBase core;
     };
 
-    struct CompressedSparseSecondaryBlockWorkspace : public BlockWorkspace<!ROW> {
-        CompressedSparseSecondaryBlockWorkspace(size_t s, size_t l, size_t max_index, const V& idx, const W& idp) : 
-            details(s, l), core(max_index, idx, idp, s, l) {}
-
-        std::pair<size_t, size_t> details;
-        const std::pair<size_t, size_t>& block() const { return details; }
+    struct CompressedSparseSecondaryDenseBlockWorkspace : public DenseBlockWorkspace<!ROW> {
+        CompressedSparseSecondaryDenseBlockWorkspace(size_t s, size_t l, size_t max_index, const V& idx, const W& idp) : 
+            DenseBlockWorkspace<!ROW>(s, l), core(max_index, idx, idp, s, l) {}
 
         SecondaryWorkspaceBase core;
     };
 
-    static PrimaryBlockWorkspaceBase& extract_primary_core(BlockWorkspace<ROW>* wrk) {
-        return static_cast<CompressedSparsePrimaryBlockWorkspace*>(wrk)->core;
+    static PrimaryBlockWorkspaceBase& extract_primary_core(DenseBlockWorkspace<ROW>* wrk) {
+        return static_cast<CompressedSparsePrimaryDenseBlockWorkspace*>(wrk)->core;
     }
 
-    static SecondaryWorkspaceBase& extract_secondary_core(BlockWorkspace<!ROW>* wrk) {
-        return static_cast<CompressedSparseSecondaryBlockWorkspace*>(wrk)->core;
+    static SecondaryWorkspaceBase& extract_secondary_core(DenseBlockWorkspace<!ROW>* wrk) {
+        return static_cast<CompressedSparseSecondaryDenseBlockWorkspace*>(wrk)->core;
     }
     /**
      * @endcond
      */
 
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length, bool cache = false) const { 
+    std::shared_ptr<DenseRowBlockWorkspace> dense_row_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const { 
         if constexpr(ROW) {
-            return std::shared_ptr<RowBlockWorkspace>(new CompressedSparsePrimaryBlockWorkspace(start, length, cache ? nrows : 0));
+            return std::shared_ptr<DenseRowBlockWorkspace>(new CompressedSparsePrimaryDenseBlockWorkspace(start, length, opt, nrows));
         } else {
-            return std::shared_ptr<RowBlockWorkspace>(new CompressedSparseSecondaryBlockWorkspace(start, length, nrows, indices, indptrs));
+            return std::shared_ptr<DenseRowBlockWorkspace>(new CompressedSparseSecondaryDenseBlockWorkspace(start, length, nrows, indices, indptrs));
         }
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length, bool cache = false) const { 
+    std::shared_ptr<DenseColumnBlockWorkspace> dense_column_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const { 
         if constexpr(ROW) {
-            return std::shared_ptr<ColumnBlockWorkspace>(new CompressedSparseSecondaryBlockWorkspace(start, length, ncols, indices, indptrs));
+            return std::shared_ptr<DenseColumnBlockWorkspace>(new CompressedSparseSecondaryDenseBlockWorkspace(start, length, ncols, indices, indptrs));
         } else {
-            return std::shared_ptr<ColumnBlockWorkspace>(new CompressedSparsePrimaryBlockWorkspace(start, length, cache ? ncols : 0));
+            return std::shared_ptr<DenseColumnBlockWorkspace>(new CompressedSparsePrimaryDenseBlockWorkspace(start, length, opt, ncols));
         }
     }
 
-    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
-        const auto& deets = work->block();
-        size_t start = deets.first, len = deets.second;
+    const T* row(size_t r, T* buffer, DenseRowBlockWorkspace* work) const {
+        size_t start = work->start, len = work->length;
         if constexpr(ROW) {
             primary_dimension_expanded(r, start, len, ncols, &(extract_primary_core(work)), buffer);
         } else {
@@ -318,9 +366,8 @@ public:
         return buffer;
     }
 
-    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
-        const auto& deets = work->block();
-        size_t start = deets.first, len = deets.second;
+    const T* column(size_t c, T* buffer, DenseColumnBlockWorkspace* work) const {
+        size_t start = work->start, len = work->length;
         if constexpr(ROW) {
             secondary_dimension_expanded(c, start, len, extract_secondary_core(work), buffer);
         } else {
@@ -329,19 +376,66 @@ public:
         return buffer;
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work, bool sorted = true) const {
-        const auto& deets = work->block();
-        size_t start = deets.first, len = deets.second;
+public:
+    /**
+     * @cond
+     */
+    struct CompressedSparsePrimarySparseBlockWorkspace : public SparseBlockWorkspace<ROW> {
+        CompressedSparsePrimarySparseBlockWorkspace(size_t s, size_t l, const WorkspaceOptions& opt, size_t maxdim) : 
+            SparseBlockWorkspace<ROW>(s, l, opt.mode, opt.sorted), core(opt.cache ? maxdim : 0) {}
+
+        PrimaryBlockWorkspaceBase core;
+    };
+
+    struct CompressedSparseSecondarySparseBlockWorkspace : public SparseBlockWorkspace<!ROW> {
+        CompressedSparseSecondarySparseBlockWorkspace(size_t s, size_t l, const WorkspaceOptions& opt, size_t max_index, const V& idx, const W& idp) : 
+            SparseBlockWorkspace<!ROW>(s, l, opt.mode, opt.sorted), core(max_index, idx, idp, s, l) {}
+
+        SecondaryWorkspaceBase core;
+    };
+
+    static PrimaryBlockWorkspaceBase& extract_primary_core(SparseBlockWorkspace<ROW>* wrk) {
+        return static_cast<CompressedSparsePrimarySparseBlockWorkspace*>(wrk)->core;
+    }
+
+    static SecondaryWorkspaceBase& extract_secondary_core(SparseBlockWorkspace<!ROW>* wrk) {
+        return static_cast<CompressedSparseSecondarySparseBlockWorkspace*>(wrk)->core;
+    }
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<SparseRowBlockWorkspace> sparse_row_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const { 
         if constexpr(ROW) {
-            return primary_dimension_raw(r, start, len, ncols, &(extract_primary_core(work)), vbuffer, ibuffer);
+            return std::shared_ptr<SparseRowBlockWorkspace>(new CompressedSparsePrimarySparseBlockWorkspace(start, length, opt, nrows));
         } else {
-            return secondary_dimension_raw(r, start, len, extract_secondary_core(work), vbuffer, ibuffer);
+            return std::shared_ptr<SparseRowBlockWorkspace>(new CompressedSparseSecondarySparseBlockWorkspace(start, length, opt, nrows, indices, indptrs));
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted = true) const {
-        const auto& deets = work->block();
-        size_t start = deets.first, len = deets.second;
+    std::shared_ptr<SparseColumnBlockWorkspace> sparse_column_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const { 
+        if constexpr(ROW) {
+            return std::shared_ptr<SparseColumnBlockWorkspace>(new CompressedSparseSecondarySparseBlockWorkspace(start, length, opt, ncols, indices, indptrs));
+        } else {
+            return std::shared_ptr<SparseColumnBlockWorkspace>(new CompressedSparsePrimarySparseBlockWorkspace(start, length, opt, ncols));
+        }
+    }
+
+    SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowBlockWorkspace* work) const {
+        size_t start = work->start, len = work->length;
+        nullify_sparse_extract_pointers(work->mode, vbuffer, ibuffer);
+
+        if constexpr(ROW) {
+            return primary_dimension_raw(r, start, len, ncols, &(extract_primary_core(work)), vbuffer, ibuffer);
+        } else {
+            return secondary_dimension_raw(r, start, len, extract_secondary_core(work), vbuffer, ibuffer); 
+        }
+    }
+
+    SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnBlockWorkspace* work) const {
+        size_t start = work->start, len = work->length;
+        nullify_sparse_extract_pointers(work->mode, vbuffer, ibuffer);
+
         if constexpr(ROW) {
             return secondary_dimension_raw(c, start, len, extract_secondary_core(work), vbuffer, ibuffer);
         } else {
@@ -659,8 +753,9 @@ public:
         std::vector<size_t> starts;
     };
 
-    struct CompressedSparsePrimaryIndexWorkspace : public IndexWorkspace<IDX, ROW> {
-        CompressedSparsePrimaryIndexWorkspace(std::vector<IDX> subset, size_t cache_size) : core(cache_size), indices_(std::move(subset)) {}
+    struct CompressedSparsePrimaryDenseIndexWorkspace : public DenseIndexWorkspace<IDX, ROW> {
+        CompressedSparsePrimaryDenseIndexWorkspace(std::vector<IDX> subset, const WorkspaceOptions& opt, size_t maxdim) : 
+            DenseIndexWorkspace<IDX, ROW>(subset.size()), core(opt.cache ? maxdim : 0), indices_(std::move(subset)) {}
 
         PrimaryIndexedWorkspaceBase core;
 
@@ -668,9 +763,9 @@ public:
         const std::vector<IDX>& indices() const { return indices_; }
     };
 
-    struct CompressedSparseSecondaryIndexWorkspace : public IndexWorkspace<IDX, !ROW> {
-        CompressedSparseSecondaryIndexWorkspace(std::vector<IDX> subset, size_t max_index, const V& idx, const W& idp) : 
-            core(max_index, idx, idp, subset), indices_(std::move(subset)) {}
+    struct CompressedSparseSecondaryDenseIndexWorkspace : public DenseIndexWorkspace<IDX, !ROW> {
+        CompressedSparseSecondaryDenseIndexWorkspace(std::vector<IDX> subset, size_t max_index, const V& idx, const W& idp) : 
+            DenseIndexWorkspace<IDX, !ROW>(subset.size()),  core(max_index, idx, idp, subset), indices_(std::move(subset)) {}
 
         SecondaryWorkspaceBase core;
 
@@ -678,34 +773,34 @@ public:
         const std::vector<IDX>& indices() const { return indices_; }
     };
 
-    static PrimaryIndexedWorkspaceBase& extract_primary_core(IndexWorkspace<IDX, ROW>* wrk) {
-        return static_cast<CompressedSparsePrimaryIndexWorkspace*>(wrk)->core;
+    static PrimaryIndexedWorkspaceBase& extract_primary_core(DenseIndexWorkspace<IDX, ROW>* wrk) {
+        return static_cast<CompressedSparsePrimaryDenseIndexWorkspace*>(wrk)->core;
     }
 
-    static SecondaryWorkspaceBase& extract_secondary_core(IndexWorkspace<IDX, !ROW>* wrk) {
-        return static_cast<CompressedSparseSecondaryIndexWorkspace*>(wrk)->core;
+    static SecondaryWorkspaceBase& extract_secondary_core(DenseIndexWorkspace<IDX, !ROW>* wrk) {
+        return static_cast<CompressedSparseSecondaryDenseIndexWorkspace*>(wrk)->core;
     }
     /**
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> subset, bool cache = false) const { 
+    std::shared_ptr<DenseRowIndexWorkspace<IDX> > dense_row_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const { 
         if constexpr(ROW) {
-            return std::shared_ptr<RowIndexWorkspace<IDX> >(new CompressedSparsePrimaryIndexWorkspace(std::move(subset), cache ? nrows : 0));
+            return std::shared_ptr<DenseRowIndexWorkspace<IDX> >(new CompressedSparsePrimaryDenseIndexWorkspace(std::move(subset), opt, nrows));
         } else {
-            return std::shared_ptr<RowIndexWorkspace<IDX> >(new CompressedSparseSecondaryIndexWorkspace(std::move(subset), nrows, indices, indptrs));
+            return std::shared_ptr<DenseRowIndexWorkspace<IDX> >(new CompressedSparseSecondaryDenseIndexWorkspace(std::move(subset), nrows, indices, indptrs));
         }
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> subset, bool cache = false) const { 
+    std::shared_ptr<DenseColumnIndexWorkspace<IDX> > dense_column_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const { 
         if constexpr(ROW) {
-            return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new CompressedSparseSecondaryIndexWorkspace(std::move(subset), ncols, indices, indptrs));
+            return std::shared_ptr<DenseColumnIndexWorkspace<IDX> >(new CompressedSparseSecondaryDenseIndexWorkspace(std::move(subset), ncols, indices, indptrs));
         } else {
-            return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new CompressedSparsePrimaryIndexWorkspace(std::move(subset), cache ? ncols : 0));
+            return std::shared_ptr<DenseColumnIndexWorkspace<IDX> >(new CompressedSparsePrimaryDenseIndexWorkspace(std::move(subset), opt, ncols));
         }
     }
 
-    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
+    const T* row(size_t r, T* buffer, DenseRowIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
             primary_dimension_expanded(r, work->indices(), ncols, extract_primary_core(work), buffer);
         } else {
@@ -714,7 +809,7 @@ public:
         return buffer;
     }
 
-    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
+    const T* column(size_t c, T* buffer, DenseColumnIndexWorkspace<IDX>* work) const {
         if constexpr(ROW) {
             secondary_dimension_expanded(c, work->indices(), extract_secondary_core(work), buffer);
         } else {
@@ -723,7 +818,60 @@ public:
         return buffer;
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, bool sorted = true) const {
+public:
+    /**
+     * @cond
+     */
+    struct CompressedSparsePrimarySparseIndexWorkspace : public SparseIndexWorkspace<IDX, ROW> {
+        CompressedSparsePrimarySparseIndexWorkspace(std::vector<IDX> subset, const WorkspaceOptions& opt, size_t maxdim) : 
+            SparseIndexWorkspace<IDX, ROW>(subset.size(), opt.mode, opt.sorted), core(opt.cache ? maxdim : 0), indices_(std::move(subset)) {}
+
+        PrimaryIndexedWorkspaceBase core;
+
+        std::vector<IDX> indices_; 
+        const std::vector<IDX>& indices() const { return indices_; }
+    };
+
+    struct CompressedSparseSecondarySparseIndexWorkspace : public SparseIndexWorkspace<IDX, !ROW> {
+        CompressedSparseSecondarySparseIndexWorkspace(std::vector<IDX> subset, const WorkspaceOptions& opt, size_t max_index, const V& idx, const W& idp) : 
+            SparseIndexWorkspace<IDX, !ROW>(subset.size(), opt.mode, opt.sorted), core(max_index, idx, idp, subset), indices_(std::move(subset)) {}
+
+        SecondaryWorkspaceBase core;
+
+        std::vector<IDX> indices_; // must be after 'core', as we're moving 'subset' after 'core' is done with it.
+        const std::vector<IDX>& indices() const { return indices_; }
+    };
+
+    static PrimaryIndexedWorkspaceBase& extract_primary_core(SparseIndexWorkspace<IDX, ROW>* wrk) {
+        return static_cast<CompressedSparsePrimarySparseIndexWorkspace*>(wrk)->core;
+    }
+
+    static SecondaryWorkspaceBase& extract_secondary_core(SparseIndexWorkspace<IDX, !ROW>* wrk) {
+        return static_cast<CompressedSparseSecondarySparseIndexWorkspace*>(wrk)->core;
+    }
+    /**
+     * @endcond
+     */
+
+    std::shared_ptr<SparseRowIndexWorkspace<IDX> > sparse_row_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const { 
+        if constexpr(ROW) {
+            return std::shared_ptr<SparseRowIndexWorkspace<IDX> >(new CompressedSparsePrimarySparseIndexWorkspace(std::move(subset), opt, nrows));
+        } else {
+            return std::shared_ptr<SparseRowIndexWorkspace<IDX> >(new CompressedSparseSecondarySparseIndexWorkspace(std::move(subset), opt, nrows, indices, indptrs));
+        }
+    }
+
+    std::shared_ptr<SparseColumnIndexWorkspace<IDX> > sparse_column_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const { 
+        if constexpr(ROW) {
+            return std::shared_ptr<SparseColumnIndexWorkspace<IDX> >(new CompressedSparseSecondarySparseIndexWorkspace(std::move(subset), opt, ncols, indices, indptrs));
+        } else {
+            return std::shared_ptr<SparseColumnIndexWorkspace<IDX> >(new CompressedSparsePrimarySparseIndexWorkspace(std::move(subset), opt, ncols));
+        }
+    }
+
+    SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowIndexWorkspace<IDX>* work) const {
+        nullify_sparse_extract_pointers(work->mode, vbuffer, ibuffer);
+
         if constexpr(ROW) {
             return primary_dimension_raw(r, work->indices(), ncols, extract_primary_core(work), vbuffer, ibuffer);
         } else {
@@ -731,7 +879,9 @@ public:
         }
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, bool sorted = true) const {
+    SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnIndexWorkspace<IDX>* work) const {
+        nullify_sparse_extract_pointers(work->mode, vbuffer, ibuffer);
+
         if constexpr(ROW) {
             return secondary_dimension_raw(c, work->indices(), extract_secondary_core(work), vbuffer, ibuffer);
         } else {

@@ -72,14 +72,6 @@ TEST_F(SparseUtilsTest, Basic) {
     auto rprefs = sparse_row->dimension_preference();
     EXPECT_TRUE(rprefs.first > 0);
     EXPECT_TRUE(rprefs.second == 0);
-
-    // Checking that the workspace is null for column extraction of a CSC matrix.
-    auto work_column = sparse_column->new_column_workspace();
-    EXPECT_EQ(work_column.get(), nullptr);
-
-    // ... and vice versa.
-    auto work_row = sparse_row->new_row_workspace();
-    EXPECT_EQ(work_row.get(), nullptr);
 }
 
 /*************************************
@@ -115,12 +107,12 @@ TEST_P(SparseFullAccessTest, Details) {
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
 
-    auto work_row = sparse_row->new_column_workspace();
+    auto work_row = sparse_row->sparse_column_workspace();
     auto fetch_offsets = [](const auto* ptr) -> std::vector<size_t> {
-        return dynamic_cast<const tatami::CompressedSparseRowMatrix<double, int>::CompressedSparseSecondaryWorkspace*>(ptr)->core.current_indptrs;
+        return dynamic_cast<const tatami::CompressedSparseRowMatrix<double, int>::CompressedSparseSecondarySparseWorkspace*>(ptr)->core.current_indptrs;
     };
-    auto work_col = sparse_column->new_column_workspace();
-    auto work_row2 = sparse_row->new_column_workspace();
+    auto work_col = sparse_column->sparse_column_workspace();
+    auto work_row2 = sparse_row->sparse_column_workspace();
 
     for (size_t i = 0; i < NC; i += JUMP) {
         size_t c = (FORWARD ? i : NC - i - 1);
@@ -138,12 +130,12 @@ TEST_P(SparseFullAccessTest, Details) {
         std::vector<double> outval(sparse_column->nrow());
         std::vector<int> outidx(sparse_column->nrow());
 
-        auto x = sparse_column->sparse_column(c, outval.data(), outidx.data(), work_col.get());
+        auto x = sparse_column->column(c, outval.data(), outidx.data(), work_col.get());
         EXPECT_TRUE(x.number < NR);
         EXPECT_FALSE(outval.data()==x.value); // points to internal data.
         EXPECT_FALSE(outidx.data()==x.index);
 
-        auto y = sparse_row->sparse_column(c, outval.data(), outidx.data(), work_row2.get());
+        auto y = sparse_row->column(c, outval.data(), outidx.data(), work_row2.get());
         EXPECT_TRUE(y.number < NR);
         EXPECT_TRUE(outval.data()==y.value); // points to buffer.
         EXPECT_TRUE(outidx.data()==y.index);
