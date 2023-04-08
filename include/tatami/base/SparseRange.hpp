@@ -90,9 +90,23 @@ struct SparseRangeCopy {
 
 /**
  * What components of the non-zero elements should be copied?
- * Just the indices (`INDEX`), the values (`VALUE`) or both (`BOTH`).
+ * Just the indices (`INDEX`), the values (`VALUE`), both (`BOTH`) or neither (`NONE`).
  */
-enum SparseCopyMode { SPARSE_COPY_INDEX, SPARSE_COPY_VALUE, SPARSE_COPY_BOTH };
+enum class SparseExtractMode : char { NONE, INDEX, VALUE, BOTH };
+
+/**
+ * @cond
+ */
+inline bool sparse_extract_index(SparseExtractMode m) {
+    return m == SparseExtractMode::BOTH || m == SparseExtractMode::INDEX;
+}
+
+inline bool sparse_extract_value(SparseExtractMode m) {
+    return m == SparseExtractMode::BOTH || m == SparseExtractMode::VALUE;
+}
+/**
+ * @endcond
+ */
 
 }
 
