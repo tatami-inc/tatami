@@ -21,14 +21,17 @@ namespace tatami {
 template<typename T, typename IDX>
 class Matrix;
 
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<DenseWorkspace<ROW> > dense_workspace(const Matrix<T, IDX>* ptr);
+template<bool ROW, bool SPARSE, typename T, typename IDX>
+auto new_workspace(const Matrix<T, IDX>* ptr);
 
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<DenseBlockWorkspace<ROW> > dense_workspace(const Matrix<T, IDX>*, size_t, size_t);
+template<bool ROW, bool SPARSE, typename T, typename IDX>
+auto new_workspace(const Matrix<T, IDX>*, size_t, size_t);
 
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<DenseIndexWorkspace<IDX, ROW> > dense_workspace(const Matrix<T, IDX>*, std::vector<IDX>);
+template<bool ROW, bool SPARSE, typename T, typename IDX>
+auto new_workspace(const Matrix<T, IDX>*, std::vector<IDX>);
+
+template<bool ROW, typename T, typename IDX, class SomeWorkspace>
+const T* extract_dense(const Matrix<T, IDX>*, size_t, T*, SomeWorkspace*);
 /**
  * @endcond
  */
@@ -172,14 +175,14 @@ public:
      */
     template<bool ROW>
     struct DefaultSparseWorkspace : public SparseWorkspace<ROW> {
-        DefaultSparseWorkspace(const WorkspaceOptions& options, const Matrix* self) : SparseWorkspace<ROW>(options.mode, options.sorted) {
-            if (sparse_extract_value(options.mode)) {
-                dwork = dense_workspace<ROW>(self);
+        DefaultSparseWorkspace(const WorkspaceOptions& options, const Matrix* self) : mode(options.mode) {
+            if (sparse_extract_value(mode)) {
+                dwork = new_workspace<ROW, false>(self);
             }
         }
 
-        // Need this for the dense extraction.
-        std::shared_ptr<DenseWorkspace<ROW> > dwork;
+        SparseExtractMode mode; 
+        std::shared_ptr<DenseWorkspace<ROW> > dwork; // Need this for the dense extraction.
     };
     /**
      * @endcond
@@ -222,15 +225,13 @@ public:
      */
     template<bool ROW>
     struct DefaultSparseBlockWorkspace : public SparseBlockWorkspace<ROW> {
-        DefaultSparseBlockWorkspace(size_t start, size_t length, const WorkspaceOptions& options, const Matrix* self) :
-            SparseBlockWorkspace<ROW>(start, length, options.mode, options.sorted) 
-        {
-            if (sparse_extract_value(options.mode)) {
-                dwork = dense_workspace<ROW>(self, start, length);
+        DefaultSparseBlockWorkspace(size_t start, size_t length, const WorkspaceOptions& options, const Matrix* self) : SparseBlockWorkspace<ROW>(start, length), mode(options.mode) {
+            if (sparse_extract_value(mode)) {
+                dwork = new_workspace<ROW, false>(self, start, length);
             }
         }
 
-        // Need this for the dense extraction.
+        SparseExtractMode mode; 
         std::shared_ptr<DenseBlockWorkspace<ROW> > dwork;
     };
     /**
@@ -288,28 +289,29 @@ public:
      */
     template<bool ROW>
     struct DefaultSparseIndexWorkspace : public SparseIndexWorkspace<IDX, ROW> {
-        DefaultSparseIndexWorkspace(std::vector<IDX> i, const WorkspaceOptions& options, const Matrix* self) : 
-            SparseIndexWorkspace<IDX, ROW>(i.size(), options.mode, options.sorted)
-        {
-            if (sparse_extract_value(options.mode)) {
-                dwork = dense_workspace<ROW>(self, std::move(i));
+        DefaultSparseIndexWorkspace(std::vector<IDX> i, const WorkspaceOptions& options, const Matrix* self) : SparseIndexWorkspace<IDX, ROW>(i.size()), mode(options.mode) {
+            // Avoid holding an unnecessary copy of the indices.
+            if (sparse_extract_value(mode)) {
+                dwork = new_workspace<ROW, false>(self, std::move(i));
             } else {
                 indices_ = std::move(i);
             }
         }
 
-        std::vector<IDX> indices_;
-
-        // Need this for the dense extraction.
+        SparseExtractMode mode;
         std::shared_ptr<DenseIndexWorkspace<IDX, ROW> > dwork;
 
         const std::vector<IDX>& indices() const { 
-            if (indices_.empty()) {
-                return dwork->indices();
+            if (dwork) {
+                const auto& output = dwork->indices();
+                return output;
             } else {
                 return indices_; 
             }
         };
+
+    private:
+        std::vector<IDX> indices_;
     };
     /**
      * @endcond
@@ -722,23 +724,16 @@ public:
      *
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `ncol()` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `ncol()` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of row `r`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
     virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowWorkspace* work) const {
-        const T* val = NULL;
-        if (sparse_extract_value(work->mode)) {
-            val = row(r, vbuffer, static_cast<DefaultSparseWorkspace<true>*>(work)->dwork.get());
-        }
-        if (sparse_extract_index(work->mode)) {
-            std::iota(ibuffer, ibuffer + ncol(), static_cast<IDX>(0));
-        }
-        return SparseRange(ncol(), val, ibuffer); 
+        return default_dim<true>(r, vbuffer, ibuffer, work);
     }
 
     /**
@@ -752,23 +747,16 @@ public:
      *
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `nrow()` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `nrow()` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace.
      *
      * @return A `SparseRange` object describing the contents of column `c`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
     virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnWorkspace* work) const {
-        const T* val = NULL;
-        if (sparse_extract_value(work->mode)) {
-            val = column(c, vbuffer, static_cast<DefaultSparseWorkspace<false>*>(work)->dwork.get());
-        }
-        if (sparse_extract_index(work->mode)) {
-            std::iota(ibuffer, ibuffer + nrow(), static_cast<IDX>(0));
-        }
-        return SparseRange(nrow(), val, ibuffer); 
+        return default_dim<false>(c, vbuffer, ibuffer, work);
     }
 
     /**
@@ -782,24 +770,17 @@ public:
      *
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `SparseRowBlockWorkspace::length` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `SparseRowBlockWorkspace::length` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of a block of columns in row `r`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
     virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowBlockWorkspace* work) const {
-        const T* val = NULL;
-        if (sparse_extract_value(work->mode)) {
-            val = row(r, vbuffer, static_cast<DefaultSparseBlockWorkspace<true>*>(work)->dwork.get());
-        }
-        if (sparse_extract_index(work->mode)) {
-            std::iota(ibuffer, ibuffer + work->length, static_cast<IDX>(work->start));
-        }
-        return SparseRange(work->length, val, ibuffer); 
+        return default_dim<true>(r, vbuffer, ibuffer, work);
     }
 
     /**
@@ -813,24 +794,17 @@ public:
      *
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `SparseColumnBlockWorkspace::length` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `SparseColumnBlockWorkspace::length` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_column_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of a block of rows in column `c`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
     virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnBlockWorkspace* work) const {
-        const T* val = NULL;
-        if (sparse_extract_value(work->mode)) {
-            val = column(c, vbuffer, static_cast<DefaultSparseBlockWorkspace<false>*>(work)->dwork.get());
-        }
-        if (sparse_extract_index(work->mode)) {
-            std::iota(ibuffer, ibuffer + work->length, static_cast<IDX>(work->start));
-        }
-        return SparseRange(work->length, val, ibuffer); 
+        return default_dim<false>(c, vbuffer, ibuffer, work);
     }
 
     /**
@@ -840,25 +814,17 @@ public:
      *
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `SparseRowIndexWorkspace::length` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `SparseRowIndexWorkspace::length` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of a subset of columns in row `r`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
     virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowIndexWorkspace<IDX>* work) const {
-        const T* val = NULL;
-        if (sparse_extract_value(work->mode)) {
-            val = row(r, vbuffer, static_cast<DefaultSparseIndexWorkspace<true>*>(work)->dwork.get());
-        }
-        const auto& indices = work->indices();
-        if (sparse_extract_index(work->mode)) {
-            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
-        }
-        return SparseRange(indices.size(), val, ibuffer); 
+        return default_dim<true>(r, vbuffer, ibuffer, work);
     }
 
     /**
@@ -868,23 +834,72 @@ public:
      *
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `SparseColumnIndexWorkspace::length` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `SparseColumnIndexWorkspace::length` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_column_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a subset of rows in column `c`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
     virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnIndexWorkspace<IDX>* work) const {
+        return default_dim<false>(c, vbuffer, ibuffer, work);
+    }
+
+private:
+    template<bool ROW>
+    SparseRange<T, IDX> default_dim(size_t i, T* vbuffer, IDX* ibuffer, Workspace<ROW, true>* work) const {
+        auto wptr = static_cast<DefaultSparseWorkspace<ROW>*>(work);
+
         const T* val = NULL;
-        if (sparse_extract_value(work->mode)) {
-            val = column(c, vbuffer, static_cast<DefaultSparseIndexWorkspace<false>*>(work)->dwork.get());
+        if (sparse_extract_value(wptr->mode)) {
+            val = extract_dense<ROW>(this, i, vbuffer, wptr->dwork.get());
         }
-        const auto& indices = work->indices();
-        if (sparse_extract_index(work->mode)) {
+
+        size_t length = (ROW ? ncol() : nrow());
+        if (sparse_extract_index(wptr->mode)) {
+            std::iota(ibuffer, ibuffer + length, 0);
+        } else {
+            ibuffer = NULL;
+        }
+
+        return SparseRange(length, val, ibuffer); 
+    }
+
+    template<bool ROW>
+    SparseRange<T, IDX> default_dim(size_t i, T* vbuffer, IDX* ibuffer, BlockWorkspace<ROW, true>* work) const {
+        auto wptr = static_cast<DefaultSparseBlockWorkspace<ROW>*>(work);
+
+        const T* val = NULL;
+        if (sparse_extract_value(wptr->mode)) {
+            val = extract_dense<ROW>(this, i, vbuffer, wptr->dwork.get());
+        }
+
+        if (sparse_extract_index(wptr->mode)) {
+            std::iota(ibuffer, ibuffer + work->length, static_cast<IDX>(work->start));
+        } else {
+            ibuffer = NULL;
+        }
+
+        return SparseRange(work->length, val, ibuffer); 
+    }
+
+    template<bool ROW>
+    SparseRange<T, IDX> default_dim(size_t i, T* vbuffer, IDX* ibuffer, IndexWorkspace<IDX, ROW, true>* work) const {
+        auto wptr = static_cast<DefaultSparseIndexWorkspace<ROW>*>(work);
+
+        const T* val = NULL;
+        if (sparse_extract_value(wptr->mode)) {
+            val = extract_dense<ROW>(this, i, vbuffer, wptr->dwork.get());
+        }
+
+        const auto& indices = wptr->indices();
+        if (sparse_extract_index(wptr->mode)) {
             std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
+        } else {
+            ibuffer = NULL;
         }
+
         return SparseRange(indices.size(), val, ibuffer); 
     }
 
@@ -892,13 +907,13 @@ public:
      ***** Sparse non-virtual methods *****
      **************************************/
 private:
-    static void copy_over(SparseRange<T, IDX>& output, T* vbuffer, IDX* ibuffer, SparseExtractMode mode) {
-        if (sparse_extract_index(mode) && output.index != ibuffer) {
+    static void copy_over(SparseRange<T, IDX>& output, T* vbuffer, IDX* ibuffer) {
+        if (output.index && output.index != ibuffer) {
             copy_over(output.index, ibuffer, output.number);
             output.index = ibuffer;
         }
 
-        if (sparse_extract_value(mode) && output.value != vbuffer) {
+        if (output.value && output.value != vbuffer) {
             copy_over(output.value, vbuffer, output.number);
             output.value = vbuffer;
         }
@@ -908,108 +923,108 @@ public:
     /**
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `ncol()` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `ncol()` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of row `r`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
      * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
     SparseRange<T, IDX> row_copy(size_t r, T* vbuffer, IDX* ibuffer, SparseRowWorkspace* work) const {
         auto output = row(r, vbuffer, ibuffer, work);
-        copy_over(output, vbuffer, ibuffer, work->mode);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `nrow()` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `nrow()` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_column_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of column `c`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
      * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
     SparseRange<T, IDX> column_copy(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnWorkspace* work) const {
         auto output = column(c, vbuffer, ibuffer, work);
-        copy_over(output, vbuffer, ibuffer, work->mode);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `SparseRowBlockWorkspace::length` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `SparseRowBlockWorkspace::length` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a block of columns in row `r`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
      * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
     SparseRange<T, IDX> row_copy(size_t r, T* vbuffer, IDX* ibuffer, SparseRowBlockWorkspace* work) const {
         auto output = row(r, vbuffer, ibuffer, work);
-        copy_over(output, vbuffer, ibuffer, work->mode);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `SparseColumnBlockWorkspace::length` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `SparseColumnBlockWorkspace::length` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a block of rows in column `c`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
      * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
     SparseRange<T, IDX> column_copy(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnBlockWorkspace* work) const {
         auto output = column(c, vbuffer, ibuffer, work);
-        copy_over(output, vbuffer, ibuffer, work->mode);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `SparseRowIndexWorkspace::length` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `SparseRowIndexWorkspace::length` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a subset of columns in row `r`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
      * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
     SparseRange<T, IDX> row_copy(size_t r, T* vbuffer, IDX* ibuffer, SparseRowIndexWorkspace<IDX>* work) const {
         auto output = row(r, vbuffer, ibuffer, work);
-        copy_over(output, vbuffer, ibuffer, work->mode);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `SparseColumnIndexWorkspace::length` values.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::INDEX` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `SparseColumnIndexWorkspace::length` indices.
-     * Alternatively a null pointer, if `work->mode` is `SparseExtractMode::VALUE` or `SparseExtractMode::NONE`.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a subset of rows in column `c`.
-     * Either or both of `value` or `index` may be `NULL`, depending on `work->mode`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
      * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
     SparseRange<T, IDX> column_copy(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnIndexWorkspace<IDX>* work) const {
         auto output = column(c, vbuffer, ibuffer, work);
-        copy_over(output, vbuffer, ibuffer, work->mode);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
@@ -1144,10 +1159,42 @@ std::shared_ptr<DenseWorkspace<ROW> > dense_workspace(const Matrix<T, IDX>* ptr)
 }
 
 /**
- * Create a new workspace for sparse extraction of full rows or columns.
+ * Create a new workspace for extraction of full rows or columns.
  * This is a convenience wrapper for switching between rows/columns at compile time.
  *
  * @tparam ROW Whether to create a workspace for row extraction.
+ * @tparam SPARSE Whether to create a workspace for sparse extraction.
+ * @tparam T Type of the matrix data.
+ * @tparam IDX Type of the row/column indices.
+ *
+ * @param ptr Pointer to a `Matrix` instance.
+ * @param options Optional parameters for workspace construction.
+ *
+ * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
+ */
+template<bool ROW, bool SPARSE, typename T, typename IDX>
+auto new_workspace(const Matrix<T, IDX>* ptr, const WorkspaceOptions& options) {
+    if constexpr(ROW) {
+        if constexpr(SPARSE) {
+            return ptr->sparse_row_workspace(options);
+        } else {
+            return ptr->dense_row_workspace(options);
+        }
+    } else {
+        if constexpr(SPARSE) {
+            return ptr->sparse_column_workspace(options);
+        } else {
+            return ptr->dense_column_workspace(options);
+        }
+    }
+}
+
+/**
+ * Create a new workspace for extraction of full rows or columns.
+ * This is a convenience wrapper for switching between rows/columns at compile time.
+ *
+ * @tparam ROW Whether to create a workspace for row extraction.
+ * @tparam SPARSE Whether to create a workspace for sparse extraction.
  * @tparam T Type of the matrix data.
  * @tparam IDX Type of the row/column indices.
  *
@@ -1155,20 +1202,50 @@ std::shared_ptr<DenseWorkspace<ROW> > dense_workspace(const Matrix<T, IDX>* ptr)
  *
  * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
  */
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<SparseWorkspace<ROW> > sparse_workspace(const Matrix<T, IDX>* ptr) {
+template<bool ROW, bool SPARSE, typename T, typename IDX>
+auto new_workspace(const Matrix<T, IDX>* ptr) {
+    return new_workspace<ROW, SPARSE>(ptr, WorkspaceOptions());
+}
+
+/**
+ * Create a new workspace for extraction of a contiguous block from each row or column. 
+ * This is a convenience wrapper for switching between rows/columns at compile time.
+ *
+ * @tparam ROW Whether to create a workspace for row extraction.
+ * @tparam SPARSE Whether to create a workspace for sparse extraction.
+ * @tparam T Type of the matrix data.
+ * @tparam IDX Type of the row/column indices.
+ *
+ * @param ptr Pointer to a `Matrix` instance.
+ * @param start Index of the first column (if `ROW = true`) or column (otherwise) in the block.
+ * @param length Number of columns (if `ROW = true`) or rows (otherwise) in the block.
+ * @param options Optional parameters for workspace construction.
+ *
+ * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
+ */
+template<bool ROW, bool SPARSE, typename T, typename IDX>
+auto new_workspace(const Matrix<T, IDX>* ptr, size_t start, size_t length, const WorkspaceOptions& options) {
     if constexpr(ROW) {
-        return ptr->sparse_row_workspace();
+        if constexpr(SPARSE) {
+            return ptr->sparse_row_workspace(start, length, options);
+        } else {
+            return ptr->dense_row_workspace(start, length, options);
+        }
     } else {
-        return ptr->sparse_column_workspace();
+        if constexpr(SPARSE) {
+            return ptr->sparse_column_workspace(start, length, options);
+        } else {
+            return ptr->dense_column_workspace(start, length, options);
+        }
     }
 }
 
 /**
- * Create a new workspace for dense extraction of a contiguous block from each row or column. 
+ * Create a new workspace for extraction of a contiguous block from each row or column. 
  * This is a convenience wrapper for switching between rows/columns at compile time.
  *
  * @tparam ROW Whether to create a workspace for row extraction.
+ * @tparam SPARSE Whether to create a workspace for sparse extraction.
  * @tparam T Type of the matrix data.
  * @tparam IDX Type of the row/column indices.
  *
@@ -1178,35 +1255,40 @@ std::shared_ptr<SparseWorkspace<ROW> > sparse_workspace(const Matrix<T, IDX>* pt
  *
  * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
  */
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<DenseBlockWorkspace<ROW> > dense_workspace(const Matrix<T, IDX>* ptr, size_t start, size_t length) {
-    if constexpr(ROW) {
-        return ptr->dense_row_workspace(start, length);
-    } else {
-        return ptr->dense_column_workspace(start, length);
-    }
+template<bool ROW, bool SPARSE, typename T, typename IDX>
+auto new_workspace(const Matrix<T, IDX>* ptr, size_t start, size_t length) {
+    return new_workspace<ROW, SPARSE>(ptr, start, length, WorkspaceOptions());
 }
 
 /**
- * Create a new workspace for sparse extraction of a contiguous block from each row or column. 
+ * Create a new workspace for dense extraction of a subset of entries from each row or column. 
  * This is a convenience wrapper for switching between rows/columns at compile time.
  *
  * @tparam ROW Whether to create a workspace for row extraction.
+ * @tparam SPARSE Whether to create a workspace for sparse extraction.
  * @tparam T Type of the matrix data.
  * @tparam IDX Type of the row/column indices.
  *
  * @param ptr Pointer to a `Matrix` instance.
- * @param start Index of the first column (if `ROW = true`) or column (otherwise) in the block.
- * @param length Number of columns (if `ROW = true`) or rows (otherwise) in the block.
+ * @param indices Vector of unique and sorted indices for columns (if `ROW = true`) or rows (otherwise) in the subset.
+ * @param options Optional parameters for workspace construction.
  *
  * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
  */
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<SparseBlockWorkspace<ROW> > sparse_workspace(const Matrix<T, IDX>* ptr, size_t start, size_t length) {
+template<bool ROW, bool SPARSE, typename T, typename IDX>
+auto new_workspace(const Matrix<T, IDX>* ptr, std::vector<IDX> indices, const WorkspaceOptions& options) {
     if constexpr(ROW) {
-        return ptr->sparse_row_workspace(start, length);
+        if constexpr(SPARSE) {
+            return ptr->sparse_row_workspace(std::move(indices), options);
+        } else {
+            return ptr->dense_row_workspace(std::move(indices), options);
+        }
     } else {
-        return ptr->sparse_column_workspace(start, length);
+        if constexpr(SPARSE) {
+            return ptr->sparse_column_workspace(std::move(indices), options);
+        } else {
+            return ptr->dense_column_workspace(std::move(indices), options);
+        }
     }
 }
 
@@ -1215,6 +1297,7 @@ std::shared_ptr<SparseBlockWorkspace<ROW> > sparse_workspace(const Matrix<T, IDX
  * This is a convenience wrapper for switching between rows/columns at compile time.
  *
  * @tparam ROW Whether to create a workspace for row extraction.
+ * @tparam SPARSE Whether to create a workspace for sparse extraction.
  * @tparam T Type of the matrix data.
  * @tparam IDX Type of the row/column indices.
  *
@@ -1223,34 +1306,26 @@ std::shared_ptr<SparseBlockWorkspace<ROW> > sparse_workspace(const Matrix<T, IDX
  *
  * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
  */
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<DenseIndexWorkspace<IDX, ROW> > dense_workspace(const Matrix<T, IDX>* ptr, std::vector<IDX> indices) {
+template<bool ROW, bool SPARSE, typename T, typename IDX>
+auto new_workspace(const Matrix<T, IDX>* ptr, std::vector<IDX> indices) {
+    return new_workspace<ROW, SPARSE>(ptr, std::move(indices), WorkspaceOptions());    
+}
+
+template<bool ROW, typename T, typename IDX, class SomeWorkspace>
+const T* extract_dense(const Matrix<T, IDX>* ptr, size_t i, T* buffer, SomeWorkspace* work) {
     if constexpr(ROW) {
-        return ptr->dense_row_workspace(std::move(indices));
+        return ptr->row(i, buffer, work);
     } else {
-        return ptr->dense_column_workspace(std::move(indices));
+        return ptr->column(i, buffer, work);
     }
 }
 
-/**
- * Create a new workspace for sparse extraction of a subset of entries from each row or column. 
- * This is a convenience wrapper for switching between rows/columns at compile time.
- *
- * @tparam ROW Whether to create a workspace for row extraction.
- * @tparam T Type of the matrix data.
- * @tparam IDX Type of the row/column indices.
- *
- * @param ptr Pointer to a `Matrix` instance.
- * @param indices Vector of unique and sorted indices for columns (if `ROW = true`) or rows (otherwise) in the subset.
- *
- * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
- */
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<SparseIndexWorkspace<IDX, ROW> > sparse_workspace(const Matrix<T, IDX>* ptr, std::vector<IDX> indices) {
+template<bool ROW, typename T, typename IDX, class SomeWorkspace>
+SparseRange<T, IDX> extract_sparse(const Matrix<T, IDX>* ptr, size_t i, T* vbuffer, IDX* ibuffer, SomeWorkspace* work) {
     if constexpr(ROW) {
-        return ptr->sparse_row_workspace(std::move(indices));
+        return ptr->row(i, vbuffer, ibuffer, work);
     } else {
-        return ptr->sparse_column_workspace(std::move(indices));
+        return ptr->column(i, vbuffer, ibuffer, work);
     }
 }
 

@@ -49,6 +49,7 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
 
     typedef typename MatrixIn::data_type DataIn; 
     typedef typename MatrixIn::index_type IndexIn; 
+    WorkspaceOptions opt;
 
     if (row == incoming->prefer_rows()) {
         size_t reservation = static_cast<double>(NR * NC) * reserve;
@@ -58,7 +59,7 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
 
         if (incoming->sparse()) {
             std::vector<IndexIn> buffer_i(secondary);
-            auto wrk = sparse_workspace<row>(incoming);
+            auto wrk = new_workspace<row, true>(incoming);
 
             for (size_t p = 0; p < primary; ++p) {
                 SparseRange<DataIn, IndexIn> range;
@@ -78,7 +79,7 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
             }
 
         } else {
-            auto wrk = dense_workspace<row>(incoming);
+            auto wrk = new_workspace<row, false>(incoming);
 
             // Special conversion from dense to save ourselves from having to make
             // indices that we aren't really interested in.
@@ -116,7 +117,7 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
         std::vector<DataIn> buffer_v(primary);
 
         if (incoming->sparse()) {
-            auto wrk = sparse_workspace<!row>(incoming);
+            auto wrk = new_workspace<!row, true>(incoming);
             std::vector<IndexIn> buffer_i(primary);
 
             for (size_t s = 0; s < secondary; ++s) {
@@ -135,7 +136,7 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
                 }
             }
         } else {
-            auto wrk = dense_workspace<!row>(incoming);
+            auto wrk = new_workspace<!row, false>(incoming);
 
             for (size_t s = 0; s < secondary; ++s) {
                 const DataIn* ptr;

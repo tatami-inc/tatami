@@ -5,7 +5,6 @@
 
 #include "tatami/base/DenseMatrix.hpp"
 #include "tatami/base/DelayedBind.hpp"
-#include "tatami/base/DelayedIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_row_access.h"
@@ -99,26 +98,26 @@ TEST_F(DelayedBindUtilsTest, EmptyBind) {
 
     // Checking that empty workspaces can be constructed.
     {
-        auto rthing = bound_dense->new_row_workspace();
+        auto rthing = bound_dense->dense_row_workspace();
         EXPECT_NE(rthing.get(), nullptr);
 
-        auto cthing = bound_dense->new_column_workspace();
+        auto cthing = bound_dense->dense_column_workspace();
         EXPECT_NE(cthing.get(), nullptr);
     }
 
     {
-        auto rthing = bound_dense->new_row_workspace(0, 0);
+        auto rthing = bound_dense->dense_row_workspace(0, 0);
         EXPECT_NE(rthing.get(), nullptr);
 
-        auto cthing = bound_dense->new_column_workspace(0, 0);
+        auto cthing = bound_dense->dense_column_workspace(0, 0);
         EXPECT_NE(cthing.get(), nullptr);
     }
 
     {
-        auto rthing = bound_dense->new_row_workspace(std::vector<int>());
+        auto rthing = bound_dense->dense_row_workspace(std::vector<int>());
         EXPECT_NE(rthing.get(), nullptr);
 
-        auto cthing = bound_dense->new_column_workspace(std::vector<int>());
+        auto cthing = bound_dense->dense_column_workspace(std::vector<int>());
         EXPECT_NE(cthing.get(), nullptr);
     }
 }

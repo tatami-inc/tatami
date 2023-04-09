@@ -18,16 +18,20 @@ namespace tatami {
 /**
  * @brief Base workspace class.
  *
- * This only exists to define the various constructors for a virtual base class,
- * given that we need to define a virtual destructor.
- * Developers should inherit from the derived classes.
+ * @tparam ROW Whether to perform row-wise extraction.
+ *
+ * This provides a workspace for dense extraction of entire vectors from `Matrix` instances, either for each row (if `ROW = true`) or column (otherwise).
+ * Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate `Matrix` methods.
+ * Developers should inherit from this class when creating workspaces for their own `Matrix` implementation.
  */
+template<bool ROW, bool SPARSE>
 class Workspace {
 protected:
-    /**
+   /**
      * @cond
      */
     Workspace() = default;
+
     virtual ~Workspace() = default;
 
     // Defining the other constructors for rule of 5. The move constructors
@@ -39,26 +43,28 @@ protected:
     Workspace& operator=(Workspace&&) = default;
     Workspace(const Workspace&) = default;
     Workspace& operator=(const Workspace&) = default;
-    /**
+   /**
      * @endcond
      */
+
+public:
+    /**
+     * Is this class used for sparse extraction?
+     */
+    static constexpr bool sparse = SPARSE;
+
+    /**
+     * Is this class used for row-wise extraction?
+     */
+    static constexpr bool row = ROW;
 };
 
 /**
- * @brief Dense workspace class.
  * @tparam ROW Whether to perform row-wise extraction.
- *
- * This provides a workspace for dense extraction of entire vectors from `Matrix` instances, either for each row (if `ROW = true`) or column (otherwise).
- * Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate `Matrix` methods.
+ * Workspace for extracting rows/columns in dense form.
  */
 template<bool ROW>
-class DenseWorkspace : public Workspace {
-protected:
-    /**
-     * Default constructor.
-     */
-    DenseWorkspace() = default;
-};
+using DenseWorkspace = Workspace<ROW, false>;
 
 /**
  * Workspace for extracting entire rows in dense form.
@@ -70,37 +76,12 @@ typedef DenseWorkspace<true> DenseRowWorkspace;
  */
 typedef DenseWorkspace<false> DenseColumnWorkspace;
 
-}
-
-namespace tatami {
-
 /**
- * @brief Sparse workspace class.
  * @tparam ROW Whether to perform row-wise extraction.
- *
- * This provides a workspace for sparse extraction of entire vectors from `Matrix` instances, either for each row (if `ROW = true`) or column (otherwise).
- * Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate `Matrix` methods.
+ * Workspace for extracting rows/columns in sparse form.
  */
 template<bool ROW>
-class SparseWorkspace : public Workspace {
-protected:
-    /**
-     * @param m Extraction mode.
-     * @param s Whether to sort by indices.
-     */
-    SparseWorkspace(SparseExtractMode m, bool so) : mode(m), sorted(so) {}
-
-public:
-    /**
-     * Extraction mode - whether to extract just the indices, values, or both.
-     */
-    SparseExtractMode mode;
-
-    /**
-     * Whether to sort sparse values by index in the output.
-     */
-    bool sorted;
-};
+using SparseWorkspace = Workspace<ROW, true>;
 
 /**
  * Workspace for extracting entire rows in sparse form.
@@ -115,27 +96,46 @@ typedef SparseWorkspace<false> SparseColumnWorkspace;
 /**
  * @brief Base workspace class for block extraction.
  * @tparam ROW Whether to perform row-wise extraction.
+ * @tparam SPARSE Whether to perform sparse extraction.
  *
  * This provides a workspace for dense extraction of a block of data from `Matrix` instances.
  * If `ROW = true`, each row-wise vector is extracted and the block is defined as a constant and contiguous set of columns from `[start, start + length)`.
  * Otherwise, each column-wise vector is extracted and the block is defined as a constant and contiguous set of rows from `[start, start + length)`.
  *
- * Developers of `Matrix` implementations should define workspaces that inherit from this class's derived subclasses for dense/sparse extraction.
+ * Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate `Matrix` methods.
+ * Developers should inherit from this class when creating workspaces for their own `Matrix` implementation.
  */
-template<bool ROW>
-class BlockWorkspace : public Workspace {
+template<bool ROW, bool SPARSE>
+class BlockWorkspace {
 protected:
     /**
      * @cond
      */
     BlockWorkspace(size_t s, size_t l) : start(s), length(l) {}
+
+    virtual ~BlockWorkspace() = default;
+    BlockWorkspace(BlockWorkspace&&) = default;
+    BlockWorkspace& operator=(BlockWorkspace&&) = default;
+    BlockWorkspace(const BlockWorkspace&) = default;
+    BlockWorkspace& operator=(const BlockWorkspace&) = default;
     /**
      * @endcond
      */
 
 public:
     /**
-     * Index of the orst row/column in the block.
+     * Is this class used for sparse extraction?
+     */
+    static constexpr bool sparse = SPARSE;
+
+    /**
+     * Is this class used for row-wise extraction?
+     */
+    static constexpr bool row = ROW;
+
+public:
+    /**
+     * Index of the first row/column in the block.
      */
     size_t start;
 
@@ -146,77 +146,45 @@ public:
 };
 
 /**
- * @brief Dense workspace class for block extraction.
  * @tparam ROW Whether to perform row-wise extraction.
- *
- * This provides a workspace for dense extraction of a block of data from `Matrix` instances.
- * Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate `Matrix` methods.
+ * Workspace for extracting blocks from rows/columns in dense form.
  */
 template<bool ROW>
-class DenseBlockWorkspace : public BlockWorkspace<ROW> {
-protected:
-    /**
-     * @param s Start of the block.
-     * @param l Length of the block.
-     */
-    DenseBlockWorkspace(size_t s, size_t l) : BlockWorkspace<ROW>(s, l) {}
-};
+using DenseBlockWorkspace = BlockWorkspace<ROW, false>;
 
 /**
- * Workspace for extracting blocks of data from each row in dense form.
+ * Workspace for extracting entire rows in dense form.
  */
 typedef DenseBlockWorkspace<true> DenseRowBlockWorkspace;
 
 /**
- * Workspace for extracting blocks of data from each column in dense form.
+ * Workspace for extracting entire columns in dense form.
  */
 typedef DenseBlockWorkspace<false> DenseColumnBlockWorkspace;
 
 /**
- * @brief Sparse workspace class for block extraction.
  * @tparam ROW Whether to perform row-wise extraction.
- *
- * This provides a workspace for sparse extraction of a block of data from `Matrix` instances.
- * Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate `Matrix` methods.
+ * Workspace for extracting blocks from rows/columns in sparse form.
  */
 template<bool ROW>
-class SparseBlockWorkspace : public BlockWorkspace<ROW> {
-protected:
-    /**
-     * @param s Start of the block.
-     * @param l Length of the block.
-     * @param m Extraction mode.
-     * @param so Whether to sort by indices.
-     */
-    SparseBlockWorkspace(size_t s, size_t l, SparseExtractMode m, bool so) : BlockWorkspace<ROW>(s, l), mode(m), sorted(so) {}
-
-public:
-    /**
-     * Extraction mode - whether to extract just the indices, values, or both.
-     */
-    SparseExtractMode mode;
-
-    /**
-     * Whether to sort sparse values by index in the output.
-     */
-    bool sorted;
-};
+using SparseBlockWorkspace = BlockWorkspace<ROW, true>;
 
 /**
- * Workspace for extracting blocks of data from each row in sparse form.
+ * Workspace for extracting entire rows in sparse form.
  */
 typedef SparseBlockWorkspace<true> SparseRowBlockWorkspace;
 
 /**
- * Workspace for extracting blocks of data from each column in sparse form.
+ * Workspace for extracting entire columns in sparse form.
  */
 typedef SparseBlockWorkspace<false> SparseColumnBlockWorkspace;
 
 /**
  * @brief Base workspace class for indexed extraction.
  *
- * @tparam IDX Type of the column indices.
+ * @tparam IDX Type of the row/column indices.
  * @tparam ROW Whether to perform row-wise extraction.
+ * @tparam SPARSE Whether to perform sparse extraction.
  *
  * This provides a workspace for extraction of a subset of data from `Matrix` instances.
  * If `ROW = true`, each row-wise vector is extracted and the subset is defined from sorted and unique column indices.
@@ -224,16 +192,33 @@ typedef SparseBlockWorkspace<false> SparseColumnBlockWorkspace;
  *
  * Developers of `Matrix` implementations should define workspaces that inherit from this class's derived subclasses for dense/sparse extraction.
  */
-template<typename IDX, bool ROW>
-class IndexWorkspace : public Workspace {
+template<typename IDX, bool ROW, bool SPARSE>
+class IndexWorkspace {
 protected:
     /**
      * @cond
      */
     IndexWorkspace(size_t l) : length(l) {}
+
+    virtual ~IndexWorkspace() = default;
+    IndexWorkspace(IndexWorkspace&&) = default;
+    IndexWorkspace& operator=(IndexWorkspace&&) = default;
+    IndexWorkspace(const IndexWorkspace&) = default;
+    IndexWorkspace& operator=(const IndexWorkspace&) = default;
     /**
      * @endcond
      */
+
+public:
+    /**
+     * Is this class used for sparse extraction?
+     */
+    static constexpr bool sparse = SPARSE;
+
+    /**
+     * Is this class used for row-wise extraction?
+     */
+    static constexpr bool row = ROW;
 
 public:
     /**
@@ -248,73 +233,44 @@ public:
 };
 
 /**
- * @brief Dense workspace class for indexed extraction.
- *
- * @tparam IDX Type of the column indices.
+ * @tparam IDX Type of the row/column indices.
  * @tparam ROW Whether to perform row-wise extraction.
- *
- * This provides a workspace for dense extraction of a subset of data from `Matrix` instances.
- * Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate `Matrix` methods.
+ * Workspace for extracting indexed subsets from rows/columns in dense form.
  */
 template<typename IDX, bool ROW>
-class DenseIndexWorkspace : public IndexWorkspace<IDX, ROW> {
-protected:
-    /**
-     * @param l Length of the subset.
-     */
-    DenseIndexWorkspace(size_t l) : IndexWorkspace<IDX, ROW>(l) {}
-};
+using DenseIndexWorkspace = IndexWorkspace<IDX, ROW, false>;
 
 /**
+ * @tparam IDX Type of the row/column indices.
  * Workspace for extracting subsets of data from each row in dense form.
  */
 template<typename IDX>
 using DenseRowIndexWorkspace = DenseIndexWorkspace<IDX, true>;
 
 /**
+ * @tparam IDX Type of the row/column indices.
  * Workspace for extracting subsets of data from each column in dense form.
  */
 template<typename IDX>
 using DenseColumnIndexWorkspace = DenseIndexWorkspace<IDX, false>;
 
 /**
- * @brief Sparse workspace class for indexed extraction.
- *
- * @tparam IDX Type of the column indices.
+ * @tparam IDX Type of the row/column indices.
  * @tparam ROW Whether to perform row-wise extraction.
- *
- * This provides a workspace for sparse extraction of a subset of data from `Matrix` instances.
- * Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate `Matrix` methods.
+ * Workspace for extracting indexed subsets from rows/columns in sparse form.
  */
 template<typename IDX, bool ROW>
-class SparseIndexWorkspace : public IndexWorkspace<IDX, ROW> {
-protected:
-    /**
-     * @param l Length of the subset.
-     * @param m Extraction mode.
-     * @param so Whether to sort by indices.
-     */
-    SparseIndexWorkspace(size_t l, SparseExtractMode m, bool so) : IndexWorkspace<IDX, ROW>(l), mode(m), sorted(so) {}
-
-public:
-    /**
-     * Extraction mode - whether to extract just the indices, values, or both.
-     */
-    SparseExtractMode mode;
-
-    /**
-     * Whether to sort sparse values by index in the output.
-     */
-    bool sorted;
-};
+using SparseIndexWorkspace = IndexWorkspace<IDX, ROW, true>;
 
 /**
+ * @tparam IDX Type of the row/column indices.
  * Workspace for extracting subsets of data from each row in sparse form.
  */
 template<typename IDX>
 using SparseRowIndexWorkspace = SparseIndexWorkspace<IDX, true>;
 
 /**
+ * @tparam IDX Type of the row/column indices.
  * Workspace for extracting subsets of data from each column in sparse form.
  */
 template<typename IDX>

@@ -241,7 +241,7 @@ public:
 
         std::vector<IDX> indices_;
         const std::vector<IDX>& indices() const {
-            if (indices_.empty()) {
+            if (this->internal) {
                 return this->internal->indices();
             } else {
                 return indices_;
