@@ -155,7 +155,7 @@ private:
                     auto copy = opt;
                     copy.mode = SparseExtractMode::BOTH;
                     ptr->inner = factory.inner_sparse_workspace(mat.get(), copy);
-                    ptr->ibuffer.resize(factory.length());
+                    ptr->ibuffer.resize(factory.length);
                 } else {
                     ptr->inner = factory.inner_sparse_workspace(mat.get(), opt);
                 }
@@ -194,7 +194,7 @@ private:
 
         } else if constexpr(!OP::sparse) {
             auto wptr = static_cast<typename OperatorFactory::dense_workspace_type*>(work);
-            SparseRange<T, IDX> raw(factory.length(), NULL, NULL);
+            SparseRange<T, IDX> raw(factory.length, NULL, NULL);
 
             if (wptr->inner) {
                 auto found = extract_dense<WORKROW>(mat.get(), x, vbuffer, wptr->inner.get());
@@ -235,8 +235,13 @@ private:
 private:
     template<bool WORKROW>
     struct SimpleWorkspaceFactory {
+        SimpleWorkspaceFactory(size_t l) : length(l) {}
+
+        size_t length;
+
         typedef SparseWorkspace<WORKROW> Parent;
 
+    public:
         struct S : public Parent {
             std::shared_ptr<SparseWorkspace<WORKROW> > inner;
             std::vector<IDX> ibuffer;
@@ -250,6 +255,7 @@ private:
             return new_workspace<WORKROW, true>(mat, opt);
         }
 
+    public:
         struct D : public Parent {
             std::shared_ptr<DenseWorkspace<WORKROW> > inner;
             bool report_index;
@@ -266,33 +272,29 @@ private:
 
     template<bool WORKROW>
     struct SimpleOperatorFactory {
-        SimpleOperatorFactory(size_t l) : len(l) {}
+        SimpleOperatorFactory(size_t l) : length(l) {}
 
         typedef typename SimpleWorkspaceFactory<WORKROW>::S sparse_workspace_type;
         typedef typename SimpleWorkspaceFactory<WORKROW>::D dense_workspace_type;
 
-        size_t len;
-
-        size_t length() const { return len; }
+        size_t length;
 
         void copy_indices(IDX* ibuffer) const {
-            std::iota(ibuffer, ibuffer + len, static_cast<IDX>(0));
+            std::iota(ibuffer, ibuffer + length, static_cast<IDX>(0));
         }
 
         void mutate_values(size_t x, const T* in, T* out, const OP& operation) const {
-            DelayedIsometricOp<T, IDX, OP>::mutate<WORKROW>(x, 0, len, in, out, operation);
+            DelayedIsometricOp<T, IDX, OP>::mutate<WORKROW>(x, 0, length, in, out, operation);
         }
     };
 
-    template<bool WORKROW> friend class SimpleOperatorFactory;
-
 public:
     std::shared_ptr<SparseRowWorkspace> sparse_row_workspace(const WorkspaceOptions& opt) const {
-        return create_sparse_workspace(opt, SimpleWorkspaceFactory<true>());
+        return create_sparse_workspace(opt, SimpleWorkspaceFactory<true>(this->ncol()));
     }
 
     std::shared_ptr<SparseColumnWorkspace> sparse_column_workspace(const WorkspaceOptions& opt) const {
-        return create_sparse_workspace(opt, SimpleWorkspaceFactory<false>());
+        return create_sparse_workspace(opt, SimpleWorkspaceFactory<false>(this->nrow()));
     }
 
     SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowWorkspace* work) const {
@@ -332,11 +334,13 @@ private:
         BlockWorkspaceFactory(size_t s, size_t l) : start(s), length(l) {}
    
         size_t start, length;
+
         typedef SparseBlockWorkspace<WORKROW> Parent;
 
-        struct S : public SparseBlockWorkspace<WORKROW> {
-            S(size_t s, size_t l) : SparseBlockWorkspace<WORKROW>(s, l) {}
-            std::shared_ptr<SparseBlockWorkspace<WORKROW> > inner;
+    public:
+        struct S : public Parent {
+            S(size_t s, size_t l) : Parent(s, l) {}
+            std::shared_ptr<Parent > inner;
             std::vector<IDX> ibuffer;
         };
 
@@ -344,8 +348,13 @@ private:
             return new S(start, length);
         }
 
-        struct D : public SparseBlockWorkspace<WORKROW> {
-            D(size_t s, size_t l) : SparseBlockWorkspace<WORKROW>(s, l) {}
+        auto inner_sparse_workspace(const Matrix<T, IDX>* mat, const WorkspaceOptions& opt) const {
+            return new_workspace<WORKROW, true>(mat, start, length, opt);
+        }
+
+    public:
+        struct D : public Parent {
+            D(size_t s, size_t l) : Parent(s, l) {}
             std::shared_ptr<DenseBlockWorkspace<WORKROW> > inner;
             bool report_index;
 
@@ -357,33 +366,25 @@ private:
         D* intermediate_dense_workspace(const WorkspaceOptions&) const {
             return new D(start, length);
         }
-
-        auto inner_sparse_workspace(const Matrix<T, IDX>* mat, const WorkspaceOptions& opt) const {
-            return new_workspace<WORKROW, true>(mat, start, length, opt);
-        }
     };
 
     template<bool WORKROW>
     struct BlockOperatorFactory {
-        BlockOperatorFactory(size_t s, size_t l) : start(s), len(l) {}
+        BlockOperatorFactory(size_t s, size_t l) : start(s), length(l) {}
 
         typedef typename BlockWorkspaceFactory<WORKROW>::S sparse_workspace_type;
         typedef typename BlockWorkspaceFactory<WORKROW>::D dense_workspace_type;
 
-        size_t start, len;
-
-        size_t length() const { return len; }
+        size_t start, length;
 
         void copy_indices(IDX* ibuffer) const {
-            std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
+            std::iota(ibuffer, ibuffer + length, static_cast<IDX>(start));
         }
 
         void mutate_values(size_t x, const T* in, T* out, const OP& operation) const {
-            DelayedIsometricOp<T, IDX, OP>::mutate<WORKROW>(x, start, start + len, in, out, operation);
+            DelayedIsometricOp<T, IDX, OP>::mutate<WORKROW>(x, start, start + length, in, out, operation);
         }
     };
-
-    template<bool WORKROW> friend class BlockOperatorFactory;
 
 public:
     std::shared_ptr<SparseRowBlockWorkspace> sparse_row_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
@@ -447,11 +448,15 @@ private:
 private:
     template<bool WORKROW>
     struct IndexWorkspaceFactory {
-        IndexWorkspaceFactory(std::vector<IDX>& i) : iptr(&i) {}
+        IndexWorkspaceFactory(std::vector<IDX>& i) : iptr(&i), length(i.size()) {}
    
         std::vector<IDX>* iptr;
+
+        size_t length;
+
         typedef SparseIndexWorkspace<IDX, WORKROW> Parent;
 
+    public:
         struct S : public Parent {
             S(size_t l) : Parent(l) {}
             std::shared_ptr<SparseIndexWorkspace<IDX, WORKROW> > inner;
@@ -468,6 +473,7 @@ private:
             return new_workspace<WORKROW, true>(mat, std::move(*iptr), opt); // called no more than once!
         }
 
+    public:
         struct D : public Parent {
             D(std::vector<IDX> i) : Parent(i.size()), indices_(std::move(i)) {}
             std::shared_ptr<DenseIndexWorkspace<IDX, WORKROW> > inner;
@@ -494,14 +500,14 @@ private:
 
     template<bool WORKROW>
     struct IndexOperatorFactory {
-        IndexOperatorFactory(const std::vector<IDX>& i) : iptr(&i) {}
+        IndexOperatorFactory(const std::vector<IDX>& i) : iptr(&i), length(i.size()) {}
 
         typedef typename IndexWorkspaceFactory<WORKROW>::S sparse_workspace_type;
         typedef typename IndexWorkspaceFactory<WORKROW>::D dense_workspace_type;
 
         const std::vector<IDX>* iptr;
 
-        size_t length() const { return iptr->size(); }
+        size_t length;
 
         void copy_indices(IDX* ibuffer) const {
             // Copying to avoid lifetime issues with IndexWorkspace's indices.
@@ -512,8 +518,6 @@ private:
             DelayedIsometricOp<T, IDX, OP>::mutate<WORKROW>(x, *iptr, in, out, operation);
         }
     };
-
-    template<bool WORKROW> friend struct IndexOperatorFactory;
 
 public:
     std::shared_ptr<SparseRowIndexWorkspace<IDX> > sparse_row_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
