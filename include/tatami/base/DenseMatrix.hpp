@@ -2,6 +2,7 @@
 #define TATAMI_DENSE_MATRIX_H
 
 #include "Matrix.hpp"
+#include "utils.hpp"
 #include "has_data.hpp"
 
 #include <vector>

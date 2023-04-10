@@ -2,6 +2,7 @@
 #define TATAMI_COMPRESSED_SPARSE_MATRIX_H
 
 #include "Matrix.hpp"
+#include "utils.hpp"
 #include "has_data.hpp"
 #include "SparseRange.hpp"
 

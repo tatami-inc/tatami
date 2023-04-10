@@ -2,6 +2,7 @@
 #define TATAMI_DELAYED_CAST_HPP
 
 #include "Matrix.hpp"
+#include "utils.hpp"
 #include <memory>
 #include <type_traits>
 
@@ -79,6 +80,7 @@ private:
     template<bool SPARSE>
     using ConditionalBase = typename std::conditional<SPARSE, SparseBase, DenseBase>::type;
 
+private:
     template<bool WORKROW, bool SPARSE>
     struct CastWorkspace : public Workspace<WORKROW, SPARSE>, public ConditionalBase<SPARSE> {
         CastWorkspace(size_t n, const WorkspaceOptions& opt, std::shared_ptr<Workspace<WORKROW, SPARSE> > p) : 
