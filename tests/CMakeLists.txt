@@ -14,13 +14,13 @@ enable_testing()
 add_executable(
     libtest 
 
-#    src/base/DenseMatrix.cpp
-#    src/base/CompressedSparseMatrix.cpp
-#    src/base/DelayedBind.cpp
+    src/base/DenseMatrix.cpp
+    src/base/CompressedSparseMatrix.cpp
+    src/base/DelayedBind.cpp
 #    src/base/DelayedSubset.cpp
 #    src/base/DelayedSubsetBlock.cpp
-#    src/base/DelayedTranspose.cpp
-#    src/base/DelayedCast.cpp
+    src/base/DelayedTranspose.cpp
+    src/base/DelayedCast.cpp
     src/base/arith_vector_helpers.cpp
     src/base/arith_scalar_helpers.cpp
     src/base/math_helpers.cpp

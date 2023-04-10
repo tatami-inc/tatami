@@ -60,130 +60,150 @@ public:
 
     using Matrix<T, IDX>::row;
 
-    using Matrix<T, IDX>::sparse_column;
+    using Matrix<T, IDX>::dense_row_workspace;
 
-    using Matrix<T, IDX>::sparse_row;
+    using Matrix<T, IDX>::dense_column_workspace;
 
-public:
-    /**
-     * @cond
-     */
-    template<bool ROW>
-    struct TransposedWorkspace : public Workspace<ROW> {
-        TransposedWorkspace(std::shared_ptr<Workspace<!ROW> > w) : base(std::move(w)) {}
-        std::shared_ptr<Workspace<!ROW> > base;
+    using Matrix<T, IDX>::sparse_row_workspace;
+
+    using Matrix<T, IDX>::sparse_column_workspace;
+
+private:
+    template<bool ROW, bool SPARSE>
+    struct TransposedWorkspace : public Workspace<ROW, SPARSE> {
+        TransposedWorkspace(std::shared_ptr<Workspace<!ROW, SPARSE> > w) : base(std::move(w)) {}
+        std::shared_ptr<Workspace<!ROW, SPARSE> > base;
     };
 
-    typedef TransposedWorkspace<true> TransposedRowWorkspace;
-    typedef TransposedWorkspace<false> TransposedColumnWorkspace;
-    /**
-     * @endcond
-     */
-
-    std::shared_ptr<RowWorkspace> new_row_workspace(bool cache = false) const {
-        return std::shared_ptr<RowWorkspace>(new TransposedRowWorkspace(mat->new_column_workspace(cache)));
-    }
-
-    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool cache = false) const {
-        return std::shared_ptr<ColumnWorkspace>(new TransposedColumnWorkspace(mat->new_row_workspace(cache)));
-    }
-
-    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
-        return mat->column(r, buffer, static_cast<TransposedRowWorkspace*>(work)->base.get());
-    }
-
-    const T* column(size_t c, T* buffer, ColumnWorkspace* work) const {
-        return mat->row(c, buffer, static_cast<TransposedColumnWorkspace*>(work)->base.get());
-    }
-
-    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowWorkspace* work, bool sorted=true) const {
-        return mat->sparse_column(r, out_values, out_indices, static_cast<TransposedRowWorkspace*>(work)->base.get(), sorted);
-    }
-
-    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnWorkspace* work, bool sorted=true) const {
-        return mat->sparse_row(c, out_values, out_indices, static_cast<TransposedColumnWorkspace*>(work)->base.get(), sorted);
-    }
+    typedef TransposedWorkspace<true, false> DenseTransposedRowWorkspace;
+    typedef TransposedWorkspace<false, false> DenseTransposedColumnWorkspace;
+    typedef TransposedWorkspace<true, true> SparseTransposedRowWorkspace;
+    typedef TransposedWorkspace<false, true> SparseTransposedColumnWorkspace;
 
 public:
-    /**
-     * @cond
-     */
-    template<bool ROW>
-    struct TransposedBlockWorkspace : public BlockWorkspace<ROW> {
-        TransposedBlockWorkspace(std::shared_ptr<BlockWorkspace<!ROW> > w) : base(std::move(w)) {}
-        std::shared_ptr<BlockWorkspace<!ROW> > base;
-        const std::pair<size_t, size_t>& block() const { return base->block(); }
+    std::shared_ptr<DenseRowWorkspace> dense_row_workspace(const WorkspaceOptions& opt) const {
+        return std::shared_ptr<DenseRowWorkspace>(new DenseTransposedRowWorkspace(mat->dense_column_workspace(opt)));
+    }
+
+    std::shared_ptr<DenseColumnWorkspace> dense_column_workspace(const WorkspaceOptions& opt) const {
+        return std::shared_ptr<DenseColumnWorkspace>(new DenseTransposedColumnWorkspace(mat->dense_row_workspace(opt)));
+    }
+
+    const T* row(size_t r, T* buffer, DenseRowWorkspace* work) const {
+        return mat->column(r, buffer, static_cast<DenseTransposedRowWorkspace*>(work)->base.get());
+    }
+
+    const T* column(size_t c, T* buffer, DenseColumnWorkspace* work) const {
+        return mat->row(c, buffer, static_cast<DenseTransposedColumnWorkspace*>(work)->base.get());
+    }
+
+    std::shared_ptr<SparseRowWorkspace> sparse_row_workspace(const WorkspaceOptions& opt) const {
+        return std::shared_ptr<SparseRowWorkspace>(new SparseTransposedRowWorkspace(mat->sparse_column_workspace(opt)));
+    }
+
+    std::shared_ptr<SparseColumnWorkspace> sparse_column_workspace(const WorkspaceOptions& opt) const {
+        return std::shared_ptr<SparseColumnWorkspace>(new SparseTransposedColumnWorkspace(mat->sparse_row_workspace(opt)));
+    }
+
+    SparseRange<T, IDX> row(size_t r, T* out_values, IDX* out_indices, SparseRowWorkspace* work) const {
+        return mat->column(r, out_values, out_indices, static_cast<SparseTransposedRowWorkspace*>(work)->base.get());
+    }
+
+    SparseRange<T, IDX> column(size_t c, T* out_values, IDX* out_indices, SparseColumnWorkspace* work) const {
+        return mat->row(c, out_values, out_indices, static_cast<SparseTransposedColumnWorkspace*>(work)->base.get());
+    }
+
+private:
+    template<bool ROW, bool SPARSE>
+    struct TransposedBlockWorkspace : public BlockWorkspace<ROW, SPARSE> {
+        TransposedBlockWorkspace(std::shared_ptr<BlockWorkspace<!ROW, SPARSE> > w) : 
+            BlockWorkspace<ROW, SPARSE>(w->start, w->length), base(std::move(w)) {}
+        std::shared_ptr<BlockWorkspace<!ROW, SPARSE> > base;
     };
 
-    typedef TransposedBlockWorkspace<true> TransposedRowBlockWorkspace;
-    typedef TransposedBlockWorkspace<false> TransposedColumnBlockWorkspace;
-    /**
-     * @endcond
-     */
-
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length, bool cache = false) const {
-        return std::shared_ptr<RowBlockWorkspace>(new TransposedRowBlockWorkspace(mat->new_column_workspace(start, length, cache)));
-    }
-
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length, bool cache = false) const {
-        return std::shared_ptr<ColumnBlockWorkspace>(new TransposedColumnBlockWorkspace(mat->new_row_workspace(start, length, cache)));
-    }
-
-    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
-        return mat->column(r, buffer, static_cast<TransposedRowBlockWorkspace*>(work)->base.get());
-    }
-
-    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
-        return mat->row(c, buffer, static_cast<TransposedColumnBlockWorkspace*>(work)->base.get());
-    }
-
-    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowBlockWorkspace* work, bool sorted=true) const {
-        return mat->sparse_column(r, out_values, out_indices, static_cast<TransposedRowBlockWorkspace*>(work)->base.get(), sorted);
-    }
-
-    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnBlockWorkspace* work, bool sorted=true) const {
-        return mat->sparse_row(c, out_values, out_indices, static_cast<TransposedColumnBlockWorkspace*>(work)->base.get(), sorted);
-    }
+    typedef TransposedBlockWorkspace<true, false> DenseTransposedRowBlockWorkspace;
+    typedef TransposedBlockWorkspace<false, false> DenseTransposedColumnBlockWorkspace;
+    typedef TransposedBlockWorkspace<true, true> SparseTransposedRowBlockWorkspace;
+    typedef TransposedBlockWorkspace<false, true> SparseTransposedColumnBlockWorkspace;
 
 public:
-    /**
-     * @cond
-     */
-    template<bool ROW>
-    struct TransposedIndexWorkspace : public IndexWorkspace<IDX, ROW> {
-        TransposedIndexWorkspace(std::shared_ptr<IndexWorkspace<IDX, !ROW> > w) : base(std::move(w)) {}
-        std::shared_ptr<IndexWorkspace<IDX, !ROW> > base;
+    std::shared_ptr<DenseRowBlockWorkspace> dense_row_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
+        return std::shared_ptr<DenseRowBlockWorkspace>(new DenseTransposedRowBlockWorkspace(mat->dense_column_workspace(start, length, opt)));
+    }
+
+    std::shared_ptr<DenseColumnBlockWorkspace> dense_column_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
+        return std::shared_ptr<DenseColumnBlockWorkspace>(new DenseTransposedColumnBlockWorkspace(mat->dense_row_workspace(start, length, opt)));
+    }
+
+    const T* row(size_t r, T* buffer, DenseRowBlockWorkspace* work) const {
+        return mat->column(r, buffer, static_cast<DenseTransposedRowBlockWorkspace*>(work)->base.get());
+    }
+
+    const T* column(size_t c, T* buffer, DenseColumnBlockWorkspace* work) const {
+        return mat->row(c, buffer, static_cast<DenseTransposedColumnBlockWorkspace*>(work)->base.get());
+    }
+
+    std::shared_ptr<SparseRowBlockWorkspace> sparse_row_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
+        return std::shared_ptr<SparseRowBlockWorkspace>(new SparseTransposedRowBlockWorkspace(mat->sparse_column_workspace(start, length, opt)));
+    }
+
+    std::shared_ptr<SparseColumnBlockWorkspace> sparse_column_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
+        return std::shared_ptr<SparseColumnBlockWorkspace>(new SparseTransposedColumnBlockWorkspace(mat->sparse_row_workspace(start, length, opt)));
+    }
+
+    SparseRange<T, IDX> row(size_t r, T* out_values, IDX* out_indices, SparseRowBlockWorkspace* work) const {
+        return mat->column(r, out_values, out_indices, static_cast<SparseTransposedRowBlockWorkspace*>(work)->base.get());
+    }
+
+    SparseRange<T, IDX> column(size_t c, T* out_values, IDX* out_indices, SparseColumnBlockWorkspace* work) const {
+        return mat->row(c, out_values, out_indices, static_cast<SparseTransposedColumnBlockWorkspace*>(work)->base.get());
+    }
+
+private:
+    template<bool ROW, bool SPARSE>
+    struct TransposedIndexWorkspace : public IndexWorkspace<IDX, ROW, SPARSE> {
+        TransposedIndexWorkspace(std::shared_ptr<IndexWorkspace<IDX, !ROW, SPARSE> > w) : 
+            IndexWorkspace<IDX, ROW, SPARSE>(w->length), base(std::move(w)) {}
+        std::shared_ptr<IndexWorkspace<IDX, !ROW, SPARSE> > base;
         const std::vector<IDX>& indices() const { return base->indices(); }
     };
 
-    typedef TransposedIndexWorkspace<true> TransposedRowIndexWorkspace;
-    typedef TransposedIndexWorkspace<false> TransposedColumnIndexWorkspace;
-    /**
-     * @endcond
-     */
+    typedef TransposedIndexWorkspace<true, false> DenseTransposedRowIndexWorkspace;
+    typedef TransposedIndexWorkspace<false, false> DenseTransposedColumnIndexWorkspace;
+    typedef TransposedIndexWorkspace<true, true> SparseTransposedRowIndexWorkspace;
+    typedef TransposedIndexWorkspace<false, true> SparseTransposedColumnIndexWorkspace;
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> subset, bool cache = false) const {
-        return std::shared_ptr<RowIndexWorkspace<IDX> >(new TransposedRowIndexWorkspace(mat->new_column_workspace(std::move(subset), cache)));
+public:
+    std::shared_ptr<DenseRowIndexWorkspace<IDX> > dense_row_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
+        return std::shared_ptr<DenseRowIndexWorkspace<IDX> >(new DenseTransposedRowIndexWorkspace(mat->dense_column_workspace(std::move(subset), opt)));
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> subset, bool cache = false) const {
-        return std::shared_ptr<ColumnIndexWorkspace<IDX> >(new TransposedColumnIndexWorkspace(mat->new_row_workspace(std::move(subset), cache)));
+    std::shared_ptr<DenseColumnIndexWorkspace<IDX> > dense_column_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
+        return std::shared_ptr<DenseColumnIndexWorkspace<IDX> >(new DenseTransposedColumnIndexWorkspace(mat->dense_row_workspace(std::move(subset), opt)));
     }
 
-    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
-        return mat->column(r, buffer, static_cast<TransposedRowIndexWorkspace*>(work)->base.get());
+    const T* row(size_t r, T* buffer, DenseRowIndexWorkspace<IDX>* work) const {
+        return mat->column(r, buffer, static_cast<DenseTransposedRowIndexWorkspace*>(work)->base.get());
     }
 
-    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
-        return mat->row(c, buffer, static_cast<TransposedColumnIndexWorkspace*>(work)->base.get());
+    const T* column(size_t c, T* buffer, DenseColumnIndexWorkspace<IDX>* work) const {
+        return mat->row(c, buffer, static_cast<DenseTransposedColumnIndexWorkspace*>(work)->base.get());
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* out_values, IDX* out_indices, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
-        return mat->sparse_column(r, out_values, out_indices, static_cast<TransposedRowIndexWorkspace*>(work)->base.get(), sorted);
+    std::shared_ptr<SparseRowIndexWorkspace<IDX> > sparse_row_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
+        return std::shared_ptr<SparseRowIndexWorkspace<IDX> >(new SparseTransposedRowIndexWorkspace(mat->sparse_column_workspace(std::move(subset), opt)));
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* out_values, IDX* out_indices, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
-        return mat->sparse_row(c, out_values, out_indices, static_cast<TransposedColumnIndexWorkspace*>(work)->base.get(), sorted);
+    std::shared_ptr<SparseColumnIndexWorkspace<IDX> > sparse_column_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
+        return std::shared_ptr<SparseColumnIndexWorkspace<IDX> >(new SparseTransposedColumnIndexWorkspace(mat->sparse_row_workspace(std::move(subset), opt)));
+    }
+
+    SparseRange<T, IDX> row(size_t r, T* out_values, IDX* out_indices, SparseRowIndexWorkspace<IDX>* work) const {
+        return mat->column(r, out_values, out_indices, static_cast<SparseTransposedRowIndexWorkspace*>(work)->base.get());
+    }
+
+    SparseRange<T, IDX> column(size_t c, T* out_values, IDX* out_indices, SparseColumnIndexWorkspace<IDX>* work) const {
+        return mat->row(c, out_values, out_indices, static_cast<SparseTransposedColumnIndexWorkspace*>(work)->base.get());
     }
 };
 
