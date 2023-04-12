@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedSubsetBlock.hpp"
+#include "tatami/base/subset/DelayedSubsetBlock.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_column_access.h"

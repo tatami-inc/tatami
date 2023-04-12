@@ -118,6 +118,8 @@ void nullify_sparse_extract_pointers(SparseExtractMode m, T*& vbuffer, IDX*& ibu
         case SparseExtractMode::VALUE:
             ibuffer = NULL;
             break;
+        default:
+            break;
     }
 }
 
