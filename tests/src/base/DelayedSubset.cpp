@@ -7,7 +7,7 @@
 #include <random>
 
 #include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedSubset.hpp"
+#include "tatami/base/subset/make_DelayedSubset.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_column_access.h"

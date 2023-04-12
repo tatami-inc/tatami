@@ -1,7 +1,6 @@
 #ifndef TATAMI_DELAYED_SUBSET_BLOCK
 #define TATAMI_DELAYED_SUBSET_BLOCK
 
-#include "Matrix.hpp"
 #include "utils.hpp"
 #include <algorithm>
 #include <memory>
