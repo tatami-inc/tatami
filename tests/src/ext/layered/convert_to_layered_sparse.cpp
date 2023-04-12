@@ -33,8 +33,8 @@ TEST_P(ConvertToLayeredSparseTest, FromCSC) {
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
 
-    auto rwrk = ref->new_row_workspace();
-    auto owrk = out.matrix->new_row_workspace();
+    auto rwrk = ref->dense_row_workspace();
+    auto owrk = out.matrix->dense_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
         auto stuff = out.matrix->row(out.permutation[i], owrk.get());
         EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
@@ -50,8 +50,8 @@ TEST_P(ConvertToLayeredSparseTest, FromCSR) {
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
 
-    auto rwrk = ref->new_row_workspace();
-    auto owrk = out.matrix->new_row_workspace();
+    auto rwrk = ref->dense_row_workspace();
+    auto owrk = out.matrix->dense_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
         auto stuff = out.matrix->row(out.permutation[i], owrk.get());
         EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
@@ -70,8 +70,8 @@ TEST_P(ConvertToLayeredSparseTest, FromDenseColumn) {
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
 
-    auto rwrk = ref->new_row_workspace();
-    auto owrk = out.matrix->new_row_workspace();
+    auto rwrk = ref->dense_row_workspace();
+    auto owrk = out.matrix->dense_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
         auto stuff = out.matrix->row(out.permutation[i], owrk.get());
         EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
@@ -90,8 +90,8 @@ TEST_P(ConvertToLayeredSparseTest, FromDenseRow) {
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
 
-    auto rwrk = ref->new_row_workspace();
-    auto owrk = out.matrix->new_row_workspace();
+    auto rwrk = ref->dense_row_workspace();
+    auto owrk = out.matrix->dense_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
         auto stuff = out.matrix->row(out.permutation[i], owrk.get());
         EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
@@ -171,8 +171,8 @@ TEST_P(ConvertToLayeredSparseHardTest, Complex) {
 
         auto out = tatami::convert_to_layered_sparse(ref.get());
 
-        auto rwrk = ref->new_row_workspace();
-        auto owrk = out.matrix->new_row_workspace();
+        auto rwrk = ref->dense_row_workspace();
+        auto owrk = out.matrix->dense_row_workspace();
         for (size_t i = 0; i < NR; ++i) {
             auto stuff = out.matrix->row(out.permutation[i], owrk.get());
             EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
@@ -191,8 +191,8 @@ TEST_P(ConvertToLayeredSparseHardTest, Complex) {
 
         auto out = tatami::convert_to_layered_sparse(ref.get());
 
-        auto rwrk = ref->new_row_workspace();
-        auto owrk = out.matrix->new_row_workspace();
+        auto rwrk = ref->dense_row_workspace();
+        auto owrk = out.matrix->dense_row_workspace();
         for (size_t i = 0; i < NR; ++i) {
             auto stuff = out.matrix->row(out.permutation[i], owrk.get());
             EXPECT_EQ(stuff, ref->row(i, rwrk.get()));

@@ -42,7 +42,6 @@ RowRemapping<RowIndex> convert_by_row(
         return create_empty<RowIndex>(NR);
     }
 
-    auto wrk = incoming->new_row_workspace();
     std::vector<int> category(NR);
     std::vector<DataIn> dbuffer(NC);
     std::vector<IndexIn> ibuffer;
@@ -70,9 +69,10 @@ RowRemapping<RowIndex> convert_by_row(
 
     if (incoming->sparse()) {
         ibuffer.resize(NC);
+        auto wrk = incoming->sparse_row_workspace();
 
         for (size_t i = 0; i < NR; ++i) {
-            auto out = incoming->sparse_row(i, dbuffer.data(), ibuffer.data(), wrk.get());
+            auto out = incoming->row(i, dbuffer.data(), ibuffer.data(), wrk.get());
             if (*std::min_element(out.value, out.value + out.number) < 0) {
                 throw std::runtime_error("all values in the input matrix must be non-negative");
             }
@@ -89,6 +89,7 @@ RowRemapping<RowIndex> convert_by_row(
         }
 
     } else {
+        auto wrk = incoming->dense_row_workspace();
         for (size_t i = 0; i < NR; ++i) {
             auto out = incoming->row(i, dbuffer.data(), wrk.get());
             if (*std::min_element(out, out + NC) < 0) {
@@ -160,8 +161,9 @@ RowRemapping<RowIndex> convert_by_row(
     };
 
     if (incoming->sparse()) {
+        auto wrk = incoming->sparse_row_workspace();
         for (size_t i = 0; i < NR; ++i) {
-            auto out = incoming->sparse_row(i, dbuffer.data(), ibuffer.data(), wrk.get());
+            auto out = incoming->row(i, dbuffer.data(), ibuffer.data(), wrk.get());
             auto r = new_indices[i];
             auto chosen = category[i];
             for (size_t j = 0; j < out.number; ++j) {
@@ -172,6 +174,7 @@ RowRemapping<RowIndex> convert_by_row(
         }
 
     } else {
+        auto wrk = incoming->dense_row_workspace();
         for (size_t i = 0; i < NR; ++i) {
             auto out = incoming->row(i, dbuffer.data(), wrk.get());
             auto r = new_indices[i];
@@ -206,7 +209,6 @@ RowRemapping<RowIndex> convert_by_column(
         return create_empty<RowIndex>(NR);
     }
 
-    auto wrk = incoming->new_column_workspace();
     std::vector<DataIn> dbuffer(NR);
     std::vector<IndexIn> ibuffer;
     std::vector<DataIn> mins(NR), maxs(NR);
@@ -214,9 +216,11 @@ RowRemapping<RowIndex> convert_by_column(
 
     // First pass: extracting the range per row and the number of non-zeros in each column.
     if (incoming->sparse()) {
+        auto wrk = incoming->sparse_column_workspace();
         ibuffer.resize(NR);
+
         for (size_t i = 0; i < NC; ++i) {
-            auto out = incoming->sparse_column(i, dbuffer.data(), ibuffer.data(), wrk.get());
+            auto out = incoming->column(i, dbuffer.data(), ibuffer.data(), wrk.get());
             if (i) {
                 for (size_t j = 0; j < out.number; ++j) {
                     auto val = out.value[j];
@@ -240,6 +244,7 @@ RowRemapping<RowIndex> convert_by_column(
         }
         
     } else {
+        auto wrk = incoming->dense_column_workspace();
         for (size_t i = 0; i < NC; ++i) {
             auto out = incoming->column(i, dbuffer.data(), wrk.get());
             if (i) {
@@ -314,8 +319,10 @@ RowRemapping<RowIndex> convert_by_column(
     };
 
     if (incoming->sparse()) {
+        auto wrk = incoming->sparse_column_workspace();
+
         for (size_t i = 0; i < NC; ++i) {
-            auto out = incoming->sparse_column(i, dbuffer.data(), ibuffer.data(), wrk.get());
+            auto out = incoming->column(i, dbuffer.data(), ibuffer.data(), wrk.get());
             for (size_t j = 0; j < out.number; ++j) {
                 if (out.value[j]) {
                     store_values(out.value[j], out.index[j], i, category[out.index[j]]);
@@ -324,6 +331,8 @@ RowRemapping<RowIndex> convert_by_column(
         }
 
     } else {
+        auto wrk = incoming->dense_column_workspace();
+
         for (size_t i = 0; i < NC; ++i) {
             auto out = incoming->column(i, dbuffer.data(), wrk.get());
             for (size_t j = 0; j < NR; ++j) {

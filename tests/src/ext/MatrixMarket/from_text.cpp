@@ -48,8 +48,8 @@ TEST_P(MatrixMarketTextTest, Simple) {
     typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
 
-    auto owrk = out->new_column_workspace();
-    auto rwrk = ref->new_column_workspace();
+    auto owrk = out->dense_column_workspace();
+    auto rwrk = ref->dense_column_workspace();
     for (size_t i = 0; i < NC; ++i) {
         auto stuff = out->column(i, owrk.get());
         EXPECT_EQ(stuff, ref->column(i, rwrk.get()));
@@ -79,8 +79,8 @@ TEST_P(MatrixMarketTextTest, Layered) {
     EXPECT_TRUE(out->sparse());
     EXPECT_FALSE(out->prefer_rows());
 
-    auto owrk = out->new_row_workspace();
-    auto rwrk = ref->new_row_workspace();
+    auto owrk = out->dense_row_workspace();
+    auto rwrk = ref->dense_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
         int adjusted = loaded.permutation[i];
         auto stuff = out->row(adjusted, owrk.get());
