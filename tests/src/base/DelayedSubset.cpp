@@ -92,6 +92,7 @@ class SubsetFullAccessTest : public SubsetTest<std::tuple<size_t, bool, bool, bo
 TEST_P(SubsetFullAccessTest, OnRow) {
     auto param = GetParam();
     auto sub = spawn_indices<size_t>(std::get<0>(param), NR, std::get<1>(param), std::get<2>(param));
+    std::cout << std::get<0>(param) << "\t" << std::get<1>(param) << "\t" << std::get<2>(param) << std::endl;
     auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
     auto sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
     auto sparse_subbed2 = tatami::make_DelayedSubset<0>(sparse, std::vector<int>(sub.begin(), sub.end())); // check that eliding the copy works.

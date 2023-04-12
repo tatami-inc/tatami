@@ -166,10 +166,9 @@ private:
         /*
          * The behavior of the buffers depends on whether we want sorted output.
          *
-         * If we want sorted output, then the logic follows that of DelayedSubsetUnique::SparseBase.
-         * We can directly extract into the user-supplied ibuffer/vbuffer and then copy everything into
-         * sortspace for resorting. The only exception is if the user wants the values but not the
-         * indices, in which case we need to do some allocation.
+         * If we want sorted output, then the logic roughly follows that of DelayedSubsetUnique::SparseBase.
+         * We can directly extract into the user-supplied ibuffer/vbuffer and then copy everything into sortspace for resorting. 
+         * The only exception is if the doesn't want the indices, in which case we need to do some allocation.
          *
          * If we don't want sorted output, then the logic follows that of DelayedSubsetSorted::SparseBase.
          * Here, we can't extract into the user-supplied ibuffer/vbuffer, because we need some
@@ -179,7 +178,7 @@ private:
 
         SparseBase(size_t bufsize, const WorkspaceOptions& opt) : report_index(sparse_extract_index(opt.mode)), needs_sort(opt.sorted) {
             if (needs_sort) {
-                if (opt.mode == SparseExtractMode::VALUE) {
+                if (!sparse_extract_index(opt.mode)) {
                     ibuffer.resize(bufsize);
                 }
                 sortspace.reserve(bufsize);
@@ -204,8 +203,11 @@ private:
     template<bool WORKROW, bool SPARSE>
     auto define_internal_workspace(std::vector<IDX> subset, WorkspaceOptions opt) const {
         if (opt.mode == SparseExtractMode::VALUE) {
-            // Making sure we extract the indices to do the deduplication.
+            // Making sure we extract the indices to do the expansion.
             opt.mode = SparseExtractMode::BOTH;
+        } else if (opt.mode == SparseExtractMode::NONE) {
+            // Still need indices to get the duplicate counts.
+            opt.mode = SparseExtractMode::INDEX;
         }
 
         // Turning off the sorting to enable possible optimizations in the underlying matrix.

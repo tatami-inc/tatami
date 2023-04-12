@@ -148,10 +148,15 @@ private:
     template<bool WORKROW, bool SPARSE>
     auto define_internal_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
         if (opt.mode == SparseExtractMode::VALUE) {
-            // Making sure we extract the indices if we want the values,
+            // Making sure we extract the indices,
             // as we need this to do the reverse mapping of duplicates.
             auto copy = opt;
             copy.mode = SparseExtractMode::BOTH;
+            return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset), copy);
+        } else if (opt.mode == SparseExtractMode::NONE) {
+            // Still need the indices to get the duplicate counts.
+            auto copy = opt;
+            copy.mode = SparseExtractMode::INDEX;
             return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset), copy);
         } else {
             return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset), opt);
