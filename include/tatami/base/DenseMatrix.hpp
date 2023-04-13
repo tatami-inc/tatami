@@ -1,7 +1,7 @@
 #ifndef TATAMI_DENSE_MATRIX_H
 #define TATAMI_DENSE_MATRIX_H
 
-#include "Matrix.hpp"
+#include "VirtualDenseMatrix.hpp"
 #include "utils.hpp"
 #include "has_data.hpp"
 
@@ -32,7 +32,7 @@ namespace tatami {
  * If a method is available for `data()` that returns a `const T*`, it will also be used.
  */
 template<bool ROW, typename T, typename IDX = int, class V = std::vector<T> >
-class DenseMatrix : public Matrix<T, IDX> {
+class DenseMatrix : public VirtualDenseMatrix<T, IDX> {
 public: 
     /**
      * @param nr Number of rows.

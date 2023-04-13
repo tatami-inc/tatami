@@ -15,28 +15,6 @@
 namespace tatami {
 
 /**
- * @cond
- */
-// Forward declarations.
-template<typename T, typename IDX>
-class Matrix;
-
-template<bool ROW, bool SPARSE, typename T, typename IDX>
-auto new_workspace(const Matrix<T, IDX>* ptr);
-
-template<bool ROW, bool SPARSE, typename T, typename IDX>
-auto new_workspace(const Matrix<T, IDX>*, size_t, size_t);
-
-template<bool ROW, bool SPARSE, typename T, typename IDX>
-auto new_workspace(const Matrix<T, IDX>*, std::vector<IDX>);
-
-template<bool ROW, typename T, typename IDX, class SomeWorkspace>
-const T* extract_dense(const Matrix<T, IDX>*, size_t, T*, SomeWorkspace*);
-/**
- * @endcond
- */
-
-/**
  * @brief Options for workspace construction.
  * 
  * This allows users to pass in more options to methods like `Matrix::dense_row_workspace()`, 
@@ -171,38 +149,16 @@ public:
     virtual std::shared_ptr<DenseColumnWorkspace> dense_column_workspace(const WorkspaceOptions& options) const = 0;
 
     /**
-     * @cond
-     */
-    template<bool ROW>
-    struct DefaultSparseWorkspace : public SparseWorkspace<ROW> {
-        DefaultSparseWorkspace(const WorkspaceOptions& options, const Matrix* self) : mode(options.mode) {
-            if (sparse_extract_value(mode)) {
-                dwork = new_workspace<ROW, false>(self);
-            }
-        }
-
-        SparseExtractMode mode; 
-        std::shared_ptr<DenseWorkspace<ROW> > dwork; // Need this for the dense extraction.
-    };
-    /**
-     * @endcond
-     */
-
-    /**
      * @param options Optional parameters for workspace construction.
      * @return A shared pointer to a `SparseRowWorkspace` for row-wise data extraction.
      */
-    virtual std::shared_ptr<SparseRowWorkspace> sparse_row_workspace(const WorkspaceOptions& options) const {
-        return std::shared_ptr<SparseRowWorkspace>(new DefaultSparseWorkspace<true>(options, this));
-    }
+    virtual std::shared_ptr<SparseRowWorkspace> sparse_row_workspace(const WorkspaceOptions& options) const = 0;
 
     /**
      * @param options Optional parameters for workspace construction.
      * @return A shared pointer to a `SparseColumnWorkspace` for column-wise data extraction.
      */
-    virtual std::shared_ptr<SparseColumnWorkspace> sparse_column_workspace(const WorkspaceOptions& options) const {
-        return std::shared_ptr<SparseColumnWorkspace>(new DefaultSparseWorkspace<false>(options, this));
-    }
+    virtual std::shared_ptr<SparseColumnWorkspace> sparse_column_workspace(const WorkspaceOptions& options) const = 0;
 
 public:
     /**
@@ -221,33 +177,13 @@ public:
     virtual std::shared_ptr<DenseColumnBlockWorkspace> dense_column_workspace(size_t start, size_t length, const WorkspaceOptions& options) const = 0;
 
     /**
-     * @cond
-     */
-    template<bool ROW>
-    struct DefaultSparseBlockWorkspace : public SparseBlockWorkspace<ROW> {
-        DefaultSparseBlockWorkspace(size_t start, size_t length, const WorkspaceOptions& options, const Matrix* self) : SparseBlockWorkspace<ROW>(start, length), mode(options.mode) {
-            if (sparse_extract_value(mode)) {
-                dwork = new_workspace<ROW, false>(self, start, length);
-            }
-        }
-
-        SparseExtractMode mode; 
-        std::shared_ptr<DenseBlockWorkspace<ROW> > dwork;
-    };
-    /**
-     * @endcond
-     */
-
-    /**
      * @param start Index of the first column in the block.
      * @param length Number of columns in the block.
      * @param options Optional parameters for workspace construction.
      *
      * @return A shared pointer to a `SparseRowBlockWorkspace` for row-wise extraction of data from a contiguous block of columns from `[start, start + length)`. 
      */
-    virtual std::shared_ptr<SparseRowBlockWorkspace> sparse_row_workspace(size_t start, size_t length, const WorkspaceOptions& options) const {
-        return std::shared_ptr<SparseRowBlockWorkspace>(new DefaultSparseBlockWorkspace<true>(start, length, options, this));
-    }
+    virtual std::shared_ptr<SparseRowBlockWorkspace> sparse_row_workspace(size_t start, size_t length, const WorkspaceOptions& options) const = 0;
 
     /**
      * @param start Index of the first row in the block.
@@ -256,9 +192,7 @@ public:
      *
      * @return A shared pointer to a `SparseColumnBlockWorkspace` for column-wise extraction of data from a contiguous block of rows from `[start, start + length)`.
      */
-    virtual std::shared_ptr<SparseColumnBlockWorkspace> sparse_column_workspace(size_t start, size_t length, const WorkspaceOptions& options) const {
-        return std::shared_ptr<SparseColumnBlockWorkspace>(new DefaultSparseBlockWorkspace<false>(start, length, options, this));
-    }
+    virtual std::shared_ptr<SparseColumnBlockWorkspace> sparse_column_workspace(size_t start, size_t length, const WorkspaceOptions& options) const = 0;
 
 public:
     // Note to self: we use a vector rather than taking a pointer to the
@@ -285,47 +219,12 @@ public:
     virtual std::shared_ptr<DenseColumnIndexWorkspace<IDX> > dense_column_workspace(std::vector<IDX> indices, const WorkspaceOptions& options) const = 0;
 
     /**
-     * @cond
-     */
-    template<bool ROW>
-    struct DefaultSparseIndexWorkspace : public SparseIndexWorkspace<IDX, ROW> {
-        DefaultSparseIndexWorkspace(std::vector<IDX> i, const WorkspaceOptions& options, const Matrix* self) : SparseIndexWorkspace<IDX, ROW>(i.size()), mode(options.mode) {
-            // Avoid holding an unnecessary copy of the indices.
-            if (sparse_extract_value(mode)) {
-                dwork = new_workspace<ROW, false>(self, std::move(i));
-            } else {
-                indices_ = std::move(i);
-            }
-        }
-
-        SparseExtractMode mode;
-        std::shared_ptr<DenseIndexWorkspace<IDX, ROW> > dwork;
-
-        const std::vector<IDX>& indices() const { 
-            if (dwork) {
-                const auto& output = dwork->indices();
-                return output;
-            } else {
-                return indices_; 
-            }
-        };
-
-    private:
-        std::vector<IDX> indices_;
-    };
-    /**
-     * @endcond
-     */
-
-    /**
      * @param indices Vector containing sorted and unique column indices.
      * @param options Optional parameters for workspace construction.
      *
      * @return A shared pointer to a `SparseRowIndexWorkspace` for row-wise extraction of data from a subset of columns defined by `indices`.
      */
-    virtual std::shared_ptr<SparseRowIndexWorkspace<IDX> > sparse_row_workspace(std::vector<IDX> indices, const WorkspaceOptions& options) const {
-        return std::shared_ptr<SparseRowIndexWorkspace<IDX> >(new DefaultSparseIndexWorkspace<true>(std::move(indices), options, this));
-    }
+    virtual std::shared_ptr<SparseRowIndexWorkspace<IDX> > sparse_row_workspace(std::vector<IDX> indices, const WorkspaceOptions& options) const = 0;
 
     /**
      * @param indices Vector containing sorted and unique row indices.
@@ -333,9 +232,7 @@ public:
      *
      * @return A shared pointer to a `SparseColumnIndexWorkspace` for column-wise extraction of data from a subset of rows defined by `indices`.
      */
-    virtual std::shared_ptr<SparseColumnIndexWorkspace<IDX> > sparse_column_workspace(std::vector<IDX> indices, const WorkspaceOptions& options) const {
-        return std::shared_ptr<SparseColumnIndexWorkspace<IDX> >(new DefaultSparseIndexWorkspace<false>(std::move(indices), options, this));
-    }
+    virtual std::shared_ptr<SparseColumnIndexWorkspace<IDX> > sparse_column_workspace(std::vector<IDX> indices, const WorkspaceOptions& options) const = 0;
 
     /*****************************************
      ***** Non-virtual workspace methods *****
@@ -732,9 +629,7 @@ public:
      * @return A `SparseRange` object describing the contents of row `r`.
      * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowWorkspace* work) const {
-        return default_dim<true>(r, vbuffer, ibuffer, work);
-    }
+    virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowWorkspace* work) const = 0;
 
     /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
@@ -755,9 +650,7 @@ public:
      * @return A `SparseRange` object describing the contents of column `c`.
      * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnWorkspace* work) const {
-        return default_dim<false>(c, vbuffer, ibuffer, work);
-    }
+    virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnWorkspace* work) const = 0;
 
     /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
@@ -779,9 +672,7 @@ public:
      * @return A `SparseRange` object describing the contents of a block of columns in row `r`.
      * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowBlockWorkspace* work) const {
-        return default_dim<true>(r, vbuffer, ibuffer, work);
-    }
+    virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowBlockWorkspace* work) const = 0;
 
     /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
@@ -803,9 +694,7 @@ public:
      * @return A `SparseRange` object describing the contents of a block of rows in column `c`.
      * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnBlockWorkspace* work) const {
-        return default_dim<false>(c, vbuffer, ibuffer, work);
-    }
+    virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnBlockWorkspace* work) const = 0;
 
     /**
      * Entries in the output `value` array are not guaranteed to be non-zero.
@@ -823,9 +712,7 @@ public:
      * @return A `SparseRange` object describing the contents of a subset of columns in row `r`.
      * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowIndexWorkspace<IDX>* work) const {
-        return default_dim<true>(r, vbuffer, ibuffer, work);
-    }
+    virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowIndexWorkspace<IDX>* work) const = 0;
 
     /**
      * Entries in the output `value` array are not guaranteed to be non-zero.
@@ -842,66 +729,7 @@ public:
      * @return A `SparseRange` object describing the contents of a subset of rows in column `c`.
      * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnIndexWorkspace<IDX>* work) const {
-        return default_dim<false>(c, vbuffer, ibuffer, work);
-    }
-
-private:
-    template<bool ROW>
-    SparseRange<T, IDX> default_dim(size_t i, T* vbuffer, IDX* ibuffer, Workspace<ROW, true>* work) const {
-        auto wptr = static_cast<DefaultSparseWorkspace<ROW>*>(work);
-
-        const T* val = NULL;
-        if (sparse_extract_value(wptr->mode)) {
-            val = extract_dense<ROW>(this, i, vbuffer, wptr->dwork.get());
-        }
-
-        size_t length = (ROW ? ncol() : nrow());
-        if (sparse_extract_index(wptr->mode)) {
-            std::iota(ibuffer, ibuffer + length, 0);
-        } else {
-            ibuffer = NULL;
-        }
-
-        return SparseRange(length, val, ibuffer); 
-    }
-
-    template<bool ROW>
-    SparseRange<T, IDX> default_dim(size_t i, T* vbuffer, IDX* ibuffer, BlockWorkspace<ROW, true>* work) const {
-        auto wptr = static_cast<DefaultSparseBlockWorkspace<ROW>*>(work);
-
-        const T* val = NULL;
-        if (sparse_extract_value(wptr->mode)) {
-            val = extract_dense<ROW>(this, i, vbuffer, wptr->dwork.get());
-        }
-
-        if (sparse_extract_index(wptr->mode)) {
-            std::iota(ibuffer, ibuffer + work->length, static_cast<IDX>(work->start));
-        } else {
-            ibuffer = NULL;
-        }
-
-        return SparseRange(work->length, val, ibuffer); 
-    }
-
-    template<bool ROW>
-    SparseRange<T, IDX> default_dim(size_t i, T* vbuffer, IDX* ibuffer, IndexWorkspace<IDX, ROW, true>* work) const {
-        auto wptr = static_cast<DefaultSparseIndexWorkspace<ROW>*>(work);
-
-        const T* val = NULL;
-        if (sparse_extract_value(wptr->mode)) {
-            val = extract_dense<ROW>(this, i, vbuffer, wptr->dwork.get());
-        }
-
-        const auto& indices = wptr->indices();
-        if (sparse_extract_index(wptr->mode)) {
-            std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
-        } else {
-            ibuffer = NULL;
-        }
-
-        return SparseRange(indices.size(), val, ibuffer); 
-    }
+    virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnIndexWorkspace<IDX>* work) const = 0;
 
     /**************************************
      ***** Sparse non-virtual methods *****
