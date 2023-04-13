@@ -176,14 +176,14 @@ private:
          * Of course, we can omit the vbuffer allocation if the user doesn't want the values.
          */ 
 
-        SparseBase(size_t bufsize, const WorkspaceOptions& opt) : report_index(sparse_extract_index(opt.mode)), needs_sort(opt.sorted) {
+        SparseBase(size_t bufsize, const WorkspaceOptions& opt) : report_index(sparse_extract_index(opt.sparse_extract_mode)), needs_sort(opt.sparse_ordered_index) {
             if (needs_sort) {
-                if (!sparse_extract_index(opt.mode)) {
+                if (!sparse_extract_index(opt.sparse_extract_mode)) {
                     ibuffer.resize(bufsize);
                 }
                 sortspace.reserve(bufsize);
             } else {
-                if (sparse_extract_value(opt.mode)) {
+                if (sparse_extract_value(opt.sparse_extract_mode)) {
                     vbuffer.resize(bufsize);
                 }
                 ibuffer.resize(bufsize);
@@ -202,17 +202,17 @@ private:
 
     template<bool WORKROW, bool SPARSE>
     auto define_internal_workspace(std::vector<IDX> subset, WorkspaceOptions opt) const {
-        if (opt.mode == SparseExtractMode::VALUE) {
+        if (opt.sparse_extract_mode == SparseExtractMode::VALUE) {
             // Making sure we extract the indices to do the expansion.
-            opt.mode = SparseExtractMode::BOTH;
-        } else if (opt.mode == SparseExtractMode::NONE) {
+            opt.sparse_extract_mode = SparseExtractMode::BOTH;
+        } else if (opt.sparse_extract_mode == SparseExtractMode::NONE) {
             // Still need indices to get the duplicate counts.
-            opt.mode = SparseExtractMode::INDEX;
+            opt.sparse_extract_mode = SparseExtractMode::INDEX;
         }
 
         // Turning off the sorting to enable possible optimizations in the underlying matrix.
         // We don't need sorted output as we'll be resorting ourselves later.
-        opt.sorted = false;
+        opt.sparse_ordered_index = false;
         return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset), opt);
     }
 

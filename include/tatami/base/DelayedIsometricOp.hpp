@@ -150,10 +150,10 @@ private:
                 auto ptr = factory.intermediate_sparse_workspace(opt);
                 output.reset(ptr);
 
-                if (opt.mode == SparseExtractMode::VALUE) {
+                if (opt.sparse_extract_mode == SparseExtractMode::VALUE) {
                     // Only need to allocate a buffer if the indices are needed AND we didn't extract them in the first place.
                     auto copy = opt;
-                    copy.mode = SparseExtractMode::BOTH;
+                    copy.sparse_extract_mode = SparseExtractMode::BOTH;
                     ptr->inner = factory.inner_sparse_workspace(mat.get(), copy);
                     ptr->ibuffer.resize(factory.length);
                 } else {
@@ -165,10 +165,10 @@ private:
                 output.reset(ptr);
 
                 // Going for dense extraction, in which case we don't even need indices.
-                if (sparse_extract_value(opt.mode)) {
+                if (sparse_extract_value(opt.sparse_extract_mode)) {
                     ptr->acquire_inner_workspace(mat.get(), opt);
                 }
-                ptr->report_index = sparse_extract_index(opt.mode);
+                ptr->report_index = sparse_extract_index(opt.sparse_extract_mode);
             }
 
             return output;
@@ -249,7 +249,7 @@ private:
 
     public:
         struct S : public Parent {
-            S(const WorkspaceOptions& opt) : report_index(sparse_extract_index(opt.mode)) {}
+            S(const WorkspaceOptions& opt) : report_index(sparse_extract_index(opt.sparse_extract_mode)) {}
 
             std::shared_ptr<SparseWorkspace<WORKROW> > inner;
             std::vector<IDX> ibuffer;
@@ -266,7 +266,7 @@ private:
 
     public:
         struct D : public Parent {
-            D(const WorkspaceOptions& opt) : report_index(sparse_extract_index(opt.mode)) {}
+            D(const WorkspaceOptions& opt) : report_index(sparse_extract_index(opt.sparse_extract_mode)) {}
 
             std::shared_ptr<DenseWorkspace<WORKROW> > inner;
             bool report_index;
@@ -350,7 +350,7 @@ private:
 
     public:
         struct S : public Parent {
-            S(size_t s, size_t l, const WorkspaceOptions& opt) : Parent(s, l), report_index(sparse_extract_index(opt.mode)) {}
+            S(size_t s, size_t l, const WorkspaceOptions& opt) : Parent(s, l), report_index(sparse_extract_index(opt.sparse_extract_mode)) {}
 
             std::shared_ptr<Parent > inner;
             std::vector<IDX> ibuffer;
@@ -367,7 +367,7 @@ private:
 
     public:
         struct D : public Parent {
-            D(size_t s, size_t l, const WorkspaceOptions& opt) : Parent(s, l), report_index(sparse_extract_index(opt.mode)) {}
+            D(size_t s, size_t l, const WorkspaceOptions& opt) : Parent(s, l), report_index(sparse_extract_index(opt.sparse_extract_mode)) {}
 
             std::shared_ptr<DenseBlockWorkspace<WORKROW> > inner;
             bool report_index;
@@ -472,7 +472,7 @@ private:
 
     public:
         struct S : public Parent {
-            S(size_t l, const WorkspaceOptions& opt) : Parent(l), report_index(sparse_extract_index(opt.mode)) {}
+            S(size_t l, const WorkspaceOptions& opt) : Parent(l), report_index(sparse_extract_index(opt.sparse_extract_mode)) {}
 
             std::shared_ptr<SparseIndexWorkspace<IDX, WORKROW> > inner;
             std::vector<IDX> ibuffer;
@@ -491,7 +491,7 @@ private:
 
     public:
         struct D : public Parent {
-            D(std::vector<IDX> i, const WorkspaceOptions& opt) : Parent(i.size()), indices_(std::move(i)), report_index(sparse_extract_index(opt.mode)) {}
+            D(std::vector<IDX> i, const WorkspaceOptions& opt) : Parent(i.size()), indices_(std::move(i)), report_index(sparse_extract_index(opt.sparse_extract_mode)) {}
 
             std::shared_ptr<DenseIndexWorkspace<IDX, WORKROW> > inner;
             bool report_index;

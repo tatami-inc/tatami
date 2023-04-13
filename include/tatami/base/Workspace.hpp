@@ -276,6 +276,35 @@ using SparseRowIndexWorkspace = SparseIndexWorkspace<IDX, true>;
 template<typename IDX>
 using SparseColumnIndexWorkspace = SparseIndexWorkspace<IDX, false>;
 
+/**
+ * @brief Options for workspace construction.
+ * 
+ * This allows users to pass in more options to methods like `Matrix::dense_row_workspace()`, 
+ * in order to fine-tune how the extraction of data out of the `Matrix` is performed.
+ */
+struct WorkspaceOptions {
+    /** 
+     * Whether to extract the sparse values, indices, both or neither.
+     * This can be used to avoid unnecessary computation and copying.
+     * Only used in the sparse workspace methods.
+     */
+    SparseExtractMode sparse_extract_mode = SparseExtractMode::BOTH;
+
+    /**
+     * Whether the extracted sparse output should be ordered by increasing index.
+     * Setting this to `false` may reduce computational work in situations where the order of non-zero elements does not matter.
+     * Only used in the sparse workspace methods.
+     */
+    bool sparse_ordered_index = true;
+
+    /** 
+     * Whether to cache information from every call to `Matrix::row()`/`Matrix::column()` with this workspace.
+     * Specifically, this refers to intermediate row- or column-specific values that can be re-used if the same row/column is requested in a subsequent `Matrix::row()`/`Matrix::column()` call with the same workspace.
+     * This may enable faster iteration if the same workspace is re-used for multiple passes over the same matrix.
+     */
+    bool cache_for_reuse = false;
+};
+
 }
 
 #endif

@@ -179,7 +179,7 @@ public:
 
 private:
     struct SparseBase {
-        SparseBase(const WorkspaceOptions& opt) : needs_index(sparse_extract_index(opt.mode)), needs_value(sparse_extract_value(opt.mode)) {}
+        SparseBase(const WorkspaceOptions& opt) : needs_index(sparse_extract_index(opt.sparse_extract_mode)), needs_value(sparse_extract_value(opt.sparse_extract_mode)) {}
         bool needs_index;
         bool needs_value;
     };
@@ -580,9 +580,9 @@ private:
 
         if constexpr(WORKROW == ROW) {
             if constexpr(WORKROW) {
-                fill_core(ptr->core, opt.cache ? nrows : 0);
+                fill_core(ptr->core, opt.cache_for_reuse ? nrows : 0);
             } else {
-                fill_core(ptr->core, opt.cache ? ncols : 0);
+                fill_core(ptr->core, opt.cache_for_reuse ? ncols : 0);
             }
         } else {
             fill_core(ptr->core);
@@ -841,9 +841,9 @@ private:
 
         if constexpr(WORKROW == ROW) {
             if constexpr(WORKROW) {
-                fill_core(ptr->core, opt.cache ? nrows : 0);
+                fill_core(ptr->core, opt.cache_for_reuse ? nrows : 0);
             } else {
-                fill_core(ptr->core, opt.cache ? ncols : 0);
+                fill_core(ptr->core, opt.cache_for_reuse ? ncols : 0);
             }
         } else {
             fill_core(ptr->core);

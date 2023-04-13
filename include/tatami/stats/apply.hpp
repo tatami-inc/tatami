@@ -177,7 +177,7 @@ void apply_sparse_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, F
 
         constexpr bool do_copy = stats::has_nonconst_sparse_compute<decltype(stat), T, IDX>::value;
         WorkspaceOptions opt;
-        opt.mode = stats::nonconst_sparse_compute_copy_mode<decltype(stat)>::value;
+        opt.sparse_extract_mode = stats::nonconst_sparse_compute_copy_mode<decltype(stat)>::value;
         auto wrk = new_workspace<ROW, true>(p, opt);
 
 #ifndef TATAMI_CUSTOM_PARALLEL

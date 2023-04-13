@@ -65,7 +65,7 @@ std::vector<double> colsums_sparse(std::shared_ptr<tatami::NumericMatrix> p) {
          * care about the indices, we can skip their extraction for efficiency.
          */
         tatami::WorkspaceOptions opt;
-        opt.mode = tatami::SparseExtractMode::VALUE;
+        opt.sparse_extract_mode = tatami::SparseExtractMode::VALUE;
         auto wrk = p->sparse_column_workspace(opt);
 
         for (size_t i = 0; i < NC; ++i) {
@@ -134,7 +134,7 @@ std::vector<double> colsums_preferred(std::shared_ptr<tatami::NumericMatrix> p) 
         if (p->sparse()) {
             std::vector<int> ibuffer(NR);
             tatami::WorkspaceOptions opt;
-            opt.mode = tatami::SparseExtractMode::VALUE;
+            opt.sparse_extract_mode = tatami::SparseExtractMode::VALUE;
             auto wrk = p->sparse_column_workspace(opt);
 
             for (size_t i = 0; i < NC; ++i) {

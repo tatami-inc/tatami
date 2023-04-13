@@ -202,7 +202,7 @@ private:
     };
 
     struct SparseBase {
-        SparseBase(const WorkspaceOptions& opt) : extract_mode(opt.mode) {}
+        SparseBase(const WorkspaceOptions& opt) : extract_mode(opt.sparse_extract_mode) {}
         SparseExtractMode extract_mode;
 
         // It's always sorted anyway, no need to consider 'sorted' here.
@@ -327,7 +327,7 @@ private:
     template<template<bool> class ParentBlockWorkspace, class Parent = ParentBlockWorkspace<ROW> >
     struct CompressedSparsePrimaryBlockWorkspace : public Parent, public ConditionalBase<Parent> {
         CompressedSparsePrimaryBlockWorkspace(size_t s, size_t l, const WorkspaceOptions& opt, size_t maxdim) : 
-            Parent(s, l), ConditionalBase<Parent>(opt), core(opt.cache ? maxdim : 0) {}
+            Parent(s, l), ConditionalBase<Parent>(opt), core(opt.cache_for_reuse ? maxdim : 0) {}
 
         PrimaryBlockWorkspaceBase core;
     };
@@ -740,7 +740,7 @@ private:
     template<template<typename, bool> class ParentIndexWorkspace, class Parent = ParentIndexWorkspace<IDX, ROW> >
     struct CompressedSparsePrimaryIndexWorkspace__ : public Parent, public ConditionalBase<Parent> {
         CompressedSparsePrimaryIndexWorkspace__(std::vector<IDX> subset, const WorkspaceOptions& opt, size_t maxdim) : 
-            Parent(subset.size()), ConditionalBase<Parent>(opt), core(opt.cache ? maxdim : 0), indices_(std::move(subset)) {}
+            Parent(subset.size()), ConditionalBase<Parent>(opt), core(opt.cache_for_reuse ? maxdim : 0), indices_(std::move(subset)) {}
 
         PrimaryIndexedWorkspaceBase core;
 

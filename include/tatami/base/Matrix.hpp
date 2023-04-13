@@ -15,34 +15,6 @@
 namespace tatami {
 
 /**
- * @brief Options for workspace construction.
- * 
- * This allows users to pass in more options to methods like `Matrix::dense_row_workspace()`, 
- * in order to fine-tune how the extraction of data out of the `Matrix` is performed.
- */
-struct WorkspaceOptions {
-    /** 
-     * Whether to extract the sparse values, indices, both or neither.
-     * This can be used to avoid unnecessary computation and copying.
-     * Only used in the sparse workspace methods.
-     */
-    SparseExtractMode mode = SparseExtractMode::BOTH;
-
-    /**
-     * Whether the sparse values should be sorted by increasing indices.
-     * Setting this to `false` can reduce computational work in situations where the order of non-zero elements does not matter.
-     * Only used in the sparse workspace methods.
-     */
-    bool sorted = true;
-
-    /** 
-     * Whether to cache information from each call to `Matrix::row()`/`Matrix::column()` with this workspace.
-     * This enables faster iterations if the same row/column is extracted during multiple passes over the matrix.
-     */
-    bool cache = false;
-};
-
-/**
  * @brief Virtual class for a matrix with a defined type.
  * 
  * @tparam T Type of the matrix data.

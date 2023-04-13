@@ -13,24 +13,24 @@ void test_simple_row_access_base(const Matrix* ptr, const Matrix2* ref, bool for
     auto swork = ptr->sparse_row_workspace(args...);
 
     tatami::WorkspaceOptions opt;
-    opt.sorted = false;
+    opt.sparse_ordered_index = false;
     auto swork_uns = ptr->sparse_row_workspace(args..., opt);
-    opt.sorted = true;
+    opt.sparse_ordered_index = true;
 
-    opt.mode = tatami::SparseExtractMode::INDEX;
+    opt.sparse_extract_mode = tatami::SparseExtractMode::INDEX;
     auto swork_i = ptr->sparse_row_workspace(args..., opt);
 
-    opt.mode = tatami::SparseExtractMode::VALUE;
+    opt.sparse_extract_mode = tatami::SparseExtractMode::VALUE;
     auto swork_v = ptr->sparse_row_workspace(args..., opt);
 
-    opt.mode = tatami::SparseExtractMode::NONE;
+    opt.sparse_extract_mode = tatami::SparseExtractMode::NONE;
     auto swork_n = ptr->sparse_row_workspace(args..., opt);
-    opt.mode = tatami::SparseExtractMode::BOTH;
+    opt.sparse_extract_mode = tatami::SparseExtractMode::BOTH;
 
     auto pwork_bi = ptr->dense_row_workspace(args...);
     auto rwork_bi = ref->dense_row_workspace(args...);
 
-    opt.cache = true;
+    opt.cache_for_reuse = true;
     auto cwork = ptr->dense_row_workspace(args..., opt); 
 
     for (size_t i = 0; i < NR; i += jump) {

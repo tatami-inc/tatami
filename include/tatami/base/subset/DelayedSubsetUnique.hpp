@@ -173,9 +173,9 @@ private:
          */ 
 
         SparseBase(size_t bufsize, const WorkspaceOptions& opt) : 
-            report_index(sparse_extract_index(opt.mode)),
-            needs_sort(opt.sorted),
-            ibuffer(opt.mode == SparseExtractMode::VALUE && needs_sort ? bufsize : 0) 
+            report_index(sparse_extract_index(opt.sparse_extract_mode)),
+            needs_sort(opt.sparse_ordered_index),
+            ibuffer(opt.sparse_extract_mode == SparseExtractMode::VALUE && needs_sort ? bufsize : 0) 
         {
             if (needs_sort) {
                 sortspace.reserve(bufsize);
@@ -193,14 +193,14 @@ private:
 
     template<bool WORKROW, bool SPARSE>
     auto define_internal_workspace(std::vector<IDX> subset, WorkspaceOptions opt) const {
-        if (opt.mode == SparseExtractMode::VALUE && opt.sorted) {
+        if (opt.sparse_extract_mode == SparseExtractMode::VALUE && opt.sparse_ordered_index) {
             // Making sure we extract the indices if we want the sorted values.
-            opt.mode = SparseExtractMode::BOTH;
+            opt.sparse_extract_mode = SparseExtractMode::BOTH;
         }
 
         // Turning off the sorting to enable possible optimizations in the underlying matrix.
         // We don't need sorted output as we'll be resorting ourselves later.
-        opt.sorted = false;
+        opt.sparse_ordered_index = false;
         return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset), opt);
     }
 

@@ -54,7 +54,7 @@ public:
      */
     template<bool ROW>
     struct DefaultSparseWorkspace : public SparseWorkspace<ROW> {
-        DefaultSparseWorkspace(const WorkspaceOptions& options, const Matrix<T, IDX>* self) : mode(options.mode) {
+        DefaultSparseWorkspace(const WorkspaceOptions& options, const Matrix<T, IDX>* self) : mode(options.sparse_extract_mode) {
             if (sparse_extract_value(mode)) {
                 dwork = new_workspace<ROW, false>(self);
             }
@@ -81,7 +81,7 @@ public:
      */
     template<bool ROW>
     struct DefaultSparseBlockWorkspace : public SparseBlockWorkspace<ROW> {
-        DefaultSparseBlockWorkspace(size_t start, size_t length, const WorkspaceOptions& options, const Matrix<T, IDX>* self) : SparseBlockWorkspace<ROW>(start, length), mode(options.mode) {
+        DefaultSparseBlockWorkspace(size_t start, size_t length, const WorkspaceOptions& options, const Matrix<T, IDX>* self) : SparseBlockWorkspace<ROW>(start, length), mode(options.sparse_extract_mode) {
             if (sparse_extract_value(mode)) {
                 dwork = new_workspace<ROW, false>(self, start, length);
             }
@@ -108,7 +108,7 @@ public:
      */
     template<bool ROW>
     struct DefaultSparseIndexWorkspace : public SparseIndexWorkspace<IDX, ROW> {
-        DefaultSparseIndexWorkspace(std::vector<IDX> i, const WorkspaceOptions& options, const Matrix<T, IDX>* self) : SparseIndexWorkspace<IDX, ROW>(i.size()), mode(options.mode) {
+        DefaultSparseIndexWorkspace(std::vector<IDX> i, const WorkspaceOptions& options, const Matrix<T, IDX>* self) : SparseIndexWorkspace<IDX, ROW>(i.size()), mode(options.sparse_extract_mode) {
             // Avoid holding an unnecessary copy of the indices.
             if (sparse_extract_value(mode)) {
                 dwork = new_workspace<ROW, false>(self, std::move(i));

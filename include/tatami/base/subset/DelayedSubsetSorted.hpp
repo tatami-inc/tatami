@@ -132,8 +132,8 @@ private:
          */ 
 
         SparseBase(size_t bufsize, const WorkspaceOptions& opt) : 
-            report_index(sparse_extract_index(opt.mode)),
-            vbuffer(sparse_extract_value(opt.mode) ? bufsize : 0),
+            report_index(sparse_extract_index(opt.sparse_extract_mode)),
+            vbuffer(sparse_extract_value(opt.sparse_extract_mode) ? bufsize : 0),
             ibuffer(bufsize) 
         {}
 
@@ -147,16 +147,16 @@ private:
 
     template<bool WORKROW, bool SPARSE>
     auto define_internal_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
-        if (opt.mode == SparseExtractMode::VALUE) {
+        if (opt.sparse_extract_mode == SparseExtractMode::VALUE) {
             // Making sure we extract the indices,
             // as we need this to do the reverse mapping of duplicates.
             auto copy = opt;
-            copy.mode = SparseExtractMode::BOTH;
+            copy.sparse_extract_mode = SparseExtractMode::BOTH;
             return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset), copy);
-        } else if (opt.mode == SparseExtractMode::NONE) {
+        } else if (opt.sparse_extract_mode == SparseExtractMode::NONE) {
             // Still need the indices to get the duplicate counts.
             auto copy = opt;
-            copy.mode = SparseExtractMode::INDEX;
+            copy.sparse_extract_mode = SparseExtractMode::INDEX;
             return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset), copy);
         } else {
             return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset), opt);

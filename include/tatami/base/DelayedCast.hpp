@@ -69,8 +69,8 @@ private:
 
     struct SparseBase {
         SparseBase(size_t n, const WorkspaceOptions& opt) : 
-            vbuffer(sparse_extract_value(opt.mode) && !same_T_type ? n : 0),
-            ibuffer(sparse_extract_index(opt.mode) && !same_IDX_type ? n : 0)
+            vbuffer(sparse_extract_value(opt.sparse_extract_mode) && !same_T_type ? n : 0),
+            ibuffer(sparse_extract_index(opt.sparse_extract_mode) && !same_IDX_type ? n : 0)
             {}
 
         std::vector<T_in> vbuffer;

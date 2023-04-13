@@ -142,7 +142,7 @@ private:
     };
 
     struct SparseBase {
-        SparseBase(const WorkspaceOptions& opt) : extract_mode(opt.mode) {}
+        SparseBase(const WorkspaceOptions& opt) : extract_mode(opt.sparse_extract_mode) {}
         SparseExtractMode extract_mode;
 
         // It's always sorted anyway, no need to consider 'sorted' here.
@@ -489,7 +489,7 @@ private:
     }
 
     template<bool WORKROW, class ParallelWorkspace_>
-    SparseRange<T, IDX> assemble_along_dimension_complex(size_t i, T* out_values, IDX* out_indices, ParallelWorkspace_* work, bool sorted=true) const {
+    SparseRange<T, IDX> assemble_along_dimension_complex(size_t i, T* out_values, IDX* out_indices, ParallelWorkspace_* work) const {
         size_t total = 0;
         auto originali = out_indices;
         auto originalv = out_values;
