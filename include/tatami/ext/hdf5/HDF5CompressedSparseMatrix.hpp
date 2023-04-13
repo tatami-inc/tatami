@@ -80,7 +80,7 @@ public:
     {
         size_t total_element_size;
 
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
 #else
@@ -112,7 +112,7 @@ public:
             throw std::runtime_error("last index pointer should be equal to the number of non-zero elements");
         }
 
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
         }
 #else
         });
@@ -202,13 +202,6 @@ private:
     };
 
     void fill_core(H5Core& core) const {
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-        #pragma omp critical
-        {
-#else
-        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
-#endif
-
         // TODO: set more suitable chunk cache values here, to avoid re-reading
         // chunks on the boundaries of the primary cache.
         core.file.openFile(file_name, H5F_ACC_RDONLY);
@@ -216,12 +209,6 @@ private:
         core.data = core.file.openDataSet(data_name);
         core.index = core.file.openDataSet(index_name);
         core.dataspace = core.data.getSpace();
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-        }
-#else
-        });
-#endif
     }
 
     struct PrimaryH5Core : public H5Core {
@@ -256,7 +243,7 @@ private:
         hsize_t offset = limits.first;
         hsize_t count = limits.second - limits.first;
 
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
 #else
@@ -371,6 +358,13 @@ private:
             needs_value
         );
 
+        if (!needs_value) {
+            dbuffer = NULL;
+        }
+        if (!needs_index) {
+            ibuffer = NULL;
+        }
+
         return SparseRange<T, IDX>(counter, dbuffer, ibuffer);
     }
 
@@ -417,7 +411,7 @@ private:
 
     template<class Function>
     void extract_secondary_raw_loop(size_t i, Function fill, size_t start, size_t length, H5Core& core, bool needs_value) const {
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
 #else
@@ -471,10 +465,10 @@ private:
             needs_value
         );
 
-        if (needs_value) {
+        if (!needs_value) {
             dbuffer = NULL;
         }
-        if (needs_index) {
+        if (!needs_index) {
             ibuffer = NULL;
         }
 
@@ -493,13 +487,29 @@ private:
 
     template<bool WORKROW, bool SPARSE>
     std::shared_ptr<Workspace<WORKROW, SPARSE> > create_new_workspace(const WorkspaceOptions& opt) const {
+        std::shared_ptr<Workspace<WORKROW, SPARSE> > output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         auto ptr = new Hdf5SparseWorkspace<WORKROW, SPARSE>(opt);
-        std::shared_ptr<Workspace<WORKROW, SPARSE> > output(ptr);
+        output.reset(ptr);
         if constexpr(WORKROW == ROW) {
             fill_core(ptr->core, 0);
         } else {
             fill_core(ptr->core);
         }
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
         return output;
     }
 
@@ -522,7 +532,7 @@ private:
             if (wptr->needs_index || wptr->needs_value) {
                 return extract_primary(i, vbuffer, ibuffer, 0, n, wptr->core, wptr->needs_index, wptr->needs_value);
             } else {
-                // Quick return is possible if we don't need any indices or values.                        
+                // Quick return is possible if we don't need any indices or values.
                 return SparseRange<T, IDX>(pointers[i+1] - pointers[i], NULL, NULL);
             }
         } else {
@@ -575,8 +585,17 @@ private:
 
     template<bool WORKROW, bool SPARSE>
     std::shared_ptr<BlockWorkspace<WORKROW, SPARSE> > create_new_workspace(size_t s, size_t l, const WorkspaceOptions& opt) const {
+        std::shared_ptr<BlockWorkspace<WORKROW, SPARSE> > output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         auto ptr = new Hdf5SparseBlockWorkspace<WORKROW, SPARSE>(s, l, opt);
-        std::shared_ptr<BlockWorkspace<WORKROW, SPARSE> > output(ptr);
+        output.reset(ptr);
 
         if constexpr(WORKROW == ROW) {
             if constexpr(WORKROW) {
@@ -587,6 +606,12 @@ private:
         } else {
             fill_core(ptr->core);
         }
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
 
         return output;
     }
@@ -744,10 +769,10 @@ private:
             needs_value
         );
 
-        if (needs_index) {
+        if (!needs_index) {
             ibuffer = NULL;
         }
-        if (needs_value) {
+        if (!needs_value) {
             dbuffer = NULL;
         }
 
@@ -756,7 +781,7 @@ private:
 
     template<class Function, class Skip>
     size_t extract_secondary_raw_loop(size_t i, Function fill, Skip skip, const std::vector<IDX>& indices, H5Core& core, bool needs_value) const {
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
 #else
@@ -813,10 +838,10 @@ private:
             needs_value
         );
 
-        if (needs_value) {
+        if (!needs_value) {
             dbuffer = NULL;
         }
-        if (needs_index) {
+        if (!needs_index) {
             ibuffer = NULL;
         }
 
@@ -836,8 +861,17 @@ private:
 
     template<bool WORKROW, bool SPARSE>
     std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > create_new_workspace(std::vector<IDX> i, const WorkspaceOptions& opt) const {
+        std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         auto ptr = new Hdf5SparseIndexWorkspace<WORKROW, SPARSE>(std::move(i), opt);
-        std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > output(ptr);
+        output.reset(ptr);
 
         if constexpr(WORKROW == ROW) {
             if constexpr(WORKROW) {
@@ -848,6 +882,12 @@ private:
         } else {
             fill_core(ptr->core);
         }
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK 
+        }
+#else
+        });
+#endif
 
         return output;
     }
