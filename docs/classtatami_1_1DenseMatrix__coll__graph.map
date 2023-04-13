@@ -1,4 +1,5 @@
 <map id="tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;" name="tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;">
-<area shape="rect" id="node1" title="Dense matrix representation." alt="" coords="5,93,141,133"/>
-<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type." alt="" coords="12,5,135,45"/>
+<area shape="rect" id="node1" title="Dense matrix representation." alt="" coords="24,181,160,221"/>
+<area shape="rect" id="node2" href="$classtatami_1_1VirtualDenseMatrix.html" title="Virtual class for a dense matrix with a defined type." alt="" coords="5,93,179,133"/>
+<area shape="rect" id="node3" href="$classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type." alt="" coords="31,5,153,45"/>
 </map>

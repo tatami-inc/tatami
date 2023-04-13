@@ -99,6 +99,10 @@ Public Member Functions</h2></td></tr>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a1f9882e33a8dc933074eb16b00cd17fa"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#a1f9882e33a8dc933074eb16b00cd17fa">sparse</a> = RIGHT</td></tr>
 <tr class="separator:a1f9882e33a8dc933074eb16b00cd17fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac12dcf5a2f9113b2236329b2d81d2ece"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#ac12dcf5a2f9113b2236329b2d81d2ece">needs_row</a> = false</td></tr>
+<tr class="separator:ac12dcf5a2f9113b2236329b2d81d2ece"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20c06d41019286efc9b0e95f3c58c3b7"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html#a20c06d41019286efc9b0e95f3c58c3b7">needs_column</a> = false</td></tr>
+<tr class="separator:a20c06d41019286efc9b0e95f3c58c3b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;bool RIGHT, typename T = double&gt;<br />
@@ -225,6 +229,56 @@ template&lt;bool RIGHT, typename T  = double&gt; </div>
 </div><div class="memdoc">
 <p>Division on the right is always assumed to preserve structural sparsity. Non-finite or zero <code>scalar</code> values are not considered here.</p>
 <p>Division of the scalar by the matrix value is assumed to discard structural sparsity, as any matrix zeros will yield an infinite value for a non-zero scalar. </p>
+
+</div>
+</div>
+<a id="ac12dcf5a2f9113b2236329b2d81d2ece" name="ac12dcf5a2f9113b2236329b2d81d2ece"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac12dcf5a2f9113b2236329b2d81d2ece">&#9670;&#160;</a></span>needs_row</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool RIGHT, typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; RIGHT, T &gt;::needs_row = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>This does not require row indices. </p>
+
+</div>
+</div>
+<a id="a20c06d41019286efc9b0e95f3c58c3b7" name="a20c06d41019286efc9b0e95f3c58c3b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20c06d41019286efc9b0e95f3c58c3b7">&#9670;&#160;</a></span>needs_column</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool RIGHT, typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedDivideScalarHelper.html">tatami::DelayedDivideScalarHelper</a>&lt; RIGHT, T &gt;::needs_column = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>This does not require column indices. </p>
 
 </div>
 </div>

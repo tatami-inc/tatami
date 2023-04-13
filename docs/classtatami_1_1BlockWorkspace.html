@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::BlockWorkspace&lt; ROW &gt; Class Template Reference</title>
+<title>tatami: tatami::BlockWorkspace&lt; ROW, SPARSE &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -76,9 +76,10 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classtatami_1_1BlockWorkspace-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami::BlockWorkspace&lt; ROW &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
+  <div class="headertitle"><div class="title">tatami::BlockWorkspace&lt; ROW, SPARSE &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -86,83 +87,117 @@ $(function() {
  <a href="classtatami_1_1BlockWorkspace.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Workspace_8hpp_source.html">Workspace.hpp</a>&gt;</code></p>
+
+<p>Inherited by tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;::BlockWorkspaceFactory&lt; WORKROW &gt;::D, and tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;::BlockWorkspaceFactory&lt; WORKROW &gt;::S.</p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:aa98b7347608a333a2a3595d04d84db07"><td class="memItemLeft" align="right" valign="top">virtual const std::pair&lt; size_t, size_t &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1BlockWorkspace.html#aa98b7347608a333a2a3595d04d84db07">block</a> () const =0</td></tr>
-<tr class="separator:aa98b7347608a333a2a3595d04d84db07"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7dbf988dde45119d189517b2d435edf6"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1BlockWorkspace.html#a7dbf988dde45119d189517b2d435edf6">length</a> () const</td></tr>
-<tr class="separator:a7dbf988dde45119d189517b2d435edf6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:ab08f5a86fe65e65c888d1147a860e1a0"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1BlockWorkspace.html#ab08f5a86fe65e65c888d1147a860e1a0">start</a></td></tr>
+<tr class="separator:ab08f5a86fe65e65c888d1147a860e1a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a818b80115792369f2d48407b464c45d2"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1BlockWorkspace.html#a818b80115792369f2d48407b464c45d2">length</a></td></tr>
+<tr class="separator:a818b80115792369f2d48407b464c45d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a1cf6de1a2cf32409d3a0881e9258284d"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1BlockWorkspace.html#a1cf6de1a2cf32409d3a0881e9258284d">sparse</a> = SPARSE</td></tr>
+<tr class="separator:a1cf6de1a2cf32409d3a0881e9258284d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ea595f4d44085dc288871d532ab1a99"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1BlockWorkspace.html#a1ea595f4d44085dc288871d532ab1a99">row</a> = ROW</td></tr>
+<tr class="separator:a1ea595f4d44085dc288871d532ab1a99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;bool ROW&gt;<br />
-class tatami::BlockWorkspace&lt; ROW &gt;</div><p>Base workspace class for block extraction. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;bool ROW, bool SPARSE&gt;<br />
+class tatami::BlockWorkspace&lt; ROW, SPARSE &gt;</div><p>Base workspace class for block extraction. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">ROW</td><td>Whether to perform row-wise extraction.</td></tr>
+    <tr><td class="paramname">ROW</td><td>Whether to perform row-wise extraction. </td></tr>
+    <tr><td class="paramname">SPARSE</td><td>Whether to perform sparse extraction.</td></tr>
   </table>
   </dd>
 </dl>
-<p>This provides a workspace for extraction of a block of data from <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instances. If <code>ROW = true</code>, each row-wise vector is extracted and the block is defined as a constant and contiguous set of columns from <code>[start, start + length)</code>. Otherwise, each column-wise vector is extracted and the block is defined as a constant and contiguous set of rows from <code>[start, start + length)</code>. Instances of this class cannot be constructed; it is only provided as a base class for <code><a class="el" href="classtatami_1_1Matrix.html#aa62c3f22f2f82f93b81596caf27ededd">Matrix::new_row_workspace()</a></code> and <code><a class="el" href="classtatami_1_1Matrix.html#a8e0dbb0132e1b132a9164c20729e21d5">Matrix::new_column_workspace()</a></code> methods to return appropriate objects. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa98b7347608a333a2a3595d04d84db07" name="aa98b7347608a333a2a3595d04d84db07"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa98b7347608a333a2a3595d04d84db07">&#9670;&#160;</a></span>block()</h2>
+<p>This provides a workspace for dense extraction of a block of data from <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instances. If <code>ROW = true</code>, each row-wise vector is extracted and the block is defined as a constant and contiguous set of columns from <code>[start, start + length)</code>. Otherwise, each column-wise vector is extracted and the block is defined as a constant and contiguous set of rows from <code>[start, start + length)</code>.</p>
+<p>Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> methods. Developers should inherit from this class when creating workspaces for their own <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> implementation. </p>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="a1cf6de1a2cf32409d3a0881e9258284d" name="a1cf6de1a2cf32409d3a0881e9258284d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1cf6de1a2cf32409d3a0881e9258284d">&#9670;&#160;</a></span>sparse</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;bool ROW&gt; </div>
+template&lt;bool ROW, bool SPARSE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual const std::pair&lt; size_t, size_t &gt; &amp; <a class="el" href="classtatami_1_1BlockWorkspace.html">tatami::BlockWorkspace</a>&lt; ROW &gt;::block </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td class="memname">constexpr bool <a class="el" href="classtatami_1_1BlockWorkspace.html">tatami::BlockWorkspace</a>&lt; ROW, SPARSE &gt;::sparse = SPARSE</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>Pair containing (i) the index of the first row/column in the block, and (ii) the number of rows/columns in the block. </dd></dl>
+<p>Is this class used for sparse extraction? </p>
 
 </div>
 </div>
-<a id="a7dbf988dde45119d189517b2d435edf6" name="a7dbf988dde45119d189517b2d435edf6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7dbf988dde45119d189517b2d435edf6">&#9670;&#160;</a></span>length()</h2>
+<a id="a1ea595f4d44085dc288871d532ab1a99" name="a1ea595f4d44085dc288871d532ab1a99"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1ea595f4d44085dc288871d532ab1a99">&#9670;&#160;</a></span>row</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;bool ROW&gt; </div>
+template&lt;bool ROW, bool SPARSE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classtatami_1_1BlockWorkspace.html">tatami::BlockWorkspace</a>&lt; ROW &gt;::length </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td class="memname">constexpr bool <a class="el" href="classtatami_1_1BlockWorkspace.html">tatami::BlockWorkspace</a>&lt; ROW, SPARSE &gt;::row = ROW</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">Number</td><td>of rows/columns in the block. </td></tr>
-  </table>
-  </dd>
-</dl>
+<p>Is this class used for row-wise extraction? </p>
+
+</div>
+</div>
+<a id="ab08f5a86fe65e65c888d1147a860e1a0" name="ab08f5a86fe65e65c888d1147a860e1a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab08f5a86fe65e65c888d1147a860e1a0">&#9670;&#160;</a></span>start</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool ROW, bool SPARSE&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classtatami_1_1BlockWorkspace.html">tatami::BlockWorkspace</a>&lt; ROW, SPARSE &gt;::start</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Index of the first row/column in the block. </p>
+
+</div>
+</div>
+<a id="a818b80115792369f2d48407b464c45d2" name="a818b80115792369f2d48407b464c45d2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a818b80115792369f2d48407b464c45d2">&#9670;&#160;</a></span>length</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool ROW, bool SPARSE&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classtatami_1_1BlockWorkspace.html">tatami::BlockWorkspace</a>&lt; ROW, SPARSE &gt;::length</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Number of rows/columns in the block. </p>
 
 </div>
 </div>

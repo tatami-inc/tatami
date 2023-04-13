@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::IndexWorkspace&lt; IDX, ROW &gt; Class Template Reference</title>
+<title>tatami: tatami::IndexWorkspace&lt; IDX, ROW, SPARSE &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -77,8 +77,10 @@ $(function() {
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classtatami_1_1IndexWorkspace-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami::IndexWorkspace&lt; IDX, ROW &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
+  <div class="headertitle"><div class="title">tatami::IndexWorkspace&lt; IDX, ROW, SPARSE &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -86,39 +88,53 @@ $(function() {
  <a href="classtatami_1_1IndexWorkspace.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Workspace_8hpp_source.html">Workspace.hpp</a>&gt;</code></p>
+
+<p>Inherited by tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;::IndexWorkspaceFactory&lt; WORKROW &gt;::D, and tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;::IndexWorkspaceFactory&lt; WORKROW &gt;::S.</p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a45ab900117f54e6a717732d7f8e7c469"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; IDX &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1IndexWorkspace.html#a45ab900117f54e6a717732d7f8e7c469">indices</a> () const =0</td></tr>
-<tr class="separator:a45ab900117f54e6a717732d7f8e7c469"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa48b3242c66017689d36d6570e04cb49"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1IndexWorkspace.html#aa48b3242c66017689d36d6570e04cb49">length</a> () const</td></tr>
-<tr class="separator:aa48b3242c66017689d36d6570e04cb49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6496692900e9b96e373204048c4fd6c"><td class="memItemLeft" align="right" valign="top">virtual const std::vector&lt; IDX &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1IndexWorkspace.html#ab6496692900e9b96e373204048c4fd6c">indices</a> () const =0</td></tr>
+<tr class="separator:ab6496692900e9b96e373204048c4fd6c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a01e3f1497ad171dec73398872c4bd2aa"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1IndexWorkspace.html#a01e3f1497ad171dec73398872c4bd2aa">length</a></td></tr>
+<tr class="separator:a01e3f1497ad171dec73398872c4bd2aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a3bd6119af6d2ffaf58643331d065d4c8"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1IndexWorkspace.html#a3bd6119af6d2ffaf58643331d065d4c8">sparse</a> = SPARSE</td></tr>
+<tr class="separator:a3bd6119af6d2ffaf58643331d065d4c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a69975a742f7f64d4d15df244c0bb1c53"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1IndexWorkspace.html#a69975a742f7f64d4d15df244c0bb1c53">row</a> = ROW</td></tr>
+<tr class="separator:a69975a742f7f64d4d15df244c0bb1c53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename IDX, bool ROW&gt;<br />
-class tatami::IndexWorkspace&lt; IDX, ROW &gt;</div><p>Base workspace class for indexed extraction. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename IDX, bool ROW, bool SPARSE&gt;<br />
+class tatami::IndexWorkspace&lt; IDX, ROW, SPARSE &gt;</div><p>Base workspace class for indexed extraction. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">IDX</td><td>Type of the column indices. </td></tr>
-    <tr><td class="paramname">ROW</td><td>Whether to perform row-wise extraction.</td></tr>
+    <tr><td class="paramname">IDX</td><td>Type of the row/column indices. </td></tr>
+    <tr><td class="paramname">ROW</td><td>Whether to perform row-wise extraction. </td></tr>
+    <tr><td class="paramname">SPARSE</td><td>Whether to perform sparse extraction.</td></tr>
   </table>
   </dd>
 </dl>
-<p>This provides a workspace for extraction of a subset of data from <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instances. If <code>ROW = true</code>, each row-wise vector is extracted and the subset is defined from sorted and unique column indices. Otherwise, each column-wise vector is extracted and the subset is defined from sorted and unique row indices. Instances of this class cannot be constructed; it is only provided as a base class for <code><a class="el" href="classtatami_1_1Matrix.html#aa62c3f22f2f82f93b81596caf27ededd">Matrix::new_row_workspace()</a></code> and <code><a class="el" href="classtatami_1_1Matrix.html#a8e0dbb0132e1b132a9164c20729e21d5">Matrix::new_column_workspace()</a></code> methods to return appropriate objects. </p>
+<p>This provides a workspace for extraction of a subset of data from <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instances. If <code>ROW = true</code>, each row-wise vector is extracted and the subset is defined from sorted and unique column indices. Otherwise, each column-wise vector is extracted and the subset is defined from sorted and unique row indices.</p>
+<p>Developers of <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> implementations should define workspaces that inherit from this class's derived subclasses for dense/sparse extraction. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a45ab900117f54e6a717732d7f8e7c469" name="a45ab900117f54e6a717732d7f8e7c469"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a45ab900117f54e6a717732d7f8e7c469">&#9670;&#160;</a></span>indices()</h2>
+<a id="ab6496692900e9b96e373204048c4fd6c" name="ab6496692900e9b96e373204048c4fd6c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6496692900e9b96e373204048c4fd6c">&#9670;&#160;</a></span>indices()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename IDX , bool ROW&gt; </div>
+template&lt;typename IDX , bool ROW, bool SPARSE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual const std::vector&lt; IDX &gt; &amp; <a class="el" href="classtatami_1_1IndexWorkspace.html">tatami::IndexWorkspace</a>&lt; IDX, ROW &gt;::indices </td>
+          <td class="memname">virtual const std::vector&lt; IDX &gt; &amp; <a class="el" href="classtatami_1_1IndexWorkspace.html">tatami::IndexWorkspace</a>&lt; IDX, ROW, SPARSE &gt;::indices </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -134,29 +150,69 @@ template&lt;typename IDX , bool ROW&gt; </div>
 
 </div>
 </div>
-<a id="aa48b3242c66017689d36d6570e04cb49" name="aa48b3242c66017689d36d6570e04cb49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa48b3242c66017689d36d6570e04cb49">&#9670;&#160;</a></span>length()</h2>
+<h2 class="groupheader">Member Data Documentation</h2>
+<a id="a3bd6119af6d2ffaf58643331d065d4c8" name="a3bd6119af6d2ffaf58643331d065d4c8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bd6119af6d2ffaf58643331d065d4c8">&#9670;&#160;</a></span>sparse</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename IDX , bool ROW&gt; </div>
+template&lt;typename IDX , bool ROW, bool SPARSE&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">size_t <a class="el" href="classtatami_1_1IndexWorkspace.html">tatami::IndexWorkspace</a>&lt; IDX, ROW &gt;::length </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
+          <td class="memname">constexpr bool <a class="el" href="classtatami_1_1IndexWorkspace.html">tatami::IndexWorkspace</a>&lt; IDX, ROW, SPARSE &gt;::sparse = SPARSE</td>
         </tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
   </tr>
 </table>
+</div><div class="memdoc">
+<p>Is this class used for sparse extraction? </p>
+
+</div>
+</div>
+<a id="a69975a742f7f64d4d15df244c0bb1c53" name="a69975a742f7f64d4d15df244c0bb1c53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a69975a742f7f64d4d15df244c0bb1c53">&#9670;&#160;</a></span>row</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename IDX , bool ROW, bool SPARSE&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool <a class="el" href="classtatami_1_1IndexWorkspace.html">tatami::IndexWorkspace</a>&lt; IDX, ROW, SPARSE &gt;::row = ROW</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Is this class used for row-wise extraction? </p>
+
+</div>
+</div>
+<a id="a01e3f1497ad171dec73398872c4bd2aa" name="a01e3f1497ad171dec73398872c4bd2aa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01e3f1497ad171dec73398872c4bd2aa">&#9670;&#160;</a></span>length</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename IDX , bool ROW, bool SPARSE&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t <a class="el" href="classtatami_1_1IndexWorkspace.html">tatami::IndexWorkspace</a>&lt; IDX, ROW, SPARSE &gt;::length</td>
+        </tr>
+      </table>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">

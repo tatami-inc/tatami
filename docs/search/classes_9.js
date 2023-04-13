@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['workspace_0',['Workspace',['../classtatami_1_1Workspace.html',1,'tatami']]],
-  ['writesparsematrixtohdf5parameters_1',['WriteSparseMatrixToHdf5Parameters',['../structtatami_1_1WriteSparseMatrixToHdf5Parameters.html',1,'tatami']]]
+  ['virtualdensematrix_0',['VirtualDenseMatrix',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]],
+  ['virtualdensematrix_3c_20t_2c_20idx_20_3e_1',['VirtualDenseMatrix&lt; T, IDX &gt;',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]],
+  ['virtualdensematrix_3c_20t_2c_20int_20_3e_2',['VirtualDenseMatrix&lt; T, int &gt;',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]]
 ];

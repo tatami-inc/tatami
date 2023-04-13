@@ -99,6 +99,10 @@ Public Member Functions</h2></td></tr>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:af309b4411711c654d9c1ae1e47b765cf"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedAddScalarHelper.html#af309b4411711c654d9c1ae1e47b765cf">sparse</a> = false</td></tr>
 <tr class="separator:af309b4411711c654d9c1ae1e47b765cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2290994b01da908ecbe0d19b5d5cf14"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedAddScalarHelper.html#af2290994b01da908ecbe0d19b5d5cf14">needs_row</a> = false</td></tr>
+<tr class="separator:af2290994b01da908ecbe0d19b5d5cf14"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40e5f39d786760e0b4d236e7f0eb3a5f"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedAddScalarHelper.html#a40e5f39d786760e0b4d236e7f0eb3a5f">needs_column</a> = false</td></tr>
+<tr class="separator:a40e5f39d786760e0b4d236e7f0eb3a5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T = double&gt;<br />
@@ -223,6 +227,56 @@ template&lt;typename T  = double&gt; </div>
 </table>
 </div><div class="memdoc">
 <p>Addition is always assumed to discard structural sparsity, even when the scalar is zero. </p>
+
+</div>
+</div>
+<a id="af2290994b01da908ecbe0d19b5d5cf14" name="af2290994b01da908ecbe0d19b5d5cf14"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af2290994b01da908ecbe0d19b5d5cf14">&#9670;&#160;</a></span>needs_row</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedAddScalarHelper.html">tatami::DelayedAddScalarHelper</a>&lt; T &gt;::needs_row = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>This does not require row indices. </p>
+
+</div>
+</div>
+<a id="a40e5f39d786760e0b4d236e7f0eb3a5f" name="a40e5f39d786760e0b4d236e7f0eb3a5f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40e5f39d786760e0b4d236e7f0eb3a5f">&#9670;&#160;</a></span>needs_column</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename T  = double&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedAddScalarHelper.html">tatami::DelayedAddScalarHelper</a>&lt; T &gt;::needs_column = false</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>This does not require column indices. </p>
 
 </div>
 </div>

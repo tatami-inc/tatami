@@ -99,6 +99,10 @@ Public Member Functions</h2></td></tr>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a43eee71f485171fb60a8bd1573abef72"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideVectorHelper.html#a43eee71f485171fb60a8bd1573abef72">sparse</a> = RIGHT</td></tr>
 <tr class="separator:a43eee71f485171fb60a8bd1573abef72"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98712ed9203af2278a2779ac59dc1f89"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideVectorHelper.html#a98712ed9203af2278a2779ac59dc1f89">needs_row</a> = MARGIN == 0</td></tr>
+<tr class="separator:a98712ed9203af2278a2779ac59dc1f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac445d964f6d6c72666a14bae1302b82b"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedDivideVectorHelper.html#ac445d964f6d6c72666a14bae1302b82b">needs_column</a> = MARGIN == 1</td></tr>
+<tr class="separator:ac445d964f6d6c72666a14bae1302b82b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;bool RIGHT, int MARGIN, typename T = double, class V = std::vector&lt;T&gt;&gt;<br />
@@ -226,6 +230,56 @@ template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector
 </div><div class="memdoc">
 <p>Division on the right is always assumed to preserve structural sparsity. Non-finite or zero <code>scalar</code> values are not considered here.</p>
 <p>Division of the scalar by the matrix value is assumed to discard structural sparsity, as any matrix zeros will yield an infinite value for a non-zero scalar. </p>
+
+</div>
+</div>
+<a id="a98712ed9203af2278a2779ac59dc1f89" name="a98712ed9203af2278a2779ac59dc1f89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a98712ed9203af2278a2779ac59dc1f89">&#9670;&#160;</a></span>needs_row</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedDivideVectorHelper.html">tatami::DelayedDivideVectorHelper</a>&lt; RIGHT, MARGIN, T, V &gt;::needs_row = MARGIN == 0</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>This requires row indices if <code>MARGIN = 0</code>. </p>
+
+</div>
+</div>
+<a id="ac445d964f6d6c72666a14bae1302b82b" name="ac445d964f6d6c72666a14bae1302b82b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac445d964f6d6c72666a14bae1302b82b">&#9670;&#160;</a></span>needs_column</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool RIGHT, int MARGIN, typename T  = double, class V  = std::vector&lt;T&gt;&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedDivideVectorHelper.html">tatami::DelayedDivideVectorHelper</a>&lt; RIGHT, MARGIN, T, V &gt;::needs_column = MARGIN == 1</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>This requires column indices if <code>MARGIN = 1</code>. </p>
 
 </div>
 </div>

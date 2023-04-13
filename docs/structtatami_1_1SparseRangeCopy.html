@@ -160,7 +160,8 @@ template&lt;typename T , typename IDX &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Values of the non-zero elements. </p>
+<p>Values of the non-zero elements.</p>
+<p>Note that this may not be filled if extraction was performed with a <code>SparseExtractMode</code> that did not extract the values. </p>
 
 </div>
 </div>
@@ -177,7 +178,8 @@ template&lt;typename T , typename IDX &gt; </div>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Indices of the non-zero elements. This should be of the same length as <code>value</code>. </p>
+<p>Indices of the non-zero elements. This should be of the same length as <code>value</code>.</p>
+<p>Note that this may not be filled if extraction was performed with a <code>SparseExtractMode</code> that did not extract the indices. </p>
 
 </div>
 </div>

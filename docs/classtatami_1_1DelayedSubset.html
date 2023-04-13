@@ -119,42 +119,54 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:ad6a41e31f7986bcac03d1386f57fed55"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aca10f5c1d320a98115f24ad0af0cc305"><td class="memItemLeft" align="right" valign="top">std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#aca10f5c1d320a98115f24ad0af0cc305">dimension_preference</a> () const</td></tr>
 <tr class="separator:aca10f5c1d320a98115f24ad0af0cc305"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a821eac25f5742d2b1e9492dd9011a351"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a821eac25f5742d2b1e9492dd9011a351">new_row_workspace</a> (bool cache=false) const</td></tr>
-<tr class="separator:a821eac25f5742d2b1e9492dd9011a351"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1abb23e256e3277f0eee8f7244e43c73"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a1abb23e256e3277f0eee8f7244e43c73">new_column_workspace</a> (bool cache=false) const</td></tr>
-<tr class="separator:a1abb23e256e3277f0eee8f7244e43c73"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af0a4fc948a316c0b74771811fc4cadda"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#af0a4fc948a316c0b74771811fc4cadda">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *work) const</td></tr>
-<tr class="separator:af0a4fc948a316c0b74771811fc4cadda"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc95d029362d35b5171ce7ec38f0c528"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#afc95d029362d35b5171ce7ec38f0c528">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *work) const</td></tr>
-<tr class="separator:afc95d029362d35b5171ce7ec38f0c528"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83cefa3a3faa9d144bf52a95b04b0ac0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a83cefa3a3faa9d144bf52a95b04b0ac0">sparse_row</a> (size_t r, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:a83cefa3a3faa9d144bf52a95b04b0ac0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a119cb2aa6a7690a0ea1fe570be4235a7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a119cb2aa6a7690a0ea1fe570be4235a7">sparse_column</a> (size_t c, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:a119cb2aa6a7690a0ea1fe570be4235a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a56174f98b83e99807fb9ca248c94a7d2"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a56174f98b83e99807fb9ca248c94a7d2">new_row_workspace</a> (size_t start, size_t length, bool cache=false) const</td></tr>
-<tr class="separator:a56174f98b83e99807fb9ca248c94a7d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6fc58a7c3943fc0431874dab58b0fe8b"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a6fc58a7c3943fc0431874dab58b0fe8b">new_column_workspace</a> (size_t start, size_t length, bool cache=false) const</td></tr>
-<tr class="separator:a6fc58a7c3943fc0431874dab58b0fe8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a23c9a7eeed2a59631681e55c6503c08d"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a23c9a7eeed2a59631681e55c6503c08d">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *work) const</td></tr>
-<tr class="separator:a23c9a7eeed2a59631681e55c6503c08d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a70ced59c6239735d6816aab1085f6715"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a70ced59c6239735d6816aab1085f6715">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *work) const</td></tr>
-<tr class="separator:a70ced59c6239735d6816aab1085f6715"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af3de4f539ab984ba2ee3aafe998d352d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#af3de4f539ab984ba2ee3aafe998d352d">sparse_row</a> (size_t r, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:af3de4f539ab984ba2ee3aafe998d352d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7217c04da1c525f995e0a0be2ea09880"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a7217c04da1c525f995e0a0be2ea09880">sparse_column</a> (size_t c, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:a7217c04da1c525f995e0a0be2ea09880"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a971f853b55bad7f3ed4a35b5674ae6ad"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a971f853b55bad7f3ed4a35b5674ae6ad">new_row_workspace</a> (std::vector&lt; IDX &gt; subset, bool cache=false) const</td></tr>
-<tr class="separator:a971f853b55bad7f3ed4a35b5674ae6ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69084b2562451b31d2fb835d1b304b24"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a69084b2562451b31d2fb835d1b304b24">new_column_workspace</a> (std::vector&lt; IDX &gt; subset, bool cache=false) const</td></tr>
-<tr class="separator:a69084b2562451b31d2fb835d1b304b24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aeb0b68aced2e6b7269e2f00b0c549c2a"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#aeb0b68aced2e6b7269e2f00b0c549c2a">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
-<tr class="separator:aeb0b68aced2e6b7269e2f00b0c549c2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98355392c8db9c38b09d650ebe37ef34"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a98355392c8db9c38b09d650ebe37ef34">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
-<tr class="separator:a98355392c8db9c38b09d650ebe37ef34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ec88dc9d0fd0ec22dadf8677d4a2e84"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a2ec88dc9d0fd0ec22dadf8677d4a2e84">sparse_row</a> (size_t r, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *work, bool sorted=true) const</td></tr>
-<tr class="separator:a2ec88dc9d0fd0ec22dadf8677d4a2e84"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab0ab8e7a9412985efb509e99e9aec01"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#aab0ab8e7a9412985efb509e99e9aec01">sparse_column</a> (size_t c, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *work, bool sorted=true) const</td></tr>
-<tr class="separator:aab0ab8e7a9412985efb509e99e9aec01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5c8327271f54c064795ea00f4067892c"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a3e4e7d9c0a3103fe35d6b6b2d5c8167e">DenseRowWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a5c8327271f54c064795ea00f4067892c">dense_row_workspace</a> (const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:a5c8327271f54c064795ea00f4067892c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad66235473f22031e2822b81e6cf23742"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a0f817935c6e352d908090a67aff91f2a">DenseColumnWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#ad66235473f22031e2822b81e6cf23742">dense_column_workspace</a> (const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:ad66235473f22031e2822b81e6cf23742"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44f071a8068e7c908f1604edccfdfcc4"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a44f071a8068e7c908f1604edccfdfcc4">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a3e4e7d9c0a3103fe35d6b6b2d5c8167e">DenseRowWorkspace</a> *work) const</td></tr>
+<tr class="separator:a44f071a8068e7c908f1604edccfdfcc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e53e722959521d79dabdabfe8459dd8"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a5e53e722959521d79dabdabfe8459dd8">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a0f817935c6e352d908090a67aff91f2a">DenseColumnWorkspace</a> *work) const</td></tr>
+<tr class="separator:a5e53e722959521d79dabdabfe8459dd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acc554ace1e678bed927c5fbb87c57e68"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a94ca69af3e36f805e53326d4f8fc7cba">SparseRowWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#acc554ace1e678bed927c5fbb87c57e68">sparse_row_workspace</a> (const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:acc554ace1e678bed927c5fbb87c57e68"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac768438d5b92e1c6ca91f0e96323e527"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a4182e7ceb1cab3083cfec53b9dc5d561">SparseColumnWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#ac768438d5b92e1c6ca91f0e96323e527">sparse_column_workspace</a> (const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:ac768438d5b92e1c6ca91f0e96323e527"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42398ae39483fe45f2efbe87c167adcb"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a42398ae39483fe45f2efbe87c167adcb">row</a> (size_t r, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a94ca69af3e36f805e53326d4f8fc7cba">SparseRowWorkspace</a> *work) const</td></tr>
+<tr class="separator:a42398ae39483fe45f2efbe87c167adcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9fe03690563445942cbb85f1b99acc56"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a9fe03690563445942cbb85f1b99acc56">column</a> (size_t c, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a4182e7ceb1cab3083cfec53b9dc5d561">SparseColumnWorkspace</a> *work) const</td></tr>
+<tr class="separator:a9fe03690563445942cbb85f1b99acc56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab05250b98f085534ab387a6224699dc6"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a77143ea2ebbc50e952b51d640376b008">DenseRowBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#ab05250b98f085534ab387a6224699dc6">dense_row_workspace</a> (size_t s, size_t l, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:ab05250b98f085534ab387a6224699dc6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5289b7562e1c01f8d9199f743c3bc8f2"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#aba03c94d01da4c440f052d704e14cdbe">DenseColumnBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a5289b7562e1c01f8d9199f743c3bc8f2">dense_column_workspace</a> (size_t s, size_t l, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:a5289b7562e1c01f8d9199f743c3bc8f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5dacf5a5aba93bd76abe6875191d903"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#ad5dacf5a5aba93bd76abe6875191d903">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a77143ea2ebbc50e952b51d640376b008">DenseRowBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:ad5dacf5a5aba93bd76abe6875191d903"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfb35f4231907ce0169cfd770db7a58f"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#abfb35f4231907ce0169cfd770db7a58f">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#aba03c94d01da4c440f052d704e14cdbe">DenseColumnBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:abfb35f4231907ce0169cfd770db7a58f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0582656c4355fcd3a37c8d39d20297b7"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1798a0b6bf7822a590baee156371c352">SparseRowBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a0582656c4355fcd3a37c8d39d20297b7">sparse_row_workspace</a> (size_t s, size_t l, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:a0582656c4355fcd3a37c8d39d20297b7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abac7955fe0760b3ba2c530ff4e636d2a"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#ac85be5029bb03a836b329b566c4d89c2">SparseColumnBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#abac7955fe0760b3ba2c530ff4e636d2a">sparse_column_workspace</a> (size_t s, size_t l, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:abac7955fe0760b3ba2c530ff4e636d2a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a696f001d12d93fbe7d33de3d693d56a8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a696f001d12d93fbe7d33de3d693d56a8">row</a> (size_t r, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a1798a0b6bf7822a590baee156371c352">SparseRowBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:a696f001d12d93fbe7d33de3d693d56a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd6379a9c995ebc604d43753e843e896"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#acd6379a9c995ebc604d43753e843e896">column</a> (size_t c, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#ac85be5029bb03a836b329b566c4d89c2">SparseColumnBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:acd6379a9c995ebc604d43753e843e896"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6686e6b3bcb60d72af76a35c0bf9e6e7"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a422993ac842bf906000d6ccebd0c86e6">DenseRowIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a6686e6b3bcb60d72af76a35c0bf9e6e7">dense_row_workspace</a> (std::vector&lt; IDX &gt; subset, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:a6686e6b3bcb60d72af76a35c0bf9e6e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f403488b68975e8cb108e75ad2549b9"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a0029d39a6fa9fe81a5c85cdf744ebd68">DenseColumnIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a6f403488b68975e8cb108e75ad2549b9">dense_column_workspace</a> (std::vector&lt; IDX &gt; subset, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:a6f403488b68975e8cb108e75ad2549b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26ebf454f71a42e4a366a2438253250a"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a26ebf454f71a42e4a366a2438253250a">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a422993ac842bf906000d6ccebd0c86e6">DenseRowIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a26ebf454f71a42e4a366a2438253250a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56a348f66a2b7eea75997823b11b1615"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a56a348f66a2b7eea75997823b11b1615">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a0029d39a6fa9fe81a5c85cdf744ebd68">DenseColumnIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a56a348f66a2b7eea75997823b11b1615"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa038bef26d7a595ca061b7974888e967"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1edbb6992ee134f2481b6227300322ce">SparseRowIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#aa038bef26d7a595ca061b7974888e967">sparse_row_workspace</a> (std::vector&lt; IDX &gt; subset, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:aa038bef26d7a595ca061b7974888e967"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a03d89b9fe2f7852e77e22e33f4a075bf"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a54ba456fea7d955f10d55792cbcc7a58">SparseColumnIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a03d89b9fe2f7852e77e22e33f4a075bf">sparse_column_workspace</a> (std::vector&lt; IDX &gt; subset, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;opt) const</td></tr>
+<tr class="separator:a03d89b9fe2f7852e77e22e33f4a075bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36c16a2532d73f369b71f1cdcca82710"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a36c16a2532d73f369b71f1cdcca82710">row</a> (size_t r, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a1edbb6992ee134f2481b6227300322ce">SparseRowIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a36c16a2532d73f369b71f1cdcca82710"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0a161984a155bd3276abd863b34915fa"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubset.html#a0a161984a155bd3276abd863b34915fa">column</a> (size_t c, T *out_values, IDX *out_indices, <a class="el" href="namespacetatami.html#a54ba456fea7d955f10d55792cbcc7a58">SparseColumnIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a0a161984a155bd3276abd863b34915fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_methods_classtatami_1_1Matrix"><td colspan="2" onclick="javascript:toggleInherit('pub_methods_classtatami_1_1Matrix')"><img src="closed.png" alt="-"/>&#160;Public Member Functions inherited from <a class="el" href="classtatami_1_1Matrix.html">tatami::Matrix&lt; T, IDX &gt;</a></td></tr>
 <tr class="memitem:a6d505c205ae7ff6fb225450fca5f4307 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a6d505c205ae7ff6fb225450fca5f4307">Matrix</a> (<a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &amp;&amp;)=default</td></tr>
 <tr class="separator:a6d505c205ae7ff6fb225450fca5f4307 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -168,96 +180,132 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a48e1342556ff97cc8367b25d244195a9 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1049bd5cbe37b618db795787725930e4 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a1049bd5cbe37b618db795787725930e4">ncol</a> () const=0</td></tr>
 <tr class="separator:a1049bd5cbe37b618db795787725930e4 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05f69722541e0ed9a8f19aad2d44f1c4 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a05f69722541e0ed9a8f19aad2d44f1c4">sparse</a> () const</td></tr>
-<tr class="separator:a05f69722541e0ed9a8f19aad2d44f1c4 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac31ddc309419b4b2f6a2d0a01837e7a3 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ac31ddc309419b4b2f6a2d0a01837e7a3">prefer_rows</a> () const</td></tr>
-<tr class="separator:ac31ddc309419b4b2f6a2d0a01837e7a3 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad9017848eb07fd4e6337dcd384d7f7df inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ad9017848eb07fd4e6337dcd384d7f7df">sparse</a> () const=0</td></tr>
+<tr class="separator:ad9017848eb07fd4e6337dcd384d7f7df inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fc7c2e5f408a096f92163d3c031f113 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a6fc7c2e5f408a096f92163d3c031f113">prefer_rows</a> () const=0</td></tr>
+<tr class="separator:a6fc7c2e5f408a096f92163d3c031f113 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8e0c04c5b051451af78a64e517aae0c1 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a8e0c04c5b051451af78a64e517aae0c1">dimension_preference</a> () const</td></tr>
 <tr class="separator:a8e0c04c5b051451af78a64e517aae0c1 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa62c3f22f2f82f93b81596caf27ededd inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#aa62c3f22f2f82f93b81596caf27ededd">new_row_workspace</a> (bool cache=false) const=0</td></tr>
-<tr class="separator:aa62c3f22f2f82f93b81596caf27ededd inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7287719dc760c70e891586dd946f8443 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a7287719dc760c70e891586dd946f8443">new_row_workspace</a> (size_t start, size_t length, bool cache=false) const=0</td></tr>
-<tr class="separator:a7287719dc760c70e891586dd946f8443 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afee30b94d74c1a1f8d1a197f388d2e71 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#afee30b94d74c1a1f8d1a197f388d2e71">new_row_workspace</a> (std::vector&lt; IDX &gt; indices, bool cache=false) const=0</td></tr>
-<tr class="separator:afee30b94d74c1a1f8d1a197f388d2e71 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e0dbb0132e1b132a9164c20729e21d5 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a8e0dbb0132e1b132a9164c20729e21d5">new_column_workspace</a> (bool cache=false) const=0</td></tr>
-<tr class="separator:a8e0dbb0132e1b132a9164c20729e21d5 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a75c16c916c50066e637a83c97b73b627 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a75c16c916c50066e637a83c97b73b627">new_column_workspace</a> (size_t start, size_t length, bool cache=false) const=0</td></tr>
-<tr class="separator:a75c16c916c50066e637a83c97b73b627 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11491463b084b7fdbe9c2f969b2c8dee inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a11491463b084b7fdbe9c2f969b2c8dee">new_column_workspace</a> (std::vector&lt; IDX &gt; indices, bool cache=false) const=0</td></tr>
-<tr class="separator:a11491463b084b7fdbe9c2f969b2c8dee inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a10be7bad85b57f0681a12dc02455c772 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a10be7bad85b57f0681a12dc02455c772">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *work) const=0</td></tr>
-<tr class="separator:a10be7bad85b57f0681a12dc02455c772 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a1d326e609a1787e4d62f30c08fb613 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a6a1d326e609a1787e4d62f30c08fb613">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *work) const=0</td></tr>
-<tr class="separator:a6a1d326e609a1787e4d62f30c08fb613 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a342e723374e557545341ef981b61097b inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a342e723374e557545341ef981b61097b">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *work) const=0</td></tr>
-<tr class="separator:a342e723374e557545341ef981b61097b inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4604ebd84ac00b6cbc30c16f8c5e0082 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a4604ebd84ac00b6cbc30c16f8c5e0082">row</a> (size_t r, <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *work) const</td></tr>
-<tr class="separator:a4604ebd84ac00b6cbc30c16f8c5e0082 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d396ffeaf59b2accb61e633c597b87f inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a1d396ffeaf59b2accb61e633c597b87f">row</a> (size_t r, <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *work) const</td></tr>
-<tr class="separator:a1d396ffeaf59b2accb61e633c597b87f inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab406aa70fea00208ccdee7b100999ff7 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ab406aa70fea00208ccdee7b100999ff7">row</a> (size_t r, <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
-<tr class="separator:ab406aa70fea00208ccdee7b100999ff7 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7d6336c4e35d9573f9e4633ea7519e2e inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a7d6336c4e35d9573f9e4633ea7519e2e">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *work) const=0</td></tr>
-<tr class="separator:a7d6336c4e35d9573f9e4633ea7519e2e inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a749f178cf9da74760d1d5b3cf9887077 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a749f178cf9da74760d1d5b3cf9887077">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *work) const=0</td></tr>
-<tr class="separator:a749f178cf9da74760d1d5b3cf9887077 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a52782c318fde3026a32a39b7cd5889a3 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a52782c318fde3026a32a39b7cd5889a3">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *work) const=0</td></tr>
-<tr class="separator:a52782c318fde3026a32a39b7cd5889a3 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab86424e298a196537c91aa3e2b1a40cd inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ab86424e298a196537c91aa3e2b1a40cd">column</a> (size_t c, <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *work) const</td></tr>
-<tr class="separator:ab86424e298a196537c91aa3e2b1a40cd inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ada979dd7f59d997a87e0fa0d83352c20 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ada979dd7f59d997a87e0fa0d83352c20">column</a> (size_t c, <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *work) const</td></tr>
-<tr class="separator:ada979dd7f59d997a87e0fa0d83352c20 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05aaa7528e1b52b91f978b4149eb4165 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a05aaa7528e1b52b91f978b4149eb4165">column</a> (size_t c, <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
-<tr class="separator:a05aaa7528e1b52b91f978b4149eb4165 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af66be1bb53f6ec8eb2efae17c3289d66 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#af66be1bb53f6ec8eb2efae17c3289d66">row_copy</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *work) const</td></tr>
-<tr class="separator:af66be1bb53f6ec8eb2efae17c3289d66 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2e95a6555c53b064d2d468bafbd5a25e inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a2e95a6555c53b064d2d468bafbd5a25e">row_copy</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *work) const</td></tr>
-<tr class="separator:a2e95a6555c53b064d2d468bafbd5a25e inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afdd3e81c05d4311827bd0a2836bee98f inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#afdd3e81c05d4311827bd0a2836bee98f">row_copy</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
-<tr class="separator:afdd3e81c05d4311827bd0a2836bee98f inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aced34f0c951c2aba0c63b158656ee190 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#aced34f0c951c2aba0c63b158656ee190">column_copy</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *work) const</td></tr>
-<tr class="separator:aced34f0c951c2aba0c63b158656ee190 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6f586587bd44cf891062e3e2e054542 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ab6f586587bd44cf891062e3e2e054542">column_copy</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *work) const</td></tr>
-<tr class="separator:ab6f586587bd44cf891062e3e2e054542 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae398a0d02d2bf817dfd0449a6718c92a inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ae398a0d02d2bf817dfd0449a6718c92a">column_copy</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
-<tr class="separator:ae398a0d02d2bf817dfd0449a6718c92a inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa75bd1d084698e5df87796ecfe3fffb6 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#aa75bd1d084698e5df87796ecfe3fffb6">sparse_row</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:aa75bd1d084698e5df87796ecfe3fffb6 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b930df00eec917bba0ac6ae1c0f4458 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a4b930df00eec917bba0ac6ae1c0f4458">sparse_row</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:a4b930df00eec917bba0ac6ae1c0f4458 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae5e29247a01e96b0c13df3b708ecf5a9 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ae5e29247a01e96b0c13df3b708ecf5a9">sparse_row</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *work, bool sorted=true) const</td></tr>
-<tr class="separator:ae5e29247a01e96b0c13df3b708ecf5a9 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af56641ca2112efc31e1c6ab475726b50 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#af56641ca2112efc31e1c6ab475726b50">sparse_row</a> (size_t r, <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:af56641ca2112efc31e1c6ab475726b50 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2565998990e5f5af2f4d2251bf6181fc inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a2565998990e5f5af2f4d2251bf6181fc">sparse_row</a> (size_t r, <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:a2565998990e5f5af2f4d2251bf6181fc inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77d19b893748e5026eeec9e87e8d8cf1 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a77d19b893748e5026eeec9e87e8d8cf1">sparse_row</a> (size_t r, <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *work, bool sorted=true) const</td></tr>
-<tr class="separator:a77d19b893748e5026eeec9e87e8d8cf1 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af294706bdf2074efd08b3e1db0456ca1 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#af294706bdf2074efd08b3e1db0456ca1">sparse_column</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:af294706bdf2074efd08b3e1db0456ca1 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a614d5d8a63b7f4ef246ab3ceda3919d1 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a614d5d8a63b7f4ef246ab3ceda3919d1">sparse_column</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:a614d5d8a63b7f4ef246ab3ceda3919d1 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a095783fbfdea3be8b7ad441e9b536338 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a095783fbfdea3be8b7ad441e9b536338">sparse_column</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *work, bool sorted=true) const</td></tr>
-<tr class="separator:a095783fbfdea3be8b7ad441e9b536338 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a418be2669371c8bcc9a7c042001e5449 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a418be2669371c8bcc9a7c042001e5449">sparse_column</a> (size_t c, <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:a418be2669371c8bcc9a7c042001e5449 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a94face240af1ec765f084b0dce0a7395 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a94face240af1ec765f084b0dce0a7395">sparse_column</a> (size_t c, <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *work, bool sorted=true) const</td></tr>
-<tr class="separator:a94face240af1ec765f084b0dce0a7395 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4bf867231d9760eeb2773f1c1e4f2cc inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#aa4bf867231d9760eeb2773f1c1e4f2cc">sparse_column</a> (size_t c, <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *work, bool sorted=true) const</td></tr>
-<tr class="separator:aa4bf867231d9760eeb2773f1c1e4f2cc inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a72a2a08f7008bdc1c9848d87f3bf80ce inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a72a2a08f7008bdc1c9848d87f3bf80ce">sparse_row_copy</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *work, <a class="el" href="namespacetatami.html#ac4dba1039cc39910b0dd3bcccfea0f71">SparseCopyMode</a> copy=SPARSE_COPY_BOTH, bool sorted=true) const</td></tr>
-<tr class="separator:a72a2a08f7008bdc1c9848d87f3bf80ce inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b45fbaacf1503182b6391ffefa5f9f5 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a4b45fbaacf1503182b6391ffefa5f9f5">sparse_row_copy</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *work, <a class="el" href="namespacetatami.html#ac4dba1039cc39910b0dd3bcccfea0f71">SparseCopyMode</a> copy=SPARSE_COPY_BOTH, bool sorted=true) const</td></tr>
-<tr class="separator:a4b45fbaacf1503182b6391ffefa5f9f5 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae6b78113e3d23ecf47efe20c17e59028 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ae6b78113e3d23ecf47efe20c17e59028">sparse_row_copy</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *work, <a class="el" href="namespacetatami.html#ac4dba1039cc39910b0dd3bcccfea0f71">SparseCopyMode</a> copy=SPARSE_COPY_BOTH, bool sorted=true) const</td></tr>
-<tr class="separator:ae6b78113e3d23ecf47efe20c17e59028 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a028fa8bf369e540c212f6dcd11c29fb1 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a028fa8bf369e540c212f6dcd11c29fb1">sparse_column_copy</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *work, <a class="el" href="namespacetatami.html#ac4dba1039cc39910b0dd3bcccfea0f71">SparseCopyMode</a> copy=SPARSE_COPY_BOTH, bool sorted=true) const</td></tr>
-<tr class="separator:a028fa8bf369e540c212f6dcd11c29fb1 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c68c3c8aab41106934efe98fdfdec88 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a3c68c3c8aab41106934efe98fdfdec88">sparse_column_copy</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *work, <a class="el" href="namespacetatami.html#ac4dba1039cc39910b0dd3bcccfea0f71">SparseCopyMode</a> copy=SPARSE_COPY_BOTH, bool sorted=true) const</td></tr>
-<tr class="separator:a3c68c3c8aab41106934efe98fdfdec88 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32061a22c9773763e8adf8d4decffc63 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a32061a22c9773763e8adf8d4decffc63">sparse_column_copy</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *work, <a class="el" href="namespacetatami.html#ac4dba1039cc39910b0dd3bcccfea0f71">SparseCopyMode</a> copy=SPARSE_COPY_BOTH, bool sorted=true) const</td></tr>
-<tr class="separator:a32061a22c9773763e8adf8d4decffc63 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a935242c6a441cd71ad82f9965ed7e018 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a3e4e7d9c0a3103fe35d6b6b2d5c8167e">DenseRowWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a935242c6a441cd71ad82f9965ed7e018">dense_row_workspace</a> (const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:a935242c6a441cd71ad82f9965ed7e018 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af96ddb276e8b641b71d2659098235ad5 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a77143ea2ebbc50e952b51d640376b008">DenseRowBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#af96ddb276e8b641b71d2659098235ad5">dense_row_workspace</a> (size_t start, size_t length, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:af96ddb276e8b641b71d2659098235ad5 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acec95f144f7287a375dfb301974c7d50 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a422993ac842bf906000d6ccebd0c86e6">DenseRowIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#acec95f144f7287a375dfb301974c7d50">dense_row_workspace</a> (std::vector&lt; IDX &gt; indices, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:acec95f144f7287a375dfb301974c7d50 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a675bf1ddd56c6eaf24b1100fdf7122a0 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a3e4e7d9c0a3103fe35d6b6b2d5c8167e">DenseRowWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a675bf1ddd56c6eaf24b1100fdf7122a0">dense_row_workspace</a> () const</td></tr>
+<tr class="separator:a675bf1ddd56c6eaf24b1100fdf7122a0 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15773037446a0221ff0e5a5bf5d4299c inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a77143ea2ebbc50e952b51d640376b008">DenseRowBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a15773037446a0221ff0e5a5bf5d4299c">dense_row_workspace</a> (size_t start, size_t length) const</td></tr>
+<tr class="separator:a15773037446a0221ff0e5a5bf5d4299c inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6cad51f94ab35c4751ae731b1891da6 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a422993ac842bf906000d6ccebd0c86e6">DenseRowIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ab6cad51f94ab35c4751ae731b1891da6">dense_row_workspace</a> (std::vector&lt; IDX &gt; indices) const</td></tr>
+<tr class="separator:ab6cad51f94ab35c4751ae731b1891da6 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad095a4dabf76686f7105b35215ee6ed4 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a0f817935c6e352d908090a67aff91f2a">DenseColumnWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ad095a4dabf76686f7105b35215ee6ed4">dense_column_workspace</a> (const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:ad095a4dabf76686f7105b35215ee6ed4 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a14f0d46805b214bf93c2b89cacaed9 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#aba03c94d01da4c440f052d704e14cdbe">DenseColumnBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a3a14f0d46805b214bf93c2b89cacaed9">dense_column_workspace</a> (size_t start, size_t length, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:a3a14f0d46805b214bf93c2b89cacaed9 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2910e520ecd969329a43f9ac9a5598bd inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a0029d39a6fa9fe81a5c85cdf744ebd68">DenseColumnIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a2910e520ecd969329a43f9ac9a5598bd">dense_column_workspace</a> (std::vector&lt; IDX &gt; indices, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:a2910e520ecd969329a43f9ac9a5598bd inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a293cc62cc8a39e4ed66ab99e33cbcf27 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a0f817935c6e352d908090a67aff91f2a">DenseColumnWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a293cc62cc8a39e4ed66ab99e33cbcf27">dense_column_workspace</a> () const</td></tr>
+<tr class="separator:a293cc62cc8a39e4ed66ab99e33cbcf27 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a134a0216419196e100c542f37550ca13 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#aba03c94d01da4c440f052d704e14cdbe">DenseColumnBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a134a0216419196e100c542f37550ca13">dense_column_workspace</a> (size_t start, size_t length) const</td></tr>
+<tr class="separator:a134a0216419196e100c542f37550ca13 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a479dcb29b421a743d31a82fe3991d941 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a0029d39a6fa9fe81a5c85cdf744ebd68">DenseColumnIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a479dcb29b421a743d31a82fe3991d941">dense_column_workspace</a> (std::vector&lt; IDX &gt; indices) const</td></tr>
+<tr class="separator:a479dcb29b421a743d31a82fe3991d941 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abb01b715c9918114ba658d279f0c9306 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a94ca69af3e36f805e53326d4f8fc7cba">SparseRowWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#abb01b715c9918114ba658d279f0c9306">sparse_row_workspace</a> (const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:abb01b715c9918114ba658d279f0c9306 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a810044d32984857de1d571f120fe97df inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1798a0b6bf7822a590baee156371c352">SparseRowBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a810044d32984857de1d571f120fe97df">sparse_row_workspace</a> (size_t start, size_t length, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:a810044d32984857de1d571f120fe97df inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7a2c1606b0b9c0c47c964d4c07fbcd4d inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1edbb6992ee134f2481b6227300322ce">SparseRowIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a7a2c1606b0b9c0c47c964d4c07fbcd4d">sparse_row_workspace</a> (std::vector&lt; IDX &gt; indices, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:a7a2c1606b0b9c0c47c964d4c07fbcd4d inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a4db842e8742bb6eb9d3456ad9628b2 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a94ca69af3e36f805e53326d4f8fc7cba">SparseRowWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a4a4db842e8742bb6eb9d3456ad9628b2">sparse_row_workspace</a> () const</td></tr>
+<tr class="separator:a4a4db842e8742bb6eb9d3456ad9628b2 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad5784d1baf88d06c4b9999ce60dc5b14 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1798a0b6bf7822a590baee156371c352">SparseRowBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ad5784d1baf88d06c4b9999ce60dc5b14">sparse_row_workspace</a> (size_t start, size_t length) const</td></tr>
+<tr class="separator:ad5784d1baf88d06c4b9999ce60dc5b14 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4ada5a449ab883b911b420d7ed53c9c8 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1edbb6992ee134f2481b6227300322ce">SparseRowIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a4ada5a449ab883b911b420d7ed53c9c8">sparse_row_workspace</a> (std::vector&lt; IDX &gt; indices) const</td></tr>
+<tr class="separator:a4ada5a449ab883b911b420d7ed53c9c8 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2c50f28ce9ca0edc27a4647b6c595b21 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a4182e7ceb1cab3083cfec53b9dc5d561">SparseColumnWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a2c50f28ce9ca0edc27a4647b6c595b21">sparse_column_workspace</a> (const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:a2c50f28ce9ca0edc27a4647b6c595b21 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99694353e05bc2d8fe40735b96d9d898 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#ac85be5029bb03a836b329b566c4d89c2">SparseColumnBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a99694353e05bc2d8fe40735b96d9d898">sparse_column_workspace</a> (size_t start, size_t length, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:a99694353e05bc2d8fe40735b96d9d898 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6d7bb36282f467911ff2573bb96d465b inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a54ba456fea7d955f10d55792cbcc7a58">SparseColumnIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a6d7bb36282f467911ff2573bb96d465b">sparse_column_workspace</a> (std::vector&lt; IDX &gt; indices, const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;options) const=0</td></tr>
+<tr class="separator:a6d7bb36282f467911ff2573bb96d465b inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8a1dd4ef8814f3e748dc6bc9d7c6828 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a4182e7ceb1cab3083cfec53b9dc5d561">SparseColumnWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ae8a1dd4ef8814f3e748dc6bc9d7c6828">sparse_column_workspace</a> () const</td></tr>
+<tr class="separator:ae8a1dd4ef8814f3e748dc6bc9d7c6828 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa6950a659cb100964829e9a7ba094796 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#ac85be5029bb03a836b329b566c4d89c2">SparseColumnBlockWorkspace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#aa6950a659cb100964829e9a7ba094796">sparse_column_workspace</a> (size_t start, size_t length) const</td></tr>
+<tr class="separator:aa6950a659cb100964829e9a7ba094796 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1a5563529059a6db56968b8b15558c58 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a54ba456fea7d955f10d55792cbcc7a58">SparseColumnIndexWorkspace</a>&lt; IDX &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a1a5563529059a6db56968b8b15558c58">sparse_column_workspace</a> (std::vector&lt; IDX &gt; indices) const</td></tr>
+<tr class="separator:a1a5563529059a6db56968b8b15558c58 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a34d3893b5a47b532d30db6780febdeff inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a34d3893b5a47b532d30db6780febdeff">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a3e4e7d9c0a3103fe35d6b6b2d5c8167e">DenseRowWorkspace</a> *work) const=0</td></tr>
+<tr class="separator:a34d3893b5a47b532d30db6780febdeff inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2165df9ff4cb9afcc61992e888f7b33 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ac2165df9ff4cb9afcc61992e888f7b33">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a77143ea2ebbc50e952b51d640376b008">DenseRowBlockWorkspace</a> *work) const=0</td></tr>
+<tr class="separator:ac2165df9ff4cb9afcc61992e888f7b33 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e22a1534c0549a2bf5ac818d5a9c1cb inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a0e22a1534c0549a2bf5ac818d5a9c1cb">row</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a422993ac842bf906000d6ccebd0c86e6">DenseRowIndexWorkspace</a>&lt; IDX &gt; *work) const=0</td></tr>
+<tr class="separator:a0e22a1534c0549a2bf5ac818d5a9c1cb inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45374d30647b638e8901e25be6cf84d2 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a45374d30647b638e8901e25be6cf84d2">row</a> (size_t r, <a class="el" href="namespacetatami.html#a3e4e7d9c0a3103fe35d6b6b2d5c8167e">DenseRowWorkspace</a> *work) const</td></tr>
+<tr class="separator:a45374d30647b638e8901e25be6cf84d2 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d914be30f58811a241e1e5873ca88b8 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a5d914be30f58811a241e1e5873ca88b8">row</a> (size_t r, <a class="el" href="namespacetatami.html#a77143ea2ebbc50e952b51d640376b008">DenseRowBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:a5d914be30f58811a241e1e5873ca88b8 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a21c54c0dd2a96ff1c25fba8665d73c38 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a21c54c0dd2a96ff1c25fba8665d73c38">row</a> (size_t r, <a class="el" href="namespacetatami.html#a422993ac842bf906000d6ccebd0c86e6">DenseRowIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a21c54c0dd2a96ff1c25fba8665d73c38 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7bd5de94d342cf00f520a75e44f1112f inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a7bd5de94d342cf00f520a75e44f1112f">row</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a94ca69af3e36f805e53326d4f8fc7cba">SparseRowWorkspace</a> *work) const=0</td></tr>
+<tr class="separator:a7bd5de94d342cf00f520a75e44f1112f inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa17ffa61ac22a28ba583739c32a73a56 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#aa17ffa61ac22a28ba583739c32a73a56">row</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a1798a0b6bf7822a590baee156371c352">SparseRowBlockWorkspace</a> *work) const=0</td></tr>
+<tr class="separator:aa17ffa61ac22a28ba583739c32a73a56 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6e4f5da8caf94a54cb94e2ff3e602ab6 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a6e4f5da8caf94a54cb94e2ff3e602ab6">row</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a1edbb6992ee134f2481b6227300322ce">SparseRowIndexWorkspace</a>&lt; IDX &gt; *work) const=0</td></tr>
+<tr class="separator:a6e4f5da8caf94a54cb94e2ff3e602ab6 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5a548e337fa5829bc8be7fb482992ca7 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a5a548e337fa5829bc8be7fb482992ca7">row</a> (size_t r, <a class="el" href="namespacetatami.html#a94ca69af3e36f805e53326d4f8fc7cba">SparseRowWorkspace</a> *work) const</td></tr>
+<tr class="separator:a5a548e337fa5829bc8be7fb482992ca7 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a68b3b7cd6f455fcdca738c1cc8b4755d inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a68b3b7cd6f455fcdca738c1cc8b4755d">row</a> (size_t r, <a class="el" href="namespacetatami.html#a1798a0b6bf7822a590baee156371c352">SparseRowBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:a68b3b7cd6f455fcdca738c1cc8b4755d inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b182cbbed5a6fa81c0873078c6fa693 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a2b182cbbed5a6fa81c0873078c6fa693">row</a> (size_t r, <a class="el" href="namespacetatami.html#a1edbb6992ee134f2481b6227300322ce">SparseRowIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a2b182cbbed5a6fa81c0873078c6fa693 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada2c72ccd1628c96c40c601e6ceda654 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ada2c72ccd1628c96c40c601e6ceda654">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a0f817935c6e352d908090a67aff91f2a">DenseColumnWorkspace</a> *work) const=0</td></tr>
+<tr class="separator:ada2c72ccd1628c96c40c601e6ceda654 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aee2bfcd96c64ecc4fb1c6682b2527aae inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#aee2bfcd96c64ecc4fb1c6682b2527aae">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#aba03c94d01da4c440f052d704e14cdbe">DenseColumnBlockWorkspace</a> *work) const=0</td></tr>
+<tr class="separator:aee2bfcd96c64ecc4fb1c6682b2527aae inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f503f54c5ebbfdcfb7c313a405f08ac inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a1f503f54c5ebbfdcfb7c313a405f08ac">column</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a0029d39a6fa9fe81a5c85cdf744ebd68">DenseColumnIndexWorkspace</a>&lt; IDX &gt; *work) const=0</td></tr>
+<tr class="separator:a1f503f54c5ebbfdcfb7c313a405f08ac inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace200adc8b1c4237f3c734551ef046dc inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ace200adc8b1c4237f3c734551ef046dc">column</a> (size_t c, <a class="el" href="namespacetatami.html#a0f817935c6e352d908090a67aff91f2a">DenseColumnWorkspace</a> *work) const</td></tr>
+<tr class="separator:ace200adc8b1c4237f3c734551ef046dc inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af27b9c0d027c50e52ad3da0c2c23ad2c inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#af27b9c0d027c50e52ad3da0c2c23ad2c">column</a> (size_t c, <a class="el" href="namespacetatami.html#aba03c94d01da4c440f052d704e14cdbe">DenseColumnBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:af27b9c0d027c50e52ad3da0c2c23ad2c inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7633048ba93256affc03084e2da6f063 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a7633048ba93256affc03084e2da6f063">column</a> (size_t c, <a class="el" href="namespacetatami.html#a0029d39a6fa9fe81a5c85cdf744ebd68">DenseColumnIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a7633048ba93256affc03084e2da6f063 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a809134c6013d89008a5cdc0e2f153fe8 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a809134c6013d89008a5cdc0e2f153fe8">column</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a4182e7ceb1cab3083cfec53b9dc5d561">SparseColumnWorkspace</a> *work) const=0</td></tr>
+<tr class="separator:a809134c6013d89008a5cdc0e2f153fe8 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8bd7375e9b578e2369b335b5cd70875e inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a8bd7375e9b578e2369b335b5cd70875e">column</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#ac85be5029bb03a836b329b566c4d89c2">SparseColumnBlockWorkspace</a> *work) const=0</td></tr>
+<tr class="separator:a8bd7375e9b578e2369b335b5cd70875e inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57915eab83c7caafac71365c7b56a2a8 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual <a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a57915eab83c7caafac71365c7b56a2a8">column</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a54ba456fea7d955f10d55792cbcc7a58">SparseColumnIndexWorkspace</a>&lt; IDX &gt; *work) const=0</td></tr>
+<tr class="separator:a57915eab83c7caafac71365c7b56a2a8 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa329d34be396ce9cca9077f47149d2a inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#aaa329d34be396ce9cca9077f47149d2a">column</a> (size_t c, <a class="el" href="namespacetatami.html#a4182e7ceb1cab3083cfec53b9dc5d561">SparseColumnWorkspace</a> *work) const</td></tr>
+<tr class="separator:aaa329d34be396ce9cca9077f47149d2a inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2212303b5cdddfe60e7d5e882af126d8 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a2212303b5cdddfe60e7d5e882af126d8">column</a> (size_t c, <a class="el" href="namespacetatami.html#ac85be5029bb03a836b329b566c4d89c2">SparseColumnBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:a2212303b5cdddfe60e7d5e882af126d8 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a06d2cbfca03430d24be093142afd7cf6 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a06d2cbfca03430d24be093142afd7cf6">column</a> (size_t c, <a class="el" href="namespacetatami.html#a54ba456fea7d955f10d55792cbcc7a58">SparseColumnIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a06d2cbfca03430d24be093142afd7cf6 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2197ca3d05f70127f22de31a645c0ba4 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a2197ca3d05f70127f22de31a645c0ba4">row_copy</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a3e4e7d9c0a3103fe35d6b6b2d5c8167e">DenseRowWorkspace</a> *work) const</td></tr>
+<tr class="separator:a2197ca3d05f70127f22de31a645c0ba4 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7ba093df5c7add38c7a65cd0156d3c45 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a7ba093df5c7add38c7a65cd0156d3c45">row_copy</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a77143ea2ebbc50e952b51d640376b008">DenseRowBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:a7ba093df5c7add38c7a65cd0156d3c45 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdcac115721408d4b7991d7e60942028 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#abdcac115721408d4b7991d7e60942028">row_copy</a> (size_t r, T *buffer, <a class="el" href="namespacetatami.html#a422993ac842bf906000d6ccebd0c86e6">DenseRowIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:abdcac115721408d4b7991d7e60942028 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64006bdf017d48760f4b1ac4e31bac87 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a64006bdf017d48760f4b1ac4e31bac87">row_copy</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a94ca69af3e36f805e53326d4f8fc7cba">SparseRowWorkspace</a> *work) const</td></tr>
+<tr class="separator:a64006bdf017d48760f4b1ac4e31bac87 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4202cc7b5662376311c683a799a34a6c inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a4202cc7b5662376311c683a799a34a6c">row_copy</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a1798a0b6bf7822a590baee156371c352">SparseRowBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:a4202cc7b5662376311c683a799a34a6c inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3c50c971e2e058faff45de7681f82ded inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a3c50c971e2e058faff45de7681f82ded">row_copy</a> (size_t r, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a1edbb6992ee134f2481b6227300322ce">SparseRowIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a3c50c971e2e058faff45de7681f82ded inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2682f1537920f6b4db653583ecb38e45 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a2682f1537920f6b4db653583ecb38e45">column_copy</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a0f817935c6e352d908090a67aff91f2a">DenseColumnWorkspace</a> *work) const</td></tr>
+<tr class="separator:a2682f1537920f6b4db653583ecb38e45 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f2a5e069a31348059ac9b2ee51a6378 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a0f2a5e069a31348059ac9b2ee51a6378">column_copy</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#aba03c94d01da4c440f052d704e14cdbe">DenseColumnBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:a0f2a5e069a31348059ac9b2ee51a6378 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf8daacc683494db58d2f7ba9f57afd6 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">const T *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#abf8daacc683494db58d2f7ba9f57afd6">column_copy</a> (size_t c, T *buffer, <a class="el" href="namespacetatami.html#a0029d39a6fa9fe81a5c85cdf744ebd68">DenseColumnIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:abf8daacc683494db58d2f7ba9f57afd6 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51995cb3d6c2bbcface88087dd7f2e4a inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a51995cb3d6c2bbcface88087dd7f2e4a">column_copy</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a4182e7ceb1cab3083cfec53b9dc5d561">SparseColumnWorkspace</a> *work) const</td></tr>
+<tr class="separator:a51995cb3d6c2bbcface88087dd7f2e4a inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae7c1c4c8de56f48849cae9aea92df695 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#ae7c1c4c8de56f48849cae9aea92df695">column_copy</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#ac85be5029bb03a836b329b566c4d89c2">SparseColumnBlockWorkspace</a> *work) const</td></tr>
+<tr class="separator:ae7c1c4c8de56f48849cae9aea92df695 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41742465767476b745f214080163b3f2 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a41742465767476b745f214080163b3f2">column_copy</a> (size_t c, T *vbuffer, IDX *ibuffer, <a class="el" href="namespacetatami.html#a54ba456fea7d955f10d55792cbcc7a58">SparseColumnIndexWorkspace</a>&lt; IDX &gt; *work) const</td></tr>
+<tr class="separator:a41742465767476b745f214080163b3f2 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="inherited" name="inherited"></a>
 Additional Inherited Members</h2></td></tr>
@@ -270,7 +318,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;int MARGIN, typename T, typename IDX, class V&gt;<br />
 class tatami::DelayedSubset&lt; MARGIN, T, IDX, V &gt;</div><p>Delayed subsetting of a matrix with general indices. </p>
-<p>Implements delayed subsetting (i.e., slicing) on the rows or columns of a matrix, given a vector of arbitrary indices. This operation is "delayed" in that it is only evaluated on request, e.g., with <code><a class="el" href="classtatami_1_1DelayedSubset.html#af0a4fc948a316c0b74771811fc4cadda">row()</a></code> or friends.</p>
+<p>Implements delayed subsetting (i.e., slicing) on the rows or columns of a matrix, given a vector of arbitrary indices. This operation is "delayed" in that it is only evaluated on request, e.g., with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a44f071a8068e7c908f1604edccfdfcc4">row()</a></code> or friends.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">MARGIN</td><td>Dimension along which the subsetting is to occur. If 0, the subset is applied to the rows; if 1, the subset is applied to the columns. </td></tr>
@@ -413,7 +461,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Is this matrix sparse? Defaults to <code>false</code> if no specialized method is provided in derived classes. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#a05f69722541e0ed9a8f19aad2d44f1c4">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#ad9017848eb07fd4e6337dcd384d7f7df">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
@@ -441,9 +489,9 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="section return"><dt>Returns</dt><dd>The preferred dimension for extracting values. If <code>true</code>, row-wise extraction is preferred; if <code>false</code>, column-wise extraction is preferred. Defaults to <code>false</code> if no specialized method is provided in derived classes. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The preferred dimension for extracting values. If <code>true</code>, row-wise extraction is preferred; if <code>false</code>, column-wise extraction is preferred. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#ac31ddc309419b4b2f6a2d0a01837e7a3">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a6fc7c2e5f408a096f92163d3c031f113">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
@@ -479,8 +527,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 
 </div>
 </div>
-<a id="a821eac25f5742d2b1e9492dd9011a351" name="a821eac25f5742d2b1e9492dd9011a351"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a821eac25f5742d2b1e9492dd9011a351">&#9670;&#160;</a></span>new_row_workspace() <span class="overload">[1/3]</span></h2>
+<a id="a5c8327271f54c064795ea00f4067892c" name="a5c8327271f54c064795ea00f4067892c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5c8327271f54c064795ea00f4067892c">&#9670;&#160;</a></span>dense_row_workspace() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -491,10 +539,10 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::new_row_workspace </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a3e4e7d9c0a3103fe35d6b6b2d5c8167e">DenseRowWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::dense_row_workspace </td>
           <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>cache</em> = <code>false</code></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -506,18 +554,18 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cache</td><td>Whether to cache information from each call to <code><a class="el" href="classtatami_1_1DelayedSubset.html#af0a4fc948a316c0b74771811fc4cadda">row()</a></code> with this workspace, for faster iterations if the same row is extracted during multiple passes over the matrix. </td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>RowWorkspace</code> for row-wise data extraction, or a null pointer if no workspace is required. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>DenseRowWorkspace</code> for row-wise data extraction. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#aa62c3f22f2f82f93b81596caf27ededd">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a935242c6a441cd71ad82f9965ed7e018">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a1abb23e256e3277f0eee8f7244e43c73" name="a1abb23e256e3277f0eee8f7244e43c73"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1abb23e256e3277f0eee8f7244e43c73">&#9670;&#160;</a></span>new_column_workspace() <span class="overload">[1/3]</span></h2>
+<a id="ad66235473f22031e2822b81e6cf23742" name="ad66235473f22031e2822b81e6cf23742"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad66235473f22031e2822b81e6cf23742">&#9670;&#160;</a></span>dense_column_workspace() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -528,10 +576,10 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::new_column_workspace </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a0f817935c6e352d908090a67aff91f2a">DenseColumnWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::dense_column_workspace </td>
           <td>(</td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>cache</em> = <code>false</code></td><td>)</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em></td><td>)</td>
           <td> const</td>
         </tr>
       </table>
@@ -543,18 +591,18 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">cache</td><td>Whether to cache information from each call to <code><a class="el" href="classtatami_1_1DelayedSubset.html#afc95d029362d35b5171ce7ec38f0c528">column()</a></code> with this workspace, for faster iterations if the same column is extracted during multiple passes over the matrix. </td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>ColumnWorkspace</code> for column-wise data extraction, or a null pointer if no workspace is required. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>DenseColumnWorkspace</code> for column-wise data extraction. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a8e0dbb0132e1b132a9164c20729e21d5">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#ad095a4dabf76686f7105b35215ee6ed4">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="af0a4fc948a316c0b74771811fc4cadda" name="af0a4fc948a316c0b74771811fc4cadda"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af0a4fc948a316c0b74771811fc4cadda">&#9670;&#160;</a></span>row() <span class="overload">[1/3]</span></h2>
+<a id="a44f071a8068e7c908f1604edccfdfcc4" name="a44f071a8068e7c908f1604edccfdfcc4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44f071a8068e7c908f1604edccfdfcc4">&#9670;&#160;</a></span>row() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -579,7 +627,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a3e4e7d9c0a3103fe35d6b6b2d5c8167e">DenseRowWorkspace</a> *&#160;</td>
           <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
@@ -599,18 +647,18 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <table class="params">
     <tr><td class="paramname">r</td><td>Index of the row. </td></tr>
     <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad">ncol()</a></code> values. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a821eac25f5742d2b1e9492dd9011a351">new_row_workspace()</a></code>.</td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#a675bf1ddd56c6eaf24b1100fdf7122a0">dense_row_workspace()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the values of row <code>r</code>, containing <code><a class="el" href="classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad">ncol()</a></code> valid entries. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a10be7bad85b57f0681a12dc02455c772">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a34d3893b5a47b532d30db6780febdeff">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="afc95d029362d35b5171ce7ec38f0c528" name="afc95d029362d35b5171ce7ec38f0c528"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afc95d029362d35b5171ce7ec38f0c528">&#9670;&#160;</a></span>column() <span class="overload">[1/3]</span></h2>
+<a id="a5e53e722959521d79dabdabfe8459dd8" name="a5e53e722959521d79dabdabfe8459dd8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5e53e722959521d79dabdabfe8459dd8">&#9670;&#160;</a></span>column() <span class="overload">[1/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -635,7 +683,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a0f817935c6e352d908090a67aff91f2a">DenseColumnWorkspace</a> *&#160;</td>
           <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
@@ -654,19 +702,19 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">c</td><td>Index of the column. </td></tr>
-    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code>last - first</code> values. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a1abb23e256e3277f0eee8f7244e43c73">new_column_workspace()</a></code>.</td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a0b1e46c7058a68bf99d22e1abbfae180">nrow()</a></code> values. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#a293cc62cc8a39e4ed66ab99e33cbcf27">dense_column_workspace()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Pointer to the values of column <code>c</code>, containing <code><a class="el" href="classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad">ncol()</a></code> valid entries. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a7d6336c4e35d9573f9e4633ea7519e2e">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#ada2c72ccd1628c96c40c601e6ceda654">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a83cefa3a3faa9d144bf52a95b04b0ac0" name="a83cefa3a3faa9d144bf52a95b04b0ac0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83cefa3a3faa9d144bf52a95b04b0ac0">&#9670;&#160;</a></span>sparse_row() <span class="overload">[1/3]</span></h2>
+<a id="acc554ace1e678bed927c5fbb87c57e68" name="acc554ace1e678bed927c5fbb87c57e68"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acc554ace1e678bed927c5fbb87c57e68">&#9670;&#160;</a></span>sparse_row_workspace() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -677,7 +725,81 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_row </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a94ca69af3e36f805e53326d4f8fc7cba">SparseRowWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_row_workspace </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>SparseRowWorkspace</code> for row-wise data extraction. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#abb01b715c9918114ba658d279f0c9306">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+
+</div>
+</div>
+<a id="ac768438d5b92e1c6ca91f0e96323e527" name="ac768438d5b92e1c6ca91f0e96323e527"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac768438d5b92e1c6ca91f0e96323e527">&#9670;&#160;</a></span>sparse_column_workspace() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a4182e7ceb1cab3083cfec53b9dc5d561">SparseColumnWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_column_workspace </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>SparseColumnWorkspace</code> for column-wise data extraction. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a2c50f28ce9ca0edc27a4647b6c595b21">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a42398ae39483fe45f2efbe87c167adcb" name="a42398ae39483fe45f2efbe87c167adcb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42398ae39483fe45f2efbe87c167adcb">&#9670;&#160;</a></span>row() <span class="overload">[2/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::row </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>r</em>, </td>
@@ -697,14 +819,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a4a4650628564a58b961b7df8e2a83ac8">RowWorkspace</a> *&#160;</td>
-          <td class="paramname"><em>work</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>sorted</em> = <code>true</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a94ca69af3e36f805e53326d4f8fc7cba">SparseRowWorkspace</a> *&#160;</td>
+          <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -719,26 +835,24 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 </table>
 </div><div class="memdoc">
 <p><code>vbuffer</code> may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store. This be checked by comparing the returned <code><a class="el" href="structtatami_1_1SparseRange.html#af58b18de602bb4e82e5223b0d7168a08">SparseRange::value</a></code> pointer to <code>vbuffer</code>; if they are the same, <code>vbuffer</code> has been filled. The same applies for <code>ibuffer</code> and the returned <code><a class="el" href="structtatami_1_1SparseRange.html#ac7dd33e84bcc456c04e848bdc51ade73">SparseRange::index</a></code> pointer.</p>
-<p>Values in <code>vbuffer</code> are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>vbuffer</code> are zero.</p>
-<p>Setting <code>sorted = false</code> can reduce computational work in situations where the order of non-zero elements does not matter.</p>
+<p>Entries in the output <code>value</code> array are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>value</code> are zero.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">r</td><td>Index of the row. </td></tr>
-    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad">ncol()</a></code> values. </td></tr>
-    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad">ncol()</a></code> indices. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a821eac25f5742d2b1e9492dd9011a351">new_row_workspace()</a></code>. </td></tr>
-    <tr><td class="paramname">sorted</td><td>Should the non-zero elements be sorted by their indices?</td></tr>
+    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad">ncol()</a></code> values. Ignored if <code>WorkspaceOptions::mode</code> was set to <code>SparseExtractMode::INDEX</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a075542a40a304d609080c1bf6dc76dad">ncol()</a></code> indices. Ignored if <code>WorkspaceOptions::mode</code> was set <code>SparseExtractMode::VALUE</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code>row_workspace()</code>.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of row <code>r</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of row <code>r</code>. Either or both of <code>value</code> or <code>index</code> is set to <code>NULL</code> if extraction of that field is skipped, based on the setting of <code>WorkspaceOptions::mode</code> used to construct <code>work</code>. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#aa75bd1d084698e5df87796ecfe3fffb6">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a7bd5de94d342cf00f520a75e44f1112f">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a119cb2aa6a7690a0ea1fe570be4235a7" name="a119cb2aa6a7690a0ea1fe570be4235a7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a119cb2aa6a7690a0ea1fe570be4235a7">&#9670;&#160;</a></span>sparse_column() <span class="overload">[1/3]</span></h2>
+<a id="a9fe03690563445942cbb85f1b99acc56" name="a9fe03690563445942cbb85f1b99acc56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9fe03690563445942cbb85f1b99acc56">&#9670;&#160;</a></span>column() <span class="overload">[2/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -749,7 +863,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_column </td>
+          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::column </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>c</em>, </td>
@@ -769,14 +883,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a60a9117c28a1c409e7b7b3836be9531a">ColumnWorkspace</a> *&#160;</td>
-          <td class="paramname"><em>work</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>sorted</em> = <code>true</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a4182e7ceb1cab3083cfec53b9dc5d561">SparseColumnWorkspace</a> *&#160;</td>
+          <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -791,26 +899,24 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 </table>
 </div><div class="memdoc">
 <p><code>vbuffer</code> may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store. This be checked by comparing the returned <code><a class="el" href="structtatami_1_1SparseRange.html#af58b18de602bb4e82e5223b0d7168a08">SparseRange::value</a></code> pointer to <code>vbuffer</code>; if they are the same, <code>vbuffer</code> has been filled. The same applies for <code>ibuffer</code> and the returned <code><a class="el" href="structtatami_1_1SparseRange.html#ac7dd33e84bcc456c04e848bdc51ade73">SparseRange::index</a></code> pointer.</p>
-<p>Values in <code>vbuffer</code> are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>vbuffer</code> are zero.</p>
-<p>Setting <code>sorted = false</code> can reduce computational work in situations where the order of non-zero elements does not matter.</p>
+<p>Entries in the output <code>value</code> array are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>value</code> are zero.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">c</td><td>Index of the column. </td></tr>
-    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a0b1e46c7058a68bf99d22e1abbfae180">nrow()</a></code> values. </td></tr>
-    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a0b1e46c7058a68bf99d22e1abbfae180">nrow()</a></code> indices. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to a workspace. </td></tr>
-    <tr><td class="paramname">sorted</td><td>Should the non-zero elements be sorted by their indices?</td></tr>
+    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a0b1e46c7058a68bf99d22e1abbfae180">nrow()</a></code> values. Ignored if <code>WorkspaceOptions::mode</code> was set to <code>SparseExtractMode::INDEX</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1DelayedSubset.html#a0b1e46c7058a68bf99d22e1abbfae180">nrow()</a></code> indices. Ignored if <code>WorkspaceOptions::mode</code> was set <code>SparseExtractMode::VALUE</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to a workspace.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of column <code>c</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of column <code>c</code>. Either or both of <code>value</code> or <code>index</code> is set to <code>NULL</code> if extraction of that field is skipped, based on the setting of <code>WorkspaceOptions::mode</code> used to construct <code>work</code>. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#af294706bdf2074efd08b3e1db0456ca1">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a809134c6013d89008a5cdc0e2f153fe8">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a56174f98b83e99807fb9ca248c94a7d2" name="a56174f98b83e99807fb9ca248c94a7d2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a56174f98b83e99807fb9ca248c94a7d2">&#9670;&#160;</a></span>new_row_workspace() <span class="overload">[2/3]</span></h2>
+<a id="ab05250b98f085534ab387a6224699dc6" name="ab05250b98f085534ab387a6224699dc6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab05250b98f085534ab387a6224699dc6">&#9670;&#160;</a></span>dense_row_workspace() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -821,7 +927,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::new_row_workspace </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a77143ea2ebbc50e952b51d640376b008">DenseRowBlockWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::dense_row_workspace </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>start</em>, </td>
@@ -835,8 +941,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>cache</em> = <code>false</code>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -852,20 +958,18 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">start</td><td>Index of the first column in the block. </td></tr>
-    <tr><td class="paramname">length</td><td>Number of columns in the block. </td></tr>
-    <tr><td class="paramname">cache</td><td>Whether to cache information from each call to <code><a class="el" href="classtatami_1_1DelayedSubset.html#af0a4fc948a316c0b74771811fc4cadda">row()</a></code> with this workspace, for faster iterations if the same row is extracted during multiple passes over the matrix.</td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>RowBlockWorkspace</code> for row-wise extraction of data from a contiguous block of columns from <code>[start, start + length)</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>DenseRowBlockWorkspace</code> for row-wise extraction of data from a contiguous block of columns from <code>[start, start + length)</code>. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a7287719dc760c70e891586dd946f8443">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#af96ddb276e8b641b71d2659098235ad5">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a6fc58a7c3943fc0431874dab58b0fe8b" name="a6fc58a7c3943fc0431874dab58b0fe8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6fc58a7c3943fc0431874dab58b0fe8b">&#9670;&#160;</a></span>new_column_workspace() <span class="overload">[2/3]</span></h2>
+<a id="a5289b7562e1c01f8d9199f743c3bc8f2" name="a5289b7562e1c01f8d9199f743c3bc8f2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5289b7562e1c01f8d9199f743c3bc8f2">&#9670;&#160;</a></span>dense_column_workspace() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -876,7 +980,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::new_column_workspace </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#aba03c94d01da4c440f052d704e14cdbe">DenseColumnBlockWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::dense_column_workspace </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>start</em>, </td>
@@ -890,8 +994,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>cache</em> = <code>false</code>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -909,18 +1013,18 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <table class="params">
     <tr><td class="paramname">start</td><td>Index of the first row in the block. </td></tr>
     <tr><td class="paramname">length</td><td>Number of rows in the block. </td></tr>
-    <tr><td class="paramname">cache</td><td>Whether to cache information from each call to <code><a class="el" href="classtatami_1_1DelayedSubset.html#afc95d029362d35b5171ce7ec38f0c528">column()</a></code> with this workspace, for faster iterations if the same column is extracted during multiple passes over the matrix.</td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>RowBlockWorkspace</code> for column-wise extraction of data from a contiguous block of rows from <code>[start, start + length)</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>DenseRowBlockWorkspace</code> for column-wise extraction of data from a contiguous block of rows from <code>[start, start + length)</code>. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a75c16c916c50066e637a83c97b73b627">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a3a14f0d46805b214bf93c2b89cacaed9">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a23c9a7eeed2a59631681e55c6503c08d" name="a23c9a7eeed2a59631681e55c6503c08d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a23c9a7eeed2a59631681e55c6503c08d">&#9670;&#160;</a></span>row() <span class="overload">[2/3]</span></h2>
+<a id="ad5dacf5a5aba93bd76abe6875191d903" name="ad5dacf5a5aba93bd76abe6875191d903"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5dacf5a5aba93bd76abe6875191d903">&#9670;&#160;</a></span>row() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -945,7 +1049,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a77143ea2ebbc50e952b51d640376b008">DenseRowBlockWorkspace</a> *&#160;</td>
           <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
@@ -964,19 +1068,19 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">r</td><td>Index of the row. </td></tr>
-    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a7dbf988dde45119d189517b2d435edf6">RowBlockWorkspace::length</a></code> values. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a821eac25f5742d2b1e9492dd9011a351">new_row_workspace()</a></code>.</td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a818b80115792369f2d48407b464c45d2">DenseRowBlockWorkspace::length</a></code> values. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#a675bf1ddd56c6eaf24b1100fdf7122a0">dense_row_workspace()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing a block of values from row <code>r</code>, where the array is of length <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a7dbf988dde45119d189517b2d435edf6">RowBlockWorkspace::length</a></code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing a block of values from row <code>r</code>, where the array is of length <code>RowBlockWorkspace::length</code>. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a6a1d326e609a1787e4d62f30c08fb613">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#ac2165df9ff4cb9afcc61992e888f7b33">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a70ced59c6239735d6816aab1085f6715" name="a70ced59c6239735d6816aab1085f6715"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a70ced59c6239735d6816aab1085f6715">&#9670;&#160;</a></span>column() <span class="overload">[2/3]</span></h2>
+<a id="abfb35f4231907ce0169cfd770db7a58f" name="abfb35f4231907ce0169cfd770db7a58f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfb35f4231907ce0169cfd770db7a58f">&#9670;&#160;</a></span>column() <span class="overload">[3/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1001,7 +1105,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#aba03c94d01da4c440f052d704e14cdbe">DenseColumnBlockWorkspace</a> *&#160;</td>
           <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
@@ -1020,19 +1124,19 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">c</td><td>Index of the column. </td></tr>
-    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a7dbf988dde45119d189517b2d435edf6">ColumnBlockWorkspace::length</a></code> values. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a1abb23e256e3277f0eee8f7244e43c73">new_column_workspace()</a></code>.</td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a818b80115792369f2d48407b464c45d2">DenseColumnBlockWorkspace::length</a></code> values. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#a293cc62cc8a39e4ed66ab99e33cbcf27">dense_column_workspace()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing a block of values from column <code>c</code>, where the array is of length <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a7dbf988dde45119d189517b2d435edf6">ColumnBlockWorkspace::length</a></code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing a block of values from column <code>c</code>, where the array is of length <code>ColumnBlockWorkspace::length</code>. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a749f178cf9da74760d1d5b3cf9887077">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#aee2bfcd96c64ecc4fb1c6682b2527aae">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="af3de4f539ab984ba2ee3aafe998d352d" name="af3de4f539ab984ba2ee3aafe998d352d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af3de4f539ab984ba2ee3aafe998d352d">&#9670;&#160;</a></span>sparse_row() <span class="overload">[2/3]</span></h2>
+<a id="a0582656c4355fcd3a37c8d39d20297b7" name="a0582656c4355fcd3a37c8d39d20297b7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0582656c4355fcd3a37c8d39d20297b7">&#9670;&#160;</a></span>sparse_row_workspace() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1043,7 +1147,117 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_row </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1798a0b6bf7822a590baee156371c352">SparseRowBlockWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_row_workspace </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">start</td><td>Index of the first column in the block. </td></tr>
+    <tr><td class="paramname">length</td><td>Number of columns in the block. </td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>SparseRowBlockWorkspace</code> for row-wise extraction of data from a contiguous block of columns from <code>[start, start + length)</code>. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a810044d32984857de1d571f120fe97df">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+
+</div>
+</div>
+<a id="abac7955fe0760b3ba2c530ff4e636d2a" name="abac7955fe0760b3ba2c530ff4e636d2a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abac7955fe0760b3ba2c530ff4e636d2a">&#9670;&#160;</a></span>sparse_column_workspace() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#ac85be5029bb03a836b329b566c4d89c2">SparseColumnBlockWorkspace</a> &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_column_workspace </td>
+          <td>(</td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">start</td><td>Index of the first row in the block. </td></tr>
+    <tr><td class="paramname">length</td><td>Number of rows in the block. </td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>SparseColumnBlockWorkspace</code> for column-wise extraction of data from a contiguous block of rows from <code>[start, start + length)</code>. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a99694353e05bc2d8fe40735b96d9d898">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a696f001d12d93fbe7d33de3d693d56a8" name="a696f001d12d93fbe7d33de3d693d56a8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a696f001d12d93fbe7d33de3d693d56a8">&#9670;&#160;</a></span>row() <span class="overload">[4/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::row </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>r</em>, </td>
@@ -1063,14 +1277,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a100a9dd1056492a6687199cc1b341c08">RowBlockWorkspace</a> *&#160;</td>
-          <td class="paramname"><em>work</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>sorted</em> = <code>true</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a1798a0b6bf7822a590baee156371c352">SparseRowBlockWorkspace</a> *&#160;</td>
+          <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1085,26 +1293,25 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 </table>
 </div><div class="memdoc">
 <p><code>vbuffer</code> may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store. This be checked by comparing the returned <code><a class="el" href="structtatami_1_1SparseRange.html#af58b18de602bb4e82e5223b0d7168a08">SparseRange::value</a></code> pointer to <code>vbuffer</code>; if they are the same, <code>vbuffer</code> has been filled. The same applies for <code>ibuffer</code> and the returned <code><a class="el" href="structtatami_1_1SparseRange.html#ac7dd33e84bcc456c04e848bdc51ade73">SparseRange::index</a></code> pointer.</p>
-<p>Values in <code>vbuffer</code> are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>vbuffer</code> are zero.</p>
-<p>Setting <code>sorted = false</code> can reduce computational work in situations where the order of non-zero elements does not matter.</p>
+<p>Entries in the output <code>value</code> array are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>value</code> are zero.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">r</td><td>Index of the row. </td></tr>
-    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a7dbf988dde45119d189517b2d435edf6">RowBlockWorkspace::length</a></code> values. </td></tr>
-    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a7dbf988dde45119d189517b2d435edf6">RowBlockWorkspace::length</a></code> indices. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a821eac25f5742d2b1e9492dd9011a351">new_row_workspace()</a></code>. </td></tr>
+    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a818b80115792369f2d48407b464c45d2">SparseRowBlockWorkspace::length</a></code> values. Ignored if <code>WorkspaceOptions::mode</code> was set to <code>SparseExtractMode::INDEX</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a818b80115792369f2d48407b464c45d2">SparseRowBlockWorkspace::length</a></code> indices. Ignored if <code>WorkspaceOptions::mode</code> was set <code>SparseExtractMode::VALUE</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#a4a4db842e8742bb6eb9d3456ad9628b2">sparse_row_workspace()</a></code>. </td></tr>
     <tr><td class="paramname">sorted</td><td>Should the non-zero elements be sorted by their indices?</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of a block of columns in row <code>r</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of a block of columns in row <code>r</code>. Either or both of <code>value</code> or <code>index</code> is set to <code>NULL</code> if extraction of that field is skipped, based on the setting of <code>WorkspaceOptions::mode</code> used to construct <code>work</code>. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#a4b930df00eec917bba0ac6ae1c0f4458">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#aa17ffa61ac22a28ba583739c32a73a56">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a7217c04da1c525f995e0a0be2ea09880" name="a7217c04da1c525f995e0a0be2ea09880"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7217c04da1c525f995e0a0be2ea09880">&#9670;&#160;</a></span>sparse_column() <span class="overload">[2/3]</span></h2>
+<a id="acd6379a9c995ebc604d43753e843e896" name="acd6379a9c995ebc604d43753e843e896"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acd6379a9c995ebc604d43753e843e896">&#9670;&#160;</a></span>column() <span class="overload">[4/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1115,7 +1322,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_column </td>
+          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::column </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>c</em>, </td>
@@ -1135,14 +1342,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a1f0f1615a5c86e37678138caef489563">ColumnBlockWorkspace</a> *&#160;</td>
-          <td class="paramname"><em>work</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>sorted</em> = <code>true</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#ac85be5029bb03a836b329b566c4d89c2">SparseColumnBlockWorkspace</a> *&#160;</td>
+          <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1157,26 +1358,25 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 </table>
 </div><div class="memdoc">
 <p><code>vbuffer</code> may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store. This be checked by comparing the returned <code><a class="el" href="structtatami_1_1SparseRange.html#af58b18de602bb4e82e5223b0d7168a08">SparseRange::value</a></code> pointer to <code>vbuffer</code>; if they are the same, <code>vbuffer</code> has been filled. The same applies for <code>ibuffer</code> and the returned <code><a class="el" href="structtatami_1_1SparseRange.html#ac7dd33e84bcc456c04e848bdc51ade73">SparseRange::index</a></code> pointer.</p>
-<p>Values in <code>vbuffer</code> are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>vbuffer</code> are zero.</p>
-<p>Setting <code>sorted = false</code> can reduce computational work in situations where the order of non-zero elements does not matter.</p>
+<p>Entries in the output <code>value</code> array are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>value</code> are zero.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">c</td><td>Index of the column. </td></tr>
-    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a7dbf988dde45119d189517b2d435edf6">ColumnBlockWorkspace::length</a></code> values. </td></tr>
-    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a7dbf988dde45119d189517b2d435edf6">ColumnBlockWorkspace::length</a></code> indices. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a1abb23e256e3277f0eee8f7244e43c73">new_column_workspace()</a></code>. </td></tr>
+    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a818b80115792369f2d48407b464c45d2">SparseColumnBlockWorkspace::length</a></code> values. Ignored if <code>WorkspaceOptions::mode</code> was set to <code>SparseExtractMode::INDEX</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1BlockWorkspace.html#a818b80115792369f2d48407b464c45d2">SparseColumnBlockWorkspace::length</a></code> indices. Ignored if <code>WorkspaceOptions::mode</code> was set <code>SparseExtractMode::VALUE</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#ae8a1dd4ef8814f3e748dc6bc9d7c6828">sparse_column_workspace()</a></code>. </td></tr>
     <tr><td class="paramname">sorted</td><td>Should the non-zero elements be sorted by their indices?</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of a block of rows in column <code>c</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of a block of rows in column <code>c</code>. Either or both of <code>value</code> or <code>index</code> is set to <code>NULL</code> if extraction of that field is skipped, based on the setting of <code>WorkspaceOptions::mode</code> used to construct <code>work</code>. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#a614d5d8a63b7f4ef246ab3ceda3919d1">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a8bd7375e9b578e2369b335b5cd70875e">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a971f853b55bad7f3ed4a35b5674ae6ad" name="a971f853b55bad7f3ed4a35b5674ae6ad"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a971f853b55bad7f3ed4a35b5674ae6ad">&#9670;&#160;</a></span>new_row_workspace() <span class="overload">[3/3]</span></h2>
+<a id="a6686e6b3bcb60d72af76a35c0bf9e6e7" name="a6686e6b3bcb60d72af76a35c0bf9e6e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6686e6b3bcb60d72af76a35c0bf9e6e7">&#9670;&#160;</a></span>dense_row_workspace() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1187,7 +1387,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::new_row_workspace </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a422993ac842bf906000d6ccebd0c86e6">DenseRowIndexWorkspace</a>&lt; IDX &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::dense_row_workspace </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; IDX &gt;&#160;</td>
           <td class="paramname"><em>indices</em>, </td>
@@ -1195,8 +1395,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>cache</em> = <code>false</code>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1213,18 +1413,18 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">indices</td><td>Vector containing sorted and unique column indices. </td></tr>
-    <tr><td class="paramname">cache</td><td>Whether to cache information from each call to <code><a class="el" href="classtatami_1_1DelayedSubset.html#af0a4fc948a316c0b74771811fc4cadda">row()</a></code> with this workspace, for faster iterations if the same row is extracted during multiple passes over the matrix.</td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>RowIndexWorkspace</code> for row-wise extraction of data from a subset of columns defined by <code>indices</code>, or a null pointer if no workspace is required. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>DenseRowIndexWorkspace</code> for row-wise extraction of data from a subset of columns defined by <code>indices</code>. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#afee30b94d74c1a1f8d1a197f388d2e71">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#acec95f144f7287a375dfb301974c7d50">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a69084b2562451b31d2fb835d1b304b24" name="a69084b2562451b31d2fb835d1b304b24"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a69084b2562451b31d2fb835d1b304b24">&#9670;&#160;</a></span>new_column_workspace() <span class="overload">[3/3]</span></h2>
+<a id="a6f403488b68975e8cb108e75ad2549b9" name="a6f403488b68975e8cb108e75ad2549b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f403488b68975e8cb108e75ad2549b9">&#9670;&#160;</a></span>dense_column_workspace() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1235,7 +1435,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::new_column_workspace </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a0029d39a6fa9fe81a5c85cdf744ebd68">DenseColumnIndexWorkspace</a>&lt; IDX &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::dense_column_workspace </td>
           <td>(</td>
           <td class="paramtype">std::vector&lt; IDX &gt;&#160;</td>
           <td class="paramname"><em>indices</em>, </td>
@@ -1243,8 +1443,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>cache</em> = <code>false</code>&#160;</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1261,18 +1461,18 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">indices</td><td>Vector containing sorted and unique row indices. </td></tr>
-    <tr><td class="paramname">cache</td><td>Whether to cache information from each call to <code><a class="el" href="classtatami_1_1DelayedSubset.html#afc95d029362d35b5171ce7ec38f0c528">column()</a></code> with this workspace, for faster iterations if the same column is extracted during multiple passes over the matrix.</td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>ColumnIndexWorkspace</code> for column-wise extraction of data from a subset of rows defined by <code>indices</code>, or a null pointer if no workspace is required. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>DenseColumnIndexWorkspace</code> for column-wise extraction of data from a subset of rows defined by <code>indices</code> </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a11491463b084b7fdbe9c2f969b2c8dee">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a2910e520ecd969329a43f9ac9a5598bd">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="aeb0b68aced2e6b7269e2f00b0c549c2a" name="aeb0b68aced2e6b7269e2f00b0c549c2a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aeb0b68aced2e6b7269e2f00b0c549c2a">&#9670;&#160;</a></span>row() <span class="overload">[3/3]</span></h2>
+<a id="a26ebf454f71a42e4a366a2438253250a" name="a26ebf454f71a42e4a366a2438253250a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a26ebf454f71a42e4a366a2438253250a">&#9670;&#160;</a></span>row() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1297,7 +1497,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a422993ac842bf906000d6ccebd0c86e6">DenseRowIndexWorkspace</a>&lt; IDX &gt; *&#160;</td>
           <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
@@ -1315,19 +1515,19 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">r</td><td>Index of the row. </td></tr>
-    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#aa48b3242c66017689d36d6570e04cb49">RowIndexWorkspace::length</a></code> values. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a821eac25f5742d2b1e9492dd9011a351">new_row_workspace()</a></code>.</td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#a01e3f1497ad171dec73398872c4bd2aa">DenseRowIndexWorkspace::length</a></code> values. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#a675bf1ddd56c6eaf24b1100fdf7122a0">dense_row_workspace()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The array pointed to by <code>buffer</code> is filled with a subset of values from column <code>r</code>. <code>buffer</code> itself is returned. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a342e723374e557545341ef981b61097b">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a0e22a1534c0549a2bf5ac818d5a9c1cb">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a98355392c8db9c38b09d650ebe37ef34" name="a98355392c8db9c38b09d650ebe37ef34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a98355392c8db9c38b09d650ebe37ef34">&#9670;&#160;</a></span>column() <span class="overload">[3/3]</span></h2>
+<a id="a56a348f66a2b7eea75997823b11b1615" name="a56a348f66a2b7eea75997823b11b1615"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56a348f66a2b7eea75997823b11b1615">&#9670;&#160;</a></span>column() <span class="overload">[5/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1352,7 +1552,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a0029d39a6fa9fe81a5c85cdf744ebd68">DenseColumnIndexWorkspace</a>&lt; IDX &gt; *&#160;</td>
           <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
@@ -1370,19 +1570,19 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">c</td><td>Index of the column. </td></tr>
-    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#aa48b3242c66017689d36d6570e04cb49">ColumnIndexWorkspace::length</a></code> values. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a1abb23e256e3277f0eee8f7244e43c73">new_column_workspace()</a></code>.</td></tr>
+    <tr><td class="paramname">buffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#a01e3f1497ad171dec73398872c4bd2aa">DenseColumnIndexWorkspace::length</a></code> values. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to the workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#a293cc62cc8a39e4ed66ab99e33cbcf27">dense_column_workspace()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The array pointed to by <code>buffer</code> is filled with a subset of values from column <code>c</code>. <code>buffer</code> itself is returned. </dd></dl>
 
-<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a52782c318fde3026a32a39b7cd5889a3">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a1f503f54c5ebbfdcfb7c313a405f08ac">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="a2ec88dc9d0fd0ec22dadf8677d4a2e84" name="a2ec88dc9d0fd0ec22dadf8677d4a2e84"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ec88dc9d0fd0ec22dadf8677d4a2e84">&#9670;&#160;</a></span>sparse_row() <span class="overload">[3/3]</span></h2>
+<a id="aa038bef26d7a595ca061b7974888e967" name="aa038bef26d7a595ca061b7974888e967"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa038bef26d7a595ca061b7974888e967">&#9670;&#160;</a></span>sparse_row_workspace() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1393,7 +1593,103 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_row </td>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a1edbb6992ee134f2481b6227300322ce">SparseRowIndexWorkspace</a>&lt; IDX &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_row_workspace </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; IDX &gt;&#160;</td>
+          <td class="paramname"><em>indices</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">indices</td><td>Vector containing sorted and unique column indices. </td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>SparseRowIndexWorkspace</code> for row-wise extraction of data from a subset of columns defined by <code>indices</code>. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a7a2c1606b0b9c0c47c964d4c07fbcd4d">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a03d89b9fe2f7852e77e22e33f4a075bf" name="a03d89b9fe2f7852e77e22e33f4a075bf"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a03d89b9fe2f7852e77e22e33f4a075bf">&#9670;&#160;</a></span>sparse_column_workspace() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="namespacetatami.html#a54ba456fea7d955f10d55792cbcc7a58">SparseColumnIndexWorkspace</a>&lt; IDX &gt; &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_column_workspace </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; IDX &gt;&#160;</td>
+          <td class="paramname"><em>indices</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1WorkspaceOptions.html">WorkspaceOptions</a> &amp;&#160;</td>
+          <td class="paramname"><em>options</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">indices</td><td>Vector containing sorted and unique row indices. </td></tr>
+    <tr><td class="paramname">options</td><td>Optional parameters for workspace construction.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A shared pointer to a <code>SparseColumnIndexWorkspace</code> for column-wise extraction of data from a subset of rows defined by <code>indices</code>. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a6d7bb36282f467911ff2573bb96d465b">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a36c16a2532d73f369b71f1cdcca82710" name="a36c16a2532d73f369b71f1cdcca82710"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36c16a2532d73f369b71f1cdcca82710">&#9670;&#160;</a></span>row() <span class="overload">[6/6]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::row </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>r</em>, </td>
@@ -1413,14 +1709,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a8dacf3f8e448e211c63056656e24d0b8">RowIndexWorkspace</a>&lt; IDX &gt; *&#160;</td>
-          <td class="paramname"><em>work</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>sorted</em> = <code>true</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a1edbb6992ee134f2481b6227300322ce">SparseRowIndexWorkspace</a>&lt; IDX &gt; *&#160;</td>
+          <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1434,26 +1724,25 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Values in <code>vbuffer</code> are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>vbuffer</code> are zero.</p>
-<p>Setting <code>sorted = false</code> can reduce computational work in situations where the order of non-zero elements does not matter.</p>
+<p>Entries in the output <code>value</code> array are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>value</code> are zero.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">r</td><td>Index of the row. </td></tr>
-    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#aa48b3242c66017689d36d6570e04cb49">RowIndexWorkspace::length</a></code> values. </td></tr>
-    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#aa48b3242c66017689d36d6570e04cb49">RowIndexWorkspace::length</a></code> indices. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a821eac25f5742d2b1e9492dd9011a351">new_row_workspace()</a></code>. </td></tr>
+    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#a01e3f1497ad171dec73398872c4bd2aa">SparseRowIndexWorkspace::length</a></code> values. Ignored if <code>WorkspaceOptions::mode</code> was set to <code>SparseExtractMode::INDEX</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#a01e3f1497ad171dec73398872c4bd2aa">SparseRowIndexWorkspace::length</a></code> indices. Ignored if <code>WorkspaceOptions::mode</code> was set <code>SparseExtractMode::VALUE</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#a4a4db842e8742bb6eb9d3456ad9628b2">sparse_row_workspace()</a></code>. </td></tr>
     <tr><td class="paramname">sorted</td><td>Should the non-zero elements be sorted by their indices?</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of a subset of columns in row <code>r</code>. <code>vbuffer</code> is set as <code><a class="el" href="structtatami_1_1SparseRange.html#af58b18de602bb4e82e5223b0d7168a08">SparseRange::value</a></code>, while <code>ibuffer</code> is set as <code><a class="el" href="structtatami_1_1SparseRange.html#ac7dd33e84bcc456c04e848bdc51ade73">SparseRange::index</a></code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of a subset of columns in row <code>r</code>. Either or both of <code>value</code> or <code>index</code> is set to <code>NULL</code> if extraction of that field is skipped, based on the setting of <code>WorkspaceOptions::mode</code> used to construct <code>work</code>. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#ae5e29247a01e96b0c13df3b708ecf5a9">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a6e4f5da8caf94a54cb94e2ff3e602ab6">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
-<a id="aab0ab8e7a9412985efb509e99e9aec01" name="aab0ab8e7a9412985efb509e99e9aec01"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aab0ab8e7a9412985efb509e99e9aec01">&#9670;&#160;</a></span>sparse_column() <span class="overload">[3/3]</span></h2>
+<a id="a0a161984a155bd3276abd863b34915fa" name="a0a161984a155bd3276abd863b34915fa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0a161984a155bd3276abd863b34915fa">&#9670;&#160;</a></span>column() <span class="overload">[6/6]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1464,7 +1753,7 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::sparse_column </td>
+          <td class="memname"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a>&lt; T, IDX &gt; <a class="el" href="classtatami_1_1DelayedSubset.html">tatami::DelayedSubset</a>&lt; MARGIN, T, IDX, V &gt;::column </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
           <td class="paramname"><em>c</em>, </td>
@@ -1484,14 +1773,8 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacetatami.html#a9de74505bea2d3c1139479047b133f3d">ColumnIndexWorkspace</a>&lt; IDX &gt; *&#160;</td>
-          <td class="paramname"><em>work</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">bool&#160;</td>
-          <td class="paramname"><em>sorted</em> = <code>true</code>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#a54ba456fea7d955f10d55792cbcc7a58">SparseColumnIndexWorkspace</a>&lt; IDX &gt; *&#160;</td>
+          <td class="paramname"><em>work</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -1505,26 +1788,24 @@ template&lt;int MARGIN, typename T , typename IDX , class V &gt; </div>
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Values in <code>vbuffer</code> are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>vbuffer</code> are zero.</p>
-<p>Setting <code>sorted = false</code> can reduce computational work in situations where the order of non-zero elements does not matter.</p>
+<p>Entries in the output <code>value</code> array are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying representation, they will be reported here. However, one can safely assume that all values <em>not</em> in <code>value</code> are zero.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">c</td><td>Index of the column. </td></tr>
-    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#aa48b3242c66017689d36d6570e04cb49">ColumnIndexWorkspace::length</a></code> values. </td></tr>
-    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#aa48b3242c66017689d36d6570e04cb49">ColumnIndexWorkspace::length</a></code> indices. </td></tr>
-    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code><a class="el" href="classtatami_1_1DelayedSubset.html#a1abb23e256e3277f0eee8f7244e43c73">new_column_workspace()</a></code>. </td></tr>
-    <tr><td class="paramname">sorted</td><td>Should the non-zero elements be sorted by their indices?</td></tr>
+    <tr><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#a01e3f1497ad171dec73398872c4bd2aa">SparseColumnIndexWorkspace::length</a></code> values. Ignored if <code>WorkspaceOptions::mode</code> was set to <code>SparseExtractMode::INDEX</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code><a class="el" href="classtatami_1_1IndexWorkspace.html#a01e3f1497ad171dec73398872c4bd2aa">SparseColumnIndexWorkspace::length</a></code> indices. Ignored if <code>WorkspaceOptions::mode</code> was set <code>SparseExtractMode::VALUE</code> or <code>SparseExtractMode::NONE</code> during construction of <code>work</code>. </td></tr>
+    <tr><td class="paramname">work</td><td>Pointer to a workspace created with <code><a class="el" href="classtatami_1_1Matrix.html#ae8a1dd4ef8814f3e748dc6bc9d7c6828">sparse_column_workspace()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of a subset of rows in column <code>c</code>. <code>vbuffer</code> is set as <code><a class="el" href="structtatami_1_1SparseRange.html#af58b18de602bb4e82e5223b0d7168a08">SparseRange::value</a></code>, while <code>ibuffer</code> is set as <code><a class="el" href="structtatami_1_1SparseRange.html#ac7dd33e84bcc456c04e848bdc51ade73">SparseRange::index</a></code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of a subset of rows in column <code>c</code>. Either or both of <code>value</code> or <code>index</code> is set to <code>NULL</code> if extraction of that field is skipped, based on the setting of <code>WorkspaceOptions::mode</code> used to construct <code>work</code>. </dd></dl>
 
-<p>Reimplemented from <a class="el" href="classtatami_1_1Matrix.html#a095783fbfdea3be8b7ad441e9b536338">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a57915eab83c7caafac71365c7b56a2a8">tatami::Matrix&lt; T, IDX &gt;</a>.</p>
 
 </div>
 </div>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>tatami/base/<a class="el" href="DelayedSubset_8hpp_source.html">DelayedSubset.hpp</a></li>
+<li>tatami/base/subset/<a class="el" href="DelayedSubset_8hpp_source.html">DelayedSubset.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

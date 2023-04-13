@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::Workspace&lt; ROW &gt; Class Template Reference</title>
+<title>tatami: tatami::Workspace&lt; ROW, SPARSE &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -75,7 +75,10 @@ $(function() {
 </div>
 </div><!-- top -->
 <div class="header">
-  <div class="headertitle"><div class="title">tatami::Workspace&lt; ROW &gt; Class Template Reference</div></div>
+  <div class="summary">
+<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="classtatami_1_1Workspace-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">tatami::Workspace&lt; ROW, SPARSE &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -83,17 +86,78 @@ $(function() {
  <a href="classtatami_1_1Workspace.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Workspace_8hpp_source.html">Workspace.hpp</a>&gt;</code></p>
+
+<p>Inherited by tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;::SimpleWorkspaceFactory&lt; WORKROW &gt;::D, and tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;::SimpleWorkspaceFactory&lt; WORKROW &gt;::S.</p>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
+Static Public Attributes</h2></td></tr>
+<tr class="memitem:a4c9fb956f04c7d2fc8bfc6e5142e3f61"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Workspace.html#a4c9fb956f04c7d2fc8bfc6e5142e3f61">sparse</a> = SPARSE</td></tr>
+<tr class="separator:a4c9fb956f04c7d2fc8bfc6e5142e3f61"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7cd588f0951b8c0b141dcec81c556cfa"><td class="memItemLeft" align="right" valign="top">static constexpr bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Workspace.html#a7cd588f0951b8c0b141dcec81c556cfa">row</a> = ROW</td></tr>
+<tr class="separator:a7cd588f0951b8c0b141dcec81c556cfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;bool ROW&gt;<br />
-class tatami::Workspace&lt; ROW &gt;</div><p>Base workspace class. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;bool ROW, bool SPARSE&gt;<br />
+class tatami::Workspace&lt; ROW, SPARSE &gt;</div><p>Base workspace class. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">ROW</td><td>Whether to perform row-wise extraction.</td></tr>
   </table>
   </dd>
 </dl>
-<p>This provides a workspace for extraction of entire vectors from <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instances, either for each row (if <code>ROW = true</code>) or column (otherwise). Instances of this class cannot be constructed; it is only provided as a base class for <code><a class="el" href="classtatami_1_1Matrix.html#aa62c3f22f2f82f93b81596caf27ededd">Matrix::new_row_workspace()</a></code> and <code><a class="el" href="classtatami_1_1Matrix.html#a8e0dbb0132e1b132a9164c20729e21d5">Matrix::new_column_workspace()</a></code> methods to return appropriate objects. </p>
-</div><hr/>The documentation for this class was generated from the following file:<ul>
+<p>This provides a workspace for dense extraction of entire vectors from <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instances, either for each row (if <code>ROW = true</code>) or column (otherwise). Instances of this class cannot be directly constructed, and should instead be created by calling the appropriate <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> methods. Developers should inherit from this class when creating workspaces for their own <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> implementation. </p>
+</div><h2 class="groupheader">Member Data Documentation</h2>
+<a id="a4c9fb956f04c7d2fc8bfc6e5142e3f61" name="a4c9fb956f04c7d2fc8bfc6e5142e3f61"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c9fb956f04c7d2fc8bfc6e5142e3f61">&#9670;&#160;</a></span>sparse</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool ROW, bool SPARSE&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool <a class="el" href="classtatami_1_1Workspace.html">tatami::Workspace</a>&lt; ROW, SPARSE &gt;::sparse = SPARSE</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Is this class used for sparse extraction? </p>
+
+</div>
+</div>
+<a id="a7cd588f0951b8c0b141dcec81c556cfa" name="a7cd588f0951b8c0b141dcec81c556cfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7cd588f0951b8c0b141dcec81c556cfa">&#9670;&#160;</a></span>row</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool ROW, bool SPARSE&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">constexpr bool <a class="el" href="classtatami_1_1Workspace.html">tatami::Workspace</a>&lt; ROW, SPARSE &gt;::row = ROW</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Is this class used for row-wise extraction? </p>
+
+</div>
+</div>
+<hr/>The documentation for this class was generated from the following file:<ul>
 <li>tatami/base/<a class="el" href="Workspace_8hpp_source.html">Workspace.hpp</a></li>
 </ul>
 </div><!-- contents -->

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['value_0',['value',['../structtatami_1_1SparseRange.html#af58b18de602bb4e82e5223b0d7168a08',1,'tatami::SparseRange::value()'],['../structtatami_1_1SparseRangeCopy.html#a3091fafa3385c97f6c21e251e0ad951a',1,'tatami::SparseRangeCopy::value()']]]
+  ['row_0',['row',['../classtatami_1_1Workspace.html#a7cd588f0951b8c0b141dcec81c556cfa',1,'tatami::Workspace::row()'],['../classtatami_1_1BlockWorkspace.html#a1ea595f4d44085dc288871d532ab1a99',1,'tatami::BlockWorkspace::row()'],['../classtatami_1_1IndexWorkspace.html#a69975a742f7f64d4d15df244c0bb1c53',1,'tatami::IndexWorkspace::row()']]]
 ];

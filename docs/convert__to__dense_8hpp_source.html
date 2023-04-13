@@ -99,7 +99,7 @@ $(function() {
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    <span class="keywordtype">size_t</span> secondary = (row ? NC : NR);</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>    <span class="keywordflow">if</span> (row == incoming-&gt;prefer_rows()) {</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="keyword">auto</span> wrk = new_workspace&lt;row&gt;(incoming);</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="keyword">auto</span> wrk = new_workspace&lt;row, false&gt;(incoming);</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> same_type = std::is_same&lt;DataIn, DataStore&gt;::value;</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        std::vector&lt;DataIn&gt; temp(same_type ? 0 : secondary);</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
@@ -126,7 +126,7 @@ $(function() {
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="comment">// under the assumption that it may be arbitrarily costly to</span></div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="comment">// extract in the non-preferred dim; it is thus cheaper to</span></div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="comment">// do cache-unfriendly inserts into the output buffer.</span></div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <span class="keyword">auto</span> wrk = new_workspace&lt;!row&gt;(incoming);</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        <span class="keyword">auto</span> wrk = new_workspace&lt;!row, false&gt;(incoming);</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        std::vector&lt;DataIn&gt; temp(primary);</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span> </div>
 <div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> s = 0; s &lt; secondary; ++s) {</div>
@@ -182,7 +182,7 @@ $(function() {
 <div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>}</div>
 <div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span> </div>
 <div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:34</div></div>
+<div class="ttc" id="aclasstatami_1_1DenseMatrix_html"><div class="ttname"><a href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix</a></div><div class="ttdoc">Dense matrix representation.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:35</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:14</div></div>
 <div class="ttc" id="anamespacetatami_html_abef8bf9fad46598b3f40436b579a8759"><div class="ttname"><a href="namespacetatami.html#abef8bf9fad46598b3f40436b579a8759">tatami::convert_to_dense</a></div><div class="ttdeci">void convert_to_dense(const MatrixIn *incoming, DataStore *store)</div><div class="ttdef"><b>Definition:</b> convert_to_dense.hpp:28</div></div>
 </div><!-- fragment --></div><!-- contents -->
