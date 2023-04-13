@@ -73,12 +73,16 @@ template<typename T, typename IDX>
 struct SparseRangeCopy {
     /** 
      * Values of the non-zero elements.
+     *
+     * Note that this may not be filled if extraction was performed with a `SparseExtractMode` that did not extract the values.
      */
     std::vector<T> value;
 
     /** 
      * Indices of the non-zero elements.
      * This should be of the same length as `value`.
+     * 
+     * Note that this may not be filled if extraction was performed with a `SparseExtractMode` that did not extract the indices.
      */
     std::vector<IDX> index;
 

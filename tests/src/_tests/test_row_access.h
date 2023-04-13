@@ -47,14 +47,23 @@ void test_simple_row_access_base(const Matrix* ptr, const Matrix2* ref, bool for
             EXPECT_EQ(expected, sparse_expand(observed));
             EXPECT_TRUE(is_increasing(observed.index));
 
-            auto observed_i = ptr->row(r, swork_i.get());
-            EXPECT_EQ(observed.index, observed_i.index);
+            std::vector<int> indices(expected.size()); // using the dense expected size as a proxy for the extraction length in block/indexed cases.
+            auto observed_i = ptr->row(r, NULL, indices.data(), swork_i.get());
+            EXPECT_TRUE(observed_i.value == NULL);
+            EXPECT_EQ(observed.index, std::vector<int>(observed_i.index, observed_i.index + observed_i.number));
 
-            auto observed_v = ptr->row(r, swork_v.get());
-            EXPECT_EQ(observed.value, observed_v.value);
+            std::vector<double> values(expected.size());
+            auto observed_v = ptr->row(r, values.data(), NULL, swork_v.get());
+            EXPECT_TRUE(observed_v.index == NULL);
+            EXPECT_EQ(observed.value, std::vector<double>(observed_v.value, observed_v.value + observed_v.number));
 
             auto observed_n = ptr->row(r, NULL, NULL, swork_n.get());
+            EXPECT_TRUE(observed_n.value == NULL);
+            EXPECT_TRUE(observed_n.index == NULL);
             EXPECT_EQ(observed.value.size(), observed_n.number);
+
+            auto observed_n2 = ptr->row(r, swork_n.get()); // just another request for some coverage of the Matrix::copy_over function.
+            EXPECT_EQ(observed.value.size(), observed_n2.value.size());
         }
 
         {
