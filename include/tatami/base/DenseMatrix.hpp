@@ -67,8 +67,6 @@ public:
 
     size_t ncol() const { return ncols; }
 
-    bool sparse() const { return false; }
-
     bool prefer_rows() const { return ROW; }
 
     using Matrix<T, IDX>::row;

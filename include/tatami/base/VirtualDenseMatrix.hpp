@@ -43,6 +43,8 @@ public:
 
     using Matrix<T, IDX>::sparse_column_workspace;
 
+    bool sparse() const { return false; }
+
     /****************************************
      ***** Workspace-generating methods *****
      ****************************************/
