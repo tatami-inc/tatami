@@ -34,7 +34,7 @@ TEST_P(ConvertToDenseTest, RowToRow) {
     EXPECT_TRUE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
-    auto wrk2 = converted2->new_row_workspace();
+    auto wrk2 = converted2->dense_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
@@ -57,7 +57,7 @@ TEST_P(ConvertToDenseTest, ColumnToColumn) {
     EXPECT_FALSE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
-    auto wrk2 = converted2->new_column_workspace();
+    auto wrk2 = converted2->dense_column_workspace();
     for (size_t i = 0; i < NC; ++i) {
         auto start = vec.begin() + i * NR;
         std::vector<int> expected2(start, start + NR);
@@ -80,7 +80,7 @@ TEST_P(ConvertToDenseTest, RowToColumn) {
     EXPECT_FALSE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
-    auto wrk2 = converted2->new_row_workspace();
+    auto wrk2 = converted2->dense_row_workspace();
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
@@ -103,7 +103,7 @@ TEST_P(ConvertToDenseTest, ColumnToRow) {
     EXPECT_TRUE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
-    auto wrk2 = converted2->new_column_workspace();
+    auto wrk2 = converted2->dense_column_workspace();
     for (size_t i = 0; i < NC; ++i) {
         auto start = vec.begin() + i * NR;
         std::vector<int> expected2(start, start + NR);
