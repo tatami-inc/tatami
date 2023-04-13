@@ -32,7 +32,7 @@ std::vector<double> rowsums_parallel(std::shared_ptr<tatami::NumericMatrix> p) {
     # pragma omp parallel
     {
         std::vector<double> buffer(NC);
-        auto wrk = p->new_row_workspace();
+        auto wrk = p->dense_row_workspace();
 
         #pragma omp for schedule(static)
         for (size_t i = 0; i < NR; ++i) {
@@ -54,7 +54,7 @@ int main(int argc, char** argv) {
 
     std::cout << "Matrix preview: " << std::endl;
     std::vector<double> buffer(mat->ncol());
-    auto wrk = mat->new_row_workspace();
+    auto wrk = mat->dense_row_workspace();
     for (size_t i = 0; i < mat->nrow(); ++i) {
         auto ptr = mat->row(i, buffer.data(), wrk.get());
         print_vector(ptr, ptr + mat->ncol());

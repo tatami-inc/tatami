@@ -36,7 +36,7 @@ std::vector<double> colsums_simple(std::shared_ptr<tatami::NumericMatrix> p) {
     /* Constructing the workspace for column-wise extraction. Other workspaces
      * can be constructed that only extract a slice from each column.
      */
-    auto wrk = p->new_column_workspace();
+    auto wrk = p->dense_column_workspace();
 
     for (size_t i = 0; i < NC; ++i) {
         auto ptr = p->column(i, buffer.data(), wrk.get());
@@ -58,30 +58,32 @@ std::vector<double> colsums_sparse(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
     std::vector<double> output(NC);
     std::vector<double> buffer(NR);
-    auto wrk = p->new_column_workspace();
 
-    /* When performing sparse extractions, we need an additional buffer for the
-     * indices - in this case, the row indices of the non-zero elements.
-     */
-    std::vector<int> ibuffer(NR);
-
-    for (size_t i = 0; i < NC; ++i) {
-        const double* ptr = NULL;
-        size_t n = NR;
-
-        /* Sparse extractions return a struct containing 'number', the number
-         * of non-zero elements; 'value', a pointer to the non-zero values; and
-         * 'index', the (row) indices of the non-zero values.
+    if (p->sparse()) {
+        /* When performing sparse extractions, we usually need an additional
+         * buffer for the indices of the non-zero elements. However, if we don't
+         * care about the indices, we can skip their extraction for efficiency.
          */
-        if (p->sparse()) {
-            auto range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());
-            n = range.number;
-            ptr = range.value;
-        } else {
-            ptr = p->column(i, buffer.data(), wrk.get());
-        }
+        tatami::WorkspaceOptions opt;
+        opt.mode = tatami::SparseExtractMode::VALUE;
+        auto wrk = p->sparse_column_workspace(opt);
 
-        output[i] = std::accumulate(ptr, ptr + n, 0.0);
+        for (size_t i = 0; i < NC; ++i) {
+            /* Sparse extractions return a struct containing 'number', the number
+             * of non-zero elements; 'value', a pointer to the non-zero values; and
+             * 'index', the (row) indices of the non-zero values. In this case,
+             * 'index' will be set to NULL as we don't need the indices for summation.
+             */
+            auto range = p->column(i, buffer.data(), NULL, wrk.get());
+            output[i] = std::accumulate(range.value, range.value + range.number, 0.0);
+        }
+    } else {
+        // Copied from colsums_simple.
+        auto wrk = p->dense_column_workspace();
+        for (size_t i = 0; i < NC; ++i) {
+            auto ptr = p->column(i, buffer.data(), wrk.get());
+            output[i] = std::accumulate(ptr, ptr + NR, 0.0);
+        }
     }
 
     return output;
@@ -106,16 +108,20 @@ std::vector<double> colsums_preferred(std::shared_ptr<tatami::NumericMatrix> p) 
     // Deciding whether or not to perform row-wise extraction.
     if (p->prefer_rows()) {
         std::vector<double> buffer(NC);
-        auto wrk = p->new_row_workspace();
-        std::vector<int> ibuffer(NC);
+        if (p->sparse()) {
+            // This time, we actually do need the sparse indices.
+            auto wrk = p->sparse_row_workspace();
+            std::vector<int> ibuffer(NC);
 
-        for (size_t i = 0; i < NR; ++i) {
-            if (p->sparse()) {
-                auto range = p->sparse_row(i, buffer.data(), ibuffer.data(), wrk.get());
+            for (size_t i = 0; i < NR; ++i) {
+                auto range = p->row(i, buffer.data(), ibuffer.data(), wrk.get());
                 for (size_t j = 0; j < range.number; ++j) {
                     output[range.index[j]] += range.value[j];
                 }
-            } else {
+            }
+        } else {
+            auto wrk = p->dense_row_workspace();
+            for (size_t i = 0; i < NR; ++i) {
                 auto ptr = p->row(i, buffer.data(), wrk.get());
                 for (size_t j = 0; j < NC; ++j) {
                     output[j] += ptr[j];
@@ -123,23 +129,24 @@ std::vector<double> colsums_preferred(std::shared_ptr<tatami::NumericMatrix> p) 
             }
         }
     } else {
+        // Copied from colsums_sparse.
         std::vector<double> buffer(NR);
-        auto wrk = p->new_column_workspace();
-        std::vector<int> ibuffer(NR);
+        if (p->sparse()) {
+            std::vector<int> ibuffer(NR);
+            tatami::WorkspaceOptions opt;
+            opt.mode = tatami::SparseExtractMode::VALUE;
+            auto wrk = p->sparse_column_workspace(opt);
 
-        for (size_t i = 0; i < NC; ++i) {
-            const double* ptr = NULL;
-            size_t n = NR;
-
-            if (p->sparse()) {
-                auto range = p->sparse_column(i, buffer.data(), ibuffer.data(), wrk.get());
-                n = range.number;
-                ptr = range.value;
-            } else {
-                ptr = p->column(i, buffer.data(), wrk.get());
+            for (size_t i = 0; i < NC; ++i) {
+                auto range = p->column(i, buffer.data(), ibuffer.data(), wrk.get());
+                output[i] = std::accumulate(range.value, range.value + range.number, 0.0);
             }
-
-            output[i] = std::accumulate(ptr, ptr + n, 0.0);
+        } else {
+            auto wrk = p->dense_column_workspace();
+            for (size_t i = 0; i < NC; ++i) {
+                auto ptr = p->column(i, buffer.data(), wrk.get());
+                output[i] = std::accumulate(ptr, ptr + NR, 0.0);
+            }
         }
     }
 
@@ -156,7 +163,7 @@ int main(int argc, char** argv) {
 
     std::cout << "Matrix preview: " << std::endl;
     std::vector<double> buffer(mat->ncol());
-    auto wrk = mat->new_row_workspace();
+    auto wrk = mat->dense_row_workspace();
     for (size_t i = 0; i < mat->nrow(); ++i) {
         auto ptr = mat->row(i, buffer.data(), wrk.get());
         print_vector(ptr, ptr + mat->ncol());
