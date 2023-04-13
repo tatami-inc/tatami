@@ -8,7 +8,7 @@
 #include <type_traits>
 #include <cmath>
 
-#include "../../base/Matrix.hpp"
+#include "../../base/VirtualDenseMatrix.hpp"
 #include "utils.hpp"
 
 /**
@@ -43,7 +43,7 @@ namespace tatami {
  * @tparam transpose Whether the dataset is transposed in its storage order, i.e., rows in HDF5 are columns in this matrix.
  */
 template<typename T, typename IDX, bool transpose = false>
-class HDF5DenseMatrix : public tatami::Matrix<T, IDX> {
+class HDF5DenseMatrix : public VirtualDenseMatrix<T, IDX> {
     size_t firstdim, seconddim;
     std::string file_name, dataset_name;
 
@@ -63,7 +63,7 @@ public:
         file_name(std::move(file)), 
         dataset_name(std::move(name))
     {
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
 #else
@@ -114,7 +114,7 @@ public:
             prefer_firstdim = true;
         }
 
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
         }
 #else
         });
@@ -159,6 +159,14 @@ public:
 
     using Matrix<T, IDX>::column;
 
+    using Matrix<T, IDX>::dense_row_workspace;
+
+    using Matrix<T, IDX>::dense_column_workspace;
+
+    using Matrix<T, IDX>::sparse_row_workspace;
+
+    using Matrix<T, IDX>::sparse_column_workspace;
+
 private:
     struct Hdf5WorkspaceBase {
         H5::H5File file;
@@ -178,44 +186,69 @@ public:
      * @cond
      */
     template<bool ROW>
-    struct Hdf5Workspace : public Workspace<ROW> {
+    struct Hdf5Workspace : public DenseWorkspace<ROW> {
         Hdf5WorkspaceBase base;
     };
     /**
      * @endcond
      */
 
-    std::shared_ptr<RowWorkspace> new_row_workspace(bool = false) const {
-        auto ptr = new Hdf5Workspace<true>;
-        std::shared_ptr<RowWorkspace> output(ptr);
-        fill_base(ptr->base);
-        return output;
-    }
+    std::shared_ptr<DenseRowWorkspace> dense_row_workspace(const WorkspaceOptions& opt) const {
+        std::shared_ptr<DenseRowWorkspace> output;
 
-    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool = false) const {
-        auto ptr = new Hdf5Workspace<false>;
-        std::shared_ptr<ColumnWorkspace> output(ptr);
-        fill_base(ptr->base);
-        return output;
-    }
-
-    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
-        return extract<true>(r, buffer, 0, ncol(), static_cast<Hdf5Workspace<true>*>(work)->base);
-    }
-
-    const T* column(size_t c, T* buffer, ColumnWorkspace* work) const {
-        return extract<false>(c, buffer, 0, nrow(), static_cast<Hdf5Workspace<false>*>(work)->base);
-    }
-
-private:
-    void fill_base(Hdf5WorkspaceBase& base) const  {
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
 #else
         TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
 #endif
 
+        auto ptr = new Hdf5Workspace<true>;
+        output.reset(ptr);
+        fill_base(ptr->base);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
+        return output;
+    }
+
+    std::shared_ptr<DenseColumnWorkspace> dense_column_workspace(const WorkspaceOptions& opt) const {
+        std::shared_ptr<DenseColumnWorkspace> output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
+        auto ptr = new Hdf5Workspace<false>;
+        output.reset(ptr);
+        fill_base(ptr->base);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
+        return output;
+    }
+
+    const T* row(size_t r, T* buffer, DenseRowWorkspace* work) const {
+        return extract<true>(r, buffer, 0, ncol(), static_cast<Hdf5Workspace<true>*>(work)->base);
+    }
+
+    const T* column(size_t c, T* buffer, DenseColumnWorkspace* work) const {
+        return extract<false>(c, buffer, 0, nrow(), static_cast<Hdf5Workspace<false>*>(work)->base);
+    }
+
+private:
+    void fill_base(Hdf5WorkspaceBase& base) const  {
         // Turn off HDF5's caching, as we'll be handling that.
         H5::FileAccPropList fapl(H5::FileAccPropList::DEFAULT.getId());
         fapl.setCache(0, 0, 0, 0);
@@ -223,12 +256,6 @@ private:
         base.file.openFile(file_name, H5F_ACC_RDONLY, fapl);
         base.dataset = base.file.openDataSet(dataset_name);
         base.dataspace = base.dataset.getSpace();
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-        }
-#else
-        });
-#endif
     }
 
     template<bool ROW, typename ExtractType>
@@ -241,13 +268,6 @@ private:
         count[1-dimdex] = primary_length;
 
         constexpr bool indexed = std::is_same<ExtractType, std::vector<IDX> >::value;
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-        #pragma omp critical
-        {
-#else
-        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
-#endif
 
         if constexpr(indexed) {
             // Take slices across the current chunk for each index. This should be okay if consecutive,
@@ -272,12 +292,6 @@ private:
         work.memspace.selectAll();
 
         work.dataset.read(target, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK        
-        }
-#else
-        });
-#endif
     }
 
     template<bool ROW, typename ExtractType>
@@ -307,14 +321,14 @@ private:
             hsize_t cache_mydim_start = chunk * cache_mydim;
             hsize_t cache_mydim_end = std::min(mydim, cache_mydim_start + cache_mydim);
             hsize_t cache_mydim_actual = cache_mydim_end - cache_mydim_start;
-            size_t new_cache_size = extract_length * cache_mydim_actual;
+            size_t dense_cache_size = extract_length * cache_mydim_actual;
 
             T* destination;
-            work.cache.resize(new_cache_size);
+            work.cache.resize(dense_cache_size);
             if constexpr(ROW != transpose) {
                 destination = work.cache.data();
             } else {
-                work.buffer.resize(new_cache_size);
+                work.buffer.resize(dense_cache_size);
                 destination = work.buffer.data();
             }
 
@@ -344,11 +358,8 @@ public:
      * @cond
      */
     template<bool ROW>
-    struct Hdf5BlockWorkspace : public BlockWorkspace<ROW> {
-        Hdf5BlockWorkspace(size_t s, size_t l) : details(s, l) {}
-
-        std::pair<size_t, size_t> details;
-        const std::pair<size_t, size_t>& block() const { return details; }
+    struct Hdf5BlockWorkspace : public DenseBlockWorkspace<ROW> {
+        Hdf5BlockWorkspace(size_t s, size_t l) : DenseBlockWorkspace<ROW>(s, l) {}
 
         Hdf5WorkspaceBase base;
     };
@@ -356,28 +367,60 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t s, size_t l, bool = false) const {
+    std::shared_ptr<DenseRowBlockWorkspace> dense_row_workspace(size_t s, size_t l, const WorkspaceOptions& opt) const {
+        std::shared_ptr<DenseRowBlockWorkspace> output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         auto ptr = new Hdf5BlockWorkspace<true>(s, l);
-        std::shared_ptr<RowBlockWorkspace> output(ptr);
+        output.reset(ptr);
         fill_base(ptr->base);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
         return output;
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t s, size_t l, bool = false) const {
+    std::shared_ptr<DenseColumnBlockWorkspace> dense_column_workspace(size_t s, size_t l, const WorkspaceOptions& opt) const {
+        std::shared_ptr<DenseColumnBlockWorkspace> output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         auto ptr = new Hdf5BlockWorkspace<false>(s, l);
-        std::shared_ptr<ColumnBlockWorkspace> output(ptr);
+        output.reset(ptr);
         fill_base(ptr->base);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
         return output;
     }
 
-    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
+    const T* row(size_t r, T* buffer, DenseRowBlockWorkspace* work) const {
         auto ptr = static_cast<Hdf5BlockWorkspace<true>*>(work);
-        return extract<true>(r, buffer, ptr->details.first, ptr->details.second, ptr->base);
+        return extract<true>(r, buffer, ptr->start, ptr->length, ptr->base);
     }
 
-    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
+    const T* column(size_t c, T* buffer, DenseColumnBlockWorkspace* work) const {
         auto ptr = static_cast<Hdf5BlockWorkspace<false>*>(work);
-        return extract<false>(c, buffer, ptr->details.first, ptr->details.second, ptr->base);
+        return extract<false>(c, buffer, ptr->start, ptr->length, ptr->base);
     }
 
 public:
@@ -385,8 +428,8 @@ public:
      * @cond
      */
     template<bool ROW>
-    struct Hdf5IndexWorkspace : public IndexWorkspace<IDX, ROW> {
-        Hdf5IndexWorkspace(std::vector<IDX> i) : indices_(std::move(i)) {}
+    struct Hdf5IndexWorkspace : public DenseIndexWorkspace<IDX, ROW> {
+        Hdf5IndexWorkspace(std::vector<IDX> i) : DenseIndexWorkspace<IDX, ROW>(i.size()), indices_(std::move(i)) {}
 
         std::vector<IDX> indices_;
         const std::vector<IDX>& indices() const { return indices_; }
@@ -397,26 +440,59 @@ public:
      * @endcond
      */
 
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i, bool = false) const { 
+    std::shared_ptr<DenseRowIndexWorkspace<IDX> > dense_row_workspace(std::vector<IDX> i, const WorkspaceOptions& opt) const { 
+        std::shared_ptr<DenseRowIndexWorkspace<IDX> > output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
+
         auto ptr = new Hdf5IndexWorkspace<true>(std::move(i));
-        std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
+        output.reset(ptr);
         fill_base(ptr->base);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
         return output;
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i, bool = false) const { 
+    std::shared_ptr<DenseColumnIndexWorkspace<IDX> > dense_column_workspace(std::vector<IDX> i, const WorkspaceOptions& opt) const { 
+        std::shared_ptr<DenseColumnIndexWorkspace<IDX> > output;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
         auto ptr = new Hdf5IndexWorkspace<false>(std::move(i));
-        std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
+        output.reset(ptr);
         fill_base(ptr->base);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
         return output;
     }
 
-    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
+    const T* row(size_t r, T* buffer, DenseRowIndexWorkspace<IDX>* work) const {
         auto ptr = static_cast<Hdf5IndexWorkspace<true>*>(work);
         return extract<true>(r, buffer, ptr->indices_, ptr->indices_.size(), ptr->base);
     }
 
-    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
+    const T* column(size_t c, T* buffer, DenseColumnIndexWorkspace<IDX>* work) const {
         auto ptr = static_cast<Hdf5IndexWorkspace<false>*>(work);
         return extract<false>(c, buffer, ptr->indices_, ptr->indices_.size(), ptr->base);
     }

@@ -51,10 +51,10 @@ int main() {
     std::vector<int> ibuffer(mat->ncol());
 
     auto start = std::chrono::high_resolution_clock::now();
-    auto wrk = mat->new_row_workspace();
+    auto wrk = mat->sparse_row_workspace();
     int sum = 0;
     for (size_t r = 0; r < mat->nrow(); ++r) {
-        auto range = mat->sparse_row(r, xbuffer.data(), ibuffer.data(), wrk.get());
+        auto range = mat->row(r, xbuffer.data(), ibuffer.data(), wrk.get());
         sum += range.number;
     }
     auto stop = std::chrono::high_resolution_clock::now();
@@ -66,8 +66,8 @@ int main() {
     start = std::chrono::high_resolution_clock::now();
     sum = 0;
     for (size_t r = 0; r < mat->nrow(); ++r) {
-        auto wrk = mat->new_row_workspace(); 
-        auto range = mat->sparse_row(r, xbuffer.data(), ibuffer.data(), wrk.get());
+        auto wrk = mat->sparse_row_workspace(); 
+        auto range = mat->row(r, xbuffer.data(), ibuffer.data(), wrk.get());
         sum += range.number;
     }
     stop = std::chrono::high_resolution_clock::now();
@@ -76,9 +76,9 @@ int main() {
 
     // Testing the inflation in time.
     start = std::chrono::high_resolution_clock::now();
-    tatami::RowWorkspace* ptr;
+    tatami::SparseRowWorkspace* ptr;
     for (size_t r = 0; r < mat->nrow(); ++r) {
-        auto wrk = mat->new_row_workspace(); 
+        auto wrk = mat->sparse_row_workspace(); 
         ptr = wrk.get(); // avoid optimizing out the entire loop.
     }
     stop = std::chrono::high_resolution_clock::now();

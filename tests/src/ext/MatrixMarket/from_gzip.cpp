@@ -61,9 +61,9 @@ TEST_P(MatrixMarketGzipTest, SimpleTest) {
     typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs)));
 
-    auto lwrk = loaded->new_column_workspace();
-    auto lwrk2 = auto_loaded->new_column_workspace();
-    auto rwrk = ref->new_column_workspace();
+    auto lwrk = loaded->dense_column_workspace();
+    auto lwrk2 = auto_loaded->dense_column_workspace();
+    auto rwrk = ref->dense_column_workspace();
     for (size_t i = 0; i < NC; ++i) {
         auto expected = ref->column(i, rwrk.get());
         EXPECT_EQ(expected, loaded->column(i, lwrk.get()));
@@ -91,9 +91,9 @@ TEST_P(MatrixMarketGzipTest, SimpleBufferTest) {
     EXPECT_EQ(obs_auto->nrow(), NR);
     EXPECT_EQ(obs_auto->ncol(), NC);
 
-    auto owrk = obs->new_column_workspace();
-    auto owrk2 = obs_auto->new_column_workspace();
-    auto rwrk = ref->new_column_workspace();
+    auto owrk = obs->dense_column_workspace();
+    auto owrk2 = obs_auto->dense_column_workspace();
+    auto rwrk = ref->dense_column_workspace();
     for (size_t i = 0; i < NC; ++i) {
         auto expected = ref->column(i, rwrk.get());
         EXPECT_EQ(expected, obs->column(i, owrk.get()));
@@ -120,9 +120,9 @@ TEST_P(MatrixMarketGzipTest, LayeredTest) {
     EXPECT_FALSE(loaded.matrix->prefer_rows());
     EXPECT_FALSE(loaded_gz.matrix->prefer_rows());
 
-    auto lwrk = loaded.matrix->new_column_workspace();
-    auto gwrk = loaded_gz.matrix->new_column_workspace();
-    auto rwrk = ref->new_column_workspace();
+    auto lwrk = loaded.matrix->dense_column_workspace();
+    auto gwrk = loaded_gz.matrix->dense_column_workspace();
+    auto rwrk = ref->dense_column_workspace();
 
     for (size_t i = 0; i < NC; ++i) {
         int adjusted = loaded.permutation[i];
@@ -155,8 +155,8 @@ TEST_P(MatrixMarketGzipTest, LayeredBufferTest) {
     EXPECT_EQ(obs.matrix->nrow(), NR);
     EXPECT_EQ(obs.matrix->ncol(), NC);
 
-    auto owrk = obs.matrix->new_column_workspace();
-    auto rwrk = ref.matrix->new_column_workspace();
+    auto owrk = obs.matrix->dense_column_workspace();
+    auto rwrk = ref.matrix->dense_column_workspace();
     for (size_t i = 0; i < NC; ++i) {
         auto stuff = obs.matrix->column(i, owrk.get());
         EXPECT_EQ(stuff, ref.matrix->column(i, rwrk.get()));

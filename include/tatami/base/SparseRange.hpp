@@ -73,12 +73,16 @@ template<typename T, typename IDX>
 struct SparseRangeCopy {
     /** 
      * Values of the non-zero elements.
+     *
+     * Note that this may not be filled if extraction was performed with a `SparseExtractMode` that did not extract the values.
      */
     std::vector<T> value;
 
     /** 
      * Indices of the non-zero elements.
      * This should be of the same length as `value`.
+     * 
+     * Note that this may not be filled if extraction was performed with a `SparseExtractMode` that did not extract the indices.
      */
     std::vector<IDX> index;
 
@@ -90,9 +94,42 @@ struct SparseRangeCopy {
 
 /**
  * What components of the non-zero elements should be copied?
- * Just the indices (`INDEX`), the values (`VALUE`) or both (`BOTH`).
+ * Just the indices (`INDEX`), the values (`VALUE`), both (`BOTH`) or neither (`NONE`).
  */
-enum SparseCopyMode { SPARSE_COPY_INDEX, SPARSE_COPY_VALUE, SPARSE_COPY_BOTH };
+enum class SparseExtractMode : char { NONE, INDEX, VALUE, BOTH };
+
+/**
+ * @cond
+ */
+inline bool sparse_extract_index(SparseExtractMode m) {
+    return m == SparseExtractMode::BOTH || m == SparseExtractMode::INDEX;
+}
+
+inline bool sparse_extract_value(SparseExtractMode m) {
+    return m == SparseExtractMode::BOTH || m == SparseExtractMode::VALUE;
+}
+
+template<typename T, typename IDX>
+void nullify_sparse_extract_pointers(SparseExtractMode m, T*& vbuffer, IDX*& ibuffer) {
+    switch (m) {
+        case SparseExtractMode::NONE:
+            vbuffer = NULL;
+            ibuffer = NULL;
+            break;
+        case SparseExtractMode::INDEX:
+            vbuffer = NULL;
+            break;
+        case SparseExtractMode::VALUE:
+            ibuffer = NULL;
+            break;
+        default:
+            break;
+    }
+}
+
+/**
+ * @endcond
+ */
 
 }
 

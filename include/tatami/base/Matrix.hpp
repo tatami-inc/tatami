@@ -79,14 +79,13 @@ public:
      * @return Is this matrix sparse?
      * Defaults to `false` if no specialized method is provided in derived classes.
      */
-    virtual bool sparse() const { return false; }
+    virtual bool sparse() const = 0;
 
     /**
      * @return The preferred dimension for extracting values.
      * If `true`, row-wise extraction is preferred; if `false`, column-wise extraction is preferred.
-     * Defaults to `false` if no specialized method is provided in derived classes.
      */
-    virtual bool prefer_rows() const { return false; }
+    virtual bool prefer_rows() const = 0;
 
     /**
      * @return A `pair` containing the number of matrix elements that prefer row-level access (`first`) or column-level access (`second`).
@@ -110,35 +109,64 @@ public:
      ****************************************/
 public:
     /**
-     * @param cache Whether to cache information from each call to `row()` with this workspace, for faster iterations if the same row is extracted during multiple passes over the matrix.
-     * @return A shared pointer to a `RowWorkspace` for row-wise data extraction, or a null pointer if no workspace is required.
+     * @param options Optional parameters for workspace construction.
+     * @return A shared pointer to a `DenseRowWorkspace` for row-wise data extraction.
      */
-    virtual std::shared_ptr<RowWorkspace> new_row_workspace(bool cache = false) const = 0;
+    virtual std::shared_ptr<DenseRowWorkspace> dense_row_workspace(const WorkspaceOptions& options) const = 0;
 
     /**
-     * @param cache Whether to cache information from each call to `column()` with this workspace, for faster iterations if the same column is extracted during multiple passes over the matrix.
-     * @return A shared pointer to a `ColumnWorkspace` for column-wise data extraction, or a null pointer if no workspace is required.
+     * @param options Optional parameters for workspace construction.
+     * @return A shared pointer to a `DenseColumnWorkspace` for column-wise data extraction.
      */
-    virtual std::shared_ptr<ColumnWorkspace> new_column_workspace(bool cache = false) const = 0;
+    virtual std::shared_ptr<DenseColumnWorkspace> dense_column_workspace(const WorkspaceOptions& options) const = 0;
 
     /**
-     * @param start Index of the first column in the block.
-     * @param length Number of columns in the block.
-     * @param cache Whether to cache information from each call to `row()` with this workspace, for faster iterations if the same row is extracted during multiple passes over the matrix.
-     *
-     * @return A shared pointer to a `RowBlockWorkspace` for row-wise extraction of data from a contiguous block of columns from `[start, start + length)`. 
+     * @param options Optional parameters for workspace construction.
+     * @return A shared pointer to a `SparseRowWorkspace` for row-wise data extraction.
      */
-    virtual std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t start, size_t length, bool cache = false) const = 0;
+    virtual std::shared_ptr<SparseRowWorkspace> sparse_row_workspace(const WorkspaceOptions& options) const = 0;
+
+    /**
+     * @param options Optional parameters for workspace construction.
+     * @return A shared pointer to a `SparseColumnWorkspace` for column-wise data extraction.
+     */
+    virtual std::shared_ptr<SparseColumnWorkspace> sparse_column_workspace(const WorkspaceOptions& options) const = 0;
+
+public:
+    /**
+     * @param options Optional parameters for workspace construction.
+     * @return A shared pointer to a `DenseRowBlockWorkspace` for row-wise extraction of data from a contiguous block of columns from `[start, start + length)`. 
+     */
+    virtual std::shared_ptr<DenseRowBlockWorkspace> dense_row_workspace(size_t start, size_t length, const WorkspaceOptions& options) const = 0;
 
     /**
      * @param start Index of the first row in the block.
      * @param length Number of rows in the block.
-     * @param cache Whether to cache information from each call to `column()` with this workspace, for faster iterations if the same column is extracted during multiple passes over the matrix.
+     * @param options Optional parameters for workspace construction.
      *
-     * @return A shared pointer to a `RowBlockWorkspace` for column-wise extraction of data from a contiguous block of rows from `[start, start + length)`.
+     * @return A shared pointer to a `DenseRowBlockWorkspace` for column-wise extraction of data from a contiguous block of rows from `[start, start + length)`.
      */
-    virtual std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t start, size_t length, bool cache = false) const = 0;
+    virtual std::shared_ptr<DenseColumnBlockWorkspace> dense_column_workspace(size_t start, size_t length, const WorkspaceOptions& options) const = 0;
 
+    /**
+     * @param start Index of the first column in the block.
+     * @param length Number of columns in the block.
+     * @param options Optional parameters for workspace construction.
+     *
+     * @return A shared pointer to a `SparseRowBlockWorkspace` for row-wise extraction of data from a contiguous block of columns from `[start, start + length)`. 
+     */
+    virtual std::shared_ptr<SparseRowBlockWorkspace> sparse_row_workspace(size_t start, size_t length, const WorkspaceOptions& options) const = 0;
+
+    /**
+     * @param start Index of the first row in the block.
+     * @param length Number of rows in the block.
+     * @param options Optional parameters for workspace construction.
+     *
+     * @return A shared pointer to a `SparseColumnBlockWorkspace` for column-wise extraction of data from a contiguous block of rows from `[start, start + length)`.
+     */
+    virtual std::shared_ptr<SparseColumnBlockWorkspace> sparse_column_workspace(size_t start, size_t length, const WorkspaceOptions& options) const = 0;
+
+public:
     // Note to self: we use a vector rather than taking a pointer to the
     // indices. This is because workspaces of wrapper matrices may need to
     // construct their own vectors, in which case the validity of the pointers
@@ -148,19 +176,145 @@ public:
 
     /**
      * @param indices Vector containing sorted and unique column indices.
-     * @param cache Whether to cache information from each call to `row()` with this workspace, for faster iterations if the same row is extracted during multiple passes over the matrix.
+     * @param options Optional parameters for workspace construction.
      *
-     * @return A shared pointer to a `RowIndexWorkspace` for row-wise extraction of data from a subset of columns defined by `indices`, or a null pointer if no workspace is required.
+     * @return A shared pointer to a `DenseRowIndexWorkspace` for row-wise extraction of data from a subset of columns defined by `indices`.
      */
-    virtual std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> indices, bool cache = false) const = 0;
+    virtual std::shared_ptr<DenseRowIndexWorkspace<IDX> > dense_row_workspace(std::vector<IDX> indices, const WorkspaceOptions& options) const = 0;
 
     /**
      * @param indices Vector containing sorted and unique row indices.
-     * @param cache Whether to cache information from each call to `column()` with this workspace, for faster iterations if the same column is extracted during multiple passes over the matrix.
+     * @param options Optional parameters for workspace construction.
      *
-     * @return A shared pointer to a `ColumnIndexWorkspace` for column-wise extraction of data from a subset of rows defined by `indices`, or a null pointer if no workspace is required.
+     * @return A shared pointer to a `DenseColumnIndexWorkspace` for column-wise extraction of data from a subset of rows defined by `indices`
      */
-    virtual std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> indices, bool cache = false) const = 0;
+    virtual std::shared_ptr<DenseColumnIndexWorkspace<IDX> > dense_column_workspace(std::vector<IDX> indices, const WorkspaceOptions& options) const = 0;
+
+    /**
+     * @param indices Vector containing sorted and unique column indices.
+     * @param options Optional parameters for workspace construction.
+     *
+     * @return A shared pointer to a `SparseRowIndexWorkspace` for row-wise extraction of data from a subset of columns defined by `indices`.
+     */
+    virtual std::shared_ptr<SparseRowIndexWorkspace<IDX> > sparse_row_workspace(std::vector<IDX> indices, const WorkspaceOptions& options) const = 0;
+
+    /**
+     * @param indices Vector containing sorted and unique row indices.
+     * @param options Optional parameters for workspace construction.
+     *
+     * @return A shared pointer to a `SparseColumnIndexWorkspace` for column-wise extraction of data from a subset of rows defined by `indices`.
+     */
+    virtual std::shared_ptr<SparseColumnIndexWorkspace<IDX> > sparse_column_workspace(std::vector<IDX> indices, const WorkspaceOptions& options) const = 0;
+
+    /*****************************************
+     ***** Non-virtual workspace methods *****
+     *****************************************/
+public:
+    /**
+     * @return A shared pointer to a `DenseRowWorkspace` for row-wise data extraction, or a null pointer if no workspace is required.
+     */
+    std::shared_ptr<DenseRowWorkspace> dense_row_workspace() const {
+        return dense_row_workspace(WorkspaceOptions());
+    }
+
+    /**
+     * @return A shared pointer to a `DenseColumnWorkspace` for row-wise data extraction, or a null pointer if no workspace is required.
+     */
+    std::shared_ptr<DenseColumnWorkspace> dense_column_workspace() const {
+        return dense_column_workspace(WorkspaceOptions()); 
+    }
+
+    /**
+     * @return A shared pointer to a `SparseRowWorkspace` for row-wise data extraction, or a null pointer if no workspace is required.
+     */
+    std::shared_ptr<SparseRowWorkspace> sparse_row_workspace() const {
+        return sparse_row_workspace(WorkspaceOptions()); 
+    }
+
+    /**
+     * @return A shared pointer to a `SparseColumnWorkspace` for row-wise data extraction, or a null pointer if no workspace is required.
+     */
+    std::shared_ptr<SparseColumnWorkspace> sparse_column_workspace() const {
+        return sparse_column_workspace(WorkspaceOptions());
+    }
+
+    /**
+     * @param start Index of the first row in the block.
+     * @param length Number of rows in the block.
+     *
+     * @return A shared pointer to a `DenseRowBlockWorkspace` for row-wise extraction of data from a contiguous block of columns from `[start, start + length)`. 
+     */
+    std::shared_ptr<DenseRowBlockWorkspace> dense_row_workspace(size_t start, size_t length) const {
+        return dense_row_workspace(start, length, WorkspaceOptions());
+    }
+
+    /**
+     * @param start Index of the first row in the block.
+     * @param length Number of rows in the block.
+     *
+     * @return A shared pointer to a `DenseRowBlockWorkspace` for column-wise extraction of data from a contiguous block of rows from `[start, start + length)`.
+     */
+    std::shared_ptr<DenseColumnBlockWorkspace> dense_column_workspace(size_t start, size_t length) const {
+        return dense_column_workspace(start, length, WorkspaceOptions()); 
+    }
+
+    /**
+     * @param start Index of the first column in the block.
+     * @param length Number of columns in the block.
+     *
+     * @return A shared pointer to a `SparseRowBlockWorkspace` for row-wise extraction of data from a contiguous block of columns from `[start, start + length)`. 
+     */
+    std::shared_ptr<SparseRowBlockWorkspace> sparse_row_workspace(size_t start, size_t length) const {
+        return sparse_row_workspace(start, length, WorkspaceOptions());
+    }
+
+    /**
+     * @param start Index of the first row in the block.
+     * @param length Number of rows in the block.
+     *
+     * @return A shared pointer to a `SparseRowBlockWorkspace` for column-wise extraction of data from a contiguous block of rows from `[start, start + length)`.
+     */
+    std::shared_ptr<SparseColumnBlockWorkspace> sparse_column_workspace(size_t start, size_t length) const {
+        return sparse_column_workspace(start, length, WorkspaceOptions());
+    }
+
+    /**
+     * @param indices Vector containing sorted and unique column indices.
+     *
+     * @return A shared pointer to a `DenseRowIndexWorkspace` for row-wise extraction of data from a subset of columns defined by `indices`.
+     */
+    std::shared_ptr<DenseRowIndexWorkspace<IDX> > dense_row_workspace(std::vector<IDX> indices) const {
+        return dense_row_workspace(std::move(indices), WorkspaceOptions());
+    }
+
+    /**
+     * @param indices Vector containing sorted and unique row indices.
+     *
+     * @return A shared pointer to a `DenseColumnIndexWorkspace` for column-wise extraction of data from a subset of rows defined by `indices`
+     */
+    std::shared_ptr<DenseColumnIndexWorkspace<IDX> > dense_column_workspace(std::vector<IDX> indices) const {
+        return dense_column_workspace(std::move(indices), WorkspaceOptions());
+    }
+
+    /**
+     * @param indices Vector containing sorted and unique column indices.
+     * @param options Optional parameters for workspace construction.
+     *
+     * @return A shared pointer to a `SparseRowIndexWorkspace` for row-wise extraction of data from a subset of columns defined by `indices`.
+     */
+    std::shared_ptr<SparseRowIndexWorkspace<IDX> > sparse_row_workspace(std::vector<IDX> indices) const {
+        return sparse_row_workspace(std::move(indices), WorkspaceOptions());
+    }
+
+    /**
+     * @param indices Vector containing sorted and unique row indices.
+     * @param options Optional parameters for workspace construction.
+     *
+     * @return A shared pointer to a `SparseColumnIndexWorkspace` for column-wise extraction of data from a subset of rows defined by `indices`.
+     */
+    virtual std::shared_ptr<SparseColumnIndexWorkspace<IDX> > sparse_column_workspace(std::vector<IDX> indices) const {
+        return sparse_column_workspace(std::move(indices), WorkspaceOptions());
+    }
 
     /*********************************
      ***** Dense virtual methods *****
@@ -172,67 +326,67 @@ public:
      *
      * @param r Index of the row.
      * @param buffer Pointer to an array with enough space for at least `ncol()` values.
-     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     * @param work Pointer to the workspace created with `dense_row_workspace()`.
      *
      * @return Pointer to the values of row `r`, containing `ncol()` valid entries.
      */
-    virtual const T* row(size_t r, T* buffer, RowWorkspace* work) const = 0;
+    virtual const T* row(size_t r, T* buffer, DenseRowWorkspace* work) const = 0;
 
     /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
      * @param c Index of the column.
-     * @param buffer Pointer to an array with enough space for at least `last - first` values.
-     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     * @param buffer Pointer to an array with enough space for at least `nrow()` values.
+     * @param work Pointer to the workspace created with `dense_column_workspace()`.
      *
      * @return Pointer to the values of column `c`, containing `ncol()` valid entries.
      */
-    virtual const T* column(size_t c, T* buffer, ColumnWorkspace* work) const = 0;
+    virtual const T* column(size_t c, T* buffer, DenseColumnWorkspace* work) const = 0;
 
     /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
      * @param r Index of the row.
-     * @param buffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` values.
-     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     * @param buffer Pointer to an array with enough space for at least `DenseRowBlockWorkspace::length` values.
+     * @param work Pointer to the workspace created with `dense_row_workspace()`.
      *
      * @return Pointer to an array containing a block of values from row `r`, where the array is of length `RowBlockWorkspace::length`.
      */
-    virtual const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const = 0;
+    virtual const T* row(size_t r, T* buffer, DenseRowBlockWorkspace* work) const = 0;
 
     /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
      * @param c Index of the column.
-     * @param buffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` values.
-     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     * @param buffer Pointer to an array with enough space for at least `DenseColumnBlockWorkspace::length` values.
+     * @param work Pointer to the workspace created with `dense_column_workspace()`.
      *
      * @return Pointer to an array containing a block of values from column `c`, where the array is of length `ColumnBlockWorkspace::length`.
      */
-    virtual const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const = 0;
+    virtual const T* column(size_t c, T* buffer, DenseColumnBlockWorkspace* work) const = 0;
 
     /**
      * @param r Index of the row.
-     * @param buffer Pointer to an array with enough space for at least `RowIndexWorkspace::length` values.
-     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     * @param buffer Pointer to an array with enough space for at least `DenseRowIndexWorkspace::length` values.
+     * @param work Pointer to the workspace created with `dense_row_workspace()`.
      *
      * @return The array pointed to by `buffer` is filled with a subset of values from column `r`.
      * `buffer` itself is returned.
      */
-    virtual const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const = 0;
+    virtual const T* row(size_t r, T* buffer, DenseRowIndexWorkspace<IDX>* work) const = 0;
 
     /**
      * @param c Index of the column.
-     * @param buffer Pointer to an array with enough space for at least `ColumnIndexWorkspace::length` values.
-     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     * @param buffer Pointer to an array with enough space for at least `DenseColumnIndexWorkspace::length` values.
+     * @param work Pointer to the workspace created with `dense_column_workspace()`.
      *
      * @return The array pointed to by `buffer` is filled with a subset of values from column `c`.
      * `buffer` itself is returned.
      */
-    virtual const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const = 0;
+    virtual const T* column(size_t c, T* buffer, DenseColumnIndexWorkspace<IDX>* work) const = 0;
 
     /*************************************
      ***** Dense non-virtual methods *****
@@ -250,12 +404,12 @@ public:
     /**
      * @param r Index of the row.
      * @param buffer Pointer to an array with enough space for at least `ncol()` values.
-     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     * @param work Pointer to the workspace created with `dense_row_workspace()`.
      *
      * @return The array at `buffer` is filled with the values of row `r`.
      * `buffer` itself is returned.
      */
-    const T* row_copy(size_t r, T* buffer, RowWorkspace* work) const {
+    const T* row_copy(size_t r, T* buffer, DenseRowWorkspace* work) const {
         auto ptr = row(r, buffer, work);
         copy_over(ptr, buffer, ncol());
         return buffer;
@@ -264,12 +418,12 @@ public:
     /**
      * @param c Index of the column.
      * @param buffer Pointer to an array with enough space for at least `nrow()` values.
-     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     * @param work Pointer to the workspace created with `dense_column_workspace()`.
      *
      * @return The array at `buffer` is filled with the values of column `c`.
      * `buffer` itself is returned.
      */
-    const T* column_copy(size_t c, T* buffer, ColumnWorkspace* work) const {
+    const T* column_copy(size_t c, T* buffer, DenseColumnWorkspace* work) const {
         auto ptr = column(c, buffer, work);
         copy_over(ptr, buffer, nrow());
         return buffer;
@@ -277,59 +431,59 @@ public:
 
     /**
      * @param r Index of the row.
-     * @param buffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` values.
-     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     * @param buffer Pointer to an array with enough space for at least `DenseRowBlockWorkspace::length` values.
+     * @param work Pointer to the workspace created with `dense_row_workspace()`.
      *
      * @return The array pointed to by `buffer` is filled with a block of values from row `r`.
      * `buffer` itself is returned.
      */
-    const T* row_copy(size_t r, T* buffer, RowBlockWorkspace* work) const {
+    const T* row_copy(size_t r, T* buffer, DenseRowBlockWorkspace* work) const {
         auto ptr = row(r, buffer, work);
-        copy_over(ptr, buffer, work->length());
+        copy_over(ptr, buffer, work->length);
         return buffer;
     }
 
     /**
      * @param c Index of the column.
-     * @param buffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` values.
-     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     * @param buffer Pointer to an array with enough space for at least `DenseColumnBlockWorkspace::length` values.
+     * @param work Pointer to the workspace created with `dense_column_workspace()`.
      *
      * @return The array pointed to by `buffer` is filled with a block of values from column `c`.
      * `buffer` itself is returned.
      */
-    const T* column_copy(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
+    const T* column_copy(size_t c, T* buffer, DenseColumnBlockWorkspace* work) const {
         auto ptr = column(c, buffer, work);
-        copy_over(ptr, buffer, work->length());
+        copy_over(ptr, buffer, work->length);
         return buffer;
     }
 
     /**
      * @param r Index of the row.
-     * @param buffer Pointer to an array with enough space for at least `RowIndexWorkspace<IDX>::length` values.
-     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     * @param buffer Pointer to an array with enough space for at least `DenseRowIndexWorkspace::length` values.
+     * @param work Pointer to the workspace created with `dense_row_workspace()`.
      *
      * @return The array pointed to by `buffer` is filled with a block of values from row `r`.
      * `buffer` itself is returned.
      */
-    const T* row_copy(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
+    const T* row_copy(size_t r, T* buffer, DenseRowIndexWorkspace<IDX>* work) const {
         // Indexed extraction should almost certainly copy, but we'll just make sure.
         auto ptr = row(r, buffer, work);
-        copy_over(ptr, buffer, work->length());
+        copy_over(ptr, buffer, work->length);
         return buffer;
     }
 
     /**
      * @param c Index of the column.
      * @param buffer Pointer to an array with enough space for at least `ColumnIndexWorkspace<IDX>::length` values.
-     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     * @param work Pointer to the workspace created with `dense_column_workspace()`.
      *
      * @return The array pointed to by `buffer` is filled with a block of values from column `c`.
      * `buffer` itself is returned.
      */
-    const T* column_copy(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
+    const T* column_copy(size_t c, T* buffer, DenseColumnIndexWorkspace<IDX>* work) const {
         // Indexed extraction should almost certainly copy, but we'll just make sure.
         auto ptr = column(c, buffer, work);
-        copy_over(ptr, buffer, work->length());
+        copy_over(ptr, buffer, work->length);
         return buffer;
     }
 
@@ -339,11 +493,11 @@ public:
      * Callers do not have to supply `buffer`; instead a new allocation is performed every time.
      *
      * @param r Index of the row.
-     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     * @param work Pointer to the workspace created with `dense_row_workspace()`.
      *
      * @return A vector containing the values of row `r`.
      */
-    std::vector<T> row(size_t r, RowWorkspace* work) const {
+    std::vector<T> row(size_t r, DenseRowWorkspace* work) const {
         std::vector<T> output(ncol());
         row_copy(r, output.data(), work);
         return output;
@@ -354,11 +508,11 @@ public:
      * Callers do not have to supply `buffer`; instead a new allocation is performed every time.
      *
      * @param c Index of the column.
-     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     * @param work Pointer to the workspace created with `dense_column_workspace()`.
      *
      * @return A vector containing the values of column `c`.
      */
-    std::vector<T> column(size_t c, ColumnWorkspace* work) const {
+    std::vector<T> column(size_t c, DenseColumnWorkspace* work) const {
         std::vector<T> output(nrow());
         column_copy(c, output.data(), work);
         return output;
@@ -369,12 +523,12 @@ public:
      * Callers do not have to supply `buffer`; instead a new allocation is performed every time.
      *
      * @param r Index of the row.
-     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     * @param work Pointer to the workspace created with `dense_row_workspace()`.
      *
      * @return A vector containing all values of row `r`.
      */
-    std::vector<T> row(size_t r, RowBlockWorkspace* work) const {
-        std::vector<T> output(work->length());
+    std::vector<T> row(size_t r, DenseRowBlockWorkspace* work) const {
+        std::vector<T> output(work->length);
         row_copy(r, output.data(), work);
         return output;
     }
@@ -384,12 +538,12 @@ public:
      * Callers do not have to supply `buffer`; instead a new allocation is performed every time.
      *
      * @param c Index of the column.
-     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     * @param work Pointer to the workspace created with `dense_column_workspace()`.
      *
      * @return A vector containing all values of column `c`.
      */
-    std::vector<T> column(size_t c, ColumnBlockWorkspace* work) const {
-        std::vector<T> output(work->length());
+    std::vector<T> column(size_t c, DenseColumnBlockWorkspace* work) const {
+        std::vector<T> output(work->length);
         column_copy(c, output.data(), work);
         return output;
     }
@@ -399,12 +553,12 @@ public:
      * Callers do not have to supply `buffer`; instead a new allocation is performed every time.
      *
      * @param r Index of the row.
-     * @param work Pointer to the workspace created with `new_row_workspace()`.
+     * @param work Pointer to the workspace created with `dense_row_workspace()`.
      *
      * @return A vector containing all values of row `r`.
      */
-    std::vector<T> row(size_t r, RowIndexWorkspace<IDX>* work) const {
-        std::vector<T> output(work->length());
+    std::vector<T> row(size_t r, DenseRowIndexWorkspace<IDX>* work) const {
+        std::vector<T> output(work->length);
         row_copy(r, output.data(), work);
         return output;
     }
@@ -414,12 +568,12 @@ public:
      * Callers do not have to supply `buffer`; instead a new allocation is performed every time.
      *
      * @param c Index of the column.
-     * @param work Pointer to the workspace created with `new_column_workspace()`.
+     * @param work Pointer to the workspace created with `dense_column_workspace()`.
      *
      * @return A vector containing all values of column `c`.
      */
-    std::vector<T> column(size_t c, ColumnIndexWorkspace<IDX>* work) const {
-        std::vector<T> output(work->length());
+    std::vector<T> column(size_t c, DenseColumnIndexWorkspace<IDX>* work) const {
+        std::vector<T> output(work->length);
         column_copy(c, output.data(), work);
         return output;
     }
@@ -433,374 +587,345 @@ public:
      * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled. 
      * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
-     * Values in `vbuffer` are not guaranteed to be non-zero.
+     * Entries in the output `value` array are not guaranteed to be non-zero.
      * If zeroes are explicitly initialized in the underlying representation, they will be reported here.
-     * However, one can safely assume that all values _not_ in `vbuffer` are zero.
-     *
-     * Setting `sorted = false` can reduce computational work in situations where the order of non-zero elements does not matter.
+     * However, one can safely assume that all values _not_ in `value` are zero.
      *
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `ncol()` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `ncol()` indices.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
-     * @param sorted Should the non-zero elements be sorted by their indices?
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of row `r`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowWorkspace* work, bool sorted = true) const {
-        const T* val = row(r, vbuffer, work);
-        std::iota(ibuffer, ibuffer + ncol(), static_cast<IDX>(0));
-        return SparseRange(ncol(), val, ibuffer); 
-    }
+    virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowWorkspace* work) const = 0;
 
     /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled. 
      * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
-     * Values in `vbuffer` are not guaranteed to be non-zero.
+     * Entries in the output `value` array are not guaranteed to be non-zero.
      * If zeroes are explicitly initialized in the underlying representation, they will be reported here.
-     * However, one can safely assume that all values _not_ in `vbuffer` are zero.
-     *
-     * Setting `sorted = false` can reduce computational work in situations where the order of non-zero elements does not matter.
+     * However, one can safely assume that all values _not_ in `value` are zero.
      *
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `nrow()` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `nrow()` indices.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
      * @param work Pointer to a workspace.
-     * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of column `c`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnWorkspace* work, bool sorted = true) const {
-        const T* val = column(c, vbuffer, work);
-        std::iota(ibuffer, ibuffer + nrow(), static_cast<IDX>(0));
-        return SparseRange(nrow(), val, ibuffer); 
-    }
+    virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnWorkspace* work) const = 0;
 
     /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled. 
      * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
-     * Values in `vbuffer` are not guaranteed to be non-zero.
+     * Entries in the output `value` array are not guaranteed to be non-zero.
      * If zeroes are explicitly initialized in the underlying representation, they will be reported here.
-     * However, one can safely assume that all values _not_ in `vbuffer` are zero.
-     *
-     * Setting `sorted = false` can reduce computational work in situations where the order of non-zero elements does not matter.
+     * However, one can safely assume that all values _not_ in `value` are zero.
      *
      * @param r Index of the row.
-     * @param vbuffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` values.
-     * @param ibuffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` indices.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
+     * @param vbuffer Pointer to an array with enough space for at least `SparseRowBlockWorkspace::length` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param ibuffer Pointer to an array with enough space for at least `SparseRowBlockWorkspace::length` indices.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of a block of columns in row `r`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work, bool sorted = true) const {
-        const T* val = row(r, vbuffer, work);
-        const auto& deets = work->block();
-        size_t start = deets.first, len = deets.second;
-        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
-        return SparseRange(len, val, ibuffer); 
-    }
+    virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowBlockWorkspace* work) const = 0;
 
     /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled. 
      * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
-     * Values in `vbuffer` are not guaranteed to be non-zero.
+     * Entries in the output `value` array are not guaranteed to be non-zero.
      * If zeroes are explicitly initialized in the underlying representation, they will be reported here.
-     * However, one can safely assume that all values _not_ in `vbuffer` are zero.
-     *
-     * Setting `sorted = false` can reduce computational work in situations where the order of non-zero elements does not matter.
+     * However, one can safely assume that all values _not_ in `value` are zero.
      *
      * @param c Index of the column.
-     * @param vbuffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` values.
-     * @param ibuffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` indices.
-     * @param work Pointer to a workspace created with `new_column_workspace()`.
+     * @param vbuffer Pointer to an array with enough space for at least `SparseColumnBlockWorkspace::length` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param ibuffer Pointer to an array with enough space for at least `SparseColumnBlockWorkspace::length` indices.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_column_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of a block of rows in column `c`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted = true) const {
-        const T* val = column(c, vbuffer, work);
-        const auto& deets = work->block();
-        size_t start = deets.first, len = deets.second;
-        std::iota(ibuffer, ibuffer + len, static_cast<IDX>(start));
-        return SparseRange(len, val, ibuffer); 
-    }
+    virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnBlockWorkspace* work) const = 0;
 
     /**
-     * Values in `vbuffer` are not guaranteed to be non-zero.
+     * Entries in the output `value` array are not guaranteed to be non-zero.
      * If zeroes are explicitly initialized in the underlying representation, they will be reported here.
-     * However, one can safely assume that all values _not_ in `vbuffer` are zero.
-     *
-     * Setting `sorted = false` can reduce computational work in situations where the order of non-zero elements does not matter.
+     * However, one can safely assume that all values _not_ in `value` are zero.
      *
      * @param r Index of the row.
-     * @param vbuffer Pointer to an array with enough space for at least `RowIndexWorkspace::length` values.
-     * @param ibuffer Pointer to an array with enough space for at least `RowIndexWorkspace::length` indices.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
+     * @param vbuffer Pointer to an array with enough space for at least `SparseRowIndexWorkspace::length` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param ibuffer Pointer to an array with enough space for at least `SparseRowIndexWorkspace::length` indices.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      * @param sorted Should the non-zero elements be sorted by their indices?
      *
      * @return A `SparseRange` object describing the contents of a subset of columns in row `r`.
-     * `vbuffer` is set as `SparseRange::value`, while `ibuffer` is set as `SparseRange::index`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> sparse_row(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, bool sorted = true) const {
-        const T* val = row(r, vbuffer, work);
-        const auto& indices = work->indices();
-        std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
-        return SparseRange(indices.size(), val, ibuffer); 
-    }
+    virtual SparseRange<T, IDX> row(size_t r, T* vbuffer, IDX* ibuffer, SparseRowIndexWorkspace<IDX>* work) const = 0;
 
     /**
-     * Values in `vbuffer` are not guaranteed to be non-zero.
+     * Entries in the output `value` array are not guaranteed to be non-zero.
      * If zeroes are explicitly initialized in the underlying representation, they will be reported here.
-     * However, one can safely assume that all values _not_ in `vbuffer` are zero.
-     *
-     * Setting `sorted = false` can reduce computational work in situations where the order of non-zero elements does not matter.
+     * However, one can safely assume that all values _not_ in `value` are zero.
      *
      * @param c Index of the column.
-     * @param vbuffer Pointer to an array with enough space for at least `ColumnIndexWorkspace::length` values.
-     * @param ibuffer Pointer to an array with enough space for at least `ColumnIndexWorkspace::length` indices.
-     * @param work Pointer to a workspace created with `new_column_workspace()`.
-     * @param sorted Should the non-zero elements be sorted by their indices?
+     * @param vbuffer Pointer to an array with enough space for at least `SparseColumnIndexWorkspace::length` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param ibuffer Pointer to an array with enough space for at least `SparseColumnIndexWorkspace::length` indices.
+     * Ignored if `WorkspaceOptions::mode` was set `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_column_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a subset of rows in column `c`.
-     * `vbuffer` is set as `SparseRange::value`, while `ibuffer` is set as `SparseRange::index`.
+     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, based on the setting of `WorkspaceOptions::mode` used to construct `work`.
      */
-    virtual SparseRange<T, IDX> sparse_column(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, bool sorted = true) const {
-        const T* val = column(c, vbuffer, work);
-        const auto& indices = work->indices();
-        std::copy(indices.begin(), indices.end(), ibuffer); // avoid lifetime issues with the workspace.
-        return SparseRange(indices.size(), val, ibuffer); 
-    }
+    virtual SparseRange<T, IDX> column(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnIndexWorkspace<IDX>* work) const = 0;
 
     /**************************************
      ***** Sparse non-virtual methods *****
      **************************************/
 private:
-    static void copy_over(SparseRange<T, IDX>& output, T* vbuffer, IDX* ibuffer, SparseCopyMode copy) {
-        if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_INDEX) && output.index != ibuffer) {
+    static void copy_over(SparseRange<T, IDX>& output, T* vbuffer, IDX* ibuffer) {
+        if (output.index && output.index != ibuffer) {
             copy_over(output.index, ibuffer, output.number);
             output.index = ibuffer;
         }
 
-        if ((copy == SPARSE_COPY_BOTH || copy == SPARSE_COPY_VALUE) && output.value != vbuffer) {
+        if (output.value && output.value != vbuffer) {
             copy_over(output.value, vbuffer, output.number);
             output.value = vbuffer;
         }
     }
-    
+
 public:
     /**
      * @param r Index of the row.
      * @param vbuffer Pointer to an array with enough space for at least `ncol()` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `ncol()` indices.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
-     * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_row()` for details.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of row `r`.
-     * Depending on `copy`, values and indices will be copied into `vbuffer` and/or `ibuffer`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
+     * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
-    SparseRange<T, IDX> sparse_row_copy(size_t r, T* vbuffer, IDX* ibuffer, RowWorkspace* work, SparseCopyMode copy = SPARSE_COPY_BOTH, bool sorted = true) const {
-        auto output = sparse_row(r, vbuffer, ibuffer, work, sorted);
-        copy_over(output, vbuffer, ibuffer, copy);
+    SparseRange<T, IDX> row_copy(size_t r, T* vbuffer, IDX* ibuffer, SparseRowWorkspace* work) const {
+        auto output = row(r, vbuffer, ibuffer, work);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param c Index of the column.
      * @param vbuffer Pointer to an array with enough space for at least `nrow()` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
      * @param ibuffer Pointer to an array with enough space for at least `nrow()` indices.
-     * @param work Pointer to a workspace created with `new_column_workspace()`.
-     * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_column()` for details.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_column_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of column `c`.
-     * Depending on `copy`, values and indices will be copied into `vbuffer` and/or `ibuffer`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
+     * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
-    SparseRange<T, IDX> sparse_column_copy(size_t c, T* vbuffer, IDX* ibuffer, ColumnWorkspace* work, SparseCopyMode copy = SPARSE_COPY_BOTH, bool sorted = true) const {
-        auto output = sparse_column(c, vbuffer, ibuffer, work, sorted);
-        copy_over(output, vbuffer, ibuffer, copy);
+    SparseRange<T, IDX> column_copy(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnWorkspace* work) const {
+        auto output = column(c, vbuffer, ibuffer, work);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param r Index of the row.
-     * @param vbuffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` values.
-     * @param ibuffer Pointer to an array with enough space for at least `RowBlockWorkspace::length` indices.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
-     * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_row()` for details.
+     * @param vbuffer Pointer to an array with enough space for at least `SparseRowBlockWorkspace::length` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param ibuffer Pointer to an array with enough space for at least `SparseRowBlockWorkspace::length` indices.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a block of columns in row `r`.
-     * Depending on `copy`, values and indices will be copied into `vbuffer` and/or `ibuffer`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
+     * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
-    SparseRange<T, IDX> sparse_row_copy(size_t r, T* vbuffer, IDX* ibuffer, RowBlockWorkspace* work, SparseCopyMode copy = SPARSE_COPY_BOTH, bool sorted = true) const {
-        auto output = sparse_row(r, vbuffer, ibuffer, work, sorted);
-        copy_over(output, vbuffer, ibuffer, copy);
+    SparseRange<T, IDX> row_copy(size_t r, T* vbuffer, IDX* ibuffer, SparseRowBlockWorkspace* work) const {
+        auto output = row(r, vbuffer, ibuffer, work);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param c Index of the column.
-     * @param vbuffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` values.
-     * @param ibuffer Pointer to an array with enough space for at least `ColumnBlockWorkspace::length` indices.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
-     * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_column()` for details.
+     * @param vbuffer Pointer to an array with enough space for at least `SparseColumnBlockWorkspace::length` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param ibuffer Pointer to an array with enough space for at least `SparseColumnBlockWorkspace::length` indices.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a block of rows in column `c`.
-     * Depending on `copy`, values and indices will be copied into `vbuffer` and/or `ibuffer`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
+     * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
-    SparseRange<T, IDX> sparse_column_copy(size_t c, T* vbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, SparseCopyMode copy = SPARSE_COPY_BOTH, bool sorted = true) const {
-        auto output = sparse_column(c, vbuffer, ibuffer, work, sorted);
-        copy_over(output, vbuffer, ibuffer, copy);
+    SparseRange<T, IDX> column_copy(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnBlockWorkspace* work) const {
+        auto output = column(c, vbuffer, ibuffer, work);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param r Index of the row.
-     * @param vbuffer Pointer to an array with enough space for at least `RowIndexWorkspace::length` values.
-     * @param ibuffer Pointer to an array with enough space for at least `RowIndexWorkspace::length` indices.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
-     * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_row()` for details.
+     * @param vbuffer Pointer to an array with enough space for at least `SparseRowIndexWorkspace::length` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param ibuffer Pointer to an array with enough space for at least `SparseRowIndexWorkspace::length` indices.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a subset of columns in row `r`.
-     * Depending on `copy`, values and indices will be copied into `vbuffer` and/or `ibuffer`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
+     * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
-    SparseRange<T, IDX> sparse_row_copy(size_t r, T* vbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, SparseCopyMode copy = SPARSE_COPY_BOTH, bool sorted = true) const {
-        auto output = sparse_row(r, vbuffer, ibuffer, work, sorted);
-        copy_over(output, vbuffer, ibuffer, copy);
+    SparseRange<T, IDX> row_copy(size_t r, T* vbuffer, IDX* ibuffer, SparseRowIndexWorkspace<IDX>* work) const {
+        auto output = row(r, vbuffer, ibuffer, work);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
     /**
      * @param c Index of the column.
-     * @param vbuffer Pointer to an array with enough space for at least `ColumnIndexWorkspace::length` values.
-     * @param ibuffer Pointer to an array with enough space for at least `ColumnIndexWorkspace::length` indices.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
-     * @param copy Whether the non-zero values and/or indices should be copied into `vbuffer` and `ibuffer`, respectively.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_column()` for details.
+     * @param vbuffer Pointer to an array with enough space for at least `SparseColumnIndexWorkspace::length` values.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::INDEX` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param ibuffer Pointer to an array with enough space for at least `SparseColumnIndexWorkspace::length` indices.
+     * Ignored if `WorkspaceOptions::mode` was set to `SparseExtractMode::VALUE` or `SparseExtractMode::NONE` during construction of `work`.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRange` object describing the contents of a subset of rows in column `c`.
-     * Depending on `copy`, values and indices will be copied into `vbuffer` and/or `ibuffer`.
+     * Either or both of `value` or `index` may be invalid, depending on the setting of `WorkspaceOptions::mode` used to construct `work`.
+     * If non-`NULL`, they will be set to `vbuffer` and `ibuffer`, which will be filled with values and indices respectively.
      */
-    SparseRange<T, IDX> sparse_column_copy(size_t c, T* vbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, SparseCopyMode copy = SPARSE_COPY_BOTH, bool sorted = true) const {
-        auto output = sparse_column(c, vbuffer, ibuffer, work, sorted);
-        copy_over(output, vbuffer, ibuffer, copy);
+    SparseRange<T, IDX> column_copy(size_t c, T* vbuffer, IDX* ibuffer, SparseColumnIndexWorkspace<IDX>* work) const {
+        auto output = column(c, vbuffer, ibuffer, work);
+        copy_over(output, vbuffer, ibuffer);
         return output;
     }
 
 public:
     /**
-     * A more convenient but less efficient version of the `sparse_row()` method.
+     * A more convenient but less efficient version of the `row()` method.
      * Callers do not have to supply the buffers; instead a new allocation is performed every time.
      *
      * @param r Index of the row.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_row()` for details.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRangeCopy` object containing the contents of row `r`.
      */
-    SparseRangeCopy<T, IDX> sparse_row(size_t r, RowWorkspace* work, bool sorted = true) const {
+    SparseRangeCopy<T, IDX> row(size_t r, SparseRowWorkspace* work) const {
         SparseRangeCopy<T, IDX> output(ncol());
-        auto ret = sparse_row_copy(r, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
+        auto ret = row_copy(r, output.value.data(), output.index.data(), work);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
         return output;
     }
 
     /**
-     * A more convenient but less efficient version of the `sparse_column()` method.
+     * A more convenient but less efficient version of the `column()` method.
      * Callers do not have to supply the buffers; instead a new allocation is performed every time.
      *
      * @param c Index of the column.
-     * @param work Pointer to a workspace created with `new_column_workspace()`.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_column()` for details.
+     * @param work Pointer to a workspace created with `sparse_column_workspace()`.
      *
      * @return A `SparseRangeCopy` object containing the contents of column `c`.
      */
-    SparseRangeCopy<T, IDX> sparse_column(size_t c, ColumnWorkspace* work, bool sorted = true) const {
+    SparseRangeCopy<T, IDX> column(size_t c, SparseColumnWorkspace* work) const {
         SparseRangeCopy<T, IDX> output(nrow());
-        auto ret = sparse_column_copy(c, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
+        auto ret = column_copy(c, output.value.data(), output.index.data(), work);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
         return output;
     }
 
     /**
-     * A more convenient but less efficient version of the `sparse_row()` method.
+     * A more convenient but less efficient version of the `row()` method.
      * Callers do not have to supply the buffers; instead a new allocation is performed every time.
      *
      * @param r Index of the row.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_row()` for details.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRangeCopy` object containing the contents of a block of columns in row `r`.
      */
-    SparseRangeCopy<T, IDX> sparse_row(size_t r, RowBlockWorkspace* work, bool sorted = true) const {
-        SparseRangeCopy<T, IDX> output(work->length());
-        auto ret = sparse_row_copy(r, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
+    SparseRangeCopy<T, IDX> row(size_t r, SparseRowBlockWorkspace* work) const {
+        SparseRangeCopy<T, IDX> output(work->length);
+        auto ret = row_copy(r, output.value.data(), output.index.data(), work);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
         return output;
     }
 
     /**
-     * A more convenient but less efficient version of the `sparse_column()` method.
+     * A more convenient but less efficient version of the `column()` method.
      * Callers do not have to supply the buffers; instead a new allocation is performed every time.
      *
      * @param c Index of the column.
-     * @param work Pointer to a workspace created with `new_column_workspace()`.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_column()` for details.
+     * @param work Pointer to a workspace created with `sparse_column_workspace()`.
      *
      * @return A `SparseRangeCopy` object containing the contents of a block of rows in column `c`.
      */
-    SparseRangeCopy<T, IDX> sparse_column(size_t c, ColumnBlockWorkspace* work, bool sorted = true) const {
-        SparseRangeCopy<T, IDX> output(work->length());
-        auto ret = sparse_column_copy(c, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
+    SparseRangeCopy<T, IDX> column(size_t c, SparseColumnBlockWorkspace* work) const {
+        SparseRangeCopy<T, IDX> output(work->length);
+        auto ret = column_copy(c, output.value.data(), output.index.data(), work);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
         return output;
     }
 
     /**
-     * A more convenient but less efficient version of the `sparse_row()` method.
+     * A more convenient but less efficient version of the `row()` method.
      * Callers do not have to supply the buffers; instead a new allocation is performed every time.
      *
      * @param r Index of the row.
-     * @param work Pointer to a workspace created with `new_row_workspace()`.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_row()` for details.
+     * @param work Pointer to a workspace created with `sparse_row_workspace()`.
      *
      * @return A `SparseRangeCopy` object containing the contents of a subset of columns in row `r`.
      */
-    SparseRangeCopy<T, IDX> sparse_row(size_t r, RowIndexWorkspace<IDX>* work, bool sorted = true) const {
-        SparseRangeCopy<T, IDX> output(work->length());
-        auto ret = sparse_row_copy(r, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
+    SparseRangeCopy<T, IDX> row(size_t r, SparseRowIndexWorkspace<IDX>* work) const {
+        SparseRangeCopy<T, IDX> output(work->length);
+        auto ret = row_copy(r, output.value.data(), output.index.data(), work);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
         return output;
     }
 
     /**
-     * A more convenient but less efficient version of the `sparse_column()` method.
+     * A more convenient but less efficient version of the `column()` method.
      * Callers do not have to supply the buffers; instead a new allocation is performed every time.
      *
      * @param c Index of the column.
-     * @param work Pointer to a workspace created with `new_column_workspace()`.
-     * @param sorted Should the non-zero elements be sorted by their indices? See `sparse_column()` for details.
+     * @param work Pointer to a workspace created with `sparse_column_workspace()`.
      *
      * @return A `SparseRangeCopy` object containing the contents of a subset of rows in column `c`.
      */
-    SparseRangeCopy<T, IDX> sparse_column(size_t c, ColumnIndexWorkspace<IDX>* work, bool sorted = true) const {
-        SparseRangeCopy<T, IDX> output(work->length());
-        auto ret = sparse_column_copy(c, output.value.data(), output.index.data(), work, SPARSE_COPY_BOTH, sorted);
+    SparseRangeCopy<T, IDX> column(size_t c, SparseColumnIndexWorkspace<IDX>* work) const {
+        SparseRangeCopy<T, IDX> output(work->length);
+        auto ret = column_copy(c, output.value.data(), output.index.data(), work);
         output.index.resize(ret.number);
         output.value.resize(ret.number);
         return output;
@@ -811,72 +936,6 @@ public:
  * A convenient shorthand for the most common use case of double-precision matrices.
  */
 using NumericMatrix = Matrix<double, int>;
-
-/**
- * Create a new workspace for extraction of full rows or columns.
- * This is a convenience wrapper for switching between rows/columns at compile time.
- *
- * @tparam ROW Whether to create a workspace for row extraction.
- * @tparam T Type of the matrix data.
- * @tparam IDX Type of the row/column indices.
- *
- * @param ptr Pointer to a `Matrix` instance.
- *
- * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
- */
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<Workspace<ROW> > new_workspace(const Matrix<T, IDX>* ptr) {
-    if constexpr(ROW) {
-        return ptr->new_row_workspace();
-    } else {
-        return ptr->new_column_workspace();
-    }
-}
-
-/**
- * Create a new workspace for extraction of a contiguous block from each row or column. 
- * This is a convenience wrapper for switching between rows/columns at compile time.
- *
- * @tparam ROW Whether to create a workspace for row extraction.
- * @tparam T Type of the matrix data.
- * @tparam IDX Type of the row/column indices.
- *
- * @param ptr Pointer to a `Matrix` instance.
- * @param start Index of the first column (if `ROW = true`) or column (otherwise) in the block.
- * @param length Number of columns (if `ROW = true`) or rows (otherwise) in the block.
- *
- * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
- */
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<BlockWorkspace<ROW> > new_workspace(const Matrix<T, IDX>* ptr, size_t start, size_t length) {
-    if constexpr(ROW) {
-        return ptr->new_row_workspace(start, length);
-    } else {
-        return ptr->new_column_workspace(start, length);
-    }
-}
-
-/**
- * Create a new workspace for extraction of a subset of entries from each row or column. 
- * This is a convenience wrapper for switching between rows/columns at compile time.
- *
- * @tparam ROW Whether to create a workspace for row extraction.
- * @tparam T Type of the matrix data.
- * @tparam IDX Type of the row/column indices.
- *
- * @param ptr Pointer to a `Matrix` instance.
- * @param indices Vector of unique and sorted indices for columns (if `ROW = true`) or rows (otherwise) in the subset.
- *
- * @return A workspace for extracting rows from `ptr` if `ROW = true`, or columns otherwise.
- */
-template<bool ROW, typename T, typename IDX>
-std::shared_ptr<BlockWorkspace<ROW> > new_workspace(const Matrix<T, IDX>* ptr, std::vector<IDX> indices) {
-    if constexpr(ROW) {
-        return ptr->new_row_workspace(std::move(indices));
-    } else {
-        return ptr->new_column_workspace(std::move(indices));
-    }
-}
 
 }
 

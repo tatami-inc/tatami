@@ -121,8 +121,8 @@ TEST(ComputingDimVariances, Configuration) {
     typedef decltype(std::declval<VarFact>().sparse_direct()) VarSparse;
     const bool nsc = tatami::stats::has_nonconst_sparse_compute<VarSparse, double, int>::value;
     EXPECT_FALSE(nsc);
-    const tatami::SparseCopyMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<VarSparse>::value;
-    EXPECT_EQ(nscc, tatami::SPARSE_COPY_BOTH); // just a negative control.
+    const tatami::SparseExtractMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<VarSparse>::value;
+    EXPECT_EQ(nscc, tatami::SparseExtractMode::BOTH); // just a negative control.
 }
 
 TEST(RunningVariances, SensibleZeros) {
@@ -139,10 +139,10 @@ TEST(RunningVariances, SensibleZeros) {
         std::vector<int> ibuffer(NR);
         std::vector<double> vbuffer(NR);
         std::vector<int> ref_nzeros(NR);
-        auto wrk = sparse_column->new_column_workspace();
+        auto wrk = sparse_column->sparse_column_workspace();
 
         for (int c = 0; c < static_cast<int>(NC); ++c) {
-            auto range = sparse_column->sparse_column_copy(c, vbuffer.data(), ibuffer.data(), wrk.get(), tatami::SPARSE_COPY_VALUE);
+            auto range = sparse_column->column_copy(c, vbuffer.data(), ibuffer.data(), wrk.get());
             vbuffer[0] = 0; 
             tatami::stats::variances::compute_running(range, running_means.data(), running_vars.data(), running_nzeros.data(), c);
             for (size_t r = 1; r < range.number; ++r) {
@@ -162,10 +162,10 @@ TEST(RunningVariances, SensibleZeros) {
         std::vector<int> ibuffer(NR);
         std::vector<double> vbuffer(NR);
         std::vector<int> ref_nzeros(NR);
-        auto wrk = sparse_column->new_column_workspace();
+        auto wrk = sparse_column->sparse_column_workspace();
 
         for (int c = 0; c < static_cast<int>(NC); ++c) {
-            auto range = sparse_column->sparse_column_copy(c, vbuffer.data(), ibuffer.data(), wrk.get(), tatami::SPARSE_COPY_VALUE);
+            auto range = sparse_column->column_copy(c, vbuffer.data(), ibuffer.data(), wrk.get());
             vbuffer[0] = 0; 
             tatami::stats::variances::compute_running(range, running_means2.data(), running_vars2.data(), running_nzeros2.data(), c, false);
             for (size_t r = 0; r < range.number; ++r) {

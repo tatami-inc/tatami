@@ -49,29 +49,24 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
 
     typedef typename MatrixIn::data_type DataIn; 
     typedef typename MatrixIn::index_type IndexIn; 
+    WorkspaceOptions opt;
 
     if (row == incoming->prefer_rows()) {
         size_t reservation = static_cast<double>(NR * NC) * reserve;
         output_v.reserve(reservation);
         output_i.reserve(reservation);
-
-        std::shared_ptr<Workspace<row> > wrk;
-        if constexpr(row) {
-            wrk = incoming->new_row_workspace();
-        } else {
-            wrk = incoming->new_column_workspace();
-        }
         std::vector<DataIn> buffer_v(secondary);
 
         if (incoming->sparse()) {
             std::vector<IndexIn> buffer_i(secondary);
+            auto wrk = new_workspace<row, true>(incoming);
 
             for (size_t p = 0; p < primary; ++p) {
                 SparseRange<DataIn, IndexIn> range;
                 if constexpr(row) {
-                    range = incoming->sparse_row(p, buffer_v.data(), buffer_i.data(), wrk.get());
+                    range = incoming->row(p, buffer_v.data(), buffer_i.data(), wrk.get());
                 } else {
-                    range = incoming->sparse_column(p, buffer_v.data(), buffer_i.data(), wrk.get());
+                    range = incoming->column(p, buffer_v.data(), buffer_i.data(), wrk.get());
                 }
 
                 for (size_t i = 0; i < range.number; ++i, ++range.value, ++range.index) {
@@ -84,6 +79,8 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
             }
 
         } else {
+            auto wrk = new_workspace<row, false>(incoming);
+
             // Special conversion from dense to save ourselves from having to make
             // indices that we aren't really interested in.
             for (size_t p = 0; p < primary; ++p) {
@@ -117,23 +114,18 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
             store_v[p].reserve(reservation);
             store_i[p].reserve(reservation);
         }
-
-        std::shared_ptr<Workspace<!row> > wrk;
-        if constexpr(row) {
-            wrk = incoming->new_column_workspace();
-        } else {
-            wrk = incoming->new_row_workspace();
-        }
         std::vector<DataIn> buffer_v(primary);
 
         if (incoming->sparse()) {
+            auto wrk = new_workspace<!row, true>(incoming);
             std::vector<IndexIn> buffer_i(primary);
+
             for (size_t s = 0; s < secondary; ++s) {
                 SparseRange<DataIn, IndexIn> range;
                 if constexpr(row) {
-                    range = incoming->sparse_column(s, buffer_v.data(), buffer_i.data(), wrk.get());
+                    range = incoming->column(s, buffer_v.data(), buffer_i.data(), wrk.get());
                 } else {
-                    range = incoming->sparse_row(s, buffer_v.data(), buffer_i.data(), wrk.get());
+                    range = incoming->row(s, buffer_v.data(), buffer_i.data(), wrk.get());
                 }
 
                 for (size_t i = 0; i < range.number; ++i, ++range.value, ++range.index) {
@@ -144,6 +136,8 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
                 }
             }
         } else {
+            auto wrk = new_workspace<!row, false>(incoming);
+
             for (size_t s = 0; s < secondary; ++s) {
                 const DataIn* ptr;
                 if constexpr(row) {

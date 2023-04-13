@@ -44,6 +44,17 @@ struct DelayedAddScalarHelper {
      * Addition is always assumed to discard structural sparsity, even when the scalar is zero.
      */
     static const bool sparse = false;
+
+    /**
+     * This does not require row indices.
+     */
+    static const bool needs_row = false;
+
+    /**
+     * This does not require column indices.
+     */
+    static const bool needs_column= false;
+
 private:
     const T scalar;
 };
@@ -80,6 +91,17 @@ struct DelayedMultiplyScalarHelper {
      * Non-finite `scalar` values are not considered.
      */
     static const bool sparse = true;
+
+    /**
+     * This does not require row indices.
+     */
+    static const bool needs_row = false;
+
+    /**
+     * This does not require column indices.
+     */
+    static const bool needs_column= false;
+
 private:
     const T scalar;
 };
@@ -121,6 +143,17 @@ struct DelayedSubtractScalarHelper {
      * Subtraction is always assumed to discard structural sparsity, even when the scalar is zero.
      */
     static const bool sparse = false;
+
+    /**
+     * This does not require row indices.
+     */
+    static const bool needs_row = false;
+
+    /**
+     * This does not require column indices.
+     */
+    static const bool needs_column= false;
+
 private:
     const T scalar;
 };
@@ -172,6 +205,17 @@ struct DelayedDivideScalarHelper {
      * as any matrix zeros will yield an infinite value for a non-zero scalar.
      */
     static const bool sparse = RIGHT;
+
+    /**
+     * This does not require row indices.
+     */
+    static const bool needs_row = false;
+
+    /**
+     * This does not require column indices.
+     */
+    static const bool needs_column= false;
+
 private:
     const T scalar;
 };

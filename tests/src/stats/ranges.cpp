@@ -87,8 +87,8 @@ TEST(ComputingDimMins, Configuration) {
     typedef decltype(std::declval<MinFact>().sparse_direct()) MinSparse;
     const bool nsc = tatami::stats::has_nonconst_sparse_compute<MinSparse, double, int>::value;
     EXPECT_FALSE(nsc);
-    const tatami::SparseCopyMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<MinSparse>::value;
-    EXPECT_EQ(nscc, tatami::SPARSE_COPY_BOTH); // just a negative control.
+    const tatami::SparseExtractMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<MinSparse>::value;
+    EXPECT_EQ(nscc, tatami::SparseExtractMode::BOTH); // just a negative control.
 }
 
 /********************************************/
@@ -212,8 +212,8 @@ TEST(ComputingDimRanges, Configuration) {
     typedef decltype(std::declval<RangeFact>().sparse_direct()) RangeSparse;
     const bool nsc = tatami::stats::has_nonconst_sparse_compute<RangeSparse, double, int>::value;
     EXPECT_FALSE(nsc);
-    const tatami::SparseCopyMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<RangeSparse>::value;
-    EXPECT_EQ(nscc, tatami::SPARSE_COPY_BOTH); // just a negative control.
+    const tatami::SparseExtractMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<RangeSparse>::value;
+    EXPECT_EQ(nscc, tatami::SparseExtractMode::BOTH); // just a negative control.
 }
 
 /********************************************/

@@ -20,7 +20,7 @@ TEST(DenseMatrix, Basic) {
     EXPECT_EQ(mat.ncol(), 20);
 
     {
-        auto wrk = mat.new_column_workspace();
+        auto wrk = mat.dense_column_workspace();
         for (size_t i = 0; i < mat.ncol(); ++i) {
             auto start = contents.begin() + i * mat.nrow();
             std::vector<double> expected(start, start + mat.nrow());
@@ -29,7 +29,7 @@ TEST(DenseMatrix, Basic) {
     }
 
     {
-        auto wrk = mat.new_row_workspace();
+        auto wrk = mat.dense_row_workspace();
         for (size_t i = 0; i < mat.nrow(); ++i) {
             std::vector<double> expected(mat.ncol());
             for (size_t j = 0; j < mat.ncol(); ++j) {

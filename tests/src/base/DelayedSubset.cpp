@@ -7,7 +7,7 @@
 #include <random>
 
 #include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedSubset.hpp"
+#include "tatami/base/subset/make_DelayedSubset.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_column_access.h"
@@ -55,7 +55,7 @@ protected:
     std::shared_ptr<tatami::NumericMatrix> reference_on_rows(const V& sub) const {
         std::vector<double> reference(sub.size() * NC);
         auto ptr = reference.data();
-        auto wrk = dense->new_row_workspace();
+        auto wrk = dense->dense_row_workspace();
 
         for (auto r : sub) {
             dense->row_copy(r, ptr, wrk.get());
@@ -70,7 +70,7 @@ protected:
         std::vector<double> reference(sub.size() * NR);
         auto ptr = reference.data();
         std::vector<double> buffer(NC);
-        auto wrk = dense->new_row_workspace();
+        auto wrk = dense->dense_row_workspace();
 
         for (size_t r = 0; r < NR; ++r) {
             auto full = dense->row(r, buffer.data(), wrk.get());

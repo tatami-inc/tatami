@@ -53,6 +53,17 @@ struct DelayedAddVectorHelper {
      * Addition is always assumed to discard structural sparsity, even when the added value is zero.
      */
     static const bool sparse = false; 
+
+    /**
+     * This requires row indices if `MARGIN = 0`.
+     */
+    static const bool needs_row = MARGIN == 0;
+
+    /**
+     * This requires column indices if `MARGIN = 1`.
+     */
+    static const bool needs_column = MARGIN == 1;
+
 private:
     const V vec;
 };
@@ -115,6 +126,17 @@ struct DelayedSubtractVectorHelper {
      * Subtraction is always assumed to discard structural sparsity, even when the subtracted value is zero.
      */
     static const bool sparse = false; 
+
+    /**
+     * This requires row indices if `MARGIN = 0`.
+     */
+    static const bool needs_row = MARGIN == 0;
+
+    /**
+     * This requires column indices if `MARGIN = 1`.
+     */
+    static const bool needs_column = MARGIN == 1;
+
 private:
     const V vec;
 };
@@ -166,6 +188,17 @@ struct DelayedMultiplyVectorHelper {
      * Multiplication is always assumed to preserve structural sparsity.
      */
     static const bool sparse = true;
+
+    /**
+     * This requires row indices if `MARGIN = 0`.
+     */
+    static const bool needs_row = MARGIN == 0;
+
+    /**
+     * This requires column indices if `MARGIN = 1`.
+     */
+    static const bool needs_column = MARGIN == 1;
+
 private:
     const V vec;
 };
@@ -241,6 +274,17 @@ struct DelayedDivideVectorHelper {
      * as any matrix zeros will yield an infinite value for a non-zero scalar.
      */
     static const bool sparse = RIGHT;
+
+    /**
+     * This requires row indices if `MARGIN = 0`.
+     */
+    static const bool needs_row = MARGIN == 0;
+
+    /**
+     * This requires column indices if `MARGIN = 1`.
+     */
+    static const bool needs_column = MARGIN == 1;
+
 private:
     const V vec;
 };

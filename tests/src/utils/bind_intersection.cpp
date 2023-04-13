@@ -65,12 +65,12 @@ TEST_F(BindIntersectionTest, NoOp) {
 
     // Checking that the matrix contains the expected values.
     size_t chosen = 5;
-    auto wrk = output.first->new_row_workspace();
+    auto wrk = output.first->dense_row_workspace();
     auto vals = output.first->row(chosen, wrk.get());
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
-        auto iwrk = collected[i]->new_row_workspace();
+        auto iwrk = collected[i]->dense_row_workspace();
         auto expected = collected[i]->row(chosen, iwrk.get());
         auto sofar = offset;
         offset += collected[i]->ncol();
@@ -110,14 +110,14 @@ TEST_F(BindIntersectionTest, Shuffled) {
 
     // Checking that the matrix contains the expected values.
     size_t chosen = 1;
-    auto wrk = output.first->new_row_workspace();
+    auto wrk = output.first->dense_row_workspace();
     auto vals = output.first->row(chosen, wrk.get());
     size_t chosen_id = ids[0][output.second[chosen]];
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto actual_chosen = find_chosen(chosen_id, ids[i]);
-        auto iwrk = collected[i]->new_row_workspace();
+        auto iwrk = collected[i]->dense_row_workspace();
         auto expected = collected[i]->row(actual_chosen, iwrk.get());
         auto sofar = offset;
         offset += collected[i]->ncol();
@@ -161,14 +161,14 @@ TEST_F(BindIntersectionTest, Uncommon) {
 
     // Checking that the matrix contains the expected values.
     size_t chosen = 0;
-    auto wrk = output.first->new_row_workspace();
+    auto wrk = output.first->dense_row_workspace();
     auto vals = output.first->row(chosen, wrk.get());
     size_t chosen_id = ids[0][output.second[chosen]];
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto actual_chosen = find_chosen(chosen_id, ids[i]);
-        auto iwrk = collected[i]->new_row_workspace();
+        auto iwrk = collected[i]->dense_row_workspace();
         auto expected = collected[i]->row(actual_chosen, iwrk.get());
         auto sofar = offset;
         offset += collected[i]->ncol();
@@ -238,14 +238,14 @@ TEST_F(BindIntersectionTest, ByRows) {
 
     // Checking that the matrix contains the expected values.
     size_t chosen = 4;
-    auto wrk = output.first->new_column_workspace();
+    auto wrk = output.first->dense_column_workspace();
     auto vals = output.first->column(chosen, wrk.get());
     size_t chosen_id = ids[0][output.second[chosen]];
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto actual_chosen = find_chosen(chosen_id, ids[i]);
-        auto iwrk = collected[i]->new_column_workspace();
+        auto iwrk = collected[i]->dense_column_workspace();
         auto expected = collected[i]->column(actual_chosen, iwrk.get());
         auto sofar = offset;
         offset += collected[i]->nrow();

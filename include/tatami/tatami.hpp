@@ -4,11 +4,10 @@
 #include "base/DenseMatrix.hpp"
 #include "base/CompressedSparseMatrix.hpp"
 #include "base/DelayedIsometricOp.hpp"
-#include "base/DelayedSubset.hpp"
-#include "base/DelayedSubsetBlock.hpp"
 #include "base/DelayedBind.hpp"
 #include "base/DelayedCast.hpp"
 #include "base/DelayedTranspose.hpp"
+#include "base/subset/make_DelayedSubset.hpp"
 
 #include "utils/compress_sparse_triplets.hpp"
 #include "utils/convert_to_sparse.hpp"

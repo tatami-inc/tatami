@@ -187,6 +187,6 @@ TEST(ComputingDimMedians, Configuration) {
     typedef decltype(std::declval<MedFact>().sparse_direct()) MedSparse;
     const bool nsc = tatami::stats::has_nonconst_sparse_compute<MedSparse, double, int>::value;
     EXPECT_TRUE(nsc);
-    const tatami::SparseCopyMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<MedSparse>::value;
-    EXPECT_EQ(nscc, tatami::SPARSE_COPY_VALUE);
+    const tatami::SparseExtractMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<MedSparse>::value;
+    EXPECT_EQ(nscc, tatami::SparseExtractMode::VALUE);
 }

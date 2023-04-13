@@ -5,7 +5,7 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
-#include "../base/DelayedSubset.hpp"
+#include "../base/subset/make_DelayedSubset.hpp"
 #include "../base/DelayedBind.hpp"
 
 /**
