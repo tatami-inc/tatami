@@ -62,7 +62,7 @@ struct DelayedAddVectorHelper {
     /**
      * This requires column indices if `MARGIN = 1`.
      */
-    static const bool  needs_column = MARGIN == 1;
+    static const bool needs_column = MARGIN == 1;
 
 private:
     const V vec;
@@ -135,7 +135,7 @@ struct DelayedSubtractVectorHelper {
     /**
      * This requires column indices if `MARGIN = 1`.
      */
-    static const bool  needs_column = MARGIN == 1;
+    static const bool needs_column = MARGIN == 1;
 
 private:
     const V vec;
@@ -197,7 +197,7 @@ struct DelayedMultiplyVectorHelper {
     /**
      * This requires column indices if `MARGIN = 1`.
      */
-    static const bool  needs_column = MARGIN == 1;
+    static const bool needs_column = MARGIN == 1;
 
 private:
     const V vec;
@@ -283,7 +283,7 @@ struct DelayedDivideVectorHelper {
     /**
      * This requires column indices if `MARGIN = 1`.
      */
-    static const bool  needs_column = MARGIN == 1;
+    static const bool needs_column = MARGIN == 1;
 
 private:
     const V vec;

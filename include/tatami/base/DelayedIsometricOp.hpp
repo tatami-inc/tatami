@@ -189,8 +189,9 @@ private:
                         vbuffer[i] = operation(0, x, raw.value[i]); // no-op value, we don't need the row indices.
                     }
                 }
-            } 
-            return SparseRange<T, IDX>(raw.number, vbuffer, raw.index);
+                raw.value = vbuffer;
+            }
+            return raw;
 
         } else if constexpr(!OP::sparse) {
             auto wptr = static_cast<typename OperatorFactory::dense_workspace_type*>(work);
@@ -228,6 +229,11 @@ private:
                 }
                 raw.value = vbuffer;
             }
+
+            if (!(wptr->report_index)) {
+                raw.index = NULL;
+            }
+
             return raw;
         }
     }
@@ -243,12 +249,15 @@ private:
 
     public:
         struct S : public Parent {
+            S(const WorkspaceOptions& opt) : report_index(sparse_extract_index(opt.mode)) {}
+
             std::shared_ptr<SparseWorkspace<WORKROW> > inner;
             std::vector<IDX> ibuffer;
+            bool report_index;
         };
 
-        S* intermediate_sparse_workspace(const WorkspaceOptions&) const {
-            return new S;
+        S* intermediate_sparse_workspace(const WorkspaceOptions& opt) const {
+            return new S(opt);
         }
 
         auto inner_sparse_workspace(const Matrix<T, IDX>* mat, const WorkspaceOptions& opt) const {
@@ -257,6 +266,8 @@ private:
 
     public:
         struct D : public Parent {
+            D(const WorkspaceOptions& opt) : report_index(sparse_extract_index(opt.mode)) {}
+
             std::shared_ptr<DenseWorkspace<WORKROW> > inner;
             bool report_index;
 
@@ -265,8 +276,8 @@ private:
             }
         };
 
-        D* intermediate_dense_workspace(const WorkspaceOptions&) const {
-            return new D;
+        D* intermediate_dense_workspace(const WorkspaceOptions& opt) const {
+            return new D(opt);
         }
     };
 
@@ -339,13 +350,15 @@ private:
 
     public:
         struct S : public Parent {
-            S(size_t s, size_t l) : Parent(s, l) {}
+            S(size_t s, size_t l, const WorkspaceOptions& opt) : Parent(s, l), report_index(sparse_extract_index(opt.mode)) {}
+
             std::shared_ptr<Parent > inner;
             std::vector<IDX> ibuffer;
+            bool report_index;
         };
 
-        S* intermediate_sparse_workspace(const WorkspaceOptions&) const {
-            return new S(start, length);
+        S* intermediate_sparse_workspace(const WorkspaceOptions& opt) const {
+            return new S(start, length, opt);
         }
 
         auto inner_sparse_workspace(const Matrix<T, IDX>* mat, const WorkspaceOptions& opt) const {
@@ -354,7 +367,8 @@ private:
 
     public:
         struct D : public Parent {
-            D(size_t s, size_t l) : Parent(s, l) {}
+            D(size_t s, size_t l, const WorkspaceOptions& opt) : Parent(s, l), report_index(sparse_extract_index(opt.mode)) {}
+
             std::shared_ptr<DenseBlockWorkspace<WORKROW> > inner;
             bool report_index;
 
@@ -363,8 +377,8 @@ private:
             }
         };
 
-        D* intermediate_dense_workspace(const WorkspaceOptions&) const {
-            return new D(start, length);
+        D* intermediate_dense_workspace(const WorkspaceOptions& opt) const {
+            return new D(start, length, opt);
         }
     };
 
@@ -458,15 +472,17 @@ private:
 
     public:
         struct S : public Parent {
-            S(size_t l) : Parent(l) {}
+            S(size_t l, const WorkspaceOptions& opt) : Parent(l), report_index(sparse_extract_index(opt.mode)) {}
+
             std::shared_ptr<SparseIndexWorkspace<IDX, WORKROW> > inner;
             std::vector<IDX> ibuffer;
+            bool report_index;
 
             const std::vector<IDX>& indices() const { return inner->indices(); }
         };
 
-        S* intermediate_sparse_workspace(const WorkspaceOptions&) const {
-            return new S(iptr->size());
+        S* intermediate_sparse_workspace(const WorkspaceOptions& opt) const {
+            return new S(iptr->size(), opt);
         }
 
         auto inner_sparse_workspace(const Matrix<T, IDX>* mat, const WorkspaceOptions& opt) {
@@ -475,7 +491,8 @@ private:
 
     public:
         struct D : public Parent {
-            D(std::vector<IDX> i) : Parent(i.size()), indices_(std::move(i)) {}
+            D(std::vector<IDX> i, const WorkspaceOptions& opt) : Parent(i.size()), indices_(std::move(i)), report_index(sparse_extract_index(opt.mode)) {}
+
             std::shared_ptr<DenseIndexWorkspace<IDX, WORKROW> > inner;
             bool report_index;
 
@@ -493,8 +510,8 @@ private:
             }
         };
 
-        D* intermediate_dense_workspace(const WorkspaceOptions&) {
-            return new D(std::move(*iptr)); // called no more than once!
+        D* intermediate_dense_workspace(const WorkspaceOptions& opt) {
+            return new D(std::move(*iptr), opt); // called no more than once!
         }
     };
 

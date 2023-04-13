@@ -42,7 +42,7 @@ struct DelayedAbsHelper {
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column = false;
 };
 
 /**
@@ -84,7 +84,7 @@ struct DelayedLogHelper {
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column = false;
 private:
     const double log_base;
 };
@@ -118,7 +118,7 @@ struct DelayedSqrtHelper {
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column = false;
 };
 
 /**
@@ -160,7 +160,7 @@ struct DelayedLog1pHelper {
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column = false;
 private:
     const double log_base;
 };
@@ -194,7 +194,7 @@ struct DelayedRoundHelper {
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column = false;
 };
 
 /**
@@ -226,7 +226,7 @@ struct DelayedExpHelper {
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column = false;
 };
 
 }
