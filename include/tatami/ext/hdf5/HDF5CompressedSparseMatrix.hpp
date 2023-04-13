@@ -169,12 +169,30 @@ public:
 
     using Matrix<T, IDX>::column;
 
-    using Matrix<T, IDX>::sparse_row;
+    using Matrix<T, IDX>::dense_row_workspace;
 
-    using Matrix<T, IDX>::sparse_column;
+    using Matrix<T, IDX>::dense_column_workspace;
+
+    using Matrix<T, IDX>::sparse_row_workspace;
+
+    using Matrix<T, IDX>::sparse_column_workspace;
 
 private:
-    struct SparseWorkspaceBase {
+    struct SparseBase {
+        SparseBase(const WorkspaceOptions& opt) : needs_index(sparse_extract_index(opt.mode)), needs_value(sparse_extract_value(opt.mode)) {}
+        bool needs_index;
+        bool needs_value;
+    };
+
+    struct DenseBase {
+        DenseBase(const WorkspaceOptions& opt) {}
+    };
+
+    template<bool SPARSE>
+    using ConditionalBase = typename std::conditional<SPARSE, SparseBase, DenseBase>::type;
+
+private:
+    struct H5Core {
         H5::H5File file;
         H5::DataSet data, index;
         H5::DataSpace dataspace;
@@ -183,7 +201,7 @@ private:
         std::vector<IDX> index_cache;
     };
 
-    void fill_base(SparseWorkspaceBase& base) const {
+    void fill_core(H5Core& core) const {
 #ifndef TATAMI_HDF5_PARALLEL_LOCK        
         #pragma omp critical
         {
@@ -193,11 +211,11 @@ private:
 
         // TODO: set more suitable chunk cache values here, to avoid re-reading
         // chunks on the boundaries of the primary cache.
-        base.file.openFile(file_name, H5F_ACC_RDONLY);
+        core.file.openFile(file_name, H5F_ACC_RDONLY);
 
-        base.data = base.file.openDataSet(data_name);
-        base.index = base.file.openDataSet(index_name);
-        base.dataspace = base.data.getSpace();
+        core.data = core.file.openDataSet(data_name);
+        core.index = core.file.openDataSet(index_name);
+        core.dataspace = core.data.getSpace();
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK        
         }
@@ -206,7 +224,7 @@ private:
 #endif
     }
 
-    struct PrimarySparseWorkspaceBase : public SparseWorkspaceBase {
+    struct PrimaryH5Core : public H5Core {
         std::vector<T> data_cache;
         size_t current_cache_id = 0;
         bool init = false;
@@ -214,101 +232,27 @@ private:
         std::vector<size_t> starts;
     };
 
-    void fill_base(PrimarySparseWorkspaceBase& base, size_t cache_size) const {
-        fill_base(base);
-        base.starts.resize(cache_size, -1);
+    void fill_core(PrimaryH5Core& core, size_t cache_size) const {
+        fill_core(core);
+        core.starts.resize(cache_size, -1);
     }
-
-public:
-    /**
-     * @cond
-     */
-    template<bool WORKROW>
-    struct HDF5PrimarySparseWorkspace : public Workspace<WORKROW> {
-        PrimarySparseWorkspaceBase base;
-    };
 
     template<bool WORKROW>
-    struct HDF5SecondarySparseWorkspace : public Workspace<WORKROW> {
-        SparseWorkspaceBase base;
-    };
-    /**
-     * @endcond
-     */
-
-    std::shared_ptr<RowWorkspace> new_row_workspace(bool = false) const {
-        if constexpr(ROW) {
-            auto ptr = new HDF5PrimarySparseWorkspace<true>;
-            std::shared_ptr<RowWorkspace> output(ptr);
-            fill_base(ptr->base);
-            return output;
-        } else {
-            auto ptr = new HDF5SecondarySparseWorkspace<true>;
-            std::shared_ptr<RowWorkspace> output(ptr);
-            fill_base(ptr->base);
-            return output;
-        }
-    }
-
-    std::shared_ptr<ColumnWorkspace> new_column_workspace(bool = false) const {
-        if constexpr(ROW) {
-            auto ptr = new HDF5SecondarySparseWorkspace<false>;
-            std::shared_ptr<ColumnWorkspace> output(ptr);
-            fill_base(ptr->base);
-            return output;
-        } else {
-            auto ptr = new HDF5PrimarySparseWorkspace<false>;
-            std::shared_ptr<ColumnWorkspace> output(ptr);
-            fill_base(ptr->base);
-            return output;
-        }
-    }
-
-    const T* row(size_t r, T* buffer, RowWorkspace* work) const {
-        if constexpr(ROW) {
-            return extract_primary(r, buffer, 0, ncols, static_cast<HDF5PrimarySparseWorkspace<true>*>(work)->base);
-        } else {
-            return extract_secondary(r, buffer, 0, ncols, static_cast<HDF5SecondarySparseWorkspace<true>*>(work)->base);
-        }
-    }
-
-    const T* column(size_t c, T* buffer, ColumnWorkspace* work) const {
-        if constexpr(ROW) {
-            return extract_secondary(c, buffer, 0, nrows, static_cast<HDF5SecondarySparseWorkspace<false>*>(work)->base);
-        } else {
-            return extract_primary(c, buffer, 0, nrows, static_cast<HDF5PrimarySparseWorkspace<false>*>(work)->base);
-        }
-    }
-
-    SparseRange<T, IDX> sparse_row(size_t r, T* dbuffer, IDX* ibuffer, RowWorkspace* work, bool sorted=true) const {
-        if constexpr(ROW) {
-            return extract_primary(r, dbuffer, ibuffer, 0, ncols, static_cast<HDF5PrimarySparseWorkspace<true>*>(work)->base);
-        } else {
-            return extract_secondary(r, dbuffer, ibuffer, 0, ncols, static_cast<HDF5SecondarySparseWorkspace<true>*>(work)->base);
-        }
-    }
-
-    SparseRange<T, IDX> sparse_column(size_t c, T* dbuffer, IDX* ibuffer, ColumnWorkspace* work, bool sorted=true) const {
-        if constexpr(ROW) {
-            return extract_secondary(c, dbuffer, ibuffer, 0, nrows, static_cast<HDF5SecondarySparseWorkspace<false>*>(work)->base);
-        } else {
-            return extract_primary(c, dbuffer, ibuffer, 0, nrows, static_cast<HDF5PrimarySparseWorkspace<false>*>(work)->base);
-        }
-    }
+    using ConditionalH5Core = typename std::conditional<WORKROW == ROW, PrimaryH5Core, H5Core>::type;
 
 private:
-    void populate_primary_cache(size_t i, PrimarySparseWorkspaceBase& work) const {
-        if (primary_cache_id[i] == work.current_cache_id && work.init) {
+    void populate_primary_cache(size_t i, PrimaryH5Core& core, bool needs_value) const {
+        if (primary_cache_id[i] == core.current_cache_id && core.init) {
             return;
         }
 
-        work.init = true;
-        work.current_cache_id = primary_cache_id[i];
+        core.init = true;
+        core.current_cache_id = primary_cache_id[i];
 
         // Pulling out the entire chunk of primary dimensions containing
         // 'i'. We have to do this for all indices, regardless of the
         // slicing/indexing. 
-        const auto& limits = primary_cache_limits[work.current_cache_id];
+        const auto& limits = primary_cache_limits[core.current_cache_id];
         hsize_t offset = limits.first;
         hsize_t count = limits.second - limits.first;
 
@@ -319,32 +263,35 @@ private:
         TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
 #endif
 
-        work.dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
-        work.memspace.setExtentSimple(1, &count);
-        work.memspace.selectAll();
+        core.dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+        core.memspace.setExtentSimple(1, &count);
+        core.memspace.selectAll();
 
-        work.index_cache.resize(count);
-        work.index.read(work.index_cache.data(), HDF5::define_mem_type<IDX>(), work.memspace, work.dataspace);
+        core.index_cache.resize(count);
+        core.index.read(core.index_cache.data(), HDF5::define_mem_type<IDX>(), core.memspace, core.dataspace);
 
-        // In theory, we could avoid extracting data for the entire column when
-        // populating the cache for sliced or indexed queries. In practice,
-        // each chunk is often larger than the number of non-zeroes in a
-        // column, so we end up having to pull out the entire column anyway.
-        // Also, I want to get out of this critical region ASAP and do my
-        // indexing elsewhere. 
+        if (needs_value) {
+            // In theory, we could avoid extracting data for the entire column when
+            // populating the cache for sliced or indexed queries. In practice,
+            // each chunk is often larger than the number of non-zeroes in a
+            // column, so we end up having to pull out the entire column anyway.
+            // Also, I want to get out of this critical region ASAP and do my
+            // indexing elsewhere. 
 
-        work.data_cache.resize(count);
-        work.data.read(work.data_cache.data(), HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
+            core.data_cache.resize(count);
+            core.data.read(core.data_cache.data(), HDF5::define_mem_type<T>(), core.memspace, core.dataspace);
+        }
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK 
         }
 #else
         });
 #endif
-    }
+
+    };
 
     template<class Function>
-    void extract_primary(size_t i, Function fill, size_t start, size_t length, PrimarySparseWorkspaceBase& work) const {
+    void extract_primary_raw(size_t i, Function fill, size_t start, size_t length, PrimaryH5Core& core, bool needs_value) const {
         if (length == 0) {
             return;
         }
@@ -354,53 +301,75 @@ private:
             return;
         }
 
-        populate_primary_cache(i, work);
+        populate_primary_cache(i, core, needs_value);
 
-        const auto& limits = primary_cache_limits[work.current_cache_id];
+        const auto& limits = primary_cache_limits[core.current_cache_id];
         size_t offset = pointers[i] - limits.first;
-        auto istart = work.index_cache.begin() + offset;
-        auto dstart = work.data_cache.begin() + offset;
+        auto istart = core.index_cache.begin() + offset;
 
         size_t request_start = 0;
         if (start > *istart) { // 'istart' guaranteed to be valid from length check above.
-            bool do_cache = !work.starts.empty();
-            if (do_cache && work.starts[i] != -1) {
-                request_start = work.starts[i];
+            bool do_cache = !core.starts.empty();
+            if (do_cache && core.starts[i] != -1) {
+                request_start = core.starts[i];
             } else {
                 request_start = std::lower_bound(istart, istart + primary_length, start) - istart;
                 if (do_cache) {
-                    work.starts[i] = request_start;
+                    core.starts[i] = request_start;
                 }
             }
         }
 
         istart += request_start;
-        dstart += request_start;
-
         size_t end = start + length;
-        for (size_t i = request_start; i < primary_length && *istart < end; ++i, ++istart, ++dstart) {
-            fill(*istart, *dstart);
+        if (needs_value) {
+            auto dstart = core.data_cache.begin() + offset + request_start;
+            for (size_t i = request_start; i < primary_length && *istart < end; ++i, ++istart, ++dstart) {
+                fill(*istart, *dstart);
+            }
+        } else {
+            for (size_t i = request_start; i < primary_length && *istart < end; ++i, ++istart) {
+                fill(*istart, 0);
+            }
         }
 
         return;
     }
 
-    const T* extract_primary(size_t i, T* dbuffer, size_t start, size_t length, PrimarySparseWorkspaceBase& work) const {
+    const T* extract_primary(size_t i, T* dbuffer, size_t start, size_t length, PrimaryH5Core& core) const {
         std::fill(dbuffer, dbuffer + length, 0);
-        extract_primary(i, [&](IDX pos, T value) -> void {
-            dbuffer[pos - start] = value;
-        }, start, length, work);
+
+        extract_primary_raw(i, 
+            [&](IDX pos, T value) -> void {
+                dbuffer[pos - start] = value;
+            }, 
+            start, 
+            length, 
+            core, 
+            true
+        );
+
         return dbuffer;
     }
 
-    SparseRange<T, IDX> extract_primary(size_t i, T* dbuffer, IDX* ibuffer, size_t start, size_t length, PrimarySparseWorkspaceBase& work) const {
+    SparseRange<T, IDX> extract_primary(size_t i, T* dbuffer, IDX* ibuffer, size_t start, size_t length, PrimaryH5Core& core, bool needs_index, bool needs_value) const {
         size_t counter = 0;
 
-        extract_primary(i, [&](IDX pos, T value) -> void {
-            dbuffer[counter] = value;
-            ibuffer[counter] = pos;
-            ++counter;
-        }, start, length, work);
+        extract_primary_raw(i, 
+            [&](IDX pos, T value) -> void {
+                if (needs_index) {
+                    ibuffer[counter] = pos;
+                }
+                if (needs_value) {
+                    dbuffer[counter] = value;
+                }
+                ++counter;
+            }, 
+            start, 
+            length, 
+            core, 
+            needs_value
+        );
 
         return SparseRange<T, IDX>(counter, dbuffer, ibuffer);
     }
@@ -413,29 +382,33 @@ private:
     // pattern, when users shouldn't even be calling this at all... 
 
     template<class Function>
-    bool extract_secondary_raw(IDX primary, size_t secondary, Function& fill, SparseWorkspaceBase& work) const {
+    bool extract_secondary_raw(IDX primary, size_t secondary, Function& fill, H5Core& core, bool needs_value) const {
         size_t left = pointers[primary], right = pointers[primary + 1];
-        work.index_cache.resize(right - left);
+        core.index_cache.resize(right - left);
 
         // Serial locks should be applied by the callers.
         hsize_t offset = left;
-        hsize_t count = work.index_cache.size();
-        work.dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
-        work.memspace.setExtentSimple(1, &count);
-        work.memspace.selectAll();
-        work.index.read(work.index_cache.data(), HDF5::define_mem_type<IDX>(), work.memspace, work.dataspace);
+        hsize_t count = core.index_cache.size();
+        core.dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+        core.memspace.setExtentSimple(1, &count);
+        core.memspace.selectAll();
+        core.index.read(core.index_cache.data(), HDF5::define_mem_type<IDX>(), core.memspace, core.dataspace);
 
-        auto it = std::lower_bound(work.index_cache.begin(), work.index_cache.end(), secondary);
-        if (it != work.index_cache.end() && *it == secondary) {
-            offset = left + (it - work.index_cache.begin());
-            count = 1;
-            work.dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
-            work.memspace.setExtentSimple(1, &count);
-            work.memspace.selectAll();
+        auto it = std::lower_bound(core.index_cache.begin(), core.index_cache.end(), secondary);
+        if (it != core.index_cache.end() && *it == secondary) {
+            if (needs_value) {
+                offset = left + (it - core.index_cache.begin());
+                count = 1;
+                core.dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
+                core.memspace.setExtentSimple(1, &count);
+                core.memspace.selectAll();
 
-            T dest;
-            work.data.read(&dest, HDF5::define_mem_type<T>(), work.memspace, work.dataspace);
-            fill(primary, dest);
+                T dest;
+                core.data.read(&dest, HDF5::define_mem_type<T>(), core.memspace, core.dataspace);
+                fill(primary, dest);
+            } else {
+                fill(primary, 0);
+            }
             return true;
         } else {
             return false;
@@ -443,7 +416,7 @@ private:
     }
 
     template<class Function>
-    void extract_secondary(size_t i, Function fill, size_t start, size_t length, SparseWorkspaceBase& work) const {
+    void extract_secondary_raw_loop(size_t i, Function fill, size_t start, size_t length, H5Core& core, bool needs_value) const {
 #ifndef TATAMI_HDF5_PARALLEL_LOCK        
         #pragma omp critical
         {
@@ -453,7 +426,7 @@ private:
 
         size_t end = start + length;
         for (size_t j = start; j < end; ++j) {
-            extract_secondary_raw(j, i, fill, work);
+            extract_secondary_raw(j, i, fill, core, needs_value);
         }
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK 
@@ -463,219 +436,220 @@ private:
 #endif
     }
 
-    const T* extract_secondary(size_t i, T* dbuffer, size_t start, size_t length, SparseWorkspaceBase& work) const {
+    const T* extract_secondary(size_t i, T* dbuffer, size_t start, size_t length, H5Core& core) const {
         std::fill(dbuffer, dbuffer + length, 0);
-        extract_secondary(i, [&](IDX pos, T value) -> void {
-            dbuffer[pos - start] = value;
-        }, start, length, work);
+
+        extract_secondary_raw_loop(i, 
+            [&](IDX pos, T value) -> void {
+                dbuffer[pos - start] = value;
+            }, 
+            start, 
+            length, 
+            core,
+            true
+        );
+
         return dbuffer;
     }
 
-    SparseRange<T, IDX> extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t start, size_t length, SparseWorkspaceBase& work) const {
+    SparseRange<T, IDX> extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, size_t start, size_t length, H5Core& core, bool needs_index, bool needs_value) const {
         size_t counter = 0;
 
-        extract_secondary(i, [&](IDX pos, T value) -> void {
-            dbuffer[counter] = value;
-            ibuffer[counter] = pos;
-            ++counter;
-        }, start, length, work);
+        extract_secondary_raw_loop(i, 
+            [&](IDX pos, T value) -> void {
+                if (needs_value) {
+                    dbuffer[counter] = value;
+                }
+                if (needs_index) {
+                    ibuffer[counter] = pos;
+                }
+                ++counter;
+            }, 
+            start, 
+            length, 
+            core,
+            needs_value
+        );
+
+        if (needs_value) {
+            dbuffer = NULL;
+        }
+        if (needs_index) {
+            ibuffer = NULL;
+        }
 
         return SparseRange<T, IDX>(counter, dbuffer, ibuffer);
     }
 
-public:
-    /**
-     * @cond
-     */
-    template<bool WORKROW>
-    struct HDF5PrimarySparseBlockWorkspace : public BlockWorkspace<WORKROW> {
-        HDF5PrimarySparseBlockWorkspace(size_t s, size_t l) : details(s, l) {}
-        std::pair<size_t, size_t> details;
-        const std::pair<size_t, size_t>& block() const { return details; }
-        PrimarySparseWorkspaceBase base;
+    /*****************************************
+     ************ Full extraction ************
+     *****************************************/
+private:
+    template<bool WORKROW, bool SPARSE>
+    struct Hdf5SparseWorkspace : public Workspace<WORKROW, SPARSE>, public ConditionalBase<SPARSE> {
+        Hdf5SparseWorkspace(const WorkspaceOptions& opt) : ConditionalBase<SPARSE>(opt) {}
+        ConditionalH5Core<WORKROW> core;
     };
 
+    template<bool WORKROW, bool SPARSE>
+    std::shared_ptr<Workspace<WORKROW, SPARSE> > create_new_workspace(const WorkspaceOptions& opt) const {
+        auto ptr = new Hdf5SparseWorkspace<WORKROW, SPARSE>(opt);
+        std::shared_ptr<Workspace<WORKROW, SPARSE> > output(ptr);
+        if constexpr(WORKROW == ROW) {
+            fill_core(ptr->core, 0);
+        } else {
+            fill_core(ptr->core);
+        }
+        return output;
+    }
+
     template<bool WORKROW>
-    struct HDF5SecondarySparseBlockWorkspace : public BlockWorkspace<WORKROW> {
-        HDF5SecondarySparseBlockWorkspace(size_t s, size_t l) : details(s, l) {}
-        std::pair<size_t, size_t> details;
-        const std::pair<size_t, size_t>& block() const { return details; }
-        SparseWorkspaceBase base;
-    };
-    /**
-     * @endcond
-     */
-
-    std::shared_ptr<RowBlockWorkspace> new_row_workspace(size_t s, size_t l, bool cache = false) const {
-        if constexpr(ROW) {
-            auto ptr = new HDF5PrimarySparseBlockWorkspace<true>(s, l);
-            std::shared_ptr<RowBlockWorkspace> output(ptr);
-            fill_base(ptr->base, cache ? nrows : 0);
-            return output;
+    const T* get_dense(size_t i, T* buffer, DenseWorkspace<WORKROW>* work) const {
+        size_t n = (WORKROW ? ncols : nrows);
+        auto wptr = static_cast<Hdf5SparseWorkspace<WORKROW, false>*>(work);
+        if constexpr(ROW == WORKROW) {
+            return extract_primary(i, buffer, 0, n, wptr->core);
         } else {
-            auto ptr = new HDF5SecondarySparseBlockWorkspace<true>(s, l);
-            std::shared_ptr<RowBlockWorkspace> output(ptr);
-            fill_base(ptr->base);
-            return output;
+            return extract_secondary(i, buffer, 0, n, wptr->core);
         }
     }
 
-    std::shared_ptr<ColumnBlockWorkspace> new_column_workspace(size_t s, size_t l, bool cache = false) const {
-        if constexpr(ROW) {
-            auto ptr = new HDF5SecondarySparseBlockWorkspace<false>(s, l);
-            std::shared_ptr<ColumnBlockWorkspace> output(ptr);
-            fill_base(ptr->base);
-            return output;
+    template<bool WORKROW>
+    SparseRange<T, IDX> get_sparse(size_t i, T* vbuffer, IDX* ibuffer, SparseWorkspace<WORKROW>* work) const {
+        size_t n = (WORKROW ? ncols : nrows);
+        auto wptr = static_cast<Hdf5SparseWorkspace<WORKROW, true>*>(work);
+        if constexpr(ROW == WORKROW) {
+            if (wptr->needs_index || wptr->needs_value) {
+                return extract_primary(i, vbuffer, ibuffer, 0, n, wptr->core, wptr->needs_index, wptr->needs_value);
+            } else {
+                // Quick return is possible if we don't need any indices or values.                        
+                return SparseRange<T, IDX>(pointers[i+1] - pointers[i], NULL, NULL);
+            }
         } else {
-            auto ptr = new HDF5PrimarySparseBlockWorkspace<false>(s, l);
-            std::shared_ptr<ColumnBlockWorkspace> output(ptr);
-            fill_base(ptr->base, cache ? ncols : 0);
-            return output;
-        }
-    }
-
-    const T* row(size_t r, T* buffer, RowBlockWorkspace* work) const {
-        if constexpr(ROW) {
-            auto wptr = static_cast<HDF5PrimarySparseBlockWorkspace<true>*>(work);
-            auto details = wptr->details;
-            return extract_primary(r, buffer, details.first, details.second, wptr->base);
-        } else {
-            auto wptr = static_cast<HDF5SecondarySparseBlockWorkspace<true>*>(work);
-            auto details = wptr->details;
-            return extract_secondary(r, buffer, details.first, details.second, wptr->base);
-        }
-    }
-
-    const T* column(size_t c, T* buffer, ColumnBlockWorkspace* work) const {
-        if constexpr(ROW) {
-            auto wptr = static_cast<HDF5SecondarySparseBlockWorkspace<false>*>(work);
-            auto details = wptr->details;
-            return extract_secondary(c, buffer, details.first, details.second, wptr->base);
-        } else {
-            auto wptr = static_cast<HDF5PrimarySparseBlockWorkspace<false>*>(work);
-            auto details = wptr->details;
-            return extract_primary(c, buffer, details.first, details.second, wptr->base);
-        }
-    }
-
-    SparseRange<T, IDX> sparse_row(size_t r, T* dbuffer, IDX* ibuffer, RowBlockWorkspace* work, bool sorted=true) const {
-        if constexpr(ROW) {
-            auto wptr = static_cast<HDF5PrimarySparseBlockWorkspace<true>*>(work);
-            auto details = wptr->details;
-            return extract_primary(r, dbuffer, ibuffer, details.first, details.second, wptr->base);
-        } else {
-            auto wptr = static_cast<HDF5SecondarySparseBlockWorkspace<true>*>(work);
-            auto details = wptr->details;
-            return extract_secondary(r, dbuffer, ibuffer, details.first, details.second, wptr->base);
-        }
-    }
-
-    SparseRange<T, IDX> sparse_column(size_t c, T* dbuffer, IDX* ibuffer, ColumnBlockWorkspace* work, bool sorted=true) const {
-        if constexpr(ROW) {
-            auto wptr = static_cast<HDF5SecondarySparseBlockWorkspace<false>*>(work);
-            auto details = wptr->details;
-            return extract_secondary(c, dbuffer, ibuffer, details.first, details.second, wptr->base);
-        } else {
-            auto wptr = static_cast<HDF5PrimarySparseBlockWorkspace<false>*>(work);
-            auto details = wptr->details;
-            return extract_primary(c, dbuffer, ibuffer, details.first, details.second, wptr->base);
+            return extract_secondary(i, vbuffer, ibuffer, 0, n, wptr->core, wptr->needs_index, wptr->needs_value);
         }
     }
 
 public:
-    /**
-     * @cond
-     */
-    template<bool WORKROW>
-    struct HDF5PrimarySparseIndexWorkspace : public IndexWorkspace<IDX, WORKROW> {
-        HDF5PrimarySparseIndexWorkspace(std::vector<IDX> i) : indices_(std::move(i)) {}
-        std::vector<IDX> indices_;
-        const std::vector<IDX>& indices() const { return indices_; }
-        PrimarySparseWorkspaceBase base;
+    std::shared_ptr<DenseRowWorkspace> dense_row_workspace(const WorkspaceOptions& opt) const {
+        return create_new_workspace<true, false>(opt);
+    }
+
+    std::shared_ptr<DenseColumnWorkspace> dense_column_workspace(const WorkspaceOptions& opt) const {
+        return create_new_workspace<false, false>(opt);
+    }
+
+    const T* row(size_t r, T* buffer, DenseRowWorkspace* work) const {
+        return get_dense(r, buffer, work);
+    }
+
+    const T* column(size_t c, T* buffer, DenseColumnWorkspace* work) const {
+        return get_dense(c, buffer, work);
+    }
+
+    std::shared_ptr<SparseRowWorkspace> sparse_row_workspace(const WorkspaceOptions& opt) const {
+        return create_new_workspace<true, true>(opt);
+    }
+
+    std::shared_ptr<SparseColumnWorkspace> sparse_column_workspace(const WorkspaceOptions& opt) const {
+        return create_new_workspace<false, true>(opt);
+    }
+
+    SparseRange<T, IDX> row(size_t r, T* dbuffer, IDX* ibuffer, SparseRowWorkspace* work) const {
+        return get_sparse(r, dbuffer, ibuffer, work);
+    }
+
+    SparseRange<T, IDX> column(size_t c, T* dbuffer, IDX* ibuffer, SparseColumnWorkspace* work) const {
+        return get_sparse(c, dbuffer, ibuffer, work);
+    }
+
+    /*****************************************
+     *********** Block extraction ************
+     *****************************************/
+private:
+    template<bool WORKROW, bool SPARSE>
+    struct Hdf5SparseBlockWorkspace : public BlockWorkspace<WORKROW, SPARSE>, public ConditionalBase<SPARSE> {
+        Hdf5SparseBlockWorkspace(size_t s, size_t l, const WorkspaceOptions& opt) : BlockWorkspace<WORKROW, SPARSE>(s, l), ConditionalBase<SPARSE>(opt) {}
+        ConditionalH5Core<WORKROW> core;
     };
 
+    template<bool WORKROW, bool SPARSE>
+    std::shared_ptr<BlockWorkspace<WORKROW, SPARSE> > create_new_workspace(size_t s, size_t l, const WorkspaceOptions& opt) const {
+        auto ptr = new Hdf5SparseBlockWorkspace<WORKROW, SPARSE>(s, l, opt);
+        std::shared_ptr<BlockWorkspace<WORKROW, SPARSE> > output(ptr);
+
+        if constexpr(WORKROW == ROW) {
+            if constexpr(WORKROW) {
+                fill_core(ptr->core, opt.cache ? nrows : 0);
+            } else {
+                fill_core(ptr->core, opt.cache ? ncols : 0);
+            }
+        } else {
+            fill_core(ptr->core);
+        }
+
+        return output;
+    }
+
     template<bool WORKROW>
-    struct HDF5SecondarySparseIndexWorkspace : public IndexWorkspace<IDX, WORKROW> {
-        HDF5SecondarySparseIndexWorkspace(std::vector<IDX> i) : indices_(std::move(i)) {}
-        std::vector<IDX> indices_;
-        const std::vector<IDX>& indices() const { return indices_; }
-        SparseWorkspaceBase base;
-    };
-    /**
-     * @endcond
-     */
-
-    std::shared_ptr<RowIndexWorkspace<IDX> > new_row_workspace(std::vector<IDX> i, bool cache = false) const {
-        if constexpr(ROW) {
-            auto ptr = new HDF5PrimarySparseIndexWorkspace<true>(std::move(i));
-            std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
-            fill_base(ptr->base, cache ? nrows : 0);
-            return output;
+    const T* get_dense(size_t i, T* buffer, DenseBlockWorkspace<WORKROW>* work) const {
+        auto wptr = static_cast<Hdf5SparseBlockWorkspace<WORKROW, false>*>(work);
+        if constexpr(ROW == WORKROW) {
+            return extract_primary(i, buffer, wptr->start, wptr->length, wptr->core);
         } else {
-            auto ptr = new HDF5SecondarySparseIndexWorkspace<true>(std::move(i));
-            std::shared_ptr<RowIndexWorkspace<IDX> > output(ptr);
-            fill_base(ptr->base);
-            return output;
+            return extract_secondary(i, buffer, wptr->start, wptr->length, wptr->core);
         }
     }
 
-    std::shared_ptr<ColumnIndexWorkspace<IDX> > new_column_workspace(std::vector<IDX> i, bool cache = false) const {
-        if constexpr(ROW) {
-            auto ptr = new HDF5SecondarySparseIndexWorkspace<false>(std::move(i));
-            std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
-            fill_base(ptr->base);
-            return output;
+    template<bool WORKROW>
+    SparseRange<T, IDX> get_sparse(size_t i, T* vbuffer, IDX* ibuffer, SparseBlockWorkspace<WORKROW>* work) const {
+        auto wptr = static_cast<Hdf5SparseBlockWorkspace<WORKROW, true>*>(work);
+        if constexpr(ROW == WORKROW) {
+            return extract_primary(i, vbuffer, ibuffer, wptr->start, wptr->length, wptr->core, wptr->needs_index, wptr->needs_value);
         } else {
-            auto ptr = new HDF5PrimarySparseIndexWorkspace<false>(std::move(i));
-            std::shared_ptr<ColumnIndexWorkspace<IDX> > output(ptr);
-            fill_base(ptr->base, cache ? ncols : 0);
-            return output;
+            return extract_secondary(i, vbuffer, ibuffer, wptr->start, wptr->length, wptr->core, wptr->needs_index, wptr->needs_value);
         }
     }
 
-    const T* row(size_t r, T* buffer, RowIndexWorkspace<IDX>* work) const {
-        if constexpr(ROW) {
-            auto wptr = static_cast<HDF5PrimarySparseIndexWorkspace<true>*>(work);
-            return extract_primary(r, buffer, wptr->indices_, wptr->base);
-        } else {
-            auto wptr = static_cast<HDF5SecondarySparseIndexWorkspace<true>*>(work);
-            return extract_secondary(r, buffer, wptr->indices_, wptr->base);
-        }
+public:
+    std::shared_ptr<DenseRowBlockWorkspace> dense_row_workspace(size_t s, size_t l, const WorkspaceOptions& opt) const {
+        return create_new_workspace<true, false>(s, l, opt);
     }
 
-    const T* column(size_t c, T* buffer, ColumnIndexWorkspace<IDX>* work) const {
-        if constexpr(ROW) {
-            auto wptr = static_cast<HDF5SecondarySparseIndexWorkspace<false>*>(work);
-            return extract_secondary(c, buffer, wptr->indices_, wptr->base);
-        } else {
-            auto wptr = static_cast<HDF5PrimarySparseIndexWorkspace<false>*>(work);
-            return extract_primary(c, buffer, wptr->indices_, wptr->base);
-        }
+    std::shared_ptr<DenseColumnBlockWorkspace> dense_column_workspace(size_t s, size_t l, const WorkspaceOptions& opt) const {
+        return create_new_workspace<false, false>(s, l, opt);
     }
 
-    SparseRange<T, IDX> sparse_row(size_t r, T* dbuffer, IDX* ibuffer, RowIndexWorkspace<IDX>* work, bool sorted=true) const {
-        if constexpr(ROW) {
-            auto wptr = static_cast<HDF5PrimarySparseIndexWorkspace<true>*>(work);
-            return extract_primary(r, dbuffer, ibuffer, wptr->indices_, wptr->base);
-        } else {
-            auto wptr = static_cast<HDF5SecondarySparseIndexWorkspace<true>*>(work);
-            return extract_secondary(r, dbuffer, ibuffer, wptr->indices_, wptr->base);
-        }
+    const T* row(size_t r, T* buffer, DenseRowBlockWorkspace* work) const {
+        return get_dense(r, buffer, work);
     }
 
-    SparseRange<T, IDX> sparse_column(size_t c, T* dbuffer, IDX* ibuffer, ColumnIndexWorkspace<IDX>* work, bool sorted=true) const {
-        if constexpr(ROW) {
-            auto wptr = static_cast<HDF5SecondarySparseIndexWorkspace<false>*>(work);
-            return extract_secondary(c, dbuffer, ibuffer, wptr->indices_, wptr->base);
-        } else {
-            auto wptr = static_cast<HDF5PrimarySparseIndexWorkspace<false>*>(work);
-            return extract_primary(c, dbuffer, ibuffer, wptr->indices_, wptr->base);
-        }
+    const T* column(size_t c, T* buffer, DenseColumnBlockWorkspace* work) const {
+        return get_dense(c, buffer, work);
     }
 
+    std::shared_ptr<SparseRowBlockWorkspace> sparse_row_workspace(size_t s, size_t l, const WorkspaceOptions& opt) const {
+        return create_new_workspace<true, true>(s, l, opt);
+    }
+
+    std::shared_ptr<SparseColumnBlockWorkspace> sparse_column_workspace(size_t s, size_t l, const WorkspaceOptions& opt) const {
+        return create_new_workspace<false, true>(s, l, opt);
+    }
+
+    SparseRange<T, IDX> row(size_t r, T* dbuffer, IDX* ibuffer, SparseRowBlockWorkspace* work) const {
+        return get_sparse(r, dbuffer, ibuffer, work);
+    }
+
+    SparseRange<T, IDX> column(size_t c, T* dbuffer, IDX* ibuffer, SparseColumnBlockWorkspace* work) const {
+        return get_sparse(c, dbuffer, ibuffer, work);
+    }
+
+    /*****************************************
+     *********** Index extraction ************
+     *****************************************/
 private:
     template<class Function, class Skip>
-    void extract_primary(size_t i, Function fill, Skip skip, const std::vector<IDX>& indices, PrimarySparseWorkspaceBase& work) const {
+    void extract_primary_raw(size_t i, Function fill, Skip skip, const std::vector<IDX>& indices, PrimaryH5Core& core, bool needs_value) const {
         if (indices.empty()) {
             return;
         }
@@ -685,29 +659,31 @@ private:
             return;
         }
 
-        populate_primary_cache(i, work);
+        populate_primary_cache(i, core, needs_value);
 
-        const auto& limits = primary_cache_limits[work.current_cache_id];
+        const auto& limits = primary_cache_limits[core.current_cache_id];
         size_t offset = pointers[i] - limits.first;
-        auto istart = work.index_cache.begin() + offset;
-        auto dstart = work.data_cache.begin() + offset;
+        auto istart = core.index_cache.begin() + offset;
         auto iend = istart + primary_length;
 
         size_t quick_shift = 0;
         if (indices[0] > *istart) { // Both are guaranteed to valid, from length check above.
-            bool do_cache = !work.starts.empty();
-            if (do_cache && work.starts[i] != -1) {
-                quick_shift = work.starts[i];
+            bool do_cache = !core.starts.empty();
+            if (do_cache && core.starts[i] != -1) {
+                quick_shift = core.starts[i];
             } else {
                 quick_shift = std::lower_bound(istart, istart + primary_length, indices[0]) - istart;
                 if (do_cache) {
-                    work.starts[i] = quick_shift;
+                    core.starts[i] = quick_shift;
                 }
             }
         }
 
         istart += quick_shift;
-        dstart += quick_shift;
+        auto dstart = core.data_cache.begin();
+        if (needs_value) {
+            dstart += offset + quick_shift;
+        }
 
         for (auto idx : indices) {
             while (istart != iend && *istart < idx) {
@@ -718,17 +694,22 @@ private:
                 break;
             }
             if (*istart == idx) {
-                fill(idx, *dstart);
+                if (needs_value) {
+                    fill(idx, *dstart);
+                } else {
+                    fill(idx, 0);
+                }
             } else {
                 skip();
             }
         }
     }
 
-    const T* extract_primary(size_t i, T* dbuffer, const std::vector<IDX>& indices, PrimarySparseWorkspaceBase& work) const {
+    const T* extract_primary(size_t i, T* dbuffer, const std::vector<IDX>& indices, PrimaryH5Core& core) const {
         std::fill(dbuffer, dbuffer + indices.size(), 0);
         auto original = dbuffer;
-        extract_primary(i, 
+
+        extract_primary_raw(i, 
             [&](IDX, T value) -> void {
                 *dbuffer = value;
                 ++dbuffer;
@@ -737,31 +718,44 @@ private:
                 ++dbuffer;
             },
             indices, 
-            work
+            core,
+            true
         );
+
         return original;
     }
 
-    SparseRange<T, IDX> extract_primary(size_t i, T* dbuffer, IDX* ibuffer, const std::vector<IDX>& indices, PrimarySparseWorkspaceBase& work) const {
+    SparseRange<T, IDX> extract_primary(size_t i, T* dbuffer, IDX* ibuffer, const std::vector<IDX>& indices, PrimaryH5Core& core, bool needs_index, bool needs_value) const {
         size_t counter = 0;
 
-        extract_primary(i, 
+        extract_primary_raw(i, 
             [&](IDX pos, T value) -> void {
-                dbuffer[counter] = value;
-                ibuffer[counter] = pos;
+                if (needs_value) {
+                    dbuffer[counter] = value;
+                }
+                if (needs_index) {
+                    ibuffer[counter] = pos;
+                }
                 ++counter;
             }, 
             []() -> void {},
             indices, 
-            work
+            core,
+            needs_value
         );
+
+        if (needs_index) {
+            ibuffer = NULL;
+        }
+        if (needs_value) {
+            dbuffer = NULL;
+        }
 
         return SparseRange<T, IDX>(counter, dbuffer, ibuffer);
     }
 
-private:
     template<class Function, class Skip>
-    size_t extract_secondary(size_t i, Function fill, Skip skip, const std::vector<IDX>& indices, SparseWorkspaceBase& work) const {
+    size_t extract_secondary_raw_loop(size_t i, Function fill, Skip skip, const std::vector<IDX>& indices, H5Core& core, bool needs_value) const {
 #ifndef TATAMI_HDF5_PARALLEL_LOCK        
         #pragma omp critical
         {
@@ -770,7 +764,7 @@ private:
 #endif
 
         for (auto j : indices) {
-            if (!extract_secondary_raw(j, i, fill, work)) {
+            if (!extract_secondary_raw(j, i, fill, core, needs_value)) {
                 skip();
             }
         }
@@ -782,10 +776,10 @@ private:
 #endif
     }
 
-    const T* extract_secondary(size_t i, T* dbuffer, const std::vector<IDX>& indices, SparseWorkspaceBase& work) const {
+    const T* extract_secondary(size_t i, T* dbuffer, const std::vector<IDX>& indices, H5Core& core) const {
         std::fill(dbuffer, dbuffer + indices.size(), 0);
         auto original = dbuffer;
-        extract_secondary(i, 
+        extract_secondary_raw_loop(i, 
             [&](IDX pos, T value) -> void {
                 *dbuffer = value;
                 ++dbuffer;
@@ -794,26 +788,121 @@ private:
                 ++dbuffer;
             },
             indices, 
-            work
+            core,
+            true
         );
         return original;
     }
 
-    SparseRange<T, IDX> extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, const std::vector<IDX>& indices, SparseWorkspaceBase& work) const {
+    SparseRange<T, IDX> extract_secondary(size_t i, T* dbuffer, IDX* ibuffer, const std::vector<IDX>& indices, H5Core& core, bool needs_index, bool needs_value) const {
         size_t counter = 0;
 
-        extract_secondary(i, 
+        extract_secondary_raw_loop(i, 
             [&](IDX pos, T value) -> void {
-                dbuffer[counter] = value;
-                ibuffer[counter] = pos;
+                if (needs_value) {
+                    dbuffer[counter] = value;
+                }
+                if (needs_index) {
+                    ibuffer[counter] = pos;
+                }
                 ++counter;
             }, 
             []() -> void {},
             indices, 
-            work
+            core,
+            needs_value
         );
 
+        if (needs_value) {
+            dbuffer = NULL;
+        }
+        if (needs_index) {
+            ibuffer = NULL;
+        }
+
         return SparseRange<T, IDX>(counter, dbuffer, ibuffer);
+    }
+
+private:
+    template<bool WORKROW, bool SPARSE>
+    struct Hdf5SparseIndexWorkspace : public IndexWorkspace<IDX, WORKROW, SPARSE>, public ConditionalBase<SPARSE> {
+        Hdf5SparseIndexWorkspace(std::vector<IDX> i, const WorkspaceOptions& opt) : IndexWorkspace<IDX, WORKROW, SPARSE>(i.size()), ConditionalBase<SPARSE>(opt), indices_(std::move(i)) {}
+
+        ConditionalH5Core<WORKROW> core;
+
+        std::vector<IDX> indices_;
+        const std::vector<IDX>& indices() const { return indices_; }
+    };
+
+    template<bool WORKROW, bool SPARSE>
+    std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > create_new_workspace(std::vector<IDX> i, const WorkspaceOptions& opt) const {
+        auto ptr = new Hdf5SparseIndexWorkspace<WORKROW, SPARSE>(std::move(i), opt);
+        std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > output(ptr);
+
+        if constexpr(WORKROW == ROW) {
+            if constexpr(WORKROW) {
+                fill_core(ptr->core, opt.cache ? nrows : 0);
+            } else {
+                fill_core(ptr->core, opt.cache ? ncols : 0);
+            }
+        } else {
+            fill_core(ptr->core);
+        }
+
+        return output;
+    }
+
+    template<bool WORKROW>
+    const T* get_dense(size_t i, T* buffer, DenseIndexWorkspace<IDX, WORKROW>* work) const {
+        auto wptr = static_cast<Hdf5SparseIndexWorkspace<WORKROW, false>*>(work);
+        if constexpr(ROW == WORKROW) {
+            return extract_primary(i, buffer, wptr->indices_, wptr->core);
+        } else {
+            return extract_secondary(i, buffer, wptr->indices_, wptr->core);
+        }
+    }
+
+    template<bool WORKROW>
+    SparseRange<T, IDX> get_sparse(size_t i, T* vbuffer, IDX* ibuffer, SparseIndexWorkspace<IDX, WORKROW>* work) const {
+        auto wptr = static_cast<Hdf5SparseIndexWorkspace<WORKROW, true>*>(work);
+        if constexpr(ROW == WORKROW) {
+            return extract_primary(i, vbuffer, ibuffer, wptr->indices_, wptr->core, wptr->needs_index, wptr->needs_value);
+        } else {
+            return extract_secondary(i, vbuffer, ibuffer, wptr->indices_, wptr->core, wptr->needs_index, wptr->needs_value);
+        }
+    }
+
+public:
+    std::shared_ptr<DenseRowIndexWorkspace<IDX> > dense_row_workspace(std::vector<IDX> i, const WorkspaceOptions& opt) const {
+        return create_new_workspace<true, false>(std::move(i), opt);
+    }
+
+    std::shared_ptr<DenseColumnIndexWorkspace<IDX> > dense_column_workspace(std::vector<IDX> i, const WorkspaceOptions& opt) const {
+        return create_new_workspace<false, false>(std::move(i), opt);
+    }
+
+    const T* row(size_t r, T* buffer, DenseRowIndexWorkspace<IDX>* work) const {
+        return get_dense<true>(r, buffer, work);
+    }
+
+    const T* column(size_t c, T* buffer, DenseColumnIndexWorkspace<IDX>* work) const {
+        return get_dense<false>(c, buffer, work);
+    }
+
+    std::shared_ptr<SparseRowIndexWorkspace<IDX> > sparse_row_workspace(std::vector<IDX> i, const WorkspaceOptions& opt) const {
+        return create_new_workspace<true, true>(std::move(i), opt);
+    }
+
+    std::shared_ptr<SparseColumnIndexWorkspace<IDX> > sparse_column_workspace(std::vector<IDX> i, const WorkspaceOptions& opt) const {
+        return create_new_workspace<false, true>(std::move(i), opt);
+    }
+
+    SparseRange<T, IDX> row(size_t r, T* dbuffer, IDX* ibuffer, SparseRowIndexWorkspace<IDX>* work) const {
+        return get_sparse<true>(r, dbuffer, ibuffer, work);
+    }
+
+    SparseRange<T, IDX> column(size_t c, T* dbuffer, IDX* ibuffer, SparseColumnIndexWorkspace<IDX>* work) const {
+        return get_sparse<false>(c, dbuffer, ibuffer, work);
     }
 };
 
