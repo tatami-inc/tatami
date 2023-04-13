@@ -128,6 +128,15 @@ void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward,
         start, 
         end - start
     );
+
+    // Checking that properties are correctly passed down.
+    auto pwork = ptr->dense_row_workspace(start, end - start);
+    EXPECT_EQ(pwork->start, start);
+    EXPECT_EQ(pwork->length, end - start);
+
+    auto swork = ptr->sparse_row_workspace(start, end - start);
+    EXPECT_EQ(pwork->start, start);
+    EXPECT_EQ(pwork->length, end - start);
 }
 
 template<class Matrix, class Matrix2>
@@ -164,6 +173,15 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
         },
         indices
     );
+
+    // Checking that properties are correctly passed down.
+    auto pwork = ptr->dense_row_workspace(indices);
+    EXPECT_EQ(pwork->indices(), indices);
+    EXPECT_EQ(pwork->length, indices.size());
+
+    auto swork = ptr->sparse_row_workspace(indices);
+    EXPECT_EQ(pwork->indices(), indices);
+    EXPECT_EQ(pwork->length, indices.size());
 }
 
 #endif

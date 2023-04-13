@@ -1,6 +1,7 @@
 #ifndef TEST_COLUMN_ACCESS_H
 #define TEST_COLUMN_ACCESS_H
 #include "utils.h"
+#include <type_traits>
 
 template<class Matrix, class Matrix2, class Function1, class Function2, typename ...Args>
 void test_simple_column_access_base(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, Function1 expector, Function2 sparse_expand, Args... args) {
@@ -103,6 +104,7 @@ template<class Matrix, class Matrix2>
 void test_simple_column_access(const Matrix* ptr, const Matrix2* ref, bool forward = true, size_t jump = 1) {
     auto rwork = ref->dense_column_workspace();
     size_t NR = ref->nrow();
+
     test_simple_column_access_base(ptr, ref, forward, jump, 
         [&](size_t c) -> auto { 
             auto expected = ref->column(c, rwork.get());
@@ -129,6 +131,15 @@ void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
         start, 
         end - start
     );
+
+    // Checking that properties are correctly passed down.
+    auto pwork = ptr->dense_column_workspace(start, end - start);
+    EXPECT_EQ(pwork->start, start);
+    EXPECT_EQ(pwork->length, end - start);
+
+    auto swork = ptr->sparse_column_workspace(start, end - start);
+    EXPECT_EQ(pwork->start, start);
+    EXPECT_EQ(pwork->length, end - start);
 }
 
 template<class Matrix, class Matrix2>
@@ -165,6 +176,15 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
         },
         indices
     );
+
+    // Checking that properties are correctly passed down.
+    auto pwork = ptr->dense_column_workspace(indices);
+    EXPECT_EQ(pwork->indices(), indices);
+    EXPECT_EQ(pwork->length, indices.size());
+
+    auto swork = ptr->sparse_column_workspace(indices);
+    EXPECT_EQ(pwork->indices(), indices);
+    EXPECT_EQ(pwork->length, indices.size());
 }
 
 #endif
