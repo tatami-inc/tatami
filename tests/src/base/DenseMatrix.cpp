@@ -4,7 +4,7 @@
 #include <deque>
 #include <numeric>
 
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 #include "../_tests/test_column_access.h"
 #include "../_tests/test_row_access.h"
 #include "../_tests/simulate_vector.h"
@@ -20,22 +20,22 @@ TEST(DenseMatrix, Basic) {
     EXPECT_EQ(mat.ncol(), 20);
 
     {
-        auto wrk = mat.dense_column_workspace();
+        auto wrk = mat.dense_column();
         for (size_t i = 0; i < mat.ncol(); ++i) {
             auto start = contents.begin() + i * mat.nrow();
             std::vector<double> expected(start, start + mat.nrow());
-            EXPECT_EQ(mat.column(i, wrk.get()), expected);
+            EXPECT_EQ(wrk->fetch(i), expected);
         }
     }
 
     {
-        auto wrk = mat.dense_row_workspace();
+        auto wrk = mat.dense_row();
         for (size_t i = 0; i < mat.nrow(); ++i) {
             std::vector<double> expected(mat.ncol());
             for (size_t j = 0; j < mat.ncol(); ++j) {
                 expected[j] = contents[j * mat.nrow() + i];
             }
-            EXPECT_EQ(mat.row(i, wrk.get()), expected);
+            EXPECT_EQ(wrk->fetch(i), expected);
         }
     }
 }

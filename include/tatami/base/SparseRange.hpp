@@ -10,32 +10,30 @@
  * @brief Store information about extracted sparse elements.
  */
 
-using std::size_t;
-
 namespace tatami {
 
 /**
  * @brief A range of a sparse vector.
  *
  * This class defines a range along a sparse vector.
- * It records the number of "non-zero" elements within this range, and contains pointers to their values and row/column indices.
- * This is most commonly returned by `Matrix::sparse_row()` and `Matrix::sparse_column()` methods to obtain the contents of a row or column of a sparse matrix.
+ * It records the number of structural "non-zero" elements within this range, and contains pointers to their values and row/column indices.
  *
  * @note
  * Note that the elements in `value` are not guaranteed to be non-zero.
- * Zero values are usually not explicitly filtered out.
+ * If zeroes are explicitly initialized in the underlying structure, they will be reported here.
+ * However, one can safely assume that all indices _not_ reported in `index` have values of zero.
  *
- * @tparam T Type of value.
- * @tparam IDX Type of index.
+ * @tparam Value Data value type, should be numeric.
+ * @tparam Index Row/column index type, should be integer.
  */
-template <typename T, typename IDX>
+template <typename Value, typename Index>
 struct SparseRange {
     /**
-     * @param n Number of non-zero values.
+     * @param n Number of structural non-zero values.
      * @param v Pointer to the values. This should have at least `n` addressible elements.
      * @param i Pointer to the indices. This should have at least `n` addressible elements.
      */ 
-    SparseRange(size_t n, const T* v=NULL, const IDX* i=NULL) : number(n), value(v), index(i) {}
+    SparseRange(Index n, const Value* v=NULL, const Index* i=NULL) : number(n), value(v), index(i) {}
 
     /**
      * Default constructor.
@@ -43,93 +41,59 @@ struct SparseRange {
     SparseRange() {}
 
     /**
-     * Number of non-zero elements.
+     * Number of structural non-zero elements.
      */
-    size_t number = 0;
+    Index number = 0;
 
     /**
-     * Pointer to the values of the non-zero elements.
+     * Pointer to the values of the structural non-zeros.
      * Has at least `number` addressible entries. 
      */
-    const T* value = NULL;
+    const Value* value = NULL;
 
     /**
-     * Pointer to the (row/column) indices of the non-zero elements.
+     * Pointer to the (row/column) indices of the structural non-zeros.
      * Has at least `number` addressible entries. 
      */
-    const IDX* index = NULL;
+    const Index* index = NULL;
 };
 
 /**
  * @brief A range of a sparse vector with copying 
  *
- * This class defines a range along a sparse vector, where the values and indices of the non-zero elements are copied into internal `vector`s.
+ * This class defines a range along a sparse vector, where the values and indices of the structural non-zero elements are copied into internal `vector`s.
  * It provides more memory safety than the `SparseRange` class, at the cost of extra allocation and copying.
  *
- * @tparam T Type of value.
- * @tparam IDX Type of index.
+ * @tparam Value Data value type, should be numeric.
+ * @tparam Index Row/column index type, should be integer.
  */
-template<typename T, typename IDX>
+template<typename Value, typename Index>
 struct SparseRangeCopy {
+    /**
+     * Number of structural non-zero elements.
+     */
+    Index number = 0;
+
     /** 
-     * Values of the non-zero elements.
+     * Values of the structural non-zeros.
      *
      * Note that this may not be filled if extraction was performed with a `SparseExtractMode` that did not extract the values.
      */
-    std::vector<T> value;
+    std::vector<Value> value;
 
     /** 
-     * Indices of the non-zero elements.
+     * Indices of the structural non-zeros.
      * This should be of the same length as `value`.
      * 
      * Note that this may not be filled if extraction was performed with a `SparseExtractMode` that did not extract the indices.
      */
-    std::vector<IDX> index;
+    std::vector<Index> index;
 
     /**
-     * @param n Number of non-zero elements.
+     * @param n Number of structural non-zeros.
      */
-    SparseRangeCopy(size_t n) : index(n), value(n) {}
+    SparseRangeCopy(Index n) : number(n), index(n), value(n) {}
 };
-
-/**
- * What components of the non-zero elements should be copied?
- * Just the indices (`INDEX`), the values (`VALUE`), both (`BOTH`) or neither (`NONE`).
- */
-enum class SparseExtractMode : char { NONE, INDEX, VALUE, BOTH };
-
-/**
- * @cond
- */
-inline bool sparse_extract_index(SparseExtractMode m) {
-    return m == SparseExtractMode::BOTH || m == SparseExtractMode::INDEX;
-}
-
-inline bool sparse_extract_value(SparseExtractMode m) {
-    return m == SparseExtractMode::BOTH || m == SparseExtractMode::VALUE;
-}
-
-template<typename T, typename IDX>
-void nullify_sparse_extract_pointers(SparseExtractMode m, T*& vbuffer, IDX*& ibuffer) {
-    switch (m) {
-        case SparseExtractMode::NONE:
-            vbuffer = NULL;
-            ibuffer = NULL;
-            break;
-        case SparseExtractMode::INDEX:
-            vbuffer = NULL;
-            break;
-        case SparseExtractMode::VALUE:
-            ibuffer = NULL;
-            break;
-        default:
-            break;
-    }
-}
-
-/**
- * @endcond
- */
 
 }
 
