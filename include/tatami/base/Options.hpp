@@ -66,12 +66,20 @@ struct DimensionLimit {
 /**
  * Access pattern for the elements of the iteration dimension.
  * 
- * - `CONSECUTIVE`: consecutive elements are accessed.
- *   This is the most typical iteration strategy through a matrix and likely to be the most efficient for `Matrix` implementations.
- * - `SEQUENCE`: elements are accessed in an _a priori_ known sequence.
- *   The sequence itself should be available in `IterationOptions` to enable pre-fetching of the (not necessarily consecutive) next elements by `Matrix` implementations.
- * - `RANDOM`: elements are accessed in a random sequence.
- *   This allows `Matrix` implementations to dispense with any pre-fetching or caching.
+ * For `CONSECUTIVE`, elements are accessed in consecutive order.
+ * This enables pre-fetching of the subsequent elements by `Matrix` implementations.
+ * It is expected that calls to `DenseExtractor::fetch()` or `SparseExtractor::fetch()` involve consecutive `i`.
+ * Repeated calls to the same `i` are allowed.
+ * Any calls to the first `i` specified in `IterationOptions::limit` should reset the `Extractor` to its initial position.
+ * 
+ * For `SEQUENCE`, elements are accessed in an _a priori_ known sequence.
+ * The enables pre-fetching of the (not necessarily consecutive) next elements by `Matrix` implementations.
+ * It is expected that `DenseExtractor::fetch()` or `SparseExtractor::fetch()` are called with `i` in the same order as `IterationOptions::sequence` or `IterationOptions::sequence_start`.
+ * Repeated calls to the same `i` are allowed.
+ * Any calls to the first `i` specified in the sequence should reset the `Extractor` to its initial position.
+ *
+ * For `RANDOM`: elements are accessed in a random sequence.
+ * This allows `Matrix` implementations to dispense with any pre-fetching or caching.
  */
 enum class AccessOrder : char { CONSECUTIVE, SEQUENCE, RANDOM };
 
@@ -97,6 +105,7 @@ struct IterationOptions {
 
     /**
      * Pointer to an array containing the indices of elements to access. 
+     * Contents should be a subset of elements in `limit`.
      * Only relevant if `access_order = AccessOrder::SEQUENCE`.
      * This is intended for use by `Matrix` developers where the array is guaranteed to outlive the `IterationOptions` object.
      */
@@ -110,6 +119,7 @@ struct IterationOptions {
 
     /**
      * Vector containing the sequence of indices for elements on the iteration dimension.
+     * Contents should be a subset of elements in `limit`.
      * Only relevant if `access_order = AccessOrder::SEQUENCE` and `sequence_start != NULL`.
      * This is provided to allow callers to transfer ownership of the array, if `sequence_start` would otherwise be pointing to a temporary array.
      */
