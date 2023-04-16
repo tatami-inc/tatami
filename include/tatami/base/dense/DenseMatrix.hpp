@@ -39,9 +39,7 @@ public:
      * @param source Vector of values, or length equal to the product of `nr` and `nc`.
      */
     DenseMatrix(Index_ nr, Index_ nc, const Storage_& source) : nrows(nr), ncols(nc), values(source) {
-        if (nrows * ncols != values.size()) {
-            throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
-        }
+        check_dimensions(nr, nc, values.size());
         return;
     }
 
@@ -51,15 +49,19 @@ public:
      * @param source Vector of values, or length equal to the product of `nr` and `nc`.
      */
     DenseMatrix(Index_ nr, Index_ nc, Storage_&& source) : nrows(nr), ncols(nc), values(source) {
-        if (nrows * ncols != values.size()) {
-            throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
-        }
+        check_dimensions(nr, nc, values.size());
         return;
     }
 
 private: 
     Index_ nrows, ncols;
     Storage_ values;
+
+    static bool check_dimensions(size_t nr, size_t nc, size_t expected) {
+        if (nr * nc != expected) {
+            throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
+        }
+    }
 
 public:
     Index_ nrow() const { return nrows; }
@@ -143,7 +145,7 @@ private:
 
 private:
     template<bool accrow_> 
-    Index_ other_dimension() const {
+    size_t other_dimension() const { // deliberate cast to avoid integer overflow on Index_ when multiplying to compute offsets.
         if constexpr(row_) {
             return ncols;
         } else {
@@ -153,7 +155,7 @@ private:
 
     template<bool accrow_> 
     const Value_* primary(Index_ x, Value_* buffer, Index_ start, Index_ end) const {
-        Index_ shift = x * other_dimension<accrow_>();
+        size_t shift = x * other_dimension<accrow_>();
         if constexpr(has_data<Value_, Storage_>::value) {
             return values.data() + shift + start;
         } else {
@@ -164,7 +166,7 @@ private:
 
     template<bool accrow_> 
     void secondary(Index_ x, Value_* buffer, Index_ start, Index_ end) const {
-        Index_ dim_secondary = other_dimension<accrow_>();
+        size_t dim_secondary = other_dimension<accrow_>();
         auto it = values.begin() + x + start * dim_secondary;
         for (Index_ i = start; i < end; ++i, ++buffer, it += dim_secondary) {
             *buffer = *it; 
@@ -174,7 +176,7 @@ private:
 
     template<bool accrow_> 
     const Value_* primary(Index_ x, Value_* buffer, const Index_* indices, Index_ length) const {
-        auto offset = x * other_dimension<accrow_>();
+        size_t offset = x * other_dimension<accrow_>();
         for (Index_ i = 0; i < length; ++i) {
             buffer[i] = values[indices[i] + offset];
         }
@@ -183,7 +185,7 @@ private:
 
     template<bool accrow_> 
     void secondary(Index_ x, Value_* buffer, const Index_* indices, Index_ length) const {
-        Index_ dim_secondary = other_dimension<accrow_>();        
+        size_t dim_secondary = other_dimension<accrow_>();        
         for (Index_ i = 0; i < length; ++i, ++buffer) {
             *buffer = values[indices[i] * dim_secondary + x]; 
         }
