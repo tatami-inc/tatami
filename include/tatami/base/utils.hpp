@@ -32,7 +32,7 @@ struct has_data<T, V, decltype((void) V().data(), 0)> {
  * @tparam Args_ Further arguments.
  *
  * @param[in] ptr Pointer to a `Matrix` object to iterate over.
- * @param args Zero or more additional arguments to pass to methods like `Matrix::dense_row()`, e.g., `DimensionLimit`, `ExtractOptions`.
+ * @param args Zero or more additional arguments to pass to methods like `Matrix::dense_row()`, e.g., `IterationOptions`, `ExtractionOptions`.
  *
  * @return A `DimensionAccess` object to access the requested dimension of `ptr`.
  */

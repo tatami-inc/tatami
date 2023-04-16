@@ -11,7 +11,7 @@ void test_simple_row_access_base(const Matrix* ptr, const Matrix2* ref, bool for
 
     IterationOptions ropt;
     std::vector<int> indices;
-    set_access_order(ropt, indices, NR, forward, jump);
+    set_access_pattern(ropt, indices, NR, forward, jump);
 
     auto pwork = ptr->dense_row(ropt, copt);
     auto swork = ptr->sparse_row(ropt, copt);
@@ -100,20 +100,20 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
 
     // Checking that properties are correctly passed down.
     auto pwork = ptr->dense_row();
-    EXPECT_EQ(pwork->extracted_limit, tatami::DimensionLimitType::NONE);
+    EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::FULL);
     EXPECT_EQ(pwork->extracted_length, NC);
 
     auto swork = ptr->sparse_row();
-    EXPECT_EQ(swork->extracted_limit, tatami::DimensionLimitType::NONE);
+    EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::FULL);
     EXPECT_EQ(swork->extracted_length, NC);
 }
 
 template<class Matrix, class Matrix2>
 void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, int start, int end) {
     ExtractionOptions csub;
-    csub.limit.type = tatami::DimensionLimitType::BLOCK;
-    csub.limit.block_start = start;
-    csub.limit.block_length = end - start;
+    csub.selection.type = tatami::DimensionSelectionType::BLOCK;
+    csub.selection.block_start = start;
+    csub.selection.block_length = end - start;
 
     auto rwork = ref->dense_row();
     test_simple_row_access_base(ptr, ref, forward, jump, 
@@ -129,12 +129,12 @@ void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward,
 
     // Checking that properties are correctly passed down.
     auto pwork = ptr->dense_row(IterationOptions(), csub);
-    EXPECT_EQ(pwork->extracted_limit, tatami::DimensionLimitType::BLOCK);
+    EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::BLOCK);
     EXPECT_EQ(pwork->extracted_block, start);
     EXPECT_EQ(pwork->extracted_length, end - start);
 
     auto swork = ptr->sparse_row(IterationOptions(), csub);
-    EXPECT_EQ(swork->extracted_limit, tatami::DimensionLimitType::BLOCK);
+    EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::BLOCK);
     EXPECT_EQ(swork->extracted_block, start);
     EXPECT_EQ(swork->extracted_length, end - start);
 }
@@ -154,9 +154,9 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
     // First trying with the index pointers.
     {
         ExtractionOptions csub;
-        csub.limit.type = tatami::DimensionLimitType::INDEX;
-        csub.limit.index_length = indices.size();
-        csub.limit.index_start = indices.data();
+        csub.selection.type = tatami::DimensionSelectionType::INDEX;
+        csub.selection.index_length = indices.size();
+        csub.selection.index_start = indices.data();
 
         auto rwork = ref->dense_row();
         test_simple_row_access_base(ptr, ref, forward, jump, 
@@ -183,12 +183,12 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
 
         // Checking that properties are correctly passed down.
         auto pwork = ptr->dense_row(IterationOptions(), csub);
-        EXPECT_EQ(pwork->extracted_limit, tatami::DimensionLimitType::INDEX);
+        EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::INDEX);
         EXPECT_EQ(pwork->extracted_index(), indices.data());
         EXPECT_EQ(pwork->extracted_length, indices.size());
 
         auto swork = ptr->sparse_row(IterationOptions(), csub);
-        EXPECT_EQ(swork->extracted_limit, tatami::DimensionLimitType::INDEX);
+        EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::INDEX);
         EXPECT_EQ(swork->extracted_index(), indices.data());
         EXPECT_EQ(swork->extracted_length, indices.size());
     }
@@ -196,8 +196,8 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
     // First trying with the index pointers.
     {
         ExtractionOptions csub;
-        csub.limit.type = tatami::DimensionLimitType::INDEX;
-        csub.limit.indices = indices;
+        csub.selection.type = tatami::DimensionSelectionType::INDEX;
+        csub.selection.indices = indices;
 
         auto rwork = ref->dense_row();
         test_simple_row_access_base(ptr, ref, forward, jump, 
@@ -224,12 +224,12 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
 
         // Checking that properties are correctly passed down.
         auto pwork = ptr->dense_row(IterationOptions(), csub);
-        EXPECT_EQ(pwork->extracted_limit, tatami::DimensionLimitType::INDEX);
+        EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::INDEX);
         EXPECT_EQ(std::vector<int>(pwork->extracted_index(), pwork->extracted_index() + pwork->extracted_length), indices);
         EXPECT_EQ(pwork->extracted_length, indices.size());
 
         auto swork = ptr->sparse_row(IterationOptions(), csub);
-        EXPECT_EQ(swork->extracted_limit, tatami::DimensionLimitType::INDEX);
+        EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::INDEX);
         EXPECT_EQ(std::vector<int>(swork->extracted_index(), swork->extracted_index() + swork->extracted_length), indices);
         EXPECT_EQ(swork->extracted_length, indices.size());
     }

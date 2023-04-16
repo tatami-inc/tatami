@@ -80,22 +80,22 @@ private:
     template<bool accrow_>
     struct DenseBase : public DenseExtractor<Value_, Index_> {
         DenseBase(const DenseMatrix* p, ExtractionOptions<Index_> non_target) : parent(p) {
-            this->extracted_limit = non_target.limit.type;
-            switch (this->extracted_limit) {
-                case DimensionLimitType::NONE:
+            this->extracted_selection = non_target.selection.type;
+            switch (this->extracted_selection) {
+                case DimensionSelectionType::FULL:
                     this->extracted_length = (accrow_ ? p->ncols : p->nrows);
                     break;
-                case DimensionLimitType::BLOCK:
-                    this->extracted_length = non_target.limit.block_length;
-                    this->extracted_block = non_target.limit.block_start;
+                case DimensionSelectionType::BLOCK:
+                    this->extracted_length = non_target.selection.block_length;
+                    this->extracted_block = non_target.selection.block_start;
                     break;
-                case DimensionLimitType::INDEX:
-                    if (non_target.limit.index_start) {
-                        this->extracted_length = non_target.limit.index_length;
-                        this->extracted_index_internal = non_target.limit.index_start;
+                case DimensionSelectionType::INDEX:
+                    if (non_target.selection.index_start) {
+                        this->extracted_length = non_target.selection.index_length;
+                        this->extracted_index_internal = non_target.selection.index_start;
                     } else {
-                        this->extracted_length = non_target.limit.indices.size();
-                        this->extracted_indices = std::move(non_target.limit.indices);
+                        this->extracted_length = non_target.selection.indices.size();
+                        this->extracted_indices = std::move(non_target.selection.indices);
                     }
                     break;
             }
@@ -106,26 +106,26 @@ private:
         
         const Value_* fetch(Index_ position, Value_* buffer) {
             if constexpr(row_ == accrow_) {
-                switch (this->extracted_limit) {
-                    case DimensionLimitType::NONE:
+                switch (this->extracted_selection) {
+                    case DimensionSelectionType::FULL:
                         return parent->primary<accrow_>(position, buffer, 0, this->extracted_length);
                         break;
-                    case DimensionLimitType::BLOCK:
+                    case DimensionSelectionType::BLOCK:
                         return parent->primary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
                         break;
-                    case DimensionLimitType::INDEX:
+                    case DimensionSelectionType::INDEX:
                         return parent->primary<accrow_>(position, buffer, this->extracted_index_0(), this->extracted_length);
                         break;
                 }
             } else {
-                switch (this->extracted_limit) {
-                    case DimensionLimitType::NONE:
+                switch (this->extracted_selection) {
+                    case DimensionSelectionType::FULL:
                         parent->secondary<accrow_>(position, buffer, 0, this->extracted_length);
                         break;
-                    case DimensionLimitType::BLOCK:
+                    case DimensionSelectionType::BLOCK:
                         parent->secondary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
                         break;
-                    case DimensionLimitType::INDEX:
+                    case DimensionSelectionType::INDEX:
                         parent->secondary<accrow_>(position, buffer, this->extracted_index_0(), this->extracted_length);
                         break;
                 }

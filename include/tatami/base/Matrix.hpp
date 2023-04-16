@@ -132,14 +132,14 @@ public:
      ***************************************/
 public:
     /**
-     * @return A `DimensionAccess` object for random access to dense rows, without any dimension limits or non-default options.
+     * @return A `DimensionAccess` object for random access to dense rows with default options.
      */
     std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row() const {
         return dense_row(IterationOptions<Index_>(), ExtractionOptions<Index_>());
     }
 
     /**
-     * @return A `DimensionAccess` object for random access to dense columns, without any dimension limits or non-default options.
+     * @return A `DimensionAccess` object for random access to dense columns with default options.
      */
     std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column() const {
         return dense_column(IterationOptions<Index_>(), ExtractionOptions<Index_>());
@@ -150,14 +150,14 @@ public:
      ****************************************/
 public:
     /**
-     * @return A `DimensionAccess` object for random access to sparse rows, without any dimension limits or non-default options.
+     * @return A `DimensionAccess` object for random access to sparse rows with default options.
      */
     std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_row() const {
         return sparse_row(IterationOptions<Index_>(), ExtractionOptions<Index_>());
     }
 
     /**
-     * @return A `DimensionAccess` object for random access to sparse columns, without any dimension limits or non-default options.
+     * @return A `DimensionAccess` object for random access to sparse columns with default options.
      */
     std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_column() const {
         return sparse_column(IterationOptions<Index_>(), ExtractionOptions<Index_>());

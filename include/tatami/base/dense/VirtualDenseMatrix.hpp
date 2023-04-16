@@ -45,7 +45,7 @@ public:
 private:
     struct SparseWrapper : public SparseExtractor<Value_, Index_> {
         SparseWrapper(std::unique_ptr<DenseExtractor<Value_, Index_> > base) : internal(std::move(base)) {
-            this->extracted_limit = internal->extracted_limit;
+            this->extracted_selection = internal->extracted_selection;
             this->extracted_length = internal->extracted_length;
             this->extracted_block = internal->extracted_block;
         }
@@ -57,14 +57,14 @@ private:
         SparseRange<Value_, Index_> fetch(Index_ position, Value_* vbuffer, Index_* ibuffer) {
             const Value_* vout = (needs_value ? internal->fetch(position, vbuffer) : NULL);
             if (needs_index) {
-                switch (this->extracted_limit) {
-                    case DimensionLimitType::NONE: 
+                switch (this->extracted_selection) {
+                    case DimensionSelectionType::FULL: 
                         std::iota(ibuffer, ibuffer + this->extracted_length, static_cast<Index_>(0));
                         break;
-                    case DimensionLimitType::BLOCK: 
+                    case DimensionSelectionType::BLOCK: 
                         std::iota(ibuffer, ibuffer + this->extracted_length, static_cast<Index_>(this->extracted_block));
                         break;
-                    case DimensionLimitType::INDEX:
+                    case DimensionSelectionType::INDEX:
                         {
                             auto ptr = internal->extracted_index();
                             std::copy(ptr, ptr + this->extracted_length, ibuffer);

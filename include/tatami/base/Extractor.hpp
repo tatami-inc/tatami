@@ -37,29 +37,29 @@ protected:
 public:
     /**
      * Limit on the elements on the extraction dimension, when accessing a single element of the iteration dimension.
-     * For example, when extracting a particular row, a setting of `DimensionLimitType::NONE` indicates that entries were extracted across all columns for that row.
+     * For example, when extracting a particular row, a setting of `DimensionSelectionType::NONE` indicates that entries were extracted across all columns for that row.
      */
-    DimensionLimitType extracted_limit = DimensionLimitType::NONE;
+    DimensionSelectionType extracted_selection = DimensionSelectionType::FULL;
 
     /**
      * Number of extracted entries of a dimension element.
      * 
-     * - For `extracted_limit = DimensionLimitType::NONE`, this should be the total extent of the extraction dimension.
-     * - For `extracted_limit = DimensionLimitType::BLOCK`, this should be the size of the contiguous block along the extraction dimension.
-     * - For `extracted_limit = DimensionLimitType::INDEX`, this should be the number of indices for the extraction dimension.
+     * - For `extracted_selection = DimensionSelectionType::NONE`, this should be the total extent of the extraction dimension.
+     * - For `extracted_selection = DimensionSelectionType::BLOCK`, this should be the size of the contiguous block along the extraction dimension.
+     * - For `extracted_selection = DimensionSelectionType::INDEX`, this should be the number of indices for the extraction dimension.
      */
     Index_ extracted_length = 0;
 
     /**
      * Index of the start of the contiguous block of entries along the extraction dimension.
-     * Only relevant if `extracted_limit = DimensionLimitType::BLOCK`.
+     * Only relevant if `extracted_selection = DimensionSelectionType::BLOCK`.
      */
     Index_ extracted_block = 0;
 
     /**
      * @return Pointer to the start of an array of length `extracted_length`,
      * containing the sorted and unique entry indices along the extraction dimension.
-     * Only relevant if `extracted_limit = DimensionLimitType::INDEX`.
+     * Only relevant if `extracted_selection = DimensionSelectionType::INDEX`.
      */
     virtual const Index_* extracted_index() const = 0;
 };
