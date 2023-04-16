@@ -1,10 +1,11 @@
 #ifndef TATAMI_MATRIX_H
 #define TATAMI_MATRIX_H
 
-#include "ExtractFormat.hpp"
+#include "Extractor.hpp"
 #include "Options.hpp"
 #include <algorithm>
 #include <numeric>
+#include <memory>
 
 /**
  * @file Matrix.hpp
@@ -91,84 +92,40 @@ public:
      **************************************/
 public:
     /**
-     * @param row_limits Dimension limits on the rows.
-     * @param column_limits Dimension limits on the columns.
-     * @param options Further options for extraction.
+     * @param iopt Iteration options.
+     * @param eopt Extraction options.
      * 
      * @return A `DimensionAccess` object for random access to dense rows.
      */
-    virtual std::unique_ptr<DenseFormat<Value_, Index_> > dense_row(DimensionLimit<Index_> row_limits, DimensionLimit<Index_> column_limits, ExtractOptions options) const = 0;
+    virtual std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const = 0;
 
     /**
-     * @param row_limits Dimension limits on the rows.
-     * @param column_limits Dimension limits on the columns.
-     * @param options Further options for extraction.
+     * @param iopt Iteration options.
+     * @param eopt Extraction options.
      * 
      * @return A `DimensionAccess` object for random access to dense columns.
      */
-    virtual std::unique_ptr<DenseFormat<Value_, Index_> > dense_column(DimensionLimit<Index_> row_limits, DimensionLimit<Index_> column_limits, ExtractOptions options) const = 0;
+    virtual std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const = 0;
 
     /***************************************
      **** Sparse access virtual methods ****
      ***************************************/
 public:
     /**
-     * @param row_limits Dimension limits on the rows.
-     * @param column_limits Dimension limits on the columns.
-     * @param options Further options for extraction.
+     * @param iopt Iteration options.
+     * @param eopt Extraction options.
      * 
      * @return A `DimensionAccess` object for random access to sparse rows.
      */
-    virtual std::unique_ptr<SparseFormat<Value_, Index_> > sparse_row(DimensionLimit<Index_> row_limits, DimensionLimit<Index_> column_limits, ExtractOptions options) const = 0;
+    virtual std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const = 0;
 
     /**
-     * @param row_limits Dimension limits on the rows.
-     * @param column_limits Dimension limits on the columns.
-     * @param options Further options for extraction.
+     * @param iopt Iteration options.
+     * @param eopt Extraction options.
      * 
      * @return A `DimensionAccess` object for random access to sparse columns.
      */
-    virtual std::unique_ptr<SparseFormat<Value_, Index_> > sparse_column(DimensionLimit<Index_> row_limits, DimensionLimit<Index_> column_limits, ExtractOptions options) const = 0;
-
-    /***************************************
-     **** Dense access options overload ****
-     ***************************************/
-public:
-    /**
-     * @param options Options for extraction.
-     * @return A `DimensionAccess` object for random access to dense rows, without any dimension limits.
-     */
-    std::unique_ptr<DenseFormat<Value_, Index_> > dense_row(ExtractOptions options) const {
-        return dense_row(DimensionLimit<Index_>(), DimensionLimit<Index_>(), std::move(options));
-    }
-
-    /**
-     * @param options Options for extraction.
-     * @return A `DimensionAccess` object for random access to dense columns, without any dimension limits.
-     */
-    std::unique_ptr<DenseFormat<Value_, Index_> > dense_column(ExtractOptions options) const {
-        return dense_column(DimensionLimit<Index_>(), DimensionLimit<Index_>(), std::move(options));
-    }
-
-    /****************************************
-     **** Sparse access options overload ****
-     ****************************************/
-public:
-    /**
-     * @param options Options for extraction.
-     * @return A `DimensionAccess` object for random access to sparse rows, without any dimension limits.
-     */
-    std::unique_ptr<SparseFormat<Value_, Index_> > sparse_row(ExtractOptions options) const {
-        return sparse_row(DimensionLimit<Index_>(), DimensionLimit<Index_>(), std::move(options));
-    }
-
-    /**
-     * @param options Options for extraction.
-     * @return A `DimensionAccess` object for random access to sparse columns, without any dimension limits.
-     */
-    std::unique_ptr<SparseFormat<Value_, Index_> > sparse_column(ExtractOptions options) const {
-        return sparse_column(DimensionLimit<Index_>(), DimensionLimit<Index_>(), std::move(options));
-    }
+    virtual std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const = 0;
 
     /***************************************
      **** Dense access default overload ****
@@ -177,15 +134,15 @@ public:
     /**
      * @return A `DimensionAccess` object for random access to dense rows, without any dimension limits or non-default options.
      */
-    std::unique_ptr<DenseFormat<Value_, Index_> > dense_row() const {
-        return dense_row(ExtractOptions());
+    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row() const {
+        return dense_row(IterationOptions<Index_>(), ExtractionOptions<Index_>());
     }
 
     /**
      * @return A `DimensionAccess` object for random access to dense columns, without any dimension limits or non-default options.
      */
-    std::unique_ptr<DenseFormat<Value_, Index_> > dense_column() const {
-        return dense_column(ExtractOptions());
+    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column() const {
+        return dense_column(IterationOptions<Index_>(), ExtractionOptions<Index_>());
     }
 
     /****************************************
@@ -195,15 +152,15 @@ public:
     /**
      * @return A `DimensionAccess` object for random access to sparse rows, without any dimension limits or non-default options.
      */
-    std::unique_ptr<SparseFormat<Value_, Index_> > sparse_row() const {
-        return sparse_row(ExtractOptions());
+    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_row() const {
+        return sparse_row(IterationOptions<Index_>(), ExtractionOptions<Index_>());
     }
 
     /**
      * @return A `DimensionAccess` object for random access to sparse columns, without any dimension limits or non-default options.
      */
-    std::unique_ptr<SparseFormat<Value_, Index_> > sparse_column() const {
-        return sparse_column(ExtractOptions());
+    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_column() const {
+        return sparse_column(IterationOptions<Index_>(), ExtractionOptions<Index_>());
     }
 };
 

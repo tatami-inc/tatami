@@ -1,7 +1,7 @@
 #ifndef TATAMI_VIRTUAL_DENSE_MATRIX_H
 #define TATAMI_VIRTUAL_DENSE_MATRIX_H
 
-#include "../ExtractFormat.hpp"
+#include "../Extractor.hpp"
 #include "../SparseRange.hpp"
 #include "../Options.hpp"
 #include "../Matrix.hpp"
@@ -43,15 +43,19 @@ public:
     bool sparse() const { return false; }
 
 private:
-    struct SparseWrapper : public SparseFormat<Value_, Index_> {
-        SparseWrapper(std::unique_ptr<DenseFormat<Value_, Index_> > base) : internal(std::move(base)) {
+    struct SparseWrapper : public SparseExtractor<Value_, Index_> {
+        SparseWrapper(std::unique_ptr<DenseExtractor<Value_, Index_> > base) : internal(std::move(base)) {
             this->extracted_limit = internal->extracted_limit;
             this->extracted_length = internal->extracted_length;
             this->extracted_block = internal->extracted_block;
         }
 
-        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            const Value_* vout = (needs_value ? internal->fetch(i, vbuffer) : NULL);
+        const Index_* extracted_index() const {
+            return internal->extracted_index();
+        }
+
+        SparseRange<Value_, Index_> fetch(Index_ position, Value_* vbuffer, Index_* ibuffer) {
+            const Value_* vout = (needs_value ? internal->fetch(position, vbuffer) : NULL);
             if (needs_index) {
                 switch (this->extracted_limit) {
                     case DimensionLimitType::NONE: 
@@ -73,22 +77,18 @@ private:
             return SparseRange<Value_, Index_>(this->extracted_length, vout, ibuffer);
         }
 
-        const Index_* extracted_index() const {
-            return internal->extracted_index();
-        }
-
         bool needs_value = false;
         bool needs_index = false;
-        std::unique_ptr<DenseFormat<Value_, Index_> > internal;
+        std::unique_ptr<DenseExtractor<Value_, Index_> > internal;
     };
 
     template<bool accrow_>
-    std::unique_ptr<SparseFormat<Value_, Index_> > populate(DimensionLimit<Index_> row_limits, DimensionLimit<Index_> column_limits, ExtractOptions options) const {
-        bool needs_index = options.sparse_extract_index;
-        bool needs_value = options.sparse_extract_value;
+    std::unique_ptr<SparseExtractor<Value_, Index_> > populate(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
+        bool needs_index = eopt.sparse_extract_index;
+        bool needs_value = eopt.sparse_extract_value;
 
-        auto ptr = new SparseWrapper(new_extractor<accrow_, false>(this, std::move(row_limits), std::move(column_limits), std::move(options)));
-        std::unique_ptr<SparseFormat<Value_, Index_> > output(ptr);
+        auto ptr = new SparseWrapper(new_extractor<accrow_, false>(this, std::move(iopt), std::move(eopt)));
+        std::unique_ptr<SparseExtractor<Value_, Index_> > output(ptr);
 
         ptr->needs_index = needs_index;
         ptr->needs_value = needs_value;
@@ -96,12 +96,12 @@ private:
     }
 
 public:
-    std::unique_ptr<SparseFormat<Value_, Index_> > sparse_row(DimensionLimit<Index_> row_limits, DimensionLimit<Index_> column_limits, ExtractOptions options) const {
-        return populate<true>(std::move(row_limits), std::move(column_limits), std::move(options));
+    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
+        return populate<true>(std::move(iopt), std::move(eopt));
     }
 
-    std::unique_ptr<SparseFormat<Value_, Index_> > sparse_column(DimensionLimit<Index_> row_limits, DimensionLimit<Index_> column_limits, ExtractOptions options) const {
-        return populate<false>(std::move(row_limits), std::move(column_limits), std::move(options));
+    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
+        return populate<false>(std::move(iopt), std::move(eopt));
     }
 };
 

@@ -3,42 +3,37 @@
 #include "utils.h"
 #include <type_traits>
 
-using tatami::DimensionLimit;
-using tatami::ExtractOptions;
-
 template<class Matrix, class Matrix2, class Function1, class Function2>
-void test_simple_column_access_base(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, Function1 expector, Function2 sparse_expand, const DimensionLimit<int>& rlimits) {
-    size_t NR = ptr->nrow();
+void test_simple_column_access_base(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, Function1 expector, Function2 sparse_expand, ExtractionOptions ropt) {
+    int NR = ptr->nrow();
     ASSERT_EQ(NR, ref->nrow());
-    size_t NC = ptr->ncol();
+    int NC = ptr->ncol();
     ASSERT_EQ(NC, ref->ncol());
 
-    ExtractOptions opt;
-    if (!forward) {
-        opt.access_order = tatami::AccessOrder::RANDOM;
-    }
+    IterationOptions copt;
+    std::vector<int> indices;
+    set_access_order(copt, indices, NC, forward, jump);
 
-    DimensionLimit<int> climits;
-    auto pwork = ptr->dense_column(rlimits, climits, opt);
-    auto swork = ptr->sparse_column(rlimits, climits, opt);
+    auto pwork = ptr->dense_column(copt, ropt);
+    auto swork = ptr->sparse_column(copt, ropt);
 
-    opt.sparse_ordered_index = false;
-    auto swork_uns = ptr->sparse_column(rlimits, climits, opt);
-    opt.sparse_ordered_index = true;
+    ropt.sparse_ordered_index = false;
+    auto swork_uns = ptr->sparse_column(copt, ropt);
+    ropt.sparse_ordered_index = true;
 
-    opt.sparse_extract_index = false;
-    auto swork_v = ptr->sparse_column(rlimits, climits, opt);
-    opt.sparse_extract_value = false;
-    auto swork_n = ptr->sparse_column(rlimits, climits, opt);
-    opt.sparse_extract_index = true;
-    auto swork_i = ptr->sparse_column(rlimits, climits, opt);
-    opt.sparse_extract_value = true;
+    ropt.sparse_extract_index = false;
+    auto swork_v = ptr->sparse_column(copt, ropt);
+    ropt.sparse_extract_value = false;
+    auto swork_n = ptr->sparse_column(copt, ropt);
+    ropt.sparse_extract_index = true;
+    auto swork_i = ptr->sparse_column(copt, ropt);
+    ropt.sparse_extract_value = true;
 
-    opt.cache_for_reuse = true;
-    auto cwork = ptr->dense_column(rlimits, climits, opt); 
+    copt.cache_for_reuse = true;
+    auto cwork = ptr->dense_column(copt, ropt); 
 
-    for (size_t i = 0; i < NC; i += jump) {
-        size_t c = (forward ? i : NC - i - 1);
+    for (int i = 0; i < NC; i += jump) {
+        int c = (forward ? i : NC - i - 1);
 
         auto expected = expector(c);
         {
@@ -79,8 +74,8 @@ void test_simple_column_access_base(const Matrix* ptr, const Matrix2* ref, bool 
     }
 
     // Check that the caching gives the same results as uncached pass.
-    for (size_t i = 0; i < NC; i += jump) {
-        size_t c = (forward ? i : NC - i - 1);
+    for (int i = 0; i < NC; i += jump) {
+        int c = (forward ? i : NC - i - 1);
         auto expected = pwork->fetch(c);
         auto observed = cwork->fetch(c);
         EXPECT_EQ(expected, observed);
@@ -88,12 +83,12 @@ void test_simple_column_access_base(const Matrix* ptr, const Matrix2* ref, bool 
 }
 
 template<class Matrix, class Matrix2>
-void test_simple_column_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump) {
-    size_t NR = ref->nrow();
+void test_simple_column_access(const Matrix* ptr, const Matrix2* ref, bool forward, int jump) {
+    int NR = ref->nrow();
 
     auto rwork = ref->dense_column();
     test_simple_column_access_base(ptr, ref, forward, jump, 
-        [&](size_t c) -> auto { 
+        [&](int c) -> auto { 
             auto expected = rwork->fetch(c);
             EXPECT_EQ(expected.size(), NR);
             return expected;
@@ -101,7 +96,7 @@ void test_simple_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
         [&](const auto& range) -> auto {
             return expand(range, NR);
         },
-        DimensionLimit<int>()
+        ExtractionOptions()
     );
 
     // Checking that properties are correctly passed down.
@@ -115,15 +110,15 @@ void test_simple_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
 }
 
 template<class Matrix, class Matrix2>
-void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, size_t start, size_t end) {
-    DimensionLimit<int> rsub;
-    rsub.type = tatami::DimensionLimitType::BLOCK;
-    rsub.block_start = start;
-    rsub.block_length = end - start;
+void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, int start, int end) {
+    ExtractionOptions rsub;
+    rsub.limit.type = tatami::DimensionLimitType::BLOCK;
+    rsub.limit.block_start = start;
+    rsub.limit.block_length = end - start;
 
     auto rwork = ref->dense_column();
     test_simple_column_access_base(ptr, ref, forward, jump, 
-        [&](size_t c) -> auto { 
+        [&](int c) -> auto { 
             auto raw_expected = rwork->fetch(c);
             return std::vector<typename Matrix::value_type>(raw_expected.begin() + start, raw_expected.begin() + end);
         }, 
@@ -134,20 +129,20 @@ void test_sliced_column_access(const Matrix* ptr, const Matrix2* ref, bool forwa
     );
 
     // Checking that properties are correctly passed down.
-    auto pwork = ptr->dense_column(rsub, DimensionLimit<int>(), ExtractOptions());
+    auto pwork = ptr->dense_column(IterationOptions(), rsub);
     EXPECT_EQ(pwork->extracted_limit, tatami::DimensionLimitType::BLOCK);
     EXPECT_EQ(pwork->extracted_block, start);
     EXPECT_EQ(pwork->extracted_length, end - start);
 
-    auto swork = ptr->sparse_column(rsub, DimensionLimit<int>(), ExtractOptions());
+    auto swork = ptr->sparse_column(IterationOptions(), rsub);
     EXPECT_EQ(swork->extracted_limit, tatami::DimensionLimitType::BLOCK);
     EXPECT_EQ(swork->extracted_block, start);
     EXPECT_EQ(swork->extracted_length, end - start);
 }
 
 template<class Matrix, class Matrix2>
-void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, size_t start, size_t step) {
-    size_t NR = ref->nrow();
+void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, int start, int step) {
+    int NR = ref->nrow();
     std::vector<int> indices;
     {
         int counter = start;
@@ -159,14 +154,14 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
 
     // First trying with the index pointers.
     {
-        DimensionLimit<int> rsub;
-        rsub.type = tatami::DimensionLimitType::INDEX;
-        rsub.index_length = indices.size();
-        rsub.index_start = indices.data();
+        ExtractionOptions rsub;
+        rsub.limit.type = tatami::DimensionLimitType::INDEX;
+        rsub.limit.index_length = indices.size();
+        rsub.limit.index_start = indices.data();
 
         auto rwork = ref->dense_column();
         test_simple_column_access_base(ptr, ref, forward, jump, 
-            [&](size_t c) -> auto { 
+            [&](int c) -> auto { 
                 auto raw_expected = rwork->fetch(c);
                 std::vector<typename Matrix::value_type> expected;
                 expected.reserve(indices.size());
@@ -188,12 +183,12 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
         );
 
         // Checking that properties are correctly passed down.
-        auto pwork = ptr->dense_column(rsub, DimensionLimit<int>(), ExtractOptions());
+        auto pwork = ptr->dense_column(IterationOptions(), rsub);
         EXPECT_EQ(pwork->extracted_limit, tatami::DimensionLimitType::INDEX);
         EXPECT_EQ(pwork->extracted_index(), indices.data());
         EXPECT_EQ(pwork->extracted_length, indices.size());
 
-        auto swork = ptr->sparse_column(rsub, DimensionLimit<int>(), ExtractOptions());
+        auto swork = ptr->sparse_column(IterationOptions(), rsub);
         EXPECT_EQ(swork->extracted_limit, tatami::DimensionLimitType::INDEX);
         EXPECT_EQ(swork->extracted_index(), indices.data());
         EXPECT_EQ(swork->extracted_length, indices.size());
@@ -201,13 +196,13 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
 
     // Now trying with full indices.
     {
-        DimensionLimit<int> rsub;
-        rsub.type = tatami::DimensionLimitType::INDEX;
-        rsub.indices = indices;
+        ExtractionOptions rsub;
+        rsub.limit.type = tatami::DimensionLimitType::INDEX;
+        rsub.limit.indices = indices;
 
         auto rwork = ref->dense_column();
         test_simple_column_access_base(ptr, ref, forward, jump, 
-            [&](size_t c) -> auto { 
+            [&](int c) -> auto { 
                 auto raw_expected = rwork->fetch(c);
                 std::vector<typename Matrix::value_type> expected;
                 expected.reserve(indices.size());
@@ -229,12 +224,12 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
         );
 
         // Checking that properties are correctly passed down.
-        auto pwork = ptr->dense_column(rsub, DimensionLimit<int>(), ExtractOptions());
+        auto pwork = ptr->dense_column(IterationOptions(), rsub);
         EXPECT_EQ(pwork->extracted_limit, tatami::DimensionLimitType::INDEX);
         EXPECT_EQ(pwork->extracted_length, indices.size());
         EXPECT_EQ(std::vector<int>(pwork->extracted_index(), pwork->extracted_index() + pwork->extracted_length), indices);
 
-        auto swork = ptr->sparse_column(rsub, DimensionLimit<int>(), ExtractOptions());
+        auto swork = ptr->sparse_column(IterationOptions(), rsub);
         EXPECT_EQ(swork->extracted_limit, tatami::DimensionLimitType::INDEX);
         EXPECT_EQ(swork->extracted_length, indices.size());
         EXPECT_EQ(std::vector<int>(swork->extracted_index(), swork->extracted_index() + swork->extracted_length), indices);

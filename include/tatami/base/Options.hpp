@@ -45,38 +45,84 @@ struct DimensionLimit {
     /**
      * Pointer to an array containing sorted and unique indices for dimension elements.
      * Only relevant if `type = DimensionLimitType::INDEX`.
-     * This is intended for use by `Matrix` developers where the array is guaranteed to outlive the `DimensionLimits` object.
+     * This is intended for use by `Matrix` developers where the array is guaranteed to outlive the `DimensionLimit` object.
      */
     const Index_* index_start = NULL;
 
     /**
      * Length of the array pointed to by `index_start`.
-     * Only relevant if `type = DimensionLimitType::INDEX`.
+     * Only relevant if `type = DimensionLimitType::INDEX` and `index_start != NULL`.
      */
     Index_ index_length = 0;
 
     /**
      * Vector containing sorted and unique indices for dimension elements.
      * Only used if `type = DimensionLimitType::INDEX` and `index_start = NULL`.
-     *
-     * This is provided to allow callers to transfer ownership of the array.
-     * Users should use `indices` rather than set `index_start` to avoid problems with invalidation of the latter.
+     * This is provided to allow callers to transfer ownership of the array, if `index_start` would otherwise be pointing to a temporary array.
      */
     std::vector<Index_> indices;
 };
 
 /**
- * Access pattern for the elements of a matrix dimension.
- * This can be sorted (i.e., non-decreasing) or random.
- */
-enum class AccessOrder : char { SORTED, RANDOM };
-
-/**
- * @brief Options for data extraction.
+ * Access pattern for the elements of the iteration dimension.
  * 
- * Specify how the data is to be extracted.
+ * - `CONSECUTIVE`: consecutive elements are accessed.
+ *   This is the most typical iteration strategy through a matrix and likely to be the most efficient for `Matrix` implementations.
+ * - `SEQUENCE`: elements are accessed in an _a priori_ known sequence.
+ *   The sequence itself should be available in `IterationOptions` to enable pre-fetching of the (not necessarily consecutive) next elements by `Matrix` implementations.
+ * - `RANDOM`: elements are accessed in a random sequence.
+ *   This allows `Matrix` implementations to dispense with any pre-fetching or caching.
  */
-struct ExtractOptions {
+enum class AccessOrder : char { CONSECUTIVE, SEQUENCE, RANDOM };
+
+template<typename Index_>
+struct IterationOptions {
+    /**
+     * Limits on the elements to be accessed in the iteration dimension.
+     */
+    DimensionLimit<Index_> limit;
+
+    /** 
+     * Whether to cache information from every call to `DenseFormat::fetch()` or `SparseFormat::fetch()`.
+     * Specifically, this refers to intermediate element-specific values that can be re-used if the same dimension element is requested in a subsequent call.
+     * This may enable faster iteration if the same `ExtractFormat` object is re-used for multiple passes over the same matrix.
+     */
+    bool cache_for_reuse = false;
+
+   /**
+     * Expected access order of elements on the iteration dimension.
+     * This may be used by implementations to optimize their extraction.
+     */
+    AccessOrder access_order = AccessOrder::CONSECUTIVE;
+
+    /**
+     * Pointer to an array containing the indices of elements to access. 
+     * Only relevant if `access_order = AccessOrder::SEQUENCE`.
+     * This is intended for use by `Matrix` developers where the array is guaranteed to outlive the `IterationOptions` object.
+     */
+    const Index_* sequence_start = NULL;
+
+    /**
+     * Length of the array pointed to by `index_start`.
+     * Only relevant if `access_order = AccessOrder::SEQUENCE` and `sequence_start != NULL`.
+     */
+    Index_ sequence_length = 0;
+
+    /**
+     * Vector containing the sequence of indices for elements on the iteration dimension.
+     * Only relevant if `access_order = AccessOrder::SEQUENCE` and `sequence_start != NULL`.
+     * This is provided to allow callers to transfer ownership of the array, if `sequence_start` would otherwise be pointing to a temporary array.
+     */
+    std::vector<Index_> sequence;
+};
+
+template<typename Index_>
+struct ExtractionOptions {
+    /**
+     * Limits on the elements to be accessed in the extraction dimension.
+     */
+    DimensionLimit<Index_> limit;
+
     /** 
      * Whether to extract the sparse indices.
      * If set to `false`, this can be used to avoid unnecessary computation and copying in `Matrix` methods.
@@ -97,24 +143,6 @@ struct ExtractOptions {
      * Only used in the sparse `DimensionAccess` classes.
      */
     bool sparse_ordered_index = true;
-
-    /** 
-     * Whether to cache information from every call to `DimensionAccess::fetch()`.
-     * Specifically, this refers to intermediate element-specific values that can be re-used if the same dimension element is requested in a subsequent call.
-     * This may enable faster iteration if the same `DimensionAccess` object is re-used for multiple passes over the same matrix.
-     */
-    bool cache_for_reuse = false;
-
-    /**
-     * Expected access order of dimension elements.
-     * This may be used by implementations to optimize their extraction.
-     *
-     * If set to `SORTED`, successive calls to `SparseFormat::fetch()` or `DenseFormat::fetch()` should have non-decreasing `i`.
-     * Any call with a lower `i` can be assumed to restart iteration from an earlier element in the dimension.
-     *
-     * If set to `RANDOM`, successive calls to `SparseFormat::fetch()` or `DenseFormat::fetch()` may have any `i`.
-     */
-    AccessOrder access_order = AccessOrder::SORTED;
 };
 
 }

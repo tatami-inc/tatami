@@ -78,29 +78,32 @@ public:
 
 private:
     template<bool accrow_>
-    struct DenseBase : public DenseFormat<Value_, Index_> {
-        DenseBase(const DenseMatrix* p, DimensionLimit<Index_> non_target) : parent(p) {
-            this->extracted_limit = non_target.type;
+    struct DenseBase : public DenseExtractor<Value_, Index_> {
+        DenseBase(const DenseMatrix* p, ExtractionOptions<Index_> non_target) : parent(p) {
+            this->extracted_limit = non_target.limit.type;
             switch (this->extracted_limit) {
                 case DimensionLimitType::NONE:
                     this->extracted_length = (accrow_ ? p->ncols : p->nrows);
                     break;
                 case DimensionLimitType::BLOCK:
-                    this->extracted_length = non_target.block_length;
-                    this->extracted_block = non_target.block_start;
+                    this->extracted_length = non_target.limit.block_length;
+                    this->extracted_block = non_target.limit.block_start;
                     break;
                 case DimensionLimitType::INDEX:
-                    if (non_target.index_start) {
-                        this->extracted_length = non_target.index_length;
-                        this->extracted_index_internal = non_target.index_start;
+                    if (non_target.limit.index_start) {
+                        this->extracted_length = non_target.limit.index_length;
+                        this->extracted_index_internal = non_target.limit.index_start;
                     } else {
-                        this->extracted_length = non_target.indices.size();
-                        this->extracted_indices = std::move(non_target.indices);
+                        this->extracted_length = non_target.limit.indices.size();
+                        this->extracted_indices = std::move(non_target.limit.indices);
                     }
                     break;
             }
         }
 
+    public:
+        const Index_* extracted_index() const { return extracted_index_0(); }
+        
         const Value_* fetch(Index_ position, Value_* buffer) {
             if constexpr(row_ == accrow_) {
                 switch (this->extracted_limit) {
@@ -130,10 +133,10 @@ private:
             }
         }
 
+    private:
         const Index_* extracted_index_internal = NULL;
         std::vector<Index_> extracted_indices;
         const Index_* extracted_index_0() const { return (extracted_index_internal ? extracted_index_internal : extracted_indices.data()); }
-        const Index_* extracted_index() const { return extracted_index_0(); }
 
         const DenseMatrix* parent;
     };
@@ -188,12 +191,12 @@ private:
     }
 
 public:
-    std::unique_ptr<DenseFormat<Value_, Index_> > dense_row(DimensionLimit<Index_> row_limits, DimensionLimit<Index_> column_limits, ExtractOptions options) const {
-        return std::unique_ptr<DenseFormat<Value_, Index_> >(new DenseBase<true>(this, std::move(column_limits)));
+    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row(IterationOptions<Index_>, ExtractionOptions<Index_> eopt) const {
+        return std::unique_ptr<DenseExtractor<Value_, Index_> >(new DenseBase<true>(this, std::move(eopt)));
     }
 
-    std::unique_ptr<DenseFormat<Value_, Index_> > dense_column(DimensionLimit<Index_> row_limits, DimensionLimit<Index_> column_limits, ExtractOptions options) const {
-        return std::unique_ptr<DenseFormat<Value_, Index_> >(new DenseBase<false>(this, std::move(row_limits)));
+    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column(IterationOptions<Index_>, ExtractionOptions<Index_> eopt) const {
+        return std::unique_ptr<DenseExtractor<Value_, Index_> >(new DenseBase<false>(this, std::move(eopt)));
     }
 };
 
