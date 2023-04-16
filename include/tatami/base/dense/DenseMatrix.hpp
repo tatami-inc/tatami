@@ -57,7 +57,7 @@ private:
     Index_ nrows, ncols;
     Storage_ values;
 
-    static bool check_dimensions(size_t nr, size_t nc, size_t expected) {
+    static bool check_dimensions(size_t nr, size_t nc, size_t expected) { // cast to size_t is deliberate to avoid overflow on Index_ on product.
         if (nr * nc != expected) {
             throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
         }
@@ -80,32 +80,13 @@ public:
 
 private:
     template<bool accrow_>
-    struct DenseBase : public DenseExtractor<Value_, Index_> {
-        DenseBase(const DenseMatrix* p, ExtractionOptions<Index_> non_target) : parent(p) {
-            this->extracted_selection = non_target.selection.type;
-            switch (this->extracted_selection) {
-                case DimensionSelectionType::FULL:
-                    this->extracted_length = (accrow_ ? p->ncols : p->nrows);
-                    break;
-                case DimensionSelectionType::BLOCK:
-                    this->extracted_length = non_target.selection.block_length;
-                    this->extracted_block = non_target.selection.block_start;
-                    break;
-                case DimensionSelectionType::INDEX:
-                    if (non_target.selection.index_start) {
-                        this->extracted_length = non_target.selection.index_length;
-                        this->extracted_index_internal = non_target.selection.index_start;
-                    } else {
-                        this->extracted_length = non_target.selection.indices.size();
-                        this->extracted_indices = std::move(non_target.selection.indices);
-                    }
-                    break;
-            }
-        }
+    struct DenseBase : public StandardExtractor<accrow_, false, Value_, Index_> {
+        DenseBase(const DenseMatrix* p, ExtractionOptions<Index_>& non_target) : 
+            StandardExtractor<accrow_, false, Value_, Index_>(p, non_target), // (note: potentially invalidates non_target.selections.indices)
+            parent(p)
+        {}
 
     public:
-        const Index_* extracted_index() const { return extracted_index_0(); }
-        
         const Value_* fetch(Index_ position, Value_* buffer) {
             if constexpr(row_ == accrow_) {
                 switch (this->extracted_selection) {
@@ -116,7 +97,7 @@ private:
                         return parent->primary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
                         break;
                     case DimensionSelectionType::INDEX:
-                        return parent->primary<accrow_>(position, buffer, this->extracted_index_0(), this->extracted_length);
+                        return parent->primary<accrow_>(position, buffer, this->quick_extracted_index(), this->extracted_length);
                         break;
                 }
             } else {
@@ -128,7 +109,7 @@ private:
                         parent->secondary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
                         break;
                     case DimensionSelectionType::INDEX:
-                        parent->secondary<accrow_>(position, buffer, this->extracted_index_0(), this->extracted_length);
+                        parent->secondary<accrow_>(position, buffer, this->quick_extracted_index(), this->extracted_length);
                         break;
                 }
                 return buffer;
@@ -136,10 +117,6 @@ private:
         }
 
     private:
-        const Index_* extracted_index_internal = NULL;
-        std::vector<Index_> extracted_indices;
-        const Index_* extracted_index_0() const { return (extracted_index_internal ? extracted_index_internal : extracted_indices.data()); }
-
         const DenseMatrix* parent;
     };
 
@@ -194,11 +171,11 @@ private:
 
 public:
     std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row(IterationOptions<Index_>, ExtractionOptions<Index_> eopt) const {
-        return std::unique_ptr<DenseExtractor<Value_, Index_> >(new DenseBase<true>(this, std::move(eopt)));
+        return std::unique_ptr<DenseExtractor<Value_, Index_> >(new DenseBase<true>(this, eopt));
     }
 
     std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column(IterationOptions<Index_>, ExtractionOptions<Index_> eopt) const {
-        return std::unique_ptr<DenseExtractor<Value_, Index_> >(new DenseBase<false>(this, std::move(eopt)));
+        return std::unique_ptr<DenseExtractor<Value_, Index_> >(new DenseBase<false>(this, eopt));
     }
 };
 

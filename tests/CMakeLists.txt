@@ -15,7 +15,7 @@ add_executable(
     libtest 
 
     src/base/DenseMatrix.cpp
-#    src/base/CompressedSparseMatrix.cpp
+    src/base/CompressedSparseMatrix.cpp
 #    src/base/DelayedBind.cpp
 #    src/base/DelayedSubset.cpp
 #    src/base/DelayedSubsetBlock.cpp

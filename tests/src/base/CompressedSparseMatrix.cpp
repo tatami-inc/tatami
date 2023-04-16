@@ -3,7 +3,8 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/base/sparse/CompressedSparseMatrix.hpp"
 #include "tatami/base/arith_scalar_helpers.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
@@ -23,8 +24,8 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
 
     // Comparing access for an empty matrix.
     tatami::DenseColumnMatrix<double, int> dense(10, 20, std::vector<double>(200));
-    test_simple_column_access(&mat, &dense);
-    test_simple_row_access(&mat, &dense);
+    test_simple_column_access(&mat, &dense, true, 1);
+    test_simple_row_access(&mat, &dense, true, 1);
 }
 
 /*************************************
@@ -107,19 +108,19 @@ TEST_P(SparseFullAccessTest, Details) {
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
 
-    auto work_row = sparse_row->sparse_column_workspace();
+    auto work_row = sparse_row->sparse_column();
     auto fetch_offsets = [](const auto* ptr) -> std::vector<size_t> {
-        return dynamic_cast<const tatami::CompressedSparseRowMatrix<double, int>::CompressedSparseSecondarySparseWorkspace*>(ptr)->core.current_indptrs;
+        return dynamic_cast<const tatami::CompressedSparseRowMatrix<double, int>::SSE*>(ptr)->work.current_indptrs;
     };
-    auto work_col = sparse_column->sparse_column_workspace();
-    auto work_row2 = sparse_row->sparse_column_workspace();
+    auto work_col = sparse_column->sparse_column();
+    auto work_row2 = sparse_row->sparse_column();
 
     for (size_t i = 0; i < NC; i += JUMP) {
         size_t c = (FORWARD ? i : NC - i - 1);
 
         // Checking that CSR extraction actually has an effect on the latest indptrs.
         std::vector<size_t> old_offsets = fetch_offsets(work_row.get());
-        sparse_row->column(c, work_row.get());
+        work_row->fetch(c);
         std::vector<size_t> new_offsets = fetch_offsets(work_row.get());
 
         if (!FORWARD || c != 0) {
@@ -130,12 +131,12 @@ TEST_P(SparseFullAccessTest, Details) {
         std::vector<double> outval(sparse_column->nrow());
         std::vector<int> outidx(sparse_column->nrow());
 
-        auto x = sparse_column->column(c, outval.data(), outidx.data(), work_col.get());
+        auto x = work_col->fetch(c, outval.data(), outidx.data());
         EXPECT_TRUE(x.number < NR);
         EXPECT_FALSE(outval.data()==x.value); // points to internal data.
         EXPECT_FALSE(outidx.data()==x.index);
 
-        auto y = sparse_row->column(c, outval.data(), outidx.data(), work_row2.get());
+        auto y = work_row2->fetch(c, outval.data(), outidx.data());
         EXPECT_TRUE(y.number < NR);
         EXPECT_TRUE(outval.data()==y.value); // points to buffer.
         EXPECT_TRUE(outidx.data()==y.index);

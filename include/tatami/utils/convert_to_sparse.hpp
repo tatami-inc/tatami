@@ -1,7 +1,7 @@
 #ifndef TATAMI_CONVERT_TO_SPARSE_H
 #define TATAMI_CONVERT_TO_SPARSE_H
 
-#include "../base/CompressedSparseMatrix.hpp"
+#include "../base/sparse/CompressedSparseMatrix.hpp"
 
 #include <memory>
 #include <vector>
@@ -16,59 +16,51 @@
 namespace tatami {
 
 /**
- * @tparam row Whether to return a compressed sparse row matrix.
- * @tparam DataInterface Type of data values in the output interface.
- * @tparam IndexInterface Integer type for the indices in the output interface.
- * @tparam DataStore Type of data values to be stored in the output.
- * @tparam IndexStore Integer type for storing the indices in the output. 
- * @tparam MatrixIn Input matrix class, most typically a `tatami::Matrix`.
+ * @tparam row_ Whether to return a compressed sparse row matrix.
+ * @tparam Value_ Type of data values in the output interface.
+ * @tparam Index_ Integer type for the indices in the output interface.
+ * @tparam StoredValue_ Type of data values to be stored in the output.
+ * @tparam StoredIndex_ Integer type for storing the indices in the output. 
+ * @tparam InputMatrix_ Input matrix class, most typically a `tatami::Matrix`.
  *
  * @param incoming Pointer to a `tatami::Matrix`, possibly containing delayed operations.
  * @param reserve The expected density of non-zero values in `incoming`.
  * A slight overestimate will avoid reallocation of the temporary vectors.
  *
  * @return A pointer to a new `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
- * If `row = true`, the matrix is compressed sparse row, otherwise it is compressed sparse column.
+ * If `row_ = true`, the matrix is compressed sparse row, otherwise it is compressed sparse column.
  */
-template <bool row, 
-    typename DataInterface = double,
-    typename IndexInterface = int,
-    typename DataStore = DataInterface,
-    typename IndexStore = IndexInterface,
-    class MatrixIn
+template <bool row_, 
+    typename Value_ = double,
+    typename Index_ = int,
+    typename StoredValue_ = Value_,
+    typename StoredIndex_ = Index_,
+    class InputMatrix_
 >
-inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse(const MatrixIn* incoming, double reserve = 0.1) {
-    size_t NR = incoming->nrow();
-    size_t NC = incoming->ncol();
-    size_t primary = (row ? NR : NC);
-    size_t secondary = (row ? NC : NR);
+inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMatrix_* incoming, double reserve = 0.1) {
+    Index_ NR = incoming->nrow();
+    Index_ NC = incoming->ncol();
+    Index_ primary = (row_ ? NR : NC);
+    Index_ secondary = (row_ ? NC : NR);
 
-    std::vector<DataStore> output_v;
-    std::vector<IndexStore> output_i;
+    std::vector<StoredValue_> output_v;
+    std::vector<StoredIndex_> output_i;
     std::vector<size_t> indptrs(primary + 1);
 
-    typedef typename MatrixIn::data_type DataIn; 
-    typedef typename MatrixIn::index_type IndexIn; 
-    WorkspaceOptions opt;
+    typedef typename InputMatrix_::value_type InputData_; 
+    typedef typename InputMatrix_::index_type InputIndex_; 
 
-    if (row == incoming->prefer_rows()) {
-        size_t reservation = static_cast<double>(NR * NC) * reserve;
+    if (row_ == incoming->prefer_rows()) {
+        size_t reservation = static_cast<double>(NR) * static_cast<double>(NC) * reserve;
         output_v.reserve(reservation);
         output_i.reserve(reservation);
-        std::vector<DataIn> buffer_v(secondary);
+        std::vector<InputData_> buffer_v(secondary);
 
         if (incoming->sparse()) {
-            std::vector<IndexIn> buffer_i(secondary);
-            auto wrk = new_workspace<row, true>(incoming);
-
+            std::vector<InputIndex_> buffer_i(secondary);
+            auto wrk = new_extractor<row_, true>(incoming);
             for (size_t p = 0; p < primary; ++p) {
-                SparseRange<DataIn, IndexIn> range;
-                if constexpr(row) {
-                    range = incoming->row(p, buffer_v.data(), buffer_i.data(), wrk.get());
-                } else {
-                    range = incoming->column(p, buffer_v.data(), buffer_i.data(), wrk.get());
-                }
-
+                auto range = wrk->fetch(p, buffer_v.data(), buffer_i.data());
                 for (size_t i = 0; i < range.number; ++i, ++range.value, ++range.index) {
                     if (*range.value) {
                         output_v.push_back(*range.value);
@@ -79,18 +71,12 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
             }
 
         } else {
-            auto wrk = new_workspace<row, false>(incoming);
+            auto wrk = new_extractor<row_, false>(incoming);
 
             // Special conversion from dense to save ourselves from having to make
             // indices that we aren't really interested in.
             for (size_t p = 0; p < primary; ++p) {
-                const DataIn* ptr;
-                if constexpr(row) {
-                    ptr = incoming->row(p, buffer_v.data(), wrk.get());
-                } else {
-                    ptr = incoming->column(p, buffer_v.data(), wrk.get());
-                }
-
+                auto ptr = wrk->fetch(p, buffer_v.data());
                 for (size_t s = 0; s < secondary; ++s, ++ptr) {
                     if (*ptr) {
                         output_v.push_back(*ptr);
@@ -107,27 +93,20 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
         // non-preferred dim; it is thus cheaper to do cache-unfriendly inserts
         // into the output buffer. In this case, there's not much choice but to
         // make extensible vectors for each primary dimension.
-        std::vector<std::vector<DataStore> > store_v(primary);
-        std::vector<std::vector<DataStore> > store_i(primary);
+        std::vector<std::vector<StoredValue_> > store_v(primary);
+        std::vector<std::vector<StoredValue_> > store_i(primary);
         size_t reservation = secondary * reserve;
         for (size_t p = 0; p < primary; ++p) {
             store_v[p].reserve(reservation);
             store_i[p].reserve(reservation);
         }
-        std::vector<DataIn> buffer_v(primary);
+        std::vector<InputData_> buffer_v(primary);
 
         if (incoming->sparse()) {
-            auto wrk = new_workspace<!row, true>(incoming);
-            std::vector<IndexIn> buffer_i(primary);
-
+            auto wrk = new_extractor<!row_, true>(incoming);
+            std::vector<InputIndex_> buffer_i(primary);
             for (size_t s = 0; s < secondary; ++s) {
-                SparseRange<DataIn, IndexIn> range;
-                if constexpr(row) {
-                    range = incoming->column(s, buffer_v.data(), buffer_i.data(), wrk.get());
-                } else {
-                    range = incoming->row(s, buffer_v.data(), buffer_i.data(), wrk.get());
-                }
-
+                auto range = wrk->fetch(s, buffer_v.data(), buffer_i.data());
                 for (size_t i = 0; i < range.number; ++i, ++range.value, ++range.index) {
                     if (*range.value) {
                         store_v[*range.index].push_back(*range.value);
@@ -135,17 +114,11 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
                     }
                 }
             }
+
         } else {
-            auto wrk = new_workspace<!row, false>(incoming);
-
+            auto wrk = new_extractor<!row_, false>(incoming);
             for (size_t s = 0; s < secondary; ++s) {
-                const DataIn* ptr;
-                if constexpr(row) {
-                    ptr = incoming->column(s, buffer_v.data(), wrk.get());
-                } else {
-                    ptr = incoming->row(s, buffer_v.data(), wrk.get());
-                }
-
+                auto ptr = wrk->fetch(s, buffer_v.data());
                 for (size_t p = 0; p < primary; ++p, ++ptr) {
                     if (*ptr) {
                         store_v[p].push_back(*ptr);
@@ -170,11 +143,11 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
         }
     }
 
-    return std::shared_ptr<Matrix<DataInterface, IndexInterface> >(
+    return std::shared_ptr<Matrix<Value_, Index_> >(
         new CompressedSparseMatrix<
-            row, 
-            DataInterface, 
-            IndexInterface,
+            row_, 
+            Value_, 
+            Index_,
             decltype(output_v),
             decltype(output_i),
             decltype(indptrs)
@@ -191,11 +164,11 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
 /**
  * This overload makes it easier to control the desired output order when it is not known at compile time.
  *
- * @tparam DataInterface Type of data values in the output interface.
- * @tparam IndexInterface Integer type for the indices in the output interface.
- * @tparam DataStore Type of data values to be stored in the output.
- * @tparam IndexStore Integer type for storing the indices in the output. 
- * @tparam MatrixIn Input matrix class, most typically a `tatami::Matrix`.
+ * @tparam Value_ Type of data values in the output interface.
+ * @tparam Index_ Integer type for the indices in the output interface.
+ * @tparam StoredValue_ Type of data values to be stored in the output.
+ * @tparam StoredIndex_ Integer type for storing the indices in the output. 
+ * @tparam InputMatrix_ Input matrix class, most typically a `tatami::Matrix`.
  *
  * @param incoming Pointer to a `tatami::Matrix`.
  * @param order Ordering of values in the output matrix - compressed sparse row (0) or column (1).
@@ -204,20 +177,20 @@ inline std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse
  * @return A pointer to a new `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
  */
 template <
-    typename DataInterface = double,
-    typename IndexInterface = int,
-    typename DataStore = DataInterface,
-    typename IndexStore = IndexInterface,
-    class MatrixIn
+    typename Value_ = double,
+    typename Index_ = int,
+    typename StoredValue_ = Value_,
+    typename StoredIndex_ = Index_,
+    class InputMatrix_
 >
-std::shared_ptr<Matrix<DataInterface, IndexInterface> > convert_to_sparse(const MatrixIn* incoming, int order) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMatrix_* incoming, int order) {
     if (order < 0) {
         order = static_cast<int>(!incoming->prefer_rows());
     }
     if (order == 0) {
-        return convert_to_sparse<true, DataInterface, IndexInterface, DataStore, IndexStore, MatrixIn>(incoming);
+        return convert_to_sparse<true, Value_, Index_, StoredValue_, StoredIndex_, InputMatrix_>(incoming);
     } else {
-        return convert_to_sparse<false, DataInterface, IndexInterface, DataStore, IndexStore, MatrixIn>(incoming);
+        return convert_to_sparse<false, Value_, Index_, StoredValue_, StoredIndex_, InputMatrix_>(incoming);
     }
 }
 
