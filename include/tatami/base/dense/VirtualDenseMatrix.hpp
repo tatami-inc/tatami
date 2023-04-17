@@ -43,33 +43,32 @@ public:
     bool sparse() const { return false; }
 
 private:
+    template<DimensionSelectionType selection_>
     struct SparseWrapper : public SparseExtractor<Value_, Index_> {
-        SparseWrapper(std::unique_ptr<DenseExtractor<Value_, Index_> > base) : internal(std::move(base)) {
-            this->extracted_selection = internal->extracted_selection;
+        SparseWrapper(std::unique_ptr<DenseExtractor<Value_, Index_> > base, bool nv, bool ni) : 
+            internal(std::move(base)), needs_value(nv), needs_index(ni) 
+        {
+            this->extracted_selection = selection_;
             this->extracted_length = internal->extracted_length;
-            this->extracted_block = internal->extracted_block;
+            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                this->extracted_block = internal->extracted_block;
+            }
         }
 
-        const Index_* extracted_index() const {
+        const Index_* extracted_index() const { 
             return internal->extracted_index();
         }
 
         SparseRange<Value_, Index_> fetch(Index_ position, Value_* vbuffer, Index_* ibuffer) {
             const Value_* vout = (needs_value ? internal->fetch(position, vbuffer) : NULL);
             if (needs_index) {
-                switch (this->extracted_selection) {
-                    case DimensionSelectionType::FULL: 
-                        std::iota(ibuffer, ibuffer + this->extracted_length, static_cast<Index_>(0));
-                        break;
-                    case DimensionSelectionType::BLOCK: 
-                        std::iota(ibuffer, ibuffer + this->extracted_length, static_cast<Index_>(this->extracted_block));
-                        break;
-                    case DimensionSelectionType::INDEX:
-                        {
-                            auto ptr = internal->extracted_index();
-                            std::copy(ptr, ptr + this->extracted_length, ibuffer);
-                        }
-                        break;
+                if constexpr(selection_ == DimensionSelectionType::FULL) {
+                    std::iota(ibuffer, ibuffer + this->extracted_length, static_cast<Index_>(0));
+                } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                    std::iota(ibuffer, ibuffer + this->extracted_length, static_cast<Index_>(this->extracted_block));
+                } else {
+                    auto ptr = internal->extracted_index();
+                    std::copy(ptr, ptr + this->extracted_length, ibuffer);
                 }
             } else {
                 ibuffer = NULL;
@@ -87,11 +86,23 @@ private:
         bool needs_index = eopt.sparse_extract_index;
         bool needs_value = eopt.sparse_extract_value;
 
-        auto ptr = new SparseWrapper(new_extractor<accrow_, false>(this, std::move(iopt), std::move(eopt)));
-        std::unique_ptr<SparseExtractor<Value_, Index_> > output(ptr);
+        auto internal = new_extractor<accrow_, false>(this, std::move(iopt), std::move(eopt));
 
-        ptr->needs_index = needs_index;
-        ptr->needs_value = needs_value;
+        // Nature of the selection on the extraction dimension is encoded in the returned subclass;
+        // this avoids having to check for the selection type at runtime inside each fetch() call.
+        std::unique_ptr<SparseExtractor<Value_, Index_> > output;
+        switch (internal->extracted_selection) {
+            case DimensionSelectionType::FULL:
+                output.reset(new SparseWrapper<DimensionSelectionType::FULL>(std::move(internal), needs_value, needs_index));
+                break;
+            case DimensionSelectionType::BLOCK:
+                output.reset(new SparseWrapper<DimensionSelectionType::BLOCK>(std::move(internal), needs_value, needs_index));
+                break;
+            case DimensionSelectionType::INDEX:
+                output.reset(new SparseWrapper<DimensionSelectionType::INDEX>(std::move(internal), needs_value, needs_index));
+                break;
+        }
+
         return output;
     }
 

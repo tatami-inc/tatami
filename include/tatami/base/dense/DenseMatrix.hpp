@@ -2,6 +2,7 @@
 #define TATAMI_DENSE_MATRIX_H
 
 #include "VirtualDenseMatrix.hpp"
+#include "../StandardExtractor.hpp"
 #include "../utils.hpp"
 
 #include <vector>
@@ -79,38 +80,34 @@ public:
     using Matrix<Value_, Index_>::sparse_column;
 
 private:
-    template<bool accrow_>
-    struct DenseBase : public StandardExtractor<accrow_, false, Value_, Index_> {
-        DenseBase(const DenseMatrix* p, ExtractionOptions<Index_>& non_target) : 
-            StandardExtractor<accrow_, false, Value_, Index_>(p, non_target), // (note: potentially invalidates non_target.selections.indices)
-            parent(p)
-        {}
+    template<DimensionSelectionType selection_, bool use_start_, bool accrow_>
+    struct DenseBase : public StandardExtractor<selection_, use_start_, false, Value_, Index_> {
+        DenseBase(const DenseMatrix* p, ExtractionOptions<Index_>& options) : 
+            StandardExtractor<selection_, use_start_, false, Value_, Index_>(options), // note: moves options.selection.indices
+            parent(p) 
+        {
+            if constexpr(selection_ == DimensionSelectionType::FULL) {
+                this->extracted_length = (accrow_ ? parent->ncols : parent->nrows);
+            }
+        }
 
     public:
         const Value_* fetch(Index_ position, Value_* buffer) {
             if constexpr(row_ == accrow_) {
-                switch (this->extracted_selection) {
-                    case DimensionSelectionType::FULL:
-                        return parent->primary<accrow_>(position, buffer, 0, this->extracted_length);
-                        break;
-                    case DimensionSelectionType::BLOCK:
-                        return parent->primary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
-                        break;
-                    case DimensionSelectionType::INDEX:
-                        return parent->primary<accrow_>(position, buffer, this->quick_extracted_index(), this->extracted_length);
-                        break;
+                if constexpr(selection_ == DimensionSelectionType::FULL) {
+                    return parent->primary<accrow_>(position, buffer, 0, this->extracted_length);
+                } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                    return parent->primary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
+                } else {
+                    return parent->primary<accrow_>(position, buffer, this->quick_extracted_index(), this->extracted_length);
                 }
             } else {
-                switch (this->extracted_selection) {
-                    case DimensionSelectionType::FULL:
-                        parent->secondary<accrow_>(position, buffer, 0, this->extracted_length);
-                        break;
-                    case DimensionSelectionType::BLOCK:
-                        parent->secondary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
-                        break;
-                    case DimensionSelectionType::INDEX:
-                        parent->secondary<accrow_>(position, buffer, this->quick_extracted_index(), this->extracted_length);
-                        break;
+                if constexpr(selection_ == DimensionSelectionType::FULL) {
+                    parent->secondary<accrow_>(position, buffer, 0, this->extracted_length);
+                } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                    parent->secondary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
+                } else {
+                    parent->secondary<accrow_>(position, buffer, this->quick_extracted_index(), this->extracted_length);
                 }
                 return buffer;
             }
@@ -119,6 +116,29 @@ private:
     private:
         const DenseMatrix* parent;
     };
+
+    template<bool accrow_>
+    std::unique_ptr<DenseExtractor<Value_, Index_> > populate(ExtractionOptions<Index_> eopt) const {
+        std::unique_ptr<DenseExtractor<Value_, Index_> > output;
+
+        switch (eopt.selection.type) {
+            case DimensionSelectionType::FULL:
+                output.reset(new DenseBase<DimensionSelectionType::FULL, true, accrow_>(this, eopt));
+                break;
+            case DimensionSelectionType::BLOCK:
+                output.reset(new DenseBase<DimensionSelectionType::BLOCK, true, accrow_>(this, eopt));
+                break;
+            case DimensionSelectionType::INDEX:
+                if (eopt.selection.index_start) {
+                    output.reset(new DenseBase<DimensionSelectionType::INDEX, true, accrow_>(this, eopt));
+                } else {
+                    output.reset(new DenseBase<DimensionSelectionType::INDEX, false, accrow_>(this, eopt));
+                }
+                break;
+        }
+
+        return output;
+    }
 
 private:
     template<bool accrow_> 
@@ -171,11 +191,11 @@ private:
 
 public:
     std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row(IterationOptions<Index_>, ExtractionOptions<Index_> eopt) const {
-        return std::unique_ptr<DenseExtractor<Value_, Index_> >(new DenseBase<true>(this, eopt));
+        return populate<true>(std::move(eopt));
     }
 
     std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column(IterationOptions<Index_>, ExtractionOptions<Index_> eopt) const {
-        return std::unique_ptr<DenseExtractor<Value_, Index_> >(new DenseBase<false>(this, eopt));
+        return populate<false>(std::move(eopt));
     }
 };
 

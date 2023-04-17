@@ -25,44 +25,6 @@ struct has_data<T, V, decltype((void) V().data(), 0)> {
  * @endcond
  */
 
-template<bool accrow_, bool sparse_, typename Value_, typename Index_>
-struct StandardExtractor : public Extractor<sparse_, Value_, Index_> {
-    StandardExtractor(const Matrix<Value_, Index_>* matrix, ExtractionOptions<Index_>& options) {
-        this->extracted_selection = options.selection.type;
-        switch (this->extracted_selection) {
-            case DimensionSelectionType::FULL:
-                this->extracted_length = (accrow_ ? matrix->ncol() : matrix->nrow());
-                break;
-            case DimensionSelectionType::BLOCK:
-                this->extracted_length = options.selection.block_length;
-                this->extracted_block = options.selection.block_start;
-                break;
-            case DimensionSelectionType::INDEX:
-                if (options.selection.index_start) {
-                    this->extracted_length = options.selection.index_length;
-                    this->extracted_index_start = options.selection.index_start;
-                } else {
-                    this->extracted_length = options.selection.indices.size();
-                    this->extracted_indices = std::move(options.selection.indices);
-                }
-                break;
-        }
-    }
-
-    const Index_* extracted_index() const { 
-        return quick_extracted_index();
-    }
-
-protected:
-    const Index_* extracted_index_start = NULL;
-
-    std::vector<Index_> extracted_indices;
-
-    const Index_* quick_extracted_index() const { 
-        return (extracted_index_start ? extracted_index_start : extracted_indices.data()); 
-    }
-};
-
 /**
  * @tparam row_ Whether to iterate over rows.
  * @tparam sparse_ Whether to perform sparse retrieval.

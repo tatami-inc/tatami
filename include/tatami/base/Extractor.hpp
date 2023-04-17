@@ -52,14 +52,14 @@ public:
 
     /**
      * Index of the start of the contiguous block of entries along the extraction dimension.
-     * Only relevant if `extracted_selection = DimensionSelectionType::BLOCK`.
+     * Only used if `extracted_selection = DimensionSelectionType::BLOCK`.
      */
     Index_ extracted_block = 0;
 
     /**
      * @return Pointer to the start of an array of length `extracted_length`,
      * containing the sorted and unique entry indices along the extraction dimension.
-     * Only relevant if `extracted_selection = DimensionSelectionType::INDEX`.
+     * Only used if `extracted_selection = DimensionSelectionType::INDEX`.
      */
     virtual const Index_* extracted_index() const = 0;
 };

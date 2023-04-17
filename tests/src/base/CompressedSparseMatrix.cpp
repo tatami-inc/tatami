@@ -109,8 +109,9 @@ TEST_P(SparseFullAccessTest, Details) {
     size_t JUMP = std::get<1>(param);
 
     auto work_row = sparse_row->sparse_column();
+    typedef const tatami::CompressedSparseRowMatrix<double, int>::SparseSecondaryExtractor<tatami::DimensionSelectionType::FULL, true> SSE;
     auto fetch_offsets = [](const auto* ptr) -> std::vector<size_t> {
-        return dynamic_cast<const tatami::CompressedSparseRowMatrix<double, int>::SSE*>(ptr)->work.current_indptrs;
+        return dynamic_cast<SSE*>(ptr)->work.current_indptrs;
     };
     auto work_col = sparse_column->sparse_column();
     auto work_row2 = sparse_row->sparse_column();
