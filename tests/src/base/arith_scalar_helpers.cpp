@@ -4,8 +4,8 @@
 #include <memory>
 #include <tuple>
 
-#include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedIsometricOp.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/base/isometric/DelayedIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_column_access.h"

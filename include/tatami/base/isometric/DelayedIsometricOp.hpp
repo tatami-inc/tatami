@@ -187,18 +187,18 @@ private:
             IsometricExtractorBase<selection_, true, true>(std::move(i), p), report_index(ri)
         {
             if (!report_index && report_value) {
-                // We only need 'ibuffer' if the user wants the values but
-                // didn't provide enough space to store the indices (which 
-                // we need to pass to the operation's functor).
-                ibuffer.resize(this->internal->extracted_length);
+                // We only need an internal ibuffer if the user wants the
+                // values but didn't provide enough space to store the indices
+                // (which we need to pass to the operation's functor).
+                internal_ibuffer.resize(this->extracted_length);
             }
         }
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            // If the workspace's ibuffer is empty, we're either extracting the indices
+            // If the internal ibuffer is empty, we're either extracting the indices
             // directly into the user's ibuffer, or we don't need the indices at all.
             // Either way, it doesn't hurt to use the user's ibuffer.
-            Index_* iin = (ibuffer.empty() ? ibuffer : ibuffer.data());
+            Index_* iin = (internal_ibuffer.empty() ? ibuffer : internal_ibuffer.data());
 
             auto raw = this->internal->fetch(i, vbuffer, iin);
 
@@ -223,7 +223,7 @@ private:
 
     protected:
         bool report_index = false;
-        std::vector<Index_> ibuffer;
+        std::vector<Index_> internal_ibuffer;
     };
 
     /*******************************************
@@ -295,7 +295,9 @@ private:
         } else {
             bool report_value = eopt.sparse_extract_value;
             bool report_index = eopt.sparse_extract_index;
-            eopt.sparse_extract_index = true; // if we get to this clause, we need the index, otherwise we'd have constructed a SimpleSparseIsometricExtractor.
+            if (report_value && !report_index) {
+                eopt.sparse_extract_index = true; // if we get to this clause, we need the indices; otherwise we'd have constructed a SimpleSparseIsometricExtractor.
+            }
 
             auto inner = new_extractor<accrow_, true>(mat.get(), std::move(iopt), std::move(eopt));
             output.reset(new RegularSparseIsometricExtractor<accrow_, selection_>(std::move(inner), this, report_index, report_value));
