@@ -87,13 +87,15 @@ public:
  *
  * @tparam Matrix_ A realized `Matrix` class, possibly one that is `const`.
  *
- * @param p Pointer to a (possibly `const`) `Matrix` instance.
+ * @param p Pointer to a `Matrix` instance.
  *
  * @return A pointer to a `DelayedTranspose` instance.
  */
 template<class Matrix_>
 std::shared_ptr<Matrix_> make_DelayedTranspose(std::shared_ptr<Matrix_> p) {
-    return std::shared_ptr<Matrix_>(new DelayedTranspose<typename Matrix_::value_type, typename Matrix_::index_type>(std::move(p)));
+    typedef typename Matrix_::value_type Value_;
+    typedef typename Matrix_::index_type Index_;
+    return std::shared_ptr<Matrix_>(new DelayedTranspose<Value_, Index_>(std::move(p)));
 }
 
 }

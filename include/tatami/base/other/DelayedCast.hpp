@@ -227,11 +227,16 @@ private:
             ecopy.sparse_extract_value = eopt.sparse_extract_value;
             ecopy.sparse_ordered_index = eopt.sparse_ordered_index;
 
-            // Transferring the vector of selection indices for use in CastExtractor::extracted_index().
-            if (eopt.selection.index_start) {
-                eopt.selection.indices.insert(eopt.selection.indices.end(), eopt.selection.index_start, eopt.selection.index_start + eopt.selection.index_length);
+            if (eopt.selection.type == DimensionSelectionType::INDEX) {
+                // Transferring the correctly-typed vector of selection indices
+                // for use in CastExtractor::extracted_index().
+                if (eopt.selection.index_start) {
+                    eopt.selection.indices.insert(eopt.selection.indices.end(), eopt.selection.index_start, eopt.selection.index_start + eopt.selection.index_length);
+                }
+                return populate<accrow_, sparse_, std::vector<Index_out_> >(std::move(icopy), std::move(ecopy), std::move(eopt.selection.indices));
+            } else {
+                return populate<accrow_, sparse_>(std::move(icopy), std::move(ecopy), false);
             }
-            return populate<accrow_, sparse_, std::vector<Index_out_> >(std::move(icopy), std::move(ecopy), std::move(eopt.selection.indices));
         }
     }
 
@@ -258,15 +263,14 @@ public:
  *
  * @tparam Value_out_ Data type to cast to.
  * @tparam Index_out_ Index type to cast to.
- * @tparam Value_in_ Data type to cast from.
- * @tparam Index_in_ Index type to cast from.
+ * @tparam Matrix_ A realized `Matrix` class, possibly one that is `const`.
  *
  * @param p Pointer to the `Matrix` instance to cast from.
  * @return Pointer to a `Matrix` instance of the desired interface type.
  */
-template<typename Value_out_, typename Index_out_, typename Value_in_, typename Index_in_>
-std::shared_ptr<Matrix<Value_out_, Index_out_> > make_DelayedCast(const std::shared_ptr<Matrix<Value_in_, Index_in_> > p) {
-    return std::shared_ptr<Matrix<Value_out_, Index_out_> >(new DelayedCast<Value_out_, Index_out_, Value_in_, Index_in_>(std::move(p)));
+template<typename Value_out_, typename Index_out_, class Matrix_>
+std::shared_ptr<Matrix<Value_out_, Index_out_> > make_DelayedCast(std::shared_ptr<Matrix_> p) {
+    return std::shared_ptr<Matrix<Value_out_, Index_out_> >(new DelayedCast<Value_out_, Index_out_, typename Matrix_::value_type, typename Matrix_::index_type>(std::move(p)));
 }
 
 }
