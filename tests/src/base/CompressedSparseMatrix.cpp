@@ -5,7 +5,6 @@
 
 #include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/base/sparse/CompressedSparseMatrix.hpp"
-#include "tatami/base/arith_scalar_helpers.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_row_access.h"
