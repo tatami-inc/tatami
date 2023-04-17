@@ -3,8 +3,8 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedTranspose.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/base/other/DelayedTranspose.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_row_access.h"
