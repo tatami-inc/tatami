@@ -185,13 +185,11 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
         // Checking that properties are correctly passed down.
         auto pwork = ptr->dense_column(IterationOptions(), rsub);
         EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(pwork->extracted_index(), indices.data());
-        EXPECT_EQ(pwork->extracted_length, indices.size());
+        EXPECT_EQ(std::vector<int>(pwork->extracted_index(), pwork->extracted_index() + pwork->extracted_length), indices);
 
         auto swork = ptr->sparse_column(IterationOptions(), rsub);
         EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(swork->extracted_index(), indices.data());
-        EXPECT_EQ(swork->extracted_length, indices.size());
+        EXPECT_EQ(std::vector<int>(swork->extracted_index(), swork->extracted_index() + swork->extracted_length), indices);
     }
 
     // Now trying with full indices.
@@ -226,12 +224,10 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
         // Checking that properties are correctly passed down.
         auto pwork = ptr->dense_column(IterationOptions(), rsub);
         EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(pwork->extracted_length, indices.size());
         EXPECT_EQ(std::vector<int>(pwork->extracted_index(), pwork->extracted_index() + pwork->extracted_length), indices);
 
         auto swork = ptr->sparse_column(IterationOptions(), rsub);
         EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(swork->extracted_length, indices.size());
         EXPECT_EQ(std::vector<int>(swork->extracted_index(), swork->extracted_index() + swork->extracted_length), indices);
     }
 }

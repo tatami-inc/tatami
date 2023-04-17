@@ -43,17 +43,17 @@ struct DelayedAddScalarHelper {
     /**
      * Addition is always assumed to discard structural sparsity, even when the scalar is zero.
      */
-    static const bool sparse = false;
+    static const bool sparse_ = false;
 
     /**
      * This does not require row indices.
      */
-    static const bool needs_row = false;
+    static const bool needs_row_ = false;
 
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column_= false;
 
 private:
     const T scalar;
@@ -90,17 +90,17 @@ struct DelayedMultiplyScalarHelper {
      * Multiplication is always assumed to preserve structural sparsity.
      * Non-finite `scalar` values are not considered.
      */
-    static const bool sparse = true;
+    static const bool sparse_ = true;
 
     /**
      * This does not require row indices.
      */
-    static const bool needs_row = false;
+    static const bool needs_row_ = false;
 
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column_= false;
 
 private:
     const T scalar;
@@ -142,17 +142,17 @@ struct DelayedSubtractScalarHelper {
     /**
      * Subtraction is always assumed to discard structural sparsity, even when the scalar is zero.
      */
-    static const bool sparse = false;
+    static const bool sparse_ = false;
 
     /**
      * This does not require row indices.
      */
-    static const bool needs_row = false;
+    static const bool needs_row_ = false;
 
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column_= false;
 
 private:
     const T scalar;
@@ -204,17 +204,17 @@ struct DelayedDivideScalarHelper {
      * Division of the scalar by the matrix value is assumed to discard structural sparsity,
      * as any matrix zeros will yield an infinite value for a non-zero scalar.
      */
-    static const bool sparse = RIGHT;
+    static const bool sparse_ = RIGHT;
 
     /**
      * This does not require row indices.
      */
-    static const bool needs_row = false;
+    static const bool needs_row_ = false;
 
     /**
      * This does not require column indices.
      */
-    static const bool needs_column= false;
+    static const bool needs_column_= false;
 
 private:
     const T scalar;

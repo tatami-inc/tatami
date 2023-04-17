@@ -54,7 +54,7 @@ public:
      * Otherwise returns `false`.
      */
     bool sparse() const {
-        if constexpr(Operation_::sparse) {
+        if constexpr(Operation_::sparse_) {
             return mat->sparse();
         } else {
             return false;
@@ -280,7 +280,7 @@ private:
             auto inner = new_extractor<accrow_, false>(mat.get(), std::move(iopt), std::move(eopt));
             output.reset(new DenseIsometricExtractor<accrow_, selection_>(std::move(inner), this));
 
-        } else if constexpr(!Operation_::sparse) {
+        } else if constexpr(!Operation_::sparse_) {
             // Make copies to avoid invalidation on move(eopt).
             bool report_value = eopt.sparse_extract_value;
             bool report_index = eopt.sparse_extract_index;
@@ -288,7 +288,7 @@ private:
             auto inner = new_extractor<accrow_, false>(mat.get(), std::move(iopt), std::move(eopt));
             output.reset(new DensifiedSparseIsometricExtractor<accrow_, selection_>(std::move(inner), this, report_index, report_value));
 
-        } else if constexpr((accrow_ && !Operation_::needs_column) || (!accrow_ && !Operation_::needs_row)) { // i.e., extraction indices aren't required for the operation.
+        } else if constexpr((accrow_ && !Operation_::needs_column_) || (!accrow_ && !Operation_::needs_row_)) { // i.e., extraction indices aren't required for the operation.
             auto inner = new_extractor<accrow_, true>(mat.get(), std::move(iopt), std::move(eopt));
             output.reset(new SimpleSparseIsometricExtractor<accrow_, selection_>(std::move(inner), this));
 

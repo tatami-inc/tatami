@@ -414,7 +414,7 @@ private:
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->parent->primary_dimension_expanded(i, 0, this->extracted_length, this->work, buffer);
+                this->parent->primary_dimension_expanded(i, static_cast<Index_>(0), this->extracted_length, this->work, buffer);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->parent->primary_dimension_expanded(i, this->extracted_block, this->extracted_length, this->work, buffer);
             } else {
@@ -431,7 +431,7 @@ private:
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                return this->parent->primary_dimension_raw(i, 0, this->extracted_length, this->work, vbuffer, ibuffer);
+                return this->parent->primary_dimension_raw(i, static_cast<Index_>(0), this->extracted_length, this->work, vbuffer, ibuffer);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 return this->parent->primary_dimension_raw(i, this->extracted_block, this->extracted_length, this->work, vbuffer, ibuffer);
             } else {
@@ -474,7 +474,7 @@ private:
         } 
 
         SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp) :
-            SecondaryWorkspace(max_index, idx, idp, 0, idp.size() - 1) {}
+            SecondaryWorkspace(max_index, idx, idp, static_cast<Index_>(0), idp.size() - 1) {}
 
         SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
             current_indptrs(length), current_indices(length)
@@ -695,7 +695,7 @@ private:
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->parent->secondary_dimension_expanded(i, 0, this->extracted_length, this->work, buffer);
+                this->parent->secondary_dimension_expanded(i, static_cast<Index_>(0), this->extracted_length, this->work, buffer);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->parent->secondary_dimension_expanded(i, this->extracted_block, this->extracted_length, this->work, buffer);
             } else {
@@ -713,7 +713,7 @@ private:
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                return this->parent->secondary_dimension_raw(i, 0, this->extracted_length, this->work, vbuffer, ibuffer);
+                return this->parent->secondary_dimension_raw(i, static_cast<Index_>(0), this->extracted_length, this->work, vbuffer, ibuffer);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 return this->parent->secondary_dimension_raw(i, this->extracted_block, this->extracted_length, this->work, vbuffer, ibuffer);
             } else {

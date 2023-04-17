@@ -181,16 +181,14 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
             csub
         );
 
-        // Checking that properties are correctly passed down.
+        // Checking that properties are correctly passed down. 
         auto pwork = ptr->dense_row(IterationOptions(), csub);
         EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(pwork->extracted_index(), indices.data());
-        EXPECT_EQ(pwork->extracted_length, indices.size());
+        EXPECT_EQ(std::vector<int>(pwork->extracted_index(), pwork->extracted_index() + pwork->extracted_length), indices);
 
         auto swork = ptr->sparse_row(IterationOptions(), csub);
         EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(swork->extracted_index(), indices.data());
-        EXPECT_EQ(swork->extracted_length, indices.size());
+        EXPECT_EQ(std::vector<int>(swork->extracted_index(), swork->extracted_index() + swork->extracted_length), indices);
     }
 
     // First trying with the index pointers.
@@ -226,12 +224,10 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
         auto pwork = ptr->dense_row(IterationOptions(), csub);
         EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::INDEX);
         EXPECT_EQ(std::vector<int>(pwork->extracted_index(), pwork->extracted_index() + pwork->extracted_length), indices);
-        EXPECT_EQ(pwork->extracted_length, indices.size());
 
         auto swork = ptr->sparse_row(IterationOptions(), csub);
         EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::INDEX);
         EXPECT_EQ(std::vector<int>(swork->extracted_index(), swork->extracted_index() + swork->extracted_length), indices);
-        EXPECT_EQ(swork->extracted_length, indices.size());
     }
 }
 

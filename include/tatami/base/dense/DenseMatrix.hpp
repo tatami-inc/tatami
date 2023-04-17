@@ -58,7 +58,7 @@ private:
     Index_ nrows, ncols;
     Storage_ values;
 
-    static bool check_dimensions(size_t nr, size_t nc, size_t expected) { // cast to size_t is deliberate to avoid overflow on Index_ on product.
+    static void check_dimensions(size_t nr, size_t nc, size_t expected) { // cast to size_t is deliberate to avoid overflow on Index_ on product.
         if (nr * nc != expected) {
             throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
         }
@@ -95,7 +95,7 @@ private:
         const Value_* fetch(Index_ position, Value_* buffer) {
             if constexpr(row_ == accrow_) {
                 if constexpr(selection_ == DimensionSelectionType::FULL) {
-                    return parent->primary<accrow_>(position, buffer, 0, this->extracted_length);
+                    return parent->primary<accrow_>(position, buffer, static_cast<Index_>(0), this->extracted_length);
                 } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                     return parent->primary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
                 } else {
@@ -103,7 +103,7 @@ private:
                 }
             } else {
                 if constexpr(selection_ == DimensionSelectionType::FULL) {
-                    parent->secondary<accrow_>(position, buffer, 0, this->extracted_length);
+                    parent->secondary<accrow_>(position, buffer, static_cast<Index_>(0), this->extracted_length);
                 } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                     parent->secondary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
                 } else {
