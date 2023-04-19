@@ -3,33 +3,30 @@
 #include "utils.h"
 
 template<class Matrix, class Matrix2, class Function1, class Function2, typename ...Args>
-void test_simple_row_access_base(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, Function1 expector, Function2 sparse_expand, ExtractionOptions copt) {
+void test_simple_row_access_base(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, Function1 expector, Function2 sparse_expand, Args... args) {
     int NR = ptr->nrow();
     ASSERT_EQ(NR, ref->nrow());
     int NC = ptr->ncol();
     ASSERT_EQ(NC, ref->ncol());
 
-    IterationOptions ropt;
-    std::vector<int> indices;
-    set_access_pattern(ropt, indices, NR, forward, jump);
+    auto pwork = ptr->dense_row(args...);
+    auto swork = ptr->sparse_row(args...);
 
-    auto pwork = ptr->dense_row(ropt, copt);
-    auto swork = ptr->sparse_row(ropt, copt);
+    tatami::Options<int> opt;
+    opt.sparse.ordered_index = false;
+    auto swork_uns = ptr->sparse_row(args..., opt);
+    opt.sparse.ordered_index = true;
 
-    copt.sparse_ordered_index = false;
-    auto swork_uns = ptr->sparse_row(ropt, copt);
-    copt.sparse_ordered_index = true;
+    opt.sparse.extract_index = false;
+    auto swork_v = ptr->sparse_row(args..., opt);
+    opt.sparse.extract_value = false;
+    auto swork_n = ptr->sparse_row(args..., opt);
+    opt.sparse.extract_index = true;
+    auto swork_i = ptr->sparse_row(args..., opt);
+    opt.sparse.extract_value = true;
 
-    copt.sparse_extract_index = false;
-    auto swork_v = ptr->sparse_row(ropt, copt);
-    copt.sparse_extract_value = false;
-    auto swork_n = ptr->sparse_row(ropt, copt);
-    copt.sparse_extract_index = true;
-    auto swork_i = ptr->sparse_row(ropt, copt);
-    copt.sparse_extract_value = true;
-
-    ropt.cache_for_reuse = true;
-    auto cwork = ptr->dense_row(ropt, copt); 
+    opt.access.cache_for_reuse = true;
+    auto cwork = ptr->dense_row(args..., opt); 
 
     for (int i = 0; i < NR; i += jump) {
         int r = (forward ? i : NR - i - 1);
@@ -94,27 +91,19 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
         },
         [&](const auto& range) -> auto {
             return expand(range, NC);
-        },
-        ExtractionOptions()
+        }
     );
 
     // Checking that properties are correctly passed down.
     auto pwork = ptr->dense_row();
-    EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::FULL);
-    EXPECT_EQ(pwork->extracted_length, NC);
+    EXPECT_EQ(pwork->full_length, NC);
 
     auto swork = ptr->sparse_row();
-    EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::FULL);
-    EXPECT_EQ(swork->extracted_length, NC);
+    EXPECT_EQ(swork->full_length, NC);
 }
 
 template<class Matrix, class Matrix2>
 void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, int start, int end) {
-    ExtractionOptions csub;
-    csub.selection.type = tatami::DimensionSelectionType::BLOCK;
-    csub.selection.block_start = start;
-    csub.selection.block_length = end - start;
-
     auto rwork = ref->dense_row();
     test_simple_row_access_base(ptr, ref, forward, jump, 
         [&](int r) -> auto { 
@@ -124,19 +113,18 @@ void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward,
         [&](const auto& range) -> auto {
             return expand(range, start, end);
         },
-        csub
+        start,
+        end - start
     );
 
     // Checking that properties are correctly passed down.
-    auto pwork = ptr->dense_row(IterationOptions(), csub);
-    EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::BLOCK);
-    EXPECT_EQ(pwork->extracted_block, start);
-    EXPECT_EQ(pwork->extracted_length, end - start);
+    auto pwork = ptr->dense_row(start, end - start);
+    EXPECT_EQ(pwork->block_start, start);
+    EXPECT_EQ(pwork->block_length, end - start);
 
-    auto swork = ptr->sparse_row(IterationOptions(), csub);
-    EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::BLOCK);
-    EXPECT_EQ(swork->extracted_block, start);
-    EXPECT_EQ(swork->extracted_length, end - start);
+    auto swork = ptr->sparse_row(start, end - start);
+    EXPECT_EQ(swork->block_start, start);
+    EXPECT_EQ(swork->block_length, end - start);
 }
 
 template<class Matrix, class Matrix2>
@@ -151,84 +139,36 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
         }
     }
 
-    // First trying with the index pointers.
-    {
-        ExtractionOptions csub;
-        csub.selection.type = tatami::DimensionSelectionType::INDEX;
-        csub.selection.index_length = indices.size();
-        csub.selection.index_start = indices.data();
+    auto rwork = ref->dense_row();
+    test_simple_row_access_base(ptr, ref, forward, jump, 
+        [&](int r) -> auto { 
+            auto raw_expected = rwork->fetch(r);
+            std::vector<typename Matrix::value_type> expected;
+            expected.reserve(indices.size());
+            for (auto idx : indices) {
+                expected.push_back(raw_expected[idx]);
+            }
+            return expected;
+        },
+        [&](const auto& range) -> auto {
+            auto full = expand(range, NC);
+            std::vector<double> sub;
+            sub.reserve(indices.size());
+            for (auto idx : indices) {
+                sub.push_back(full[idx]);
+            }
+            return sub;
+        },
+        indices.data(),
+        indices.size()
+    );
 
-        auto rwork = ref->dense_row();
-        test_simple_row_access_base(ptr, ref, forward, jump, 
-            [&](int r) -> auto { 
-                auto raw_expected = rwork->fetch(r);
-                std::vector<typename Matrix::value_type> expected;
-                expected.reserve(indices.size());
-                for (auto idx : indices) {
-                    expected.push_back(raw_expected[idx]);
-                }
-                return expected;
-            },
-            [&](const auto& range) -> auto {
-                auto full = expand(range, NC);
-                std::vector<double> sub;
-                sub.reserve(indices.size());
-                for (auto idx : indices) {
-                    sub.push_back(full[idx]);
-                }
-                return sub;
-            },
-            csub
-        );
+    // Checking that properties are correctly passed down. 
+    auto pwork = ptr->dense_row(indices.data(), indices.size());
+    EXPECT_EQ(std::vector<int>(pwork->index_start(), pwork->index_start() + pwork->index_length), indices);
 
-        // Checking that properties are correctly passed down. 
-        auto pwork = ptr->dense_row(IterationOptions(), csub);
-        EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(std::vector<int>(pwork->extracted_index(), pwork->extracted_index() + pwork->extracted_length), indices);
-
-        auto swork = ptr->sparse_row(IterationOptions(), csub);
-        EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(std::vector<int>(swork->extracted_index(), swork->extracted_index() + swork->extracted_length), indices);
-    }
-
-    // First trying with the index pointers.
-    {
-        ExtractionOptions csub;
-        csub.selection.type = tatami::DimensionSelectionType::INDEX;
-        csub.selection.indices = indices;
-
-        auto rwork = ref->dense_row();
-        test_simple_row_access_base(ptr, ref, forward, jump, 
-            [&](int r) -> auto { 
-                auto raw_expected = rwork->fetch(r);
-                std::vector<typename Matrix::value_type> expected;
-                expected.reserve(indices.size());
-                for (auto idx : indices) {
-                    expected.push_back(raw_expected[idx]);
-                }
-                return expected;
-            },
-            [&](const auto& range) -> auto {
-                auto full = expand(range, NC);
-                std::vector<double> sub;
-                sub.reserve(indices.size());
-                for (auto idx : indices) {
-                    sub.push_back(full[idx]);
-                }
-                return sub;
-            },
-            csub
-        );
-
-        // Checking that properties are correctly passed down.
-        auto pwork = ptr->dense_row(IterationOptions(), csub);
-        EXPECT_EQ(pwork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(std::vector<int>(pwork->extracted_index(), pwork->extracted_index() + pwork->extracted_length), indices);
-
-        auto swork = ptr->sparse_row(IterationOptions(), csub);
-        EXPECT_EQ(swork->extracted_selection, tatami::DimensionSelectionType::INDEX);
-        EXPECT_EQ(std::vector<int>(swork->extracted_index(), swork->extracted_index() + swork->extracted_length), indices);
-    }
+    auto swork = ptr->sparse_row(indices.data(), indices.size());
+    EXPECT_EQ(std::vector<int>(swork->index_start(), swork->index_start() + swork->index_length), indices);
 }
 
 #endif

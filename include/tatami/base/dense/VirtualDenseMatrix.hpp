@@ -24,7 +24,7 @@ namespace tatami {
  * @tparam Index_ Row/column index type, should be integer.
  *
  * This virtual class provides default methods for sparse extraction that just wrap the dense methods.
- * By inheriting from this class, implementers of dense matrices can skip the implementation of irrelevant methods for `Matrix::sparse_row()`, `Matrix::sparse_column_workspace()`, etc.,
+ * By inheriting from this class, implementers of dense matrices can skip the implementation of irrelevant methods for `Matrix::sparse_row()`, `Matrix::sparse_column()`, etc.,
  */
 template <typename Value_, typename Index_ = int>
 class VirtualDenseMatrix : public Matrix<Value_, Index_> {
@@ -44,75 +44,84 @@ public:
 
 private:
     template<DimensionSelectionType selection_>
-    struct SparseWrapper : public SparseExtractor<Value_, Index_> {
-        SparseWrapper(std::unique_ptr<DenseExtractor<Value_, Index_> > base, bool nv, bool ni) : 
+    struct SparseWrapper : public Extractor<selection_, true, Value_, Index_> {
+        SparseWrapper(std::unique_ptr<Extractor<selection_, false, Value_, Index_> > base, bool nv, bool ni) : 
             internal(std::move(base)), needs_value(nv), needs_index(ni) 
         {
-            this->extracted_selection = selection_;
-            this->extracted_length = internal->extracted_length;
-            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->extracted_block = internal->extracted_block;
+            if constexpr(selection_ == DimensionSelectionType::FULL) {
+                this->full_length = internal->full_length;
+            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                this->block_start = internal->block_start;
+                this->block_length = internal->block_length;
+            } else if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                this->index_length = internal->index_length;
             }
-        }
-
-        const Index_* extracted_index() const { 
-            return internal->extracted_index();
         }
 
         SparseRange<Value_, Index_> fetch(Index_ position, Value_* vbuffer, Index_* ibuffer) {
             const Value_* vout = (needs_value ? internal->fetch(position, vbuffer) : NULL);
             if (needs_index) {
                 if constexpr(selection_ == DimensionSelectionType::FULL) {
-                    std::iota(ibuffer, ibuffer + this->extracted_length, static_cast<Index_>(0));
+                    std::iota(ibuffer, ibuffer + this->full_length, static_cast<Index_>(0));
                 } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                    std::iota(ibuffer, ibuffer + this->extracted_length, static_cast<Index_>(this->extracted_block));
+                    std::iota(ibuffer, ibuffer + this->block_length, static_cast<Index_>(this->block_start));
                 } else {
-                    auto ptr = internal->extracted_index();
-                    std::copy(ptr, ptr + this->extracted_length, ibuffer);
+                    auto ptr = internal->index_start();
+                    std::copy(ptr, ptr + this->index_length, ibuffer);
                 }
             } else {
                 ibuffer = NULL;
             }
-            return SparseRange<Value_, Index_>(this->extracted_length, vout, ibuffer);
+            return SparseRange<Value_, Index_>(extracted_length<selection_, Index_>(*this), vout, ibuffer);
         }
 
+        const Index_* index_start() const {
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                return internal->index_start();
+            } else {
+                return NULL;
+            }
+        }
+
+    protected:
+        std::unique_ptr<Extractor<selection_, false, Value_, Index_> > internal;
         bool needs_value = false;
         bool needs_index = false;
-        std::unique_ptr<DenseExtractor<Value_, Index_> > internal;
     };
 
-    template<bool accrow_>
-    std::unique_ptr<SparseExtractor<Value_, Index_> > populate(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        bool needs_index = eopt.sparse_extract_index;
-        bool needs_value = eopt.sparse_extract_value;
-
-        auto internal = new_extractor<accrow_, false>(this, std::move(iopt), std::move(eopt));
-
-        // Nature of the selection on the extraction dimension is encoded in the returned subclass;
-        // this avoids having to check for the selection type at runtime inside each fetch() call.
-        std::unique_ptr<SparseExtractor<Value_, Index_> > output;
-        switch (internal->extracted_selection) {
-            case DimensionSelectionType::FULL:
-                output.reset(new SparseWrapper<DimensionSelectionType::FULL>(std::move(internal), needs_value, needs_index));
-                break;
-            case DimensionSelectionType::BLOCK:
-                output.reset(new SparseWrapper<DimensionSelectionType::BLOCK>(std::move(internal), needs_value, needs_index));
-                break;
-            case DimensionSelectionType::INDEX:
-                output.reset(new SparseWrapper<DimensionSelectionType::INDEX>(std::move(internal), needs_value, needs_index));
-                break;
-        }
-
-        return output;
-    }
+    typedef SparseWrapper<DimensionSelectionType::FULL> FullSparseWrapper;
+    typedef SparseWrapper<DimensionSelectionType::BLOCK> BlockSparseWrapper;
+    typedef SparseWrapper<DimensionSelectionType::INDEX> IndexSparseWrapper;
 
 public:
-    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return populate<true>(std::move(iopt), std::move(eopt));
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options<Index_>& opt) const {
+        auto ptr = new FullSparseWrapper(this->dense_row(opt), opt.sparse.extract_value, opt.sparse.extract_index);
+        return std::unique_ptr<FullSparseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return populate<false>(std::move(iopt), std::move(eopt));
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        auto ptr = new BlockSparseWrapper(this->dense_row(block_start, block_length, opt), opt.sparse.extract_value, opt.sparse.extract_index);
+        return std::unique_ptr<BlockSparseExtractor<Value_, Index_> >(ptr);
+    }
+
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        auto ptr = new IndexSparseWrapper(this->dense_row(index_start, index_length, opt), opt.sparse.extract_value, opt.sparse.extract_index);
+        return std::unique_ptr<IndexSparseExtractor<Value_, Index_> >(ptr);
+    }
+
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& opt) const {
+        auto ptr = new FullSparseWrapper(this->dense_column(opt), opt.sparse.extract_value, opt.sparse.extract_index);
+        return std::unique_ptr<FullSparseExtractor<Value_, Index_> >(ptr);
+    }
+
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        auto ptr = new BlockSparseWrapper(this->dense_column(block_start, block_length, opt), opt.sparse.extract_value, opt.sparse.extract_index);
+        return std::unique_ptr<BlockSparseExtractor<Value_, Index_> >(ptr);
+    }
+
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        auto ptr = new IndexSparseWrapper(this->dense_column(index_start, index_length, opt), opt.sparse.extract_value, opt.sparse.extract_index);
+        return std::unique_ptr<IndexSparseExtractor<Value_, Index_> >(ptr);
     }
 };
 

@@ -38,18 +38,18 @@ struct has_data<T, V, decltype((void) V().data(), 0)> {
  * @return A `DimensionAccess` object to access the requested dimension of `ptr`.
  */
 template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>
-std::unique_ptr<Extractor<sparse_, Value_, Index_> > new_extractor(const Matrix<Value_, Index_>* ptr, Args_... args) {
+auto new_extractor(const Matrix<Value_, Index_>* ptr, Args_... args) {
     if constexpr(sparse_) {
         if constexpr(row_) {
-            return ptr->sparse_row(std::move(args)...);
+            return ptr->sparse_row(args...);
         } else {
-            return ptr->sparse_column(std::move(args)...);
+            return ptr->sparse_column(args...);
         }
     } else {
         if constexpr(row_) {
-            return ptr->dense_row(std::move(args)...);
+            return ptr->dense_row(args...);
         } else {
-            return ptr->dense_column(std::move(args)...);
+            return ptr->dense_column(args...);
         }
     }
 }

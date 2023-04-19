@@ -2,7 +2,6 @@
 #define TATAMI_DENSE_MATRIX_H
 
 #include "VirtualDenseMatrix.hpp"
-#include "../StandardExtractor.hpp"
 #include "../utils.hpp"
 
 #include <vector>
@@ -80,14 +79,33 @@ public:
     using Matrix<Value_, Index_>::sparse_column;
 
 private:
-    template<DimensionSelectionType selection_, bool use_start_, bool accrow_>
-    struct DenseBase : public StandardExtractor<selection_, use_start_, false, Value_, Index_> {
-        DenseBase(const DenseMatrix* p, ExtractionOptions<Index_>& options) : 
-            StandardExtractor<selection_, use_start_, false, Value_, Index_>(options), // note: moves options.selection.indices
-            parent(p) 
-        {
+    template<bool accrow_, DimensionSelectionType selection_>
+    struct DenseBase : public Extractor<selection_, false, Value_, Index_> {
+        DenseBase(const DenseMatrix* p) : parent(p) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->extracted_length = (accrow_ ? parent->ncols : parent->nrows);
+                this->full_length = (accrow_ ? p->ncol() : p->nrow());
+            }
+        }
+
+        DenseBase(const DenseMatrix* p, Index_ bs, Index_ bl) : parent(p) {
+            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                this->block_start = bs;
+                this->block_length = bl;
+            }
+        }
+
+        DenseBase(const DenseMatrix* p, const Index_* is, size_t il) : parent(p) {
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                indices = std::vector<Index_>(is, is + il);
+                this->index_length = il;
+            }
+        }
+
+        const Index_* index_start() const {
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                return indices.data();
+            } else {
+                return NULL;
             }
         }
 
@@ -95,19 +113,19 @@ private:
         const Value_* fetch(Index_ position, Value_* buffer) {
             if constexpr(row_ == accrow_) {
                 if constexpr(selection_ == DimensionSelectionType::FULL) {
-                    return parent->primary<accrow_>(position, buffer, static_cast<Index_>(0), this->extracted_length);
+                    return parent->primary<accrow_>(position, buffer, static_cast<Index_>(0), this->full_length);
                 } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                    return parent->primary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
+                    return parent->primary<accrow_>(position, buffer, this->block_start, this->block_start + this->block_length);
                 } else {
-                    return parent->primary<accrow_>(position, buffer, this->quick_extracted_index(), this->extracted_length);
+                    return parent->primary<accrow_>(position, buffer, indices.data(), this->index_length);
                 }
             } else {
                 if constexpr(selection_ == DimensionSelectionType::FULL) {
-                    parent->secondary<accrow_>(position, buffer, static_cast<Index_>(0), this->extracted_length);
+                    parent->secondary<accrow_>(position, buffer, static_cast<Index_>(0), this->full_length);
                 } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                    parent->secondary<accrow_>(position, buffer, this->extracted_block, this->extracted_block + this->extracted_length);
+                    parent->secondary<accrow_>(position, buffer, this->block_start, this->block_start + this->block_length);
                 } else {
-                    parent->secondary<accrow_>(position, buffer, this->quick_extracted_index(), this->extracted_length);
+                    parent->secondary<accrow_>(position, buffer, indices.data(), this->index_length);
                 }
                 return buffer;
             }
@@ -115,30 +133,8 @@ private:
 
     private:
         const DenseMatrix* parent;
+        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
     };
-
-    template<bool accrow_>
-    std::unique_ptr<DenseExtractor<Value_, Index_> > populate(ExtractionOptions<Index_> eopt) const {
-        std::unique_ptr<DenseExtractor<Value_, Index_> > output;
-
-        switch (eopt.selection.type) {
-            case DimensionSelectionType::FULL:
-                output.reset(new DenseBase<DimensionSelectionType::FULL, true, accrow_>(this, eopt));
-                break;
-            case DimensionSelectionType::BLOCK:
-                output.reset(new DenseBase<DimensionSelectionType::BLOCK, true, accrow_>(this, eopt));
-                break;
-            case DimensionSelectionType::INDEX:
-                if (eopt.selection.index_start) {
-                    output.reset(new DenseBase<DimensionSelectionType::INDEX, true, accrow_>(this, eopt));
-                } else {
-                    output.reset(new DenseBase<DimensionSelectionType::INDEX, false, accrow_>(this, eopt));
-                }
-                break;
-        }
-
-        return output;
-    }
 
 private:
     template<bool accrow_> 
@@ -190,12 +186,34 @@ private:
     }
 
 public:
-    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row(IterationOptions<Index_>, ExtractionOptions<Index_> eopt) const {
-        return populate<true>(std::move(eopt));
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options<Index_>& opt) const {
+        auto ptr = new DenseBase<true, DimensionSelectionType::FULL>(this);
+        return std::unique_ptr<FullDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column(IterationOptions<Index_>, ExtractionOptions<Index_> eopt) const {
-        return populate<false>(std::move(eopt));
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        auto ptr = new DenseBase<true, DimensionSelectionType::BLOCK>(this, block_start, block_length);
+        return std::unique_ptr<BlockDenseExtractor<Value_, Index_> >(ptr);
+    }
+
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        auto ptr = new DenseBase<true, DimensionSelectionType::INDEX>(this, index_start, index_length);
+        return std::unique_ptr<IndexDenseExtractor<Value_, Index_> >(ptr);
+    }
+
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
+        auto ptr = new DenseBase<false, DimensionSelectionType::FULL>(this);
+        return std::unique_ptr<FullDenseExtractor<Value_, Index_> >(ptr);
+    }
+
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        auto ptr = new DenseBase<false, DimensionSelectionType::BLOCK>(this, block_start, block_length);
+        return std::unique_ptr<BlockDenseExtractor<Value_, Index_> >(ptr);
+    }
+
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        auto ptr = new DenseBase<false, DimensionSelectionType::INDEX>(this, index_start, index_length);
+        return std::unique_ptr<IndexDenseExtractor<Value_, Index_> >(ptr);
     }
 };
 

@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include "SequenceOracle.hpp"
 
 /**
  * @file Options.hpp
@@ -48,10 +49,16 @@ struct DimensionSelectionOptions {
     Index_ block_length = 0;
 
     /**
-     * Vector containing sorted and unique indices for dimension elements.
+     * Pointer to an array containing sorted and unique indices for dimension elements.
      * Only used if `type = DimensionSelectionType::INDEX`. 
      */
-    std::vector<Index_> indices;
+    const Index_* index_start = NULL;
+
+    /**
+     * Length of the array pointed to by `index_start`.
+     * Only relevant if `type = DimensionSelectionType::BLOCK`.
+     */
+    size_t index_length = 0;
 };
 
 /**
@@ -138,7 +145,7 @@ struct Options {
      */
     DimensionSelectionOptions<Index_> selection;
 
-    SparseExtractionOptions<Index_> sparse;
+    SparseExtractionOptions sparse;
 
     AccessPatternOptions<Index_> access;
 };

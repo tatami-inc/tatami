@@ -5,9 +5,6 @@
 #include "tatami/base/SparseRange.hpp"
 #include "tatami/base/Options.hpp"
 
-typedef tatami::IterationOptions<int> IterationOptions;
-typedef tatami::ExtractionOptions<int> ExtractionOptions;
-
 inline std::pair<size_t, size_t> wrap_intervals(size_t first, size_t last, size_t max) {
     size_t diff = last - first;
     first %= max;
@@ -41,31 +38,6 @@ bool is_increasing(const std::vector<IDX>& indices) {
         }
     }
     return true;
-}
-
-inline void set_access_pattern(IterationOptions& opt, std::vector<int>& indices, int length, bool forward, int jump) {
-    if (jump == 1) {
-        if (forward) {
-            opt.access_pattern = tatami::AccessPattern::CONSECUTIVE;
-        } else {
-            opt.access_pattern = tatami::AccessPattern::SEQUENCE;
-            indices.resize(length);
-            std::iota(indices.rbegin(), indices.rend(), 0);
-            opt.sequence_start = indices.data();
-            opt.sequence_length = indices.size();
-        }
-    } else {
-        if (forward) {
-            for (size_t i = 0; i < length; i += jump) {
-                indices.push_back(i);
-            }
-            opt.access_pattern = tatami::AccessPattern::SEQUENCE;
-            opt.sequence_start = indices.data();
-            opt.sequence_length = indices.size();
-        } else {
-            opt.access_pattern = tatami::AccessPattern::RANDOM;
-        }
-    }
 }
 
 #endif

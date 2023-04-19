@@ -1,5 +1,5 @@
-#ifndef TATAMI_OPTIONS_HPP
-#define TATAMI_OPTIONS_HPP
+#ifndef TATAMI_SEQUENCE_ORACLE_HPP
+#define TATAMI_SEQUENCE_ORACLE_HPP
 
 #include <vector>
 #include <memory>
@@ -21,6 +21,17 @@ namespace tatami {
  */
 template<typename Index_>
 struct SequenceOracle {
+protected:
+    /**
+     * @cond
+     */
+    SequenceOracle() = default;
+    virtual ~SequenceOracle() = default;
+    /**
+     * @endcond
+     */
+
+public:
     /**
      * Predict the indices to be accessed in future `fetch()` calls.
      *
@@ -29,7 +40,7 @@ struct SequenceOracle {
      * @return Pointer to an array of indices of the future elements to be accessed by `fetch()`.
      * The length of this array is also returned and is guaranteed to be less than `n`.
      */
-    std::pair<const Index_*, size_t> predict(size_t n) = 0;
+    virtual std::pair<const Index_*, size_t> predict(size_t n) = 0;
 };
 
 /**
@@ -40,7 +51,7 @@ struct SequenceOracle {
  * Once the sequence is fully iterated, this instance will wrap around to the start of the sequence.
  */
 template<typename Index_>
-struct FixedOracle : public SequenceOracle {
+struct FixedOracle : public SequenceOracle<Index_> {
     /**
      * @param r Pointer to a constant array of indices.
      * @param n Length of the array for `r`.
