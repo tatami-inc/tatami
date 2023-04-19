@@ -65,20 +65,53 @@ public:
     using Matrix<Value_, Index_>::sparse_column;
 
 public:
-    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return mat->dense_column(std::move(iopt), std::move(eopt));
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options<Index_>& opt) const {
+        return mat->dense_column(opt);
     }
 
-    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return mat->dense_row(std::move(iopt), std::move(eopt));
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        return mat->dense_column(block_start, block_length, opt);
     }
 
-    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return mat->sparse_column(std::move(iopt), std::move(eopt));
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        return mat->dense_column(index_start, index_length, opt);
     }
 
-    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return mat->sparse_row(std::move(iopt), std::move(eopt));
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
+        return mat->dense_row(opt);
+    }
+
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        return mat->dense_row(block_start, block_length, opt);
+    }
+
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        return mat->dense_row(index_start, index_length, opt);
+    }
+
+public:
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options<Index_>& opt) const {
+        return mat->sparse_column(opt);
+    }
+
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        return mat->sparse_column(block_start, block_length, opt);
+    }
+
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        return mat->sparse_column(index_start, index_length, opt);
+    }
+
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& opt) const {
+        return mat->sparse_row(opt);
+    }
+
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        return mat->sparse_row(block_start, block_length, opt);
+    }
+
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        return mat->sparse_row(index_start, index_length, opt);
     }
 };
 
