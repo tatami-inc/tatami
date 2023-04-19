@@ -75,23 +75,30 @@ public:
 
 private:
     template<DimensionSelectionType selection_, bool sparse_, bool inner_sparse_>
-    struct IsometricExtractorBase : public Extractor<sparse_, Value_, Index_> {
-        IsometricExtractorBase(std::unique_ptr<Extractor<inner_sparse_, Value_, Index_> > i, const DelayedIsometricOp* p) : internal(std::move(i)), parent(p) {
-            this->extracted_selection = internal->extracted_selection;
-            this->extracted_length = internal->extracted_length;
-            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->extracted_block = internal->extracted_block;
+    struct IsometricExtractorBase : public Extractor<selection_, sparse_, Value_, Index_> {
+        IsometricExtractorBase(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, inner_sparse_, Value_, Index_> > i) : parent(p), internal(std::move(i)) {
+            if constexpr(selection_ == DimensionSelectionType::FULL) {
+                this->full_length = internal->full_length;
+            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                this->block_start = internal->block_start;
+                this->block_length = internal->block_length;
+            } else {
+                this->index_length = internal->index_length;
             }
         }
 
-        const Index_* extracted_index() const {
-            return internal->extracted_index();
+        const Index_* index_start() const {
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                return internal->index_start();
+            } else {
+                return NULL;
+            }
         }
 
     protected:
-        std::unique_ptr<Extractor<inner_sparse_, Value_, Index_> > internal;
-
         const DelayedIsometricOp* parent;
+
+        std::unique_ptr<Extractor<selection_, inner_sparse_, Value_, Index_> > internal;
 
         friend class DelayedIsometricOp;
     };
@@ -102,9 +109,7 @@ private:
 public:
     template<bool accrow_, DimensionSelectionType selection_> 
     struct DenseIsometricExtractor : public IsometricExtractorBase<selection_, false, false> {
-        DenseIsometricExtractor(std::unique_ptr<Extractor<false, Value_, Index_> > i, const DelayedIsometricOp* p) : 
-            IsometricExtractorBase<selection_, false, false>(std::move(i), p) 
-        {}
+        DenseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i) : IsometricExtractorBase<selection_, false, false>(p, std::move(i)) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             auto ptr = this->internal->fetch(i, buffer);
@@ -115,9 +120,8 @@ public:
 
     template<bool accrow_, DimensionSelectionType selection_, class IsometricExtractor_>
     void mutate_dense(const Value_* ptr, Value_* buffer, Index_ i, const IsometricExtractor_* exptr) const {
-        auto end = exptr->extracted_length;
-
         if constexpr(selection_ == DimensionSelectionType::FULL) {
+            auto end = exptr->full_length;
             for (Index_ j = 0; j < end; ++j, ++ptr) {
                 if constexpr(accrow_) {
                     buffer[j] = operation(i, j, *ptr);
@@ -127,7 +131,8 @@ public:
             }
 
         } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-            auto shift = exptr->extracted_block;
+            auto end = exptr->block_length;
+            auto shift = exptr->block_start;
             for (Index_ j = 0; j < end; ++j, ++ptr) {
                 if constexpr(accrow_) {
                     buffer[j] = operation(i, j + shift, *ptr);
@@ -137,7 +142,8 @@ public:
             }
 
         } else {
-            auto xptr = exptr->internal->extracted_index();
+            auto xptr = exptr->internal->index_start();
+            auto end = exptr->index_length;
             for (Index_ j = 0; j < end; ++j, ++ptr, ++xptr) {
                 if constexpr(accrow_) {
                     buffer[j] = operation(i, *xptr, *ptr);
@@ -158,9 +164,7 @@ private:
     // provide space in the 'ibuffer'.
     template<bool accrow_, DimensionSelectionType selection_> 
     struct SimpleSparseIsometricExtractor : public IsometricExtractorBase<selection_, true, true> {
-        SimpleSparseIsometricExtractor(std::unique_ptr<Extractor<true, Value_, Index_> > i, const DelayedIsometricOp* p) : 
-            IsometricExtractorBase<selection_, true, true>(std::move(i), p)
-        {}
+        SimpleSparseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i) : IsometricExtractorBase<selection_, true, true>(p, std::move(i)) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             auto raw = this->internal->fetch(i, vbuffer, ibuffer);
@@ -183,14 +187,14 @@ private:
 
     template<bool accrow_, DimensionSelectionType selection_> 
     struct RegularSparseIsometricExtractor : public IsometricExtractorBase<selection_, true, true> {
-        RegularSparseIsometricExtractor(std::unique_ptr<Extractor<true, Value_, Index_> > i, const DelayedIsometricOp* p, bool ri, bool report_value) : 
-            IsometricExtractorBase<selection_, true, true>(std::move(i), p), report_index(ri)
+        RegularSparseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i, bool ri, bool report_value) : 
+            IsometricExtractorBase<selection_, true, true>(p, std::move(i)), report_index(ri)
         {
             if (!report_index && report_value) {
                 // We only need an internal ibuffer if the user wants the
                 // values but didn't provide enough space to store the indices
                 // (which we need to pass to the operation's functor).
-                internal_ibuffer.resize(this->extracted_length);
+                internal_ibuffer.resize(extracted_length<selection_, Index_>(*this));
             }
         }
 
@@ -222,8 +226,8 @@ private:
         }
 
     protected:
-        bool report_index = false;
         std::vector<Index_> internal_ibuffer;
+        bool report_index = false;
     };
 
     /*******************************************
@@ -235,12 +239,12 @@ private:
     // so we wont' bother doing that.
     template<bool accrow_, DimensionSelectionType selection_> 
     struct DensifiedSparseIsometricExtractor : public IsometricExtractorBase<selection_, true, false> {
-        DensifiedSparseIsometricExtractor(std::unique_ptr<Extractor<false, Value_, Index_> > i, const DelayedIsometricOp* p, bool ri, bool rv) : 
-            IsometricExtractorBase<selection_, true, false>(std::move(i), p), report_index(ri), report_value(rv)
+        DensifiedSparseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i, bool ri, bool rv) : 
+            IsometricExtractorBase<selection_, true, false>(p, std::move(i)), report_index(ri), report_value(rv)
         {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            SparseRange<Value_, Index_> raw(this->extracted_length, NULL, NULL);
+            SparseRange<Value_, Index_> raw(extracted_length<selection_, Index_>(*this), NULL, NULL);
 
             if (report_value) {
                 auto ptr = this->internal->fetch(i, vbuffer);
@@ -250,12 +254,12 @@ private:
 
             if (report_index) {
                 if constexpr(selection_ == DimensionSelectionType::FULL) {
-                    std::iota(ibuffer, ibuffer + this->extracted_length, 0);
+                    std::iota(ibuffer, ibuffer + this->full_length, 0);
                 } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                    std::iota(ibuffer, ibuffer + this->extracted_length, this->extracted_block);
+                    std::iota(ibuffer, ibuffer + this->block_length, this->block_start);
                 } else {
-                    auto xptr = this->internal->extracted_index();
-                    std::copy(xptr, xptr + this->extracted_length, ibuffer);
+                    auto xptr = this->internal->index_start();
+                    std::copy(xptr, xptr + this->index_length, ibuffer);
                 }
                 raw.index = ibuffer;
             }
@@ -272,67 +276,91 @@ private:
      ********** Public extractor methods **********
      **********************************************/
 private:
-    template<bool accrow_, DimensionSelectionType selection_, bool sparse_>
-    std::unique_ptr<Extractor<sparse_, Value_, Index_> > propagate_by_operation(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        std::unique_ptr<Extractor<sparse_, Value_, Index_> > output;
+    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > propagate(const Options<Index_>& opt, Args_... args) const {
+        std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(!sparse_) {
-            auto inner = new_extractor<accrow_, false>(mat.get(), std::move(iopt), std::move(eopt));
-            output.reset(new DenseIsometricExtractor<accrow_, selection_>(std::move(inner), this));
+            auto inner = new_extractor<accrow_, false>(mat.get(), args..., opt);
+            output.reset(new DenseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
 
         } else if constexpr(!Operation_::sparse_) {
-            // Make copies to avoid invalidation on move(eopt).
-            bool report_value = eopt.sparse_extract_value;
-            bool report_index = eopt.sparse_extract_index;
-
-            auto inner = new_extractor<accrow_, false>(mat.get(), std::move(iopt), std::move(eopt));
-            output.reset(new DensifiedSparseIsometricExtractor<accrow_, selection_>(std::move(inner), this, report_index, report_value));
+            bool report_value = opt.sparse.extract_value;
+            bool report_index = opt.sparse.extract_index;
+            auto inner = new_extractor<accrow_, false>(mat.get(), args..., opt);
+            output.reset(new DensifiedSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
 
         } else if constexpr((accrow_ && !Operation_::needs_column_) || (!accrow_ && !Operation_::needs_row_)) { // i.e., extraction indices aren't required for the operation.
-            auto inner = new_extractor<accrow_, true>(mat.get(), std::move(iopt), std::move(eopt));
-            output.reset(new SimpleSparseIsometricExtractor<accrow_, selection_>(std::move(inner), this));
+            auto inner = new_extractor<accrow_, true>(mat.get(), args..., opt);
+            output.reset(new SimpleSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
 
         } else {
-            bool report_value = eopt.sparse_extract_value;
-            bool report_index = eopt.sparse_extract_index;
+            bool report_value = opt.sparse.extract_value;
+            bool report_index = opt.sparse.extract_index;
+
+            std::unique_ptr<Extractor<selection_, true, Value_, Index_> > inner;
             if (report_value && !report_index) {
-                eopt.sparse_extract_index = true; // if we get to this clause, we need the indices; otherwise we'd have constructed a SimpleSparseIsometricExtractor.
+                auto optcopy = opt;
+                optcopy.sparse.extract_index = true; // if we get to this clause, we need the indices; otherwise we'd have constructed a SimpleSparseIsometricExtractor.
+                inner = new_extractor<accrow_, true>(mat.get(), args..., optcopy);
+            } else {
+                inner = new_extractor<accrow_, true>(mat.get(), args..., opt);
             }
 
-            auto inner = new_extractor<accrow_, true>(mat.get(), std::move(iopt), std::move(eopt));
-            output.reset(new RegularSparseIsometricExtractor<accrow_, selection_>(std::move(inner), this, report_index, report_value));
+            output.reset(new RegularSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
         }
 
         return output;
     }
 
-    template<bool accrow_, bool sparse_>
-    std::unique_ptr<Extractor<sparse_, Value_, Index_> > propagate(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        switch (eopt.selection.type) {
-            case DimensionSelectionType::FULL:
-                return propagate_by_operation<accrow_, DimensionSelectionType::FULL, sparse_>(std::move(iopt), std::move(eopt));
-            case DimensionSelectionType::BLOCK:
-                return propagate_by_operation<accrow_, DimensionSelectionType::BLOCK, sparse_>(std::move(iopt), std::move(eopt));
-            case DimensionSelectionType::INDEX:
-                return propagate_by_operation<accrow_, DimensionSelectionType::INDEX, sparse_>(std::move(iopt), std::move(eopt));
-        }
+public:
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options<Index_>& opt) const {
+        return propagate<true, DimensionSelectionType::FULL, false>(opt);
+    }
+
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        return propagate<true, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
+    }
+    
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        return propagate<true, DimensionSelectionType::INDEX, false>(opt, index_start, index_length);
+    }
+
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
+        return propagate<false, DimensionSelectionType::FULL, false>(opt);
+    }
+
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        return propagate<false, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
+    }
+    
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        return propagate<false, DimensionSelectionType::INDEX, false>(opt, index_start, index_length);
     }
 
 public:
-    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return propagate<true, false>(std::move(iopt), std::move(eopt));
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options<Index_>& opt) const {
+        return propagate<true, DimensionSelectionType::FULL, true>(opt);
     }
 
-    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return propagate<false, false>(std::move(iopt), std::move(eopt));
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        return propagate<true, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
+    }
+    
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        return propagate<true, DimensionSelectionType::INDEX, true>(opt, index_start, index_length);
     }
 
-    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return propagate<true, true>(std::move(iopt), std::move(eopt));
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& opt) const {
+        return propagate<false, DimensionSelectionType::FULL, true>(opt);
     }
 
-    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const {
-        return propagate<false, true>(std::move(iopt), std::move(eopt));
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+        return propagate<false, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
+    }
+    
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
+        return propagate<false, DimensionSelectionType::INDEX, true>(opt, index_start, index_length);
     }
 };
 

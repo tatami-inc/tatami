@@ -20,57 +20,136 @@ namespace tatami {
 
 /**
  * @tparam Index_ Row/column index type, should be integer.
- * @brief Virtual base class for extraction formatting.
+ * @brief Virtual base class for full access.
+ * 
+ * This is an interface class that provides access to the full extent of the extraction dimension.
  */
 template<typename Index_>
-struct ExtractorBase {
+struct FullExtractor {
 protected:
     /**
      * @cond
      */
-    ExtractorBase() = default;
-    virtual ~ExtractorBase() = default;
+    FullExtractor() = default;
+    virtual ~FullExtractor() = default;
     /**
      * @endcond
      */
 
 public:
     /**
-     * Limit on the elements on the extraction dimension, when accessing a single element of the iteration dimension.
-     * For example, when extracting a particular row, a setting of `DimensionSelectionType::NONE` indicates that entries were extracted across all columns for that row.
+     * Full extent of the extraction dimension.
      */
-    DimensionSelectionType extracted_selection = DimensionSelectionType::FULL;
-
-    /**
-     * Number of extracted entries of a dimension element.
-     * 
-     * - For `extracted_selection = DimensionSelectionType::NONE`, this should be the total extent of the extraction dimension.
-     * - For `extracted_selection = DimensionSelectionType::BLOCK`, this should be the size of the contiguous block along the extraction dimension.
-     * - For `extracted_selection = DimensionSelectionType::INDEX`, this should be the number of indices for the extraction dimension.
-     */
-    Index_ extracted_length = 0;
-
-    /**
-     * Index of the start of the contiguous block of entries along the extraction dimension.
-     * Only used if `extracted_selection = DimensionSelectionType::BLOCK`.
-     */
-    Index_ extracted_block = 0;
-
-    /**
-     * @return Pointer to the start of an array of length `extracted_length`,
-     * containing the sorted and unique entry indices along the extraction dimension.
-     * Only used if `extracted_selection = DimensionSelectionType::INDEX`.
-     */
-    virtual const Index_* extracted_index() const = 0;
+    Index_ full_length = 0;
 };
 
 /**
+ * @tparam Index_ Row/column index type, should be integer.
+ * @brief Virtual base class for block access.
+ *
+ * This is an interface class that provides access to a contiguous block of elements along the extraction dimension.
+ */
+template<typename Index_>
+struct BlockExtractor {
+protected:
+    /**
+     * @cond
+     */
+    BlockExtractor() = default;
+    virtual ~BlockExtractor() = default;
+    /**
+     * @endcond
+     */
+
+public:
+    /**
+     * Index of the start of the contiguous block of entries along the extraction dimension.
+     */
+    Index_ block_start = 0;
+
+    /**
+     * Size of the contiguous block along the extraction dimension.
+     */
+    Index_ block_length = 0;
+};
+
+/**
+ * @tparam Index_ Row/column index type, should be integer.
+ * @brief Virtual base class for indexed access. 
+ *
+ * This is an interface class that provides access to a subset of elements on the extraction dimension,
+ * where the subset is defined by a vector of sorted and unique indices.
+ */
+template<typename Index_> 
+struct IndexExtractor {
+protected:
+    /**
+     * @cond
+     */
+    IndexExtractor() = default;
+    virtual ~IndexExtractor() = default;
+    /**
+     * @endcond
+     */
+
+public:
+    /**
+     * Unlike `index_length`, this is implemented as a virtual method to avoid invalidation of pointers when `IndexExtractor` instances are copied or moved.
+     *
+     * @return Pointer to an array containing the sorted and unique entry indices along the extraction dimension.
+     */
+    virtual const Index_* index_start() const = 0;
+
+    /**
+     * @return Length of the array pointed to by `indices()`.
+     */
+    size_t index_length = 0;
+};
+
+/**
+ * @tparam selection_ Type of selection along the extraction dimension.
+ * @tparam Index_ Row/column index type, should be integer.
+ *
+ * Conditional extractor interface that depends on the selection type.
+ */
+template<DimensionSelectionType selection_, typename Index_> 
+using ConditionalSelectionExtractor = typename std::conditional<
+        selection_ == DimensionSelectionType::FULL,
+        FullExtractor<Index_>,
+        typename std::conditional<
+                selection_ == DimensionSelectionType::BLOCK,
+                BlockExtractor<Index_>,
+                IndexExtractor<Index_>
+            >::type
+    >::type;
+
+/**
+ * @tparam selection_ Type of selection along the extraction dimension.
+ * @tparam Index_ Row/column index type, should be integer.
+ * 
+ * @param ex A `ConditionalSelectionExtractor` object.
+ * @return Number of elements extracted from the extraction dimension, conditional on the selection type in `selection_`.
+ */
+template<DimensionSelectionType selection_, typename Index_> 
+Index_ extracted_length(const ConditionalSelectionExtractor<selection_, Index_>& ex) {
+    if constexpr(selection_ == DimensionSelectionType::FULL) {
+        return ex.full_length;
+    } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+        return ex.block_length;
+    } else {
+        return ex.index_length;
+    }
+}
+
+/**
+ * @tparam selection_ Type of selection along the extraction dimension.
  * @tparam Value_ Data value type, should be numeric.
  * @tparam Index_ Row/column index type, should be integer.
+ *
  * @brief Virtual base class for dense extraction.
  */
-template<typename Value_, typename Index_>
-class DenseExtractor : public ExtractorBase<Index_> {
+template<DimensionSelectionType selection_, typename Value_, typename Index_>
+class DenseExtractor : public ConditionalSelectionExtractor<selection_, Index_> {
 protected:
     /**
      * @cond
@@ -86,15 +165,15 @@ public:
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
      * @param i Index of the desired element on the iteration dimension.
-     * @param buffer Pointer to an array of length specified by `ExtractorBase::extracted_length`.
+     * @param buffer Pointer to an array of length no less than `extracted_length()`.
      *
-     * @return Pointer to the contents of the desired dimension element, containing `ExtractorBase::extracted_length` valid entries.
+     * @return Pointer to the contents of the `i`-th element of the iteration dimension, containing `extracted_length()` entries.
      */
     virtual const Value_* fetch(Index_ i, Value_* buffer) = 0;
 
     /**
      * @param i Index of the desired element on the iteration dimension.
-     * @param[out] buffer Pointer to an array of length specified by `ExtractorBase::extracted_length`.
+     * @param[out] buffer Pointer to an array of length specified by `extracted_length()`.
      * This is filled with the contents of the desired dimension element.
      *
      * @return `buffer`, for consistency with `fetch()`.
@@ -102,17 +181,17 @@ public:
     const Value_* fetch_copy(Index_ i, Value_* buffer) {
         auto out = fetch(i, buffer);
         if (out != buffer) {
-            std::copy(out, out + this->extracted_length, buffer);
+            std::copy(out, out + extracted_length<selection_, Index_>(*this), buffer);
         }
         return buffer;
     }
 
     /**
      * @param i Index of the desired element on the iteration dimension.
-     * @return Vector of length `ExtractorBase::extracted_length`, containing the contents of the desired dimension element.
+     * @return Vector of length `extracted_length()`, containing the contents of the desired dimension element.
      */
     std::vector<Value_> fetch(Index_ i) {
-        std::vector<Value_> buffer(this->extracted_length);
+        std::vector<Value_> buffer(extracted_length<selection_, Index_>(*this));
         fetch_copy(i, buffer.data());
         return buffer;
     }
@@ -120,16 +199,23 @@ public:
     /**
      * Whether this class enables sparse access.
      */
-    static constexpr bool sparse_ = false;
+    static constexpr bool sparse = false;
+
+    /**
+     * Type of selection on the extraction dimension.
+     */
+    static constexpr DimensionSelectionType selection = selection_;
 };
 
 /**
+ * @tparam selection_ Type of selection along the extraction dimension.
  * @tparam Value_ Data value type, should be numeric.
  * @tparam Index_ Row/column index type, should be integer.
- * @brief Virtual base class for dense extraction.
+ *
+ * @brief Virtual base class for sparse extraction.
  */
-template<typename Value_, typename Index_>
-class SparseExtractor : public ExtractorBase<Index_> {
+template<DimensionSelectionType selection_, typename Value_, typename Index_>
+class SparseExtractor : public ConditionalSelectionExtractor<selection_, Index_> {
 protected:
     /**
      * @cond
@@ -146,9 +232,9 @@ public:
      * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
      * @param i Index of the desired element on the iteration dimension.
-     * @param vbuffer Pointer to an array with enough space for at least `ExtractorBase::extracted_length` values.
+     * @param vbuffer Pointer to an array with enough space for at least `extracted_length()` values.
      * Ignored if `ExtractionOptions::sparse_extract_value` was set to `false` during construction of this instance.
-     * @param ibuffer Pointer to an array with enough space for at least `ExtractorBase::extracted_length` indices.
+     * @param ibuffer Pointer to an array with enough space for at least `extracted_length()` indices.
      * Ignored if `ExtractionOptions::sparse_extract_index` was set to `false` during construction of this instance.
      *
      * @return A `SparseRange` object describing the contents of the desired dimension element.
@@ -159,12 +245,12 @@ public:
 
     /**
      * @param i Index of the desired element on the iteration dimension.
-     * @param[out] vbuffer Pointer to an array with enough space for at least `ExtractorBase::extracted_length` values.
+     * @param[out] vbuffer Pointer to an array with enough space for at least `extracted_length()` values.
      * On output, this is filled with the values of the structural non-zeros. 
      *
      * Ignored if `ExtractionOptions::sparse_extract_value` was set to `false` during construction of this instance.
      * Also ignored if set to `NULL`, in which case the values are extracted but not copied to `vbuffer`.
-     * @param[out] ibuffer Pointer to an array with enough space for at least `ExtractorBase::extracted_length` indices.
+     * @param[out] ibuffer Pointer to an array with enough space for at least `extracted_length()` indices.
      * On output, this is filled with the indices of the structural non-zeros. 
      *
      * Ignored if `ExtractionOptions::sparse_extract_index` was set to `false` during construction of this instance.
@@ -205,7 +291,7 @@ public:
      * based on the setting of `ExtractionOptions::sparse_extract_mode` used to construct this object.
      */
     SparseRangeCopy<Value_, Index_> fetch(Index_ i) {
-        SparseRangeCopy<Value_, Index_> output(this->extracted_length);
+        SparseRangeCopy<Value_, Index_> output(extracted_length<selection_, Index_>(*this));
         auto range = fetch_copy(i, output.value.data(), output.index.data());
         output.number = range.number;
         output.value.resize(range.value != NULL ? range.number : 0);
@@ -216,19 +302,60 @@ public:
     /**
      * Whether this class enables sparse access.
      */
-    static constexpr bool sparse_ = true;
+    static constexpr bool sparse = true;
+
+    /**
+     * Type of selection on the extraction dimension.
+     */
+    static constexpr DimensionSelectionType selection = selection_;
 };
 
 /**
+ * @tparam selection_ Type of selection on the extraction dimension.
  * @tparam sparse_ Whether to perform sparse retrieval.
  * @tparam Value_ Data value type, should be numeric.
  * @tparam Index_ Row/column index type, should be integer.
  *
- * Conditional class definition for dense/sparse formats.
- * If `sparse = true`, this will have the `SparseExtractor::fetch()` method, otherwise it will have the `DenseExtractor::fetch()` method.
+ * Conditional extractor interface that depends on the format type.
  */
-template<bool sparse_, typename Value_, typename Index_>
-using Extractor = typename std::conditional<sparse_, SparseExtractor<Value_, Index_>, DenseExtractor<Value_, Index_> >::type;
+template<DimensionSelectionType selection_, bool sparse_, typename Value_, typename Index_> 
+using Extractor = typename std::conditional<sparse_, SparseExtractor<selection_, Value_, Index_>, DenseExtractor<selection_, Value_, Index_> >::type;
+
+/**
+ * Extractor for dense extraction of full rows.
+ */
+template<typename Value_, typename Index_>
+using FullDenseExtractor = Extractor<DimensionSelectionType::FULL, false, Value_, Index_>;
+
+/**
+ * Extractor for dense extraction of a block of each row.
+ */
+template<typename Value_, typename Index_>
+using BlockDenseExtractor = Extractor<DimensionSelectionType::BLOCK, false, Value_, Index_>;
+
+/**
+ * Extractor for dense extraction of an indexed subset of each row.
+ */
+template<typename Value_, typename Index_>
+using IndexDenseExtractor = Extractor<DimensionSelectionType::INDEX, false, Value_, Index_>;
+
+/**
+ * Extractor for sparse extraction of full rows.
+ */
+template<typename Value_, typename Index_>
+using FullSparseExtractor = Extractor<DimensionSelectionType::FULL, true, Value_, Index_>;
+
+/**
+ * Extractor for sparse extraction of a block of each column.
+ */
+template<typename Value_, typename Index_>
+using BlockSparseExtractor = Extractor<DimensionSelectionType::BLOCK, true, Value_, Index_>;
+
+/**
+ * Extractor for sparse extraction of an indexed subset of each column.
+ */
+template<typename Value_, typename Index_>
+using IndexSparseExtractor = Extractor<DimensionSelectionType::INDEX, true, Value_, Index_>;
 
 }
 

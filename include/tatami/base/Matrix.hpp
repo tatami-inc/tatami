@@ -92,75 +92,203 @@ public:
      **************************************/
 public:
     /**
-     * @param iopt Iteration options.
-     * @param eopt Extraction options.
-     * 
-     * @return A `DimensionAccess` object for random access to dense rows.
+     * @param opt Options for extraction.
+     * @return A `FullDenseExtractor` object for dense access to full rows.
      */
-    virtual std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const = 0;
+    virtual std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options<Index_>& opt) const = 0;
 
     /**
-     * @param iopt Iteration options.
-     * @param eopt Extraction options.
-     * 
-     * @return A `DimensionAccess` object for random access to dense columns.
+     * @param block_start Index of the column at the start of the block.
+     * @param block_length Number of columns in the block.
+     * @param opt Options for extraction.
+     * @return A `BlockDenseExtractor` object for dense access to a block of each row.
      */
-    virtual std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const = 0;
+    virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_end, const Options<Index_>& opt) const = 0;
+
+    /**
+     * @param index_start Pointer to an array containing sorted and unique column indices.
+     * @param index_length Length of the array pointed to by `index_start`.
+     * @param opt Options for extraction.
+     * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each row.
+     */
+    virtual std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const = 0;
+
+    /**
+     * @param opt Options for extraction.
+     * @return A `FullDenseExtractor` object for dense access to full columns.
+     */
+    virtual std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const = 0;
+
+    /**
+     * @param block_start Index of the row at the start of the block.
+     * @param block_length Number of rows in the block.
+     * @param opt Options for extraction.
+     * @return A `BlockDenseExtractor` object for dense access to a block of each column.
+     */
+    virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_end, const Options<Index_>& opt) const = 0;
+
+    /**
+     * @param index_start Pointer to an array containing sorted and unique row indices.
+     * @param index_length Length of the array pointed to by `index_start`.
+     * @param opt Options for extraction.
+     * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each column.
+     */
+    virtual std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const = 0;
 
     /***************************************
      **** Sparse access virtual methods ****
      ***************************************/
 public:
     /**
-     * @param iopt Iteration options.
-     * @param eopt Extraction options.
-     * 
-     * @return A `DimensionAccess` object for random access to sparse rows.
+     * @param opt Options for extraction.
+     * @return A `FullSparseExtractor` object for sparse access to full rows.
      */
-    virtual std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_row(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const = 0;
+    virtual std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options<Index_>& opt) const = 0;
 
     /**
-     * @param iopt Iteration options.
-     * @param eopt Extraction options.
-     * 
-     * @return A `DimensionAccess` object for random access to sparse columns.
+     * @param block_start Index of the column at the start of the block.
+     * @param block_length Number of columns in the block.
+     * @param opt Options for extraction.
+     * @return A `BlockSparseExtractor` object for sparse access to a block of each row.
      */
-    virtual std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_column(IterationOptions<Index_> iopt, ExtractionOptions<Index_> eopt) const = 0;
+    virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_end, const Options<Index_>& opt) const = 0;
+
+    /**
+     * @param index_start Pointer to an array containing sorted and unique column indices.
+     * @param index_length Length of the array pointed to by `index_start`.
+     * @param opt Options for extraction.
+     * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each row.
+     */
+    virtual std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const = 0;
+
+    /**
+     * @param opt Options for extraction.
+     * @return A `FullSparseExtractor` object for sparse access to full columns.
+     */
+    virtual std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& opt) const = 0;
+
+    /**
+     * @param block_start Index of the row at the start of the block.
+     * @param block_length Number of rows in the block.
+     * @param opt Options for extraction.
+     * @return A `BlockSparseExtractor` object for sparse access to a block of each column.
+     */
+    virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_end, const Options<Index_>& opt) const = 0;
+
+    /**
+     * @param index_start Pointer to an array containing sorted and unique row indices.
+     * @param index_length Length of the array pointed to by `index_start`.
+     * @param opt Options for extraction.
+     * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each column.
+     */
+    virtual std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const = 0;
 
     /***************************************
      **** Dense access default overload ****
      ***************************************/
 public:
     /**
-     * @return A `DimensionAccess` object for random access to dense rows with default options.
+     * @return A `FullDenseExtractor` object for dense access to full rows, using default options.
      */
-    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_row() const {
-        return dense_row(IterationOptions<Index_>(), ExtractionOptions<Index_>());
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row() const {
+        return dense_row(Options<Index_>());
     }
 
     /**
-     * @return A `DimensionAccess` object for random access to dense columns with default options.
+     * @param block_start Index of the column at the start of the block.
+     * @param block_length Number of columns in the block.
+     * @return A `BlockDenseExtractor` object for dense access to a block of each row, using default options.
      */
-    std::unique_ptr<DenseExtractor<Value_, Index_> > dense_column() const {
-        return dense_column(IterationOptions<Index_>(), ExtractionOptions<Index_>());
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_end) const {
+        return dense_row(block_start, block_end, Options<Index_>());
     }
 
-    /****************************************
-     **** Sparse access options overload ****
-     ****************************************/
+    /**
+     * @param index_start Pointer to an array containing sorted and unique column indices.
+     * @param index_length Length of the array pointed to by `index_start`.
+     * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each row, using default options.
+     */
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length) const {
+        return dense_row(index_start, index_length, Options<Index_>());
+    }
+
+    /**
+     * @return A `FullDenseExtractor` object for dense access to full columns, using default options.
+     */
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column() const {
+        return dense_column(Options<Index_>());
+    }
+
+    /**
+     * @param block_start Index of the row at the start of the block.
+     * @param block_length Number of rows in the block.
+     * @return A `BlockDenseExtractor` object for dense access to a block of each column, using default options.
+     */
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_end) const {
+        return dense_column(block_start, block_end, Options<Index_>());
+    }
+
+    /**
+     * @param index_start Pointer to an array containing sorted and unique row indices.
+     * @param index_length Length of the array pointed to by `index_start`.
+     * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each column, using default options.
+     */
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length) const {
+        return dense_column(index_start, index_length, Options<Index_>()); 
+    }
+
+    /*****************************************
+     **** Sparse access default overloads ****
+     *****************************************/
 public:
     /**
-     * @return A `DimensionAccess` object for random access to sparse rows with default options.
+     * @return A `FullSparseExtractor` object for sparse access to full rows, using default options.
      */
-    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_row() const {
-        return sparse_row(IterationOptions<Index_>(), ExtractionOptions<Index_>());
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row() const {
+        return sparse_row(Options<Index_>());
     }
 
     /**
-     * @return A `DimensionAccess` object for random access to sparse columns with default options.
+     * @param block_start Index of the column at the start of the block.
+     * @param block_length Number of columns in the block.
+     * @return A `BlockSparseExtractor` object for sparse access to a block of each row, using default options.
      */
-    std::unique_ptr<SparseExtractor<Value_, Index_> > sparse_column() const {
-        return sparse_column(IterationOptions<Index_>(), ExtractionOptions<Index_>());
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_end) const {
+        return sparse_row(block_start, block_end, Options<Index_>());
+    }
+
+    /**
+     * @param index_start Pointer to an array containing sorted and unique column indices.
+     * @param index_length Length of the array pointed to by `index_start`.
+     * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each row, using default options.
+     */
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length) const {
+        return sparse_row(index_start, index_length, Options<Index_>());
+    }
+
+    /**
+     * @return A `FullSparseExtractor` object for sparse access to full columns, using default options.
+     */
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column() const {
+        return sparse_column(Options<Index_>());
+    }
+
+    /**
+     * @param block_start Index of the row at the start of the block.
+     * @param block_length Number of rows in the block.
+     * @return A `BlockSparseExtractor` object for sparse access to a block of each column, using default options.
+     */
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_end) const {
+        return sparse_column(block_start, block_end, Options<Index_>());
+    }
+
+    /**
+     * @param index_start Pointer to an array containing sorted and unique row indices.
+     * @param index_length Length of the array pointed to by `index_start`.
+     * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each column, using default options.
+     */
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length) const {
+        return sparse_column(index_start, index_length, Options<Index_>());
     }
 };
 

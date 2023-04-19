@@ -24,7 +24,7 @@ add_executable(
     src/base/arith_vector_helpers.cpp
     src/base/arith_scalar_helpers.cpp
     src/base/math_helpers.cpp
-#
+
 #    src/stats/sums.cpp
 #    src/stats/variances.cpp
 #    src/stats/medians.cpp
