@@ -276,8 +276,8 @@ private:
      ********** Public extractor methods **********
      **********************************************/
 private:
-    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > propagate(const Options<Index_>& opt, Args... args) const {
+    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > propagate(const Options<Index_>& opt, Args_... args) const {
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(!sparse_) {
