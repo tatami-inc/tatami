@@ -134,19 +134,25 @@ struct AccessPatternOptions {
 };
 
 /**
- * @brief Options for accessing elements along the extraction dimension.
+ * @brief Options for accessing elements. 
  *
  * @tparam Index_ Integer type of the row/column indices.
  */
 template<typename Index_>
 struct Options {
     /**
-     *
+     * Options for selecting elements on the iteration dimension.
      */
     DimensionSelectionOptions<Index_> selection;
 
+    /**
+     * Options for sparse extraction.
+     */
     SparseExtractionOptions sparse;
 
+    /**
+     * Options to define the access pattern on the iteration dimension.
+     */
     AccessPatternOptions<Index_> access;
 };
 
