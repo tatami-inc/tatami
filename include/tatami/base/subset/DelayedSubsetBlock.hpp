@@ -179,7 +179,16 @@ private:
 private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct AcrossExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-        AcrossExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, Index_ start) : internal(std::move(i)), offset(start) {}
+        AcrossExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, Index_ start) : internal(std::move(i)), offset(start) {
+            if constexpr(selection_ == DimensionSelectionType::FULL) {
+                this->full_length = this->internal->full_length;
+            } else if constexpr(selection_ == DimensionSelectionType::FULL) {
+                this->block_start = this->internal->block_start;
+                this->block_length = this->internal->block_length;
+            } else if constexpr(selection_ == DimensionSelectionType::FULL) {
+                this->index_length= this->internal->index_length;
+            }
+        }
 
         const Index_* index_start() const {
             return internal->index_start();
@@ -215,7 +224,7 @@ private:
     std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options<Index_>& opt, Args_... args) const {
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
-        if constexpr(accrow_ == (margin_ == 0)) {
+        if constexpr(accrow_ != (margin_ == 0)) {
             if constexpr(sparse_) {
                 output.reset(new SparseAlongExtractor<selection_>(this, opt, args...));
             } else {
