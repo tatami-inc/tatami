@@ -162,10 +162,15 @@ private:
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             auto out = this->internal->fetch(i, vbuffer, ibuffer);
-            if (out.index && offset) {
-                for (Index_ j = 0; j < out.number; ++j) {
-                    ibuffer[j] = out.index[j] - offset;
+            if (out.index) {
+                if (offset) {
+                    for (Index_ j = 0; j < out.number; ++j) {
+                        ibuffer[j] = out.index[j] - offset;
+                    }
+                    out.index = ibuffer;
                 }
+            } else {
+                out.index = NULL;
             }
             return out;
         }
@@ -182,10 +187,10 @@ private:
         AcrossExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, Index_ start) : internal(std::move(i)), offset(start) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->full_length = this->internal->full_length;
-            } else if constexpr(selection_ == DimensionSelectionType::FULL) {
+            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->block_start = this->internal->block_start;
                 this->block_length = this->internal->block_length;
-            } else if constexpr(selection_ == DimensionSelectionType::FULL) {
+            } else if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 this->index_length= this->internal->index_length;
             }
         }
