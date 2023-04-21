@@ -215,34 +215,35 @@ private:
                 this->index_length = il;
 
                 if (il) {
-                    indices = std::vector<Index_>(is, is + il);
-
                     const auto& cumulative = this->parent->cumulative;
-                    size_t index = std::upper_bound(cumulative.begin(), cumulative.end(), indices[0]) - cumulative.begin() - 1; // finding the first matrix.
+                    size_t index = std::upper_bound(cumulative.begin(), cumulative.end(), is[0]) - cumulative.begin() - 1; // finding the first matrix.
                     if constexpr(sparse_) {
                         kept.reserve(nmats);
                     }
 
                     size_t counter = 0;
-                    std::vector<Index_> curslice;
-                    curslice.reserve(indices.size());
-
+                    indices.reserve(il);
                     for (; index < nmats; ++index) {
                         Index_ lower = cumulative[index];
                         Index_ upper = cumulative[index + 1];
 
-                        curslice.clear();
-                        while (counter < il && indices[counter] < upper) {
-                            curslice.push_back(indices[counter] - lower);
+                        size_t old_counter = counter;
+                        while (counter < il && is[counter] < upper) {
+                            indices.push_back(is[counter] - lower);
                             ++counter;
                         }
 
-                        if (curslice.size()) {
+                        if (old_counter != counter) {
+                            auto indices_start = indices.data() + old_counter;
+
                             // TODO: manage opt.selection, manage opt.access.sequencer!
-                            workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), curslice.data(), static_cast<size_t>(curslice.size()), opt));
+                            workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), indices_start, counter - old_counter, opt));
                             if constexpr(sparse_) {
                                 kept.push_back(index);
                             }
+
+                            // Actually setting the indices properly.
+                            std::copy(is + old_counter, is + counter, indices_start);
                         }
 
                         if (counter == il) {
