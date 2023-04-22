@@ -123,6 +123,7 @@ private:
 
         ParallelWorkspaceBase(const DelayedSubsetSortedUnique* parent, const Options<Index_>& opt, const Index_* is, size_t il) {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                // Reusing 'indices' to store the inner indices.
                 indices.reserve(il);
                 for (size_t i = 0; i < il; ++i) {
                     indices.push_back(parent->indices[is[i]]);
@@ -130,7 +131,7 @@ private:
                 internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), indices.data(), il, opt);
 
                 this->index_length = il;
-                std::copy(is, is + il, indices.begin());
+                std::copy(is, is + il, indices.begin()); // now replacing it with the supplied indices.
             }
         }
 
@@ -180,66 +181,6 @@ private:
         const DelayedSubsetSortedUnique* parent;
     };
 
-    /**************************************************
-     ************ Perpendicular extraction ************
-     **************************************************/
-private:
-    template<DimensionSelectionType selection_, bool sparse_>
-    struct PerpendicularWorkspaceBase : public Extractor<selection_, sparse_, Value_, Index_> {
-        PerpendicularWorkspaceBase(const DelayedSubsetSortedUnique* p, const Options<Index_>& opt) : parent(p) {
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->full_length = parent->indices.size();
-                internal = new_extractor<margin_ == 0, sparse_>(parent->mat.get(), opt);
-            }
-        }
-
-        PerpendicularWorkspaceBase(const DelayedSubsetSortedUnique* p, const Options<Index_>& opt, Index_ bs, Index_ bl) : parent(p) {
-            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->block_start = bs;
-                this->block_length = bl;
-                internal = new_extractor<margin_ == 0, sparse_>(parent->mat.get(), bs, bl, opt);
-            }
-        }
-
-        PerpendicularWorkspaceBase(const DelayedSubsetSortedUnique* p, const Options<Index_>& opt, const Index_* is, size_t il) : parent(p) {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                internal = new_extractor<margin_ == 0, sparse_>(parent->mat.get(), indices.data(), il, opt);
-                this->index_length = il;
-            }
-        }
-
-        const Index_* index_start() const {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                return internal->index_start();
-            } else {
-                return NULL;
-            }
-        }
-
-    protected:
-        const DelayedSubsetSortedUnique* parent;
-        std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal;
-    };
-
-    template<DimensionSelectionType selection_>
-    struct DensePerpendicularWorkspace : public PerpendicularWorkspaceBase<selection_, false> {
-        template<typename ... Args_>
-        DensePerpendicularWorkspace(const DelayedSubsetSortedUnique* parent, Args_... args) : PerpendicularWorkspaceBase<selection_, false>(parent, args...) {}
-
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            return this->internal->fetch(this->parent->indices[i], buffer);
-        }
-    };
-
-    template<DimensionSelectionType selection_>
-    struct SparsePerpendicularWorkspace : public PerpendicularWorkspaceBase<selection_, true> {
-        template<typename ... Args_>
-        SparsePerpendicularWorkspace(const DelayedSubsetSortedUnique* parent, Args_... args) : PerpendicularWorkspaceBase<selection_, true>(parent, args...) {}
-
-        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            return this->internal->fetch(this->parent->indices[i], vbuffer, ibuffer);
-        }
-    };
 
     /******************************************
      ************ Public overrides ************
@@ -251,11 +192,7 @@ private:
 
         if constexpr(accrow_ == (margin_ == 0)) {
             // TODO: fiddle with the access limits in 'opt'.
-            if constexpr(sparse_) {
-                output.reset(new SparsePerpendicularWorkspace(this, opt, args...));
-            } else {
-                output.reset(new DensePerpendicularWorkspace(this, opt, args...));
-            }
+            return subset_utils::populate_perpendicular<accrow_, selection_, sparse_>(mat.get(), this->parent->indices, opt, args...);
         } else {
             if constexpr(sparse_) {
                 output.reset(new SparseParallelWorkspace(this, opt, args...));

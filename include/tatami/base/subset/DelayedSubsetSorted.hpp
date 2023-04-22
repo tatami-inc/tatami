@@ -235,7 +235,7 @@ private:
         {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
-            auto ref = internal->fetch(i, this->temp.data());
+            auto ref = this->internal->fetch(i, this->temp.data());
             return subset_utils::remap_dense(ref, buffer, this->parent->reverse_mapping);
         }
     };
@@ -445,58 +445,6 @@ private:
     };
 
     /**************************************************
-     ************ Perpendicular extraction ************
-     **************************************************/
-private:
-    template<DimensionSelectionType selection_, bool sparse_>
-    struct PerpendicularExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-        PerpendicularExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, const DelayedSubsetSorted* p) : 
-            internal(std::move(i)), parent(p)
-        {
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->full_length = internal->full_length;
-            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->block_start = internal->block_start;
-                this->block_length = internal->block_length;
-            } else {
-                this->index_length = internal->index_length;
-            }
-        }
-
-        const Index_* index_start() const {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                return internal->index_start();
-            } else {
-                return NULL;
-            }
-        }
-
-    protected:
-        std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal;
-        const DelayedSubsetSorted* parent;
-    };
-
-    template<DimensionSelectionType selection_>
-    struct DensePerpendicularExtractor : public Extractor<selection_, false, Value_, Index_> {
-        DensePerpendicularExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, const DelayedSubsetSorted* p) : 
-            PerpendicularExtractor(std::move(i), p) {}
-
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            return this->internal->fetch(this->parent->indices[i], buffer);
-        }
-    };
-
-    template<DimensionSelectionType selection_>
-    struct SparsePerpendicularExtractor : public Extractor<selection_, true, Value_, Index_> {
-        SparsePerpendicularExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, const DelayedSubsetSorted* p) : 
-            PerpendicularExtractor(std::move(i), p) {}
-
-        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            return this->internal->fetch(this->parent->indices[i], vbuffer, ibuffer);
-        }
-    };
-
-    /**************************************************
      ************ Public virtual overrides ************
      **************************************************/
 private:
@@ -504,9 +452,9 @@ private:
     std::unique_ptr<Extractor<DimensionSelectionType::FULL, sparse_, Value_, Index_> > populate_parallel(const Options<Index_>& options) const {
         std::unique_ptr<Extractor<DimensionSelectionType::FULL, sparse_, Value_, Index_> > output;
         if constexpr(sparse_) {
-            output.reset(new SparseFullParallelWorkspace(options));
+            output.reset(new SparseFullParallelWorkspace(this, options));
         } else {
-            output.reset(new DenseFullParallelWorkspace(options));
+            output.reset(new DenseFullParallelWorkspace(this, options));
         }
         return output;
     }
@@ -515,9 +463,9 @@ private:
     std::unique_ptr<Extractor<DimensionSelectionType::BLOCK, sparse_, Value_, Index_> > populate_parallel(const Options<Index_>& options, Index_ bs, Index_ bl) const {
         std::unique_ptr<Extractor<DimensionSelectionType::BLOCK, sparse_, Value_, Index_> > output;
         if constexpr(sparse_) {
-            output.reset(new SparseBlockParallelWorkspace(options, bs, bl));
+            output.reset(new SparseBlockParallelWorkspace(this, options, bs, bl));
         } else {
-            output.reset(new DenseBlockParallelWorkspace(options, bs, bl));
+            output.reset(new DenseBlockParallelWorkspace(this, options, bs, bl));
         }
         return output;
     }
@@ -526,9 +474,9 @@ private:
     std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > populate_parallel(const Options<Index_>& options, const Index_* is, size_t il) const {
         std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > output;
         if constexpr(sparse_) {
-            output.reset(new SparseIndexParallelWorkspace(options, is, il));
+            output.reset(new SparseIndexParallelWorkspace(this, options, is, il));
         } else {
-            output.reset(new DenseIndexParallelWorkspace(options, is, il));
+            output.reset(new DenseIndexParallelWorkspace(this, options, is, il));
         }
         return output;
     }
@@ -536,14 +484,7 @@ private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
     std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options<Index_>& options, Args_... args) const {
         if constexpr(accrow_ == (margin_ == 0)) {
-            // TODO: handle variable access patterns here.
-            std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
-            if constexpr(sparse_) {
-                output.reset(new SparsePerpendicularExtractor(new_extractor<accrow_, sparse_>(mat.get(), args...), this));
-            } else {
-                output.reset(new DensePerpendicularExtractor(new_extractor<accrow_, sparse_>(mat.get(), args...), this));
-            }
-            return output;
+            return subset_utils::populate_perpendicular<accrow_, selection_, sparse_>(mat.get(), this->parent->indices, opt, args...);
         } else {
             return populate_parallel(options, args...);
         }
