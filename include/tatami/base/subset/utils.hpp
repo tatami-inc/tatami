@@ -17,9 +17,8 @@ struct DenseSupplement {
     static constexpr bool sparse = false;
 };
 
-template<bool WORKROW, typename Value_, typename Index_, class InputWorkspace>
-const Value_* remap_dense(const Matrix<Value_, Index_>* mat, size_t i, Value_* buffer, InputWorkspace* work, const std::vector<size_t>& rmapping) {
-    const Value_* dump = extract_dense<WORKROW>(mat, i, work->buffer.data(), work->internal.get());
+template<bool WORKROW, typename Value_, typename Index_>
+const Value_* remap_dense(const Value_* input, Value_* buffer, const std::vector<Index_>& rmapping) {
     auto temp = buffer;
     for (auto i : rmapping) {
         *temp = dump[i];
