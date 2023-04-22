@@ -369,29 +369,35 @@ private:
 private:
     template<bool sparse_>
     struct IndexParallelExtractor : public Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> {
-        const Index_* index_start() const {
-            return indices.data();
-        }
-    protected:
-        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
-        std::vector<Index_> indices;
-    }
-
-    struct DenseIndexParallelExtractorRaw : public IndexParallelExtractor<false> {
-        DenseIndexParallelExtractorRaw(const DelayedSubsetSorted* p, const Options<Index_>& opt, const Index_* is, size_t il) {
+        IndexParallelExtractorRaw(const DelayedSubsetSorted* p, const Options<Index_>& opt, const Index_* is, size_t il) {
             const auto& pindices = this->parent->indices;
-            reverse_mapping.reserve(il);
+            this->indices.reserve(il); // re-using 'indices' to get the unique indices first.
 
-            // Re-using 'indices' to get the unique indices first.
-            this->indices.reserve(il);
-            Index_ ucount = 0;
-            for (size_t i = 0; i < il; ++i) {
-                Index_ curdex = is[i];
-                if (indices.empty() || indices.back() == curdex) {
-                    this->indices.push_back(curdex);
-                    ++ucount;
+            if constexpr(!sparse_) {
+                reverse_mapping.reserve(il);
+                Index_ ucount = 0;
+                for (size_t i = 0; i < il; ++i) {
+                    Index_ curdex = pindices[is[i]];
+                    if (indices.empty() || indices.back() == curdex) {
+                        this->indices.push_back(curdex);
+                        ++ucount;
+                    }
+                    reverse_mapping.push_back(ucount);
                 }
-                reverse_mapping.push_back(ucount);
+            } else {
+                Index_ mapping_dim = get_mapping_dim();
+                duplicate_starts.resize(mapping_dim);
+                duplicate_lengths.resize(mapping_dim);
+
+                for (size_t i = 0; i < il; ++i) {
+                    Index_ curdex = pindices[is[i]];
+                    auto& len = duplicate_lengths[curdex];
+                    if (len == 0) {
+                        this->indices.push_back(curdex);
+                        duplicate_starts[curdex] = i; // references a range on the this->indices array, see the remap_spares_duplicates() call below.
+                    }
+                    ++len;
+                }
             }
 
             this->internal = parent->create_inner_extractor(opt, this->indices.data(), this->indices.size());
@@ -401,13 +407,22 @@ private:
             this->indices.clear();
             this->indices.insert(this->indices.end(), is, is + il);
         }
-    protected:
-        std::vector<Index_> reverse_mapping;
-    };
 
-    struct DenseIndexParallelExtractor : public DenseIndexParallelExtractorRaw, public DenseBase {
+        const Index_* index_start() const {
+            return indices.data();
+        }
+    protected:
+        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
+        std::vector<Index_> indices;
+
+        typename std::conditional<!sparse_, std::vector<Index_>, bool>::type reverse_mapping;
+        typename std::conditional<sparse_, std::vector<Index_>, bool>::type duplicate_starts;
+        typename std::conditional<sparse_, std::vector<Index_>, bool>::type duplicate_lengths;
+    }
+
+    struct DenseIndexParallelExtractor : public IndexParallelExtractor<false>, public DenseBase {
         DenseIndexParallelExtractor(const DelayedSubsetSorted* p, const Options<Index_>& opt, const Index_* is, size_t il) :
-            DenseIndexParallelExtractorRaw(p, opt, is, il), DenseBase(this->internal->index_length) {}
+            DenseIndexParallelExtractor<false>(p, opt, is, il), DenseBase(this->internal->index_length) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             auto ref = this->internal->fetch(i, this->temp.data());
@@ -415,40 +430,9 @@ private:
         }
     };
 
-    struct SparseIndexParallelExtractorRaw : public IndexParallelExtractor<true> {
-        SparseIndexParallelExtractorRaw(const DelayedSubsetSorted* p, const Options<Index_>& opt, const Index_* is, Index_ il) {
-            const auto& pindices = this->parent->indices;
-            Index_ mapping_dim = get_mapping_dim();
-            duplicate_starts.resize(mapping_dim);
-            duplicate_lengths.resize(mapping_dim);
-
-            // Re-using 'indices' to get the unique indices first.
-            this->indices.reserve(il);
-            for (size_t i = 0; i < il; ++i) {
-                Index_ curdex = pindices[is[i]];
-                auto& len = duplicate_lengths[curdex];
-                if (len == 0) {
-                    this->indices.push_back(curdex);
-                    duplicate_starts[curdex] = i; // references a range on the this->indices array, see the remap_spares_duplicates() call below.
-                }
-                ++len;
-            }
-
-            this->internal = parent->create_inner_extractor(opt, this->indices.data(), this->indices.size());
-            this->index_length = il;
-
-            // Now, filling the 'indices' with the actual stuff.
-            this->indices.clear();
-            this->indices.insert(this->indices.end(), is, is + il);
-        }
-    protected:
-        std::vector<Index_> duplicate_starts;
-        std::vector<Index_> duplicate_lengths;
-    };
-
-    struct SparseIndexParallelExtractor : public SparseIndexParallelExtractorRaw, public SparseBase {
+    struct SparseIndexParallelExtractor : public IndexParallelExtractor<true>, public SparseBase {
         SparseIndexParallelExtractor(const DelayedSubsetSorted* p, const Options<Index_>& opt, const Index_* is, Index_ il) :
-            SparseIndexParallelExtractorRaw(p, opt, is, il), SparseBase(opt, this->internal->index_length) {}
+            SparseIndexParallelExtractor<true>(p, opt, is, il), SparseBase(opt, this->internal->index_length) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             return remap_sparse_duplicates(
