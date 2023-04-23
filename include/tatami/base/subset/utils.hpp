@@ -16,7 +16,7 @@ template<typename Value_, typename Index_>
 const Value_* remap_dense(const Value_* input, Value_* buffer, const std::vector<Index_>& rmapping) {
     auto temp = buffer;
     for (auto i : rmapping) {
-        *temp = dump[i];
+        *temp = input[i];
         ++temp;
     } 
     return buffer;
@@ -52,21 +52,21 @@ protected:
 
 template<DimensionSelectionType selection_, typename Value_, typename Index_, class IndexStorage_>
 struct DensePerpendicularExtractor : public PerpendicularExtractor<selection_, false, Value_, Index_, IndexStorage_> {
-    DensePerpendicularExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, const IndexStorage_& p) : 
+    DensePerpendicularExtractor(std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i, const IndexStorage_& p) : 
         PerpendicularExtractor<selection_, false, Value_, Index_, IndexStorage_>(std::move(i), p) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        return this->internal->fetch(*(this->indices)[i], buffer);
+        return this->internal->fetch((*(this->indices))[i], buffer);
     }
 };
 
 template<DimensionSelectionType selection_, typename Value_, typename Index_, class IndexStorage_>
 struct SparsePerpendicularExtractor : public PerpendicularExtractor<selection_, true, Value_, Index_, IndexStorage_> {
-    SparsePerpendicularExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, const IndexStorage_& p) : 
+    SparsePerpendicularExtractor(std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i, const IndexStorage_& p) : 
         PerpendicularExtractor<selection_, true, Value_, Index_, IndexStorage_>(std::move(i), p) {}
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        return this->internal->fetch(*(this->indices)[i], vbuffer, ibuffer);
+        return this->internal->fetch((*(this->indices))[i], vbuffer, ibuffer);
     }
 };
 
@@ -76,7 +76,7 @@ std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_perpen
     const IndexStorage_& indices, 
     const Options<Index_>& options, 
     Args_... args)
-const {
+{
     // TODO: handle variable access patterns here.
     std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
