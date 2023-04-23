@@ -45,7 +45,7 @@ public:
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > mat;
-    size_t block_start, block_length;
+    Index_ block_start, block_length;
 
 public:
     Index_ nrow() const {
@@ -313,7 +313,7 @@ public:
  * @return A pointer to a `DelayedSubsetBlock` instance.
  */
 template<int margin_, class MAT>
-std::shared_ptr<MAT> make_DelayedSubsetBlock(std::shared_ptr<MAT> p, size_t f, size_t l) {
+std::shared_ptr<MAT> make_DelayedSubsetBlock(std::shared_ptr<MAT> p, Index_ f, Index_ l) {
     return std::shared_ptr<MAT>(new DelayedSubsetBlock<margin_, typename MAT::value_type, typename MAT::index_type>(p, f, l));
 }
 
