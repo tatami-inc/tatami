@@ -60,7 +60,7 @@ public:
                 duplicate_starts[curdex] = i;
                 ++ucount;
             }
-            reverse_mapping.push_back(ucount);
+            reverse_mapping.push_back(ucount - 1);
             ++len;
         }
     }
@@ -76,9 +76,9 @@ private:
 
     Index_ get_mapping_dim() const {
         if constexpr(margin_ == 0) {
-            return nrow();
+            return mat->nrow();
         } else {
-            return ncol();
+            return mat->ncol();
         }
     }
 
@@ -384,7 +384,7 @@ private:
                         this->indices.push_back(curdex);
                         ++ucount;
                     }
-                    reverse_mapping.push_back(ucount);
+                    reverse_mapping.push_back(ucount - 1);
                 }
             } else {
                 Index_ mapping_dim = parent->get_mapping_dim();
