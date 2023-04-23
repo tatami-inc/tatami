@@ -303,8 +303,7 @@ public:
  *
  * @tparam margin_ Dimension along which the addition is to occur.
  * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
- * @tparam MAT A specialized `Matrix`, to be automatically deducted.
- * @tparam V Vector containing the subset indices, to be automatically deducted.
+ * @tparam Matrix_ A specialized `Matrix`, to be automatically deducted.
  *
  * @param p Pointer to the underlying (pre-subset) `Matrix`.
  * @param f Index of the start of the block. This should be a row index if `margin_ = 0` and a column index otherwise.
@@ -312,9 +311,9 @@ public:
  *
  * @return A pointer to a `DelayedSubsetBlock` instance.
  */
-template<int margin_, class MAT>
-std::shared_ptr<MAT> make_DelayedSubsetBlock(std::shared_ptr<MAT> p, Index_ f, Index_ l) {
-    return std::shared_ptr<MAT>(new DelayedSubsetBlock<margin_, typename MAT::value_type, typename MAT::index_type>(p, f, l));
+template<int margin_, class Matrix_>
+std::shared_ptr<Matrix_> make_DelayedSubsetBlock(std::shared_ptr<Matrix_> p, typename Matrix_::index_type f, typename Matrix_::index_type l) {
+    return std::shared_ptr<Matrix_>(new DelayedSubsetBlock<margin_, typename Matrix_::value_type, typename Matrix_::index_type>(p, f, l));
 }
 
 }

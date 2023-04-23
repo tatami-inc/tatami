@@ -38,7 +38,7 @@ protected:
 
         if (duplicates) {
             for (size_t i = 0, end = output.size(); i < end; ++i) {
-                output.insert(output.end(), rng() % 3, output[i]);
+                output.insert(output.end(), rng() % 3 + 1, output[i]);
             }
             if (sorted) {
                 std::sort(output.begin(), output.end());
@@ -145,7 +145,7 @@ INSTANTIATE_TEST_CASE_P(
     DelayedSubset,
     SubsetFullAccessTest,
     ::testing::Combine(
-        ::testing::Values(1, 5, 10), // step size.
+        ::testing::Values(2, 5, 10), // step size.
         ::testing::Values(false, true), // whether to support duplicate indices.
         ::testing::Values(true, false), // whether to require sorted indices.
         ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
@@ -208,7 +208,7 @@ INSTANTIATE_TEST_CASE_P(
     DelayedSubset,
     SubsetSlicedAccessTest,
     ::testing::Combine(
-        ::testing::Values(1, 5, 10), // step size.
+        ::testing::Values(2, 5, 10), // step size.
         ::testing::Values(false, true), // whether to support duplicate indices.
         ::testing::Values(true, false), // whether to require sorted indices.
         ::testing::Values(1, 3), // jump, to check the workspace memory
@@ -270,7 +270,7 @@ INSTANTIATE_TEST_CASE_P(
     DelayedSubset,
     SubsetIndexedAccessTest,
     ::testing::Combine(
-        ::testing::Values(1, 5, 10), // step size.
+        ::testing::Values(2, 5, 10), // step size.
         ::testing::Values(false, true), // whether to support duplicate indices.
         ::testing::Values(true, false), // whether to require sorted indices.
         ::testing::Values(1, 3), // jump, to check the workspace memory

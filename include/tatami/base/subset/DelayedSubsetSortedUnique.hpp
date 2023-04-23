@@ -162,7 +162,7 @@ private:
     struct SparseParallelWorkspace : public ParallelWorkspaceBase<selection_, true> {
         template<typename ... Args_>
         SparseParallelWorkspace(const DelayedSubsetSortedUnique* p, const Options<Index_>& opt, Args_... args) : 
-            ParallelWorkspaceBase<selection_, true>(parent, opt, args...), parent(p) {}
+            ParallelWorkspaceBase<selection_, true>(p, opt, args...), parent(p) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             auto raw = this->internal->fetch(i, vbuffer, ibuffer);

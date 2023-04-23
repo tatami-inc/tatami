@@ -358,9 +358,9 @@ private:
             const auto& dups = this->parent->mapping_duplicates;
             const auto& pool = this->parent->mapping_duplicates_pool;
             if (this->needs_sort) {
-                return DelayedSubset::reorganize_sparse_sorted(i, vbuffer, ibuffer, this->sortspace, this->itemp, this->report_index, this, dups, pool);
+                return DelayedSubset::reorganize_sparse_sorted(i, vbuffer, ibuffer, this->sortspace, this->itemp, this->report_index, this->internal.get(), dups, pool);
             } else {
-                return DelayedSubset::reorganize_sparse_unsorted(i, vbuffer, ibuffer, this->vtemp, this->itemp, this->report_index, this, dups, pool);
+                return DelayedSubset::reorganize_sparse_unsorted(i, vbuffer, ibuffer, this->vtemp, this->itemp, this->report_index, this->internal.get(), dups, pool);
             }
         }
     };
@@ -474,9 +474,9 @@ private:
             const auto& dups = this->mapping_duplicates;
             const auto& pool = this->mapping_duplicates_pool;
             if (this->needs_sort) {
-                return DelayedSubset::reorganize_sparse_sorted(i, vbuffer, ibuffer, this->sortspace, this->itemp, this->report_index, this, dups, pool);
+                return DelayedSubset::reorganize_sparse_sorted(i, vbuffer, ibuffer, this->sortspace, this->itemp, this->report_index, this->internal.get(), dups, pool);
             } else {
-                return DelayedSubset::reorganize_sparse_unsorted(i, vbuffer, ibuffer, this->vtemp, this->itemp, this->report_index, this, dups, pool);
+                return DelayedSubset::reorganize_sparse_unsorted(i, vbuffer, ibuffer, this->vtemp, this->itemp, this->report_index, this->internal.get(), dups, pool);
             }
         }
     };
@@ -545,9 +545,9 @@ private:
             const auto& dups = this->mapping_duplicates;
             const auto& pool = this->mapping_duplicates_pool;
             if (this->needs_sort) {
-                return DelayedSubset::reorganize_sparse_sorted(i, vbuffer, ibuffer, this->sortspace, this->itemp, this->report_index, this, dups, pool);
+                return DelayedSubset::reorganize_sparse_sorted(i, vbuffer, ibuffer, this->sortspace, this->itemp, this->report_index, this->internal.get(), dups, pool);
             } else {
-                return DelayedSubset::reorganize_sparse_unsorted(i, vbuffer, ibuffer, this->vtemp, this->itemp, this->report_index, this, dups, pool);
+                return DelayedSubset::reorganize_sparse_unsorted(i, vbuffer, ibuffer, this->vtemp, this->itemp, this->report_index, this->internal.get(), dups, pool);
             }
         }
     };
