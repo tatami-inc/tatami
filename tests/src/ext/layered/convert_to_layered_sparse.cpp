@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/CompressedSparseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/base/sparse/CompressedSparseMatrix.hpp"
 #include "tatami/ext/layered.hpp"
 
 #include "mock_layered_sparse_data.h"
@@ -33,11 +33,11 @@ TEST_P(ConvertToLayeredSparseTest, FromCSC) {
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
 
-    auto rwrk = ref->dense_row_workspace();
-    auto owrk = out.matrix->dense_row_workspace();
+    auto rwrk = ref->dense_row();
+    auto owrk = out.matrix->dense_row();
     for (size_t i = 0; i < NR; ++i) {
-        auto stuff = out.matrix->row(out.permutation[i], owrk.get());
-        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+        auto stuff = owrk->fetch(out.permutation[i]);
+        EXPECT_EQ(stuff, rwrk->fetch(i));
     }
 }
 
@@ -46,15 +46,15 @@ TEST_P(ConvertToLayeredSparseTest, FromCSR) {
 
     auto indptrs = tatami::compress_sparse_triplets<true>(NR, NC, vals, rows, cols);
     typedef tatami::CompressedSparseRowMatrix<double, int, decltype(vals), decltype(cols), decltype(indptrs)> SparseMat; 
-    auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(cols), std::move(indptrs))); 
+    auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(cols), std::move(indptrs)));
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
 
-    auto rwrk = ref->dense_row_workspace();
-    auto owrk = out.matrix->dense_row_workspace();
+    auto rwrk = ref->dense_row();
+    auto owrk = out.matrix->dense_row();
     for (size_t i = 0; i < NR; ++i) {
-        auto stuff = out.matrix->row(out.permutation[i], owrk.get());
-        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+        auto stuff = owrk->fetch(out.permutation[i]);
+        EXPECT_EQ(stuff, rwrk->fetch(i));
     }
 }
 
@@ -70,11 +70,11 @@ TEST_P(ConvertToLayeredSparseTest, FromDenseColumn) {
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
 
-    auto rwrk = ref->dense_row_workspace();
-    auto owrk = out.matrix->dense_row_workspace();
+    auto rwrk = ref->dense_row();
+    auto owrk = out.matrix->dense_row();
     for (size_t i = 0; i < NR; ++i) {
-        auto stuff = out.matrix->row(out.permutation[i], owrk.get());
-        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+        auto stuff = owrk->fetch(out.permutation[i]);
+        EXPECT_EQ(stuff, rwrk->fetch(i));
     }
 }
 
@@ -90,11 +90,11 @@ TEST_P(ConvertToLayeredSparseTest, FromDenseRow) {
 
     auto out = tatami::convert_to_layered_sparse(ref.get());
 
-    auto rwrk = ref->dense_row_workspace();
-    auto owrk = out.matrix->dense_row_workspace();
+    auto rwrk = ref->dense_row();
+    auto owrk = out.matrix->dense_row();
     for (size_t i = 0; i < NR; ++i) {
-        auto stuff = out.matrix->row(out.permutation[i], owrk.get());
-        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+        auto stuff = owrk->fetch(out.permutation[i]);
+        EXPECT_EQ(stuff, rwrk->fetch(i));
     }
 }
 
@@ -171,11 +171,11 @@ TEST_P(ConvertToLayeredSparseHardTest, Complex) {
 
         auto out = tatami::convert_to_layered_sparse(ref.get());
 
-        auto rwrk = ref->dense_row_workspace();
-        auto owrk = out.matrix->dense_row_workspace();
+        auto rwrk = ref->dense_row();
+        auto owrk = out.matrix->dense_row();
         for (size_t i = 0; i < NR; ++i) {
-            auto stuff = out.matrix->row(out.permutation[i], owrk.get());
-            EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+            auto stuff = owrk->fetch(out.permutation[i]);
+            EXPECT_EQ(stuff, rwrk->fetch(i));
         }
     }
 
@@ -191,11 +191,11 @@ TEST_P(ConvertToLayeredSparseHardTest, Complex) {
 
         auto out = tatami::convert_to_layered_sparse(ref.get());
 
-        auto rwrk = ref->dense_row_workspace();
-        auto owrk = out.matrix->dense_row_workspace();
+        auto rwrk = ref->dense_row();
+        auto owrk = out.matrix->dense_row();
         for (size_t i = 0; i < NR; ++i) {
-            auto stuff = out.matrix->row(out.permutation[i], owrk.get());
-            EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+            auto stuff = owrk->fetch(out.permutation[i]);
+            EXPECT_EQ(stuff, rwrk->fetch(i));
         }
     }
 }

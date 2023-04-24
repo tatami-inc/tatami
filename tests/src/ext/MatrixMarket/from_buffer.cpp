@@ -47,11 +47,11 @@ TEST_P(MatrixMarketBufferTest, Simple) {
     typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
 
-    auto owrk = out->dense_column_workspace();
-    auto rwrk = ref->dense_column_workspace();
+    auto owrk = out->dense_column();
+    auto rwrk = ref->dense_column();
     for (size_t i = 0; i < NC; ++i) {
-        auto stuff = out->column(i, owrk.get());
-        EXPECT_EQ(stuff, ref->column(i, rwrk.get()));
+        auto stuff = owrk->fetch(i);
+        EXPECT_EQ(stuff, rwrk->fetch(i));
     }
 }
 
@@ -99,12 +99,12 @@ TEST_P(MatrixMarketBufferTest, Layered) {
     EXPECT_TRUE(out->sparse());
     EXPECT_FALSE(out->prefer_rows());
 
-    auto owrk = out->dense_row_workspace();
-    auto rwrk = ref->dense_row_workspace();
+    auto owrk = out->dense_row();
+    auto rwrk = ref->dense_row();
     for (size_t i = 0; i < NR; ++i) {
         int adjusted = loaded.permutation[i];
-        auto stuff = out->row(adjusted, owrk.get());
-        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+        auto stuff = owrk->fetch(adjusted);
+        EXPECT_EQ(stuff, rwrk->fetch(i));
 
         auto maxed = *std::max_element(stuff.begin(), stuff.end());
         if (ass.category[i] == 2) {
@@ -135,12 +135,12 @@ TEST_P(MatrixMarketBufferTest, LayeredByRow) {
     typedef tatami::CompressedSparseRowMatrix<double, int, decltype(vals), decltype(cols), decltype(indptrs)> SparseMat; 
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, vals, cols, indptrs)); 
 
-    auto owrk = out->dense_row_workspace();
-    auto rwrk = ref->dense_row_workspace();
+    auto owrk = out->dense_row();
+    auto rwrk = ref->dense_row();
     for (size_t i = 0; i < NR; ++i) {
         int adjusted = loaded.permutation[i];
-        auto stuff = out->row(adjusted, owrk.get());
-        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+        auto stuff = owrk->fetch(adjusted);
+        EXPECT_EQ(stuff, rwrk->fetch(i));
     }
 }
 
@@ -161,12 +161,12 @@ TEST_P(MatrixMarketBufferTest, LayeredByColumn) {
     typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, vals, rows, indptrs)); 
 
-    auto owrk = out->dense_row_workspace();
-    auto rwrk = ref->dense_row_workspace();
+    auto owrk = out->dense_row();
+    auto rwrk = ref->dense_row();
     for (size_t i = 0; i < NR; ++i) {
         int adjusted = loaded.permutation[i];
-        auto stuff = out->row(adjusted, owrk.get());
-        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+        auto stuff = owrk->fetch(adjusted);
+        EXPECT_EQ(stuff, rwrk->fetch(i));
     }
 }
 
@@ -260,16 +260,16 @@ TEST(MatrixMarketTest, EdgeCases) {
         EXPECT_EQ(mat->nrow(), 5);
         EXPECT_EQ(mat->ncol(), 6);
 
-        auto wrk = mat->sparse_column_workspace();
+        auto wrk = mat->sparse_column();
         for (size_t i = 0; i < 3; ++i) {
-            auto col = mat->column(i, wrk.get());
+            auto col = wrk->fetch(i);
             EXPECT_EQ(col.index.size(), 1);
             EXPECT_EQ(col.index[0], i);
             EXPECT_EQ(col.value[0], i + 1);
         }
 
         for (size_t i = 3; i < 6; ++i) {
-            auto col = mat->column(i, wrk.get());
+            auto col = wrk->fetch(i);
             EXPECT_EQ(col.index.size(), 0);
         }
     };
@@ -309,11 +309,11 @@ TEST(MatrixMarketTest, ComplexLayered) {
         typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
         auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
 
-        auto owrk = out.matrix->dense_row_workspace();
-        auto rwrk = ref->dense_row_workspace();
+        auto owrk = out.matrix->dense_row();
+        auto rwrk = ref->dense_row();
         for (size_t i = 0; i < NR; ++i) {
-            auto stuff = out.matrix->row(out.permutation[i], owrk.get());
-            EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+            auto stuff = owrk->fetch(out.permutation[i]);
+            EXPECT_EQ(stuff, rwrk->fetch(i));
         }
     }
 
@@ -334,11 +334,11 @@ TEST(MatrixMarketTest, ComplexLayered) {
         typedef tatami::CompressedSparseRowMatrix<double, int, decltype(vals), decltype(cols), decltype(indptrs)> SparseMat; 
         auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(cols), std::move(indptrs))); 
 
-        auto owrk = out.matrix->dense_row_workspace();
-        auto rwrk = ref->dense_row_workspace();
+        auto owrk = out.matrix->dense_row();
+        auto rwrk = ref->dense_row();
         for (size_t i = 0; i < NR; ++i) {
-            auto stuff = out.matrix->row(out.permutation[i], owrk.get());
-            EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+            auto stuff = owrk->fetch(out.permutation[i]);
+            EXPECT_EQ(stuff, rwrk->fetch(i));
         }
     }
 }
@@ -362,11 +362,11 @@ TEST(MatrixMarketTest, ManyRows) {
     typedef tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows), decltype(indptrs)> SparseMat; 
     auto ref = std::shared_ptr<tatami::NumericMatrix>(new SparseMat(NR, NC, std::move(vals), std::move(rows), std::move(indptrs))); 
 
-    auto owrk = out.matrix->dense_row_workspace();
-    auto rwrk = ref->dense_row_workspace();
+    auto owrk = out.matrix->dense_row();
+    auto rwrk = ref->dense_row();
     for (size_t i = 0; i < NR; ++i) {
-        auto stuff = out.matrix->row(out.permutation[i], owrk.get());
-        EXPECT_EQ(stuff, ref->row(i, rwrk.get()));
+        auto stuff = owrk->fetch(out.permutation[i]);
+        EXPECT_EQ(stuff, rwrk->fetch(i));
     }
 }
 
@@ -392,10 +392,10 @@ TEST(MatrixMarketTest, EmptyLayered) {
         EXPECT_EQ(out.matrix->nrow(), 1000);
         EXPECT_EQ(out.matrix->ncol(), 10);
 
-        auto wrk = out.matrix->sparse_row_workspace();
+        auto wrk = out.matrix->sparse_row();
         for (size_t i = 0; i < 1000; ++i) {
             EXPECT_EQ(out.permutation[i], i);
-            auto rdata = out.matrix->row(i, wrk.get());
+            auto rdata = wrk->fetch(i);
             EXPECT_EQ(rdata.value.size(), 0);
         }
     }
