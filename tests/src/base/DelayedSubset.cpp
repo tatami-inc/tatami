@@ -38,7 +38,7 @@ protected:
 
         if (duplicates) {
             for (size_t i = 0, end = output.size(); i < end; ++i) {
-                output.insert(output.end(), rng() % 3 + 1, output[i]);
+                output.insert(output.end(), rng() % 4, output[i]);
             }
             if (sorted) {
                 std::sort(output.begin(), output.end());

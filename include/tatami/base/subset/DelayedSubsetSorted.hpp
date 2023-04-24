@@ -264,21 +264,22 @@ private:
             this->block_start = bs;
             this->block_length = bl;
 
-            if (bl) {
-                const auto& punique = parent->unique;
-                auto pstart = punique.begin();
-                auto pend = punique.end();
+            const auto& punique = parent->unique;
+            auto pstart = punique.begin();
+            auto pend = punique.end();
 
+            Index_ to = 0;
+            if (bl) {
                 // Finding the edges of the 'unique' subset so that we
                 // don't have to allocate another vector here.
                 auto left = parent->indices[bs];
                 from = std::lower_bound(pstart, pend, left) - pstart;
 
                 auto right = parent->indices[bs + bl - 1];
-                Index_ to = std::upper_bound(pstart + from, pend, right) - pstart;
-
-                internal = parent->create_inner_extractor<sparse_>(opt, punique.data() + from, to - from);
+                to = std::upper_bound(pstart + from, pend, right) - pstart;
             }
+
+            internal = parent->create_inner_extractor<sparse_>(opt, punique.data() + from, to - from);
         }
 
     protected:
@@ -322,11 +323,11 @@ private:
 
                 duplicate_starts.resize(mapping_dim);
                 const auto& dups = parent->duplicate_starts;
-                std::copy(dups.begin() + left, dups.begin() + right + 1, duplicate_starts.begin());
+                std::copy(dups.begin() + left, dups.begin() + right + 1, duplicate_starts.begin() + left);
 
                 duplicate_lengths.resize(mapping_dim);
                 const auto& dupl = parent->duplicate_lengths;
-                std::copy(dupl.begin() + left, dupl.begin() + right + 1, duplicate_lengths.begin());
+                std::copy(dupl.begin() + left, dupl.begin() + right + 1, duplicate_lengths.begin() + left);
 
                 // Now we have to adjust for the loss of duplicates at the block boundaries.
                 Index_ lx = bs;
@@ -373,15 +374,15 @@ private:
     struct IndexParallelExtractor : public Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> {
         IndexParallelExtractor(const DelayedSubsetSorted* parent, const Options<Index_>& opt, const Index_* is, size_t il) {
             const auto& parent_indices = parent->indices;
-            this->indices.reserve(il); // re-using 'indices' to get the unique indices first.
+            indices.reserve(il); // re-using 'indices' to get the unique indices first.
 
             if constexpr(!sparse_) {
                 reverse_mapping.reserve(il);
                 Index_ ucount = 0;
-                for (size_t i = 0; i < il; ++i) {
+                for (Index_ i = 0; i < il; ++i) {
                     Index_ curdex = parent_indices[is[i]];
-                    if (indices.empty() || indices.back() == curdex) {
-                        this->indices.push_back(curdex);
+                    if (indices.empty() || indices.back() != curdex) {
+                        indices.push_back(curdex);
                         ++ucount;
                     }
                     reverse_mapping.push_back(ucount - 1);
@@ -391,12 +392,12 @@ private:
                 duplicate_starts.resize(mapping_dim);
                 duplicate_lengths.resize(mapping_dim);
 
-                for (size_t i = 0; i < il; ++i) {
+                for (Index_ i = 0; i < il; ++i) {
                     Index_ curdex = parent_indices[is[i]];
                     auto& len = duplicate_lengths[curdex];
                     if (len == 0) {
                         this->indices.push_back(curdex);
-                        duplicate_starts[curdex] = i; // references a range on the this->indices array, see the remap_spares_duplicates() call below.
+                        duplicate_starts[curdex] = i; // references a range on the this->indices array, see the remap_sparse_duplicates() call below.
                     }
                     ++len;
                 }
@@ -406,8 +407,8 @@ private:
             this->index_length = il;
 
             // Now, filling the 'indices' with the actual stuff.
-            this->indices.clear();
-            this->indices.insert(this->indices.end(), is, is + il);
+            indices.clear();
+            indices.insert(this->indices.end(), is, is + il);
         }
 
         const Index_* index_start() const {

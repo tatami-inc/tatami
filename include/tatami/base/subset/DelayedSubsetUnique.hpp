@@ -341,6 +341,8 @@ private:
                 ++counter;
             }
         }
+
+        local.resize(counter);
     }
 
     template<class Function>
@@ -366,6 +368,8 @@ private:
                 ++counter;
             }
         }
+
+        local.resize(counter);
     }
 
 private:
