@@ -23,7 +23,7 @@ namespace tatami {
  */
 template <typename Value_, typename Index_ = int>
 class Matrix {
-protected:
+public:
     /**
      * @cond
      */
@@ -33,7 +33,6 @@ protected:
      * @endcond
      */
 
-public:
     /** 
      * Type of data to be returned by getters.
      */
