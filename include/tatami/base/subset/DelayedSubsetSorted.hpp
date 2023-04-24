@@ -403,7 +403,7 @@ private:
                 }
             }
 
-            this->internal = parent->create_inner_extractor<sparse_>(opt, this->indices.data(), this->indices.size());
+            internal = parent->create_inner_extractor<sparse_>(opt, this->indices.data(), this->indices.size());
             this->index_length = il;
 
             // Now, filling the 'indices' with the actual stuff.

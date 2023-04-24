@@ -14,14 +14,13 @@
 #include "../_tests/test_row_access.h"
 #include "../_tests/simulate_vector.h"
 
-template<class PARAM> 
-class SubsetTest : public ::testing::TestWithParam<PARAM> {
+class SubsetTestCore {
 protected:
     size_t NR= 90, NC = 170;
     std::shared_ptr<tatami::NumericMatrix> dense, sparse;
 
 protected:
-    void SetUp() {
+    void assemble() {
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
         sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
         return;
@@ -81,6 +80,13 @@ protected:
         }
 
         return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, sub.size(), std::move(reference)));
+    }
+};
+
+template<class PARAM> 
+class SubsetTest : public ::testing::TestWithParam<PARAM>, public SubsetTestCore {
+    void SetUp() {
+        assemble();
     }
 };
 
@@ -281,6 +287,38 @@ INSTANTIATE_TEST_CASE_P(
         )
     )
 );
+
+/****************************************************
+ ****************************************************/
+
+// Special tests when creating a blocked extractor for DelayedSubsetSorted.
+// to check that the loss of duplicates is handled correctly at block boundaries.
+class SubsetSortedSpecialAccessTest : public ::testing::Test, public SubsetTestCore {
+    void SetUp() {
+        assemble();
+    }
+};
+
+TEST_F(SubsetSortedSpecialAccessTest, OnRow) {
+    std::vector<int> sub;
+    sub.insert(sub.end(), 10, 0);
+    sub.insert(sub.end(), 20, 11);
+    sub.insert(sub.end(), 30, 22);
+
+    auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
+    auto ref = reference_on_rows(sub);
+
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 0, 59); // no loss of duplicates
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 5, 55); // bit of loss on both ends
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 5, 8);  // loss on the same repeat sequence.
+
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 10, 59); // no loss of duplicates
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 10, 45); // loss on the right
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 12, 15); // loss on the same repeat sequence.
+
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 30, 59); // no loss of duplicates
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 50, 59); // loss on the left
+}
 
 /****************************************************
  ****************************************************/
