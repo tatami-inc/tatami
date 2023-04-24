@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/simulate_vector.h"
@@ -15,18 +15,18 @@ TEST(ConvertToSparse, RowToRow) {
     auto converted = tatami::convert_to_sparse<true>(&mat);
     EXPECT_TRUE(converted->sparse());
     EXPECT_TRUE(converted->prefer_rows());
-    test_simple_row_access(converted.get(), &mat);
-    test_simple_column_access(converted.get(), &mat);
+    test_simple_row_access(converted.get(), &mat, true, 1);
+    test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_sparse<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted2->sparse());
     EXPECT_TRUE(converted2->prefer_rows());
 
-    auto wrk2 = converted2->dense_row_workspace();
+    auto wrk2 = converted2->dense_row();
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(converted2->row(i, wrk2.get()), expected2);
+        EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 }
 
@@ -38,19 +38,19 @@ TEST(ConvertToSparse, ColumnToColumn) {
     auto converted = tatami::convert_to_sparse<false>(&mat);
     EXPECT_TRUE(converted->sparse());
     EXPECT_FALSE(converted->prefer_rows());
-    test_simple_row_access(converted.get(), &mat);
-    test_simple_column_access(converted.get(), &mat);
+    test_simple_row_access(converted.get(), &mat, true, 1);
+    test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_sparse<false, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted2->sparse());
     EXPECT_FALSE(converted2->prefer_rows());
 
-    auto wrk = mat.dense_column_workspace();
-    auto wrk2 = converted2->dense_column_workspace();
+    auto wrk = mat.dense_column();
+    auto wrk2 = converted2->dense_column();
     for (size_t i = 0; i < NC; ++i) {
-        auto expected = mat.column(i, wrk.get());
+        auto expected = wrk->fetch(i);
         std::vector<int> expected2(expected.begin(), expected.end());
-        EXPECT_EQ(converted2->column(i, wrk2.get()), expected2);
+        EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 }
 
@@ -62,18 +62,18 @@ TEST(ConvertToSparse, RowToColumn) {
     auto converted = tatami::convert_to_sparse<false>(&mat);
     EXPECT_TRUE(converted->sparse());
     EXPECT_FALSE(converted->prefer_rows());
-    test_simple_row_access(converted.get(), &mat);
-    test_simple_column_access(converted.get(), &mat);
+    test_simple_row_access(converted.get(), &mat, true, 1);
+    test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_sparse<false, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted2->sparse());
     EXPECT_FALSE(converted2->prefer_rows());
 
-    auto wrk2 = converted2->dense_row_workspace();
+    auto wrk2 = converted2->dense_row();
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(converted2->row(i, wrk2.get()), expected2);
+        EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 }
 
@@ -85,19 +85,19 @@ TEST(ConvertToSparse, ColumnToRow) {
     auto converted = tatami::convert_to_sparse<true>(&mat);
     EXPECT_TRUE(converted->sparse());
     EXPECT_TRUE(converted->prefer_rows());
-    test_simple_row_access(converted.get(), &mat);
-    test_simple_column_access(converted.get(), &mat);
+    test_simple_row_access(converted.get(), &mat, true, 1);
+    test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_sparse<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted2->sparse());
     EXPECT_TRUE(converted2->prefer_rows());
 
-    auto wrk = mat.dense_column_workspace();
-    auto wrk2 = converted2->dense_column_workspace();
+    auto wrk = mat.dense_column();
+    auto wrk2 = converted2->dense_column();
     for (size_t i = 0; i < NC; ++i) {
-        auto expected = mat.column(i, wrk.get());
+        auto expected = wrk->fetch(i);
         std::vector<int> expected2(expected.begin(), expected.end());
-        EXPECT_EQ(converted2->column(i, wrk2.get()), expected2);
+        EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 }
 

@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "tatami/utils/bind_intersection.hpp"
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 #include "../_tests/simulate_vector.h"
 
 class BindIntersectionTest : public ::testing::Test {
@@ -65,13 +65,13 @@ TEST_F(BindIntersectionTest, NoOp) {
 
     // Checking that the matrix contains the expected values.
     size_t chosen = 5;
-    auto wrk = output.first->dense_row_workspace();
-    auto vals = output.first->row(chosen, wrk.get());
+    auto wrk = output.first->dense_row();
+    auto vals = wrk->fetch(chosen);
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
-        auto iwrk = collected[i]->dense_row_workspace();
-        auto expected = collected[i]->row(chosen, iwrk.get());
+        auto iwrk = collected[i]->dense_row();
+        auto expected = iwrk->fetch(chosen);
         auto sofar = offset;
         offset += collected[i]->ncol();
         std::vector<double> observed(vals.begin() + sofar, vals.begin() + offset);
@@ -110,15 +110,15 @@ TEST_F(BindIntersectionTest, Shuffled) {
 
     // Checking that the matrix contains the expected values.
     size_t chosen = 1;
-    auto wrk = output.first->dense_row_workspace();
-    auto vals = output.first->row(chosen, wrk.get());
+    auto wrk = output.first->dense_row();
+    auto vals = wrk->fetch(chosen);
     size_t chosen_id = ids[0][output.second[chosen]];
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto actual_chosen = find_chosen(chosen_id, ids[i]);
-        auto iwrk = collected[i]->dense_row_workspace();
-        auto expected = collected[i]->row(actual_chosen, iwrk.get());
+        auto iwrk = collected[i]->dense_row();
+        auto expected = iwrk->fetch(actual_chosen);
         auto sofar = offset;
         offset += collected[i]->ncol();
         std::vector<double> observed(vals.begin() + sofar, vals.begin() + offset);
@@ -161,15 +161,15 @@ TEST_F(BindIntersectionTest, Uncommon) {
 
     // Checking that the matrix contains the expected values.
     size_t chosen = 0;
-    auto wrk = output.first->dense_row_workspace();
-    auto vals = output.first->row(chosen, wrk.get());
+    auto wrk = output.first->dense_row();
+    auto vals = wrk->fetch(chosen);
     size_t chosen_id = ids[0][output.second[chosen]];
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto actual_chosen = find_chosen(chosen_id, ids[i]);
-        auto iwrk = collected[i]->dense_row_workspace();
-        auto expected = collected[i]->row(actual_chosen, iwrk.get());
+        auto iwrk = collected[i]->dense_row();
+        auto expected = iwrk->fetch(actual_chosen);
         auto sofar = offset;
         offset += collected[i]->ncol();
         std::vector<double> observed(vals.begin() + sofar, vals.begin() + offset);
@@ -238,15 +238,15 @@ TEST_F(BindIntersectionTest, ByRows) {
 
     // Checking that the matrix contains the expected values.
     size_t chosen = 4;
-    auto wrk = output.first->dense_column_workspace();
-    auto vals = output.first->column(chosen, wrk.get());
+    auto wrk = output.first->dense_column();
+    auto vals = wrk->fetch(chosen);
     size_t chosen_id = ids[0][output.second[chosen]];
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto actual_chosen = find_chosen(chosen_id, ids[i]);
-        auto iwrk = collected[i]->dense_column_workspace();
-        auto expected = collected[i]->column(actual_chosen, iwrk.get());
+        auto iwrk = collected[i]->dense_column();
+        auto expected = iwrk->fetch(actual_chosen);
         auto sofar = offset;
         offset += collected[i]->nrow();
         std::vector<double> observed(vals.begin() + sofar, vals.begin() + offset);

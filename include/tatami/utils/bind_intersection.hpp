@@ -6,7 +6,7 @@
 #include <vector>
 #include <memory>
 #include "../base/subset/make_DelayedSubset.hpp"
-#include "../base/DelayedBind.hpp"
+#include "../base/other/DelayedBind.hpp"
 
 /**
  * @file bind_intersection.hpp
