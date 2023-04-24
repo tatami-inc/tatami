@@ -379,10 +379,8 @@ private:
         reverse_mapping.resize(collected.size());
         local.reserve(collected.size());
 
-        for (Index_ i = 0, end = collected.size(); i < end; ++i) {
-            const auto& current = collected[i];
-            bool diff = (local.empty() || current.first != local.back());
-            if (diff) {
+        for (const auto& current : collected) {
+            if (local.empty() || current.first != local.back()) {
                 local.push_back(current.first);
             }
             reverse_mapping[current.second] = local.size() - 1;
@@ -402,15 +400,10 @@ private:
         pool.reserve(collected.size());
         local.reserve(collected.size());
 
-        for (Index_ i = 0, end = collected.size(); i < end; ++i) {
-            const auto& current = collected[i];
-            bool diff = (local.empty() || current.first != local.back());
-            if (diff) {
-                local.push_back(current.first);
-            }
-
+        for (const auto& current : collected) {
             auto& range = dups[current.first];
-            if (diff) {
+            if (local.empty() || current.first != local.back()) {
+                local.push_back(current.first);
                 range.first = pool.size();
             }
             ++range.second;
@@ -460,7 +453,7 @@ private:
         {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
-            auto raw = this->internal->fetch(i, buffer);
+            auto raw = this->internal->fetch(i, this->temp.data());
             return subset_utils::remap_dense(raw, buffer, this->reverse_mapping);
         }
     };
@@ -488,13 +481,15 @@ private:
     template<bool sparse_>
     struct IndexParallelExtractor : public Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> {
         IndexParallelExtractor(const DelayedSubset* parent, const Options<Index_>& opt, const Index_* is, size_t il) {
+            const auto& parent_indices = parent->indices;
+
             std::vector<std::pair<storage_type, Index_> > collected;
             collected.reserve(il);
             for (Index_ i = 0; i < il; ++i) {
                 if constexpr(sparse_) {
-                    collected.emplace_back(indices[i], is[i]);
+                    collected.emplace_back(parent_indices[is[i]], is[i]);
                 } else {
-                    collected.emplace_back(indices[i], i);
+                    collected.emplace_back(parent_indices[is[i]], i);
                 }
             }
 
@@ -531,7 +526,7 @@ private:
         {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
-            auto raw = this->internal->fetch(i, buffer);
+            auto raw = this->internal->fetch(i, this->temp.data());
             return subset_utils::remap_dense(raw, buffer, this->reverse_mapping);
         }
     };
