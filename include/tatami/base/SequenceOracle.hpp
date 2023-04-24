@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <memory>
+#include <numeric>
 
 /**
  * @file SequenceOracle.hpp
@@ -17,7 +18,7 @@ namespace tatami {
  *
  * @brief Predict future access requests.
  *
- * This allows implementations to pre-fetch data for future requests to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
+ * This allows `Matrix` implementations to pre-fetch data for future requests to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
  */
 template<typename Index_>
 struct SequenceOracle {
@@ -47,8 +48,6 @@ public:
  * @tparam Index_ Integer type of the row/column indices.
  *
  * @brief Predict future accesses from a known sequence.
- *
- * Once the sequence is fully iterated, this instance will wrap around to the start of the sequence.
  */
 template<typename Index_>
 struct FixedOracle : public SequenceOracle<Index_> {
@@ -63,10 +62,9 @@ struct FixedOracle : public SequenceOracle<Index_> {
         auto out = reference + counter;
         if (upto >= length) {
             n = length - counter;
-            counter = 0;
-        } else {
-            counter = upto;
+            upto = length;
         }
+        counter = upto;
         return std::make_pair(out, n);
     }
 private:
@@ -76,6 +74,39 @@ private:
 
     size_t counter = 0;
 };
+
+/**
+ * @tparam Index_ Integer type of the row/column indices.
+ *
+ * @brief Predict future accesses of a consecutive sequence.
+ */
+template<typename Index_>
+struct ConsecutiveOracle : public SequenceOracle<Index_> {
+    /**
+     * @param s Start index of the consecutive sequence.
+     * @param e One past the end of the sequence.
+     */
+    ConsecutiveOracle(Index_ s, Index_ e) : end(e), counter(s) {}
+
+    std::pair<const Index_*, size_t> predict(size_t n) {
+        auto upto = counter + n;
+        if (upto >= end) {
+            n = end - counter;
+            upto = end;
+        }
+        buffer.resize(n);
+        std::iota(buffer.begin(), buffer.end(), counter);
+        counter = upto;
+        return std::make_pair(buffer.data(), buffer.size());
+    }
+private:
+    size_t end;
+
+    size_t counter = 0;
+
+    std::vector<Index_> buffer;
+};
+
 
 }
 

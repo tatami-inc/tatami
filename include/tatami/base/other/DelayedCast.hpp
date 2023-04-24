@@ -227,23 +227,9 @@ private:
             Options<Index_in_> optcopy;
             optcopy.sparse = opt.sparse;
 
-            optcopy.selection.type = opt.selection.type;
-            optcopy.selection.block_start = opt.selection.block_start;
-            optcopy.selection.block_length = opt.selection.block_length;
-
-            std::vector<Index_in_> temp_index_buffer;
-            auto aptr = opt.selection.index_start;
-            size_t alen = opt.selection.index_length;
-            if (aptr) {
-                temp_index_buffer = std::vector<Index_in_>(aptr, aptr + alen);
-                optcopy.selection.index_start = temp_index_buffer.data();
-            }
-            optcopy.selection.index_length = alen;
-
             optcopy.access.cache_for_reuse = opt.access.cache_for_reuse;
-            optcopy.access.pattern = opt.access.pattern;
-            if (opt.access.sequencer) {
-                optcopy.access.sequencer.reset(new CastOracle(opt.access.sequencer));
+            if (opt.access.pattern) {
+                optcopy.access.pattern.reset(new CastOracle(opt.access.pattern));
             }
 
             return populate_cast<accrow_, selection_, sparse_>(optcopy, args...);

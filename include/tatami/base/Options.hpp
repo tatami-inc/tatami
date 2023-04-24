@@ -23,45 +23,6 @@ namespace tatami {
 enum class DimensionSelectionType : char { FULL, BLOCK, INDEX };
 
 /**
- * @brief Options to define dimension elements of interest.
- *
- * Select the elements of interest in dimension of a `Matrix`.
- *
- * @tparam Index_ Integer type of the row/column indices.
- */
-template<typename Index_>
-struct DimensionSelectionOptions {
-    /**
-     * Selection type for this `DimensionSelect` instance.
-     */
-    DimensionSelectionType type = DimensionSelectionType::FULL;
-
-    /**
-     * Index of the start of the contiguous block of elements.
-     * Only relevant if `type = DimensionSelectionType::BLOCK`.
-     */
-    Index_ block_start = 0;
-
-    /**
-     * Length of the contiguous block of elements.
-     * Only relevant if `type = DimensionSelectionType::BLOCK`.
-     */
-    Index_ block_length = 0;
-
-    /**
-     * Pointer to an array containing sorted and unique indices for dimension elements.
-     * Only used if `type = DimensionSelectionType::INDEX`. 
-     */
-    const Index_* index_start = NULL;
-
-    /**
-     * Length of the array pointed to by `index_start`.
-     * Only relevant if `type = DimensionSelectionType::BLOCK`.
-     */
-    size_t index_length = 0;
-};
-
-/**
  * @brief Options for sparse extraction.
  */
 struct SparseExtractionOptions {
@@ -85,52 +46,28 @@ struct SparseExtractionOptions {
 };
 
 /**
- * Access pattern for the elements of the iteration dimension.
- * This can be used by implementations to pre-fetch data for subsequent requests to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
+ * @brief Options for managing iteration.
  *
- * `CONSECUTIVE` hints to the implementation that elements on the iteration dimension are accessed in consecutive order.
- * Implementations may assume that a `fetch()` request for one element will (usually) be followed by requests for the subsequent element.
- * However, this is not a strict requirement, and calls to `fetch()` may still be non-consecutive, so this should be handled appropriately.
- * 
- * For `SEQUENCE`, elements are accessed in a deterministic sequence.
- * The enables pre-fetching of future elements by `fetch()` implementations, improving the efficiency of iteration through the matrix.
- * The sequence is defined by the `AccessPatternOptions::sequencer`, and it is expected that calls to `fetch()` are in exactly the same order as those returned by `SequenceOracle::predict`.
- *
- * For `RANDOM`: elements are accessed in a random sequence.
- * This allows `Matrix` implementations to dispense with any pre-fetching or caching.
-  */
-enum class AccessPatternType : char { CONSECUTIVE, SEQUENCE, RANDOM };
-
-/**
- * @brief Options for managing the accessing pattern.
- *
- * This refers to accesses along the iteration dimension.
+ * This refers to access to elements along the iteration dimension,
+ * across multiple calls to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
  *
  * @tparam Index_ Integer type of the row/column indices.
  */
 template<typename Index_>
-struct AccessPatternOptions {
+struct IterationOptions {
     /** 
-     * Whether to ask implementations to cache information from every call to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
+     * Whether to ask implementations to cache information from every 
      * Specifically, this refers to intermediate element-specific values that can be re-used if the same dimension element is requested in a subsequent call.
      * This may enable faster iteration if the same `Extractor` object is re-used for multiple passes over the same matrix.
      */
     bool cache_for_reuse = false;
 
    /**
-     * Access pattern of elements on the iteration dimension.
-     *
-     * If `CONSECUTIVE`, implementations should assume the user will be calling `fetch()` on the elements defined in `Options::selection`.
-     * For example, if an indexed subset of the extraction dimension is of interest, implementations should assume that each call will access the indices in order.
-     *
-     * If `SEQUENCE`, the elements of the sequence should be a subset of those defined by `Options::selection`.
-     * The `sequencer` should also be non-`NULL`.
-     *
-     * If `RANDOM`, the requested elements should be a subset of those defined by `Options::selection`.
+     * An oracle to define the future access pattern of elements on the iteration dimension.
+     * It is expected that calls to `fetch()` are in exactly the same order as those returned by `SequenceOracle::predict`.
+     * If `NULL`, `Matrix` implementations may assume that elements are to be accessed in random order.
      */
-    AccessPatternType pattern = AccessPatternType::CONSECUTIVE;
-
-    std::shared_ptr<SequenceOracle<Index_> > sequencer;
+    std::shared_ptr<SequenceOracle<Index_> > pattern = nullptr;
 };
 
 /**
@@ -141,11 +78,6 @@ struct AccessPatternOptions {
 template<typename Index_>
 struct Options {
     /**
-     * Options for selecting elements on the iteration dimension.
-     */
-    DimensionSelectionOptions<Index_> selection;
-
-    /**
      * Options for sparse extraction.
      */
     SparseExtractionOptions sparse;
@@ -153,7 +85,7 @@ struct Options {
     /**
      * Options to define the access pattern on the iteration dimension.
      */
-    AccessPatternOptions<Index_> access;
+    IterationOptions<Index_> access;
 };
 
 }
