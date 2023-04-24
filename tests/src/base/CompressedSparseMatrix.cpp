@@ -25,6 +25,15 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
     tatami::DenseColumnMatrix<double, int> dense(10, 20, std::vector<double>(200));
     test_simple_column_access(&mat, &dense, true, 1);
     test_simple_row_access(&mat, &dense, true, 1);
+
+    // Same for row-major.
+    indptr.resize(11);
+    tatami::CompressedSparseRowMatrix<double, int> rmat(10, 20, values, indices, indptr);
+    EXPECT_TRUE(rmat.sparse());
+    EXPECT_EQ(rmat.nrow(), 10);
+    EXPECT_EQ(rmat.ncol(), 20);
+    test_simple_column_access(&rmat, &dense, true, 1);
+    test_simple_row_access(&rmat, &dense, true, 1);
 }
 
 /*************************************

@@ -698,8 +698,7 @@ private:
     struct SecondaryExtractorBase : public CompressedExtractorBase<!row_, selection_, sparse_> {
         template<typename ...Args_>
         SecondaryExtractorBase(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : CompressedExtractorBase<!row_, selection_, sparse_>(p, opt, args...) {
-            // Get the maximum possible index of the primary dimension, as we're iterating over the secondary dimension.
-            auto max_index = row_ ? this->parent->nrows : this->parent->ncols; 
+            auto max_index = this->parent->max_secondary_index();
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 work = SecondaryWorkspace(max_index, this->parent->indices, this->parent->indptrs);
