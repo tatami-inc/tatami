@@ -49,16 +49,11 @@ void apply_sparse_running(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, 
                 std::vector<T> obuffer(len);
                 std::vector<IDX> ibuffer(obuffer.size());
                 auto stat = factory.sparse_running(start, end);
-                auto wrk = new_workspace<!ROW, true>(p, start, len);
+                auto wrk = new_extractor<!ROW, true, T, IDX>(p, start, len); // flipped around; remember, we're trying to get the preferred dimension.
 
                 for (size_t i = 0; i < otherdim; ++i) {
-                    if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
-                        auto range = p->column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                        stat.add(range);
-                    } else {
-                        auto range = p->row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                        stat.add(range);
-                    }
+                    auto range = wrk->fetch(i, obuffer.data(), ibuffer.data());
+                    stat.add(range);
                 }
 
                 if constexpr(stats::has_finish<decltype(stat)>::value) {
@@ -77,16 +72,11 @@ void apply_sparse_running(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, 
     auto stat = factory.sparse_running();
     std::vector<T> obuffer(dim);
     std::vector<IDX> ibuffer(dim);
-    auto wrk = new_workspace<!ROW, true>(p);
+    auto wrk = new_extractor<!ROW, true, T, IDX>(p); // flipped around; remember, we're trying to get the preferred dimension.
 
     for (size_t i = 0; i < otherdim; ++i) {
-        if constexpr(ROW) { // flipped around; remember, we're trying to get the preferred dimension.
-            auto range = p->column(i, obuffer.data(), ibuffer.data(), wrk.get());
-            stat.add(range);
-        } else {
-            auto range = p->row(i, obuffer.data(), ibuffer.data(), wrk.get());
-            stat.add(range);
-        }
+        auto range = wrk->fetch(i, obuffer.data(), ibuffer.data());
+        stat.add(range);
     }
 
     if constexpr(stats::has_finish<decltype(stat)>::value) {
@@ -115,16 +105,11 @@ void apply_dense_running(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, F
                 size_t len = end - start;
                 std::vector<T> obuffer(len);
                 auto stat = factory.dense_running(start, end);
-                auto wrk = new_workspace<!ROW, false>(p, start, len);
+                auto wrk = new_extractor<!ROW, false, T, IDX>(p, start, len); // flipped around, see above.
 
                 for (size_t i = 0; i < otherdim; ++i) {
-                    if constexpr(ROW) { // flipped around, see above.
-                        auto ptr = p->column(i, obuffer.data(), wrk.get());
-                        stat.add(ptr);
-                    } else {
-                        auto ptr = p->row(i, obuffer.data(), wrk.get());
-                        stat.add(ptr);
-                    }
+                    auto ptr = wrk->fetch(i, obuffer.data());
+                    stat.add(ptr);
                 }
 
                 if constexpr(stats::has_finish<decltype(stat)>::value) {
@@ -141,16 +126,11 @@ void apply_dense_running(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, F
 #endif
     auto stat = factory.dense_running();
     std::vector<T> obuffer(dim);
-    auto wrk = new_workspace<!ROW, false>(p);
+    auto wrk = new_extractor<!ROW, false, T, IDX>(p); // flipped around, see above.
 
     for (size_t i = 0; i < otherdim; ++i) {
-        if constexpr(ROW) { // flipped around, see above.
-            auto ptr = p->column(i, obuffer.data(), wrk.get());
-            stat.add(ptr);
-        } else {
-            auto ptr = p->row(i, obuffer.data(), wrk.get());
-            stat.add(ptr);
-        }
+        auto ptr = wrk->fetch(i, obuffer.data());
+        stat.add(ptr);
     }
 
     if constexpr(stats::has_finish<decltype(stat)>::value) {
@@ -176,9 +156,7 @@ void apply_sparse_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, F
         auto stat = factory.sparse_direct();
 
         constexpr bool do_copy = stats::has_nonconst_sparse_compute<decltype(stat), T, IDX>::value;
-        WorkspaceOptions opt;
-        opt.sparse_extract_mode = stats::nonconst_sparse_compute_copy_mode<decltype(stat)>::value;
-        auto wrk = new_workspace<ROW, true>(p, opt);
+        auto wrk = new_extractor<ROW, true, T, IDX>(p);
 
 #ifndef TATAMI_CUSTOM_PARALLEL
         // Without chunk size specification, static scheduling should distribute
@@ -188,22 +166,12 @@ void apply_sparse_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, F
 #else
         for (size_t i = start; i < end; ++i) {
 #endif
-            if constexpr(ROW) {
-                if constexpr(do_copy) {
-                    auto range = p->row_copy(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.compute_copy(i, range.number, obuffer.data(), ibuffer.data());
-                } else {
-                    auto range = p->row(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.compute(i, range);
-                }
+            if constexpr(do_copy) {
+                auto range = wrk->fetch_copy(i, obuffer.data(), ibuffer.data());
+                stat.compute_copy(i, range.number, obuffer.data(), ibuffer.data());
             } else {
-                if constexpr(do_copy) {
-                    auto range = p->column_copy(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.compute_copy(i, range.number, obuffer.data(), ibuffer.data());
-                } else {
-                    auto range = p->column(i, obuffer.data(), ibuffer.data(), wrk.get());
-                    stat.compute(i, range);
-                }
+                auto range = wrk->fetch(i, obuffer.data(), ibuffer.data());
+                stat.compute(i, range);
             }
         }
 #ifndef TATAMI_CUSTOM_PARALLEL
@@ -226,7 +194,7 @@ void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Fa
     TATAMI_CUSTOM_PARALLEL(dim, [&](size_t start, size_t end) -> void {
 #endif
         std::vector<T> obuffer(otherdim);
-        auto wrk = new_workspace<ROW, false>(p);
+        auto wrk = new_extractor<ROW, false, T, IDX>(p);
         auto stat = factory.dense_direct();
         constexpr bool do_copy = stats::has_nonconst_dense_compute<decltype(stat), T>::value;
 
@@ -236,22 +204,12 @@ void apply_dense_direct(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, Fa
 #else
         for (size_t i = start; i < end; ++i) {
 #endif
-            if constexpr(ROW) {
-                if constexpr(do_copy) {
-                    auto ptr = p->row_copy(i, obuffer.data(), wrk.get());
-                    stat.compute_copy(i, obuffer.data());
-                } else {
-                    auto ptr = p->row(i, obuffer.data(), wrk.get());
-                    stat.compute(i, ptr);
-                }
+            if constexpr(do_copy) {
+                auto ptr = wrk->fetch_copy(i, obuffer.data());
+                stat.compute_copy(i, obuffer.data());
             } else {
-                if constexpr(do_copy) {
-                    auto ptr = p->column_copy(i, obuffer.data(), wrk.get());
-                    stat.compute_copy(i, obuffer.data());
-                } else {
-                    auto ptr = p->column(i, obuffer.data(), wrk.get());
-                    stat.compute(i, ptr);
-                }
+                auto ptr = wrk->fetch(i, obuffer.data());
+                stat.compute(i, ptr);
             }
         }
 #ifndef TATAMI_CUSTOM_PARALLEL

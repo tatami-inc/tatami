@@ -31,12 +31,19 @@ protected:
      * @cond
      */
     FullExtractor() = default;
-    virtual ~FullExtractor() = default;
     /**
      * @endcond
      */
 
 public:
+    /**
+     * @cond
+     */
+    virtual ~FullExtractor() = default;
+    /**
+     * @endcond
+     */
+
     /**
      * Full extent of the extraction dimension.
      */
@@ -56,12 +63,19 @@ protected:
      * @cond
      */
     BlockExtractor() = default;
-    virtual ~BlockExtractor() = default;
     /**
      * @endcond
      */
 
 public:
+    /**
+     * @cond
+     */
+    virtual ~BlockExtractor() = default;
+    /**
+     * @endcond
+     */
+
     /**
      * Index of the start of the contiguous block of entries along the extraction dimension.
      */
@@ -87,12 +101,19 @@ protected:
      * @cond
      */
     IndexExtractor() = default;
-    virtual ~IndexExtractor() = default;
     /**
      * @endcond
      */
 
 public:
+    /**
+     * @cond
+     */
+    virtual ~IndexExtractor() = default;
+    /**
+     * @endcond
+     */
+
     /**
      * Unlike `index_length`, this is implemented as a virtual method to avoid invalidation of pointers when `IndexExtractor` instances are copied or moved.
      *

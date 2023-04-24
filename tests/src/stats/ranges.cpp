@@ -7,7 +7,7 @@
 #include "custom_parallel.h"
 #endif
 
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/utils/convert_to_dense.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/ranges.hpp"
@@ -87,8 +87,6 @@ TEST(ComputingDimMins, Configuration) {
     typedef decltype(std::declval<MinFact>().sparse_direct()) MinSparse;
     const bool nsc = tatami::stats::has_nonconst_sparse_compute<MinSparse, double, int>::value;
     EXPECT_FALSE(nsc);
-    const tatami::SparseExtractMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<MinSparse>::value;
-    EXPECT_EQ(nscc, tatami::SparseExtractMode::BOTH); // just a negative control.
 }
 
 /********************************************/
@@ -212,8 +210,6 @@ TEST(ComputingDimRanges, Configuration) {
     typedef decltype(std::declval<RangeFact>().sparse_direct()) RangeSparse;
     const bool nsc = tatami::stats::has_nonconst_sparse_compute<RangeSparse, double, int>::value;
     EXPECT_FALSE(nsc);
-    const tatami::SparseExtractMode nscc = tatami::stats::nonconst_sparse_compute_copy_mode<RangeSparse>::value;
-    EXPECT_EQ(nscc, tatami::SparseExtractMode::BOTH); // just a negative control.
 }
 
 /********************************************/
