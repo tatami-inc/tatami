@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include "tatami/utils/wrap_shared_ptr.hpp"
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 
 #include "../_tests/test_row_access.h"
 #include "../_tests/test_column_access.h"
@@ -18,8 +18,8 @@ TEST(WrapSharedPtrTest, Simple) {
         EXPECT_EQ(wrap->nrow(), 10);
         EXPECT_EQ(wrap->ncol(), 20);
 
-        test_simple_row_access(wrap.get(), &mat);
-        test_simple_column_access(wrap.get(), &mat);
+        test_simple_row_access(wrap.get(), &mat, true, 1);
+        test_simple_column_access(wrap.get(), &mat, true, 1);
     }
 
     // Still runs properly as wrapped pointer deletion is a no-op.

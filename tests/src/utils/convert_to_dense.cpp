@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/CompressedSparseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/base/sparse/CompressedSparseMatrix.hpp"
 #include "tatami/utils/convert_to_dense.hpp"
 
 #include "../_tests/simulate_vector.h"
@@ -27,18 +27,18 @@ TEST_P(ConvertToDenseTest, RowToRow) {
     auto converted = tatami::convert_to_dense<true>(&mat);
     EXPECT_TRUE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    test_simple_row_access(converted.get(), &mat);
-    test_simple_column_access(converted.get(), &mat);
+    test_simple_row_access(converted.get(), &mat, true, 1);
+    test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_dense<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
-    auto wrk2 = converted2->dense_row_workspace();
+    auto wrk2 = converted2->dense_row();
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(converted2->row(i, wrk2.get()), expected2);
+        EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 }
 
@@ -50,18 +50,18 @@ TEST_P(ConvertToDenseTest, ColumnToColumn) {
     auto converted = tatami::convert_to_dense<false>(&mat);
     EXPECT_FALSE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    test_simple_row_access(converted.get(), &mat);
-    test_simple_column_access(converted.get(), &mat);
+    test_simple_row_access(converted.get(), &mat, true, 1);
+    test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_dense<false, int, size_t>(&mat); // works for a different type.
     EXPECT_FALSE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
-    auto wrk2 = converted2->dense_column_workspace();
+    auto wrk2 = converted2->dense_column();
     for (size_t i = 0; i < NC; ++i) {
         auto start = vec.begin() + i * NR;
         std::vector<int> expected2(start, start + NR);
-        EXPECT_EQ(converted2->column(i, wrk2.get()), expected2);
+        EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 }
 
@@ -73,18 +73,18 @@ TEST_P(ConvertToDenseTest, RowToColumn) {
     auto converted = tatami::convert_to_dense<false>(&mat);
     EXPECT_FALSE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    test_simple_row_access(converted.get(), &mat);
-    test_simple_column_access(converted.get(), &mat);
+    test_simple_row_access(converted.get(), &mat, true, 1);
+    test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_dense<false, int, size_t>(&mat); // works for a different type.
     EXPECT_FALSE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
-    auto wrk2 = converted2->dense_row_workspace();
+    auto wrk2 = converted2->dense_row();
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(converted2->row(i, wrk2.get()), expected2);
+        EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 }
 
@@ -96,18 +96,18 @@ TEST_P(ConvertToDenseTest, ColumnToRow) {
     auto converted = tatami::convert_to_dense<true>(&mat);
     EXPECT_TRUE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    test_simple_row_access(converted.get(), &mat);
-    test_simple_column_access(converted.get(), &mat);
+    test_simple_row_access(converted.get(), &mat, true, 1);
+    test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_dense<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
-    auto wrk2 = converted2->dense_column_workspace();
+    auto wrk2 = converted2->dense_column();
     for (size_t i = 0; i < NC; ++i) {
         auto start = vec.begin() + i * NR;
         std::vector<int> expected2(start, start + NR);
-        EXPECT_EQ(converted2->column(i, wrk2.get()), expected2);
+        EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 }
 
@@ -140,16 +140,16 @@ TEST_P(ConvertToDenseTest, FromSparse) {
             auto converted = tatami::convert_to_dense<true>(&smat);
             EXPECT_TRUE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-            test_simple_row_access(converted.get(), &smat);
-            test_simple_column_access(converted.get(), &smat);
+            test_simple_row_access(converted.get(), &smat, true, 1);
+            test_simple_column_access(converted.get(), &smat, true, 1);
         }
 
         {
             auto converted = tatami::convert_to_dense<false>(&smat);
             EXPECT_FALSE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-            test_simple_row_access(converted.get(), &smat);
-            test_simple_column_access(converted.get(), &smat);
+            test_simple_row_access(converted.get(), &smat, true, 1);
+            test_simple_column_access(converted.get(), &smat, true, 1);
         }
     }
 
@@ -162,16 +162,16 @@ TEST_P(ConvertToDenseTest, FromSparse) {
             auto converted = tatami::convert_to_dense<true>(&smat);
             EXPECT_TRUE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-            test_simple_row_access(converted.get(), &smat);
-            test_simple_column_access(converted.get(), &smat);
+            test_simple_row_access(converted.get(), &smat, true, 1);
+            test_simple_column_access(converted.get(), &smat, true, 1);
         }
 
         {
             auto converted = tatami::convert_to_dense<false>(&smat);
             EXPECT_FALSE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-            test_simple_row_access(converted.get(), &smat);
-            test_simple_column_access(converted.get(), &smat);
+            test_simple_row_access(converted.get(), &smat, true, 1);
+            test_simple_column_access(converted.get(), &smat, true, 1);
         }
     }
 }
