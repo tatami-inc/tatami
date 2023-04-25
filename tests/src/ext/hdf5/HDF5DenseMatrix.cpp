@@ -7,8 +7,8 @@ std::mutex hdf5_lock; // declared in hdf5_custom_lock.h, defined here.
 #endif
 
 #include "H5Cpp.h"
-#include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedTranspose.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/base/other/DelayedTranspose.hpp"
 #include "tatami/ext/hdf5/HDF5DenseMatrix.hpp"
 #include "tatami/stats/sums.hpp"
 
