@@ -15,11 +15,11 @@
  * compute the sum. We parallelize using the simple openMP for pragma; nothing
  * too dramatic happening here. This is thread-safe as all tatami methods are
  * read-only; there are no problems due to state changes inside 'p'. Note that
- * a separate buffer and workspace needs to be created for each thread inside
+ * a separate buffer and extractor needs to be created for each thread inside
  * the parallel region.
  *
  * Notice how we use a static schedule with no chunk size arguments. This is
- * because workspaces are generally most beneficial when dealing with
+ * because extractors are generally most beneficial when dealing with
  * extraction of a block of consecutive rows within each thread. Our current
  * schedule ensures that each thread gets one chunk of consecutive jobs. Of
  * course, if extraction is cheap compared to the actual calculation, other
@@ -32,11 +32,11 @@ std::vector<double> rowsums_parallel(std::shared_ptr<tatami::NumericMatrix> p) {
     # pragma omp parallel
     {
         std::vector<double> buffer(NC);
-        auto wrk = p->dense_row_workspace();
+        auto wrk = p->dense_row();
 
         #pragma omp for schedule(static)
         for (size_t i = 0; i < NR; ++i) {
-            auto ptr = p->row(i, buffer.data(), wrk.get());
+            auto ptr = wrk->fetch(i, buffer.data());
             output[i] = std::accumulate(ptr, ptr + NR, 0.0);
         }
     }
@@ -54,9 +54,9 @@ int main(int argc, char** argv) {
 
     std::cout << "Matrix preview: " << std::endl;
     std::vector<double> buffer(mat->ncol());
-    auto wrk = mat->dense_row_workspace();
+    auto wrk = mat->dense_row();
     for (size_t i = 0; i < mat->nrow(); ++i) {
-        auto ptr = mat->row(i, buffer.data(), wrk.get());
+        auto ptr = wrk->fetch(i, buffer.data());
         print_vector(ptr, ptr + mat->ncol());
     }
     std::cout << std::endl;

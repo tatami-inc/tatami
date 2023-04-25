@@ -47,12 +47,12 @@ target_link_libraries(
 # Checking sparse workspace performance.
 
 add_executable(
-    sparse_workspace 
-    src/sparse_workspace.cpp
+    sparse_extractor 
+    src/sparse_extractor.cpp
 )
 
 target_link_libraries(
-    sparse_workspace
+    sparse_extractor
     tatami
 )
 
