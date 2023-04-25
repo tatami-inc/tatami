@@ -108,7 +108,7 @@ private:
         ParallelWorkspaceBase(const DelayedSubsetSortedUnique* parent, const Options<Index_>& opt) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->full_length = parent->indices.size();
-                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), std::vector<Index_>(parent->indices.begin(), parent->indices.end()), opt); // copy is deliberate.
+                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, std::vector<Index_>(parent->indices.begin(), parent->indices.end())); // copy is deliberate.
             }
         }
 
@@ -118,7 +118,7 @@ private:
                 this->block_length = bl;
 
                 auto pistart = parent->indices.begin() + bs;
-                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), std::vector<Index_>(pistart, pistart + bl), opt);
+                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, std::vector<Index_>(pistart, pistart + bl));
             }
         }
 
@@ -134,7 +134,7 @@ private:
                 for (auto i : indices) {
                     local.push_back(parent->indices[i]);
                 }
-                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), std::move(local), opt);
+                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, std::move(local));
             }
         }
 

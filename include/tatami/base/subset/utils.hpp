@@ -81,9 +81,9 @@ std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_perpen
     std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
     if constexpr(sparse_) {
-        output.reset(new SparsePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, args..., options), indices));
+        output.reset(new SparsePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, options, std::move(args)...), indices));
     } else {
-        output.reset(new DensePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, args..., options), indices));
+        output.reset(new DensePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, options, std::move(args)...), indices));
     }
     return output;
 }

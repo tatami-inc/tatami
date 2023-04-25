@@ -192,7 +192,7 @@ private:
                     Index_ actual_end = (not_final ? cumulative[index + 1] : end) - cumulative[index];
 
                     // TODO: manage opt.selection, manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), actual_start, actual_end - actual_start, opt));
+                    workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), opt, actual_start, actual_end - actual_start));
 
                     if constexpr(sparse_) {
                         kept.push_back(index);
@@ -236,7 +236,7 @@ private:
 
                         if (!curslice.empty()) {
                             // TODO: manage opt.selection, manage opt.access.sequencer!
-                            workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), std::move(curslice), opt));
+                            workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), opt, std::move(curslice)));
                             if constexpr(sparse_) {
                                 kept.push_back(index);
                             }
@@ -365,7 +365,7 @@ private:
                 this->block_length = bl;
                 for (const auto& m : parent->mats) {
                     // TODO: manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(m.get(), bs, bl, opt));
+                    workspaces.push_back(new_extractor<accrow_, sparse_>(m.get(), opt, bs, bl));
                 }
             }
         }
@@ -378,7 +378,7 @@ private:
                 this->index_length = idx.size();
                 for (const auto& m : parent->mats) {
                     // TODO: manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(m.get(), idx, opt)); // copy is deliberate here.
+                    workspaces.push_back(new_extractor<accrow_, sparse_>(m.get(), opt, idx)); // copy is deliberate here.
                 }
 
                 if (workspaces.empty()) {
