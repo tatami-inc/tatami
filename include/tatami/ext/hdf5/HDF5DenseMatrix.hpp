@@ -236,7 +236,7 @@ private:
     }
 
     template<bool accrow_, typename ExtractType_>
-    const Value_* extract(Index_ primary_start, Index_ primary_length, Value_* target, const ExtractType_& extract_value, Index_ extract_length, Hdf5WorkspaceBase& work) const {
+    void extract(Index_ primary_start, Index_ primary_length, Value_* target, const ExtractType_& extract_value, Index_ extract_length, Hdf5WorkspaceBase& work) const {
         hsize_t offset[2];
         hsize_t count[2];
 
