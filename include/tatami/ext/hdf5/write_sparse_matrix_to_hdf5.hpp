@@ -209,19 +209,19 @@ void write_sparse_matrix_to_hdf5(const Matrix<T, IDX>* mat, H5::Group& location,
     };
 
     if (mat->prefer_rows()) {
-        auto wrk = mat->sparse_row_workspace();
+        auto wrk = mat->sparse_row();
         std::vector<T> xbuffer(NC);
         std::vector<IDX> ibuffer(NC);
         for (size_t r = 0; r < NR; ++r) {
-            auto extracted = mat->row(r, xbuffer.data(), ibuffer.data(), wrk.get());
+            auto extracted = wrk->fetch(r, xbuffer.data(), ibuffer.data());
             update_stats(extracted);
         }
     } else {
-        auto wrk = mat->sparse_column_workspace();
+        auto wrk = mat->sparse_column();
         std::vector<T> xbuffer(NR);
         std::vector<IDX> ibuffer(NR);
         for (size_t c = 0; c < NC; ++c) {
-            auto extracted = mat->column(c, xbuffer.data(), ibuffer.data(), wrk.get());
+            auto extracted = wrk->fetch(c, xbuffer.data(), ibuffer.data());
             update_stats(extracted);
         }
     }
@@ -295,21 +295,21 @@ void write_sparse_matrix_to_hdf5(const Matrix<T, IDX>* mat, H5::Group& location,
     std::vector<hsize_t> ptrs;
     if (layout == WriteSparseMatrixToHdf5Parameters::StorageLayout::ROW) {
         ptrs.resize(NR + 1);
-        auto wrk = mat->sparse_row_workspace();
+        auto wrk = mat->sparse_row();
         std::vector<T> xbuffer(NC);
         std::vector<IDX> ibuffer(NC);
         for (size_t r = 0; r < NR; ++r) {
-            auto extracted = mat->row(r, xbuffer.data(), ibuffer.data(), wrk.get());
+            auto extracted = wrk->fetch(r, xbuffer.data(), ibuffer.data());
             fill_datasets(extracted);
             ptrs[r+1] = ptrs[r] + extracted.number;
         }
     } else {
         ptrs.resize(NC + 1);
-        auto wrk = mat->sparse_column_workspace();
+        auto wrk = mat->sparse_column();
         std::vector<T> xbuffer(NR);
         std::vector<IDX> ibuffer(NR);
         for (size_t c = 0; c < NC; ++c) {
-            auto extracted = mat->column(c, xbuffer.data(), ibuffer.data(), wrk.get());
+            auto extracted = wrk->fetch(c, xbuffer.data(), ibuffer.data());
             fill_datasets(extracted);
             ptrs[c+1] = ptrs[c] + extracted.number;
         }

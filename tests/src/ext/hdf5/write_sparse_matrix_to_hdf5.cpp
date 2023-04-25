@@ -6,7 +6,7 @@
 #endif
 
 #include "H5Cpp.h"
-#include "tatami/base/CompressedSparseMatrix.hpp"
+#include "tatami/base/sparse/CompressedSparseMatrix.hpp"
 #include "tatami/ext/hdf5/load_hdf5_matrix.hpp"
 #include "tatami/ext/hdf5/write_sparse_matrix_to_hdf5.hpp"
 
@@ -52,11 +52,11 @@ TEST(WriteSparseMatrixToHdf5Test, SparseColumn) {
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
 
-        auto mwrk = mat.dense_row_workspace();
-        auto rwrk = reloaded.dense_row_workspace();
+        auto mwrk = mat.dense_row();
+        auto rwrk = reloaded.dense_row();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r, mwrk.get());
-            auto relrow = reloaded.row(r, rwrk.get());
+            auto matrow = mwrk->fetch(r);
+            auto relrow = rwrk->fetch(r);
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -80,14 +80,14 @@ TEST(WriteSparseMatrixToHdf5Test, SparseColumn) {
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
 
-        auto mwrk = mat.dense_row_workspace();
-        auto rwrk = reloaded.dense_row_workspace();
+        auto mwrk = mat.dense_row();
+        auto rwrk = reloaded.dense_row();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r, mwrk.get());
+            auto matrow = mwrk->fetch(r);
             for (auto& x : matrow) {
                 x = static_cast<int>(x);
             }
-            auto relrow = reloaded.row(r, rwrk.get());
+            auto relrow = rwrk->fetch(r);
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -120,11 +120,11 @@ TEST(WriteSparseMatrixToHdf5Test, SparseRow) {
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<true, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
 
-        auto mwrk = mat.dense_row_workspace();
-        auto rwrk = reloaded.dense_row_workspace();
+        auto mwrk = mat.dense_row();
+        auto rwrk = reloaded.dense_row();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r, mwrk.get());
-            auto relrow = reloaded.row(r, rwrk.get());
+            auto matrow = mwrk->fetch(r);
+            auto relrow = rwrk->fetch(r);
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -150,11 +150,11 @@ TEST(WriteSparseMatrixToHdf5Test, SparseRow) {
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
 
-        auto mwrk = mat.dense_row_workspace();
-        auto rwrk = reloaded.dense_row_workspace();
+        auto mwrk = mat.dense_row();
+        auto rwrk = reloaded.dense_row();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r, mwrk.get());
-            auto relrow = reloaded.row(r, rwrk.get());
+            auto matrow = mwrk->fetch(r);
+            auto relrow = rwrk->fetch(r);
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -209,11 +209,11 @@ TEST_P(WriteSparseMatrixToHdf5UnsignedDataTypeTest, Check) {
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
 
-        auto mwrk = mat.dense_row_workspace();
-        auto rwrk = reloaded.dense_row_workspace();
+        auto mwrk = mat.dense_row();
+        auto rwrk = reloaded.dense_row();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r, mwrk.get());
-            auto relrow = reloaded.row(r, rwrk.get());
+            auto matrow = mwrk->fetch(r);
+            auto relrow = rwrk->fetch(r);
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -236,11 +236,11 @@ TEST_P(WriteSparseMatrixToHdf5UnsignedDataTypeTest, Check) {
     {
         auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
 
-        auto mwrk = mat.dense_row_workspace();
-        auto rwrk = reloaded.dense_row_workspace();
+        auto mwrk = mat.dense_row();
+        auto rwrk = reloaded.dense_row();
         for (size_t r = 0; r < NR; ++r) {
-            auto matrow = mat.row(r, mwrk.get());
-            auto relrow = reloaded.row(r, rwrk.get());
+            auto matrow = mwrk->fetch(r);
+            auto relrow = rwrk->fetch(r);
             EXPECT_EQ(matrow, relrow);
         }
     }
@@ -304,11 +304,11 @@ TEST_P(WriteSparseMatrixToHdf5SignedDataTypeTest, Check) {
     // Roundtripping.
     auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
 
-    auto mwrk = mat.dense_row_workspace();
-    auto rwrk = reloaded.dense_row_workspace();
+    auto mwrk = mat.dense_row();
+    auto rwrk = reloaded.dense_row();
     for (size_t r = 0; r < NR; ++r) {
-        auto matrow = mat.row(r, mwrk.get());
-        auto relrow = reloaded.row(r, rwrk.get());
+        auto matrow = mwrk->fetch(r);
+        auto relrow = rwrk->fetch(r);
         EXPECT_EQ(matrow, relrow);
     }
 }
@@ -370,11 +370,11 @@ TEST_P(WriteSparseMatrixToHdf5IndexTypeTest, Check) {
     // Roundtripping.
     auto reloaded = tatami::load_hdf5_compressed_sparse_matrix<false, double, int>(NR, NC, fpath, "matrix/data", "matrix/indices", "matrix/indptr");
 
-    auto mwrk = mat.dense_column_workspace();
-    auto rwrk = reloaded.dense_column_workspace();
+    auto mwrk = mat.dense_column();
+    auto rwrk = reloaded.dense_column();
     for (size_t c = 0; c < NC; ++c) {
-        auto matrow = mat.column(c, mwrk.get());
-        auto relrow = reloaded.column(c, rwrk.get());
+        auto matrow = mwrk->fetch(c);
+        auto relrow = rwrk->fetch(c);
         EXPECT_EQ(matrow, relrow);
     }
 }
