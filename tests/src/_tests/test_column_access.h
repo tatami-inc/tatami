@@ -161,15 +161,14 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
             }
             return sub;
         },
-        indices.data(),
-        indices.size()
+        indices
     );
 
     // Checking that properties are correctly passed down.
-    auto pwork = ptr->dense_column(indices.data(), indices.size());
+    auto pwork = ptr->dense_column(indices);
     EXPECT_EQ(std::vector<int>(pwork->index_start(), pwork->index_start() + pwork->index_length), indices);
 
-    auto swork = ptr->sparse_column(indices.data(), indices.size());
+    auto swork = ptr->sparse_column(indices);
     EXPECT_EQ(std::vector<int>(swork->index_start(), swork->index_start() + swork->index_length), indices);
 }
 

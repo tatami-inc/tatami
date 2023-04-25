@@ -192,10 +192,10 @@ private:
             }
         }
 
-        Hdf5Extractor(const HDF5DenseMatrix* p, const Index_* start, size_t length) : parent(p) {
+        Hdf5Extractor(const HDF5DenseMatrix* p, std::vector<Index_> idx) : parent(p) {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                this->index_length = length;
-                indices = std::vector<Index_>(start, start + length);
+                this->index_length = idx.size();
+                indices = std::move(idx);
             }
         }
 
@@ -364,8 +364,8 @@ public:
         return populate<true, DimensionSelectionType::BLOCK>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return populate<true, DimensionSelectionType::INDEX>(opt, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return populate<true, DimensionSelectionType::INDEX>(opt, std::move(indices));
     }
 
     std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
@@ -376,8 +376,8 @@ public:
         return populate<false, DimensionSelectionType::BLOCK>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return populate<false, DimensionSelectionType::INDEX>(opt, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return populate<false, DimensionSelectionType::INDEX>(opt, std::move(indices));
     }
 };
 

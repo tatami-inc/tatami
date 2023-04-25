@@ -159,15 +159,14 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
             }
             return sub;
         },
-        indices.data(),
-        indices.size()
+        indices
     );
 
     // Checking that properties are correctly passed down. 
-    auto pwork = ptr->dense_row(indices.data(), indices.size());
+    auto pwork = ptr->dense_row(indices);
     EXPECT_EQ(std::vector<int>(pwork->index_start(), pwork->index_start() + pwork->index_length), indices);
 
-    auto swork = ptr->sparse_row(indices.data(), indices.size());
+    auto swork = ptr->sparse_row(indices);
     EXPECT_EQ(std::vector<int>(swork->index_start(), swork->index_start() + swork->index_length), indices);
 }
 

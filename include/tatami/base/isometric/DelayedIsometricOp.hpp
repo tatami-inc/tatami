@@ -281,17 +281,17 @@ private:
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(!sparse_) {
-            auto inner = new_extractor<accrow_, false>(mat.get(), args..., opt);
+            auto inner = new_extractor<accrow_, false>(mat.get(), std::move(args)..., opt);
             output.reset(new DenseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
 
         } else if constexpr(!Operation_::sparse_) {
             bool report_value = opt.sparse.extract_value;
             bool report_index = opt.sparse.extract_index;
-            auto inner = new_extractor<accrow_, false>(mat.get(), args..., opt);
+            auto inner = new_extractor<accrow_, false>(mat.get(), std::move(args)..., opt);
             output.reset(new DensifiedSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
 
         } else if constexpr((accrow_ && !Operation_::needs_column_) || (!accrow_ && !Operation_::needs_row_)) { // i.e., extraction indices aren't required for the operation.
-            auto inner = new_extractor<accrow_, true>(mat.get(), args..., opt);
+            auto inner = new_extractor<accrow_, true>(mat.get(), std::move(args)..., opt);
             output.reset(new SimpleSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
 
         } else {
@@ -302,9 +302,9 @@ private:
             if (report_value && !report_index) {
                 auto optcopy = opt;
                 optcopy.sparse.extract_index = true; // if we get to this clause, we need the indices; otherwise we'd have constructed a SimpleSparseIsometricExtractor.
-                inner = new_extractor<accrow_, true>(mat.get(), args..., optcopy);
+                inner = new_extractor<accrow_, true>(mat.get(), std::move(args)..., optcopy);
             } else {
-                inner = new_extractor<accrow_, true>(mat.get(), args..., opt);
+                inner = new_extractor<accrow_, true>(mat.get(), std::move(args)..., opt);
             }
 
             output.reset(new RegularSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
@@ -322,8 +322,8 @@ public:
         return propagate<true, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
     }
     
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return propagate<true, DimensionSelectionType::INDEX, false>(opt, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return propagate<true, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
     }
 
     std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
@@ -334,8 +334,8 @@ public:
         return propagate<false, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
     }
     
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return propagate<false, DimensionSelectionType::INDEX, false>(opt, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return propagate<false, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
     }
 
 public:
@@ -347,8 +347,8 @@ public:
         return propagate<true, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
     }
     
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return propagate<true, DimensionSelectionType::INDEX, true>(opt, index_start, index_length);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return propagate<true, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
     }
 
     std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& opt) const {
@@ -359,8 +359,8 @@ public:
         return propagate<false, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
     }
     
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return propagate<false, DimensionSelectionType::INDEX, true>(opt, index_start, index_length);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return propagate<false, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
     }
 };
 

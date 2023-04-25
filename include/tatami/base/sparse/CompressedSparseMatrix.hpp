@@ -160,16 +160,16 @@ private:
             }
         }
 
-        CompressedExtractorBase(const CompressedSparseMatrix* p, const Options<Index_>& opt, const Index_* is, size_t il) : CompressedExtractorBase(p, opt) {
+        CompressedExtractorBase(const CompressedSparseMatrix* p, const Options<Index_>& opt, std::vector<Index_> i) : CompressedExtractorBase(p, opt) {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                indices = std::vector<Index_>(is, is + il);
-                this->index_length = il;
+                subset_indices = std::move(i);
+                this->index_length = subset_indices.size();
             }
         }
 
         const Index_* index_start() const {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                return indices.data();
+                return subset_indices.data();
             } else {
                 return NULL;
             }
@@ -177,7 +177,7 @@ private:
 
     protected:
         const CompressedSparseMatrix* parent;
-        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
+        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type subset_indices;
         bool needs_value = false;
         bool needs_index = false;
     };
@@ -408,7 +408,7 @@ private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct PrimaryExtractorBase : public CompressedExtractorBase<row_, selection_, sparse_> {
         template<typename ...Args_>
-        PrimaryExtractorBase(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : CompressedExtractorBase<row_, selection_, sparse_>(p, opt, args...) {
+        PrimaryExtractorBase(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : CompressedExtractorBase<row_, selection_, sparse_>(p, opt, std::move(args)...) {
             bool spawn_cache = false;
 
             if constexpr(selection_ == DimensionSelectionType::BLOCK) {
@@ -416,7 +416,7 @@ private:
                 spawn_cache = (opt.access.cache_for_reuse && this->block_start); 
             } else if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 // only need to create a cache if indices are non-empty and the first is not 0, see primary_dimension for details.
-                spawn_cache = (opt.access.cache_for_reuse && this->index_length && this->indices[0]);
+                spawn_cache = (opt.access.cache_for_reuse && this->index_length && this->subset_indices[0]);
             }
 
             if (spawn_cache) {
@@ -431,7 +431,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DensePrimaryExtractor : public PrimaryExtractorBase<selection_, false> {
         template<typename ...Args_>
-        DensePrimaryExtractor(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : PrimaryExtractorBase<selection_, false>(p, opt, args...) {}
+        DensePrimaryExtractor(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : PrimaryExtractorBase<selection_, false>(p, opt, std::move(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -439,7 +439,7 @@ private:
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->parent->primary_dimension_expanded(i, this->block_start, this->block_length, this->work, buffer);
             } else {
-                this->parent->primary_dimension_expanded(i, this->indices.data(), this->index_length, this->work, buffer);
+                this->parent->primary_dimension_expanded(i, this->subset_indices.data(), this->index_length, this->work, buffer);
             }
             return buffer;
         }
@@ -448,7 +448,7 @@ private:
     template<DimensionSelectionType selection_>
     struct SparsePrimaryExtractor : public PrimaryExtractorBase<selection_, true> {
         template<typename ...Args_>
-        SparsePrimaryExtractor(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : PrimaryExtractorBase<selection_, true>(p, opt, args...) {}
+        SparsePrimaryExtractor(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : PrimaryExtractorBase<selection_, true>(p, opt, std::move(args)...) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             if (!this->needs_value) {
@@ -463,7 +463,7 @@ private:
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 return this->parent->primary_dimension_raw(i, this->block_start, this->block_length, this->work, vbuffer, ibuffer);
             } else {
-                return this->parent->primary_dimension_raw(i, this->indices.data(), this->index_length, this->work, vbuffer, ibuffer);
+                return this->parent->primary_dimension_raw(i, this->subset_indices.data(), this->index_length, this->work, vbuffer, ibuffer);
             }
         }
     };
@@ -697,7 +697,7 @@ private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct SecondaryExtractorBase : public CompressedExtractorBase<!row_, selection_, sparse_> {
         template<typename ...Args_>
-        SecondaryExtractorBase(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : CompressedExtractorBase<!row_, selection_, sparse_>(p, opt, args...) {
+        SecondaryExtractorBase(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : CompressedExtractorBase<!row_, selection_, sparse_>(p, opt, std::move(args)...) {
             auto max_index = this->parent->max_secondary_index();
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -705,7 +705,7 @@ private:
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 work = SecondaryWorkspace(max_index, this->parent->indices, this->parent->indptrs, this->block_start, this->block_length);
             } else {
-                work = SecondaryWorkspace(max_index, this->parent->indices, this->parent->indptrs, this->indices.data(), this->index_length);
+                work = SecondaryWorkspace(max_index, this->parent->indices, this->parent->indptrs, this->subset_indices.data(), this->index_length);
             }
         }
 
@@ -716,7 +716,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DenseSecondaryExtractor : public SecondaryExtractorBase<selection_, false> {
         template<typename ...Args_>
-        DenseSecondaryExtractor(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : SecondaryExtractorBase<selection_, false>(p, opt, args...) {}
+        DenseSecondaryExtractor(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : SecondaryExtractorBase<selection_, false>(p, opt, std::move(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -724,7 +724,7 @@ private:
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->parent->secondary_dimension_expanded(i, this->block_start, this->block_length, this->work, buffer);
             } else {
-                this->parent->secondary_dimension_expanded(i, this->indices.data(), this->index_length, this->work, buffer);
+                this->parent->secondary_dimension_expanded(i, this->subset_indices.data(), this->index_length, this->work, buffer);
             }
             return buffer;
         }
@@ -733,7 +733,7 @@ private:
     template<DimensionSelectionType selection_>
     struct SparseSecondaryExtractor : public SecondaryExtractorBase<selection_, true> {
         template<typename ...Args_>
-        SparseSecondaryExtractor(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : SecondaryExtractorBase<selection_, true>(p, opt, args...) {}
+        SparseSecondaryExtractor(const CompressedSparseMatrix* p, const Options<Index_>& opt, Args_... args) : SecondaryExtractorBase<selection_, true>(p, opt, std::move(args)...) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             if (!this->needs_value) {
@@ -748,7 +748,7 @@ private:
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 return this->parent->secondary_dimension_raw(i, this->block_start, this->block_length, this->work, vbuffer, ibuffer);
             } else {
-                return this->parent->secondary_dimension_raw(i, this->indices.data(), this->index_length, this->work, vbuffer, ibuffer);
+                return this->parent->secondary_dimension_raw(i, this->subset_indices.data(), this->index_length, this->work, vbuffer, ibuffer);
             }
         }
     };
@@ -763,15 +763,15 @@ private:
 
         if constexpr(accrow_ == row_) {
             if constexpr(sparse_) {
-                output.reset(new SparsePrimaryExtractor<selection_>(this, opt, args...));
+                output.reset(new SparsePrimaryExtractor<selection_>(this, opt, std::move(args)...));
             } else {
-                output.reset(new DensePrimaryExtractor<selection_>(this, opt, args...));
+                output.reset(new DensePrimaryExtractor<selection_>(this, opt, std::move(args)...));
             }
         } else {
             if constexpr(sparse_) {
-                output.reset(new SparseSecondaryExtractor<selection_>(this, opt, args...));
+                output.reset(new SparseSecondaryExtractor<selection_>(this, opt, std::move(args)...));
             } else {
-                output.reset(new DenseSecondaryExtractor<selection_>(this, opt, args...));
+                output.reset(new DenseSecondaryExtractor<selection_>(this, opt, std::move(args)...));
             }
         }
 
@@ -787,8 +787,8 @@ public:
         return populate<true, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return populate<true, DimensionSelectionType::INDEX, false>(opt, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return populate<true, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
     }
 
     std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
@@ -799,8 +799,8 @@ public:
         return populate<false, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return populate<false, DimensionSelectionType::INDEX, false>(opt, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return populate<false, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
     }
 
 public:
@@ -812,8 +812,8 @@ public:
         return populate<true, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return populate<true, DimensionSelectionType::INDEX, true>(opt, index_start, index_length);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return populate<true, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
     }
 
     std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& opt) const {
@@ -824,8 +824,8 @@ public:
         return populate<false, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return populate<false, DimensionSelectionType::INDEX, true>(opt, index_start, index_length);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return populate<false, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
     }
 };
 

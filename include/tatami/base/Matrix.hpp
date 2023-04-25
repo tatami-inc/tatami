@@ -105,12 +105,11 @@ public:
     virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_end, const Options<Index_>& opt) const = 0;
 
     /**
-     * @param index_start Pointer to an array containing sorted and unique column indices.
-     * @param index_length Length of the array pointed to by `index_start`.
+     * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
      * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each row.
      */
-    virtual std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const = 0;
+    virtual std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options<Index_>& opt) const = 0;
 
     /**
      * @param opt Options for extraction.
@@ -127,12 +126,11 @@ public:
     virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_end, const Options<Index_>& opt) const = 0;
 
     /**
-     * @param index_start Pointer to an array containing sorted and unique row indices.
-     * @param index_length Length of the array pointed to by `index_start`.
+     * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
      * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each column.
      */
-    virtual std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const = 0;
+    virtual std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options<Index_>& opt) const = 0;
 
     /***************************************
      **** Sparse access virtual methods ****
@@ -153,12 +151,11 @@ public:
     virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_end, const Options<Index_>& opt) const = 0;
 
     /**
-     * @param index_start Pointer to an array containing sorted and unique column indices.
-     * @param index_length Length of the array pointed to by `index_start`.
+     * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
      * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each row.
      */
-    virtual std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const = 0;
+    virtual std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options<Index_>& opt) const = 0;
 
     /**
      * @param opt Options for extraction.
@@ -175,12 +172,11 @@ public:
     virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_end, const Options<Index_>& opt) const = 0;
 
     /**
-     * @param index_start Pointer to an array containing sorted and unique row indices.
-     * @param index_length Length of the array pointed to by `index_start`.
+     * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
      * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each column.
      */
-    virtual std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const = 0;
+    virtual std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options<Index_>& opt) const = 0;
 
     /***************************************
      **** Dense access default overload ****
@@ -203,12 +199,11 @@ public:
     }
 
     /**
-     * @param index_start Pointer to an array containing sorted and unique column indices.
-     * @param index_length Length of the array pointed to by `index_start`.
+     * @param indices Vector of sorted and unique column indices.
      * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each row, using default options.
      */
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length) const {
-        return dense_row(index_start, index_length, Options<Index_>());
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices) const {
+        return dense_row(std::move(indices), Options<Index_>());
     }
 
     /**
@@ -228,12 +223,11 @@ public:
     }
 
     /**
-     * @param index_start Pointer to an array containing sorted and unique row indices.
-     * @param index_length Length of the array pointed to by `index_start`.
+     * @param indices Vector of sorted and unique column indices.
      * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each column, using default options.
      */
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length) const {
-        return dense_column(index_start, index_length, Options<Index_>()); 
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices) const {
+        return dense_column(std::move(indices), Options<Index_>()); 
     }
 
     /*****************************************
@@ -257,12 +251,11 @@ public:
     }
 
     /**
-     * @param index_start Pointer to an array containing sorted and unique column indices.
-     * @param index_length Length of the array pointed to by `index_start`.
+     * @param indices Vector of sorted and unique column indices.
      * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each row, using default options.
      */
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length) const {
-        return sparse_row(index_start, index_length, Options<Index_>());
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices) const {
+        return sparse_row(std::move(indices), Options<Index_>());
     }
 
     /**
@@ -282,12 +275,11 @@ public:
     }
 
     /**
-     * @param index_start Pointer to an array containing sorted and unique row indices.
-     * @param index_length Length of the array pointed to by `index_start`.
+     * @param indices Vector of sorted and unique column indices.
      * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each column, using default options.
      */
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length) const {
-        return sparse_column(index_start, index_length, Options<Index_>());
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices) const {
+        return sparse_column(std::move(indices), Options<Index_>());
     }
 };
 

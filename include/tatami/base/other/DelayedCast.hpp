@@ -63,18 +63,20 @@ private:
 
     template<DimensionSelectionType selection_, bool sparse_>
     struct CastExtractor : public Extractor<selection_, sparse_, Value_out_, Index_out_> {
-        CastExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_in_, Index_in_> > i) : internal(std::move(i)) {
+        CastExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_in_, Index_in_> > inner) : internal(std::move(inner)) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->full_length = internal->full_length;
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->block_start = internal->block_start;
                 this->block_length = internal->block_length;
-            } else {
+            } else if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 this->index_length = internal->index_length;
-                if constexpr(!same_Index_type_) {
-                    auto ptr = internal->index_start();
-                    indices_buffer = std::vector<Index_out_>(ptr, ptr + this->index_length);
-                }
+            }
+        }
+
+        CastExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_in_, Index_in_> > inner, std::vector<Index_out_> idx) : CastExtractor(std::move(inner)) {
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                this->indices = std::move(idx);
             }
         }
 
@@ -83,7 +85,7 @@ private:
                 if constexpr(same_Index_type_) {
                     return internal->index_start();
                 } else {
-                    return indices_buffer.data();
+                    return indices.data();
                 }
             } else {
                 return NULL;
@@ -92,12 +94,13 @@ private:
 
     protected:
         std::unique_ptr<Extractor<selection_, sparse_, Value_in_, Index_in_> > internal;
-        typename std::conditional<same_Index_type_ || selection_ != DimensionSelectionType::INDEX, bool, std::vector<Index_out_> >::type indices_buffer;
+        typename std::conditional<same_Index_type_ || selection_ != DimensionSelectionType::INDEX, bool, std::vector<Index_out_> >::type indices;
     };
 
     template<DimensionSelectionType selection_>
     struct DenseCastExtractor : public CastExtractor<selection_, false> {
-        DenseCastExtractor(std::unique_ptr<Extractor<selection_, false, Value_in_, Index_in_> > i) : CastExtractor<selection_, false>(std::move(i)) {
+        template<typename ...Args_>
+        DenseCastExtractor(std::unique_ptr<Extractor<selection_, false, Value_in_, Index_in_> > inner, Args_... args) : CastExtractor<selection_, false>(std::move(inner), std::move(args)...) {
             if constexpr(!same_Value_type_) {
                 internal_buffer.resize(extracted_length<selection_, Index_out_>(*this));
             }
@@ -119,7 +122,8 @@ private:
 
     template<DimensionSelectionType selection_>
     struct SparseCastExtractor : public CastExtractor<selection_, true> {
-        SparseCastExtractor(std::unique_ptr<Extractor<selection_, true, Value_in_, Index_in_> > i) : CastExtractor<selection_, true>(std::move(i)) {
+        template<typename ...Args_>
+        SparseCastExtractor(std::unique_ptr<Extractor<selection_, true, Value_in_, Index_in_> > inner, Args_... args) : CastExtractor<selection_, true>(std::move(inner), std::move(args)...) {
             if constexpr(!same_Value_type_) {
                 internal_vbuffer.resize(extracted_length<selection_, Index_out_>(*this));
             }
@@ -176,31 +180,52 @@ private:
     };
 
 private:
-    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > populate_core(const Options<Index_in_>& opt, Args_... args) const {
-        if constexpr(sparse_) {
-            auto inner = new_extractor<accrow_, true>(ptr.get(), args..., opt);
-            return std::unique_ptr<Extractor<selection_, true, Value_out_, Index_out_> >(new SparseCastExtractor<selection_>(std::move(inner)));
-        } else {
-            auto inner = new_extractor<accrow_, false>(ptr.get(), args..., opt);
-            return std::unique_ptr<Extractor<selection_, false, Value_out_, Index_out_> >(new DenseCastExtractor<selection_>(std::move(inner)));
-        }
-    }
-
-    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
+    template<bool accrow_, DimensionSelectionType selection_, bool sparse_>
     std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > populate_cast(const Options<Index_in_>& opt) const {
-        return populate_core<accrow_, selection_, sparse_>(opt);
+        std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > output;
+        auto inner = new_extractor<accrow_, sparse_>(ptr.get(), opt);
+        if constexpr(sparse_) {
+            output.reset(new SparseCastExtractor<selection_>(std::move(inner)));
+        } else {
+            output.reset(new DenseCastExtractor<selection_>(std::move(inner)));
+        }
+        return output;
     }
 
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
     std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > populate_cast(const Options<Index_in_>& opt, Index_out_ block_start, Index_out_ block_length) const {
-        return populate_core<accrow_, selection_, sparse_>(opt, static_cast<Index_in_>(block_start), static_cast<Index_in_>(block_length));
+        std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > output;
+        auto inner = new_extractor<accrow_, sparse_>(ptr.get(), static_cast<Index_in_>(block_start), static_cast<Index_in_>(block_length), opt);
+        if constexpr(sparse_) {
+            output.reset(new SparseCastExtractor<selection_>(std::move(inner)));
+        } else {
+            output.reset(new DenseCastExtractor<selection_>(std::move(inner)));
+        }
+        return output;
     }
 
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > populate_cast(const Options<Index_in_>& opt, const Index_out_* index_start, size_t index_length) const {
-        std::vector<Index_in_> temp(index_start, index_start + index_length);
-        return populate_core<accrow_, selection_, sparse_>(opt, temp.data(), index_length);
+    std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > populate_cast(const Options<Index_in_>& opt, std::vector<Index_out_> indices) const {
+        std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > output;
+
+        if constexpr(!same_Index_type_) {
+            std::vector<Index_in_> temp(indices.begin(), indices.end());
+            auto inner = new_extractor<accrow_, sparse_>(ptr.get(), std::move(temp), opt);
+            if constexpr(sparse_) {
+                output.reset(new SparseCastExtractor<selection_>(std::move(inner), std::move(indices)));
+            } else {
+                output.reset(new DenseCastExtractor<selection_>(std::move(inner), std::move(indices)));
+            }
+        } else {
+            auto inner = new_extractor<accrow_, sparse_>(ptr.get(), std::move(indices), opt);
+            if constexpr(sparse_) {
+                output.reset(new SparseCastExtractor<selection_>(std::move(inner)));
+            } else {
+                output.reset(new DenseCastExtractor<selection_>(std::move(inner)));
+            }
+        }
+
+        return output;
     }
 
     struct CastOracle : SequenceOracle<Index_in_> {
@@ -220,7 +245,7 @@ private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
     std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > populate(const Options<Index_out_>& opt, Args_... args) const {
         if constexpr(same_Index_type_) {
-            return populate_core<accrow_, selection_, sparse_>(opt, args...);
+            return populate_cast<accrow_, selection_, sparse_>(opt, std::move(args)...);
 
         } else {
             // Need to copy everything over to a new options type.
@@ -232,7 +257,7 @@ private:
                 optcopy.access.pattern.reset(new CastOracle(opt.access.pattern));
             }
 
-            return populate_cast<accrow_, selection_, sparse_>(optcopy, args...);
+            return populate_cast<accrow_, selection_, sparse_>(optcopy, std::move(args)...);
         }
     }
 
@@ -245,8 +270,8 @@ public:
         return populate<true, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_out_, Index_out_> > dense_row(const Index_out_* index_start, size_t index_length, const Options<Index_out_>& opt) const {
-        return populate<true, DimensionSelectionType::INDEX, false>(opt, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_out_, Index_out_> > dense_row(std::vector<Index_out_> indices, const Options<Index_out_>& opt) const {
+        return populate<true, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
     }
 
     std::unique_ptr<FullDenseExtractor<Value_out_, Index_out_> > dense_column(const Options<Index_out_>& opt) const {
@@ -257,8 +282,8 @@ public:
         return populate<false, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_out_, Index_out_> > dense_column(const Index_out_* index_start, size_t index_length, const Options<Index_out_>& opt) const {
-        return populate<false, DimensionSelectionType::INDEX, false>(opt, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_out_, Index_out_> > dense_column(std::vector<Index_out_> indices, const Options<Index_out_>& opt) const {
+        return populate<false, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
     }
 
 public:
@@ -270,8 +295,8 @@ public:
         return populate<true, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_out_, Index_out_> > sparse_row(const Index_out_* index_start, size_t index_length, const Options<Index_out_>& opt) const {
-        return populate<true, DimensionSelectionType::INDEX, true>(opt, index_start, index_length);
+    std::unique_ptr<IndexSparseExtractor<Value_out_, Index_out_> > sparse_row(std::vector<Index_out_> indices, const Options<Index_out_>& opt) const {
+        return populate<true, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
     }
 
     std::unique_ptr<FullSparseExtractor<Value_out_, Index_out_> > sparse_column(const Options<Index_out_>& opt) const {
@@ -282,8 +307,8 @@ public:
         return populate<false, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_out_, Index_out_> > sparse_column(const Index_out_* index_start, size_t index_length, const Options<Index_out_>& opt) const {
-        return populate<false, DimensionSelectionType::INDEX, true>(opt, index_start, index_length);
+    std::unique_ptr<IndexSparseExtractor<Value_out_, Index_out_> > sparse_column(std::vector<Index_out_> indices, const Options<Index_out_>& opt) const {
+        return populate<false, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
     }
 };
 

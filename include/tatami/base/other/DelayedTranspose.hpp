@@ -73,8 +73,8 @@ public:
         return mat->dense_column(block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return mat->dense_column(index_start, index_length, opt);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return mat->dense_column(std::move(indices), opt);
     }
 
     std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
@@ -85,8 +85,8 @@ public:
         return mat->dense_row(block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return mat->dense_row(index_start, index_length, opt);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return mat->dense_row(std::move(indices), opt);
     }
 
 public:
@@ -98,8 +98,8 @@ public:
         return mat->sparse_column(block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return mat->sparse_column(index_start, index_length, opt);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return mat->sparse_column(std::move(indices), opt);
     }
 
     std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& opt) const {
@@ -110,8 +110,8 @@ public:
         return mat->sparse_row(block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length, const Options<Index_>& opt) const {
-        return mat->sparse_row(index_start, index_length, opt);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+        return mat->sparse_row(std::move(indices), opt);
     }
 };
 

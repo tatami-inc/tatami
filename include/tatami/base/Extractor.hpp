@@ -124,7 +124,7 @@ public:
     /**
      * @return Length of the array pointed to by `indices()`.
      */
-    size_t index_length = 0;
+    Index_ index_length = 0;
 };
 
 /**

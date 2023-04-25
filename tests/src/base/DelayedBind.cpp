@@ -114,10 +114,10 @@ TEST_F(DelayedBindUtilsTest, EmptyBind) {
     }
 
     {
-        auto rthing = bound_dense->dense_row(static_cast<int*>(NULL), 0);
+        auto rthing = bound_dense->dense_row(std::vector<int>());
         EXPECT_NE(rthing.get(), nullptr);
 
-        auto cthing = bound_dense->dense_column(static_cast<int*>(NULL), 0);
+        auto cthing = bound_dense->dense_column(std::vector<int>());
         EXPECT_NE(cthing.get(), nullptr);
     }
 }

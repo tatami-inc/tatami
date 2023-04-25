@@ -198,7 +198,7 @@ private:
 
 private:
     template<bool sparse_>
-    std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > create_inner_extractor(const Options<Index_>& opt, const Index_* start, size_t length) const {
+    std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > create_inner_extractor(const Options<Index_>& opt, std::vector<Index_> idx) const {
         if constexpr(sparse_) {
             if (opt.sparse.ordered_index || !opt.sparse.extract_index) {
                 auto copy = opt;
@@ -210,11 +210,11 @@ private:
                 // Need to force extraction of indices for correct duplication.
                 copy.sparse.extract_index = true;
 
-                return new_extractor<margin_ != 0, sparse_>(mat.get(), start, length, copy);
+                return new_extractor<margin_ != 0, sparse_>(mat.get(), std::move(idx), copy);
             }
         }
 
-        return new_extractor<margin_ != 0, sparse_>(mat.get(), start, length, opt);
+        return new_extractor<margin_ != 0, sparse_>(mat.get(), std::move(idx), opt);
     }
 
     template<class Extractor_>
@@ -331,7 +331,7 @@ private:
     struct FullParallelExtractor : public Extractor<DimensionSelectionType::FULL, sparse_, Value_, Index_> {
         FullParallelExtractor(const DelayedSubset* p, const Options<Index_>& opt) : parent(p) {
             this->full_length = parent->indices.size();
-            internal = parent->create_inner_extractor<sparse_>(opt, parent->unique_and_sorted.data(), parent->unique_and_sorted.size());
+            internal = parent->create_inner_extractor<sparse_>(opt, parent->unique_and_sorted); // copy is deliberate.
         }
     protected:
         std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
@@ -438,7 +438,7 @@ private:
                 parent->transplant_indices(local, collected, reverse_mapping);
             }
 
-            internal = parent->create_inner_extractor<sparse_>(opt, local.data(), local.size());
+            internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
         }
     protected:
         std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
@@ -480,31 +480,29 @@ private:
 private:
     template<bool sparse_>
     struct IndexParallelExtractor : public Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> {
-        IndexParallelExtractor(const DelayedSubset* parent, const Options<Index_>& opt, const Index_* is, size_t il) {
-            const auto& parent_indices = parent->indices;
+        IndexParallelExtractor(const DelayedSubset* parent, const Options<Index_>& opt, std::vector<Index_> idx) {
+            Index_ il = idx.size();
+            this->index_length = il;
+            indices = std::move(idx);
 
+            const auto& parent_indices = parent->indices;
             std::vector<std::pair<storage_type, Index_> > collected;
             collected.reserve(il);
             for (Index_ i = 0; i < il; ++i) {
                 if constexpr(sparse_) {
-                    collected.emplace_back(parent_indices[is[i]], is[i]);
+                    collected.emplace_back(parent_indices[indices[i]], indices[i]);
                 } else {
-                    collected.emplace_back(parent_indices[is[i]], i);
+                    collected.emplace_back(parent_indices[indices[i]], i);
                 }
             }
 
-            // Re-use 'indices' to store the inner indices.
+            std::vector<Index_> local;
             if constexpr(sparse_) {
-                parent->transplant_indices(indices, collected, mapping_duplicates, mapping_duplicates_pool);
+                parent->transplant_indices(local, collected, mapping_duplicates, mapping_duplicates_pool);
             } else {
-                parent->transplant_indices(indices, collected, reverse_mapping);
+                parent->transplant_indices(local, collected, reverse_mapping);
             }
-
-            internal = parent->create_inner_extractor<sparse_>(opt, indices.data(), indices.size());
-            this->index_length = il;
-
-            indices.clear();
-            indices.insert(indices.end(), is, is + il);
+            internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
         }
 
         const Index_* index_start() const {
@@ -521,8 +519,8 @@ private:
     };
 
     struct DenseIndexParallelExtractor : public IndexParallelExtractor<false>, public DenseBase {
-        DenseIndexParallelExtractor(const DelayedSubset* p, const Options<Index_>& opt, const Index_* is, size_t il) : 
-            IndexParallelExtractor<false>(p, opt, is, il), DenseBase(this->internal->index_length) 
+        DenseIndexParallelExtractor(const DelayedSubset* p, const Options<Index_>& opt, std::vector<Index_> idx) : 
+            IndexParallelExtractor<false>(p, opt, std::move(idx)), DenseBase(this->internal->index_length) 
         {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
@@ -532,8 +530,8 @@ private:
     };
 
     struct SparseIndexParallelExtractor : public IndexParallelExtractor<true>, public SparseBase {
-        SparseIndexParallelExtractor(const DelayedSubset* p, const Options<Index_>& opt, const Index_* is, size_t il) : 
-            IndexParallelExtractor<true>(p, opt, is, il), SparseBase(opt, this->internal->index_length)
+        SparseIndexParallelExtractor(const DelayedSubset* p, const Options<Index_>& opt, std::vector<Index_> idx) : 
+            IndexParallelExtractor<true>(p, opt, std::move(idx)), SparseBase(opt, this->internal->index_length)
         {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
@@ -574,12 +572,12 @@ private:
     }
 
     template<bool sparse_>
-    std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > populate_parallel(const Options<Index_>& options, const Index_* is, size_t il) const {
+    std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > populate_parallel(const Options<Index_>& options, std::vector<Index_> idx) const {
         std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > output;
         if constexpr(sparse_) {
-            output.reset(new SparseIndexParallelExtractor(this, options, is, il));
+            output.reset(new SparseIndexParallelExtractor(this, options, std::move(idx)));
         } else {
-            output.reset(new DenseIndexParallelExtractor(this, options, is, il));
+            output.reset(new DenseIndexParallelExtractor(this, options, std::move(idx)));
         }
         return output;
     }
@@ -587,9 +585,9 @@ private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
     std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options<Index_>& options, Args_... args) const {
         if constexpr(accrow_ == (margin_ == 0)) {
-            return subset_utils::populate_perpendicular<accrow_, selection_, sparse_>(mat.get(), indices, options, args...);
+            return subset_utils::populate_perpendicular<accrow_, selection_, sparse_>(mat.get(), indices, options, std::move(args)...);
         } else {
-            return populate_parallel<sparse_>(options, args...);
+            return populate_parallel<sparse_>(options, std::move(args)...);
         }
     }
 
@@ -602,8 +600,8 @@ public:
         return populate<true, DimensionSelectionType::BLOCK, false>(options, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(const Index_* index_start, size_t index_length, const Options<Index_>& options) const {
-        return populate<true, DimensionSelectionType::INDEX, false>(options, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options<Index_>& options) const {
+        return populate<true, DimensionSelectionType::INDEX, false>(options, std::move(indices));
     }
 
     std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& options) const {
@@ -614,8 +612,8 @@ public:
         return populate<false, DimensionSelectionType::BLOCK, false>(options, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(const Index_* index_start, size_t index_length, const Options<Index_>& options) const {
-        return populate<false, DimensionSelectionType::INDEX, false>(options, index_start, index_length);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options<Index_>& options) const {
+        return populate<false, DimensionSelectionType::INDEX, false>(options, std::move(indices));
     }
 
 public:
@@ -627,8 +625,8 @@ public:
         return populate<true, DimensionSelectionType::BLOCK, true>(options, block_start, block_length);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(const Index_* index_start, size_t index_length, const Options<Index_>& options) const {
-        return populate<true, DimensionSelectionType::INDEX, true>(options, index_start, index_length);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options<Index_>& options) const {
+        return populate<true, DimensionSelectionType::INDEX, true>(options, std::move(indices));
     }
 
     std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& options) const {
@@ -639,8 +637,8 @@ public:
         return populate<false, DimensionSelectionType::BLOCK, true>(options, block_start, block_length);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(const Index_* index_start, size_t index_length, const Options<Index_>& options) const {
-        return populate<false, DimensionSelectionType::INDEX, true>(options, index_start, index_length);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options<Index_>& options) const {
+        return populate<false, DimensionSelectionType::INDEX, true>(options, std::move(indices));
     }
 };
 
