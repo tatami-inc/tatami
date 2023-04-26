@@ -12,6 +12,7 @@
 
 #include "../_tests/test_column_access.h"
 #include "../_tests/test_row_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
 class SubsetTestCore {
@@ -406,5 +407,63 @@ INSTANTIATE_TEST_CASE_P(
     ::testing::Combine(
         ::testing::Values(false, true), // whether to support duplicate indices.
         ::testing::Values(true, false)  // whether to require sorted indices.
+    )
+);
+
+/****************************************************
+ ****************************************************/
+
+class SubsetOracleTest : public ::testing::TestWithParam<std::tuple<int, bool, bool, bool> >, public SubsetTestCore {};
+
+TEST_P(SubsetOracleTest, ByRow) {
+    assemble();
+    auto param = GetParam();
+    auto sub = spawn_indices<int>(std::get<0>(param), NR, std::get<1>(param), std::get<2>(param));
+    auto random = std::get<3>(param);
+
+    auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
+    auto wrapped_dense_subbed = tatami::make_DelayedSubset<0>(make_CrankyMatrix(dense), sub);
+    auto wrapped_sparse_subbed = tatami::make_DelayedSubset<0>(make_CrankyMatrix(sparse), sub);
+
+    EXPECT_FALSE(dense_subbed->uses_oracle(true));
+    EXPECT_TRUE(wrapped_dense_subbed->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_dense_subbed.get(), dense_subbed.get(), random);
+    test_oracle_column_access(wrapped_sparse_subbed.get(), sparse_subbed.get(), random);
+
+    test_oracle_row_access(wrapped_dense_subbed.get(), dense_subbed.get(), random);
+    test_oracle_row_access(wrapped_sparse_subbed.get(), sparse_subbed.get(), random);
+}
+
+TEST_P(SubsetOracleTest, ByColumn) {
+    assemble();
+    auto param = GetParam();
+    auto sub = spawn_indices<int>(std::get<0>(param), NC, std::get<1>(param), std::get<2>(param));
+    auto random = std::get<3>(param);
+
+    auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<1>(sparse, sub);
+    auto wrapped_dense_subbed = tatami::make_DelayedSubset<1>(make_CrankyMatrix(dense), sub);
+    auto wrapped_sparse_subbed = tatami::make_DelayedSubset<1>(make_CrankyMatrix(sparse), sub);
+
+    EXPECT_FALSE(dense_subbed->uses_oracle(false));
+    EXPECT_TRUE(wrapped_dense_subbed->uses_oracle(false));
+
+    test_oracle_column_access(wrapped_dense_subbed.get(), dense_subbed.get(), random);
+    test_oracle_column_access(wrapped_sparse_subbed.get(), sparse_subbed.get(), random);
+
+    test_oracle_row_access(wrapped_dense_subbed.get(), dense_subbed.get(), random);
+    test_oracle_row_access(wrapped_sparse_subbed.get(), sparse_subbed.get(), random);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubset,
+    SubsetOracleTest,
+    ::testing::Combine(
+        ::testing::Values(2, 5, 10), // step size.
+        ::testing::Values(false, true), // whether to support duplicate indices.
+        ::testing::Values(true, false), // whether to require sorted indices.
+        ::testing::Values(true, false)  // use random or consecutive oracle.
     )
 );

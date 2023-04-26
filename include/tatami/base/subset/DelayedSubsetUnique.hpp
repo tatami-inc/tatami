@@ -303,10 +303,9 @@ private:
     struct FullParallelExtractor : public ParallelExtractor<DimensionSelectionType::FULL, sparse_> {
         FullParallelExtractor(const DelayedSubsetUnique* p, const Options& opt) : parent(p) {
             this->full_length = parent->indices.size();
-            internal = parent->create_inner_extractor<sparse_>(opt, parent->sorted); // copy is deliberate.
+            this->internal = parent->create_inner_extractor<sparse_>(opt, parent->sorted); // copy is deliberate.
         }
     protected:
-        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
         const DelayedSubsetUnique* parent;
     };
 
@@ -400,10 +399,9 @@ private:
                 parent->transplant_indices(local, bl, std::move(fun), reverse_mapping);
             }
 
-            internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
+            this->internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
         }
     protected:
-        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
         const DelayedSubsetUnique* parent;
         typename std::conditional<!sparse_, std::vector<Index_>, bool>::type reverse_mapping;
     };
@@ -450,7 +448,7 @@ private:
                 parent->transplant_indices(local, il, std::move(fun), reverse_mapping);
             }
 
-            internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
+            this->internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
         }
 
         const Index_* index_start() const {
@@ -458,7 +456,6 @@ private:
         }
 
     protected:
-        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
         const DelayedSubsetUnique* parent;
         std::vector<Index_> indices;
         typename std::conditional<!sparse_, std::vector<Index_>, bool>::type reverse_mapping;
