@@ -9,6 +9,7 @@
 
 #include "../_tests/test_row_access.h"
 #include "../_tests/test_column_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
 template<class PARAM>
@@ -154,5 +155,43 @@ INSTANTIATE_TEST_CASE_P(
             std::vector<double>({ 0.2, 0.1 }), 
             std::vector<double>({ 0.7, 0.03 })
         )
+    )
+);
+
+class TransposeOracleTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
+protected:
+    size_t nrow = 199, ncol = 201;
+    std::shared_ptr<tatami::NumericMatrix> dense, sparse, tdense, tsparse, wrapped_dense, wrapped_sparse;
+
+    void extra_assemble(bool row) {
+        auto simulated = simulate_sparse_vector<double>(nrow * ncol, 0.05);
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(simulated)));
+        sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
+        tdense = tatami::make_DelayedTranspose(dense);
+        tsparse = tatami::make_DelayedTranspose(sparse);
+        wrapped_dense = tatami::make_DelayedTranspose(make_CrankyMatrix(dense));
+        wrapped_sparse = tatami::make_DelayedTranspose(make_CrankyMatrix(sparse));
+    }
+};
+
+TEST_P(TransposeOracleTest, Validate) {
+    auto param = GetParam();
+    extra_assemble(std::get<0>(param));
+    EXPECT_FALSE(tdense->uses_oracle(true));
+    EXPECT_TRUE(wrapped_dense->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_dense.get(), tdense.get(), std::get<1>(param));
+    test_oracle_column_access(wrapped_sparse.get(), tsparse.get(), std::get<1>(param));
+
+    test_oracle_row_access(wrapped_dense.get(), tdense.get(), std::get<1>(param));
+    test_oracle_row_access(wrapped_sparse.get(), tsparse.get(), std::get<1>(param));
+}
+
+INSTANTIATE_TEST_CASE_P(
+    TransposeTest,
+    TransposeOracleTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // add by row, or add by column.
+        ::testing::Values(true, false)  // use random or consecutive oracle.
     )
 );

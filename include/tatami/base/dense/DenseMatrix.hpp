@@ -70,7 +70,7 @@ public:
 
     bool prefer_rows() const { return row_; }
 
-    bool uses_oracle() const { return false; }
+    bool uses_oracle(bool) const { return false; }
 
     using Matrix<Value_, Index_>::dense_row;
 
