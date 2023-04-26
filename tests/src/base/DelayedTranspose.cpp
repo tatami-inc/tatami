@@ -158,15 +158,15 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
-class TransposeOracleTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
+class TransposeOracleTest : public ::testing::TestWithParam<bool> {
 protected:
     size_t nrow = 199, ncol = 201;
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse, tdense, tsparse, wrapped_dense, wrapped_sparse;
+    std::shared_ptr<tatami::NumericMatrix> tdense, tsparse, wrapped_dense, wrapped_sparse;
 
-    void extra_assemble(bool row) {
+    void extra_assemble() {
         auto simulated = simulate_sparse_vector<double>(nrow * ncol, 0.05);
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(simulated)));
-        sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
+        auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(simulated)));
+        auto sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
         tdense = tatami::make_DelayedTranspose(dense);
         tsparse = tatami::make_DelayedTranspose(sparse);
         wrapped_dense = tatami::make_DelayedTranspose(make_CrankyMatrix(dense));
@@ -175,23 +175,20 @@ protected:
 };
 
 TEST_P(TransposeOracleTest, Validate) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param));
+    auto random = GetParam();
+    extra_assemble();
     EXPECT_FALSE(tdense->uses_oracle(true));
     EXPECT_TRUE(wrapped_dense->uses_oracle(true));
 
-    test_oracle_column_access(wrapped_dense.get(), tdense.get(), std::get<1>(param));
-    test_oracle_column_access(wrapped_sparse.get(), tsparse.get(), std::get<1>(param));
+    test_oracle_column_access(wrapped_dense.get(), tdense.get(), random);
+    test_oracle_column_access(wrapped_sparse.get(), tsparse.get(), random);
 
-    test_oracle_row_access(wrapped_dense.get(), tdense.get(), std::get<1>(param));
-    test_oracle_row_access(wrapped_sparse.get(), tsparse.get(), std::get<1>(param));
+    test_oracle_row_access(wrapped_dense.get(), tdense.get(), random);
+    test_oracle_row_access(wrapped_sparse.get(), tsparse.get(), random);
 }
 
 INSTANTIATE_TEST_CASE_P(
     TransposeTest,
     TransposeOracleTest,
-    ::testing::Combine(
-        ::testing::Values(true, false), // add by row, or add by column.
-        ::testing::Values(true, false)  // use random or consecutive oracle.
-    )
+    ::testing::Values(true, false)  // use random or consecutive oracle.
 );
