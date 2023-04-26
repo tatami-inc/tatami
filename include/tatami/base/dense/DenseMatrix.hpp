@@ -70,6 +70,8 @@ public:
 
     bool prefer_rows() const { return row_; }
 
+    bool uses_oracle() const { return false; }
+
     using Matrix<Value_, Index_>::dense_row;
 
     using Matrix<Value_, Index_>::dense_column;
@@ -101,12 +103,17 @@ private:
             }
         }
 
+    public:
         const Index_* index_start() const {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 return indices.data();
             } else {
                 return NULL;
             }
+        }
+
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_> >) {
+            return;
         }
 
     public:

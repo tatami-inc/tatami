@@ -56,6 +56,10 @@ public:
         return std::pair<double, double>(temp.second, temp.first);
     }
 
+    bool uses_oracle(bool row) const {
+        return mat->uses_oracle(!row);
+    }
+
     using Matrix<Value_, Index_>::dense_row;
 
     using Matrix<Value_, Index_>::dense_column;

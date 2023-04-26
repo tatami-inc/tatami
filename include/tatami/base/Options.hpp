@@ -50,10 +50,7 @@ struct SparseExtractionOptions {
  *
  * This refers to access to elements along the iteration dimension,
  * across multiple calls to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
- *
- * @tparam Index_ Integer type of the row/column indices.
  */
-template<typename Index_>
 struct IterationOptions {
     /** 
      * Whether to ask implementations to cache information from every 
@@ -61,21 +58,11 @@ struct IterationOptions {
      * This may enable faster iteration if the same `Extractor` object is re-used for multiple passes over the same matrix.
      */
     bool cache_for_reuse = false;
-
-   /**
-     * An oracle to define the future access pattern of elements on the iteration dimension.
-     * It is expected that calls to `fetch()` are in exactly the same order as those returned by `SequenceOracle::predict`.
-     * If `NULL`, `Matrix` implementations may assume that elements are to be accessed in random order.
-     */
-    std::shared_ptr<SequenceOracle<Index_> > pattern = nullptr;
 };
 
 /**
  * @brief Options for accessing elements. 
- *
- * @tparam Index_ Integer type of the row/column indices.
  */
-template<typename Index_>
 struct Options {
     /**
      * Options for sparse extraction.

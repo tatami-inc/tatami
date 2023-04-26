@@ -65,6 +65,10 @@ public:
         return mat->prefer_rows();
     }
 
+    bool uses_oracle(bool row) const {
+        return mat->uses_oracle(row);
+    }
+
     using Matrix<Value_, Index_>::dense_row;
 
     using Matrix<Value_, Index_>::dense_column;
@@ -95,6 +99,10 @@ private:
             }
         }
 
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+            internal->set_oracle(std::move(o));
+        }
+
     protected:
         const DelayedIsometricOp* parent;
 
@@ -109,7 +117,8 @@ private:
 public:
     template<bool accrow_, DimensionSelectionType selection_> 
     struct DenseIsometricExtractor : public IsometricExtractorBase<selection_, false, false> {
-        DenseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i) : IsometricExtractorBase<selection_, false, false>(p, std::move(i)) {}
+        DenseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i) : 
+            IsometricExtractorBase<selection_, false, false>(p, std::move(i)) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             auto ptr = this->internal->fetch(i, buffer);
@@ -164,7 +173,8 @@ private:
     // provide space in the 'ibuffer'.
     template<bool accrow_, DimensionSelectionType selection_> 
     struct SimpleSparseIsometricExtractor : public IsometricExtractorBase<selection_, true, true> {
-        SimpleSparseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i) : IsometricExtractorBase<selection_, true, true>(p, std::move(i)) {}
+        SimpleSparseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i) : 
+            IsometricExtractorBase<selection_, true, true>(p, std::move(i)) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             auto raw = this->internal->fetch(i, vbuffer, ibuffer);

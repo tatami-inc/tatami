@@ -56,11 +56,16 @@ public:
         return ptr->dimension_preference();
     }
 
+    bool uses_oracle(bool row) const {
+        return ptr->uses_oracle(row);
+    }
+
 private:
     std::shared_ptr<Matrix<Value_in_, Index_in_> > ptr;
     static constexpr bool same_Value_type_ = std::is_same<Value_in_, Value_out_>::value;
     static constexpr bool same_Index_type_ = std::is_same<Index_in_, Index_out_>::value;
 
+private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct CastExtractor : public Extractor<selection_, sparse_, Value_out_, Index_out_> {
         CastExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_in_, Index_in_> > inner) : internal(std::move(inner)) {
@@ -80,6 +85,11 @@ private:
             }
         }
 
+    protected:
+        std::unique_ptr<Extractor<selection_, sparse_, Value_in_, Index_in_> > internal;
+        typename std::conditional<same_Index_type_ || selection_ != DimensionSelectionType::INDEX, bool, std::vector<Index_out_> >::type indices;
+
+    public:
         const Index_out_* index_start() const {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 if constexpr(same_Index_type_) {
@@ -92,9 +102,25 @@ private:
             }
         }
 
-    protected:
-        std::unique_ptr<Extractor<selection_, sparse_, Value_in_, Index_in_> > internal;
-        typename std::conditional<same_Index_type_ || selection_ != DimensionSelectionType::INDEX, bool, std::vector<Index_out_> >::type indices;
+    private:
+        struct CastOracle : public SequenceOracle<Index_in_> {
+            CastOracle(std::unique_ptr<SequenceOracle<Index_out_> > s) : source(std::move(s)) {}
+
+            size_t predict(Index_out_* target, size_t length) {
+                buffer.resize(length);
+                size_t filled = source->predict(buffer, length);
+                std::copy(buffer.begin(), buffer.begin() + filled, target);
+                return filled;
+            }
+        private:
+            std::unique_ptr<SequenceOracle<Index_out_> > source;
+            std::vector<Index_in_> buffer;
+        };
+
+    public:
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_out_> > o) const {
+            internal->set_oracle(new CastOracle(std::move(o)));
+        }
     };
 
     template<DimensionSelectionType selection_>
@@ -227,20 +253,6 @@ private:
 
         return output;
     }
-
-    struct CastOracle : SequenceOracle<Index_in_> {
-        CastOracle(std::shared_ptr<SequenceOracle<Index_out_> > s) : source(std::move(s)) {}
-
-        std::shared_ptr<SequenceOracle<Index_out_> > source;
-        std::vector<Index_in_> buffer;
-
-        std::pair<const Index_in_*, size_t> predict(size_t n) {
-            auto raw = source->predict(n);
-            buffer.clear();
-            buffer.insert(buffer.end(), raw.first, raw.first + raw.second);
-            return std::make_pair(buffer.data(), raw.second);
-        }
-    };
 
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
     std::unique_ptr<Extractor<selection_, sparse_, Value_out_, Index_out_> > populate(const Options<Index_out_>& opt, Args_... args) const {

@@ -86,6 +86,15 @@ public:
         }
     }
 
+    /**
+     * @param row Row access if `true`, column access otherwise.
+     * @return Whether this matrix's `Extractor` classes make use of oracle predictions for row (if `row = true`) or column access (otherwise).
+     *
+     * The output of this method indicates whether callers should construct an oracle for use in `Extractor::set_oracle()`.
+     * If `false`, callers should not bother to pass an oracle as it will be ignored.
+     */
+    virtual bool uses_oracle(bool row) const = 0;
+
     /**************************************
      **** Dense access virtual methods ****
      **************************************/

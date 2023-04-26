@@ -76,6 +76,10 @@ public:
         return mat->dimension_preference();
     }
 
+    bool uses_oracle(bool row) const {
+        return mat->uses_oracle(row);
+    }
+
     using Matrix<Value_, Index_>::dense_column;
 
     using Matrix<Value_, Index_>::dense_row;
@@ -102,7 +106,7 @@ private:
         AlongExtractor(const DelayedSubsetBlock* parent, const Options<Index_>& opt) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->full_length = (margin_ == 0 ? parent->nrow() : parent->ncol());
-                this->internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, parent->block_start, parent->block_length);
+                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, parent->block_start, parent->block_length);
             }
         }
 
@@ -110,7 +114,7 @@ private:
             if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->block_start = bs;
                 this->block_length = bl;
-                this->internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, bs + parent->block_start, bl);
+                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, bs + parent->block_start, bl);
             }
         }
 
@@ -124,10 +128,15 @@ private:
                 for (auto& x : local) {
                     x += parent->block_start;
                 }
-                this->internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, std::move(local));
+                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, std::move(local));
             }
         }
 
+    protected:
+        std::unique_ptr<Extractor<define_inner_selection_type<selection_>(), sparse_, Value_, Index_> > internal;
+        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
+
+    public:
         const Index_* index_start() const {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 return indices.data();
@@ -136,9 +145,9 @@ private:
             }
         }
 
-    protected:
-        std::unique_ptr<Extractor<define_inner_selection_type<selection_>(), sparse_, Value_, Index_> > internal;
-        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+            internal->set_oracle(std::move(o));
+        }
     };
 
     template<DimensionSelectionType selection_>
@@ -191,12 +200,35 @@ private:
             }
         }
 
-        const Index_* index_start() const {
-            return internal->index_start();
-        }
     protected:
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal;
         Index_ offset;
+
+    public:
+        const Index_* index_start() const {
+            return internal->index_start();
+        }
+
+    private:
+        struct SubsetBlockOracle {
+            SubsetBlockOracle(std::unique_ptr<SequenceOracle<Index_> > o, Index_ s) : source(std::move(o)), shift(s) {}
+
+            size_t predict(Index_* buffer, size_t length) {
+                size_t filled = source->predict(buffer, length);
+                for (size_t i = 0; i < filled; ++i) {
+                    buffer[i] += shift;
+                }
+                return filled;
+            }            
+        private:
+            std::unique_ptr<SequenceOracle<Index_> > source;
+            Index_ shift;
+        };
+
+    public:
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+            internal->set_oracle(new SubsetBlockOracle(std::move(o), shift_));
+        }
     };
 
     template<DimensionSelectionType selection_>

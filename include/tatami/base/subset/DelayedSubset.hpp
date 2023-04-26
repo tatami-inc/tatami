@@ -146,6 +146,10 @@ public:
         return mat->dimension_preference();
     }
 
+    bool uses_oracle(bool row) const {
+        return mat->uses_oracle(row);
+    }
+
     using Matrix<Value_, Index_>::dense_column;
 
     using Matrix<Value_, Index_>::dense_row;
@@ -327,14 +331,23 @@ private:
      ************ Full parallel extraction ************
      **************************************************/
 private:
-    template<bool sparse_>
-    struct FullParallelExtractor : public Extractor<DimensionSelectionType::FULL, sparse_, Value_, Index_> {
-        FullParallelExtractor(const DelayedSubset* p, const Options<Index_>& opt) : parent(p) {
-            this->full_length = parent->indices.size();
-            internal = parent->create_inner_extractor<sparse_>(opt, parent->unique_and_sorted); // copy is deliberate.
+    template<DimensionSelectionType selection_, bool sparse_>
+    struct ParallelExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+            internal->set_oracle(std::move(o));
         }
     protected:
         std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
+    };
+
+    template<bool sparse_>
+    struct FullParallelExtractor : public ParallelExtractor<DimensionSelectionType::FULL, sparse_> {
+        FullParallelExtractor(const DelayedSubset* p, const Options<Index_>& opt) : parent(p) {
+            this->full_length = parent->indices.size();
+            this->internal = parent->create_inner_extractor<sparse_>(opt, parent->unique_and_sorted); // copy is deliberate.
+        }
+
+    protected:
         const DelayedSubset* parent;
     };
 
@@ -413,7 +426,7 @@ private:
 
 private:
     template<bool sparse_>
-    struct BlockParallelExtractor : public Extractor<DimensionSelectionType::BLOCK, sparse_, Value_, Index_> {
+    struct BlockParallelExtractor : public ParallelExtractor<DimensionSelectionType::BLOCK, sparse_> {
         BlockParallelExtractor(const DelayedSubset* parent, const Options<Index_>& opt, Index_ bs, Index_ bl) {
             this->block_start = bs;
             this->block_length = bl;
@@ -438,10 +451,10 @@ private:
                 parent->transplant_indices(local, collected, reverse_mapping);
             }
 
-            internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
+            this->internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
         }
+
     protected:
-        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
         typename std::conditional<!sparse_, std::vector<Index_>, bool>::type reverse_mapping;
         typename std::conditional<sparse_, std::vector<std::pair<Index_, Index_> >, bool>::type mapping_duplicates;
         typename std::conditional<sparse_, std::vector<Index_>, bool>::type mapping_duplicates_pool;
@@ -479,7 +492,7 @@ private:
      ***************************************************/
 private:
     template<bool sparse_>
-    struct IndexParallelExtractor : public Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> {
+    struct IndexParallelExtractor : public ParallelExtractor<DimensionSelectionType::INDEX, sparse_> {
         IndexParallelExtractor(const DelayedSubset* parent, const Options<Index_>& opt, std::vector<Index_> idx) {
             Index_ il = idx.size();
             this->index_length = il;
@@ -502,7 +515,7 @@ private:
             } else {
                 parent->transplant_indices(local, collected, reverse_mapping);
             }
-            internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
+            this->internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
         }
 
         const Index_* index_start() const {
@@ -510,7 +523,6 @@ private:
         }
 
     protected:
-        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
         std::vector<Index_> indices;
 
         typename std::conditional<!sparse_, std::vector<Index_>, bool>::type reverse_mapping;

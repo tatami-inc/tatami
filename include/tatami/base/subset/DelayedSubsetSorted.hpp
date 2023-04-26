@@ -111,6 +111,10 @@ public:
         return mat->dimension_preference();
     }
 
+    bool uses_oracle(bool row) const {
+        return mat->uses_oracle(row);
+    }
+
     using Matrix<Value_, Index_>::dense_column;
 
     using Matrix<Value_, Index_>::dense_row;
@@ -213,19 +217,28 @@ private:
         bool report_index;
     };
 
+    template<DimensionSelectionType selection_, bool sparse_>
+    struct ParallelExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+            internal->set_oracle(std::move(o));
+        }
+
+    protected:
+        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
+    };
+
     /**************************************************
      ************ Full parallel extraction ************
      **************************************************/
 private:
     template<bool sparse_>
-    struct FullParallelExtractor : public Extractor<DimensionSelectionType::FULL, sparse_, Value_, Index_> {
+    struct FullParallelExtractor : public ParallelExtractor<DimensionSelectionType::FULL, sparse_> {
         FullParallelExtractor(const DelayedSubsetSorted* p, const Options<Index_>& opt) : parent(p) {
             this->full_length = parent->indices.size();
-            internal = parent->create_inner_extractor<sparse_>(opt, parent->unique); // copy is deliberate here.
+            this->internal = parent->create_inner_extractor<sparse_>(opt, parent->unique); // copy is deliberate here.
         }
 
     protected:
-        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
         const DelayedSubsetSorted* parent;
     };
 
@@ -259,7 +272,7 @@ private:
      ***************************************************/
 private:
     template<bool sparse_>
-    struct BlockParallelExtractor : public Extractor<DimensionSelectionType::BLOCK, sparse_, Value_, Index_> {
+    struct BlockParallelExtractor : public ParallelExtractor<DimensionSelectionType::BLOCK, sparse_> {
         BlockParallelExtractor(const DelayedSubsetSorted* parent, const Options<Index_>& opt, Index_ bs, Index_ bl) {
             this->block_start = bs;
             this->block_length = bl;
@@ -279,11 +292,10 @@ private:
                 to = std::upper_bound(pstart + from, pend, right) - pstart;
             }
 
-            internal = parent->create_inner_extractor<sparse_>(opt, std::vector<Index_>(pstart + from, pstart + to));
+            this->internal = parent->create_inner_extractor<sparse_>(opt, std::vector<Index_>(pstart + from, pstart + to));
         }
 
     protected:
-        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
         Index_ from = 0; // needed for the dense constructor, oh well.
     };
 
@@ -371,7 +383,7 @@ private:
      ***************************************************/
 private:
     template<bool sparse_>
-    struct IndexParallelExtractor : public Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> {
+    struct IndexParallelExtractor : public ParallelExtractor<DimensionSelectionType::INDEX, sparse_> {
         IndexParallelExtractor(const DelayedSubsetSorted* parent, const Options<Index_>& opt, std::vector<Index_> idx) {
             Index_ il = idx.size();
             this->index_length = il;
@@ -409,14 +421,14 @@ private:
                 }
             }
 
-            internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
+            this->internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
         }
 
         const Index_* index_start() const {
             return indices.data();
         }
+
     protected:
-        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
         std::vector<Index_> indices;
 
         typename std::conditional<!sparse_, std::vector<Index_>, bool>::type reverse_mapping;

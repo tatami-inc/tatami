@@ -58,6 +58,20 @@ private:
             }
         }
 
+    public:
+        const Index_* index_start() const {
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                return internal->index_start();
+            } else {
+                return NULL;
+            }
+        }
+
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_> >) {
+            return;
+        }
+
+    public:
         SparseRange<Value_, Index_> fetch(Index_ position, Value_* vbuffer, Index_* ibuffer) {
             const Value_* vout = (needs_value ? internal->fetch(position, vbuffer) : NULL);
             if (needs_index) {
@@ -73,14 +87,6 @@ private:
                 ibuffer = NULL;
             }
             return SparseRange<Value_, Index_>(extracted_length<selection_, Index_>(*this), vout, ibuffer);
-        }
-
-        const Index_* index_start() const {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                return internal->index_start();
-            } else {
-                return NULL;
-            }
         }
 
     protected:
