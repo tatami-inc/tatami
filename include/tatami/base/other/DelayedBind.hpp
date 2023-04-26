@@ -3,9 +3,11 @@
 
 #include "../Matrix.hpp"
 #include "../utils.hpp"
+
 #include <algorithm>
 #include <memory>
 #include <array>
+#include <deque>
 
 /**
  * @file DelayedBind.hpp
@@ -172,8 +174,9 @@ public:
 private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct ParallelExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
+        static constexpr bool accrow_ = margin_ != 0;
+
         ParallelExtractor(const DelayedBind* p, const Options& opt) : parent(p) {
-            constexpr bool accrow_ = margin_ != 0;
             workspaces.reserve(p->mats.size());
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -186,7 +189,6 @@ private:
         }
 
         ParallelExtractor(const DelayedBind* p, const Options& opt, Index_ bs, Index_ bl) : parent(p) {
-            constexpr bool accrow_ = margin_ != 0;
             size_t nmats = parent->mats.size();
             workspaces.reserve(nmats);
 
@@ -222,7 +224,6 @@ private:
         }
 
         ParallelExtractor(const DelayedBind* p, const Options& opt, std::vector<Index_> idx) : parent(p) {
-            constexpr bool accrow_ = margin_ != 0;
             size_t nmats = parent->mats.size();
             workspaces.reserve(nmats);
 
@@ -280,8 +281,88 @@ private:
             }
         }
 
+    private:
+        struct ParentOracle {
+            ParentOracle(std::unique_ptr<SequenceOracle<Index_> > o, size_t nmats) : source(std::move(o)), counters(nmats) {}
+
+            size_t fill(size_t id, Index_* buffer, size_t number) {
+                auto& current = counters[id];
+                size_t end = current + number;
+                size_t available = stream.size();
+
+                if (available >= end) {
+                    std::copy(stream.begin() + current, stream.begin() + end, buffer);
+                    current = end;
+                    return number;
+                }
+
+                size_t handled = 0;
+                if (current < available) {
+                    std::copy(stream.begin() + current, stream.end(), buffer);
+                    handled = available - current;
+                    buffer += handled;
+                    number -= handled;
+                }
+
+                size_t filled = source->predict(buffer, number);
+                current = available + filled;
+
+                // Try to slim down if the accumulated stream has gotten too big.
+                if (stream.size() >= 10000) { 
+                    size_t minimum = *std::min_element(counters.begin(), counters.end());
+                    if (minimum) {
+                        stream.erase(stream.begin(), stream.begin() + minimum);
+                        for (auto& x : counters) {
+                            x -= minimum;
+                        }
+                    }
+                }
+
+                stream.insert(stream.end(), buffer, buffer + filled);
+                return filled + handled;
+            }
+        private:
+            std::unique_ptr<SequenceOracle<Index_> > source;
+            std::deque<Index_> stream;
+            std::vector<size_t> counters;
+        };
+
+        struct ChildOracle : public SequenceOracle<Index_> {
+            ChildOracle(ParentOracle* o, size_t i) : parent(o), id(i) {}
+            size_t predict(Index_* buffer, size_t number) {
+                return parent->fill(id, buffer, number);
+            }
+        private:
+            ParentOracle* parent;
+            size_t id;
+        };
+
+        std::unique_ptr<ParentOracle> parent_oracle;
+
+    public:
         void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
-            return;
+            // Figure out how many of these need an oracle.
+            std::vector<size_t> need_oracles;
+            size_t nmats = parent->mats.size();
+            need_oracles.reserve(nmats);
+
+            for (size_t m = 0; m < nmats; ++m) {
+                if (parent->mats[m]->uses_oracle(accrow_)) {
+                    need_oracles.push_back(m);
+                }
+            }
+
+            // Now we create child oracles that reference the parent;
+            // or, if only one inner matrix needs an oracle, we pass it directly.
+            size_t needy = need_oracles.size();
+            if (needy > 1) {
+                parent_oracle.reset(new ParentOracle(std::move(o), needy));
+                for (size_t n = 0; n < needy; ++n) {
+                    workspaces[need_oracles[n]]->set_oracle(std::make_unique<ChildOracle>(parent_oracle.get(), n));
+                }
+            } else if (needy) {
+                workspaces[need_oracles.front()]->set_oracle(std::move(o));
+            }
         }
     };
 
@@ -332,8 +413,10 @@ private:
                         adjustment = this->parent->cumulative[this->kept[counter]];
                     }
 
-                    for (Index_ j = 0; j < raw.number; ++j) {
-                        icopy[j] += adjustment;
+                    if (adjustment) {
+                        for (Index_ j = 0; j < raw.number; ++j) {
+                            icopy[j] += adjustment;
+                        }
                     }
 
                     icopy += raw.number;
@@ -363,8 +446,9 @@ private:
 private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct PerpendicularExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
+        static constexpr bool accrow_ = margin_ == 0;
+
         PerpendicularExtractor(const DelayedBind* p, const Options& opt) : parent(p) {
-            constexpr bool accrow_ = margin_ == 0;
             workspaces.reserve(parent->mats.size());
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -377,7 +461,6 @@ private:
         }
 
         PerpendicularExtractor(const DelayedBind* p, const Options& opt, Index_ bs, Index_ bl) : parent(p) {
-            constexpr bool accrow_ = margin_ == 0;
             workspaces.reserve(p->mats.size());
 
             if constexpr(selection_ == DimensionSelectionType::BLOCK) {
@@ -391,7 +474,6 @@ private:
         }
 
         PerpendicularExtractor(const DelayedBind* p, const Options& opt, std::vector<Index_> idx) : parent(p) {
-            constexpr bool accrow_ = margin_ == 0;
             workspaces.reserve(p->mats.size());
 
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
@@ -414,25 +496,30 @@ private:
         size_t last_segment = 0;
 
     private:
-        size_t choose_segment_raw(size_t i) const {
-            return std::upper_bound(parent->cumulative.begin(), parent->cumulative.end(), i) - parent->cumulative.begin() - 1;
+        static size_t choose_segment_raw(size_t i, const std::vector<Index_>& cumulative) {
+            return std::upper_bound(cumulative.begin(), cumulative.end(), i) - cumulative.begin() - 1;
+        }
+
+        static void choose_segment(size_t i, size_t& last_segment, const std::vector<Index_>& cumulative) {
+            if (cumulative[last_segment] > i) {
+                if (last_segment && cumulative[last_segment - 1] <= i) {
+                    --last_segment;
+                } else {
+                    last_segment = choose_segment_raw(i, cumulative);
+                }
+            } else if (cumulative[last_segment + 1] <= i) {
+                if (last_segment + 2 < cumulative.size() && cumulative[last_segment + 2] > i) {
+                    ++last_segment;
+                } else {
+                    last_segment = choose_segment_raw(i, cumulative);
+                }
+            }
+            return;
         }
 
     protected:
         size_t choose_segment(size_t i) {
-            if (parent->cumulative[last_segment] > i) {
-                if (last_segment && parent->cumulative[last_segment - 1] <= i) {
-                    --last_segment;
-                } else {
-                    last_segment = choose_segment_raw(i);
-                }
-            } else if (parent->cumulative[last_segment + 1] <= i) {
-                if (last_segment + 2 < parent->cumulative.size() && parent->cumulative[last_segment + 2] > i) {
-                    ++last_segment;
-                } else {
-                    last_segment = choose_segment_raw(i);
-                }
-            }
+            choose_segment(i, last_segment, parent->cumulative);
             return last_segment;
         }
 
@@ -445,8 +532,86 @@ private:
             }
         }
 
+    private:
+        struct ParentOracle {
+            ParentOracle(std::unique_ptr<SequenceOracle<Index_> > o, std::vector<unsigned char> u, const std::vector<Index_>* c) : 
+                source(std::move(o)), streams(u.size()), used(std::move(u)), cumulative(c) {}
+
+            size_t fill(size_t id, Index_* buffer, size_t number) {
+                auto& stream = streams[id];
+
+                // Trying to top it up, but we won't try too hard, as we might
+                // end up doing lots of predictions to fill up the stream for a
+                // bound matrix with very few elements.
+                if (stream.size() < number) {
+                    size_t filled = source->predict(buffer, number);
+                    const auto& cum = *cumulative;
+                    for (size_t f = 0; f < filled; ++f) {
+                        PerpendicularExtractor::choose_segment(buffer[f], chosen_segment, cum);
+                        if (used[chosen_segment]) {
+                            streams[chosen_segment].push_back(buffer[f] - cum[chosen_segment]);
+                        }
+                    }
+
+                    if (stream.size() < number) {
+                        number = stream.size();
+                    }
+                }
+
+                if (number) {
+                    std::copy(stream.begin(), stream.begin() + number, buffer);
+                    stream.erase(stream.begin(), stream.begin() + number);
+                }
+                return number;
+            }
+        private:
+            std::unique_ptr<SequenceOracle<Index_> > source;
+            std::vector<std::deque<Index_> > streams;
+            std::vector<unsigned char> used;
+            const std::vector<Index_>* cumulative;
+            size_t chosen_segment = 0;
+        };
+
+        struct ChildOracle : public SequenceOracle<Index_> {
+            ChildOracle(ParentOracle* o, size_t i) : parent(o), id(i) {}
+            size_t predict(Index_* buffer, size_t number) {
+                return parent->fill(id, buffer, number);
+            }
+        private:
+            ParentOracle* parent;
+            size_t id;
+        };
+
+        std::unique_ptr<ParentOracle> parent_oracle;
+
+    public:
         void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
-            return;
+            // Figure out how many of these need an oracle.
+            std::vector<size_t> need_oracles;
+            size_t nmats = parent->mats.size();
+            need_oracles.reserve(nmats);
+
+            for (size_t m = 0; m < nmats; ++m) {
+                if (parent->mats[m]->uses_oracle(accrow_)) {
+                    need_oracles.push_back(m);
+                }
+            }
+
+            // Now we create child oracles that reference the parent;
+            // or, if only one inner matrix needs an oracle, we pass it directly.
+            size_t needy = need_oracles.size();
+            if (needy > 1) {
+                std::vector<unsigned char> used(nmats);
+                for (auto n : need_oracles) {
+                    used[n] = 1;
+                }
+                parent_oracle.reset(new ParentOracle(std::move(o), std::move(used), &(parent->cumulative))); 
+                for (size_t n = 0; n < needy; ++n) {
+                    workspaces[need_oracles[n]]->set_oracle(std::make_unique<ChildOracle>(parent_oracle.get(), need_oracles[n]));
+                }
+            } else if (needy) {
+                workspaces[need_oracles.front()]->set_oracle(std::move(o));
+            }
         }
     };
 
