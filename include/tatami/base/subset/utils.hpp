@@ -22,14 +22,14 @@ const Value_* remap_dense(const Value_* input, Value_* buffer, const std::vector
     return buffer;
 }
 
-template<class IndexStorage_>
-struct SubsetOracle {
+template<typename Index_, class IndexStorage_>
+struct SubsetOracle : public SequenceOracle<Index_> {
     SubsetOracle(std::unique_ptr<SequenceOracle<Index_> > o, const IndexStorage_* is) : source(std::move(o)), indices(is) {}
 
     size_t predict(Index_* buffer, size_t length) {
         size_t filled = source->predict(buffer, length);
         for (size_t i = 0; i < filled; ++i) {
-            buffer[i] == (*indices)[buffer[i]];
+            buffer[i] = (*indices)[buffer[i]];
         }
         return filled;
     }
@@ -67,7 +67,7 @@ public:
     }
 
     void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
-        internal->set_oracle(new SubsetOracle(std::move(o), indices));
+        internal->set_oracle(std::make_unique<SubsetOracle<Index_, IndexStorage_> >(std::move(o), indices));
     }
 };
 
@@ -95,7 +95,7 @@ template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename
 std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_perpendicular(
     const Matrix<Value_, Index_>* mat, 
     const IndexStorage_& indices, 
-    const Options<Index_>& options, 
+    const Options& options, 
     Args_... args)
 {
     // TODO: handle variable access patterns here.

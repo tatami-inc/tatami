@@ -39,7 +39,7 @@ struct has_data<T, V, decltype((void) V().data(), 0)> {
  * @return A `Extractor` object to access the requested dimension of `ptr`.
  */
 template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>
-auto new_extractor(const Matrix<Value_, Index_>* ptr, const Options<Index_>& opt, Args_... args) {
+auto new_extractor(const Matrix<Value_, Index_>* ptr, const Options& opt, Args_... args) {
     if constexpr(sparse_) {
         if constexpr(row_) {
             return ptr->sparse_row(std::move(args)..., opt);

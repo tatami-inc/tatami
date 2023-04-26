@@ -42,6 +42,8 @@ public:
 
     bool sparse() const { return false; }
 
+    bool uses_oracle(bool) const { return false; }
+
 private:
     template<DimensionSelectionType selection_>
     struct SparseWrapper : public Extractor<selection_, true, Value_, Index_> {
@@ -100,33 +102,33 @@ private:
     typedef SparseWrapper<DimensionSelectionType::INDEX> IndexSparseWrapper;
 
 public:
-    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options<Index_>& opt) const {
-        auto ptr = new FullSparseWrapper(this->dense_row(opt), opt.sparse.extract_value, opt.sparse.extract_index);
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options& opt) const {
+        auto ptr = new FullSparseWrapper(this->dense_row(opt), opt.sparse_extract_value, opt.sparse_extract_index);
         return std::unique_ptr<FullSparseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
-        auto ptr = new BlockSparseWrapper(this->dense_row(block_start, block_length, opt), opt.sparse.extract_value, opt.sparse.extract_index);
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const {
+        auto ptr = new BlockSparseWrapper(this->dense_row(block_start, block_length, opt), opt.sparse_extract_value, opt.sparse_extract_index);
         return std::unique_ptr<BlockSparseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
-        auto ptr = new IndexSparseWrapper(this->dense_row(std::move(indices), opt), opt.sparse.extract_value, opt.sparse.extract_index);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) const {
+        auto ptr = new IndexSparseWrapper(this->dense_row(std::move(indices), opt), opt.sparse_extract_value, opt.sparse_extract_index);
         return std::unique_ptr<IndexSparseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& opt) const {
-        auto ptr = new FullSparseWrapper(this->dense_column(opt), opt.sparse.extract_value, opt.sparse.extract_index);
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options& opt) const {
+        auto ptr = new FullSparseWrapper(this->dense_column(opt), opt.sparse_extract_value, opt.sparse_extract_index);
         return std::unique_ptr<FullSparseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
-        auto ptr = new BlockSparseWrapper(this->dense_column(block_start, block_length, opt), opt.sparse.extract_value, opt.sparse.extract_index);
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const {
+        auto ptr = new BlockSparseWrapper(this->dense_column(block_start, block_length, opt), opt.sparse_extract_value, opt.sparse_extract_index);
         return std::unique_ptr<BlockSparseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
-        auto ptr = new IndexSparseWrapper(this->dense_column(std::move(indices), opt), opt.sparse.extract_value, opt.sparse.extract_index);
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) const {
+        auto ptr = new IndexSparseWrapper(this->dense_column(std::move(indices), opt), opt.sparse_extract_value, opt.sparse_extract_index);
         return std::unique_ptr<IndexSparseExtractor<Value_, Index_> >(ptr);
     }
 };

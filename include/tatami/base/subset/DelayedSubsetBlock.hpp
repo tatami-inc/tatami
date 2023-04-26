@@ -103,14 +103,14 @@ private:
 
     template<DimensionSelectionType selection_, bool sparse_>
     struct AlongExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-        AlongExtractor(const DelayedSubsetBlock* parent, const Options<Index_>& opt) {
+        AlongExtractor(const DelayedSubsetBlock* parent, const Options& opt) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->full_length = (margin_ == 0 ? parent->nrow() : parent->ncol());
                 internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, parent->block_start, parent->block_length);
             }
         }
 
-        AlongExtractor(const DelayedSubsetBlock* parent, const Options<Index_>& opt, Index_ bs, Index_ bl) {
+        AlongExtractor(const DelayedSubsetBlock* parent, const Options& opt, Index_ bs, Index_ bl) {
             if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->block_start = bs;
                 this->block_length = bl;
@@ -118,7 +118,7 @@ private:
             }
         }
 
-        AlongExtractor(const DelayedSubsetBlock* parent, const Options<Index_>& opt, std::vector<Index_> idx) {
+        AlongExtractor(const DelayedSubsetBlock* parent, const Options& opt, std::vector<Index_> idx) {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 this->index_length = idx.size();
                 indices = std::move(idx);
@@ -210,7 +210,7 @@ private:
         }
 
     private:
-        struct SubsetBlockOracle {
+        struct SubsetBlockOracle : public SequenceOracle<Index_> {
             SubsetBlockOracle(std::unique_ptr<SequenceOracle<Index_> > o, Index_ s) : source(std::move(o)), shift(s) {}
 
             size_t predict(Index_* buffer, size_t length) {
@@ -227,7 +227,7 @@ private:
 
     public:
         void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
-            internal->set_oracle(new SubsetBlockOracle(std::move(o), shift_));
+            internal->set_oracle(std::make_unique<SubsetBlockOracle>(std::move(o), offset));
         }
     };
 
@@ -254,7 +254,7 @@ private:
      ********************************/
 private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options<Index_>& opt, Args_... args) const {
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_... args) const {
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(accrow_ != (margin_ == 0)) {
@@ -276,52 +276,52 @@ private:
     }
 
 public:
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options<Index_>& opt) const {
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options& opt) const {
         return populate<true, DimensionSelectionType::FULL, false>(opt);
     }
 
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const {
         return populate<true, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const {
         return populate<true, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
     }
 
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options& opt) const {
         return populate<false, DimensionSelectionType::FULL, false>(opt);
     }
 
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const {
         return populate<false, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const {
         return populate<false, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
     }
 
 public:
-    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options<Index_>& opt) const {
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options& opt) const {
         return populate<true, DimensionSelectionType::FULL, true>(opt);
     }
 
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const {
         return populate<true, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) const {
         return populate<true, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
     }
 
-    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options<Index_>& opt) const {
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options& opt) const {
         return populate<false, DimensionSelectionType::FULL, true>(opt);
     }
 
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const {
         return populate<false, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) const {
         return populate<false, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
     }
 };

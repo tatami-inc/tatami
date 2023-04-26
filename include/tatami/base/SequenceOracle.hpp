@@ -22,17 +22,14 @@ namespace tatami {
  */
 template<typename Index_>
 struct SequenceOracle {
-protected:
     /**
      * @cond
      */
-    SequenceOracle() = default;
     virtual ~SequenceOracle() = default;
     /**
      * @endcond
      */
 
-public:
     /**
      * Predict the indices to be accessed in future `fetch()` calls.
      *
@@ -105,7 +102,6 @@ private:
 
     size_t counter = 0;
 };
-
 
 }
 

@@ -26,12 +26,12 @@ namespace tatami {
  * This is an interface class for all extractors.
  */
 template<typename Index_>
-struct Extractor {
+struct ExtractorBase {
 protected:
     /**
      * @cond
      */
-    Extractor() = default;
+    ExtractorBase() = default;
     /**
      * @endcond
      */
@@ -40,7 +40,7 @@ public:
     /**
      * @cond
      */
-    virtual ~Extractor() = default;
+    virtual ~ExtractorBase() = default;
     /**
      * @endcond
      */
@@ -61,7 +61,7 @@ public:
  * This is an interface class that provides access to the full extent of the extraction dimension.
  */
 template<typename Index_>
-struct FullExtractor : public Extractor<Index_> {
+struct FullExtractor : public ExtractorBase<Index_> {
     /**
      * Full extent of the extraction dimension.
      */
@@ -75,7 +75,7 @@ struct FullExtractor : public Extractor<Index_> {
  * This is an interface class that provides access to a contiguous block of elements along the extraction dimension.
  */
 template<typename Index_>
-struct BlockExtractor : public Extractor<Index_> {
+struct BlockExtractor : public ExtractorBase<Index_> {
     /**
      * Index of the start of the contiguous block of entries along the extraction dimension.
      */
@@ -95,7 +95,7 @@ struct BlockExtractor : public Extractor<Index_> {
  * where the subset is defined by a vector of sorted and unique indices.
  */
 template<typename Index_> 
-struct IndexExtractor : public Extractor<Index_> {
+struct IndexExtractor : public ExtractorBase<Index_> {
     /**
      * Unlike `index_length`, this is implemented as a virtual method to avoid invalidation of pointers when `IndexExtractor` instances are copied or moved.
      *
