@@ -217,20 +217,19 @@ private:
         bool report_index;
     };
 
+    /**************************************************
+     ************ Full parallel extraction ************
+     **************************************************/
+private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct ParallelExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
         void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
             internal->set_oracle(std::move(o));
         }
-
     protected:
         std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
     };
 
-    /**************************************************
-     ************ Full parallel extraction ************
-     **************************************************/
-private:
     template<bool sparse_>
     struct FullParallelExtractor : public ParallelExtractor<DimensionSelectionType::FULL, sparse_> {
         FullParallelExtractor(const DelayedSubsetSorted* p, const Options<Index_>& opt) : parent(p) {
