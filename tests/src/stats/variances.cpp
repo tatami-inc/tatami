@@ -107,22 +107,6 @@ TEST(ComputingDimVariances, RowVariancesNaN) {
     EXPECT_TRUE(std::isnan(rref.back()));
 }
 
-TEST(ComputingDimVariances, Configuration) {
-    typedef tatami::stats::VarianceFactory<double> VarFact;
-    EXPECT_TRUE(tatami::stats::has_sparse_running<VarFact>::value);
-    EXPECT_TRUE(tatami::stats::has_sparse_running_parallel<VarFact>::value);
-    EXPECT_TRUE(tatami::stats::has_dense_running<VarFact>::value);
-    EXPECT_TRUE(tatami::stats::has_dense_running_parallel<VarFact>::value);
-    EXPECT_TRUE(tatami::stats::has_sparse_direct<VarFact>::value);
-
-    typedef decltype(std::declval<VarFact>().dense_direct()) VarDense;
-    const bool ndc = tatami::stats::has_nonconst_dense_compute<VarDense, double, int>::value;
-    EXPECT_FALSE(ndc);
-    typedef decltype(std::declval<VarFact>().sparse_direct()) VarSparse;
-    const bool nsc = tatami::stats::has_nonconst_sparse_compute<VarSparse, double, int>::value;
-    EXPECT_FALSE(nsc);
-}
-
 TEST(RunningVariances, SensibleZeros) {
     size_t NR = 55, NC = 52;
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));

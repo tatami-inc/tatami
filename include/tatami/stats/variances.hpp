@@ -2,7 +2,7 @@
 #define TATAMI_STATS_VARS_HPP
 
 #include "../base/Matrix.hpp"
-#include "apply.hpp"
+#include "utils.hpp"
 
 #include <vector>
 #include <cmath>
@@ -24,20 +24,20 @@ namespace variances {
 /**
  * @cond
  */
-template<typename O>
-std::pair<O, O> both_NaN() {
+template<typename Output_>
+std::pair<Output_, Output_> both_NaN() {
     return std::make_pair(
-        std::numeric_limits<O>::quiet_NaN(),
-        std::numeric_limits<O>::quiet_NaN()
+        std::numeric_limits<Output_>::quiet_NaN(),
+        std::numeric_limits<Output_>::quiet_NaN()
     );
 }
 
-template<typename O> 
-O finish_variance_direct(O var, size_t n) {
+template<typename Output_> 
+Output_ finish_variance_direct(Output_ var, size_t n) {
     if (n > 1) {
         return var / (n - 1);
     } else {
-        return std::numeric_limits<O>::quiet_NaN();
+        return std::numeric_limits<Output_>::quiet_NaN();
     }
 }
 /**
@@ -48,8 +48,8 @@ O finish_variance_direct(O var, size_t n) {
  * Compute the mean and variance along a vector.
  * We use the numerically stable calculation involving the sum of squared differences rather than taking the difference of squares.
  *
- * @tparam O Type of the output data.
- * @tparam T Type of the input data.
+ * @tparam Output_ Type of the output data.
+ * @tparam Value_ Type of the input data.
  *
  * @param[in] ptr Pointer to an array of values of length `n`.
  * @param n Size of the array.
@@ -57,14 +57,14 @@ O finish_variance_direct(O var, size_t n) {
  * @return The sample mean and variance of values in `[ptr, ptr + n)`.
  * If `n == 0`, the mean is set to NaN, and if `n < 2`, the variance is set to NaN.
  */
-template<typename O = double, typename T>
-std::pair<O, O> compute_direct(const T* ptr, size_t n) {
+template<typename Output_ = double, typename Value_>
+std::pair<Output_, Output_> compute_direct(const Value_* ptr, size_t n) {
     if (n < 1) {
-        return both_NaN<O>();
+        return both_NaN<Output_>();
     }
 
-    O mean = std::accumulate(ptr, ptr + n, static_cast<O>(0))/n;
-    O var = 0;
+    Output_ mean = std::accumulate(ptr, ptr + n, static_cast<Output_>(0))/n;
+    Output_ var = 0;
     for (size_t j = 0; j < n; ++j, ++ptr) {
         var += (*ptr - mean) * (*ptr - mean);
     }
@@ -76,9 +76,9 @@ std::pair<O, O> compute_direct(const T* ptr, size_t n) {
  * Compute the mean and variance along a sparse vector.
  * This achieves faster processing by only performing summations over non-zero elements.
  *
- * @tparam O Type of the output data.
- * @tparam T Type of the input data.
- * @tparam IDX Type of the indices.
+ * @tparam Output_ Type of the output data.
+ * @tparam Value_ Type of the input data.
+ * @tparam Index_ Type of the indices.
  *
  * @param range A `SparseRange` object specifying the number and values of all non-zero indices.
  * @param n Total length of the vector, including zero values.
@@ -86,14 +86,14 @@ std::pair<O, O> compute_direct(const T* ptr, size_t n) {
  * @return The sample mean and variance of values in the vector.
  * If `n == 0`, the mean is set to NaN, and if `n < 2`, the variance is set to NaN.
  */
-template<typename O = double, typename T, typename IDX>
-std::pair<O, O> compute_direct(const SparseRange<T, IDX>& range, size_t n) {
+template<typename Output_ = double, typename Value_, typename Index_>
+std::pair<Output_, Output_> compute_direct(const SparseRange<Value_, Index_>& range, size_t n) {
     if (n < 1) {
-        return both_NaN<O>();
+        return both_NaN<Output_>();
     }
 
-    O mean = std::accumulate(range.value, range.value + range.number, static_cast<O>(0))/n;
-    O var = 0;
+    Output_ mean = std::accumulate(range.value, range.value + range.number, static_cast<Output_>(0))/n;
+    Output_ var = 0;
     for (size_t j = 0; j < range.number; ++j) {
         var += (range.value[j] - mean) * (range.value[j] - mean);
     }
@@ -109,8 +109,8 @@ std::pair<O, O> compute_direct(const SparseRange<T, IDX>& range, size_t n) {
  * The aim is to compute the mean and variance for each target vector,
  * by repeatedly calling this function with different `ptr` containing successive elements of all target vectors.
  *
- * @tparam T Type of the input data.
- * @tparam O Type of the output data.
+ * @tparam Value_ Type of the input data.
+ * @tparam Output_ Type of the output data.
  *
  * @param[in] ptr Pointer to an array of values of length `n`, with one value per target vector.
  * @param n Size of the array referenced by `ptr`.
@@ -119,8 +119,8 @@ std::pair<O, O> compute_direct(const SparseRange<T, IDX>& range, size_t n) {
  * @param count Number of times this function has already been called.
  * This is incremented by 1 upon return.
  */
-template<typename T, typename O>
-void compute_running(const T* ptr, size_t n, O* means, O* vars, int& count) { 
+template<typename Value_, typename Output_>
+void compute_running(const Value_* ptr, size_t n, Output_* means, Output_* vars, int& count) { 
     ++count;
     for (size_t i = 0; i < n; ++i, ++means, ++vars, ++ptr) {
         const double delta=*ptr - *means;
@@ -133,10 +133,10 @@ void compute_running(const T* ptr, size_t n, O* means, O* vars, int& count) {
  * Compute a running mean and variance from sparse data using Welford's method.
  * This does the same as its dense overload.
  *
- * @tparam T Type of the input data.
- * @tparam IDX Type of the indices.
- * @tparam O Type of the output data.
- * @tparam Nz Type fo the non-zero counts.
+ * @tparam Value_ Type of the input data.
+ * @tparam Index_ Type of the indices.
+ * @tparam Output_ Type of the output data.
+ * @tparam Nonzero_ Type fo the non-zero counts.
  *
  * @param range A `SparseRange` object specifying the number, indices and values of all non-zero elements.
  * Each element is assigned to a target vector based on its index.
@@ -148,13 +148,15 @@ void compute_running(const T* ptr, size_t n, O* means, O* vars, int& count) {
  * If `false`, the output `nonzeros` instead contains the number of _structural_ non-zero values in each target vector,
  * which may be useful for informing further operations on the compressed sparse matrix structure.
  * Note that this choice has no effect on the computed means or variances, besides some differences due to numeric imprecision.
+ * @param subtract Value to subtract from each sparse index before using it to index into `means`, `vars` and `nonzeros`.
+ * This is only relevant if `means` and friends do not hold statistics for all target vectors, but just a contiguous block, e.g., during parallelization.
  */
-template<typename T, typename IDX, typename O, typename Nz>
-void compute_running(const SparseRange<T, IDX>& range, O* means, O* vars, Nz* nonzeros, int& count, bool skip_zeros = true) {
+template<typename Value_, typename Index_, typename Output_, typename Nonzero_>
+void compute_running(const SparseRange<Value_, Index_>& range, Output_* means, Output_* vars, Nonzero_* nonzeros, int& count, bool skip_zeros = true, Index_ subtract = 0) {
     ++count;
     for (size_t j = 0; j < range.number; ++j) {
         if (!skip_zeros || range.value[j]) { 
-            auto ri = range.index[j];
+            auto ri = range.index[j] - subtract;
             auto& curM = means[ri];
             auto& curS = vars[ri];
             auto& curNZ = nonzeros[ri];
@@ -173,7 +175,7 @@ void compute_running(const SparseRange<T, IDX>& range, O* means, O* vars, Nz* no
  * Elements in `vars` are divided by `count - 1`, unless if `count < 2`, in which case it is filled with NaNs.
  * If `count` is zero, `means` will also be filled with NaNs.
  *
- * @tparam O Type of the output data.
+ * @tparam Output_ Type of the output data.
  *
  * @param n Number of target vectors.
  * @param[in,out] means Pointer to an array containing the running means for each target vector.
@@ -181,8 +183,8 @@ void compute_running(const SparseRange<T, IDX>& range, O* means, O* vars, Nz* no
  * @param count Number of times the `compute_running()` function was called.
  *
  */
-template<typename O>
-void finish_running(size_t n, O* means, O* vars, int count) {
+template<typename Output_>
+void finish_running(size_t n, Output_* means, Output_* vars, int count) {
     if (count > 1) {
         for (size_t i = 0; i < n; ++i) {
             vars[i] /= count - 1;
@@ -200,8 +202,8 @@ void finish_running(size_t n, O* means, O* vars, int count) {
  * Elements in `vars` are divided by `count - 1`, unless if `count < 2`, in which case it is filled with NaNs.
  * If `count` is zero, `means` will also be filled with NaNs.
  *
- * @tparam O Type of the output data.
- * @tparam Nz Type fo the non-zero counts.
+ * @tparam Output_ Type of the output data.
+ * @tparam Nonzero_ Type of the non-zero counts.
  *
  * @param n Number of target vectors.
  * @param[in,out] means Pointer to an array containing the running means for each target vector.
@@ -209,8 +211,8 @@ void finish_running(size_t n, O* means, O* vars, int count) {
  * @param[in] nonzeros Pointer to an array containing the running number of non-zero values for each target vector.
  * @param count Number of times the `compute_running()` function was called.
  */
-template<typename O, typename Nz>
-void finish_running(size_t n, O* means, O* vars, const Nz* nonzeros, int count) {
+template<typename Output_, typename Nonzero_>
+void finish_running(size_t n, Output_* means, Output_* vars, const Nonzero_* nonzeros, int count) {
     if (count) {
         for (size_t i = 0; i < n; ++i) {
             const double curNZ = nonzeros[i];
@@ -225,104 +227,87 @@ void finish_running(size_t n, O* means, O* vars, const Nz* nonzeros, int count) 
 
 }
 
-template<typename O = double>
-struct VarianceFactory {
-public:
-    VarianceFactory(O* o, size_t d1, size_t d2) : output(o), dim(d1), otherdim(d2) {}
+/**
+ * @cond
+ */
+template<typename Output_, bool row_, typename Value_, typename Index_>
+std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int threads) {
+    Index_ dim = (row_ ? p->nrow() : p->ncol());
+    Index_ otherdim = (row_ ? p->ncol() : p->nrow());
+    std::vector<Output_> output(dim);
 
-private:
-    O* output;
-    size_t dim, otherdim;
+    const bool prefrow = p->prefer_rows();
+    const bool direct = prefrow == row_;
+    const bool oracled = p->uses_oracle(prefrow);
+    Options opt;
 
-public:
-    struct DenseDirect {
-        DenseDirect(O* o, size_t d2) : output(o), otherdim(d2) {}
+    if (p->sparse()) {
+        if (direct) {
+            opt.sparse_extract_index = false;
+            parallelize([&](size_t, Index_ s, Index_ e) {
+                auto ext = direct_extractor<row_, true>(p, oracled, s, e, opt);
+                std::vector<Value_> vbuffer(otherdim);
+                for (Index_ i = s; i < e; ++i) {
+                    auto out = ext->fetch(i, vbuffer.data(), NULL);
+                    output[i] = variances::compute_direct<Output_>(out, otherdim).second;
+                }
+            }, dim, threads);
 
-        template<typename V>
-        void compute(size_t i, const V* ptr) {
-            output[i] = variances::compute_direct<O>(ptr, otherdim).second;
-        }
-    private:
-        O* output;
-        size_t otherdim;
-    };
+        } else {
+            parallelize([&](size_t, Index_ s, Index_ e) {
+                auto len = e - s;
+                auto ext = running_extractor<row_, true>(p, s, e, oracled, otherdim, opt);
+                std::vector<Value_> vbuffer(len);
+                std::vector<Index_> ibuffer(len);
 
-    DenseDirect dense_direct() {
-        return DenseDirect(output, otherdim);
-    }
+                std::vector<Output_> running_means(len);
+                std::vector<Index_> running_nzeros(len);
+                auto running_vars = output.data() + s;
+                int counter = 0;
 
-public:
-    struct SparseDirect {
-        SparseDirect(O* o, size_t d2) : output(o), otherdim(d2) {}
-
-        template<typename T, typename IDX>
-        void compute(size_t i, const SparseRange<T, IDX>& range) {
-            output[i] = variances::compute_direct<O>(range, otherdim).second;
-        }
-    private:
-        O* output;
-        size_t otherdim;
-    };
-
-    SparseDirect sparse_direct() {
-        return SparseDirect(output, otherdim);
-    }
-
-public:
-    struct DenseRunning {
-        DenseRunning(O* o, size_t d1) : output(o), dim(d1), running_means(dim) {}
-
-        template<typename V>
-        void add(const V* ptr) {
-            variances::compute_running(ptr, dim, running_means.data(), output, counter);
+                for (Index_ i = 0; i < otherdim; ++i) {
+                    auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
+                    variances::compute_running(out, running_means.data(), running_vars, running_nzeros.data(), counter, /* skip_zeros = */ true, /* subtract = */ s);
+                }
+                variances::finish_running(len, running_means.data(), running_vars, running_nzeros.data(), counter);
+            }, dim, threads);
         }
 
-        void finish() {
-            variances::finish_running(dim, running_means.data(), output, counter);
+    } else {
+        if (direct) {
+            parallelize([&](size_t, Index_ s, Index_ e) {
+                auto ext = direct_extractor<row_, false>(p, oracled, s, e, opt);
+                std::vector<Value_> buffer(otherdim);
+                for (Index_ i = s; i < e; ++i) {
+                    auto out = ext->fetch(i, buffer.data());
+                    output[i] = variances::compute_direct<Output_>(out, otherdim).second;
+                }
+            }, dim, threads);
+
+        } else {
+            parallelize([&](size_t, Index_ s, Index_ e) {
+                auto len = e - s;
+                auto ext = running_extractor<row_, false>(p, s, e, oracled, otherdim, opt);
+                std::vector<Value_> buffer(len);
+
+                std::vector<Output_> running_means(len);
+                auto running_vars = output.data() + s;
+                int counter = 0;
+
+                for (Index_ i = 0; i < otherdim; ++i) {
+                    auto out = ext->fetch(i, buffer.data());
+                    variances::compute_running(out, len, running_means.data(), running_vars, counter);
+                }
+                variances::finish_running(len, running_means.data(), running_vars, counter);
+            }, dim, threads);
         }
-    private:
-        O* output;
-        size_t dim;
-        std::vector<O> running_means;
-        int counter = 0;
-    };
-
-    DenseRunning dense_running() {
-        return DenseRunning(output, dim);
     }
 
-    DenseRunning dense_running(size_t start, size_t end) {
-        return DenseRunning(output + start, end - start);
-    }
-
-public:
-    struct SparseRunning {
-        SparseRunning(O* o, size_t dim, size_t s, size_t e) : output(o), start(s), end(e), running_means(dim), running_nzeros(dim) {}
-
-        template<typename T, typename IDX>
-        void add(const SparseRange<T, IDX>& range) {
-            variances::compute_running(range, running_means.data(), output, running_nzeros.data(), counter);
-        }
-
-        void finish() {
-            variances::finish_running(end - start, running_means.data() + start, output + start, running_nzeros.data() + start, counter);
-        }
-    private:
-        O* output;
-        size_t start, end;
-        std::vector<O> running_means;
-        std::vector<int> running_nzeros;
-        int counter = 0;
-    };
-
-    SparseRunning sparse_running() {
-        return SparseRunning(output, dim, 0, dim);
-    }
-
-    SparseRunning sparse_running(size_t start, size_t end) {
-        return SparseRunning(output, dim, start, end);
-    }
-};
+    return output;
+}
+/**
+ * @endcond
+ */
 
 }
 
@@ -331,20 +316,17 @@ public:
  * As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.
  *
  * @tparam Output Type of the output value.
- * @tparam T Type of the matrix value, should be numeric.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Value_ Type of the matrix value, should be numeric.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of columns, containing the column variances.
  */
-template<typename Output = double, typename T, typename IDX>
-std::vector<Output> column_variances(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> output(p->ncol());
-    stats::VarianceFactory factory(output.data(), p->ncol(), p->nrow());
-    apply<1>(p, factory, threads);
-    return output;
+template<typename Output_ = double, typename Value_, typename Index_>
+std::vector<Output_> column_variances(const Matrix<Value_, Index_>* p, int threads = 1) {
+    return stats::dimension_variances<Output_, false>(p, threads);
 }
 
 /**
@@ -352,20 +334,17 @@ std::vector<Output> column_variances(const Matrix<T, IDX>* p, int threads = 1) {
  * As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.
  *
  * @tparam Output Type of the output value.
- * @tparam T Type of the matrix value, should be numeric.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Value_ Type of the matrix value, should be numeric.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of rows, containing the row variances.
  */
-template<typename Output = double, typename T, typename IDX>
-std::vector<Output> row_variances(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> output(p->nrow());
-    stats::VarianceFactory factory(output.data(), p->nrow(), p->ncol());
-    apply<0>(p, factory, threads);
-    return output;
+template<typename Output_ = double, typename Value_, typename Index_>
+std::vector<Output_> row_variances(const Matrix<Value_, Index_>* p, int threads = 1) {
+    return stats::dimension_variances<Output_, true>(p, threads);
 }
 
 }
