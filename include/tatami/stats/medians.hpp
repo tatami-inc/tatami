@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include <limits>
+#include <iostream>
 
 /**
  * @file medians.hpp
@@ -53,16 +54,6 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
     Options opt;
 
     if (p->sparse()) {
-        parallelize([&](int t, Index_ s, Index_ e) -> void {
-            std::vector<Value_> buffer(otherdim);
-            auto ext = config.template extractor<false>(s, e, opt);
-            for (Index_ i = s; i < e; ++i) {
-                ext->fetch_copy(i, buffer.data());
-                output[i] = compute_median<Output_>(buffer.data(), otherdim);
-            }
-        }, dim, threads);
-
-    } else {
         opt.sparse_extract_index = false;
         opt.sparse_ordered_index = false; // we'll be sorting by value.
         parallelize([&](int t, Index_ s, Index_ e) -> void {
@@ -113,6 +104,16 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
                         output[i] = tmp / 2;
                     }
                 }
+            }
+        }, dim, threads);
+
+    } else {
+        parallelize([&](int t, Index_ s, Index_ e) -> void {
+            std::vector<Value_> buffer(otherdim);
+            auto ext = config.template extractor<false>(s, e, opt);
+            for (Index_ i = s; i < e; ++i) {
+                ext->fetch_copy(i, buffer.data());
+                output[i] = compute_median<Output_>(buffer.data(), otherdim);
             }
         }, dim, threads);
     }
