@@ -21,6 +21,7 @@
 #include "utils/ArrayView.hpp"
 #include "utils/SomeNumericArray.hpp"
 #include "utils/bind_intersection.hpp"
+#include "utils/Oracles.hpp"
 
 #include "stats/sums.hpp"
 #include "stats/variances.hpp"

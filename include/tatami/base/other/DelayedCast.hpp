@@ -103,8 +103,8 @@ private:
         }
 
     private:
-        struct CastOracle : public SequenceOracle<Index_in_> {
-            CastOracle(std::unique_ptr<SequenceOracle<Index_out_> > s) : source(std::move(s)) {}
+        struct CastOracle : public Oracle<Index_in_> {
+            CastOracle(std::unique_ptr<Oracle<Index_out_> > s) : source(std::move(s)) {}
 
             size_t predict(Index_in_* target, size_t length) {
                 buffer.resize(length);
@@ -113,12 +113,12 @@ private:
                 return filled;
             }
         private:
-            std::unique_ptr<SequenceOracle<Index_out_> > source;
+            std::unique_ptr<Oracle<Index_out_> > source;
             std::vector<Index_out_> buffer;
         };
 
     public:
-        void set_oracle(std::unique_ptr<SequenceOracle<Index_out_> > o) {
+        void set_oracle(std::unique_ptr<Oracle<Index_out_> > o) {
             internal->set_oracle(std::make_unique<CastOracle>(std::move(o)));
         }
     };

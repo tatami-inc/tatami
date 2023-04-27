@@ -67,7 +67,7 @@ private:
             }
         }
 
-        void set_oracle(std::unique_ptr<SequenceOracle<Index_> >) {
+        void set_oracle(std::unique_ptr<Oracle<Index_> >) {
             return;
         }
 

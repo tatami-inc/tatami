@@ -23,8 +23,8 @@ const Value_* remap_dense(const Value_* input, Value_* buffer, const std::vector
 }
 
 template<typename Index_, class IndexStorage_>
-struct SubsetOracle : public SequenceOracle<Index_> {
-    SubsetOracle(std::unique_ptr<SequenceOracle<Index_> > o, const IndexStorage_* is) : source(std::move(o)), indices(is) {}
+struct SubsetOracle : public Oracle<Index_> {
+    SubsetOracle(std::unique_ptr<Oracle<Index_> > o, const IndexStorage_* is) : source(std::move(o)), indices(is) {}
 
     size_t predict(Index_* buffer, size_t length) {
         size_t filled = source->predict(buffer, length);
@@ -34,7 +34,7 @@ struct SubsetOracle : public SequenceOracle<Index_> {
         return filled;
     }
 private:
-    std::unique_ptr<SequenceOracle<Index_> > source;
+    std::unique_ptr<Oracle<Index_> > source;
     const IndexStorage_* indices;
 };
 
@@ -66,7 +66,7 @@ public:
         }
     }
 
-    void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+    void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
         internal->set_oracle(std::make_unique<SubsetOracle<Index_, IndexStorage_> >(std::move(o), indices));
     }
 };

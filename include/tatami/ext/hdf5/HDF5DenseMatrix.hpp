@@ -230,7 +230,7 @@ private:
         friend class HDF5DenseMatrix;
 
     public:
-        void set_oracle(std::unique_ptr<SequenceOracle<Index_> >) {
+        void set_oracle(std::unique_ptr<Oracle<Index_> >) {
             return; // TODO: add proper support for oracle handling.
         }
     };

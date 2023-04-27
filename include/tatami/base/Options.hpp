@@ -3,7 +3,6 @@
 
 #include <vector>
 #include <memory>
-#include "SequenceOracle.hpp"
 
 /**
  * @file Options.hpp
@@ -50,6 +49,35 @@ struct Options {
      * This may enable faster iteration if the same `Extractor` object is re-used for multiple passes over the same matrix.
      */
     bool cache_for_reuse = false;
+};
+
+/**
+ * @tparam Index_ Integer type of the row/column indices.
+ *
+ * @brief Predict future access requests.
+ *
+ * This allows `Matrix` implementations to pre-fetch data for future requests to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
+ */
+template<typename Index_>
+struct Oracle {
+    /**
+     * @cond
+     */
+    virtual ~Oracle() = default;
+    /**
+     * @endcond
+     */
+
+    /**
+     * Predict the indices to be accessed in future `fetch()` calls.
+     *
+     * @param[out] predicted Pointer to an array in which to store the predicted indices of future elements to be accessed by `fetch()`.
+     * @param number Maximum number of indices to predict.
+     *
+     * @return Number of indices that were predicted.
+     * This is guaranteed to be no greater than `number`.
+     */
+    virtual size_t predict(Index_* predicted, size_t number) = 0;
 };
 
 }

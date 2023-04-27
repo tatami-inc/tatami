@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 #include "tatami/base/Matrix.hpp"
+#include "tatami/utils/Oracles.hpp"
 #include <random>
 
 template<typename Value_, typename Index_> 
@@ -43,7 +44,7 @@ public:
 
     protected:
         std::unique_ptr<tatami::Extractor<selection_, sparse_, Value_, Index_> > internal;
-        std::unique_ptr<tatami::SequenceOracle<Index_> > source;
+        std::unique_ptr<tatami::Oracle<Index_> > source;
         std::deque<Index_> filled;
         std::vector<Index_> buffer;
         bool unused;
@@ -55,7 +56,7 @@ public:
         }
 
     private:
-        struct CrankyOracle : public tatami::SequenceOracle<Index_> {
+        struct CrankyOracle : public tatami::Oracle<Index_> {
             CrankyOracle(CrankyExtractor* p) : parent(p) {}
 
             size_t predict(Index_* buffer, size_t number) {
@@ -83,7 +84,7 @@ public:
         }
 
     public:
-        void set_oracle(std::unique_ptr<tatami::SequenceOracle<Index_> > o) {
+        void set_oracle(std::unique_ptr<tatami::Oracle<Index_> > o) {
             source = std::move(o);
             internal->set_oracle(std::make_unique<CrankyOracle>(this));
         }

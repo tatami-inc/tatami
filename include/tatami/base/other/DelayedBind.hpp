@@ -283,7 +283,7 @@ private:
 
     private:
         struct ParentOracle {
-            ParentOracle(std::unique_ptr<SequenceOracle<Index_> > o, size_t nmats) : source(std::move(o)), counters(nmats) {}
+            ParentOracle(std::unique_ptr<Oracle<Index_> > o, size_t nmats) : source(std::move(o)), counters(nmats) {}
 
             size_t fill(size_t id, Index_* buffer, size_t number) {
                 auto& current = counters[id];
@@ -322,12 +322,12 @@ private:
                 return filled + handled;
             }
         private:
-            std::unique_ptr<SequenceOracle<Index_> > source;
+            std::unique_ptr<Oracle<Index_> > source;
             std::deque<Index_> stream;
             std::vector<size_t> counters;
         };
 
-        struct ChildOracle : public SequenceOracle<Index_> {
+        struct ChildOracle : public Oracle<Index_> {
             ChildOracle(ParentOracle* o, size_t i) : parent(o), id(i) {}
             size_t predict(Index_* buffer, size_t number) {
                 return parent->fill(id, buffer, number);
@@ -340,7 +340,7 @@ private:
         std::unique_ptr<ParentOracle> parent_oracle;
 
     public:
-        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
             // Figure out how many of these need an oracle.
             std::vector<size_t> need_oracles;
             size_t nmats = parent->mats.size();
@@ -534,7 +534,7 @@ private:
 
     private:
         struct ParentOracle {
-            ParentOracle(std::unique_ptr<SequenceOracle<Index_> > o, std::vector<unsigned char> u, const std::vector<Index_>* c) : 
+            ParentOracle(std::unique_ptr<Oracle<Index_> > o, std::vector<unsigned char> u, const std::vector<Index_>* c) : 
                 source(std::move(o)), streams(u.size()), used(std::move(u)), cumulative(c) {}
 
             size_t fill(size_t id, Index_* buffer, size_t number) {
@@ -575,14 +575,14 @@ private:
                 return number;
             }
         private:
-            std::unique_ptr<SequenceOracle<Index_> > source;
+            std::unique_ptr<Oracle<Index_> > source;
             std::vector<std::deque<Index_> > streams;
             std::vector<unsigned char> used;
             const std::vector<Index_>* cumulative;
             size_t chosen_segment = 0;
         };
 
-        struct ChildOracle : public SequenceOracle<Index_> {
+        struct ChildOracle : public Oracle<Index_> {
             ChildOracle(ParentOracle* o, size_t i) : parent(o), id(i) {}
             size_t predict(Index_* buffer, size_t number) {
                 return parent->fill(id, buffer, number);
@@ -595,7 +595,7 @@ private:
         std::unique_ptr<ParentOracle> parent_oracle;
 
     public:
-        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
             // Figure out how many of these need an oracle.
             std::vector<size_t> need_oracles;
             size_t nmats = parent->mats.size();

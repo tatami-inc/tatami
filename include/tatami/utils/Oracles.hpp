@@ -1,12 +1,11 @@
-#ifndef TATAMI_SEQUENCE_ORACLE_HPP
-#define TATAMI_SEQUENCE_ORACLE_HPP
+#ifndef TATAMI_ORACLES_HPP
+#define TATAMI_ORACLES_HPP
 
-#include <vector>
-#include <memory>
+#include "../base/Options.hpp"
 #include <numeric>
 
 /**
- * @file SequenceOracle.hpp
+ * @file Oracles.hpp
  *
  * @brief Predict future accesses during iteration.
  */
@@ -16,39 +15,10 @@ namespace tatami {
 /**
  * @tparam Index_ Integer type of the row/column indices.
  *
- * @brief Predict future access requests.
- *
- * This allows `Matrix` implementations to pre-fetch data for future requests to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
- */
-template<typename Index_>
-struct SequenceOracle {
-    /**
-     * @cond
-     */
-    virtual ~SequenceOracle() = default;
-    /**
-     * @endcond
-     */
-
-    /**
-     * Predict the indices to be accessed in future `fetch()` calls.
-     *
-     * @param[out] predicted Pointer to an array in which to store the predicted indices of future elements to be accessed by `fetch()`.
-     * @param number Maximum number of indices to predict.
-     *
-     * @return Number of indices that were predicted.
-     * This is guaranteed to be no greater than `number`.
-     */
-    virtual size_t predict(Index_* predicted, size_t number) = 0;
-};
-
-/**
- * @tparam Index_ Integer type of the row/column indices.
- *
  * @brief Predict future accesses from a known sequence.
  */
 template<typename Index_>
-struct FixedOracle : public SequenceOracle<Index_> {
+struct FixedOracle : public Oracle<Index_> {
     /**
      * @param r Pointer to a constant array of indices.
      * @param n Length of the array for `r`.
@@ -80,7 +50,7 @@ private:
  * @brief Predict future accesses of a consecutive sequence.
  */
 template<typename Index_>
-struct ConsecutiveOracle : public SequenceOracle<Index_> {
+struct ConsecutiveOracle : public Oracle<Index_> {
     /**
      * @param s Start index of the consecutive sequence.
      * @param e One past the end of the sequence.

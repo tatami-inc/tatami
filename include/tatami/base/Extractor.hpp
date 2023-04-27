@@ -1,10 +1,10 @@
 #ifndef TATAMI_EXTRACT_FORMAT_HPP
 #define TATAMI_EXTRACT_FORMAT_HPP
 
+#include <vector>
 #include <type_traits>
 #include "SparseRange.hpp"
 #include "Options.hpp"
-#include "SequenceOracle.hpp"
 
 /**
  * @file Extractor.hpp
@@ -51,7 +51,7 @@ public:
      * @param o Unique pointer to an oracle.
      * This can also be set to `nullptr` to disable predictions.
      */
-    virtual void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) = 0;
+    virtual void set_oracle(std::unique_ptr<Oracle<Index_> > o) = 0;
 };
 
 /**

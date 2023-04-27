@@ -145,7 +145,7 @@ private:
             }
         }
 
-        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
             internal->set_oracle(std::move(o));
         }
     };
@@ -210,8 +210,8 @@ private:
         }
 
     private:
-        struct SubsetBlockOracle : public SequenceOracle<Index_> {
-            SubsetBlockOracle(std::unique_ptr<SequenceOracle<Index_> > o, Index_ s) : source(std::move(o)), shift(s) {}
+        struct SubsetBlockOracle : public Oracle<Index_> {
+            SubsetBlockOracle(std::unique_ptr<Oracle<Index_> > o, Index_ s) : source(std::move(o)), shift(s) {}
 
             size_t predict(Index_* buffer, size_t length) {
                 size_t filled = source->predict(buffer, length);
@@ -221,12 +221,12 @@ private:
                 return filled;
             }            
         private:
-            std::unique_ptr<SequenceOracle<Index_> > source;
+            std::unique_ptr<Oracle<Index_> > source;
             Index_ shift;
         };
 
     public:
-        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
             internal->set_oracle(std::make_unique<SubsetBlockOracle>(std::move(o), offset));
         }
     };

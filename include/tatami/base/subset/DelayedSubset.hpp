@@ -333,7 +333,7 @@ private:
 private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct ParallelExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-        void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
             internal->set_oracle(std::move(o));
         }
     protected:
