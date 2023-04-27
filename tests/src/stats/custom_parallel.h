@@ -7,7 +7,7 @@
 #include <cmath>
 
 template<class Function_>
-static void parallelize(Function_ f, size_t ntasks, size_t nworkers, size_t jobs_per_worker) {
+static void custom_parallelize(Function_ f, size_t ntasks, size_t nworkers, size_t jobs_per_worker) {
     size_t start = 0;
     std::vector<std::thread> jobs;
     jobs.reserve(nworkers);
@@ -17,7 +17,7 @@ static void parallelize(Function_ f, size_t ntasks, size_t nworkers, size_t jobs
         if (start >= end) {
             break;
         }
-        jobs.emplace_back(f, start, end);
+        jobs.emplace_back(f, w, start, end);
         start += jobs_per_worker;
     }
 
@@ -26,6 +26,6 @@ static void parallelize(Function_ f, size_t ntasks, size_t nworkers, size_t jobs
     }
 }
 
-#define TATAMI_CUSTOM_PARALLEL parallelize
+#define TATAMI_CUSTOM_PARALLEL custom_parallelize
 
 #endif
