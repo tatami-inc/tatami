@@ -42,8 +42,6 @@ public:
 
     bool sparse() const { return false; }
 
-    bool uses_oracle(bool) const { return false; }
-
 private:
     template<DimensionSelectionType selection_>
     struct SparseWrapper : public Extractor<selection_, true, Value_, Index_> {

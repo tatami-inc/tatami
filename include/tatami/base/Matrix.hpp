@@ -88,9 +88,9 @@ public:
 
     /**
      * @param row Row access if `true`, column access otherwise.
-     * @return Whether this matrix's `Extractor` classes make use of oracle predictions for row (if `row = true`) or column access (otherwise).
+     * @return Whether this matrix's `tatami::Extractor` classes make use of oracle predictions for row (if `row = true`) or column access (otherwise).
      *
-     * The output of this method indicates whether callers should construct an oracle for use in `Extractor::set_oracle()`.
+     * The output of this method indicates whether callers should construct an oracle for use in `ExtractorBase::set_oracle()`.
      * If `false`, callers should not bother to pass an oracle as it will be ignored.
      */
     virtual bool uses_oracle(bool row) const = 0;
@@ -111,7 +111,7 @@ public:
      * @param opt Options for extraction.
      * @return A `BlockDenseExtractor` object for dense access to a block of each row.
      */
-    virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_end, const Options& opt) const = 0;
+    virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
     /**
      * @param indices Vector of sorted and unique column indices.
@@ -132,7 +132,7 @@ public:
      * @param opt Options for extraction.
      * @return A `BlockDenseExtractor` object for dense access to a block of each column.
      */
-    virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_end, const Options& opt) const = 0;
+    virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
     /**
      * @param indices Vector of sorted and unique column indices.
@@ -157,7 +157,7 @@ public:
      * @param opt Options for extraction.
      * @return A `BlockSparseExtractor` object for sparse access to a block of each row.
      */
-    virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_end, const Options& opt) const = 0;
+    virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
     /**
      * @param indices Vector of sorted and unique column indices.
@@ -178,7 +178,7 @@ public:
      * @param opt Options for extraction.
      * @return A `BlockSparseExtractor` object for sparse access to a block of each column.
      */
-    virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_end, const Options& opt) const = 0;
+    virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
     /**
      * @param indices Vector of sorted and unique column indices.
@@ -203,8 +203,8 @@ public:
      * @param block_length Number of columns in the block.
      * @return A `BlockDenseExtractor` object for dense access to a block of each row, using default options.
      */
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_end) const {
-        return dense_row(block_start, block_end, Options());
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length) const {
+        return dense_row(block_start, block_length, Options());
     }
 
     /**
@@ -227,8 +227,8 @@ public:
      * @param block_length Number of rows in the block.
      * @return A `BlockDenseExtractor` object for dense access to a block of each column, using default options.
      */
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_end) const {
-        return dense_column(block_start, block_end, Options());
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length) const {
+        return dense_column(block_start, block_length, Options());
     }
 
     /**
@@ -255,8 +255,8 @@ public:
      * @param block_length Number of columns in the block.
      * @return A `BlockSparseExtractor` object for sparse access to a block of each row, using default options.
      */
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_end) const {
-        return sparse_row(block_start, block_end, Options());
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length) const {
+        return sparse_row(block_start, block_length, Options());
     }
 
     /**
@@ -279,8 +279,8 @@ public:
      * @param block_length Number of rows in the block.
      * @return A `BlockSparseExtractor` object for sparse access to a block of each column, using default options.
      */
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_end) const {
-        return sparse_column(block_start, block_end, Options());
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length) const {
+        return sparse_column(block_start, block_length, Options());
     }
 
     /**

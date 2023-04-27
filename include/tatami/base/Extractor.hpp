@@ -48,7 +48,7 @@ public:
     /**
      * Set the oracle, to predict the access pattern of future `fetch()` calls.
      * 
-     * @param Unique pointer to an oracle.
+     * @param o Unique pointer to an oracle.
      * This can also be set to `nullptr` to disable predictions.
      */
     virtual void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) = 0;
