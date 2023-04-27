@@ -43,7 +43,7 @@ void parallelize(Function_ fun, size_t tasks, size_t threads) {
 #ifndef TATAMI_CUSTOM_PARALLEL
             #pragma omp parallel for num_threads(threads)
             for (size_t t = 0; t < threads; ++t) {
-                size_t start = worker_size * t, end = std::min(ntasks, start + worker_size);
+                size_t start = worker_size * t, end = std::min(tasks, start + worker_size);
                 if (start < end) {
                     fun(t, start, end);
                 }
