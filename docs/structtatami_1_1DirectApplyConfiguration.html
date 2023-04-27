@@ -90,8 +90,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a2a82690415edc64457a4e9a25dec039f"><td class="memItemLeft" align="right" valign="top"><a id="a2a82690415edc64457a4e9a25dec039f" name="a2a82690415edc64457a4e9a25dec039f"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>DirectApplyConfiguration</b> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *mat)</td></tr>
+<tr class="memitem:a2a82690415edc64457a4e9a25dec039f"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DirectApplyConfiguration.html#a2a82690415edc64457a4e9a25dec039f">DirectApplyConfiguration</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *mat)</td></tr>
 <tr class="separator:a2a82690415edc64457a4e9a25dec039f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ffdd5240f7d29a164d15f3bc0048ce8"><td class="memTemplParams" colspan="2">template&lt;bool sparse_&gt; </td></tr>
 <tr class="memitem:a9ffdd5240f7d29a164d15f3bc0048ce8"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structtatami_1_1DirectApplyConfiguration.html#a9ffdd5240f7d29a164d15f3bc0048ce8">extractor</a> (Index_ s, Index_ e, const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
@@ -116,7 +115,42 @@ struct tatami::DirectApplyConfiguration&lt; row_, Value_, Index_ &gt;</div><p>Co
   </table>
   </dd>
 </dl>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a2a82690415edc64457a4e9a25dec039f" name="a2a82690415edc64457a4e9a25dec039f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2a82690415edc64457a4e9a25dec039f">&#9670;&#160;</a></span>DirectApplyConfiguration()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DirectApplyConfiguration.html">tatami::DirectApplyConfiguration</a>&lt; row_, Value_, Index_ &gt;::DirectApplyConfiguration </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
+          <td class="paramname"><em>mat</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">mat</td><td>Pointer to the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a9ffdd5240f7d29a164d15f3bc0048ce8" name="a9ffdd5240f7d29a164d15f3bc0048ce8"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9ffdd5240f7d29a164d15f3bc0048ce8">&#9670;&#160;</a></span>extractor()</h2>
 
@@ -168,7 +202,7 @@ template&lt;bool sparse_&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An <code>Extractor</code> object for iterating over the target dimension in the range <code>[s, e)</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>An <code>Extractor</code> object for iterating over the target dimension in the range <code>[s, e)</code>. It is assumed that the caller will iteratively call <code>fetch()</code> for consecutive indices from <code>s</code> to <code>e</code>. </dd></dl>
 
 </div>
 </div>

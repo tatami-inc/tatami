@@ -88,57 +88,57 @@ $(function() {
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_&gt;</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno"><a class="line" href="structtatami_1_1FixedOracle.html">   21</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtatami_1_1FixedOracle.html">FixedOracle</a> : <span class="keyword">public</span> <a class="code hl_struct" href="structtatami_1_1Oracle.html">Oracle</a>&lt;Index_&gt; {</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno"><a class="line" href="structtatami_1_1FixedOracle.html#ac04dcf58c95882cf83bc5204b1944776">   26</a></span>    <a class="code hl_function" href="structtatami_1_1FixedOracle.html#ac04dcf58c95882cf83bc5204b1944776">FixedOracle</a>(<span class="keyword">const</span> Index_* r, <span class="keywordtype">size_t</span> n) : reference(r), length(n) {}</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span> </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno"><a class="line" href="structtatami_1_1FixedOracle.html#a931ccde93f123c8c718f808e89cf8f36">   28</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="structtatami_1_1FixedOracle.html#a931ccde93f123c8c718f808e89cf8f36">predict</a>(Index_* predicted, <span class="keywordtype">size_t</span> number) {</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>        <span class="keyword">auto</span> upto = counter + number;</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="keyword">auto</span> out = reference + counter;</div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keywordflow">if</span> (upto &gt;= length) {</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>            number = length - counter;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            upto = length;</div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        }</div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        counter = upto;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        std::copy(out, out + number, predicted);</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        <span class="keywordflow">return</span> number;</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    }</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">const</span> Index_* reference;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    <span class="keywordtype">size_t</span> length;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span> </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    <span class="keywordtype">size_t</span> counter = 0;</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>};</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span> </div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_&gt;</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno"><a class="line" href="structtatami_1_1ConsecutiveOracle.html">   53</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtatami_1_1ConsecutiveOracle.html">ConsecutiveOracle</a> : <span class="keyword">public</span> <a class="code hl_struct" href="structtatami_1_1Oracle.html">Oracle</a>&lt;Index_&gt; {</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno"><a class="line" href="structtatami_1_1ConsecutiveOracle.html#a4efff1a6ab639d3d95b3ea617339bb56">   58</a></span>    <a class="code hl_function" href="structtatami_1_1ConsecutiveOracle.html#a4efff1a6ab639d3d95b3ea617339bb56">ConsecutiveOracle</a>(Index_ s, Index_ e) : end(e), counter(s) {}</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno"><a class="line" href="structtatami_1_1ConsecutiveOracle.html#a6ed7501a227b2ee9b96e78733f166f16">   60</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="structtatami_1_1ConsecutiveOracle.html#a6ed7501a227b2ee9b96e78733f166f16">predict</a>(Index_* buffer, <span class="keywordtype">size_t</span> number) {</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        <span class="keyword">auto</span> upto = counter + number;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keywordflow">if</span> (upto &gt;= end) {</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            number = end - counter;</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            upto = end;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        }</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        std::iota(buffer, buffer + number, counter);</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        counter = upto;</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        <span class="keywordflow">return</span> number;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    }</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span><span class="keyword">private</span>:</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    <span class="keywordtype">size_t</span> end;</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    <span class="keywordtype">size_t</span> counter = 0;</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>};</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>}</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span> </div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno"><a class="line" href="structtatami_1_1FixedOracle.html#ac04dcf58c95882cf83bc5204b1944776">   27</a></span>    <a class="code hl_function" href="structtatami_1_1FixedOracle.html#ac04dcf58c95882cf83bc5204b1944776">FixedOracle</a>(<span class="keyword">const</span> Index_* r, <span class="keywordtype">size_t</span> n) : reference(r), length(n) {}</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno"><a class="line" href="structtatami_1_1FixedOracle.html#a931ccde93f123c8c718f808e89cf8f36">   29</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="structtatami_1_1FixedOracle.html#a931ccde93f123c8c718f808e89cf8f36">predict</a>(Index_* predicted, <span class="keywordtype">size_t</span> number) {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="keyword">auto</span> upto = counter + number;</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keyword">auto</span> out = reference + counter;</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>        <span class="keywordflow">if</span> (upto &gt;= length) {</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            number = length - counter;</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>            upto = length;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>        }</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        counter = upto;</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>        std::copy(out, out + number, predicted);</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="keywordflow">return</span> number;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    }</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keyword">const</span> Index_* reference;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    <span class="keywordtype">size_t</span> length;</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordtype">size_t</span> counter = 0;</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>};</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_&gt;</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno"><a class="line" href="structtatami_1_1ConsecutiveOracle.html">   54</a></span><span class="keyword">struct </span><a class="code hl_struct" href="structtatami_1_1ConsecutiveOracle.html">ConsecutiveOracle</a> : <span class="keyword">public</span> <a class="code hl_struct" href="structtatami_1_1Oracle.html">Oracle</a>&lt;Index_&gt; {</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno"><a class="line" href="structtatami_1_1ConsecutiveOracle.html#a4efff1a6ab639d3d95b3ea617339bb56">   59</a></span>    <a class="code hl_function" href="structtatami_1_1ConsecutiveOracle.html#a4efff1a6ab639d3d95b3ea617339bb56">ConsecutiveOracle</a>(Index_ s, Index_ e) : end(e), counter(s) {}</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno"><a class="line" href="structtatami_1_1ConsecutiveOracle.html#a6ed7501a227b2ee9b96e78733f166f16">   61</a></span>    <span class="keywordtype">size_t</span> <a class="code hl_function" href="structtatami_1_1ConsecutiveOracle.html#a6ed7501a227b2ee9b96e78733f166f16">predict</a>(Index_* buffer, <span class="keywordtype">size_t</span> number) {</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keyword">auto</span> upto = counter + number;</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        <span class="keywordflow">if</span> (upto &gt;= end) {</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            number = end - counter;</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            upto = end;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        std::iota(buffer, buffer + number, counter);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        counter = upto;</div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        <span class="keywordflow">return</span> number;</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>    }</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>    <span class="keywordtype">size_t</span> end;</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keywordtype">size_t</span> counter = 0;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>};</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>}</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:19</div></div>
-<div class="ttc" id="astructtatami_1_1ConsecutiveOracle_html"><div class="ttname"><a href="structtatami_1_1ConsecutiveOracle.html">tatami::ConsecutiveOracle</a></div><div class="ttdoc">Predict future accesses of a consecutive sequence.</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:53</div></div>
-<div class="ttc" id="astructtatami_1_1ConsecutiveOracle_html_a4efff1a6ab639d3d95b3ea617339bb56"><div class="ttname"><a href="structtatami_1_1ConsecutiveOracle.html#a4efff1a6ab639d3d95b3ea617339bb56">tatami::ConsecutiveOracle::ConsecutiveOracle</a></div><div class="ttdeci">ConsecutiveOracle(Index_ s, Index_ e)</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:58</div></div>
-<div class="ttc" id="astructtatami_1_1ConsecutiveOracle_html_a6ed7501a227b2ee9b96e78733f166f16"><div class="ttname"><a href="structtatami_1_1ConsecutiveOracle.html#a6ed7501a227b2ee9b96e78733f166f16">tatami::ConsecutiveOracle::predict</a></div><div class="ttdeci">size_t predict(Index_ *buffer, size_t number)</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:60</div></div>
+<div class="ttc" id="astructtatami_1_1ConsecutiveOracle_html"><div class="ttname"><a href="structtatami_1_1ConsecutiveOracle.html">tatami::ConsecutiveOracle</a></div><div class="ttdoc">Predict future accesses of a consecutive sequence.</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:54</div></div>
+<div class="ttc" id="astructtatami_1_1ConsecutiveOracle_html_a4efff1a6ab639d3d95b3ea617339bb56"><div class="ttname"><a href="structtatami_1_1ConsecutiveOracle.html#a4efff1a6ab639d3d95b3ea617339bb56">tatami::ConsecutiveOracle::ConsecutiveOracle</a></div><div class="ttdeci">ConsecutiveOracle(Index_ s, Index_ e)</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:59</div></div>
+<div class="ttc" id="astructtatami_1_1ConsecutiveOracle_html_a6ed7501a227b2ee9b96e78733f166f16"><div class="ttname"><a href="structtatami_1_1ConsecutiveOracle.html#a6ed7501a227b2ee9b96e78733f166f16">tatami::ConsecutiveOracle::predict</a></div><div class="ttdeci">size_t predict(Index_ *buffer, size_t number)</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:61</div></div>
 <div class="ttc" id="astructtatami_1_1FixedOracle_html"><div class="ttname"><a href="structtatami_1_1FixedOracle.html">tatami::FixedOracle</a></div><div class="ttdoc">Predict future accesses from a known sequence.</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:21</div></div>
-<div class="ttc" id="astructtatami_1_1FixedOracle_html_a931ccde93f123c8c718f808e89cf8f36"><div class="ttname"><a href="structtatami_1_1FixedOracle.html#a931ccde93f123c8c718f808e89cf8f36">tatami::FixedOracle::predict</a></div><div class="ttdeci">size_t predict(Index_ *predicted, size_t number)</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:28</div></div>
-<div class="ttc" id="astructtatami_1_1FixedOracle_html_ac04dcf58c95882cf83bc5204b1944776"><div class="ttname"><a href="structtatami_1_1FixedOracle.html#ac04dcf58c95882cf83bc5204b1944776">tatami::FixedOracle::FixedOracle</a></div><div class="ttdeci">FixedOracle(const Index_ *r, size_t n)</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:26</div></div>
+<div class="ttc" id="astructtatami_1_1FixedOracle_html_a931ccde93f123c8c718f808e89cf8f36"><div class="ttname"><a href="structtatami_1_1FixedOracle.html#a931ccde93f123c8c718f808e89cf8f36">tatami::FixedOracle::predict</a></div><div class="ttdeci">size_t predict(Index_ *predicted, size_t number)</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:29</div></div>
+<div class="ttc" id="astructtatami_1_1FixedOracle_html_ac04dcf58c95882cf83bc5204b1944776"><div class="ttname"><a href="structtatami_1_1FixedOracle.html#ac04dcf58c95882cf83bc5204b1944776">tatami::FixedOracle::FixedOracle</a></div><div class="ttdeci">FixedOracle(const Index_ *r, size_t n)</div><div class="ttdef"><b>Definition:</b> Oracles.hpp:27</div></div>
 <div class="ttc" id="astructtatami_1_1Oracle_html"><div class="ttname"><a href="structtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests.</div><div class="ttdef"><b>Definition:</b> Options.hpp:62</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

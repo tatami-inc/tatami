@@ -500,7 +500,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>FullDenseExtractor</code> object for dense access to full rows. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>FullDenseExtractor</code> object for dense access to full rows. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#aa29b9428f53453369256d7febc9ed0fc">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -555,7 +555,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>BlockDenseExtractor</code> object for dense access to a block of each row. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>BlockDenseExtractor</code> object for dense access to a block of each row. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a7d96127de1d22a5d976b9a2f46ae0ab4">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -603,7 +603,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>IndexDenseExtractor</code> object for dense access to a indexed subset of each row. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>IndexDenseExtractor</code> object for dense access to a indexed subset of each row. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#aba9cc13a9df94e59d03772bde6ef565a">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -640,7 +640,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>FullDenseExtractor</code> object for dense access to full columns. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>FullDenseExtractor</code> object for dense access to full columns. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a9f6c3453a5c0c28a764f300f45bf860f">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -695,7 +695,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>BlockDenseExtractor</code> object for dense access to a block of each column. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>BlockDenseExtractor</code> object for dense access to a block of each column. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a3ddceca01de5d1985aafa6e8bfdcf604">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -743,7 +743,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>IndexDenseExtractor</code> object for dense access to a indexed subset of each column. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>IndexDenseExtractor</code> object for dense access to a indexed subset of each column. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a28ddabd4babf3d162f0901578c520a9a">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -780,7 +780,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>FullSparseExtractor</code> object for sparse access to full rows. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>FullSparseExtractor</code> object for sparse access to full rows. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#adee56bee86c500a4f4a3940e8ef18459">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -835,7 +835,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>BlockSparseExtractor</code> object for sparse access to a block of each row. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>BlockSparseExtractor</code> object for sparse access to a block of each row. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a82e592bf93aa216045a93efb923107e6">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -883,7 +883,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>IndexSparseExtractor</code> object for sparse access to a indexed subset of each row. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>IndexSparseExtractor</code> object for sparse access to a indexed subset of each row. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#aa452ec9e476c69cdd9c7079a4d382af9">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -920,7 +920,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>FullSparseExtractor</code> object for sparse access to full columns. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>FullSparseExtractor</code> object for sparse access to full columns. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a6fcbdc787f4b4980f57c228dc89f6289">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -975,7 +975,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>BlockSparseExtractor</code> object for sparse access to a block of each column. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>BlockSparseExtractor</code> object for sparse access to a block of each column. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a369b6b56d1f290d0b298ef840119468a">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -1023,7 +1023,7 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code>IndexSparseExtractor</code> object for sparse access to a indexed subset of each column. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code>IndexSparseExtractor</code> object for sparse access to a indexed subset of each column. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a120c3a294a1ffd715c86b136902b8c51">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 

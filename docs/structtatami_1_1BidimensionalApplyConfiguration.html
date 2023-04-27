@@ -207,7 +207,7 @@ template&lt;bool sparse_&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An <code>Extractor</code> object for iterating over the target dimension in the range <code>[s, e)</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>An <code>Extractor</code> object for iterating over the target dimension in the range <code>[s, e)</code>. It is assumed that the caller will iteratively call <code>fetch()</code> for consecutive indices from <code>s</code> to <code>e</code>. </dd></dl>
 
 </div>
 </div>
@@ -262,7 +262,7 @@ template&lt;bool sparse_&gt; </div>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An <code>Extractor</code> object for iterating over the non-target dimensions, extracting the range <code>[s, e)</code> from each target vector. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>An <code>Extractor</code> object for iterating over the non-target dimensions, extracting the range <code>[s, e)</code> from each target vector. It is assumed that the caller will iteratively call <code>fetch()</code> for consecutive indices from 0 to <code><a class="el" href="structtatami_1_1BidimensionalApplyConfiguration.html#ada5ee6180bdc4d0c5200db2056143c51">BidimensionalApplyConfiguration::other_dim</a></code>. </dd></dl>
 
 </div>
 </div>
