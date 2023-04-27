@@ -81,6 +81,12 @@ TEST_F(SparseUtilsTest, Basic) {
     auto rprefs = sparse_row->dimension_preference();
     EXPECT_TRUE(rprefs.first > 0);
     EXPECT_TRUE(rprefs.second == 0);
+
+    EXPECT_FALSE(sparse_row->uses_oracle(true));
+    {
+        auto wrk = sparse_row->sparse_column();
+        wrk->set_oracle(nullptr); // no-op.
+    }
 }
 
 /*************************************

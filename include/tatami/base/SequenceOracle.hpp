@@ -22,26 +22,24 @@ namespace tatami {
  */
 template<typename Index_>
 struct SequenceOracle {
-protected:
     /**
      * @cond
      */
-    SequenceOracle() = default;
     virtual ~SequenceOracle() = default;
     /**
      * @endcond
      */
 
-public:
     /**
      * Predict the indices to be accessed in future `fetch()` calls.
      *
-     * @param n Maximum number of indices to predict.
+     * @param[out] predicted Pointer to an array in which to store the predicted indices of future elements to be accessed by `fetch()`.
+     * @param number Maximum number of indices to predict.
      *
-     * @return Pointer to an array of indices of the future elements to be accessed by `fetch()`.
-     * The length of this array is also returned and is guaranteed to be less than `n`.
+     * @return Number of indices that were predicted.
+     * This is guaranteed to be no greater than `number`.
      */
-    virtual std::pair<const Index_*, size_t> predict(size_t n) = 0;
+    virtual size_t predict(Index_* predicted, size_t number) = 0;
 };
 
 /**
@@ -57,15 +55,16 @@ struct FixedOracle : public SequenceOracle<Index_> {
      */
     FixedOracle(const Index_* r, size_t n) : reference(r), length(n) {}
 
-    std::pair<const Index_*, size_t> predict(size_t n) {
-        auto upto = counter + n;
+    size_t predict(Index_* predicted, size_t number) {
+        auto upto = counter + number;
         auto out = reference + counter;
         if (upto >= length) {
-            n = length - counter;
+            number = length - counter;
             upto = length;
         }
         counter = upto;
-        return std::make_pair(out, n);
+        std::copy(out, out + number, predicted);
+        return number;
     }
 private:
     const Index_* reference;
@@ -88,25 +87,21 @@ struct ConsecutiveOracle : public SequenceOracle<Index_> {
      */
     ConsecutiveOracle(Index_ s, Index_ e) : end(e), counter(s) {}
 
-    std::pair<const Index_*, size_t> predict(size_t n) {
-        auto upto = counter + n;
+    size_t predict(Index_* buffer, size_t number) {
+        auto upto = counter + number;
         if (upto >= end) {
-            n = end - counter;
+            number = end - counter;
             upto = end;
         }
-        buffer.resize(n);
-        std::iota(buffer.begin(), buffer.end(), counter);
+        std::iota(buffer, buffer + number, counter);
         counter = upto;
-        return std::make_pair(buffer.data(), buffer.size());
+        return number;
     }
 private:
     size_t end;
 
     size_t counter = 0;
-
-    std::vector<Index_> buffer;
 };
-
 
 }
 

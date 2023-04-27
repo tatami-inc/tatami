@@ -14,7 +14,7 @@
 namespace tatami {
 
 /**
- * Type of selection along a dimension:
+ * Type of selection along a dimension, typically the extraction dimension:
  *
  * - `FULL`: selects the full extent of the dimension, i.e., all elements in the dimension.
  * - `BLOCK`: selects a contiguous block of elements in the dimension.
@@ -23,69 +23,33 @@ namespace tatami {
 enum class DimensionSelectionType : char { FULL, BLOCK, INDEX };
 
 /**
- * @brief Options for sparse extraction.
+ * @brief Options for iteration and extraction.
  */
-struct SparseExtractionOptions {
+struct Options {
     /** 
      * Whether to extract the indices in `SparseExtractor::fetch`.
      * If set to `false`, this can be used to avoid unnecessary computation and copying in `Matrix` methods.
      */
-    bool extract_index = true;
+    bool sparse_extract_index = true;
 
     /** 
      * Whether to extract the values in `SparseExtractor::fetch`.
      * If set to `false`, this can be used to avoid unnecessary computation and copying in `Matrix` methods.
      */
-    bool extract_value = true;
+    bool sparse_extract_value = true;
 
     /**
      * Whether the structural non-zeros returned by `SparseExtractor::fetch` should be ordered by increasing index.
      * Setting this to `false` may reduce computational work in situations where the order of non-zero elements does not matter.
      */
-    bool ordered_index = true;
-};
+    bool sparse_ordered_index = true;
 
-/**
- * @brief Options for managing iteration.
- *
- * This refers to access to elements along the iteration dimension,
- * across multiple calls to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
- *
- * @tparam Index_ Integer type of the row/column indices.
- */
-template<typename Index_>
-struct IterationOptions {
     /** 
      * Whether to ask implementations to cache information from every 
      * Specifically, this refers to intermediate element-specific values that can be re-used if the same dimension element is requested in a subsequent call.
      * This may enable faster iteration if the same `Extractor` object is re-used for multiple passes over the same matrix.
      */
     bool cache_for_reuse = false;
-
-   /**
-     * An oracle to define the future access pattern of elements on the iteration dimension.
-     * It is expected that calls to `fetch()` are in exactly the same order as those returned by `SequenceOracle::predict`.
-     * If `NULL`, `Matrix` implementations may assume that elements are to be accessed in random order.
-     */
-    std::shared_ptr<SequenceOracle<Index_> > pattern = nullptr;
-};
-
-/**
- * @brief Options for accessing elements. 
- *
- * @tparam Index_ Integer type of the row/column indices.
- */
-template<typename Index_>
-struct Options {
-    /**
-     * Options for sparse extraction.
-     */
-    SparseExtractionOptions sparse;
-
-    /**
-     * Options to define the access pattern on the iteration dimension.
-     */
-    IterationOptions<Index_> access;
 };
 
 }

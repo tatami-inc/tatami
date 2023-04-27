@@ -15,6 +15,8 @@ TEST(DenseMatrix, Basic) {
     for (auto& i : contents) { i = counter++; }
 
     tatami::DenseColumnMatrix<double> mat(10, 20, contents);
+
+    EXPECT_FALSE(mat.sparse());
     EXPECT_FALSE(mat.prefer_rows());
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
@@ -37,6 +39,12 @@ TEST(DenseMatrix, Basic) {
             }
             EXPECT_EQ(wrk->fetch(i), expected);
         }
+    }
+
+    EXPECT_FALSE(mat.uses_oracle(true));
+    {
+        auto wrk = mat.dense_row();
+        wrk->set_oracle(nullptr); // no-op.
     }
 }
 

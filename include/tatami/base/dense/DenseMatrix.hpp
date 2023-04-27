@@ -70,6 +70,8 @@ public:
 
     bool prefer_rows() const { return row_; }
 
+    bool uses_oracle(bool) const { return false; }
+
     using Matrix<Value_, Index_>::dense_row;
 
     using Matrix<Value_, Index_>::dense_column;
@@ -101,12 +103,17 @@ private:
             }
         }
 
+    public:
         const Index_* index_start() const {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 return indices.data();
             } else {
                 return NULL;
             }
+        }
+
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_> >) {
+            return;
         }
 
     public:
@@ -186,32 +193,32 @@ private:
     }
 
 public:
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options<Index_>& opt) const {
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options& opt) const {
         auto ptr = new DenseBase<true, DimensionSelectionType::FULL>(this);
         return std::unique_ptr<FullDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const {
         auto ptr = new DenseBase<true, DimensionSelectionType::BLOCK>(this, block_start, block_length);
         return std::unique_ptr<BlockDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const {
         auto ptr = new DenseBase<true, DimensionSelectionType::INDEX>(this, std::move(indices));
         return std::unique_ptr<IndexDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options& opt) const {
         auto ptr = new DenseBase<false, DimensionSelectionType::FULL>(this);
         return std::unique_ptr<FullDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const {
         auto ptr = new DenseBase<false, DimensionSelectionType::BLOCK>(this, block_start, block_length);
         return std::unique_ptr<BlockDenseExtractor<Value_, Index_> >(ptr);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const {
         auto ptr = new DenseBase<false, DimensionSelectionType::INDEX>(this, std::move(indices));
         return std::unique_ptr<IndexDenseExtractor<Value_, Index_> >(ptr);
     }

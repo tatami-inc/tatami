@@ -22,6 +22,22 @@ const Value_* remap_dense(const Value_* input, Value_* buffer, const std::vector
     return buffer;
 }
 
+template<typename Index_, class IndexStorage_>
+struct SubsetOracle : public SequenceOracle<Index_> {
+    SubsetOracle(std::unique_ptr<SequenceOracle<Index_> > o, const IndexStorage_* is) : source(std::move(o)), indices(is) {}
+
+    size_t predict(Index_* buffer, size_t length) {
+        size_t filled = source->predict(buffer, length);
+        for (size_t i = 0; i < filled; ++i) {
+            buffer[i] = (*indices)[buffer[i]];
+        }
+        return filled;
+    }
+private:
+    std::unique_ptr<SequenceOracle<Index_> > source;
+    const IndexStorage_* indices;
+};
+
 template<DimensionSelectionType selection_, bool sparse_, typename Value_, typename Index_, class IndexStorage_>
 struct PerpendicularExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
     PerpendicularExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, const IndexStorage_& in) : 
@@ -37,6 +53,11 @@ struct PerpendicularExtractor : public Extractor<selection_, sparse_, Value_, In
         }
     }
 
+protected:
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal;
+    const IndexStorage_* indices;
+
+public:
     const Index_* index_start() const {
         if constexpr(selection_ == DimensionSelectionType::INDEX) {
             return internal->index_start();
@@ -45,9 +66,9 @@ struct PerpendicularExtractor : public Extractor<selection_, sparse_, Value_, In
         }
     }
 
-protected:
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal;
-    const IndexStorage_* indices;
+    void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) {
+        internal->set_oracle(std::make_unique<SubsetOracle<Index_, IndexStorage_> >(std::move(o), indices));
+    }
 };
 
 template<DimensionSelectionType selection_, typename Value_, typename Index_, class IndexStorage_>
@@ -74,7 +95,7 @@ template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename
 std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_perpendicular(
     const Matrix<Value_, Index_>* mat, 
     const IndexStorage_& indices, 
-    const Options<Index_>& options, 
+    const Options& options, 
     Args_... args)
 {
     // TODO: handle variable access patterns here.

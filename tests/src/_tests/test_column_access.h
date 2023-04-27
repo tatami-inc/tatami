@@ -13,20 +13,20 @@ void test_simple_column_access_base(const Matrix* ptr, const Matrix2* ref, bool 
     auto pwork = ptr->dense_column(args...);
     auto swork = ptr->sparse_column(args...);
 
-    tatami::Options<int> opt;
-    opt.sparse.ordered_index = false;
+    tatami::Options opt;
+    opt.sparse_ordered_index = false;
     auto swork_uns = ptr->sparse_column(args..., opt);
-    opt.sparse.ordered_index = true;
+    opt.sparse_ordered_index = true;
 
-    opt.sparse.extract_index = false;
+    opt.sparse_extract_index = false;
     auto swork_v = ptr->sparse_column(args..., opt);
-    opt.sparse.extract_value = false;
+    opt.sparse_extract_value = false;
     auto swork_n = ptr->sparse_column(args..., opt);
-    opt.sparse.extract_index = true;
+    opt.sparse_extract_index = true;
     auto swork_i = ptr->sparse_column(args..., opt);
-    opt.sparse.extract_value = true;
+    opt.sparse_extract_value = true;
 
-    opt.access.cache_for_reuse = true;
+    opt.cache_for_reuse = true;
     auto cwork = ptr->dense_column(args..., opt); 
 
     for (int i = 0; i < NC; i += jump) {

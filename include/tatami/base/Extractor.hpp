@@ -4,6 +4,7 @@
 #include <type_traits>
 #include "SparseRange.hpp"
 #include "Options.hpp"
+#include "SequenceOracle.hpp"
 
 /**
  * @file Extractor.hpp
@@ -20,17 +21,17 @@ namespace tatami {
 
 /**
  * @tparam Index_ Row/column index type, should be integer.
- * @brief Virtual base class for full access.
+ * @brief Virtual base extractor class. 
  * 
- * This is an interface class that provides access to the full extent of the extraction dimension.
+ * This is an interface class for all extractors.
  */
 template<typename Index_>
-struct FullExtractor {
+struct ExtractorBase {
 protected:
     /**
      * @cond
      */
-    FullExtractor() = default;
+    ExtractorBase() = default;
     /**
      * @endcond
      */
@@ -39,11 +40,28 @@ public:
     /**
      * @cond
      */
-    virtual ~FullExtractor() = default;
+    virtual ~ExtractorBase() = default;
     /**
      * @endcond
      */
 
+    /**
+     * Set the oracle, to predict the access pattern of future `fetch()` calls.
+     * 
+     * @param Unique pointer to an oracle.
+     * This can also be set to `nullptr` to disable predictions.
+     */
+    virtual void set_oracle(std::unique_ptr<SequenceOracle<Index_> > o) = 0;
+};
+
+/**
+ * @tparam Index_ Row/column index type, should be integer.
+ * @brief Virtual base class for full access.
+ * 
+ * This is an interface class that provides access to the full extent of the extraction dimension.
+ */
+template<typename Index_>
+struct FullExtractor : public ExtractorBase<Index_> {
     /**
      * Full extent of the extraction dimension.
      */
@@ -57,25 +75,7 @@ public:
  * This is an interface class that provides access to a contiguous block of elements along the extraction dimension.
  */
 template<typename Index_>
-struct BlockExtractor {
-protected:
-    /**
-     * @cond
-     */
-    BlockExtractor() = default;
-    /**
-     * @endcond
-     */
-
-public:
-    /**
-     * @cond
-     */
-    virtual ~BlockExtractor() = default;
-    /**
-     * @endcond
-     */
-
+struct BlockExtractor : public ExtractorBase<Index_> {
     /**
      * Index of the start of the contiguous block of entries along the extraction dimension.
      */
@@ -95,25 +95,7 @@ public:
  * where the subset is defined by a vector of sorted and unique indices.
  */
 template<typename Index_> 
-struct IndexExtractor {
-protected:
-    /**
-     * @cond
-     */
-    IndexExtractor() = default;
-    /**
-     * @endcond
-     */
-
-public:
-    /**
-     * @cond
-     */
-    virtual ~IndexExtractor() = default;
-    /**
-     * @endcond
-     */
-
+struct IndexExtractor : public ExtractorBase<Index_> {
     /**
      * Unlike `index_length`, this is implemented as a virtual method to avoid invalidation of pointers when `IndexExtractor` instances are copied or moved.
      *

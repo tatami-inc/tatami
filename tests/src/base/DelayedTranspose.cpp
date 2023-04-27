@@ -9,6 +9,7 @@
 
 #include "../_tests/test_row_access.h"
 #include "../_tests/test_column_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
 template<class PARAM>
@@ -155,4 +156,39 @@ INSTANTIATE_TEST_CASE_P(
             std::vector<double>({ 0.7, 0.03 })
         )
     )
+);
+
+class TransposeOracleTest : public ::testing::TestWithParam<bool> {
+protected:
+    size_t nrow = 199, ncol = 201;
+    std::shared_ptr<tatami::NumericMatrix> tdense, tsparse, wrapped_dense, wrapped_sparse;
+
+    void extra_assemble() {
+        auto simulated = simulate_sparse_vector<double>(nrow * ncol, 0.05);
+        auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(simulated)));
+        auto sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
+        tdense = tatami::make_DelayedTranspose(dense);
+        tsparse = tatami::make_DelayedTranspose(sparse);
+        wrapped_dense = tatami::make_DelayedTranspose(make_CrankyMatrix(dense));
+        wrapped_sparse = tatami::make_DelayedTranspose(make_CrankyMatrix(sparse));
+    }
+};
+
+TEST_P(TransposeOracleTest, Validate) {
+    auto random = GetParam();
+    extra_assemble();
+    EXPECT_FALSE(tdense->uses_oracle(true));
+    EXPECT_TRUE(wrapped_dense->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_dense.get(), tdense.get(), random);
+    test_oracle_column_access(wrapped_sparse.get(), tsparse.get(), random);
+
+    test_oracle_row_access(wrapped_dense.get(), tdense.get(), random);
+    test_oracle_row_access(wrapped_sparse.get(), tsparse.get(), random);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    TransposeTest,
+    TransposeOracleTest,
+    ::testing::Values(true, false)  // use random or consecutive oracle.
 );
