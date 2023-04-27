@@ -155,6 +155,10 @@ public:
         }
     }
 
+    bool uses_oracle(bool) const {
+        return false; // placeholder for proper support.
+    }
+
     using Matrix<Value_, Index_>::dense_row;
 
     using Matrix<Value_, Index_>::dense_column;
@@ -199,6 +203,12 @@ private:
             }
         }
 
+    protected:
+        const HDF5DenseMatrix* parent;
+        Hdf5WorkspaceBase base;
+        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
+
+    public:
         const Index_* index_start() const {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 return indices.data();
@@ -218,10 +228,11 @@ private:
         }
 
         friend class HDF5DenseMatrix;
-    protected:
-        const HDF5DenseMatrix* parent;
-        Hdf5WorkspaceBase base;
-        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
+
+    public:
+        void set_oracle(std::unique_ptr<SequenceOracle<Index_> >) {
+            return; // TODO: add proper support for oracle handling.
+        }
     };
 
 private:
@@ -332,7 +343,7 @@ private:
 
 private:
     template<bool accrow_, DimensionSelectionType selection_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, false, Value_, Index_> > populate(const Options<Index_>& opt, Args_... args) const {
+    std::unique_ptr<Extractor<selection_, false, Value_, Index_> > populate(const Options& opt, Args_... args) const {
         std::unique_ptr<Extractor<selection_, false, Value_, Index_> > output;
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
@@ -356,27 +367,27 @@ private:
     }
 
 public:
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options<Index_>& opt) const {
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options& opt) const {
         return populate<true, DimensionSelectionType::FULL>(opt);
     }
 
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const {
         return populate<true, DimensionSelectionType::BLOCK>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options<Index_>& opt) const {
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const {
         return populate<true, DimensionSelectionType::INDEX>(opt, std::move(indices));
     }
 
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options<Index_>& opt) const {
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options& opt) const {
         return populate<false, DimensionSelectionType::FULL>(opt);
     }
 
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options<Index_>& opt) const {
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const {
         return populate<false, DimensionSelectionType::BLOCK>(opt, block_start, block_length);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options<Index_>& opt) const {
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const {
         return populate<false, DimensionSelectionType::INDEX>(opt, std::move(indices));
     }
 };
