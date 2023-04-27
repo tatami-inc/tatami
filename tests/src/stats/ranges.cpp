@@ -195,23 +195,6 @@ TEST(ComputingDimRanges, ColumnRanges) {
     EXPECT_EQ(ref, tatami::column_ranges(sparse_column.get(), 3));
 }
 
-TEST(ComputingDimRanges, Configuration) {
-    typedef tatami::stats::RangeFactory<double> RangeFact;
-
-    EXPECT_TRUE(tatami::stats::has_sparse_running<RangeFact>::value);
-    EXPECT_TRUE(tatami::stats::has_sparse_running_parallel<RangeFact>::value);
-    EXPECT_TRUE(tatami::stats::has_dense_running<RangeFact>::value);
-    EXPECT_TRUE(tatami::stats::has_dense_running_parallel<RangeFact>::value);
-    EXPECT_TRUE(tatami::stats::has_sparse_direct<RangeFact>::value);
-
-    typedef decltype(std::declval<RangeFact>().dense_direct()) RangeDense;
-    const bool ndc = tatami::stats::has_nonconst_dense_compute<RangeDense, double, int>::value;
-    EXPECT_FALSE(ndc);
-    typedef decltype(std::declval<RangeFact>().sparse_direct()) RangeSparse;
-    const bool nsc = tatami::stats::has_nonconst_sparse_compute<RangeSparse, double, int>::value;
-    EXPECT_FALSE(nsc);
-}
-
 /********************************************/
 
 TEST(ComputingDimRanges, AllZeros) {
