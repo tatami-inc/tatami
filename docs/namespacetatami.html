@@ -95,6 +95,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1ArrayView.html">ArrayView</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">View into a pre-allocated array.  <a href="classtatami_1_1ArrayView.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1BidimensionalApplyConfiguration.html">BidimensionalApplyConfiguration</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration for bidimensional apply.  <a href="structtatami_1_1BidimensionalApplyConfiguration.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1BlockExtractor.html">BlockExtractor</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual base class for block access.  <a href="structtatami_1_1BlockExtractor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -178,6 +181,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dense matrix representation.  <a href="classtatami_1_1DenseMatrix.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DirectApplyConfiguration.html">DirectApplyConfiguration</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration for direct apply.  <a href="structtatami_1_1DirectApplyConfiguration.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1ExtractorBase.html">ExtractorBase</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual base extractor class.  <a href="structtatami_1_1ExtractorBase.html#details">More...</a><br /></td></tr>
@@ -330,45 +336,45 @@ Functions</h2></td></tr>
 <tr class="memitem:a39d4f99c974648a98b6d9cf99e4a8ec4"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
 <tr class="memitem:a39d4f99c974648a98b6d9cf99e4a8ec4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a39d4f99c974648a98b6d9cf99e4a8ec4">write_sparse_matrix_to_hdf5</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *mat, H5::Group &amp;location)</td></tr>
 <tr class="separator:a39d4f99c974648a98b6d9cf99e4a8ec4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0692b6c82646df0131b9872431a11bf2"><td class="memTemplParams" colspan="2">template&lt;int MARGIN, typename T , typename IDX , class Factory &gt; </td></tr>
-<tr class="memitem:a0692b6c82646df0131b9872431a11bf2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, Factory &amp;factory, int threads=1)</td></tr>
-<tr class="separator:a0692b6c82646df0131b9872431a11bf2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acde903394a6c87915d3262d08b48fdea"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:acde903394a6c87915d3262d08b48fdea"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#acde903394a6c87915d3262d08b48fdea">column_medians</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:acde903394a6c87915d3262d08b48fdea"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5406cb065686144b1fa807d6c1af09d1"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a5406cb065686144b1fa807d6c1af09d1"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a5406cb065686144b1fa807d6c1af09d1">row_medians</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:a5406cb065686144b1fa807d6c1af09d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3ebbc4660ae0ae0bb1cb514f193837ff"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a3ebbc4660ae0ae0bb1cb514f193837ff"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3ebbc4660ae0ae0bb1cb514f193837ff">column_maxs</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:a3ebbc4660ae0ae0bb1cb514f193837ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9c924a9443481b6598bce6968a920e4"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:ae9c924a9443481b6598bce6968a920e4"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ae9c924a9443481b6598bce6968a920e4">row_maxs</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:ae9c924a9443481b6598bce6968a920e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae0436862fff854690153b3c19f286674"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:ae0436862fff854690153b3c19f286674"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ae0436862fff854690153b3c19f286674">column_mins</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:ae0436862fff854690153b3c19f286674"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa692c0282852e73b4617ce1d11fbc866"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:aa692c0282852e73b4617ce1d11fbc866"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aa692c0282852e73b4617ce1d11fbc866">row_mins</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:aa692c0282852e73b4617ce1d11fbc866"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17db0156d225f63b3d63fc4a27ea950d"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a17db0156d225f63b3d63fc4a27ea950d"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; std::vector&lt; Output &gt;, std::vector&lt; Output &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a17db0156d225f63b3d63fc4a27ea950d">column_ranges</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:a17db0156d225f63b3d63fc4a27ea950d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2954fabae4819e4dd1433a34691642e1"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a2954fabae4819e4dd1433a34691642e1"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; std::vector&lt; Output &gt;, std::vector&lt; Output &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a2954fabae4819e4dd1433a34691642e1">row_ranges</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:a2954fabae4819e4dd1433a34691642e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b06061261eeb15d1827dd7290162ae8"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a3b06061261eeb15d1827dd7290162ae8"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3b06061261eeb15d1827dd7290162ae8">column_sums</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:a3b06061261eeb15d1827dd7290162ae8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d121e9c7c0ded4ba86382bd83abf103"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a3d121e9c7c0ded4ba86382bd83abf103"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3d121e9c7c0ded4ba86382bd83abf103">row_sums</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:a3d121e9c7c0ded4ba86382bd83abf103"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a101a4123f87b6c4fd919004c2f3d3a91"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a101a4123f87b6c4fd919004c2f3d3a91"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a101a4123f87b6c4fd919004c2f3d3a91">column_variances</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:a101a4123f87b6c4fd919004c2f3d3a91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2aa54193cf4c92ace983cba8c118ca1a"><td class="memTemplParams" colspan="2">template&lt;typename Output  = double, typename T , typename IDX &gt; </td></tr>
-<tr class="memitem:a2aa54193cf4c92ace983cba8c118ca1a"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a2aa54193cf4c92ace983cba8c118ca1a">row_variances</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *p, int threads=1)</td></tr>
-<tr class="separator:a2aa54193cf4c92ace983cba8c118ca1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a44202790861791b1ed9df6d480c69f6a"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a44202790861791b1ed9df6d480c69f6a"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a44202790861791b1ed9df6d480c69f6a">column_medians</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:a44202790861791b1ed9df6d480c69f6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab877f67694b3fa500f59469f044b1c01"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:ab877f67694b3fa500f59469f044b1c01"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ab877f67694b3fa500f59469f044b1c01">row_medians</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:ab877f67694b3fa500f59469f044b1c01"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8102a2423efab5e329543f4235ac2290"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a8102a2423efab5e329543f4235ac2290"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8102a2423efab5e329543f4235ac2290">column_maxs</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:a8102a2423efab5e329543f4235ac2290"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47890bfd538f65971f9e5dba5e1ed785"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a47890bfd538f65971f9e5dba5e1ed785"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a47890bfd538f65971f9e5dba5e1ed785">row_maxs</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:a47890bfd538f65971f9e5dba5e1ed785"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a60e44772f82183100c7c25c181479b56"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a60e44772f82183100c7c25c181479b56"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a60e44772f82183100c7c25c181479b56">column_mins</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:a60e44772f82183100c7c25c181479b56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bcdcb0499b36b5b844ebd88fc30eefe"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a3bcdcb0499b36b5b844ebd88fc30eefe"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3bcdcb0499b36b5b844ebd88fc30eefe">row_mins</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:a3bcdcb0499b36b5b844ebd88fc30eefe"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab5eff79824930c458e730d23f640c1ab"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:ab5eff79824930c458e730d23f640c1ab"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ab5eff79824930c458e730d23f640c1ab">column_ranges</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:ab5eff79824930c458e730d23f640c1ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2b2475a166ad744b31b1275e26e562be"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a2b2475a166ad744b31b1275e26e562be"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a2b2475a166ad744b31b1275e26e562be">row_ranges</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:a2b2475a166ad744b31b1275e26e562be"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3aab6733d637b66abdf45f7300d2e1ba"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a3aab6733d637b66abdf45f7300d2e1ba"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3aab6733d637b66abdf45f7300d2e1ba">column_sums</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:a3aab6733d637b66abdf45f7300d2e1ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a53a658059404691856bef57fb85d83d6"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a53a658059404691856bef57fb85d83d6"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a53a658059404691856bef57fb85d83d6">row_sums</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:a53a658059404691856bef57fb85d83d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29ce7a2219ea60d45de1aa3d4de66063"><td class="memTemplParams" colspan="2">template&lt;bool parallel_ = true, class Function_ &gt; </td></tr>
+<tr class="memitem:a29ce7a2219ea60d45de1aa3d4de66063"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a> (Function_ fun, size_t tasks, size_t threads)</td></tr>
+<tr class="separator:a29ce7a2219ea60d45de1aa3d4de66063"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac37af9a76d15f08a3634881696a27f65"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:ac37af9a76d15f08a3634881696a27f65"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac37af9a76d15f08a3634881696a27f65">column_variances</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:ac37af9a76d15f08a3634881696a27f65"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab806279616e19f6150376a7c07d5b64b"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:ab806279616e19f6150376a7c07d5b64b"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ab806279616e19f6150376a7c07d5b64b">row_variances</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
+<tr class="separator:ab806279616e19f6150376a7c07d5b64b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87c52cf8a974ad0025550b002d391d39"><td class="memTemplParams" colspan="2">template&lt;int margin, class <a class="el" href="classtatami_1_1Matrix.html">Matrix</a> , typename Id &gt; </td></tr>
 <tr class="memitem:a87c52cf8a974ad0025550b002d391d39"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &gt;, std::vector&lt; size_t &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a87c52cf8a974ad0025550b002d391d39">bind_intersection</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &gt; &gt; &amp;inputs, const std::vector&lt; const Id * &gt; &amp;ids)</td></tr>
 <tr class="separator:a87c52cf8a974ad0025550b002d391d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1346,153 +1352,21 @@ template&lt;typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a0692b6c82646df0131b9872431a11bf2" name="a0692b6c82646df0131b9872431a11bf2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0692b6c82646df0131b9872431a11bf2">&#9670;&#160;</a></span>apply()</h2>
+<a id="a44202790861791b1ed9df6d480c69f6a" name="a44202790861791b1ed9df6d480c69f6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a44202790861791b1ed9df6d480c69f6a">&#9670;&#160;</a></span>column_medians()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;int MARGIN, typename T , typename IDX , class Factory &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">void tatami::apply </td>
-          <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Factory &amp;&#160;</td>
-          <td class="paramname"><em>factory</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">MARGIN</td><td>The dimension over which to apply the calculation of statistics, i.e., rows (0) or columns (1). </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be summable. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices. </td></tr>
-    <tr><td class="paramname">Factory</td><td>Factory class to create the statistic-calculating classes.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">factory</td><td>Instance of a factory. </td></tr>
-    <tr><td class="paramname">threads</td><td>Number of threads to use for matrix traversal.</td></tr>
-  </table>
-  </dd>
-</dl>
-<h1><a class="anchor" id="apply_overview"></a>
-Overview</h1>
-<p>In this function, we consider the matrix to be a collection of "target vectors". When <code>MARGIN = 0</code>, each row is a target vector, whereas when <code>MARGIN = 1</code>, each column is a target vector. The goal is to compute some statistic along each of these target vectors, e.g., the per-row sums (<code><a class="el" href="namespacetatami.html#a3d121e9c7c0ded4ba86382bd83abf103">row_sums()</a></code>) or the per-column variances (<code><a class="el" href="namespacetatami.html#a2aa54193cf4c92ace983cba8c118ca1a">row_variances()</a></code>). (For brevity, we will refer to the vectors along the other dimension as "non-target vectors".)</p>
-<p><code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> will automatically choose the most efficient iteration strategy for the supplied matrix. This depends on whether the matrix is sparse or dense; whether the matrix prefers iteration across rows or columns; and whether the desired statistic must be computed directly (i.e., given one target vector at a time) or can be computed in a "running" fashion (i.e., given one non-target vector at a time).</p>
-<h1><a class="anchor" id="apply_factory"></a>
-Factory requirements</h1>
-<p>Arbitrary computations are supported via the supplied <code>factory</code> instance of the factory class. The factory class should have a <code>dense_direct()</code> method that accepts no arguments and returns an arbitrary object (referred to here as a "worker"). The worker should have a <code>compute()</code> method that accepts the index of the target vector and a <code>const</code> pointer to the target vector. This will be used in the "direct" iteration strategy, i.e., the statistic for a target vector is directly computed from the target vector's values in memory.</p>
-<p>Optionally, the factory class may have one or more of:</p>
-<ul>
-<li>A <code>sparse_direct()</code> method that accepts no arguments and returns an arbitrary worker (not necessarily of the same class as <code>dense_direct()</code>). The worker should have a <code>compute()</code> method that accepts the index of the target vector and a <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object containing the non-zero elements of the target vector. This will be favored for direct iteration over a sparse matrix.</li>
-<li>A <code>dense_running()</code> method that accepts no arguments and returns an arbitrary worker. The worker should have an <code>add()</code> method that accepts a pointer to a non-target vector. It may also have a <code>finish()</code> method, to be called to finalize any calculations after all non-target vectors are supplied. This will be favored for running iteration over a dense matrix.</li>
-<li>A <code>sparse_running()</code> method that accepts no arguments and returns an arbitrary worker. The worker should have an <code>add()</code> method that accepts a <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object specifying the non-zero elements of a non-target vector. It may also have a <code>finish()</code> method, to be called to finalize any calculations after all non-target vectors are supplied. This will be favored for running iteration over a sparse matrix.</li>
-</ul>
-<p><code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> will automatically choose the most appropriate iteration strategy based on the various inputs. If <code>MARGIN</code> is consistent with the matrix's preferred dimension for iteration, a direct strategy is used; otherwise a running strategy will be chosen. If the matrix is sparse, the <code>sparse_*()</code> versions of the methods above will be favored. If the factory does not implement the method for the best iteration strategy, <code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> will attempt other strategies, finally falling back to the <code>dense_direct()</code> method. We assume that iteration in the non-preferred dimension is costly and will attempt to avoid this wherever possible.</p>
-<p>Each of these <code>compute()</code> and <code>add()</code> methods should modify the contents of <code>factory</code> by reference. This is achieved by passing pointers from <code>factory</code> to each worker and writing to those pointers in <code>compute()</code> and <code>add()</code>. Computed statistics can then be extracted from <code>factory</code> once <code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> has finished running. Results should be agnostic to the choice of calculation, notwithstanding minor differences due to numerical precision.</p>
-<p>In the running calculations, the statistic for each target vector should be computed incrementally as new values become available in successive non-target vectors. For example, if the matrix prefers row access but we want to compute column sums, <code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> can use a running strategy to exploit the more efficient access pattern. This could be achieved in <code>add()</code> by iterating across the supplied non-target vector and adding each entry to the running statistic for the corresponding target vector.</p>
-<p>See the <code>VarianceFactory</code> in <code><a class="el" href="variances_8hpp.html" title="Compute row and column variances from a tatami::Matrix.">variances.hpp</a></code> for an example of a valid factory class.</p>
-<h1><a class="anchor" id="apply_mutable"></a>
-Mutating copies</h1>
-<p>In some applications, it may be necessary to mutate the buffers containing the contents of each target vector (e.g., sorting for quantile calculations). This is accommodated by replacing the <code>compute()</code> method with a <code>compute_copy()</code> method for the <code>*_direct()</code> workers.</p>
-<ul>
-<li>In the dense case, the <code>compute_copy()</code> method should accept the index of the target vector and a non-<code>const</code> pointer to a buffer with the values of the row/column.</li>
-<li>In the sparse case, the <code>compute_copy()</code> should accept the index of the target vector, the number of non-zero elements, a non-<code>const</code> pointer to a buffer with the non-zero values, and a non-<code>const</code> pointer to the indices of the non-zero elements. The worker may also contain a static <code>copy_mode</code> member specifying whether one or both the values/indices should be copied into the buffers, see the options for a <code>SparseCopyMode</code>.</li>
-</ul>
-<p>If a <code>compute_copy()</code> method is available, <code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> will create a copy upon row/column extraction and the developer is free to modify the buffers inside the <code>compute_copy()</code> method. Note that we do not provide a copyable option for the <code>*_running()</code> workers, as there is nothing to mutate when the target vector is never instantiated.</p>
-<p>See the <code>MedianFactory</code> in <code><a class="el" href="medians_8hpp.html" title="Compute row and column medians from a tatami::Matrix.">medians.hpp</a></code> for an example of a factory that mutates the buffer.</p>
-<h1><a class="anchor" id="method_prep"></a>
-Method-specific preparation</h1>
-<p>The factory class may optionally implement any number of the following methods:</p>
-<ul>
-<li><code>prepare_dense_direct()</code>, which will be called once before any invocation of <code>dense_direct()</code>.</li>
-<li><code>prepare_dense_running()</code>, which will be called once before any invocation of <code>dense_running()</code>.</li>
-<li><code>prepare_sparse_direct()</code>, which will be called once before any invocation of <code>sparse_direct()</code>.</li>
-<li><code>prepare_sparse_running()</code>, which will be called once before any invocation of <code>sparse_running()</code>.</li>
-</ul>
-<p>This can be used by developers to perform any necessary preparation before iteration over the input matrix. Importantly, the manner of preparation can vary according to the chosen iteration strategy. For example, running calculations will typically require more intermediate structures than their direct counterparts; the <code>prepare_*_running()</code> methods can be used to set up those intermediates as needed, without committing to the setup cost if <code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> chooses to use a direct strategy.</p>
-<h1><a class="anchor" id="apply_parallel2"></a>
-Caller parallelization</h1>
-<p><code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> supports parallelization via OpenMP by default, so callers can simply compile with <code>-fopenmp</code> to parallelize their code. <code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> will automatically distribute the calculations for each target vector across available threads. The maximum number of threads is defined by the <code>threads</code> argument.</p>
-<p>Advanced callers of <code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> may specify their own parallelization scheme by defining a <code>TATAMI_CUSTOM_PARALLEL</code> macro. This should be a function-like macro with three arguments:</p>
-<ul>
-<li><code>n</code>, an integer specifying the total number of jobs.</li>
-<li><code>f</code>, a lambda specifying the function to run on a range of jobs in <code>n</code>. This should take two <code>size_t</code> arguments specifying the start and one-past-the-end of the range.</li>
-<li><code>t</code>, an integer specifying the number of available threads. This is set to <code>threads</code>.</li>
-</ul>
-<p>The <code>TATAMI_CUSTOM_PARALLEL</code> function is expected to split <code>n</code> into non-overlapping ranges where each range is assigned to a worker. It should then call <code>f</code> within each worker on the corresponding range of jobs. For example:</p>
-<div class="fragment"><div class="line"><span class="keyword">template</span>&lt;<span class="keyword">class</span> Function&gt;</div>
-<div class="line"><span class="keywordtype">void</span> parallelize(<span class="keywordtype">size_t</span> n, Function f, <span class="keywordtype">size_t</span> nworkers) {</div>
-<div class="line">    <span class="keywordtype">size_t</span> jobs_per_worker = std::ceil(<span class="keyword">static_cast&lt;</span><span class="keywordtype">double</span><span class="keyword">&gt;</span>(n) / nworkers);</div>
-<div class="line">    <span class="keywordtype">size_t</span> start = 0;</div>
-<div class="line">    std::vector&lt;std::thread&gt; jobs;</div>
-<div class="line"> </div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> w = 0; w &lt; nworkers; ++w) {</div>
-<div class="line">        <span class="keywordtype">size_t</span> end = std::min(n, start + jobs_per_worker);</div>
-<div class="line">        <span class="keywordflow">if</span> (start &gt;= end) {</div>
-<div class="line">            <span class="keywordflow">break</span>;</div>
-<div class="line">        }</div>
-<div class="line">        jobs.emplace_back(f, start, end);</div>
-<div class="line">        start += jobs_per_worker;</div>
-<div class="line">    }</div>
-<div class="line"> </div>
-<div class="line">    <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; job : jobs) {</div>
-<div class="line">        job.join();</div>
-<div class="line">    }</div>
-<div class="line">}</div>
-<div class="line"> </div>
-<div class="line"><span class="preprocessor">#define TATAMI_CUSTOM_PARALLEL parallelize</span></div>
-</div><!-- fragment --><h1><a class="anchor" id="apply_parallel"></a>
-Factory parallelization</h1>
-<p>Worker methods (i.e., <code>compute()</code>, <code>add()</code>, <code>finish()</code>) for a single worker instance do not have to be thread-safe. That is, methods for a single worker will only ever be called in a serial fashion, as each worker is local to a thread.</p>
-<p>However, worker methods should be thread-safe across multiple worker instances. For example, <code><a class="el" href="namespacetatami.html#a0692b6c82646df0131b9872431a11bf2">apply()</a></code> may simultaneously call the <code>add()</code> method of different workers from different threads. This is most relevant when results are being written back to the shared memory in <code>factory</code>, and is usually easy to achieve as long as the memory spaces for the results of two target vectors do not overlap.</p>
-<p>The direct calculations are trivially parallelizable - it is assumed that they can be called independently for different target indices. It is also assumed that each <code>compute()</code> call will only write to the shared memory at its supplied target index.</p>
-<p>To support parallelization in the running calculations, we require some overloads to the <code>dense_running()</code> and <code>sparse_running()</code> methods:</p>
-<ul>
-<li><code>dense_running()</code> now accepts two arguments: namely, the indices of the first and one-past-the-last target vectors to be processed. This should return a worker with an <code>add()</code> method that accepts a pointer to the subinterval of the non-target vector, corresponding to the target vectors to be processed. It may also have a <code>finish()</code> method, to be called to finalize any calculations after all non-target vectors are supplied.</li>
-<li><code>sparse_running()</code> now accepts two arguments: namely, the indices of the first and one-past-the-last target vectors to be processed. The returned worker should have an <code>add()</code> method that accepts a <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object, specifying the non-zero elements in the subinterval of the non-target vector. It may also have a <code>finish()</code> method, to be called to finalize any calculations after all non-target vectors are supplied.</li>
-</ul>
-<p>These overloads are optional and the function will fall back to serial processing if they are not supplied (and the function decides perform a running calculation).</p>
-<p>Calls to <code>dense_direct()</code> and counterparts should be thread-safe for any single instance of a factory class. </p>
-
-</div>
-</div>
-<a id="acde903394a6c87915d3262d08b48fdea" name="acde903394a6c87915d3262d08b48fdea"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acde903394a6c87915d3262d08b48fdea">&#9670;&#160;</a></span>column_medians()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::column_medians </td>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::column_medians </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1515,9 +1389,9 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Output</td><td>Type of the output. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Output_</td><td>Type of the output. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1532,21 +1406,21 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a5406cb065686144b1fa807d6c1af09d1" name="a5406cb065686144b1fa807d6c1af09d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5406cb065686144b1fa807d6c1af09d1">&#9670;&#160;</a></span>row_medians()</h2>
+<a id="ab877f67694b3fa500f59469f044b1c01" name="ab877f67694b3fa500f59469f044b1c01"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab877f67694b3fa500f59469f044b1c01">&#9670;&#160;</a></span>row_medians()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::row_medians </td>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::row_medians </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1586,18 +1460,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a3ebbc4660ae0ae0bb1cb514f193837ff" name="a3ebbc4660ae0ae0bb1cb514f193837ff"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3ebbc4660ae0ae0bb1cb514f193837ff">&#9670;&#160;</a></span>column_maxs()</h2>
+<a id="a8102a2423efab5e329543f4235ac2290" name="a8102a2423efab5e329543f4235ac2290"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8102a2423efab5e329543f4235ac2290">&#9670;&#160;</a></span>column_maxs()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::column_maxs </td>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::column_maxs </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1616,8 +1490,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1632,18 +1506,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="ae9c924a9443481b6598bce6968a920e4" name="ae9c924a9443481b6598bce6968a920e4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae9c924a9443481b6598bce6968a920e4">&#9670;&#160;</a></span>row_maxs()</h2>
+<a id="a47890bfd538f65971f9e5dba5e1ed785" name="a47890bfd538f65971f9e5dba5e1ed785"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a47890bfd538f65971f9e5dba5e1ed785">&#9670;&#160;</a></span>row_maxs()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::row_maxs </td>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::row_maxs </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1662,8 +1536,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1678,18 +1552,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="ae0436862fff854690153b3c19f286674" name="ae0436862fff854690153b3c19f286674"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae0436862fff854690153b3c19f286674">&#9670;&#160;</a></span>column_mins()</h2>
+<a id="a60e44772f82183100c7c25c181479b56" name="a60e44772f82183100c7c25c181479b56"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60e44772f82183100c7c25c181479b56">&#9670;&#160;</a></span>column_mins()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::column_mins </td>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::column_mins </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1708,8 +1582,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1724,18 +1598,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="aa692c0282852e73b4617ce1d11fbc866" name="aa692c0282852e73b4617ce1d11fbc866"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa692c0282852e73b4617ce1d11fbc866">&#9670;&#160;</a></span>row_mins()</h2>
+<a id="a3bcdcb0499b36b5b844ebd88fc30eefe" name="a3bcdcb0499b36b5b844ebd88fc30eefe"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3bcdcb0499b36b5b844ebd88fc30eefe">&#9670;&#160;</a></span>row_mins()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::row_mins </td>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::row_mins </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1754,8 +1628,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1770,18 +1644,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a17db0156d225f63b3d63fc4a27ea950d" name="a17db0156d225f63b3d63fc4a27ea950d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17db0156d225f63b3d63fc4a27ea950d">&#9670;&#160;</a></span>column_ranges()</h2>
+<a id="ab5eff79824930c458e730d23f640c1ab" name="ab5eff79824930c458e730d23f640c1ab"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab5eff79824930c458e730d23f640c1ab">&#9670;&#160;</a></span>column_ranges()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt; std::vector&lt; Output &gt;, std::vector&lt; Output &gt; &gt; tatami::column_ranges </td>
+          <td class="memname">std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt; tatami::column_ranges </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1800,8 +1674,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1816,18 +1690,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a2954fabae4819e4dd1433a34691642e1" name="a2954fabae4819e4dd1433a34691642e1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2954fabae4819e4dd1433a34691642e1">&#9670;&#160;</a></span>row_ranges()</h2>
+<a id="a2b2475a166ad744b31b1275e26e562be" name="a2b2475a166ad744b31b1275e26e562be"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2b2475a166ad744b31b1275e26e562be">&#9670;&#160;</a></span>row_ranges()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::pair&lt; std::vector&lt; Output &gt;, std::vector&lt; Output &gt; &gt; tatami::row_ranges </td>
+          <td class="memname">std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt; tatami::row_ranges </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1846,8 +1720,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1862,18 +1736,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a3b06061261eeb15d1827dd7290162ae8" name="a3b06061261eeb15d1827dd7290162ae8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b06061261eeb15d1827dd7290162ae8">&#9670;&#160;</a></span>column_sums()</h2>
+<a id="a3aab6733d637b66abdf45f7300d2e1ba" name="a3aab6733d637b66abdf45f7300d2e1ba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3aab6733d637b66abdf45f7300d2e1ba">&#9670;&#160;</a></span>column_sums()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::column_sums </td>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::column_sums </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1891,9 +1765,9 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be summable. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Output_</td><td>Type of the output value. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value, should be summable. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1908,18 +1782,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a3d121e9c7c0ded4ba86382bd83abf103" name="a3d121e9c7c0ded4ba86382bd83abf103"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d121e9c7c0ded4ba86382bd83abf103">&#9670;&#160;</a></span>row_sums()</h2>
+<a id="a53a658059404691856bef57fb85d83d6" name="a53a658059404691856bef57fb85d83d6"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a53a658059404691856bef57fb85d83d6">&#9670;&#160;</a></span>row_sums()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::row_sums </td>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::row_sums </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1937,9 +1811,9 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be summable. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Output_</td><td>Type of the output value. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value, should be summable. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1954,18 +1828,75 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a101a4123f87b6c4fd919004c2f3d3a91" name="a101a4123f87b6c4fd919004c2f3d3a91"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a101a4123f87b6c4fd919004c2f3d3a91">&#9670;&#160;</a></span>column_variances()</h2>
+<a id="a29ce7a2219ea60d45de1aa3d4de66063" name="a29ce7a2219ea60d45de1aa3d4de66063"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29ce7a2219ea60d45de1aa3d4de66063">&#9670;&#160;</a></span>parallelize()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;bool parallel_ = true, class Function_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::column_variances </td>
+          <td class="memname">void tatami::parallelize </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">Function_&#160;</td>
+          <td class="paramname"><em>fun</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>tasks</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">size_t&#160;</td>
+          <td class="paramname"><em>threads</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Apply a function to a set of tasks, distributing them to threads via OpenMP if enabled. Callers can specify a custom parallelization scheme by defining a <code>TATAMI_CUSTOM_PARALLEL</code> function-like macro, which should accept four arguments: <code>fun</code>, <code>tasks</code> and <code>threads</code> as below, as well as a <code>worker_size</code> argument that specifies the size of each task range (the last is provided for convenience only, to avoid the need to re-compute it inside the macro).</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">parallel_</td><td>Whether the tasks should be run in parallel. If <code>false</code>, no parallelization is performed and all tasks are run on the current thread. </td></tr>
+    <tr><td class="paramname">Function_</td><td>Function to be applied for a contiguous range of tasks. This should accept three arguments:<ul>
+<li><code>thread</code>, the thread number executing this task range.</li>
+<li><code>start</code>, the start index of the task range.</li>
+<li><code>end</code>, the first index past the end of the task range.</li>
+</ul>
+</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">fun</td><td>Function that executes a contiguous range of tasks. </td></tr>
+    <tr><td class="paramname">tasks</td><td>Number of tasks. </td></tr>
+    <tr><td class="paramname">threads</td><td>Number of threads. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac37af9a76d15f08a3634881696a27f65" name="ac37af9a76d15f08a3634881696a27f65"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac37af9a76d15f08a3634881696a27f65">&#9670;&#160;</a></span>column_variances()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::column_variances </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -1985,8 +1916,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be numeric. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value, should be numeric. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
@@ -2001,18 +1932,18 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 
 </div>
 </div>
-<a id="a2aa54193cf4c92ace983cba8c118ca1a" name="a2aa54193cf4c92ace983cba8c118ca1a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2aa54193cf4c92ace983cba8c118ca1a">&#9670;&#160;</a></span>row_variances()</h2>
+<a id="ab806279616e19f6150376a7c07d5b64b" name="ab806279616e19f6150376a7c07d5b64b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab806279616e19f6150376a7c07d5b64b">&#9670;&#160;</a></span>row_variances()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
+template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt; Output &gt; tatami::row_variances </td>
+          <td class="memname">std::vector&lt; Output_ &gt; tatami::row_variances </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *&#160;</td>
+          <td class="paramtype">const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *&#160;</td>
           <td class="paramname"><em>p</em>, </td>
         </tr>
         <tr>
@@ -2032,8 +1963,8 @@ template&lt;typename Output  = double, typename T , typename IDX &gt; </div>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Output</td><td>Type of the output value. </td></tr>
-    <tr><td class="paramname">T</td><td>Type of the matrix value, should be numeric. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of the row/column indices.</td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the matrix value, should be numeric. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of the row/column indices.</td></tr>
   </table>
   </dd>
 </dl>
