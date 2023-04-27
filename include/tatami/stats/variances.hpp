@@ -232,20 +232,20 @@ void finish_running(size_t n, Output_* means, Output_* vars, const Nonzero_* non
  */
 template<typename Output_, bool row_, typename Value_, typename Index_>
 std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int threads) {
-    Index_ dim = (row_ ? p->nrow() : p->ncol());
-    Index_ otherdim = (row_ ? p->ncol() : p->nrow());
+    BidimensionalApplyConfiguration<row_, Value_, Index_> config(p);
+
+    auto dim = config.target_dim;
     std::vector<Output_> output(dim);
 
-    const bool prefrow = p->prefer_rows();
-    const bool direct = prefrow == row_;
-    const bool oracled = p->uses_oracle(prefrow);
+    auto otherdim = config.other_dim;
+    const bool direct = config.prefer_rows == row_;
     Options opt;
 
     if (p->sparse()) {
         if (direct) {
             opt.sparse_extract_index = false;
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = direct_extractor<row_, true>(p, oracled, s, e, opt);
+                auto ext = config.template direct<true>(s, e, opt);
                 std::vector<Value_> vbuffer(otherdim);
                 for (Index_ i = s; i < e; ++i) {
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
@@ -255,8 +255,8 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
 
         } else {
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto len = e - s;
-                auto ext = running_extractor<row_, true>(p, s, e, oracled, otherdim, opt);
+                auto ext = config.template running<true>(s, e, opt);
+                auto len = ext->block_length;
                 std::vector<Value_> vbuffer(len);
                 std::vector<Index_> ibuffer(len);
 
@@ -276,7 +276,7 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
     } else {
         if (direct) {
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = direct_extractor<row_, false>(p, oracled, s, e, opt);
+                auto ext = config.template direct<false>(s, e, opt);
                 std::vector<Value_> buffer(otherdim);
                 for (Index_ i = s; i < e; ++i) {
                     auto out = ext->fetch(i, buffer.data());
@@ -286,8 +286,8 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
 
         } else {
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto len = e - s;
-                auto ext = running_extractor<row_, false>(p, s, e, oracled, otherdim, opt);
+                auto ext = config.template running<false>(s, e, opt);
+                auto len = ext->block_length;
                 std::vector<Value_> buffer(len);
 
                 std::vector<Output_> running_means(len);

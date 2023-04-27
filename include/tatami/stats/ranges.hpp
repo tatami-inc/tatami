@@ -21,12 +21,11 @@ namespace stats {
  */
 template<bool row_, typename Output_, typename Value_, typename Index_, class StoreMinimum_, class StoreMaximum_>
 void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinimum_& min_out, StoreMaximum_& max_out) {
-    Index_ dim = (row_ ? p->nrow() : p->ncol());
-    Index_ otherdim = (row_ ? p->ncol() : p->nrow());
+    BidimensionalApplyConfiguration<row_, Value_, Index_> config(p);
 
-    const bool prefrow = p->prefer_rows();
-    const bool direct = prefrow == row_;
-    const bool oracled = p->uses_oracle(prefrow);
+    auto dim = config.target_dim;
+    auto otherdim = config.other_dim;
+    const bool direct = config.prefer_rows == row_;
     Options opt;
 
     constexpr bool store_min = !std::is_same<StoreMinimum_, bool>::value;
@@ -42,7 +41,7 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
         if (direct) {
             opt.sparse_extract_index = false;
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = direct_extractor<row_, true>(p, oracled, s, e, opt);
+                auto ext = config.template direct<true>(s, e, opt);
                 std::vector<Value_> vbuffer(otherdim);
 
                 for (Index_ i = s; i < e; ++i) {
@@ -68,8 +67,8 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
 
         } else {
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto len = e - s;
-                auto ext = running_extractor<row_, true>(p, s, e, oracled, otherdim, opt);
+                auto ext = config.template running<true>(s, e, opt);
+                auto len = ext->block_length;
                 std::vector<Value_> vbuffer(len);
                 std::vector<Index_> ibuffer(len);
                 std::vector<Index_> counter(len);
@@ -116,7 +115,7 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
     } else {
         if (direct) {
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = direct_extractor<row_, false>(p, oracled, s, e, opt);
+                auto ext = config.template direct<false>(s, e, opt);
                 std::vector<Value_> buffer(otherdim);
                 for (Index_ i = s; i < e; ++i) {
                     auto ptr = ext->fetch(i, buffer.data());
@@ -131,9 +130,10 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
 
         } else {
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto len = e - s;
-                auto ext = running_extractor<row_, false>(p, s, e, oracled, otherdim, opt);
+                auto ext = config.template running<false>(s, e, opt);
+                auto len = ext->block_length;
                 std::vector<Value_> buffer(len);
+
                 for (Index_ i = 0; i < otherdim; ++i) {
                     auto ptr = ext->fetch(i, buffer.data());
                     if (i) {

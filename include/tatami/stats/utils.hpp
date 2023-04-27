@@ -1,5 +1,5 @@
-#ifndef TATAMI_STATS_PARALLELIZE_H
-#define TATAMI_STATS_PARALLELIZE_H
+#ifndef TATAMI_STATS_UTILS_HPP
+#define TATAMI_STATS_UTILS_HPP
 
 #include "../base/Matrix.hpp"
 #include "../base/utils.hpp"
@@ -8,9 +8,9 @@
 #include <cmath>
 
 /**
- * @file parallelize.hpp
+ * @file utils.hpp
  *
- * @brief Parallelize tasks across threads.
+ * @brief Utilities for computing matrix statistics.
  */
 
 namespace tatami {
@@ -79,26 +79,146 @@ auto direct_extractor(const Matrix<Value_, Index_>* mat, bool uses_oracle, Index
         return ext;
     }
 }
-
-template<bool row_, bool sparse_, typename Value_, typename Index_>
-auto running_extractor(const Matrix<Value_, Index_>* mat, Index_ start, Index_ len, bool uses_oracle, Index_ otherdim, const Options& opt) {
-    if constexpr(sparse_) {
-        auto ext = (row_ ? mat->sparse_column(start, len, opt) : mat->sparse_row(start, len, opt));
-        if (uses_oracle) {
-            ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(0, otherdim));
-        }
-        return ext;
-    } else {
-        auto ext = (row_ ? mat->dense_column(start, len, opt) : mat->dense_row(start, len, opt));
-        if (uses_oracle) {
-            ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(0, otherdim));
-        }
-        return ext;
-    }
-}
 /**
  * @endcond
  */
+
+/**
+ * @brief Configuration for bidimensional apply.
+ *
+ * Set up the iteration across a `Matrix` in its preferred iteration dimension.
+ * More specifically, we consider each matrix to be a collection of equi-length target vectors, where we wish to compute a statistic for each target vector.
+ * We can do so directly by iterating over the target vectors; or we can do so in a "running" manner, where statistics for target vectors can be computed by iterating over the non-target vectors.
+ * Use of this class assumes that the desired statistic can be computed in a running manner, which is helpful if the preferred iteration dimension is not the same as that required to iterate directly over the target vectors.
+ *
+ * @tparam row_ Whether each row is a target vector, e.g., to compute row-wise statistics.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column index.
+ */
+template<bool row_, typename Value_, typename Index_>
+struct BidimensionalApplyConfiguration {
+    /**
+     * @param mat Pointer to the `Matrix` instance.
+     */
+    BidimensionalApplyConfiguration(const Matrix<Value_, Index_>* mat) :
+        matrix(mat), 
+        prefer_rows(matrix->prefer_rows()),
+        uses_oracle(matrix->uses_oracle(prefer_rows)),
+        target_dim(row_ ? matrix->nrow() : matrix->ncol()),
+        other_dim(row_ ? matrix->ncol() : matrix->nrow())
+    {}
+
+private:
+    const Matrix<Value_, Index_>* matrix;
+
+public:
+    /**
+     * Whether the matrix prefers iteration over the rows.
+     * Same as `Matrix::prefer_rows()` but is just reported here for convenience.
+     */
+    bool prefer_rows;
+
+private:
+    bool uses_oracle; // need to do this little shuffle to avoid problems with initialization order.
+
+public:
+    /**
+     * Extent of the dimension containing the target vectors, i.e., the number of target vectors.
+     */
+    Index_ target_dim;
+
+    /**
+     * Extent of the dimension containing the non-target vectors, i.e., the "other" dimension, for which we don't want to compute statistics.
+     */
+    Index_ other_dim;
+
+    /**
+     * @param s Index of the first target vector.
+     * @param e First index past the last target vector.
+     * @param opt Options to pass to the extractor construction methods in `Matrix`.
+     *
+     * @return An `Extractor` object for iterating over the target dimension in the range `[s, e)`.
+     */
+    template<bool sparse_>
+    auto direct(Index_ s, Index_ e, const Options& opt) const {
+        return direct_extractor<row_, sparse_>(matrix, uses_oracle, s, e, opt);
+    }
+
+    /**
+     * @param s Index of the first target vector.
+     * @param e First index past the last target vector.
+     * @param opt Options to pass to the extractor construction methods in `Matrix`.
+     *
+     * @return An `Extractor` object for iterating over the non-target dimensions,
+     * extracting the range `[s, e)` from each target vector.
+     */
+    template<bool sparse_>
+    auto running(Index_ s, Index_ e, const Options& opt) const {
+        Index_ len = e - s;
+        if constexpr(sparse_) {
+            auto ext = (row_ ? matrix->sparse_column(s, len, opt) : matrix->sparse_row(s, len, opt));
+            if (uses_oracle) {
+                ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(0, other_dim));
+            }
+            return ext;
+        } else {
+            auto ext = (row_ ? matrix->dense_column(s, len, opt) : matrix->dense_row(s, len, opt));
+            if (uses_oracle) {
+                ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(0, other_dim));
+            }
+            return ext;
+        }
+    }
+};
+
+/**
+ * @brief Configuration for direct apply.
+ *
+ * Set up the iteration across a `Matrix` in the specified iteration dimension.
+ * More specifically, we consider each matrix to be a collection of equi-length target vectors, where we wish to compute a statistic for each target vector.
+ * We do so directly by iterating over the target vectors, ignoring any preference in `Matrix::prefer_rows()`.
+ * This is useful when a statistic cannot be computed in a running manner.
+ *
+ * @tparam row_ Whether each row is a target vector, e.g., to compute row-wise statistics.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column index.
+ */
+template<bool row_, typename Value_, typename Index_>
+struct DirectApplyConfiguration {
+    DirectApplyConfiguration(const Matrix<Value_, Index_>* mat) :
+        matrix(mat), 
+        uses_oracle(matrix->uses_oracle(row_)),
+        target_dim(row_ ? matrix->nrow() : matrix->ncol()),
+        other_dim(row_ ? matrix->ncol() : matrix->nrow())
+    {}
+
+private:
+    const Matrix<Value_, Index_>* matrix;
+    bool uses_oracle;
+
+public:
+    /**
+     * Extent of the dimension containing the target vectors, i.e., the number of target vectors.
+     */
+    Index_ target_dim;
+
+    /**
+     * Extent of the dimension containing the non-target vectors, i.e., the "other" dimension, for which we don't want to compute statistics.
+     */
+    Index_ other_dim;
+
+    /**
+     * @param s Index of the first target vector.
+     * @param e First index past the last target vector.
+     * @param opt Options to pass to the extractor construction methods in `Matrix`.
+     *
+     * @return An `Extractor` object for iterating over the target dimension in the range `[s, e)`.
+     */
+    template<bool sparse_>
+    auto extractor(Index_ s, Index_ e, const Options& opt) const {
+        return direct_extractor<row_, sparse_>(matrix, uses_oracle, s, e, opt);
+    }
+};
 
 }
 

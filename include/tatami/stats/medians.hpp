@@ -44,19 +44,18 @@ Output_ compute_median(Value_* buffer, size_t n) {
 
 template<typename Output_, bool row_, typename Value_, typename Index_>
 std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int threads) {
-    Index_ dim = (row_ ? p->nrow() : p->ncol());
-    Index_ otherdim = (row_ ? p->ncol() : p->nrow());
+    DirectApplyConfiguration<row_, Value_, Index_> config(p);
+
+    auto dim = config.target_dim;
     std::vector<Output_> output(dim);
 
-    const bool prefrow = p->prefer_rows();
-    const bool direct = prefrow == row_;
-    const bool oracled = p->uses_oracle(prefrow);
+    auto otherdim = config.other_dim;
     Options opt;
 
     if (p->sparse()) {
         parallelize([&](int t, Index_ s, Index_ e) -> void {
             std::vector<Value_> buffer(otherdim);
-            auto ext = direct_extractor<row_, false>(p, oracled, s, e, opt);
+            auto ext = config.template extractor<false>(s, e, opt);
             for (Index_ i = s; i < e; ++i) {
                 ext->fetch_copy(i, buffer.data());
                 output[i] = compute_median<Output_>(buffer.data(), otherdim);
@@ -67,7 +66,7 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
         opt.sparse_extract_index = false;
         opt.sparse_ordered_index = false; // we'll be sorting by value.
         parallelize([&](int t, Index_ s, Index_ e) -> void {
-            auto ext = direct_extractor<row_, true>(p, oracled, s, e, opt);
+            auto ext = config.template extractor<true>(s, e, opt);
 
             std::vector<Value_> buffer(otherdim);
             auto vbuffer = buffer.data();
