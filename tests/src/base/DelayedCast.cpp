@@ -4,12 +4,13 @@
 #include <memory>
 #include <tuple>
 
-#include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedCast.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/base/other/DelayedCast.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_row_access.h"
 #include "../_tests/test_column_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
 template<class PARAM> 
@@ -238,4 +239,44 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
+/****************************************************
+ ****************************************************/
 
+class DelayedCastOracleTest : public ::testing::TestWithParam<bool> {
+protected:
+    size_t NR = 109, NC = 88;
+    std::shared_ptr<tatami::NumericMatrix> cast_dense, cast_sparse, wrapped_cast_dense, wrapped_cast_sparse;
+
+protected:
+    void assemble() {
+        auto simulated = simulate_sparse_vector<float>(NR * NC, 0.2);
+        auto raw_dense = std::shared_ptr<tatami::Matrix<float, size_t> >(new tatami::DenseRowMatrix<float, size_t>(NR, NC, simulated));
+        auto raw_sparse = tatami::convert_to_sparse<false, float, size_t>(raw_dense.get()); 
+
+        cast_dense = tatami::make_DelayedCast<double, int>(raw_dense);
+        cast_sparse = tatami::make_DelayedCast<double, int>(raw_sparse);
+
+        wrapped_cast_dense = tatami::make_DelayedCast<double, int>(make_CrankyMatrix<float, size_t>(raw_dense));
+        wrapped_cast_sparse = tatami::make_DelayedCast<double, int>(make_CrankyMatrix<float, size_t>(raw_sparse));
+    }
+};
+
+TEST_P(DelayedCastOracleTest, Validate) {
+    assemble();
+    auto random = GetParam();
+
+    EXPECT_FALSE(cast_dense->uses_oracle(true));
+    EXPECT_TRUE(wrapped_cast_dense->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_cast_dense.get(), cast_dense.get(), random);
+    test_oracle_column_access(wrapped_cast_sparse.get(), cast_sparse.get(), random);
+
+    test_oracle_row_access(wrapped_cast_dense.get(), cast_dense.get(), random);
+    test_oracle_row_access(wrapped_cast_sparse.get(), cast_sparse.get(), random);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    DelayedCast,
+    DelayedCastOracleTest,
+    ::testing::Values(true, false)  // use random or consecutive oracle.
+);

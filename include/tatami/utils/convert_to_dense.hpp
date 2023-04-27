@@ -1,7 +1,8 @@
 #ifndef TATAMI_CONVERT_TO_DENSE_H
 #define TATAMI_CONVERT_TO_DENSE_H
 
-#include "../base/DenseMatrix.hpp"
+#include "../base/utils.hpp"
+#include "../base/dense/DenseMatrix.hpp"
 
 #include <memory>
 #include <vector>
@@ -16,42 +17,34 @@
 namespace tatami {
 
 /**
- * @tparam row Whether to return a row-major matrix.
- * @tparam DataStore Type of data values to be stored in the output.
- * @tparam MatrixIn Input matrix class, most typically a `tatami::Matrix`.
+ * @tparam row_ Whether to return a row-major matrix.
+ * @tparam StoredValue_ Type of data values to be stored in the output.
+ * @tparam Matrix_ Input matrix class, most typically a `tatami::Matrix`.
  *
  * @param incoming Pointer to a `tatami::Matrix`.
  * @param[out] store Pointer to an array of length equal to the product of the dimensions of `incoming`.
- * On output, this is filled with values from `incoming` in row- or column-major format depending on `row`.
+ * On output, this is filled with values from `incoming` in row- or column-major format depending on `row_`.
  */
-template <bool row, typename DataStore, class MatrixIn>
-void convert_to_dense(const MatrixIn* incoming, DataStore* store) {
-    typedef typename MatrixIn::data_type DataIn;
+template <bool row_, typename StoredValue_, class Matrix_>
+void convert_to_dense(const Matrix_* incoming, StoredValue_* store) {
+    typedef typename Matrix_::index_type Index_;
+    typedef typename Matrix_::value_type Value_;
 
     size_t NR = incoming->nrow();
     size_t NC = incoming->ncol();
-    size_t primary = (row ? NR : NC);
-    size_t secondary = (row ? NC : NR);
+    size_t primary = (row_ ? NR : NC);
+    size_t secondary = (row_ ? NC : NR);
 
-    if (row == incoming->prefer_rows()) {
-        auto wrk = new_workspace<row, false>(incoming);
-        constexpr bool same_type = std::is_same<DataIn, DataStore>::value;
-        std::vector<DataIn> temp(same_type ? 0 : secondary);
+    if (row_ == incoming->prefer_rows()) {
+        auto wrk = new_extractor<row_, false, Value_, Index_>(incoming);
+        constexpr bool same_type = std::is_same<Value_, StoredValue_>::value;
+        std::vector<Value_> temp(same_type ? 0 : secondary);
 
         for (size_t p = 0; p < primary; ++p, store += secondary) {
             if constexpr(same_type) {
-                if constexpr(row) {
-                    incoming->row_copy(p, store, wrk.get());
-                } else {
-                    incoming->column_copy(p, store, wrk.get());
-                }
+                wrk->fetch_copy(p, store);
             } else {
-                const DataIn* ptr;
-                if constexpr(row) {
-                    ptr = incoming->row(p, temp.data(), wrk.get());
-                } else {
-                    ptr = incoming->column(p, temp.data(), wrk.get());
-                }
+                auto ptr = wrk->fetch(p, temp.data());
                 std::copy(ptr, ptr + secondary, store);
             }
         }
@@ -61,17 +54,11 @@ void convert_to_dense(const MatrixIn* incoming, DataStore* store) {
         // under the assumption that it may be arbitrarily costly to
         // extract in the non-preferred dim; it is thus cheaper to
         // do cache-unfriendly inserts into the output buffer.
-        auto wrk = new_workspace<!row, false>(incoming);
-        std::vector<DataIn> temp(primary);
+        auto wrk = new_extractor<!row_, false, Value_, Index_>(incoming);
+        std::vector<Value_> temp(primary);
 
         for (size_t s = 0; s < secondary; ++s) {
-            const DataIn* ptr;
-            if constexpr(row) {
-                ptr = incoming->column(s, temp.data(), wrk.get());
-            } else {
-                ptr = incoming->row(s, temp.data(), wrk.get());
-            }
-
+            auto ptr = wrk->fetch(s, temp.data());
             auto bptr = store + s;
             for (size_t p = 0; p < primary; ++p, bptr += secondary) {
                 *bptr = ptr[p]; 
@@ -84,10 +71,10 @@ void convert_to_dense(const MatrixIn* incoming, DataStore* store) {
 
 /**
  * @tparam row Whether to return a row-major matrix.
- * @tparam DataInterface Type of data values in the output interface.
+ * @tparam Value_ Type of data values in the output interface.
  * @tparam Index Integer type for the indices in the output interface.
- * @tparam DataStore Type of data values to be stored in the output.
- * @tparam MatrixIn Input matrix class, most typically a `tatami::Matrix`.
+ * @tparam StoredValue_ Type of data values to be stored in the output.
+ * @tparam Matrix_ Input matrix class, most typically a `tatami::Matrix`.
  *
  * @param incoming Pointer to a `tatami::Matrix`.
  *
@@ -95,27 +82,27 @@ void convert_to_dense(const MatrixIn* incoming, DataStore* store) {
  * If `row = true`, the matrix is row-major, otherwise it is column-major.
  */
 template <
-    bool row, 
-    typename DataInterface = double, 
+    bool row_, 
+    typename Value_ = double, 
     typename Index = int, 
-    typename DataStore = DataInterface, 
-    class MatrixIn
+    typename StoredValue_ = Value_, 
+    class Matrix_
 >
-inline std::shared_ptr<Matrix<DataInterface, Index> > convert_to_dense(const MatrixIn* incoming) {
+inline std::shared_ptr<Matrix<Value_, Index> > convert_to_dense(const Matrix_* incoming) {
     size_t NR = incoming->nrow();
     size_t NC = incoming->ncol();
-    std::vector<DataStore> buffer(NR * NC);
-    convert_to_dense<row>(incoming, buffer.data());
-    return std::shared_ptr<Matrix<DataInterface, Index> >(new DenseMatrix<row, DataInterface, Index, decltype(buffer)>(NR, NC, std::move(buffer)));
+    std::vector<StoredValue_> buffer(NR * NC);
+    convert_to_dense<row_>(incoming, buffer.data());
+    return std::shared_ptr<Matrix<Value_, Index> >(new DenseMatrix<row_, Value_, Index, decltype(buffer)>(NR, NC, std::move(buffer)));
 }
 
 /**
  * This overload makes it easier to control the desired output order when it is not known at compile time.
  *
- * @tparam DataInterface Type of data values in the output interface.
- * @tparam DataStore Type of data values to be stored in the output.
+ * @tparam Value_ Type of data values in the output interface.
  * @tparam Index Integer type for the indices in the output interface.
- * @tparam MatrixIn Input matrix class, most typically a `tatami::Matrix`.
+ * @tparam StoredValue_ Type of data values to be stored in the output.
+ * @tparam Matrix_ Input matrix class, most typically a `tatami::Matrix`.
  *
  * @param incoming Pointer to a `tatami::Matrix`.
  * @param order Ordering of values in the output dense matrix - row-major (0) or column-major (1).
@@ -124,19 +111,19 @@ inline std::shared_ptr<Matrix<DataInterface, Index> > convert_to_dense(const Mat
  * @return A pointer to a new `tatami::DenseMatrix` with the same dimensions and type as the matrix referenced by `incoming`.
  */
 template <
-    typename DataInterface = double,
-    typename Index = int,
-    typename DataStore = DataInterface,
-    class MatrixIn
+    typename Value_ = double,
+    typename Index_ = int,
+    typename StoredValue_ = Value_,
+    class Matrix_
 >
-std::shared_ptr<Matrix<DataInterface, Index> > convert_to_dense(const MatrixIn* incoming, int order) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix_* incoming, int order) {
     if (order < 0) {
         order = static_cast<int>(!incoming->prefer_rows()); 
     }
     if (order == 0) {
-        return convert_to_dense<true, DataInterface, Index, DataStore, MatrixIn>(incoming);
+        return convert_to_dense<true, Value_, Index_, StoredValue_, Matrix_>(incoming);
     } else {
-        return convert_to_dense<false, DataInterface, Index, DataStore, MatrixIn>(incoming);
+        return convert_to_dense<false, Value_, Index_, StoredValue_, Matrix_>(incoming);
     }
 }
 

@@ -6,8 +6,8 @@
 #include <algorithm>
 #include <vector>
 
-#include "../../base/CompressedSparseMatrix.hpp"
-#include "../../base/DelayedBind.hpp"
+#include "../../base/sparse/CompressedSparseMatrix.hpp"
+#include "../../base/other/DelayedBind.hpp"
 #include "../../utils/compress_sparse_triplets.hpp"
 
 #include "simple.hpp"

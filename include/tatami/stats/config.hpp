@@ -139,18 +139,6 @@ struct has_nonconst_sparse_compute<V, T, IDX, decltype((void) std::declval<V>().
     static constexpr bool value = true;
 };
 
-/******************/
-
-template<class V, typename = int>
-struct nonconst_sparse_compute_copy_mode {
-    static constexpr SparseExtractMode value = SparseExtractMode::BOTH;
-};
-
-template<class V>
-struct nonconst_sparse_compute_copy_mode<V, decltype((void) V::copy_mode, 0)> {
-    static constexpr SparseExtractMode value = V::copy_mode;
-};
-
 }
 
 }

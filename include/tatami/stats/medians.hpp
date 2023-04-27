@@ -71,8 +71,6 @@ public:
     struct Sparse {
         Sparse(O* o, size_t d2) : output(o), otherdim(d2) {}
 
-        static constexpr SparseExtractMode copy_mode = SparseExtractMode::VALUE;
-
         template<typename T, typename IDX>
         void compute_copy(size_t i, size_t n, T* vbuffer, IDX*) {
             if (n == otherdim) {

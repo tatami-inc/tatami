@@ -40,10 +40,10 @@ int main(int argc, char** argv) {
     std::shared_ptr<tatami::NumericMatrix> mat(new tatami::CompressedSparseColumnMatrix<double, int, decltype(vals), decltype(rows)>(10, 5, vals, rows, indptrs));
 
     std::cout << "Matrix preview: " << std::endl;
-    auto wrk = mat->dense_row_workspace();
+    auto wrk = mat->dense_row();
     std::vector<double> buffer(mat->ncol());
     for (size_t i = 0; i < mat->nrow(); ++i) {
-        auto ptr = mat->row(i, buffer.data(), wrk.get());
+        auto ptr = wrk->fetch(i, buffer.data());
         print_vector(ptr, ptr + mat->ncol());
     }
     std::cout << std::endl;
@@ -55,8 +55,8 @@ int main(int argc, char** argv) {
      */
     std::vector<double> vbuffer(mat->nrow());
     std::vector<int> ibuffer(mat->nrow());
-    auto swrk = mat->sparse_column_workspace();
-    auto range = mat->column(0, vbuffer.data(), ibuffer.data(), swrk.get());
+    auto swrk = mat->sparse_column();
+    auto range = swrk->fetch(0, vbuffer.data(), ibuffer.data());
     std::cout << "Using buffer instead of underlying store: " << (range.value==vbuffer.data() ? "true" : "false") << std::endl;
 
     return 0;

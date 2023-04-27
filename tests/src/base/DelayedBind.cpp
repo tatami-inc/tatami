@@ -3,12 +3,13 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedBind.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/base/other/DelayedBind.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_row_access.h"
 #include "../_tests/test_column_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
 class DelayedBindTestMethods {
@@ -61,6 +62,9 @@ TEST_F(DelayedBindUtilsTest, ByRow) {
     EXPECT_EQ(bound_sparse->ncol(), 20);
     EXPECT_TRUE(bound_sparse->sparse());
     EXPECT_FALSE(bound_sparse->prefer_rows());
+
+    EXPECT_FALSE(bound_sparse->uses_oracle(true));
+    EXPECT_FALSE(bound_sparse->uses_oracle(true));
 }
 
 TEST_F(DelayedBindUtilsTest, ByColumn) {
@@ -74,7 +78,10 @@ TEST_F(DelayedBindUtilsTest, ByColumn) {
     EXPECT_EQ(bound_sparse->nrow(), 20);
     EXPECT_EQ(bound_sparse->ncol(), 35);
     EXPECT_TRUE(bound_sparse->sparse());
-    EXPECT_FALSE(bound_dense->prefer_rows());
+    EXPECT_FALSE(bound_sparse->prefer_rows());
+
+    EXPECT_FALSE(bound_dense->uses_oracle(false));
+    EXPECT_FALSE(bound_sparse->uses_oracle(false));
 }
 
 TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
@@ -98,26 +105,26 @@ TEST_F(DelayedBindUtilsTest, EmptyBind) {
 
     // Checking that empty workspaces can be constructed.
     {
-        auto rthing = bound_dense->dense_row_workspace();
+        auto rthing = bound_dense->dense_row();
         EXPECT_NE(rthing.get(), nullptr);
 
-        auto cthing = bound_dense->dense_column_workspace();
+        auto cthing = bound_dense->dense_column();
         EXPECT_NE(cthing.get(), nullptr);
     }
 
     {
-        auto rthing = bound_dense->dense_row_workspace(0, 0);
+        auto rthing = bound_dense->dense_row(0, 0);
         EXPECT_NE(rthing.get(), nullptr);
 
-        auto cthing = bound_dense->dense_column_workspace(0, 0);
+        auto cthing = bound_dense->dense_column(0, 0);
         EXPECT_NE(cthing.get(), nullptr);
     }
 
     {
-        auto rthing = bound_dense->dense_row_workspace(std::vector<int>());
+        auto rthing = bound_dense->dense_row(std::vector<int>());
         EXPECT_NE(rthing.get(), nullptr);
 
-        auto cthing = bound_dense->dense_column_workspace(std::vector<int>());
+        auto cthing = bound_dense->dense_column(std::vector<int>());
         EXPECT_NE(cthing.get(), nullptr);
     }
 }
@@ -237,3 +244,130 @@ INSTANTIATE_TEST_CASE_P(
         )
     )
 );
+
+/****************************
+ ****************************/
+
+class DelayedBindOracleTestCore {
+protected:
+    std::vector<std::shared_ptr<tatami::NumericMatrix> > collected;
+    std::shared_ptr<tatami::NumericMatrix> bound;
+
+    void assemble(const std::vector<int>& lengths, int dim, bool row) {
+        for (size_t i = 0; i < lengths.size(); ++i) {
+            int len = lengths[i];
+            auto to_add = simulate_sparse_compressed<double>(len, dim, 0.2, /* lower = */ -10, /* upper = */ 10, /* seed = */ i * 99);
+            if (row) {
+                collected.emplace_back(new tatami::CompressedSparseRowMatrix<double, int>(len, dim, std::move(to_add.value), std::move(to_add.index), std::move(to_add.ptr)));
+            } else {
+                collected.emplace_back(new tatami::CompressedSparseColumnMatrix<double, int>(dim, len, std::move(to_add.value), std::move(to_add.index), std::move(to_add.ptr)));
+            }
+        }
+
+        bound = combine(collected, row);
+    }
+
+    static std::shared_ptr<tatami::NumericMatrix> combine(std::vector<std::shared_ptr<tatami::NumericMatrix> > inputs, bool row) {
+        if (row) {
+            return tatami::make_DelayedBind<0>(std::move(inputs));
+        } else {
+            return tatami::make_DelayedBind<1>(std::move(inputs));
+        }
+    }
+};
+
+class DelayedBindOracleTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool> >, public DelayedBindOracleTestCore {};
+
+TEST_P(DelayedBindOracleTest, AllOracular) {
+    auto param = GetParam();
+    assemble(std::get<0>(param), 500, std::get<1>(param));
+    auto random = std::get<2>(param);
+
+    for (size_t m = 0; m < collected.size(); ++m) {
+        int step_size = (m + 1) * 10; // variable prediction number across bound matrices, for some variety.
+        collected[m] = make_CrankyMatrix(std::move(collected[m]), step_size);
+    }
+    auto wrapped_bound = combine(std::move(collected), std::get<1>(param));
+
+    EXPECT_FALSE(bound->uses_oracle(true));
+    EXPECT_TRUE(wrapped_bound->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
+    test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
+}
+
+TEST_P(DelayedBindOracleTest, FirstOracular) {
+    auto param = GetParam();
+    assemble(std::get<0>(param), 350, std::get<1>(param));
+    auto random = std::get<2>(param);
+
+    collected.front() = make_CrankyMatrix(std::move(collected.front()));
+    auto wrapped_bound = combine(std::move(collected), std::get<1>(param));
+
+    EXPECT_FALSE(bound->uses_oracle(true));
+    EXPECT_TRUE(wrapped_bound->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
+    test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
+}
+
+TEST_P(DelayedBindOracleTest, LastOracular) {
+    auto param = GetParam();
+    assemble(std::get<0>(param), 540, std::get<1>(param));
+    auto random = std::get<2>(param);
+
+    collected.back() = make_CrankyMatrix(std::move(collected.back()));
+    auto wrapped_bound = combine(std::move(collected), std::get<1>(param));
+
+    EXPECT_FALSE(bound->uses_oracle(true));
+    EXPECT_TRUE(wrapped_bound->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
+    test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    DelayedBind,
+    DelayedBindOracleTest,
+    ::testing::Combine(
+        ::testing::Values(
+            std::vector<int>{ 100 },
+            std::vector<int>{ 150, 100 },
+            std::vector<int>{ 50, 200, 150 }
+        ),
+        ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(true, false)  // use random or consecutive oracle.
+    )
+);
+
+class DelayedBindOracleTest2 : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool> >, public DelayedBindOracleTestCore {};
+
+TEST_F(DelayedBindOracleTest2, Elongated) {
+    size_t NC = 200;
+    assemble({ 10, 20, 30 }, NC, true);
+    for (size_t m = 0; m < collected.size(); ++m) {
+        collected[m] = make_CrankyMatrix(std::move(collected[m]), 20 - m); // again, some variety in the prediction numbers.
+    }
+    auto wrapped_bound = combine(std::move(collected), true); // combining by row.
+
+    // Use a very long simulated sequence.
+    // This checks that the collection of expired predictions works correctly
+    // in the ParallelExtractor::ParentOracle class.
+
+    std::mt19937_64 rng(4123123); 
+    std::vector<int> fixed(50000);
+    for (auto& x : fixed) {
+        x = rng() % NC;
+    }
+
+    auto swork = bound->sparse_column();
+    auto swork_o = wrapped_bound->sparse_column();
+    swork_o->set_oracle(std::make_unique<tatami::FixedOracle<int> >(fixed.data(), fixed.size()));
+
+    for (auto i : fixed) {
+        auto sexpected = swork->fetch(i);
+        auto sobserved = swork_o->fetch(i);
+        EXPECT_EQ(sexpected.index, sobserved.index);
+        EXPECT_EQ(sexpected.value, sobserved.value);
+    }
+}

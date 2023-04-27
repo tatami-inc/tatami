@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include "tatami/base/SparseRange.hpp"
+#include "tatami/base/Options.hpp"
 
 inline std::pair<size_t, size_t> wrap_intervals(size_t first, size_t last, size_t max) {
     size_t diff = last - first;

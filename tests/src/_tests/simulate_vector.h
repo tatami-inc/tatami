@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "tatami/base/Matrix.hpp"
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 
 template<typename T>
 std::vector<T> simulate_dense_vector(size_t length, double lower = 0, double upper = 100, size_t seed = 1234567890) {

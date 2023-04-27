@@ -6,22 +6,22 @@
 #include <tuple>
 #include <random>
 
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/base/subset/make_DelayedSubset.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_column_access.h"
 #include "../_tests/test_row_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
-template<class PARAM> 
-class SubsetTest : public ::testing::TestWithParam<PARAM> {
+class SubsetTestCore {
 protected:
     size_t NR= 90, NC = 170;
     std::shared_ptr<tatami::NumericMatrix> dense, sparse;
 
 protected:
-    void SetUp() {
+    void assemble() {
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
         sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
         return;
@@ -38,7 +38,7 @@ protected:
 
         if (duplicates) {
             for (size_t i = 0, end = output.size(); i < end; ++i) {
-                output.insert(output.end(), rng() % 3, output[i]);
+                output.insert(output.end(), rng() % 4, output[i]);
             }
             if (sorted) {
                 std::sort(output.begin(), output.end());
@@ -55,10 +55,10 @@ protected:
     std::shared_ptr<tatami::NumericMatrix> reference_on_rows(const V& sub) const {
         std::vector<double> reference(sub.size() * NC);
         auto ptr = reference.data();
-        auto wrk = dense->dense_row_workspace();
+        auto wrk = dense->dense_row();
 
         for (auto r : sub) {
-            dense->row_copy(r, ptr, wrk.get());
+            wrk->fetch_copy(r, ptr);
             ptr += NC;
         }
 
@@ -70,10 +70,10 @@ protected:
         std::vector<double> reference(sub.size() * NR);
         auto ptr = reference.data();
         std::vector<double> buffer(NC);
-        auto wrk = dense->dense_row_workspace();
+        auto wrk = dense->dense_row();
 
         for (size_t r = 0; r < NR; ++r) {
-            auto full = dense->row(r, buffer.data(), wrk.get());
+            auto full = wrk->fetch(r, buffer.data());
             for (auto s : sub) {
                 *ptr = full[s];
                 ++ptr;
@@ -81,6 +81,13 @@ protected:
         }
 
         return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, sub.size(), std::move(reference)));
+    }
+};
+
+template<class PARAM> 
+class SubsetTest : public ::testing::TestWithParam<PARAM>, public SubsetTestCore {
+    void SetUp() {
+        assemble();
     }
 };
 
@@ -145,7 +152,7 @@ INSTANTIATE_TEST_CASE_P(
     DelayedSubset,
     SubsetFullAccessTest,
     ::testing::Combine(
-        ::testing::Values(1, 5, 10), // step size.
+        ::testing::Values(2, 5, 10), // step size.
         ::testing::Values(false, true), // whether to support duplicate indices.
         ::testing::Values(true, false), // whether to require sorted indices.
         ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
@@ -208,7 +215,7 @@ INSTANTIATE_TEST_CASE_P(
     DelayedSubset,
     SubsetSlicedAccessTest,
     ::testing::Combine(
-        ::testing::Values(1, 5, 10), // step size.
+        ::testing::Values(2, 5, 10), // step size.
         ::testing::Values(false, true), // whether to support duplicate indices.
         ::testing::Values(true, false), // whether to require sorted indices.
         ::testing::Values(1, 3), // jump, to check the workspace memory
@@ -270,7 +277,7 @@ INSTANTIATE_TEST_CASE_P(
     DelayedSubset,
     SubsetIndexedAccessTest,
     ::testing::Combine(
-        ::testing::Values(1, 5, 10), // step size.
+        ::testing::Values(2, 5, 10), // step size.
         ::testing::Values(false, true), // whether to support duplicate indices.
         ::testing::Values(true, false), // whether to require sorted indices.
         ::testing::Values(1, 3), // jump, to check the workspace memory
@@ -281,6 +288,38 @@ INSTANTIATE_TEST_CASE_P(
         )
     )
 );
+
+/****************************************************
+ ****************************************************/
+
+// Special tests when creating a blocked extractor for DelayedSubsetSorted.
+// to check that the loss of duplicates is handled correctly at block boundaries.
+class SubsetSortedSpecialAccessTest : public ::testing::Test, public SubsetTestCore {
+    void SetUp() {
+        assemble();
+    }
+};
+
+TEST_F(SubsetSortedSpecialAccessTest, OnRow) {
+    std::vector<int> sub;
+    sub.insert(sub.end(), 10, 0);
+    sub.insert(sub.end(), 20, 11);
+    sub.insert(sub.end(), 30, 22);
+
+    auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
+    auto ref = reference_on_rows(sub);
+
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 0, 59); // no loss of duplicates
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 5, 55); // bit of loss on both ends
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 5, 8);  // loss on the same repeat sequence.
+
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 10, 59); // no loss of duplicates
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 10, 45); // loss on the right
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 12, 15); // loss on the same repeat sequence.
+
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 30, 59); // no loss of duplicates
+    test_sliced_column_access(dense_subbed.get(), ref.get(), true, 1, 50, 59); // loss on the left
+}
 
 /****************************************************
  ****************************************************/
@@ -368,5 +407,63 @@ INSTANTIATE_TEST_CASE_P(
     ::testing::Combine(
         ::testing::Values(false, true), // whether to support duplicate indices.
         ::testing::Values(true, false)  // whether to require sorted indices.
+    )
+);
+
+/****************************************************
+ ****************************************************/
+
+class SubsetOracleTest : public ::testing::TestWithParam<std::tuple<int, bool, bool, bool> >, public SubsetTestCore {};
+
+TEST_P(SubsetOracleTest, ByRow) {
+    assemble();
+    auto param = GetParam();
+    auto sub = spawn_indices<int>(std::get<0>(param), NR, std::get<1>(param), std::get<2>(param));
+    auto random = std::get<3>(param);
+
+    auto dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
+    auto wrapped_dense_subbed = tatami::make_DelayedSubset<0>(make_CrankyMatrix(dense), sub);
+    auto wrapped_sparse_subbed = tatami::make_DelayedSubset<0>(make_CrankyMatrix(sparse), sub);
+
+    EXPECT_FALSE(dense_subbed->uses_oracle(true));
+    EXPECT_TRUE(wrapped_dense_subbed->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_dense_subbed.get(), dense_subbed.get(), random);
+    test_oracle_column_access(wrapped_sparse_subbed.get(), sparse_subbed.get(), random);
+
+    test_oracle_row_access(wrapped_dense_subbed.get(), dense_subbed.get(), random);
+    test_oracle_row_access(wrapped_sparse_subbed.get(), sparse_subbed.get(), random);
+}
+
+TEST_P(SubsetOracleTest, ByColumn) {
+    assemble();
+    auto param = GetParam();
+    auto sub = spawn_indices<int>(std::get<0>(param), NC, std::get<1>(param), std::get<2>(param));
+    auto random = std::get<3>(param);
+
+    auto dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
+    auto sparse_subbed = tatami::make_DelayedSubset<1>(sparse, sub);
+    auto wrapped_dense_subbed = tatami::make_DelayedSubset<1>(make_CrankyMatrix(dense), sub);
+    auto wrapped_sparse_subbed = tatami::make_DelayedSubset<1>(make_CrankyMatrix(sparse), sub);
+
+    EXPECT_FALSE(dense_subbed->uses_oracle(false));
+    EXPECT_TRUE(wrapped_dense_subbed->uses_oracle(false));
+
+    test_oracle_column_access(wrapped_dense_subbed.get(), dense_subbed.get(), random);
+    test_oracle_column_access(wrapped_sparse_subbed.get(), sparse_subbed.get(), random);
+
+    test_oracle_row_access(wrapped_dense_subbed.get(), dense_subbed.get(), random);
+    test_oracle_row_access(wrapped_sparse_subbed.get(), sparse_subbed.get(), random);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubset,
+    SubsetOracleTest,
+    ::testing::Combine(
+        ::testing::Values(2, 5, 10), // step size.
+        ::testing::Values(false, true), // whether to support duplicate indices.
+        ::testing::Values(true, false), // whether to require sorted indices.
+        ::testing::Values(true, false)  // use random or consecutive oracle.
     )
 );

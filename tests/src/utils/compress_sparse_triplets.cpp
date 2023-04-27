@@ -4,7 +4,7 @@
 #include <algorithm>
 #include <random>
 
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/utils/compress_sparse_triplets.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 

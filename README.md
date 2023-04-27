@@ -34,14 +34,15 @@ std::shared_ptr<tatami::NumericMatrix> mat(new tatami::DenseRowMatrix<double>(nr
 size_t NR = mat->nrow(), NC = mat->ncol();
 
 // Extract a column 'i':
+auto extractor = mat->dense_column();
+
 std::vector<double> buffer(NR);
-auto workspace = mat->new_column_workspace();
-auto ptr = mat->column(i, buffer.data(), workspace.get());
+auto ptr = extractor->fetch(i, buffer.data());
 ptr[0]; // first element of the column.
 
 // Extract the [5, 10) rows of the 'i'-th column.
-auto slicedwork = mat->new_column_workspace(5, 5)
-auto ptr = mat->column(i, buffer.data(), slicedwork.get());
+auto sliced_extractor = mat->dense_column(5, 5)
+auto sliced_ptr = sliced_extractor->fetch(i, buffer.data());
 ```
 
 The key idea here is that, once `mat` is created, the application does not need to worry about the exact format of the matrix referenced by the pointer.
@@ -59,8 +60,8 @@ As a result, supported operations are limited to reading data from the matrix:
 
 ```cpp
 std::vector<double> ibuffer(NC), vbuffer(NC);
-auto rowspace = mat->new_row_workspace();
-auto indexed = mat->sparse_row(i, vbuffer.data(), ibuffer.data(), rowspace.get());
+auto sparse_extractor = mat->sparse_row();
+auto info = sparse_extractor->fetch(i, vbuffer.data(), ibuffer.data());
 for (size_t i = 0; i < indexed.number; ++i) {
     indexed.index[i]; // index of the element
     indexed.value[i]; // value of the element

@@ -52,17 +52,17 @@ struct DelayedAddVectorHelper {
     /**
      * Addition is always assumed to discard structural sparsity, even when the added value is zero.
      */
-    static const bool sparse = false; 
+    static const bool sparse_ = false; 
 
     /**
      * This requires row indices if `MARGIN = 0`.
      */
-    static const bool needs_row = MARGIN == 0;
+    static const bool needs_row_ = MARGIN == 0;
 
     /**
      * This requires column indices if `MARGIN = 1`.
      */
-    static const bool needs_column = MARGIN == 1;
+    static const bool needs_column_ = MARGIN == 1;
 
 private:
     const V vec;
@@ -125,17 +125,17 @@ struct DelayedSubtractVectorHelper {
     /**
      * Subtraction is always assumed to discard structural sparsity, even when the subtracted value is zero.
      */
-    static const bool sparse = false; 
+    static const bool sparse_ = false; 
 
     /**
      * This requires row indices if `MARGIN = 0`.
      */
-    static const bool needs_row = MARGIN == 0;
+    static const bool needs_row_ = MARGIN == 0;
 
     /**
      * This requires column indices if `MARGIN = 1`.
      */
-    static const bool needs_column = MARGIN == 1;
+    static const bool needs_column_ = MARGIN == 1;
 
 private:
     const V vec;
@@ -187,17 +187,17 @@ struct DelayedMultiplyVectorHelper {
     /**
      * Multiplication is always assumed to preserve structural sparsity.
      */
-    static const bool sparse = true;
+    static const bool sparse_ = true;
 
     /**
      * This requires row indices if `MARGIN = 0`.
      */
-    static const bool needs_row = MARGIN == 0;
+    static const bool needs_row_ = MARGIN == 0;
 
     /**
      * This requires column indices if `MARGIN = 1`.
      */
-    static const bool needs_column = MARGIN == 1;
+    static const bool needs_column_ = MARGIN == 1;
 
 private:
     const V vec;
@@ -273,17 +273,17 @@ struct DelayedDivideVectorHelper {
      * Division of the scalar by the matrix value is assumed to discard structural sparsity,
      * as any matrix zeros will yield an infinite value for a non-zero scalar.
      */
-    static const bool sparse = RIGHT;
+    static const bool sparse_ = RIGHT;
 
     /**
      * This requires row indices if `MARGIN = 0`.
      */
-    static const bool needs_row = MARGIN == 0;
+    static const bool needs_row_ = MARGIN == 0;
 
     /**
      * This requires column indices if `MARGIN = 1`.
      */
-    static const bool needs_column = MARGIN == 1;
+    static const bool needs_column_ = MARGIN == 1;
 
 private:
     const V vec;

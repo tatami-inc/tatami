@@ -10,8 +10,8 @@
 
 #include "../../base/Matrix.hpp"
 #include "utils.hpp"
-#include "../../base/CompressedSparseMatrix.hpp"
-#include "../../base/DenseMatrix.hpp"
+#include "../../base/sparse/CompressedSparseMatrix.hpp"
+#include "../../base/dense/DenseMatrix.hpp"
 
 /**
  * @file load_hdf5_matrix.hpp

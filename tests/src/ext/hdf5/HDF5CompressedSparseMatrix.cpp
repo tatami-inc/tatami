@@ -6,8 +6,8 @@
 #endif
 
 #include "H5Cpp.h"
-#include "tatami/base/CompressedSparseMatrix.hpp"
-#include "tatami/base/DelayedTranspose.hpp"
+#include "tatami/base/sparse/CompressedSparseMatrix.hpp"
+#include "tatami/base/other/DelayedTranspose.hpp"
 #include "tatami/ext/hdf5/HDF5CompressedSparseMatrix.hpp"
 #include "tatami/stats/sums.hpp"
 

@@ -3,12 +3,13 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/base/subset/DelayedSubsetBlock.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_column_access.h"
 #include "../_tests/test_row_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
 template<class PARAM> 
@@ -214,5 +215,68 @@ INSTANTIATE_TEST_CASE_P(
             std::vector<double>({ 0.33, 0.06 }),
             std::vector<double>({ 0.56, 0.02 })
         )        
+    )
+);
+
+/*****************************
+ *****************************/
+
+class SubsetBlockOracleTest : public ::testing::TestWithParam<std::tuple<bool, std::pair<double, double>, bool> > {
+protected:
+    size_t NR = 155, NC = 102;
+    std::shared_ptr<tatami::NumericMatrix> dense_block, sparse_block, wrapped_dense_block, wrapped_sparse_block;
+
+protected:
+    template<class PARAM>
+    void assemble(const PARAM& param) {
+        auto simulated = simulate_sparse_vector<double>(NR * NC, 0.2);
+        auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulated));
+        auto sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
+
+        double full =  (std::get<0>(param) ? NR : NC);
+        size_t first = full * std::get<1>(param).first;
+        size_t last = full * std::get<1>(param).second;
+        auto block_length = last - first;
+
+        if (std::get<0>(param)) {
+            dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, last);
+            sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, first, last);
+            wrapped_dense_block = tatami::make_DelayedSubsetBlock<0>(make_CrankyMatrix(dense), first, last);
+            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<0>(make_CrankyMatrix(sparse), first, last);
+        } else {
+            dense_block = tatami::make_DelayedSubsetBlock<1>(dense, first, last);
+            sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, first, last);
+            wrapped_dense_block = tatami::make_DelayedSubsetBlock<1>(make_CrankyMatrix(dense), first, last);
+            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<1>(make_CrankyMatrix(sparse), first, last);
+        }
+    }
+};
+
+TEST_P(SubsetBlockOracleTest, Validate) {
+    auto param = GetParam();
+    assemble(param);
+    auto random = std::get<2>(param);
+
+    EXPECT_FALSE(dense_block->uses_oracle(true));
+    EXPECT_TRUE(wrapped_dense_block->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_dense_block.get(), dense_block.get(), random);
+    test_oracle_column_access(wrapped_sparse_block.get(), sparse_block.get(), random);
+
+    test_oracle_row_access(wrapped_dense_block.get(), dense_block.get(), random);
+    test_oracle_row_access(wrapped_sparse_block.get(), sparse_block.get(), random);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    DelayedSubsetBlock,
+    SubsetBlockOracleTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // row or column subsetting, respectively.
+        ::testing::Values(
+            std::make_pair(0.0, 0.5),
+            std::make_pair(0.25, 0.8),
+            std::make_pair(0.4, 1)
+        ),
+        ::testing::Values(true, false)  // use random or consecutive oracle.
     )
 );

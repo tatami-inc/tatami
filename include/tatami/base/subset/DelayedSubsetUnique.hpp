@@ -19,36 +19,36 @@ namespace tatami {
  * Implements delayed subsetting (i.e., slicing) on the rows or columns of a matrix, given a vector of unique indices.
  * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
  *
- * @tparam MARGIN Dimension along which the subsetting is to occur.
+ * @tparam margin_ Dimension along which the subsetting is to occur.
  * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
- * @tparam T Type of matrix value.
- * @tparam V Vector containing the subset indices.
- * @tparam IDX Type of index value.
+ * @tparam Value_ Type of matrix value.
+ * @tparam Index_ Integer type of index value.
+ * @tparam IndexStorage_ Vector containing the subset indices.
  */
-template<int MARGIN, typename T, typename IDX, class V>
-class DelayedSubsetUnique : public Matrix<T, IDX> {
+template<int margin_, typename Value_, typename Index_, class IndexStorage_>
+class DelayedSubsetUnique : public Matrix<Value_, Index_> {
 private:
-    typedef typename std::remove_const<typename std::remove_reference<decltype(std::declval<V>()[0])>::type>::type V_type;
+    typedef typename std::remove_const<typename std::remove_reference<decltype(std::declval<IndexStorage_>()[0])>::type>::type storage_type;
 
     static void finish_assembly(
-        const std::vector<std::pair<V_type, size_t> >& collected,
-        const V& indices, 
-        std::vector<size_t>& reverse_mapping,
-        std::vector<IDX>& unique_and_sorted,
-        size_t mapping_dim,
-        std::vector<IDX>& mapping_single
+        const std::vector<std::pair<storage_type, Index_> >& collected,
+        const IndexStorage_& indices, 
+        std::vector<Index_>& reverse_mapping,
+        std::vector<Index_>& sorted,
+        Index_ mapping_dim,
+        std::vector<Index_>& mapping_single
     ) {
-        unique_and_sorted.reserve(indices.size());
+        sorted.reserve(indices.size());
         reverse_mapping.resize(indices.size());
 
-        for (size_t i = 0, end = collected.size(); i < end; ++i) {
+        for (Index_ i = 0, end = collected.size(); i < end; ++i) {
             const auto& current = collected[i];
-            unique_and_sorted.push_back(current.first);
-            reverse_mapping[current.second] = unique_and_sorted.size() - 1;
+            sorted.push_back(current.first);
+            reverse_mapping[current.second] = sorted.size() - 1;
         }
 
         mapping_single.resize(mapping_dim);
-        for (IDX  i = 0, end = indices.size(); i < end; ++i) {
+        for (Index_  i = 0, end = indices.size(); i < end; ++i) {
             mapping_single[indices[i]] = i;
         }
     }
@@ -56,20 +56,20 @@ private:
 public:
     /**
      * @param p Pointer to the underlying (pre-subset) matrix.
-     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `MARGIN = 0`) or columns (if `MARGIN = 1`).
+     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `margin_ = 0`) or columns (if `margin_ = 1`).
      * This should be unique, but may be unsorted.
      * @param check Whether to check `idx` for unique values.
      */
-    DelayedSubsetUnique(std::shared_ptr<const Matrix<T, IDX> > p, V idx, bool check = true) : mat(std::move(p)), indices(std::move(idx)) {
-        std::vector<std::pair<V_type, size_t> > collected;
+    DelayedSubsetUnique(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx, bool check = true) : mat(std::move(p)), indices(std::move(idx)) {
+        std::vector<std::pair<storage_type, Index_> > collected;
         collected.reserve(indices.size());
-        for (size_t i = 0, end = indices.size(); i < end; ++i) {
+        for (Index_ i = 0, end = indices.size(); i < end; ++i) {
             collected.emplace_back(indices[i], i);
         }
         std::sort(collected.begin(), collected.end());
 
         if (check) {
-            for (size_t i = 0, end = collected.size(); i < end; ++i) {
+            for (Index_ i = 0, end = collected.size(); i < end; ++i) {
                 if (i) {
                     if (collected[i].first == collected[i-1].first) {
                         throw std::runtime_error("indices should be unique");
@@ -83,8 +83,8 @@ public:
             collected,
             indices, 
             reverse_mapping, 
-            unique_and_sorted,
-            MARGIN == 0 ? mat->nrow() : mat->ncol(),
+            sorted,
+            margin_ == 0 ? mat->nrow() : mat->ncol(),
             mapping_single
         );
     }
@@ -92,13 +92,15 @@ public:
     /**
      * @cond
      */
-    DelayedSubsetUnique(std::shared_ptr<const Matrix<T, IDX> > p, const std::vector<std::pair<V_type, size_t> >& collected, V idx) : mat(std::move(p)), indices(std::move(idx)) {
+    DelayedSubsetUnique(std::shared_ptr<const Matrix<Value_, Index_> > p, const std::vector<std::pair<storage_type, Index_> >& collected, IndexStorage_ idx) : 
+        mat(std::move(p)), indices(std::move(idx)) 
+    {
         finish_assembly(
             collected,
             indices, 
             reverse_mapping, 
-            unique_and_sorted,
-            MARGIN == 0 ? mat->nrow() : mat->ncol(),
+            sorted,
+            margin_ == 0 ? mat->nrow() : mat->ncol(),
             mapping_single
         );
     }
@@ -107,24 +109,24 @@ public:
      */
 
 private:
-    std::shared_ptr<const Matrix<T, IDX> > mat;
-    V indices;
+    std::shared_ptr<const Matrix<Value_, Index_> > mat;
+    IndexStorage_ indices;
 
-    std::vector<size_t> reverse_mapping;
-    std::vector<IDX> unique_and_sorted;
-    std::vector<IDX> mapping_single;
+    std::vector<Index_> reverse_mapping;
+    std::vector<Index_> sorted;
+    std::vector<Index_> mapping_single;
 
 public:
-    size_t nrow() const {
-        if constexpr(MARGIN==0) {
+    Index_ nrow() const {
+        if constexpr(margin_==0) {
             return indices.size();
         } else {
             return mat->nrow();
         }
     }
 
-    size_t ncol() const {
-        if constexpr(MARGIN==0) {
+    Index_ ncol() const {
+        if constexpr(margin_==0) {
             return mat->ncol();
         } else {
             return indices.size();
@@ -143,22 +145,22 @@ public:
         return mat->dimension_preference();
     }
 
-    using Matrix<T, IDX>::column;
+    bool uses_oracle(bool row) const {
+        return mat->uses_oracle(row);
+    }
 
-    using Matrix<T, IDX>::row;
+    using Matrix<Value_, Index_>::dense_column;
 
-    using Matrix<T, IDX>::dense_column_workspace;
+    using Matrix<Value_, Index_>::dense_row;
 
-    using Matrix<T, IDX>::dense_row_workspace;
+    using Matrix<Value_, Index_>::sparse_column;
 
-    using Matrix<T, IDX>::sparse_column_workspace;
-
-    using Matrix<T, IDX>::sparse_row_workspace;
+    using Matrix<Value_, Index_>::sparse_row;
 
 private:
     struct DenseBase {
-        DenseBase(size_t bufsize, const WorkspaceOptions& opt) : buffer(bufsize) {}
-        std::vector<T> buffer;
+        DenseBase(size_t bufsize) : temp(bufsize) {}
+        std::vector<Value_> temp;
     };
 
     struct SparseBase {
@@ -172,10 +174,10 @@ private:
          * In this case, the user-supplied ibuffer (i) may not be valid but (ii) we still need the indices, so we need to create our ibuffer.
          */ 
 
-        SparseBase(size_t bufsize, const WorkspaceOptions& opt) : 
-            report_index(sparse_extract_index(opt.sparse_extract_mode)),
+        SparseBase(const Options& opt, size_t bufsize) :
+            report_index(opt.sparse_extract_index),
             needs_sort(opt.sparse_ordered_index),
-            ibuffer(opt.sparse_extract_mode == SparseExtractMode::VALUE && needs_sort ? bufsize : 0) 
+            itemp(opt.sparse_extract_value && !opt.sparse_extract_index && needs_sort ? bufsize : 0) 
         {
             if (needs_sort) {
                 sortspace.reserve(bufsize);
@@ -184,37 +186,54 @@ private:
 
         bool report_index;
         bool needs_sort;
-        std::vector<IDX> ibuffer;
-        std::vector<std::pair<IDX, T> > sortspace;
+        std::vector<Index_> itemp;
+        std::vector<std::pair<Index_, Value_> > sortspace;
     };
 
-    template<bool SPARSE>
-    using ConditionalBase = typename std::conditional<SPARSE, SparseBase, DenseBase>::type;
+private:
+    template<bool sparse_>
+    std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > create_inner_extractor(const Options& opt, std::vector<Index_> idx) const {
+        if constexpr(sparse_) {
+            if (opt.sparse_ordered_index) {
+                auto copy = opt;
 
-    template<bool WORKROW, bool SPARSE>
-    auto define_internal_workspace(std::vector<IDX> subset, WorkspaceOptions opt) const {
-        if (opt.sparse_extract_mode == SparseExtractMode::VALUE && opt.sparse_ordered_index) {
-            // Making sure we extract the indices if we want the sorted values.
-            opt.sparse_extract_mode = SparseExtractMode::BOTH;
+                // Turning off the sorting to enable possible optimizations in the underlying matrix.
+                // We don't need sorted output as we'll be resorting ourselves later.
+                copy.sparse_ordered_index = false;
+
+                if (!opt.sparse_extract_index && opt.sparse_extract_value) {
+                    // Need to force extraction of indices for correct resorting.
+                    copy.sparse_extract_index = true;
+                }
+
+                return new_extractor<margin_ != 0, sparse_>(mat.get(), copy, std::move(idx));
+            }
         }
 
-        // Turning off the sorting to enable possible optimizations in the underlying matrix.
-        // We don't need sorted output as we'll be resorting ourselves later.
-        opt.sparse_ordered_index = false;
-        return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset), opt);
+        return new_extractor<margin_ != 0, sparse_>(mat.get(), opt, std::move(idx));
     }
 
-    template<bool WORKROW, class InputWorkspace>
-    SparseRange<T, IDX> reorganize_sparse(size_t i, T* vbuffer, IDX* ibuffer, InputWorkspace* work) const {
-        if (!(work->needs_sort)) {
-            // When we don't need sorting, validity of ibuffer and vbuffer/ should be consistent 
-            // with the extraction mode used to construct work->internal.
-            auto raw = extract_sparse<WORKROW>(mat.get(), i, vbuffer, ibuffer, work->internal.get());
+    template<class Extractor_>
+    SparseRange<Value_, Index_> reorganize_sparse(
+        Index_ i, 
+        Value_* vbuffer, 
+        Index_* ibuffer, 
+        Extractor_* work,
+        std::vector<Index_>& itemp, 
+        std::vector<std::pair<Index_, Value_> >& sortspace, 
+        bool report_index, 
+        bool needs_sort) const 
+    {
+        if (!needs_sort) {
+            // When we don't need sorting, validity of ibuffer and vbuffer should be consistent 
+            // with the extraction mode used to construct 'work'.
+            auto raw = work->fetch(i, vbuffer, ibuffer);
             if (raw.index) {
                 auto icopy = ibuffer;
-                for (size_t i = 0; i < raw.number; ++i, ++icopy) {
+                for (Index_ i = 0; i < raw.number; ++i, ++icopy) {
                     *icopy = mapping_single[raw.index[i]];
                 }
+                raw.index = ibuffer;
             }
             return raw;
         }
@@ -222,25 +241,23 @@ private:
         // If the workspace's ibuffer is empty, we're either extracting the indices
         // directly into the user's ibuffer, or we don't need the indices at all.
         // Either way, it doesn't hurt to use the user's ibuffer.
-        IDX* iin = (work->ibuffer.empty() ? ibuffer : work->ibuffer.data()); 
+        Index_* iin = (itemp.empty() ? ibuffer : itemp.data()); 
 
-        auto raw = extract_sparse<WORKROW>(mat.get(), i, vbuffer, iin, work->internal.get());
+        auto raw = work->fetch(i, vbuffer, iin);
         if (!raw.value && !raw.index) {
             return raw;
         }
 
-        auto& sortspace = work->sortspace;
+        // raw.index is guaranteed to be valid as this point, as we forced the
+        // extraction of indices if the user requests sorted output.
         sortspace.clear();
-
-        // raw.index is guaranteed to be valid as this point, as the internal workspace
-        // can never be set to VALUE-only if it's requesting sorted output.
         if (raw.value) {
-            for (size_t i = 0; i < raw.number; ++i) {
+            for (Index_ i = 0; i < raw.number; ++i) {
                 sortspace.emplace_back(mapping_single[raw.index[i]], raw.value[i]);
             }
         } else {
-            for (size_t i = 0; i < raw.number; ++i) {
-                sortspace.emplace_back(mapping_single[raw.index[i]], 0);
+            for (Index_ i = 0; i < raw.number; ++i) {
+                sortspace.emplace_back(mapping_single[raw.index[i]], 0); // no-op value.
             }
         }
 
@@ -256,7 +273,7 @@ private:
             vbuffer = NULL;
         }
 
-        if (work->report_index) {
+        if (report_index) {
             auto icopy = ibuffer;
             for (const auto& x : sortspace) {
                 *icopy = x.first;
@@ -266,261 +283,301 @@ private:
             ibuffer = NULL;
         }
 
-        return SparseRange<T, IDX>(raw.number, vbuffer, ibuffer);
+        return SparseRange<Value_, Index_>(raw.number, vbuffer, ibuffer);
     }
 
     /*****************************************
      ************ Full extraction ************
      *****************************************/
 private:
-    template<bool WORKROW, bool SPARSE>
-    struct AlongWorkspace : public Workspace<WORKROW, SPARSE>, public ConditionalBase<SPARSE> {
-        AlongWorkspace(size_t bufsize, const WorkspaceOptions& opt) : ConditionalBase<SPARSE>(bufsize, opt) {}
-
-        std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > internal;
+    template<DimensionSelectionType selection_, bool sparse_>
+    struct ParallelExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
+            internal->set_oracle(std::move(o));
+        }
+    protected:
+        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > internal;
     };
 
-    template<bool WORKROW, bool SPARSE>
-    std::shared_ptr<Workspace<WORKROW, SPARSE> > create_new_workspace(const WorkspaceOptions& opt) const {
-        if constexpr((MARGIN == 0) == WORKROW) {
-            return new_workspace<WORKROW, SPARSE>(mat.get(), opt);
-        } else {
-            auto ptr = new AlongWorkspace<WORKROW, SPARSE>(unique_and_sorted.size(), opt);
-            std::shared_ptr<Workspace<WORKROW, SPARSE> > output(ptr);
-            ptr->internal = define_internal_workspace<WORKROW, SPARSE>(unique_and_sorted, opt); // deliberate copy here.
-            return output;
+    template<bool sparse_>
+    struct FullParallelExtractor : public ParallelExtractor<DimensionSelectionType::FULL, sparse_> {
+        FullParallelExtractor(const DelayedSubsetUnique* p, const Options& opt) : parent(p) {
+            this->full_length = parent->indices.size();
+            this->internal = parent->create_inner_extractor<sparse_>(opt, parent->sorted); // copy is deliberate.
         }
-    }
+    protected:
+        const DelayedSubsetUnique* parent;
+    };
 
-    template<class InputWorkspace>
-    const T* get_dense(size_t i, T* buffer, InputWorkspace* work) const {
-        constexpr bool WORKROW = InputWorkspace::row;
-        if constexpr((MARGIN==0) == WORKROW) {
-            return extract_dense<WORKROW>(mat.get(), indices[i], buffer, work);
-        } else {
-            auto wptr = static_cast<AlongWorkspace<WORKROW, false>*>(work);
-            return subset_utils::remap_dense<WORKROW>(mat.get(), i, buffer, wptr, reverse_mapping);
+    struct FullDenseParallelExtractor : public FullParallelExtractor<false>, public DenseBase {
+        FullDenseParallelExtractor(const DelayedSubsetUnique* p, const Options& opt) : 
+            FullParallelExtractor<false>(p, opt), DenseBase(this->internal->index_length) {}
+
+        const Value_* fetch(Index_ i, Value_* buffer) {
+            auto ref = this->internal->fetch(i, this->temp.data());
+            return subset_utils::remap_dense(ref, buffer, this->parent->reverse_mapping);
         }
-    }
+    };
 
-    template<template<bool, bool> class TargetWorkspace, class InputWorkspace>
-    SparseRange<T, IDX> get_sparse(size_t i, T* out_values, IDX* out_indices, InputWorkspace* work) const {
-        constexpr bool WORKROW = InputWorkspace::row;
-        if constexpr((MARGIN==0) == WORKROW) {
-            return extract_sparse<WORKROW>(mat.get(), indices[i], out_values, out_indices, work);
-        } else {
-            auto wptr = static_cast<TargetWorkspace<WORKROW, true>*>(work);
-            return reorganize_sparse<WORKROW>(i, out_values, out_indices, wptr);
+    struct FullSparseParallelExtractor : public FullParallelExtractor<true>, public SparseBase {
+        FullSparseParallelExtractor(const DelayedSubsetUnique* p, const Options& opt) : 
+            FullParallelExtractor<true>(p, opt), SparseBase(opt, this->internal->index_length) {}
+
+        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+            return this->parent->reorganize_sparse(
+                i, vbuffer, ibuffer,
+                this->internal.get(),
+                this->itemp, this->sortspace, this->report_index, this->needs_sort
+            );
         }
-    }
+    };
 
-public:
-    std::shared_ptr<DenseRowWorkspace> dense_row_workspace(const WorkspaceOptions& opt) const {
-        return create_new_workspace<true, false>(opt);
-    }
-
-    std::shared_ptr<DenseColumnWorkspace> dense_column_workspace(const WorkspaceOptions& opt) const {
-        return create_new_workspace<false, false>(opt);
-    }
-
-    const T* row(size_t r, T* buffer, DenseRowWorkspace* work) const {
-        return get_dense(r, buffer, work);
-    }
-
-    const T* column(size_t c, T* buffer, DenseColumnWorkspace* work) const {
-        return get_dense(c, buffer, work);
-    }
-
-    std::shared_ptr<SparseRowWorkspace> sparse_row_workspace(const WorkspaceOptions& opt) const {
-        return create_new_workspace<true, true>(opt);
-    }
-
-    std::shared_ptr<SparseColumnWorkspace> sparse_column_workspace(const WorkspaceOptions& opt) const {
-        return create_new_workspace<false, true>(opt);
-    }
-
-    SparseRange<T, IDX> row(size_t r, T* out_values, IDX* out_indices, SparseRowWorkspace* work) const {
-        return get_sparse<AlongWorkspace>(r, out_values, out_indices, work);
-    }
-
-    SparseRange<T, IDX> column(size_t c, T* out_values, IDX* out_indices, SparseColumnWorkspace* work) const {
-        return get_sparse<AlongWorkspace>(c, out_values, out_indices, work);
-    }
-
-    /*****************************************
-     *********** Block extraction ************
-     *****************************************/
+    /******************************************
+     ************ Block extraction ************
+     ******************************************/
 private:
-    template<class InputWorkspace>
-    std::vector<IDX> transplant_indices(std::vector<std::pair<V_type, size_t> >& collected, InputWorkspace* work) const {
-        std::sort(collected.begin(), collected.end());
+    template<class Function_> 
+    void transplant_indices(std::vector<Index_>& local, Index_ len, Function_ get_index) const {
+        // Avoid re-sorting by going through the indices
+        // and filtering the existing 'sorted'.
+        local.resize(sorted.size());
 
-        std::vector<IDX> local;
-        local.reserve(collected.size());
-        if constexpr(!InputWorkspace::sparse) {
-            work->reverse_mapping.resize(collected.size());
+        for (Index_ b = 0; b < len; ++b) {
+            local[reverse_mapping[get_index(b)]] = 1;
         }
 
-        for (size_t i = 0, end = collected.size(); i < end; ++i) {
-            local.push_back(collected[i].first);
-            if constexpr(!InputWorkspace::sparse) {
-                work->reverse_mapping[collected[i].second] = local.size() - 1;
+        Index_ counter = 0;
+        for (Index_ b = 0, end = local.size(); b < end; ++b) {
+            if (local[b]) {
+                local[counter] = sorted[b];
+                ++counter;
             }
         }
 
-        return local;
+        local.resize(counter);
     }
 
-    struct DenseBase2 : public DenseBase {
-        DenseBase2(size_t bufsize, const WorkspaceOptions& opt) : DenseBase(bufsize, opt) {}
-        std::vector<size_t> reverse_mapping;
-    };
+    template<class Function>
+    void transplant_indices(std::vector<Index_>& local, Index_ len, Function get_index, std::vector<Index_>& my_reverse_mapping) const {
+        // Same principle, but we need to keep track of the indices of the hits
+        // to create a reverse mapping vector for the dense extractors.
+        std::vector<unsigned char> hits;
+        hits.resize(sorted.size());
+        local.resize(sorted.size());
 
-    template<bool SPARSE>
-    using ConditionalBase2 = typename std::conditional<SPARSE, SparseBase, DenseBase2>::type;
+        for (Index_ b = 0; b < len; ++b) {
+            auto r = reverse_mapping[get_index(b)];
+            hits[r] = 1;
+            local[r] = b;
+        }
+
+        Index_ counter = 0;
+        my_reverse_mapping.resize(len);
+        for (Index_ b = 0, end = local.size(); b < end; ++b) {
+            if (hits[b]) {
+                my_reverse_mapping[local[b]] = counter;
+                local[counter] = sorted[b];
+                ++counter;
+            }
+        }
+
+        local.resize(counter);
+    }
 
 private:
-    template<bool WORKROW, bool SPARSE>
-    struct AlongBlockWorkspace : public BlockWorkspace<WORKROW, SPARSE>, public ConditionalBase2<SPARSE> {
-        AlongBlockWorkspace(size_t s, size_t l, const WorkspaceOptions& opt) : BlockWorkspace<WORKROW, SPARSE>(s, l), ConditionalBase2<SPARSE>(l, opt) {}
+    template<bool sparse_>
+    struct BlockParallelExtractor : public ParallelExtractor<DimensionSelectionType::BLOCK, sparse_> {
+        BlockParallelExtractor(const DelayedSubsetUnique* p, const Options& opt, Index_ bs, Index_ bl) : parent(p) {
+            this->block_start = bs;
+            this->block_length = bl;
 
-        std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > internal;
-    };
-
-    template<bool WORKROW, bool SPARSE>
-    std::shared_ptr<BlockWorkspace<WORKROW, SPARSE> > create_new_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
-        if constexpr((MARGIN == 0) == WORKROW) {
-            return new_workspace<WORKROW, SPARSE>(mat.get(), start, length, opt);
-        } else {
-            auto ptr = new AlongBlockWorkspace<WORKROW, SPARSE>(start, length, opt);
-            std::shared_ptr<BlockWorkspace<WORKROW, SPARSE> > output(ptr);
-
-            std::vector<std::pair<V_type, size_t> > collected;
-            collected.reserve(length);
-            size_t end = start + length;
-            for (size_t i = start; i < end; ++i) {
-                collected.emplace_back(indices[i], i - start);
+            std::vector<Index_> local;
+            auto fun = [&](Index_ i) -> Index_ { return i  + bs; };
+            if constexpr(sparse_) {
+                parent->transplant_indices(local, bl, std::move(fun));
+            } else {
+                parent->transplant_indices(local, bl, std::move(fun), reverse_mapping);
             }
 
-            auto local = transplant_indices(collected, ptr);
-            ptr->internal = define_internal_workspace<WORKROW, SPARSE>(std::move(local), opt); 
-            return output;
+            this->internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
         }
-    }
+    protected:
+        const DelayedSubsetUnique* parent;
+        typename std::conditional<!sparse_, std::vector<Index_>, bool>::type reverse_mapping;
+    };
 
-    template<template<bool, bool> class TargetWorkspace, class InputWorkspace>
-    const T* get_dense2(size_t i, T* buffer, InputWorkspace* work) const {
-        constexpr bool WORKROW = InputWorkspace::row;
-        if constexpr((MARGIN==0) == WORKROW) {
-            return extract_dense<WORKROW>(mat.get(), indices[i], buffer, work);
-        } else {
-            auto wptr = static_cast<TargetWorkspace<WORKROW, false>*>(work);
-            return subset_utils::remap_dense<WORKROW>(mat.get(), i, buffer, wptr, wptr->reverse_mapping);
+    struct BlockDenseParallelExtractor : public BlockParallelExtractor<false>, public DenseBase {
+        BlockDenseParallelExtractor(const DelayedSubsetUnique* p, const Options& opt, Index_ bs, Index_ bl) : 
+            BlockParallelExtractor<false>(p, opt, bs, bl), DenseBase(this->internal->index_length) {}
+
+        const Value_* fetch(Index_ i, Value_* buffer) {
+            auto ref = this->internal->fetch(i, this->temp.data());
+            return subset_utils::remap_dense(ref, buffer, this->reverse_mapping);
         }
-    }
+    };
 
-public:
-    std::shared_ptr<DenseRowBlockWorkspace> dense_row_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
-        return create_new_workspace<true, false>(start, length, opt);
-    }
+    struct BlockSparseParallelExtractor : public BlockParallelExtractor<true>, public SparseBase {
+        BlockSparseParallelExtractor(const DelayedSubsetUnique* p, const Options& opt, Index_ bs, Index_ bl) : 
+            BlockParallelExtractor<true>(p, opt, bs, bl), SparseBase(opt, this->internal->index_length) {}
 
-    std::shared_ptr<DenseColumnBlockWorkspace> dense_column_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
-        return create_new_workspace<false, false>(start, length, opt);
-    }
-
-    const T* row(size_t r, T* buffer, DenseRowBlockWorkspace* work) const {
-        return get_dense2<AlongBlockWorkspace>(r, buffer, work);
-    }
-
-    const T* column(size_t c, T* buffer, DenseColumnBlockWorkspace* work) const {
-        return get_dense2<AlongBlockWorkspace>(c, buffer, work);
-    }
-
-    std::shared_ptr<SparseRowBlockWorkspace> sparse_row_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
-        return create_new_workspace<true, true>(start, length, opt);
-    }
-
-    std::shared_ptr<SparseColumnBlockWorkspace> sparse_column_workspace(size_t start, size_t length, const WorkspaceOptions& opt) const {
-        return create_new_workspace<false, true>(start, length, opt);
-    }
-
-    SparseRange<T, IDX> row(size_t r, T* out_values, IDX* out_indices, SparseRowBlockWorkspace* work) const {
-        return get_sparse<AlongBlockWorkspace>(r, out_values, out_indices, work);
-    }
-
-    SparseRange<T, IDX> column(size_t c, T* out_values, IDX* out_indices, SparseColumnBlockWorkspace* work) const {
-        return get_sparse<AlongBlockWorkspace>(c, out_values, out_indices, work);
-    }
+        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+            return this->parent->reorganize_sparse(
+                i, vbuffer, ibuffer,
+                this->internal.get(),
+                this->itemp, this->sortspace, this->report_index, this->needs_sort
+            );
+        }
+    };
 
     /*****************************************
      *********** Index extraction ************
      *****************************************/
 private:
-    template<bool WORKROW, bool SPARSE>
-    struct AlongIndexWorkspace : public IndexWorkspace<IDX, WORKROW, SPARSE>, public ConditionalBase2<SPARSE> {
-        AlongIndexWorkspace(std::vector<IDX> i, const WorkspaceOptions& opt) : 
-            IndexWorkspace<IDX, WORKROW, SPARSE>(i.size()), ConditionalBase2<SPARSE>(i.size(), opt), indices_(std::move(i)) {}
+    template<bool sparse_>
+    struct IndexParallelExtractor : public ParallelExtractor<DimensionSelectionType::INDEX, sparse_> {
+        IndexParallelExtractor(const DelayedSubsetUnique* p, const Options& opt, std::vector<Index_> idx) : parent(p) {
+            Index_ il = idx.size();
+            this->index_length = il;
+            indices = std::move(idx);
 
-        std::vector<IDX> indices_;
-        const std::vector<IDX>& indices() const { return indices_; }
-
-        std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > internal;
-    };
-
-    template<bool WORKROW, bool SPARSE>
-    std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > create_new_workspace(std::vector<IDX> subset_, const WorkspaceOptions& opt) const {
-        if constexpr((MARGIN == 0) == WORKROW) {
-            return new_workspace<WORKROW, SPARSE>(mat.get(), std::move(subset_), opt);
-        } else {
-            auto ptr = new AlongIndexWorkspace<WORKROW, SPARSE>(std::move(subset_), opt);
-            std::shared_ptr<IndexWorkspace<IDX, WORKROW, SPARSE> > output(ptr);
-
-            const auto& subset = ptr->indices_;
-            size_t length = subset.size();
-
-            std::vector<std::pair<V_type, size_t> > collected;
-            collected.reserve(length);
-            for (size_t i = 0; i < length; ++i) {
-                collected.emplace_back(indices[subset[i]], i);
+            std::vector<Index_> local;
+            auto fun = [&](Index_ i) -> Index_ { return indices[i]; };
+            if constexpr(sparse_) {
+                parent->transplant_indices(local, il, std::move(fun));
+            } else {
+                parent->transplant_indices(local, il, std::move(fun), reverse_mapping);
             }
 
-            auto local = transplant_indices(collected, ptr);
-            ptr->internal = define_internal_workspace<WORKROW, SPARSE>(std::move(local), opt); 
-            return output;
+            this->internal = parent->create_inner_extractor<sparse_>(opt, std::move(local));
+        }
+
+        const Index_* index_start() const {
+            return indices.data();
+        }
+
+    protected:
+        const DelayedSubsetUnique* parent;
+        std::vector<Index_> indices;
+        typename std::conditional<!sparse_, std::vector<Index_>, bool>::type reverse_mapping;
+    };
+
+    struct IndexDenseParallelExtractor : public IndexParallelExtractor<false>, public DenseBase {
+        IndexDenseParallelExtractor(const DelayedSubsetUnique* p, const Options& opt, std::vector<Index_> idx) : 
+            IndexParallelExtractor<false>(p, opt, std::move(idx)), DenseBase(this->internal->index_length) {}
+
+        const Value_* fetch(Index_ i, Value_* buffer) {
+            auto ref = this->internal->fetch(i, this->temp.data());
+            return subset_utils::remap_dense(ref, buffer, this->reverse_mapping);
+        }
+    };
+
+    struct IndexSparseParallelExtractor : public IndexParallelExtractor<true>, public SparseBase {
+        IndexSparseParallelExtractor(const DelayedSubsetUnique* p, const Options& opt, std::vector<Index_> idx) : 
+            IndexParallelExtractor<true>(p, opt, std::move(idx)), SparseBase(opt, this->internal->index_length) {}
+
+        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+            return this->parent->reorganize_sparse(
+                i, vbuffer, ibuffer,
+                this->internal.get(),
+                this->itemp, this->sortspace, this->report_index, this->needs_sort
+            );
+        }
+    };
+
+    /**************************************************
+     ************ Public virtual overrides ************
+     **************************************************/
+private:
+    template<bool sparse_>
+    std::unique_ptr<Extractor<DimensionSelectionType::FULL, sparse_, Value_, Index_> > populate_parallel(const Options& options) const {
+        std::unique_ptr<Extractor<DimensionSelectionType::FULL, sparse_, Value_, Index_> > output;
+        if constexpr(sparse_) {
+            output.reset(new FullSparseParallelExtractor(this, options));
+        } else {
+            output.reset(new FullDenseParallelExtractor(this, options));
+        }
+        return output;
+    }
+
+    template<bool sparse_>
+    std::unique_ptr<Extractor<DimensionSelectionType::BLOCK, sparse_, Value_, Index_> > populate_parallel(const Options& options, Index_ bs, Index_ bl) const {
+        std::unique_ptr<Extractor<DimensionSelectionType::BLOCK, sparse_, Value_, Index_> > output;
+        if constexpr(sparse_) {
+            output.reset(new BlockSparseParallelExtractor(this, options, bs, bl));
+        } else {
+            output.reset(new BlockDenseParallelExtractor(this, options, bs, bl));
+        }
+        return output;
+    }
+
+    template<bool sparse_>
+    std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > populate_parallel(const Options& options, std::vector<Index_> idx) const {
+        std::unique_ptr<Extractor<DimensionSelectionType::INDEX, sparse_, Value_, Index_> > output;
+        if constexpr(sparse_) {
+            output.reset(new IndexSparseParallelExtractor(this, options, std::move(idx)));
+        } else {
+            output.reset(new IndexDenseParallelExtractor(this, options, std::move(idx)));
+        }
+        return output;
+    }
+
+    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& options, Args_... args) const {
+        if constexpr(accrow_ == (margin_ == 0)) {
+            return subset_utils::populate_perpendicular<accrow_, selection_, sparse_>(mat.get(), indices, options, std::move(args)...);
+        } else {
+            return populate_parallel<sparse_>(options, std::move(args)...);
         }
     }
 
 public:
-    std::shared_ptr<DenseRowIndexWorkspace<IDX> > dense_row_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
-        return create_new_workspace<true, false>(std::move(subset), opt);
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options& options) const {
+        return populate<true, DimensionSelectionType::FULL, false>(options);
     }
 
-    std::shared_ptr<DenseColumnIndexWorkspace<IDX> > dense_column_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
-        return create_new_workspace<false, false>(std::move(subset), opt);
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& options) const {
+        return populate<true, DimensionSelectionType::BLOCK, false>(options, block_start, block_length);
     }
 
-    const T* row(size_t r, T* buffer, DenseRowIndexWorkspace<IDX>* work) const {
-        return get_dense2<AlongIndexWorkspace>(r, buffer, work);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& options) const {
+        return populate<true, DimensionSelectionType::INDEX, false>(options, std::move(indices));
     }
 
-    const T* column(size_t c, T* buffer, DenseColumnIndexWorkspace<IDX>* work) const {
-        return get_dense2<AlongIndexWorkspace>(c, buffer, work);
+    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options& options) const {
+        return populate<false, DimensionSelectionType::FULL, false>(options);
     }
 
-    std::shared_ptr<SparseRowIndexWorkspace<IDX> > sparse_row_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
-        return create_new_workspace<true, true>(std::move(subset), opt);
+    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& options) const {
+        return populate<false, DimensionSelectionType::BLOCK, false>(options, block_start, block_length);
     }
 
-    std::shared_ptr<SparseColumnIndexWorkspace<IDX> > sparse_column_workspace(std::vector<IDX> subset, const WorkspaceOptions& opt) const {
-        return create_new_workspace<false, true>(std::move(subset), opt);
+    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& options) const {
+        return populate<false, DimensionSelectionType::INDEX, false>(options, std::move(indices));
     }
 
-    SparseRange<T, IDX> row(size_t r, T* out_values, IDX* out_indices, SparseRowIndexWorkspace<IDX>* work) const {
-        return get_sparse<AlongIndexWorkspace>(r, out_values, out_indices, work);
+public:
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options& options) const {
+        return populate<true, DimensionSelectionType::FULL, true>(options);
     }
 
-    SparseRange<T, IDX> column(size_t c, T* out_values, IDX* out_indices, SparseColumnIndexWorkspace<IDX>* work) const {
-        return get_sparse<AlongIndexWorkspace>(c, out_values, out_indices, work);
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& options) const {
+        return populate<true, DimensionSelectionType::BLOCK, true>(options, block_start, block_length);
+    }
+
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& options) const {
+        return populate<true, DimensionSelectionType::INDEX, true>(options, std::move(indices));
+    }
+
+    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options& options) const {
+        return populate<false, DimensionSelectionType::FULL, true>(options);
+    }
+
+    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& options) const {
+        return populate<false, DimensionSelectionType::BLOCK, true>(options, block_start, block_length);
+    }
+
+    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& options) const {
+        return populate<false, DimensionSelectionType::INDEX, true>(options, std::move(indices));
     }
 };
 

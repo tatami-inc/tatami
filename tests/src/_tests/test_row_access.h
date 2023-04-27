@@ -3,108 +3,89 @@
 #include "utils.h"
 
 template<class Matrix, class Matrix2, class Function1, class Function2, typename ...Args>
-void test_simple_row_access_base(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, Function1 expector, Function2 sparse_expand, Args... args) {
-    size_t NR = ptr->nrow();
+void test_simple_row_access_base(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, Function1 expector, Function2 sparse_expand, Args... args) {
+    int NR = ptr->nrow();
     ASSERT_EQ(NR, ref->nrow());
-    size_t NC = ptr->ncol();
+    int NC = ptr->ncol();
     ASSERT_EQ(NC, ref->ncol());
 
-    auto pwork = ptr->dense_row_workspace(args...);
-    auto swork = ptr->sparse_row_workspace(args...);
+    auto pwork = ptr->dense_row(args...);
+    auto swork = ptr->sparse_row(args...);
 
-    tatami::WorkspaceOptions opt;
+    tatami::Options opt;
     opt.sparse_ordered_index = false;
-    auto swork_uns = ptr->sparse_row_workspace(args..., opt);
+    auto swork_uns = ptr->sparse_row(args..., opt);
     opt.sparse_ordered_index = true;
 
-    opt.sparse_extract_mode = tatami::SparseExtractMode::INDEX;
-    auto swork_i = ptr->sparse_row_workspace(args..., opt);
-
-    opt.sparse_extract_mode = tatami::SparseExtractMode::VALUE;
-    auto swork_v = ptr->sparse_row_workspace(args..., opt);
-
-    opt.sparse_extract_mode = tatami::SparseExtractMode::NONE;
-    auto swork_n = ptr->sparse_row_workspace(args..., opt);
-    opt.sparse_extract_mode = tatami::SparseExtractMode::BOTH;
-
-    auto pwork_bi = ptr->dense_row_workspace(args...);
-    auto rwork_bi = ref->dense_row_workspace(args...);
+    opt.sparse_extract_index = false;
+    auto swork_v = ptr->sparse_row(args..., opt);
+    opt.sparse_extract_value = false;
+    auto swork_n = ptr->sparse_row(args..., opt);
+    opt.sparse_extract_index = true;
+    auto swork_i = ptr->sparse_row(args..., opt);
+    opt.sparse_extract_value = true;
 
     opt.cache_for_reuse = true;
-    auto cwork = ptr->dense_row_workspace(args..., opt); 
+    auto cwork = ptr->dense_row(args..., opt); 
 
-    for (size_t i = 0; i < NR; i += jump) {
-        size_t r = (forward ? i : NR - i - 1);
+    for (int i = 0; i < NR; i += jump) {
+        int r = (forward ? i : NR - i - 1);
 
         auto expected = expector(r);
         {
-            auto observed = ptr->row(r, pwork.get());
+            auto observed = pwork->fetch(r);
             EXPECT_EQ(expected, observed);
         }
 
+        // Various flavors of sparse retrieval.
         {
-            auto observed = ptr->row(r, swork.get());
+            auto observed = swork->fetch(r);
             EXPECT_EQ(expected, sparse_expand(observed));
             EXPECT_TRUE(is_increasing(observed.index));
 
             std::vector<int> indices(expected.size()); // using the dense expected size as a proxy for the extraction length in block/indexed cases.
-            auto observed_i = ptr->row(r, NULL, indices.data(), swork_i.get());
+            auto observed_i = swork_i->fetch(r, NULL, indices.data());
             EXPECT_TRUE(observed_i.value == NULL);
             EXPECT_EQ(observed.index, std::vector<int>(observed_i.index, observed_i.index + observed_i.number));
 
             std::vector<double> values(expected.size());
-            auto observed_v = ptr->row(r, values.data(), NULL, swork_v.get());
+            auto observed_v = swork_v->fetch(r, values.data(), NULL);
             EXPECT_TRUE(observed_v.index == NULL);
             EXPECT_EQ(observed.value, std::vector<double>(observed_v.value, observed_v.value + observed_v.number));
 
-            auto observed_n = ptr->row(r, NULL, NULL, swork_n.get());
+            auto observed_n = swork_n->fetch(r, NULL, NULL);
             EXPECT_TRUE(observed_n.value == NULL);
             EXPECT_TRUE(observed_n.index == NULL);
             EXPECT_EQ(observed.value.size(), observed_n.number);
 
-            auto observed_n2 = ptr->row(r, swork_n.get()); // just another request for some coverage of the Matrix::copy_over function.
-            EXPECT_EQ(observed.value.size(), observed_n2.value.size());
-        }
-
-        {
-            auto observed = ptr->row(r, swork_uns.get());
-            EXPECT_EQ(expected, sparse_expand(observed));
+            auto observed_uns = swork_uns->fetch(r);
+            EXPECT_EQ(expected, sparse_expand(observed_uns));
         } 
 
-        // Check workspace caching when access is bidirectional,
-        // i.e., not purely increasing or decreasing.
-        if (jump > 1 && i) {
-            auto observed = ptr->row(r, pwork_bi.get());
-            EXPECT_EQ(expected, observed);
-
-            auto subr = (forward ? r-1 : r+1);
-            auto observedm1 = ptr->row(subr, pwork_bi.get());
-            auto expectedm1 = ref->row(subr, rwork_bi.get());
-            EXPECT_EQ(expectedm1, observedm1);
-        }
-
+        // Checks for caching.
         {
-            auto observed = ptr->row(r, cwork.get());
+            auto observed = cwork->fetch(r);
             EXPECT_EQ(expected, observed);
         }
     }
 
     // Check that the caching gives the same results as uncached pass.
-    for (size_t i = 0; i < NR; i += jump) {
-        size_t r = (forward ? i : NR - i - 1);
-        auto expected = ptr->row(r, pwork.get());
-        auto observed = ptr->row(r, cwork.get());
+    for (int i = 0; i < NR; i += jump) {
+        int r = (forward ? i : NR - i - 1);
+        auto expected = pwork->fetch(r);
+        auto observed = cwork->fetch(r);
         EXPECT_EQ(expected, observed);
     }
 }
 
 template<class Matrix, class Matrix2>
-void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward = true, size_t jump = 1) {
-    auto rwork = ref->dense_row_workspace();
-    size_t NC = ref->ncol();
+void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward = true, int jump = 1) {
+    int NC = ref->ncol();
+
+    auto rwork = ref->dense_row();
     test_simple_row_access_base(ptr, ref, forward, jump, 
-        [&](size_t r) -> auto { 
-            auto expected = ref->row(r, rwork.get());
+        [&](int r) -> auto { 
+            auto expected = rwork->fetch(r);
             EXPECT_EQ(expected.size(), NC);
             return expected;
         },
@@ -112,36 +93,43 @@ void test_simple_row_access(const Matrix* ptr, const Matrix2* ref, bool forward 
             return expand(range, NC);
         }
     );
+
+    // Checking that properties are correctly passed down.
+    auto pwork = ptr->dense_row();
+    EXPECT_EQ(pwork->full_length, NC);
+
+    auto swork = ptr->sparse_row();
+    EXPECT_EQ(swork->full_length, NC);
 }
 
 template<class Matrix, class Matrix2>
-void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, size_t start, size_t end) {
-    auto rwork = ref->dense_row_workspace();
+void test_sliced_row_access(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, int start, int end) {
+    auto rwork = ref->dense_row();
     test_simple_row_access_base(ptr, ref, forward, jump, 
-        [&](size_t r) -> auto { 
-            auto raw_expected = ref->row(r, rwork.get());
-            return std::vector<typename Matrix::data_type>(raw_expected.begin() + start, raw_expected.begin() + end);
+        [&](int r) -> auto { 
+            auto raw_expected = rwork->fetch(r);
+            return std::vector<typename Matrix::value_type>(raw_expected.begin() + start, raw_expected.begin() + end);
         }, 
         [&](const auto& range) -> auto {
             return expand(range, start, end);
         },
-        start, 
+        start,
         end - start
     );
 
     // Checking that properties are correctly passed down.
-    auto pwork = ptr->dense_row_workspace(start, end - start);
-    EXPECT_EQ(pwork->start, start);
-    EXPECT_EQ(pwork->length, end - start);
+    auto pwork = ptr->dense_row(start, end - start);
+    EXPECT_EQ(pwork->block_start, start);
+    EXPECT_EQ(pwork->block_length, end - start);
 
-    auto swork = ptr->sparse_row_workspace(start, end - start);
-    EXPECT_EQ(pwork->start, start);
-    EXPECT_EQ(pwork->length, end - start);
+    auto swork = ptr->sparse_row(start, end - start);
+    EXPECT_EQ(swork->block_start, start);
+    EXPECT_EQ(swork->block_length, end - start);
 }
 
 template<class Matrix, class Matrix2>
-void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward, size_t jump, size_t start, size_t step) {
-    size_t NC = ptr->ncol();
+void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, int start, int step) {
+    int NC = ptr->ncol();
     std::vector<typename Matrix::index_type> indices;
     {
         int counter = start;
@@ -151,11 +139,11 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
         }
     }
 
-    auto rwork = ref->dense_row_workspace();
+    auto rwork = ref->dense_row();
     test_simple_row_access_base(ptr, ref, forward, jump, 
-        [&](size_t r) -> auto { 
-            auto raw_expected = ref->row(r, rwork.get());
-            std::vector<typename Matrix::data_type> expected;
+        [&](int r) -> auto { 
+            auto raw_expected = rwork->fetch(r);
+            std::vector<typename Matrix::value_type> expected;
             expected.reserve(indices.size());
             for (auto idx : indices) {
                 expected.push_back(raw_expected[idx]);
@@ -174,14 +162,12 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
         indices
     );
 
-    // Checking that properties are correctly passed down.
-    auto pwork = ptr->dense_row_workspace(indices);
-    EXPECT_EQ(pwork->indices(), indices);
-    EXPECT_EQ(pwork->length, indices.size());
+    // Checking that properties are correctly passed down. 
+    auto pwork = ptr->dense_row(indices);
+    EXPECT_EQ(std::vector<int>(pwork->index_start(), pwork->index_start() + pwork->index_length), indices);
 
-    auto swork = ptr->sparse_row_workspace(indices);
-    EXPECT_EQ(pwork->indices(), indices);
-    EXPECT_EQ(pwork->length, indices.size());
+    auto swork = ptr->sparse_row(indices);
+    EXPECT_EQ(std::vector<int>(swork->index_start(), swork->index_start() + swork->index_length), indices);
 }
 
 #endif

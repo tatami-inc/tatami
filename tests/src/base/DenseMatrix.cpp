@@ -4,7 +4,7 @@
 #include <deque>
 #include <numeric>
 
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 #include "../_tests/test_column_access.h"
 #include "../_tests/test_row_access.h"
 #include "../_tests/simulate_vector.h"
@@ -15,28 +15,36 @@ TEST(DenseMatrix, Basic) {
     for (auto& i : contents) { i = counter++; }
 
     tatami::DenseColumnMatrix<double> mat(10, 20, contents);
+
+    EXPECT_FALSE(mat.sparse());
     EXPECT_FALSE(mat.prefer_rows());
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
 
     {
-        auto wrk = mat.dense_column_workspace();
+        auto wrk = mat.dense_column();
         for (size_t i = 0; i < mat.ncol(); ++i) {
             auto start = contents.begin() + i * mat.nrow();
             std::vector<double> expected(start, start + mat.nrow());
-            EXPECT_EQ(mat.column(i, wrk.get()), expected);
+            EXPECT_EQ(wrk->fetch(i), expected);
         }
     }
 
     {
-        auto wrk = mat.dense_row_workspace();
+        auto wrk = mat.dense_row();
         for (size_t i = 0; i < mat.nrow(); ++i) {
             std::vector<double> expected(mat.ncol());
             for (size_t j = 0; j < mat.ncol(); ++j) {
                 expected[j] = contents[j * mat.nrow() + i];
             }
-            EXPECT_EQ(mat.row(i, wrk.get()), expected);
+            EXPECT_EQ(wrk->fetch(i), expected);
         }
+    }
+
+    EXPECT_FALSE(mat.uses_oracle(true));
+    {
+        auto wrk = mat.dense_row();
+        wrk->set_oracle(nullptr); // no-op.
     }
 }
 

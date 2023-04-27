@@ -90,6 +90,7 @@ if (USE_OPENMP)
     target_link_libraries(cuspartest OpenMP::OpenMP_CXX)
 endif()
 
+target_compile_definitions(libtest PRIVATE DEBUG=1)
 target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
 
 find_package(ZLIB)

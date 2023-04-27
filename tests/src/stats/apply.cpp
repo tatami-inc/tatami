@@ -2,7 +2,7 @@
 #include <vector>
 
 #include "tatami/stats/apply.hpp"
-#include "tatami/base/DenseMatrix.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/utils/convert_to_dense.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/variances.hpp"

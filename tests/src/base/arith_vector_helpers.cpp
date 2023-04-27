@@ -3,12 +3,13 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/base/DenseMatrix.hpp"
-#include "tatami/base/DelayedIsometricOp.hpp"
+#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/base/isometric/DelayedIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "../_tests/test_column_access.h"
 #include "../_tests/test_row_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
 template<class PARAM>
@@ -718,5 +719,55 @@ INSTANTIATE_TEST_CASE_P(
             std::vector<double>({ 0.21, 0.09 }), 
             std::vector<double>({ 0.56, 0.01 })
         )
+    )
+);
+
+/**************************
+ ********* ORACLE *********
+ **************************/
+
+class ArithVectorOracleTest : public ArithVectorTest<std::tuple<bool, bool> > {
+protected:
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, wrapped_dense_mod, wrapped_sparse_mod;
+    std::vector<double> vec;
+
+    void extra_assemble(bool row) {
+        vec = this->create_vector(row ? this->nrow : this->ncol, 5, 0.5);
+
+        if (row) {
+            auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
+            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            wrapped_dense_mod = tatami::make_DelayedIsometricOp(make_CrankyMatrix(this->dense), op);
+            wrapped_sparse_mod = tatami::make_DelayedIsometricOp(make_CrankyMatrix(this->sparse), op);
+        } else {
+            auto op = tatami::make_DelayedAddVectorHelper<1>(vec);
+            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            wrapped_dense_mod = tatami::make_DelayedIsometricOp(make_CrankyMatrix(this->dense), op);
+            wrapped_sparse_mod = tatami::make_DelayedIsometricOp(make_CrankyMatrix(this->sparse), op);
+        }
+    }
+};
+
+TEST_P(ArithVectorOracleTest, Validate) {
+    auto param = GetParam();
+    extra_assemble(std::get<0>(param));
+    EXPECT_FALSE(dense_mod->uses_oracle(true));
+    EXPECT_TRUE(wrapped_dense_mod->uses_oracle(true));
+
+    test_oracle_column_access(wrapped_dense_mod.get(), dense_mod.get(), std::get<1>(param));
+    test_oracle_column_access(wrapped_sparse_mod.get(), sparse_mod.get(), std::get<1>(param));
+
+    test_oracle_row_access(wrapped_dense_mod.get(), dense_mod.get(), std::get<1>(param));
+    test_oracle_row_access(wrapped_sparse_mod.get(), sparse_mod.get(), std::get<1>(param));
+}
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorOracleTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // add by row, or add by column.
+        ::testing::Values(true, false)  // use random or consecutive oracle.
     )
 );
