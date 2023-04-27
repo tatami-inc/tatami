@@ -8,10 +8,11 @@
 template<typename Value_, typename Index_> 
 class CrankyMatrix : public tatami::Matrix<Value_, Index_> {
 public:
-    CrankyMatrix(std::shared_ptr<tatami::Matrix<Value_, Index_> > x) : matrix(std::move(x)) {}
+    CrankyMatrix(std::shared_ptr<tatami::Matrix<Value_, Index_> > x, int pt) : matrix(std::move(x)), predict_to(pt) {}
 
 private:
     std::shared_ptr<tatami::Matrix<Value_, Index_> > matrix;
+    int predict_to;
 
 public:
     Index_ nrow() const { return matrix->nrow(); }
@@ -29,7 +30,7 @@ public:
 public:
     template<tatami::DimensionSelectionType selection_, bool sparse_>
     struct CrankyExtractor : public tatami::Extractor<selection_, sparse_, Value_, Index_> {
-        CrankyExtractor(std::unique_ptr<tatami::Extractor<selection_, sparse_, Value_, Index_> > inner, bool u) : internal(std::move(inner)), unused(u) {
+        CrankyExtractor(std::unique_ptr<tatami::Extractor<selection_, sparse_, Value_, Index_> > inner, bool u, int pt) : internal(std::move(inner)), unused(u), predict_to(pt) {
             if constexpr(selection_ == tatami::DimensionSelectionType::FULL) {
                 this->full_length = internal->full_length;
             } else if constexpr(selection_ == tatami::DimensionSelectionType::BLOCK) {
@@ -46,6 +47,7 @@ public:
         std::deque<Index_> filled;
         std::vector<Index_> buffer;
         bool unused;
+        int predict_to;
 
     public:
         const Index_* index_start() const {
@@ -68,7 +70,7 @@ public:
     protected:
         void check(Index_ i) {
             if (unused && filled.empty()) {
-                buffer.resize(100);
+                buffer.resize(predict_to);
                 size_t n = source->predict(buffer.data(), buffer.size());
                 filled.insert(filled.end(), buffer.begin(), buffer.begin() + n);
             }
@@ -89,7 +91,8 @@ public:
 
     template<tatami::DimensionSelectionType selection_>
     struct DenseCrankyExtractor : public CrankyExtractor<selection_, false> {
-        DenseCrankyExtractor(std::unique_ptr<tatami::Extractor<selection_, false, Value_, Index_> > inner, bool unused) : CrankyExtractor<selection_, false>(std::move(inner), unused) {}
+        DenseCrankyExtractor(std::unique_ptr<tatami::Extractor<selection_, false, Value_, Index_> > inner, bool unused, int predict_to) : 
+            CrankyExtractor<selection_, false>(std::move(inner), unused, predict_to) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             auto out = this->internal->fetch(i, buffer);
@@ -100,7 +103,8 @@ public:
 
     template<tatami::DimensionSelectionType selection_>
     struct SparseCrankyExtractor : public CrankyExtractor<selection_, true> {
-        SparseCrankyExtractor(std::unique_ptr<tatami::Extractor<selection_, true, Value_, Index_> > inner, bool unused) : CrankyExtractor<selection_, true>(std::move(inner), unused) {}
+        SparseCrankyExtractor(std::unique_ptr<tatami::Extractor<selection_, true, Value_, Index_> > inner, bool unused, int predict_to) : 
+            CrankyExtractor<selection_, true>(std::move(inner), unused, predict_to) {}
 
         tatami::SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             auto out = this->internal->fetch(i, vbuffer, ibuffer);
@@ -111,58 +115,58 @@ public:
 
 public:
     std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_row(const tatami::Options& opt) const {
-        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::FULL> >(matrix->dense_row(opt), !matrix->uses_oracle(true));
+        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::FULL> >(matrix->dense_row(opt), !matrix->uses_oracle(true), predict_to);
     }
 
     std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_row(Index_ bs, Index_ bl, const tatami::Options& opt) const {
-        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::BLOCK> >(matrix->dense_row(bs, bl, opt), !matrix->uses_oracle(true));
+        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::BLOCK> >(matrix->dense_row(bs, bl, opt), !matrix->uses_oracle(true),  predict_to);
     }
 
     std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> i, const tatami::Options& opt) const {
-        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::INDEX> >(matrix->dense_row(std::move(i), opt), !matrix->uses_oracle(true));
+        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::INDEX> >(matrix->dense_row(std::move(i), opt), !matrix->uses_oracle(true), predict_to);
     }
 
     std::unique_ptr<tatami::FullDenseExtractor<Value_, Index_> > dense_column(const tatami::Options& opt) const {
-        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::FULL> >(matrix->dense_column(opt), !matrix->uses_oracle(false));
+        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::FULL> >(matrix->dense_column(opt), !matrix->uses_oracle(false), predict_to);
     }
 
     std::unique_ptr<tatami::BlockDenseExtractor<Value_, Index_> > dense_column(Index_ bs, Index_ bl, const tatami::Options& opt) const {
-        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::BLOCK> >(matrix->dense_column(bs, bl, opt), !matrix->uses_oracle(false));
+        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::BLOCK> >(matrix->dense_column(bs, bl, opt), !matrix->uses_oracle(false), predict_to);
     }
 
     std::unique_ptr<tatami::IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> i, const tatami::Options& opt) const {
-        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::INDEX> >(matrix->dense_column(std::move(i), opt), !matrix->uses_oracle(false));
+        return std::make_unique<DenseCrankyExtractor<tatami::DimensionSelectionType::INDEX> >(matrix->dense_column(std::move(i), opt), !matrix->uses_oracle(false), predict_to);
     }
 
 public:
     std::unique_ptr<tatami::FullSparseExtractor<Value_, Index_> > sparse_row(const tatami::Options& opt) const {
-        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::FULL> >(matrix->sparse_row(opt), !matrix->uses_oracle(true));
+        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::FULL> >(matrix->sparse_row(opt), !matrix->uses_oracle(true), predict_to);
     }
 
     std::unique_ptr<tatami::BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ bs, Index_ bl, const tatami::Options& opt) const {
-        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::BLOCK> >(matrix->sparse_row(bs, bl, opt), !matrix->uses_oracle(true));
+        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::BLOCK> >(matrix->sparse_row(bs, bl, opt), !matrix->uses_oracle(true), predict_to);
     }
 
     std::unique_ptr<tatami::IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> i, const tatami::Options& opt) const {
-        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::INDEX> >(matrix->sparse_row(std::move(i), opt), !matrix->uses_oracle(true));
+        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::INDEX> >(matrix->sparse_row(std::move(i), opt), !matrix->uses_oracle(true), predict_to);
     }
 
     std::unique_ptr<tatami::FullSparseExtractor<Value_, Index_> > sparse_column(const tatami::Options& opt) const {
-        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::FULL> >(matrix->sparse_column(opt), !matrix->uses_oracle(false));
+        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::FULL> >(matrix->sparse_column(opt), !matrix->uses_oracle(false), predict_to);
     }
 
     std::unique_ptr<tatami::BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ bs, Index_ bl, const tatami::Options& opt) const {
-        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::BLOCK> >(matrix->sparse_column(bs, bl, opt), !matrix->uses_oracle(false));
+        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::BLOCK> >(matrix->sparse_column(bs, bl, opt), !matrix->uses_oracle(false), predict_to);
     }
 
     std::unique_ptr<tatami::IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> i, const tatami::Options& opt) const {
-        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::INDEX> >(matrix->sparse_column(std::move(i), opt), !matrix->uses_oracle(false));
+        return std::make_unique<SparseCrankyExtractor<tatami::DimensionSelectionType::INDEX> >(matrix->sparse_column(std::move(i), opt), !matrix->uses_oracle(false), predict_to);
     }
 };
 
 template<typename Value_, typename Index_> 
-std::shared_ptr<tatami::Matrix<Value_, Index_> > make_CrankyMatrix(std::shared_ptr<tatami::Matrix<Value_, Index_> > p) {
-    return std::shared_ptr<tatami::Matrix<Value_, Index_> >(new CrankyMatrix<Value_, Index_>(std::move(p)));
+std::shared_ptr<tatami::Matrix<Value_, Index_> > make_CrankyMatrix(std::shared_ptr<tatami::Matrix<Value_, Index_> > p, int predict_to = 10) {
+    return std::shared_ptr<tatami::Matrix<Value_, Index_> >(new CrankyMatrix<Value_, Index_>(std::move(p), predict_to));
 }
 
 template<class Matrix>

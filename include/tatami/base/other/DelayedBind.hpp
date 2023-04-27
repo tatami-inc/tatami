@@ -105,7 +105,7 @@ private:
     std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > mats;
     std::vector<Index_> cumulative;
 
-    bool stored_sparse = false;
+    bool stored_sparse = true;
     std::pair<double, double> stored_dimension_preference;
     std::array<bool, 2> stored_uses_oracle;
 
@@ -544,14 +544,24 @@ private:
                 // end up doing lots of predictions to fill up the stream for a
                 // bound matrix with very few elements.
                 if (stream.size() < number) {
-                    size_t filled = source->predict(buffer, number);
                     const auto& cum = *cumulative;
-                    for (size_t f = 0; f < filled; ++f) {
-                        PerpendicularExtractor::choose_segment(buffer[f], chosen_segment, cum);
-                        if (used[chosen_segment]) {
-                            streams[chosen_segment].push_back(buffer[f] - cum[chosen_segment]);
+                    bool unfound = true;
+                    do {
+                        size_t filled = source->predict(buffer, number);
+                        if (!filled) {
+                            break;
                         }
-                    }
+
+                        for (size_t f = 0; f < filled; ++f) {
+                            PerpendicularExtractor::choose_segment(buffer[f], chosen_segment, cum);
+                            if (used[chosen_segment]) {
+                                streams[chosen_segment].push_back(buffer[f] - cum[chosen_segment]);
+                                if (chosen_segment == id) {
+                                    unfound = true;
+                                }
+                            }
+                        }
+                    } while (unfound);
 
                     if (stream.size() < number) {
                         number = stream.size();
@@ -599,18 +609,15 @@ private:
 
             // Now we create child oracles that reference the parent;
             // or, if only one inner matrix needs an oracle, we pass it directly.
-            size_t needy = need_oracles.size();
-            if (needy > 1) {
+            if (!need_oracles.empty()) {
                 std::vector<unsigned char> used(nmats);
                 for (auto n : need_oracles) {
                     used[n] = 1;
                 }
                 parent_oracle.reset(new ParentOracle(std::move(o), std::move(used), &(parent->cumulative))); 
-                for (size_t n = 0; n < needy; ++n) {
-                    workspaces[need_oracles[n]]->set_oracle(std::make_unique<ChildOracle>(parent_oracle.get(), need_oracles[n]));
+                for (auto n : need_oracles) {
+                    workspaces[n]->set_oracle(std::make_unique<ChildOracle>(parent_oracle.get(), n));
                 }
-            } else if (needy) {
-                workspaces[need_oracles.front()]->set_oracle(std::move(o));
             }
         }
     };
