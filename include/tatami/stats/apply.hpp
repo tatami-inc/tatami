@@ -49,7 +49,7 @@ void apply_sparse_running(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, 
                 std::vector<T> obuffer(len);
                 std::vector<IDX> ibuffer(obuffer.size());
                 auto stat = factory.sparse_running(start, end);
-                auto wrk = new_extractor<!ROW, true, T, IDX>(p, Options<IDX>(), start, len); // flipped around; remember, we're trying to get the preferred dimension.
+                auto wrk = new_extractor<!ROW, true, T, IDX>(p, Options(), start, len); // flipped around; remember, we're trying to get the preferred dimension.
 
                 for (size_t i = 0; i < otherdim; ++i) {
                     auto range = wrk->fetch(i, obuffer.data(), ibuffer.data());
@@ -105,7 +105,7 @@ void apply_dense_running(size_t dim, size_t otherdim, const Matrix<T, IDX>* p, F
                 size_t len = end - start;
                 std::vector<T> obuffer(len);
                 auto stat = factory.dense_running(start, end);
-                auto wrk = new_extractor<!ROW, false, T, IDX>(p, Options<IDX>(), start, len); // flipped around, see above.
+                auto wrk = new_extractor<!ROW, false, T, IDX>(p, Options(), start, len); // flipped around, see above.
 
                 for (size_t i = 0; i < otherdim; ++i) {
                     auto ptr = wrk->fetch(i, obuffer.data());
