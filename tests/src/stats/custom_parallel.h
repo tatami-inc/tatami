@@ -6,18 +6,18 @@
 #include <mutex>
 #include <cmath>
 
-template<class Function>
-static void parallelize(size_t n, Function f, int nworkers) {
-    size_t jobs_per_worker = std::ceil(static_cast<double>(n) / nworkers);
+template<class Function_>
+static void custom_parallelize(Function_ f, size_t ntasks, size_t nworkers, size_t jobs_per_worker) {
     size_t start = 0;
     std::vector<std::thread> jobs;
+    jobs.reserve(nworkers);
 
     for (size_t w = 0; w < nworkers; ++w) {
-        size_t end = std::min(n, start + jobs_per_worker);
+        size_t end = std::min(ntasks, start + jobs_per_worker);
         if (start >= end) {
             break;
         }
-        jobs.emplace_back(f, start, end);
+        jobs.emplace_back(f, w, start, end);
         start += jobs_per_worker;
     }
 
@@ -26,6 +26,6 @@ static void parallelize(size_t n, Function f, int nworkers) {
     }
 }
 
-#define TATAMI_CUSTOM_PARALLEL parallelize
+#define TATAMI_CUSTOM_PARALLEL custom_parallelize
 
 #endif

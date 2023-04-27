@@ -2,7 +2,7 @@
 #define TATAMI_STATS_RANGES_HPP
 
 #include "../base/Matrix.hpp"
-#include "apply.hpp"
+#include "utils.hpp"
 #include <vector>
 #include <algorithm>
 
@@ -19,180 +19,155 @@ namespace stats {
 /**
  * @cond
  */
-template<typename O, bool compute_max>
-struct ExtremeFactory {
-public:
-    ExtremeFactory(O* o, size_t d1, size_t d2) : output(o), dim(d1), otherdim(d2) {}
+template<bool row_, typename Output_, typename Value_, typename Index_, class StoreMinimum_, class StoreMaximum_>
+void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinimum_& min_out, StoreMaximum_& max_out) {
+    BidimensionalApplyConfiguration<row_, Value_, Index_> config(p);
 
-private:
-    O* output;
-    size_t dim, otherdim;
+    auto dim = config.target_dim;
+    auto otherdim = config.other_dim;
+    const bool direct = config.prefer_rows == row_;
+    Options opt;
 
-public:
-    struct DenseDirect {
-        DenseDirect(O* o, size_t d2) : output(o), otherdim(d2) {}
+    constexpr bool store_min = !std::is_same<StoreMinimum_, bool>::value;
+    constexpr bool store_max = !std::is_same<StoreMaximum_, bool>::value;
 
-        template<typename V>
-        void compute(size_t i, const V* ptr) {
-            if (otherdim) {
-                if constexpr(compute_max) {
-                    output[i] = *std::max_element(ptr, ptr + otherdim);
-                } else {
-                    output[i] = *std::min_element(ptr, ptr + otherdim);
-                }
-            }
-        }
-    private:
-        O* output;
-        size_t otherdim;
-    };
-
-    DenseDirect dense_direct() {
-        return DenseDirect(output, otherdim);
+    if (!otherdim) {
+        return;
     }
 
-public:
-    struct SparseDirect {
-        SparseDirect(O* o, size_t d2) : output(o), otherdim(d2) {}
+    if (p->sparse()) {
+        opt.sparse_ordered_index = false;
 
-        template<typename T, typename IDX>
-        void compute(size_t i, const SparseRange<T, IDX>& range) {
-            if (range.number) {
-                if constexpr(compute_max) {
-                    output[i] = *std::max_element(range.value, range.value + range.number);
-                } else {
-                    output[i] = *std::min_element(range.value, range.value + range.number);
-                }
+        if (direct) {
+            opt.sparse_extract_index = false;
+            parallelize([&](size_t, Index_ s, Index_ e) {
+                auto ext = config.template direct<true>(s, e, opt);
+                std::vector<Value_> vbuffer(otherdim);
 
-                if (range.number != otherdim) {
-                    if constexpr(compute_max) {
-                        if (output[i] < 0) {
-                            output[i] = 0;
+                for (Index_ i = s; i < e; ++i) {
+                    auto out = ext->fetch(i, vbuffer.data(), NULL);
+
+                    // If there's no non-zero values, we just leave the min/max as zero.
+                    if (out.number) {
+                        if constexpr(store_min) {
+                            auto minned = *std::min_element(out.value, out.value + out.number);
+                            if (minned < 0 || out.number == otherdim) {
+                                min_out[i] = minned;
+                            }
                         }
-                    } else {
-                        if (output[i] > 0) {
-                            output[i] = 0;
+                        if constexpr(store_max) {
+                            auto maxed = *std::max_element(out.value, out.value + out.number);
+                            if (maxed > 0 || out.number == otherdim) {
+                                max_out[i] = maxed;
+                            }
                         }
                     }
                 }
-            } else if (otherdim) {
-                output[i] = 0;
-            }
-        }
-    private:
-        O* output;
-        size_t otherdim;
-    };
+            }, dim, threads);
 
-    SparseDirect sparse_direct() {
-        return SparseDirect(output, otherdim);
-    }
+        } else {
+            parallelize([&](size_t, Index_ s, Index_ e) {
+                auto ext = config.template running<true>(s, e, opt);
+                auto len = ext->block_length;
+                std::vector<Value_> vbuffer(len);
+                std::vector<Index_> ibuffer(len);
+                std::vector<Index_> counter(len);
 
-public:
-    struct DenseRunning {
-        DenseRunning(O* o, size_t d1) : output(o), dim(d1) {}
-
-        template<typename V>
-        void add(const V* ptr) {
-            if (first) {
-                std::copy(ptr, ptr + dim, output);
-                first = false;
-            } else {
-                for (size_t d = 0; d < dim; ++d) {
-                    if constexpr(compute_max) {
-                        if (output[d] < ptr[d]) {
-                            output[d] = ptr[d];
+                for (Index_ i = 0; i < otherdim; ++i) {
+                    auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
+                    for (Index_ j = 0; j < out.number; ++j) {
+                        auto idx = out.index[j];
+                        auto val = static_cast<Output_>(out.value[j]);
+                        if constexpr(store_min) {
+                            auto& last = min_out[idx];
+                            if (i == 0 || last > val) {
+                                last = val;
+                            }
+                        } 
+                        if constexpr(store_max) {
+                            auto& last = max_out[idx];
+                            if (i == 0 || last < val) {
+                                last = val;
+                            }
                         }
-                    } else {
-                        if (output[d] > ptr[d]) {
-                            output[d] = ptr[d];
+                        ++counter[idx - s];
+                    }
+                }
+
+                // Handling the zeros.
+                for (Index_ i = s; i < e; ++i) {
+                    if (counter[i - s] < otherdim) {
+                        if constexpr(store_min) {
+                            if (min_out[i] > 0) {
+                                min_out[i] = 0;
+                            }
+                        }
+                        if constexpr(store_max) {
+                            if (max_out[i] < 0) {
+                                max_out[i] = 0;
+                            }
                         }
                     }
                 }
-            }
+            }, dim, threads);
         }
-    private:
-        O* output;
-        size_t dim;
-        bool first = true;
-    };
 
-    DenseRunning dense_running() {
-        return DenseRunning(output, dim);
-    }
-
-    DenseRunning dense_running(size_t start, size_t end) {
-        return DenseRunning(output + start, end - start);
-    }
-
-public:
-    struct SparseRunning {
-        SparseRunning(O* o, size_t d1, size_t d2, size_t s, size_t e) : output(o), collected(d1), otherdim(d2), start(s), end(e) {}
-
-        template<typename T = double, typename IDX = int>
-        void add(const SparseRange<T, IDX>& range) {
-            if (first) {
-                // Assume output is zero-initialized.
-                for (size_t j = 0; j < range.number; ++j) {
-                    ++collected[range.index[j]];
-                    output[range.index[j]] = range.value[j];
+    } else {
+        if (direct) {
+            parallelize([&](size_t, Index_ s, Index_ e) {
+                auto ext = config.template direct<false>(s, e, opt);
+                std::vector<Value_> buffer(otherdim);
+                for (Index_ i = s; i < e; ++i) {
+                    auto ptr = ext->fetch(i, buffer.data());
+                    if constexpr(store_min) {
+                        min_out[i] = *std::min_element(ptr, ptr + otherdim);
+                    }
+                    if constexpr(store_max) {
+                        max_out[i] = *std::max_element(ptr, ptr + otherdim);
+                    } 
                 }
-                first = false;
-            } else {
-                for (size_t j = 0; j < range.number; ++j) {
-                    ++collected[range.index[j]];
-                    auto& existing = output[range.index[j]];
-                    if constexpr(compute_max) {
-                        if (existing < range.value[j]) {
-                            existing = range.value[j];
+            }, dim, threads);
+
+        } else {
+            parallelize([&](size_t, Index_ s, Index_ e) {
+                auto ext = config.template running<false>(s, e, opt);
+                auto len = ext->block_length;
+                std::vector<Value_> buffer(len);
+
+                for (Index_ i = 0; i < otherdim; ++i) {
+                    auto ptr = ext->fetch(i, buffer.data());
+                    if (i) {
+                        for (Index_ d = 0; d < len; ++d) {
+                            auto idx = d + s;
+                            auto val = static_cast<Output_>(ptr[d]);
+                            if constexpr(store_min) {
+                                auto& last = min_out[idx];
+                                if (last > val) {
+                                    last = val;
+                                }
+                            }
+                            if constexpr(store_max) {
+                                auto& last = max_out[idx];
+                                if (last < val) {
+                                    last = val;
+                                }
+                            } 
                         }
                     } else {
-                        if (existing > range.value[j]) {
-                            existing = range.value[j];
+                        if constexpr(store_min) {
+                            std::copy(ptr, ptr + len, min_out.data() + s);
+                        }
+                        if constexpr(store_max) {
+                            std::copy(ptr, ptr + len, max_out.data() + s);
                         }
                     }
                 }
-            }
+            }, dim, threads);
         }
-
-        void finish() {
-            for (size_t i = start; i < end; ++i) {
-                if (collected[i] < otherdim) {
-                    if constexpr(compute_max) {
-                        if (output[i] < 0) {
-                            output[i] = 0;
-                        }
-                    } else {
-                        if (output[i] > 0) {
-                            output[i] = 0;
-                        }
-                    }
-                }
-            }
-        }
-    private:
-        O* output;
-        bool first = true;
-        std::vector<size_t> collected;
-        size_t otherdim;
-        size_t start, end;
-    };
-
-    SparseRunning sparse_running() {
-        return SparseRunning(output, dim, otherdim, 0, dim);
     }
 
-    SparseRunning sparse_running(size_t start, size_t end) {
-        return SparseRunning(output, dim, otherdim, start, end);
-    }
-};
-
-template<typename O>
-using MaxFactory = ExtremeFactory<O, true>;
-
-template<typename O>
-using MinFactory = ExtremeFactory<O, false>;
-
+    return;
+}
 /**
  * @endcond
  */
@@ -201,191 +176,80 @@ using MinFactory = ExtremeFactory<O, false>;
 
 /**
  * @tparam Output Type of the output value.
- * @tparam T Type of the matrix value.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of columns, containing the maximum value in each column.
  */
-template<typename Output = double, typename T, typename IDX>
-std::vector<Output> column_maxs(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> output(p->ncol());
-    stats::MaxFactory<Output> factory(output.data(), p->ncol(), p->nrow());
-    apply<1>(p, factory, threads);
+template<typename Output_ = double, typename Value_, typename Index_>
+std::vector<Output_> column_maxs(const Matrix<Value_, Index_>* p, int threads = 1) {
+    std::vector<Output_> output(p->ncol());
+    bool temp = false;
+    stats::dimension_extremes<false, Output_>(p, threads, temp, output);
     return output;
 }
 
 /**
  * @tparam Output Type of the output value.
- * @tparam T Type of the matrix value.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of rows, containing the maximum value in each row.
  */
-template<typename Output = double, typename T, typename IDX>
-std::vector<Output> row_maxs(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> output(p->nrow());
-    stats::MaxFactory<Output> factory(output.data(), p->nrow(), p->ncol());
-    apply<0>(p, factory, threads);
+template<typename Output_ = double, typename Value_, typename Index_>
+std::vector<Output_> row_maxs(const Matrix<Value_, Index_>* p, int threads = 1) {
+    std::vector<Output_> output(p->nrow());
+    bool temp = false;
+    stats::dimension_extremes<true, Output_>(p, threads, temp, output);
     return output;
 }
 
 /**
  * @tparam Output Type of the output value.
- * @tparam T Type of the matrix value.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of columns, containing the minimum value in each column.
  */
-template<typename Output = double, typename T, typename IDX>
-std::vector<Output> column_mins(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> output(p->ncol());
-    stats::MinFactory<Output> factory(output.data(), p->ncol(), p->nrow());
-    apply<1>(p, factory, threads);
+template<typename Output_ = double, typename Value_, typename Index_>
+std::vector<Output_> column_mins(const Matrix<Value_, Index_>* p, int threads = 1) {
+    std::vector<Output_> output(p->ncol());
+    bool temp = false;
+    stats::dimension_extremes<false, Output_>(p, threads, output, temp);
     return output;
 }
 
 /**
  * @tparam Output Type of the output value.
- * @tparam T Type of the matrix value.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of rows, containing the minimum value in each row.
  */
-template<typename Output = double, typename T, typename IDX>
-std::vector<Output> row_mins(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> output(p->nrow());
-    stats::MinFactory<Output> factory(output.data(), p->nrow(), p->ncol());
-    apply<0>(p, factory, threads);
+template<typename Output_ = double, typename Value_, typename Index_>
+std::vector<Output_> row_mins(const Matrix<Value_, Index_>* p, int threads = 1) {
+    std::vector<Output_> output(p->nrow());
+    bool temp = false;
+    stats::dimension_extremes<true, Output_>(p, threads, output, temp);
     return output;
-}
-
-namespace stats {
-
-/**
- * @cond
- */
-template<typename O>
-struct RangeFactory {
-public:
-    RangeFactory(O* min, O* max, size_t d1, size_t d2) : mins(min, d1, d2), maxs(max, d1, d2) {}
-
-private:
-    MinFactory<O> mins;
-    MaxFactory<O> maxs;
-
-public:
-    struct DenseDirect {
-        DenseDirect(typename MinFactory<O>::DenseDirect mn, typename MaxFactory<O>::DenseDirect mx) : mins(std::move(mn)), maxs(std::move(mx)) {}
-
-        template<typename V>
-        void compute(size_t i, const V* ptr) {
-            mins.compute(i, ptr);
-            maxs.compute(i, ptr);
-            return;
-        }
-    private:
-        typename MinFactory<O>::DenseDirect mins;
-        typename MaxFactory<O>::DenseDirect maxs;
-    };
-
-    DenseDirect dense_direct() {
-        return DenseDirect(mins.dense_direct(), maxs.dense_direct());
-    }
-
-public:
-    struct SparseDirect {
-        SparseDirect(typename MinFactory<O>::SparseDirect mn, typename MaxFactory<O>::SparseDirect mx) : mins(std::move(mn)), maxs(std::move(mx)) {}
-
-        template<typename T, typename IDX>
-        void compute(size_t i, const SparseRange<T, IDX>& range) {
-            mins.compute(i, range);
-            maxs.compute(i, range);
-            return;
-        }
-    private:
-        typename MinFactory<O>::SparseDirect mins;
-        typename MaxFactory<O>::SparseDirect maxs;
-    };
-
-    SparseDirect sparse_direct() {
-        return SparseDirect(mins.sparse_direct(), maxs.sparse_direct());
-    }
-
-public:
-    struct DenseRunning {
-        DenseRunning(typename MinFactory<O>::DenseRunning mn, typename MaxFactory<O>::DenseRunning mx) : mins(std::move(mn)), maxs(std::move(mx)) {}
-
-        template<typename V>
-        void add(const V* ptr) {
-            mins.add(ptr);
-            maxs.add(ptr);
-            return;
-        }
-
-    private:
-        typename MinFactory<O>::DenseRunning mins;
-        typename MaxFactory<O>::DenseRunning maxs;
-    };
-
-    DenseRunning dense_running() {
-        return DenseRunning(mins.dense_running(), maxs.dense_running());
-    }
-
-    DenseRunning dense_running(size_t start, size_t end) {
-        return DenseRunning(mins.dense_running(start, end), maxs.dense_running(start, end));
-    }
-
-public:
-    struct SparseRunning {
-        SparseRunning(typename MinFactory<O>::SparseRunning mn, typename MaxFactory<O>::SparseRunning mx) : mins(std::move(mn)), maxs(std::move(mx)) {}
-
-        template<typename T = double, typename IDX = int>
-        void add(const SparseRange<T, IDX>& range) {
-            mins.add(range);
-            maxs.add(range);
-            return;
-        }
-
-        void finish() {
-            mins.finish();
-            maxs.finish();
-            return;
-        };
-    private:
-        typename MinFactory<O>::SparseRunning mins;
-        typename MaxFactory<O>::SparseRunning maxs;
-    };
-
-    SparseRunning sparse_running() {
-        return SparseRunning(mins.sparse_running(), maxs.sparse_running());
-    }
-
-    SparseRunning sparse_running(size_t start, size_t end) {
-        return SparseRunning(mins.sparse_running(start, end), maxs.sparse_running(start, end));
-    }
-};
-/**
- * @endcond
- */
-
 }
 
 /**
  * @tparam Output Type of the output value.
- * @tparam T Type of the matrix value.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
@@ -393,18 +257,17 @@ public:
  * @return A pair of vectors, each of length equal to the number of rows.
  * The first and second vector contains the minimum and maximum value per row, respectively.
  */
-template<typename Output = double, typename T, typename IDX>
-std::pair<std::vector<Output>, std::vector<Output> > column_ranges(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> mins(p->ncol()), maxs(p->ncol());
-    stats::RangeFactory factory(mins.data(), maxs.data(), p->ncol(), p->nrow());
-    apply<1>(p, factory, threads);
+template<typename Output_ = double, typename Value_, typename Index_>
+std::pair<std::vector<Output_>, std::vector<Output_> > column_ranges(const Matrix<Value_, Index_>* p, int threads = 1) {
+    std::vector<Output_> mins(p->ncol()), maxs(p->ncol());
+    stats::dimension_extremes<false, Output_>(p, threads, mins, maxs);
     return std::make_pair(std::move(mins), std::move(maxs));
 }
 
 /**
  * @tparam Output Type of the output value.
- * @tparam T Type of the matrix value.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
@@ -412,11 +275,10 @@ std::pair<std::vector<Output>, std::vector<Output> > column_ranges(const Matrix<
  * @return A pair of vectors, each of length equal to the number of rows.
  * The first and second vector contains the minimum and maximum value per row, respectively.
  */
-template<typename Output = double, typename T, typename IDX>
-std::pair<std::vector<Output>, std::vector<Output> > row_ranges(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> mins(p->nrow()), maxs(p->nrow());
-    stats::RangeFactory factory(mins.data(), maxs.data(), p->nrow(), p->ncol());
-    apply<0>(p, factory, threads);
+template<typename Output_ = double, typename Value_, typename Index_>
+std::pair<std::vector<Output_>, std::vector<Output_> > row_ranges(const Matrix<Value_, Index_>* p, int threads = 1) {
+    std::vector<Output_> mins(p->nrow()), maxs(p->nrow());
+    stats::dimension_extremes<true, Output_>(p, threads, mins, maxs);
     return std::make_pair(std::move(mins), std::move(maxs));
 }
 
