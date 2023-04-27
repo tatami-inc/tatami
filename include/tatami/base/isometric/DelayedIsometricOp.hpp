@@ -114,7 +114,7 @@ private:
     /**************************************
      ********** Dense extraction **********
      **************************************/
-public:
+private:
     template<bool accrow_, DimensionSelectionType selection_> 
     struct DenseIsometricExtractor : public IsometricExtractorBase<selection_, false, false> {
         DenseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i) : 

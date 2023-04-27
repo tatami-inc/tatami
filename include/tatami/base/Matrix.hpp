@@ -59,7 +59,7 @@ public:
 
     /**
      * @return Is this matrix sparse?
-     * Defaults to `false` if no specialized method is provided in derived classes.
+     * This can be used to choose between `sparse_row()` and `dense_row()` when iterating over the rows (similarly so for the columns).
      */
     virtual bool sparse() const = 0;
 
@@ -102,6 +102,7 @@ public:
     /**
      * @param opt Options for extraction.
      * @return A `FullDenseExtractor` object for dense access to full rows.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options& opt) const = 0;
 
@@ -110,6 +111,7 @@ public:
      * @param block_length Number of columns in the block.
      * @param opt Options for extraction.
      * @return A `BlockDenseExtractor` object for dense access to a block of each row.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
@@ -117,12 +119,14 @@ public:
      * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
      * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each row.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const = 0;
 
     /**
      * @param opt Options for extraction.
      * @return A `FullDenseExtractor` object for dense access to full columns.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options& opt) const = 0;
 
@@ -131,6 +135,7 @@ public:
      * @param block_length Number of rows in the block.
      * @param opt Options for extraction.
      * @return A `BlockDenseExtractor` object for dense access to a block of each column.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
@@ -138,6 +143,7 @@ public:
      * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
      * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each column.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const = 0;
 
@@ -148,6 +154,7 @@ public:
     /**
      * @param opt Options for extraction.
      * @return A `FullSparseExtractor` object for sparse access to full rows.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options& opt) const = 0;
 
@@ -156,6 +163,7 @@ public:
      * @param block_length Number of columns in the block.
      * @param opt Options for extraction.
      * @return A `BlockSparseExtractor` object for sparse access to a block of each row.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
@@ -163,12 +171,14 @@ public:
      * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
      * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each row.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) const = 0;
 
     /**
      * @param opt Options for extraction.
      * @return A `FullSparseExtractor` object for sparse access to full columns.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options& opt) const = 0;
 
@@ -177,6 +187,7 @@ public:
      * @param block_length Number of rows in the block.
      * @param opt Options for extraction.
      * @return A `BlockSparseExtractor` object for sparse access to a block of each column.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
@@ -184,6 +195,7 @@ public:
      * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
      * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each column.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) const = 0;
 
@@ -193,6 +205,7 @@ public:
 public:
     /**
      * @return A `FullDenseExtractor` object for dense access to full rows, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row() const {
         return dense_row(Options());
@@ -202,6 +215,7 @@ public:
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
      * @return A `BlockDenseExtractor` object for dense access to a block of each row, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length) const {
         return dense_row(block_start, block_length, Options());
@@ -210,6 +224,7 @@ public:
     /**
      * @param indices Vector of sorted and unique column indices.
      * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each row, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices) const {
         return dense_row(std::move(indices), Options());
@@ -217,6 +232,7 @@ public:
 
     /**
      * @return A `FullDenseExtractor` object for dense access to full columns, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column() const {
         return dense_column(Options());
@@ -226,6 +242,7 @@ public:
      * @param block_start Index of the row at the start of the block.
      * @param block_length Number of rows in the block.
      * @return A `BlockDenseExtractor` object for dense access to a block of each column, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length) const {
         return dense_column(block_start, block_length, Options());
@@ -234,6 +251,7 @@ public:
     /**
      * @param indices Vector of sorted and unique column indices.
      * @return A `IndexDenseExtractor` object for dense access to a indexed subset of each column, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices) const {
         return dense_column(std::move(indices), Options()); 
@@ -245,6 +263,7 @@ public:
 public:
     /**
      * @return A `FullSparseExtractor` object for sparse access to full rows, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row() const {
         return sparse_row(Options());
@@ -254,6 +273,7 @@ public:
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
      * @return A `BlockSparseExtractor` object for sparse access to a block of each row, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length) const {
         return sparse_row(block_start, block_length, Options());
@@ -262,6 +282,7 @@ public:
     /**
      * @param indices Vector of sorted and unique column indices.
      * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each row, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices) const {
         return sparse_row(std::move(indices), Options());
@@ -269,6 +290,7 @@ public:
 
     /**
      * @return A `FullSparseExtractor` object for sparse access to full columns, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column() const {
         return sparse_column(Options());
@@ -278,6 +300,7 @@ public:
      * @param block_start Index of the row at the start of the block.
      * @param block_length Number of rows in the block.
      * @return A `BlockSparseExtractor` object for sparse access to a block of each column, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length) const {
         return sparse_column(block_start, block_length, Options());
@@ -286,6 +309,7 @@ public:
     /**
      * @param indices Vector of sorted and unique column indices.
      * @return A `IndexSparseExtractor` object for sparse access to a indexed subset of each column, using default options.
+     * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices) const {
         return sparse_column(std::move(indices), Options());

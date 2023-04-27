@@ -21,7 +21,8 @@ template<typename Index_>
 struct FixedOracle : public Oracle<Index_> {
     /**
      * @param r Pointer to a constant array of indices.
-     * @param n Length of the array for `r`.
+     * The underlying array should be valid for the lifetime of this `FixedOracle` instance.
+     * @param n Length of the array at `r`.
      */
     FixedOracle(const Index_* r, size_t n) : reference(r), length(n) {}
 

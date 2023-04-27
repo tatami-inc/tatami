@@ -138,6 +138,7 @@ public:
      * @param opt Options to pass to the extractor construction methods in `Matrix`.
      *
      * @return An `Extractor` object for iterating over the target dimension in the range `[s, e)`.
+     * It is assumed that the caller will iteratively call `fetch()` for consecutive indices from `s` to `e`.
      */
     template<bool sparse_>
     auto direct(Index_ s, Index_ e, const Options& opt) const {
@@ -151,6 +152,7 @@ public:
      *
      * @return An `Extractor` object for iterating over the non-target dimensions,
      * extracting the range `[s, e)` from each target vector.
+     * It is assumed that the caller will iteratively call `fetch()` for consecutive indices from 0 to `BidimensionalApplyConfiguration::other_dim`.
      */
     template<bool sparse_>
     auto running(Index_ s, Index_ e, const Options& opt) const {
@@ -185,6 +187,9 @@ public:
  */
 template<bool row_, typename Value_, typename Index_>
 struct DirectApplyConfiguration {
+    /**
+     * @param mat Pointer to the `Matrix` instance.
+     */
     DirectApplyConfiguration(const Matrix<Value_, Index_>* mat) :
         matrix(mat), 
         uses_oracle(matrix->uses_oracle(row_)),
@@ -213,6 +218,7 @@ public:
      * @param opt Options to pass to the extractor construction methods in `Matrix`.
      *
      * @return An `Extractor` object for iterating over the target dimension in the range `[s, e)`.
+     * It is assumed that the caller will iteratively call `fetch()` for consecutive indices from `s` to `e`.
      */
     template<bool sparse_>
     auto extractor(Index_ s, Index_ e, const Options& opt) const {
