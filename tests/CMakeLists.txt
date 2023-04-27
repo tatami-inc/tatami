@@ -27,8 +27,8 @@ add_executable(
 
     src/stats/sums.cpp
     src/stats/variances.cpp
-#    src/stats/medians.cpp
-#    src/stats/ranges.cpp
+    src/stats/medians.cpp
+    src/stats/ranges.cpp
 
     src/utils/wrap_shared_ptr.cpp
     src/utils/SomeNumericArray.cpp
@@ -53,7 +53,6 @@ add_executable(
     src/stats/variances.cpp
     src/stats/medians.cpp
     src/stats/ranges.cpp
-    src/stats/apply.cpp
 )
 
 target_link_libraries(

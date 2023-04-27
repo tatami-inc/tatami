@@ -20,7 +20,7 @@ namespace stats {
  * @cond
  */
 template<typename Output_, bool row_, typename Value_, typename Index_>
-std::vector<Output_> internal_dimension_sums(const Matrix<Value_, Index_>* p, int threads) {
+std::vector<Output_> dimension_sums(const Matrix<Value_, Index_>* p, int threads) {
     Index_ dim = (row_ ? p->nrow() : p->ncol());
     Index_ otherdim = (row_ ? p->ncol() : p->nrow());
     std::vector<Output_> output(dim);
@@ -103,7 +103,7 @@ std::vector<Output_> internal_dimension_sums(const Matrix<Value_, Index_>* p, in
  */
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> column_sums(const Matrix<Value_, Index_>* p, int threads = 1) {
-    return internal_dimension_sums<Output_, false>(p, threads);
+    return stats::dimension_sums<Output_, false>(p, threads);
 }
 
 /**
@@ -118,7 +118,7 @@ std::vector<Output_> column_sums(const Matrix<Value_, Index_>* p, int threads = 
  */
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> row_sums(const Matrix<Value_, Index_>* p, int threads = 1) {
-    return internal_dimension_sums<Output_, true>(p, threads);
+    return stats::dimension_sums<Output_, true>(p, threads);
 }
 
 }

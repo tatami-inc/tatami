@@ -172,19 +172,3 @@ TEST(ComputingDimMedians, RowMediansNaN) {
     EXPECT_TRUE(std::isnan(rref.front()));
     EXPECT_TRUE(std::isnan(rref.back()));
 }
-
-TEST(ComputingDimMedians, Configuration) {
-    typedef tatami::stats::MedianFactory<double> MedFact;
-    EXPECT_FALSE(tatami::stats::has_sparse_running<MedFact>::value);
-    EXPECT_FALSE(tatami::stats::has_sparse_running_parallel<MedFact>::value);
-    EXPECT_FALSE(tatami::stats::has_dense_running<MedFact>::value);
-    EXPECT_FALSE(tatami::stats::has_dense_running_parallel<MedFact>::value);
-    EXPECT_TRUE(tatami::stats::has_sparse_direct<MedFact>::value);
-
-    typedef decltype(std::declval<MedFact>().dense_direct()) MedDense;
-    const bool ndc = tatami::stats::has_nonconst_dense_compute<MedDense, double, int>::value;
-    EXPECT_TRUE(ndc);
-    typedef decltype(std::declval<MedFact>().sparse_direct()) MedSparse;
-    const bool nsc = tatami::stats::has_nonconst_sparse_compute<MedSparse, double, int>::value;
-    EXPECT_TRUE(nsc);
-}

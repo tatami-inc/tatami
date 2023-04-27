@@ -2,7 +2,7 @@
 #define TATAMI_STATS_MEDIANS_HPP
 
 #include "../base/Matrix.hpp"
-#include "apply.hpp"
+#include "./utils.hpp"
 
 #include <cmath>
 #include <vector>
@@ -22,10 +22,10 @@ namespace stats {
 /**
  * @cond
  */
-template<typename O = double, typename T>
-O compute_median(T* buffer, size_t n) {
+template<typename Output_ = double, typename Value_>
+Output_ compute_median(Value_* buffer, size_t n) {
     if (n == 0) {
-        return std::numeric_limits<O>::quiet_NaN();
+        return std::numeric_limits<Output_>::quiet_NaN();
     }
 
     size_t halfway = n / 2;
@@ -42,89 +42,83 @@ O compute_median(T* buffer, size_t n) {
     }
 }
 
-template<typename O>
-struct MedianFactory {
-    MedianFactory(O* o, size_t d2) : output(o), otherdim(d2) {}
+template<typename Output_, bool row_, typename Value_, typename Index_>
+std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int threads) {
+    Index_ dim = (row_ ? p->nrow() : p->ncol());
+    Index_ otherdim = (row_ ? p->ncol() : p->nrow());
+    std::vector<Output_> output(dim);
 
-private:
-    O* output;
-    size_t otherdim;
+    const bool prefrow = p->prefer_rows();
+    const bool direct = prefrow == row_;
+    const bool oracled = p->uses_oracle(prefrow);
+    Options opt;
 
-public:
-    struct Dense {
-        Dense(O* o, size_t d2) : output(o), otherdim(d2) {}
+    if (p->sparse()) {
+        parallelize([&](int t, Index_ s, Index_ e) -> void {
+            std::vector<Value_> buffer(otherdim);
+            auto ext = direct_extractor<row_, false>(p, oracled, s, e, opt);
+            for (Index_ i = s; i < e; ++i) {
+                ext->fetch_copy(i, buffer.data());
+                output[i] = compute_median<Output_>(buffer.data(), otherdim);
+            }
+        }, dim, threads);
 
-        template<typename T>
-        void compute_copy(size_t i, T* ptr) {
-            output[i] = compute_median<O>(ptr, otherdim);
-        }
-    private:
-        O* output;
-        size_t otherdim;
-    };
+    } else {
+        opt.sparse_extract_index = false;
+        opt.sparse_ordered_index = false; // we'll be sorting by value.
+        parallelize([&](int t, Index_ s, Index_ e) -> void {
+            auto ext = direct_extractor<row_, true>(p, oracled, s, e, opt);
 
-    Dense dense_direct() {
-        return Dense(output, otherdim);
-    }
+            std::vector<Value_> buffer(otherdim);
+            auto vbuffer = buffer.data();
+            for (Index_ i = s; i < e; ++i) {
+                auto range = ext->fetch_copy(i, vbuffer, NULL);
+                auto n = range.number;
 
-public:
-    struct Sparse {
-        Sparse(O* o, size_t d2) : output(o), otherdim(d2) {}
-
-        template<typename T, typename IDX>
-        void compute_copy(size_t i, size_t n, T* vbuffer, IDX*) {
-            if (n == otherdim) {
-                output[i] = compute_median<O>(vbuffer, otherdim);
-            } else if (n * 2 < otherdim) {
-                output[i] = 0; // zero is the median if there are too many zeroes.
-            } else {
-                if (vbuffer != vbuffer) {
-                    std::copy(vbuffer, vbuffer + n, vbuffer);
-                }
-
-                size_t halfway = otherdim / 2;
-                bool is_even = (otherdim % 2 == 0);
-
-                auto vend = vbuffer + n;
-                std::sort(vbuffer, vend);
-                size_t zeropos = std::lower_bound(vbuffer, vend, 0) - vbuffer;
-                size_t nzero = otherdim - n;
-
-                if (!is_even) {
-                    if (zeropos > halfway) {
-                        output[i] = vbuffer[halfway];
-                    } else if (halfway >= zeropos + nzero) {
-                        output[i] = vbuffer[halfway - nzero];
-                    } else {
-                        output[i] = 0; // zero is the median.
-                    }
+                if (n == otherdim) {
+                    output[i] = compute_median<Output_>(vbuffer, otherdim);
+                } else if (n * 2 < otherdim) {
+                    output[i] = 0; // zero is the median if there are too many zeroes.
                 } else {
-                    double tmp = 0;
-                    if (zeropos > halfway) {
-                        tmp = vbuffer[halfway] + vbuffer[halfway - 1];
-                    } else if (zeropos == halfway) {
-                        // guaranteed to be at least 1 zero.
-                        tmp += vbuffer[halfway - 1];
-                    } else if (zeropos < halfway && zeropos + nzero > halfway) {
-                        ; // zero is the median.
-                    } else if (zeropos + nzero == halfway) {
-                        // guaranteed to be at least 1 zero.
-                        tmp += vbuffer[halfway - nzero];
+                    size_t halfway = otherdim / 2;
+                    bool is_even = (otherdim % 2 == 0);
+
+                    auto vend = vbuffer  + n;
+                    std::sort(vbuffer, vend);
+                    size_t zeropos = std::lower_bound(vbuffer, vend, 0) - vbuffer;
+                    size_t nzero = otherdim - n;
+
+                    if (!is_even) {
+                        if (zeropos > halfway) {
+                            output[i] = vbuffer[halfway];
+                        } else if (halfway >= zeropos + nzero) {
+                            output[i] = vbuffer[halfway - nzero];
+                        } else {
+                            output[i] = 0; // zero is the median.
+                        }
                     } else {
-                        tmp = vbuffer[halfway - nzero] + vbuffer[halfway - nzero - 1];
+                        double tmp = 0;
+                        if (zeropos > halfway) {
+                            tmp = vbuffer[halfway] + vbuffer[halfway - 1];
+                        } else if (zeropos == halfway) {
+                            // guaranteed to be at least 1 zero.
+                            tmp += vbuffer[halfway - 1];
+                        } else if (zeropos < halfway && zeropos + nzero > halfway) {
+                            ; // zero is the median.
+                        } else if (zeropos + nzero == halfway) {
+                            // guaranteed to be at least 1 zero.
+                            tmp += vbuffer[halfway - nzero];
+                        } else {
+                            tmp = vbuffer[halfway - nzero] + vbuffer[halfway - nzero - 1];
+                        }
+                        output[i] = tmp / 2;
                     }
-                    output[i] = tmp / 2;
                 }
             }
-        }
-    private:
-        O* output;
-        size_t otherdim;
-    };
-
-    Sparse sparse_direct() {
-        return Sparse(output, otherdim);
+        }, dim, threads);
     }
+
+    return output;
 };
 /**
  * @endcond
@@ -133,21 +127,18 @@ public:
 }
 
 /**
- * @tparam Output Type of the output.
- * @tparam T Type of the matrix value.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Output_ Type of the output.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Shared pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of columns, containing the column medians.
  */
-template<typename Output = double, typename T, typename IDX>
-inline std::vector<Output> column_medians(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> output(p->ncol());
-    stats::MedianFactory factory(output.data(), p->nrow());
-    apply<1>(p, factory, threads);
-    return output;
+template<typename Output_ = double, typename Value_, typename Index_>
+inline std::vector<Output_> column_medians(const Matrix<Value_, Index_>* p, int threads = 1) {
+     return stats::dimension_medians<Output_, false>(p, threads);
 }
 
 /**
@@ -160,12 +151,9 @@ inline std::vector<Output> column_medians(const Matrix<T, IDX>* p, int threads =
  *
  * @return A vector of length equal to the number of rows, containing the row medians.
  */
-template<typename Output = double, typename T, typename IDX>
-inline std::vector<Output> row_medians(const Matrix<T, IDX>* p, int threads = 1) {
-    std::vector<Output> output(p->nrow());
-    stats::MedianFactory factory(output.data(), p->ncol());
-    apply<0>(p, factory);
-    return output;
+template<typename Output_ = double, typename Value_, typename Index_>
+inline std::vector<Output_> row_medians(const Matrix<Value_, Index_>* p, int threads = 1) {
+    return stats::dimension_medians<Output_, true>(p, threads);
 }
 
 }

@@ -72,23 +72,6 @@ TEST(ComputingDimMins, ColumnMins) {
     EXPECT_EQ(ref, tatami::column_mins(sparse_column.get(), 3));
 }
 
-TEST(ComputingDimMins, Configuration) {
-    typedef tatami::stats::MinFactory<double> MinFact;
-
-    EXPECT_TRUE(tatami::stats::has_sparse_running<MinFact>::value);
-    EXPECT_TRUE(tatami::stats::has_sparse_running_parallel<MinFact>::value);
-    EXPECT_TRUE(tatami::stats::has_dense_running<MinFact>::value);
-    EXPECT_TRUE(tatami::stats::has_dense_running_parallel<MinFact>::value);
-    EXPECT_TRUE(tatami::stats::has_sparse_direct<MinFact>::value);
-
-    typedef decltype(std::declval<MinFact>().dense_direct()) MinDense;
-    const bool ndc = tatami::stats::has_nonconst_dense_compute<MinDense, double, int>::value;
-    EXPECT_FALSE(ndc);
-    typedef decltype(std::declval<MinFact>().sparse_direct()) MinSparse;
-    const bool nsc = tatami::stats::has_nonconst_sparse_compute<MinSparse, double, int>::value;
-    EXPECT_FALSE(nsc);
-}
-
 /********************************************/
 
 TEST(ComputingDimMaxs, RowMaxs) {
