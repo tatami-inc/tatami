@@ -92,85 +92,111 @@ $(function() {
 <div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
 <div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="keyword">namespace </span>subset_utils {</div>
 <div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span> </div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">struct </span>DenseSupplement {</div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span>    std::vector&lt;size_t&gt; reverse_mapping;</div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> sparse = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>};</div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> WORKROW, <span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX, <span class="keyword">class</span> InputWorkspace&gt;</div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="keyword">const</span> T* remap_dense(<span class="keyword">const</span> Matrix&lt;T, IDX&gt;* mat, <span class="keywordtype">size_t</span> i, T* buffer, InputWorkspace* work, <span class="keyword">const</span> std::vector&lt;size_t&gt;&amp; rmapping) {</div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keyword">const</span> T* dump = extract_dense&lt;WORKROW&gt;(mat, i, work-&gt;buffer.data(), work-&gt;internal.get());</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>    <span class="keyword">auto</span> temp = buffer;</div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> i : rmapping) {</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>        *temp = dump[i];</div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span>        ++temp;</div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    } </div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span>    <span class="keywordflow">return</span> buffer;</div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>}</div>
-<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
-<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> IDX&gt;</div>
-<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span><span class="keyword">struct </span>SparseSupplement {</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>    std::vector&lt;std::pair&lt;size_t, size_t&gt; &gt; mapping_duplicates; </div>
-<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>    std::vector&lt;IDX&gt; mapping_duplicates_pool; </div>
-<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    <span class="keyword">static</span> <span class="keyword">constexpr</span> <span class="keywordtype">bool</span> sparse = <span class="keyword">true</span>;</div>
-<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>};</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span> </div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> WORKROW, <span class="keyword">typename</span> T, <span class="keyword">typename</span> IDX, <span class="keyword">class</span> InputWorkspace&gt;</div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>SparseRange&lt;T, IDX&gt; remap_sparse_duplicates(</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>    <span class="keyword">const</span> Matrix&lt;T, IDX&gt;* mat, </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    <span class="keywordtype">size_t</span> i, </div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>    T* vbuffer, </div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    IDX* ibuffer, </div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    InputWorkspace* work, </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keyword">const</span> std::vector&lt;std::pair&lt;size_t, size_t&gt; &gt;&amp; dups, </div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>    <span class="keyword">const</span> std::vector&lt;IDX&gt;&amp; pool)</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>{</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    <span class="comment">// Allocation status of work-&gt;vbuffer depends on the extraction mode used to construct work-&gt;internal.</span></div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>    T* vin = work-&gt;vbuffer.data();</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    <span class="comment">// work-&gt;ibuffer should always be allocated, as we need this to get the expanded counts.</span></div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    IDX* iin = work-&gt;ibuffer.data();</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>    <span class="keyword">auto</span> raw = extract_sparse&lt;WORKROW&gt;(mat, i, vin, iin, work-&gt;internal.get());</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>    <span class="keywordflow">if</span> (!raw.value) {</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        vbuffer = NULL;</div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    }</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keywordflow">if</span> (!(work-&gt;report_index)) {</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        ibuffer = NULL;</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    }</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    <span class="keyword">auto</span> vcopy = vbuffer;</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>    <span class="keyword">auto</span> icopy = ibuffer;</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    <span class="keywordtype">size_t</span> counter = 0;</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; raw.number; ++i) {</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; pool_pos = dups[raw.index[i]];</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        counter += pool_pos.second;</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span> </div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        <span class="keywordflow">if</span> (vcopy) {</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>            std::fill(vcopy, vcopy + pool_pos.second, raw.value[i]);</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>            vcopy += pool_pos.second;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>        }</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span> </div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keywordflow">if</span> (icopy) {</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>            <span class="keyword">auto</span> istart = pool.begin() + pool_pos.first;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>            std::copy(istart, istart + pool_pos.second, icopy);</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>            icopy += pool_pos.second;</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        }</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    }</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span> </div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    <span class="keywordflow">return</span> SparseRange&lt;T, IDX&gt;(counter, vbuffer, ibuffer);</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>}</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> IDX, <span class="keywordtype">bool</span> SPARSE&gt;</div>
-<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keyword">using </span>ConditionalSupplement = <span class="keyword">typename</span> std::conditional&lt;SPARSE, SparseSupplement&lt;IDX&gt;, DenseSupplement&gt;::type;</div>
-<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span> </div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>}</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>}</div>
-<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
-<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span><span class="preprocessor">#endif</span></div>
-<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> arith_scalar_helpers.hpp:14</div></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_&gt;</div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="keyword">const</span> Value_* remap_dense(<span class="keyword">const</span> Value_* input, Value_* buffer, <span class="keyword">const</span> std::vector&lt;Index_&gt;&amp; rmapping) {</div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span>    <span class="keyword">auto</span> temp = buffer;</div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span>    <span class="keywordflow">for</span> (<span class="keyword">auto</span> i : rmapping) {</div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span>        *temp = input[i];</div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span>        ++temp;</div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span>    } </div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span>    <span class="keywordflow">return</span> buffer;</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span>}</div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span> </div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Index_, <span class="keyword">class</span> IndexStorage_&gt;</div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">struct </span>SubsetOracle : <span class="keyword">public</span> Oracle&lt;Index_&gt; {</div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    SubsetOracle(std::unique_ptr&lt;Oracle&lt;Index_&gt; &gt; o, <span class="keyword">const</span> IndexStorage_* is) : source(std::move(o)), indices(is) {}</div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span>    <span class="keywordtype">size_t</span> predict(Index_* buffer, <span class="keywordtype">size_t</span> length) {</div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="keywordtype">size_t</span> filled = source-&gt;predict(buffer, length);</div>
+<div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; filled; ++i) {</div>
+<div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>            buffer[i] = (*indices)[buffer[i]];</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>        }</div>
+<div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>        <span class="keywordflow">return</span> filled;</div>
+<div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>    }</div>
+<div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">private</span>:</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    std::unique_ptr&lt;Oracle&lt;Index_&gt; &gt; source;</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>    <span class="keyword">const</span> IndexStorage_* indices;</div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>};</div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="keyword">template</span>&lt;DimensionSelectionType selection_, <span class="keywordtype">bool</span> sparse_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> IndexStorage_&gt;</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="keyword">struct </span>PerpendicularExtractor : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#ae9f8db5316521603085577d977a6955f">Extractor</a>&lt;selection_, sparse_, Value_, Index_&gt; {</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>    PerpendicularExtractor(std::unique_ptr&lt;Extractor&lt;selection_, sparse_, Value_, Index_&gt; &gt; i, <span class="keyword">const</span> IndexStorage_&amp; in) : </div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        internal(std::move(i)), indices(&amp;in)</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(selection_ == DimensionSelectionType::FULL) {</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>            this-&gt;full_length = internal-&gt;full_length;</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        } <span class="keywordflow">else</span> <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(selection_ == DimensionSelectionType::BLOCK) {</div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            this-&gt;block_start = internal-&gt;block_start;</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>            this-&gt;block_length = internal-&gt;block_length;</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>            this-&gt;index_length = internal-&gt;index_length;</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        }</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>    }</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span> </div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span><span class="keyword">protected</span>:</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    std::unique_ptr&lt;Extractor&lt;selection_, sparse_, Value_, Index_&gt; &gt; internal;</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    <span class="keyword">const</span> IndexStorage_* indices;</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span><span class="keyword">public</span>:</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>    <span class="keyword">const</span> Index_* index_start()<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(selection_ == DimensionSelectionType::INDEX) {</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>            <span class="keywordflow">return</span> internal-&gt;index_start();</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>            <span class="keywordflow">return</span> NULL;</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>    }</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    <span class="keywordtype">void</span> set_oracle(std::unique_ptr&lt;Oracle&lt;Index_&gt; &gt; o) {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>        internal-&gt;set_oracle(std::make_unique&lt;SubsetOracle&lt;Index_, IndexStorage_&gt; &gt;(std::move(o), indices));</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>    }</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>};</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span><span class="keyword">template</span>&lt;DimensionSelectionType selection_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> IndexStorage_&gt;</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span><span class="keyword">struct </span>DensePerpendicularExtractor : <span class="keyword">public</span> PerpendicularExtractor&lt;selection_, false, Value_, Index_, IndexStorage_&gt; {</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>    DensePerpendicularExtractor(std::unique_ptr&lt;Extractor&lt;selection_, false, Value_, Index_&gt; &gt; i, <span class="keyword">const</span> IndexStorage_&amp; p) : </div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        PerpendicularExtractor&lt;selection_, false, Value_, Index_, IndexStorage_&gt;(std::move(i), p) {}</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span> </div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    <span class="keyword">const</span> Value_* fetch(Index_ i, Value_* buffer) {</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        <span class="keywordflow">return</span> this-&gt;internal-&gt;fetch((*(this-&gt;indices))[i], buffer);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    }</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>};</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span><span class="keyword">template</span>&lt;DimensionSelectionType selection_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> IndexStorage_&gt;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">struct </span>SparsePerpendicularExtractor : <span class="keyword">public</span> PerpendicularExtractor&lt;selection_, true, Value_, Index_, IndexStorage_&gt; {</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    SparsePerpendicularExtractor(std::unique_ptr&lt;Extractor&lt;selection_, true, Value_, Index_&gt; &gt; i, <span class="keyword">const</span> IndexStorage_&amp; p) : </div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        PerpendicularExtractor&lt;selection_, true, Value_, Index_, IndexStorage_&gt;(std::move(i), p) {}</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    SparseRange&lt;Value_, Index_&gt; fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <span class="keywordflow">return</span> this-&gt;internal-&gt;fetch((*(this-&gt;indices))[i], vbuffer, ibuffer);</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    }</div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>};</div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span> </div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> accrow_, <a class="code hl_enumeration" href="namespacetatami.html#a0a2ecaf58e2b69bb4a808e814aeb16a1">DimensionSelectionType</a> selection_, <span class="keywordtype">bool</span> sparse_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class </span>IndexStorage_, <span class="keyword">typename</span> ... Args_&gt;</div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>std::unique_ptr&lt;Extractor&lt;selection_, sparse_, Value_, Index_&gt; &gt; populate_perpendicular(</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keyword">const</span> Matrix&lt;Value_, Index_&gt;* mat, </div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <span class="keyword">const</span> IndexStorage_&amp; indices, </div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keyword">const</span> Options&amp; options, </div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    Args_... args)</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>{</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="comment">// TODO: handle variable access patterns here.</span></div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    std::unique_ptr&lt;Extractor&lt;selection_, sparse_, Value_, Index_&gt; &gt; output;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        output.reset(<span class="keyword">new</span> SparsePerpendicularExtractor&lt;selection_, Value_, Index_, IndexStorage_&gt;(new_extractor&lt;accrow_, sparse_&gt;(mat, options, std::move(args)...), indices));</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        output.reset(<span class="keyword">new</span> DensePerpendicularExtractor&lt;selection_, Value_, Index_, IndexStorage_&gt;(new_extractor&lt;accrow_, sparse_&gt;(mat, options, std::move(args)...), indices));</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    }</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>}</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span> </div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>}</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span> </div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>}</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span><span class="preprocessor">#endif</span></div>
+<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> DenseMatrix.hpp:19</div></div>
+<div class="ttc" id="anamespacetatami_html_a0a2ecaf58e2b69bb4a808e814aeb16a1"><div class="ttname"><a href="namespacetatami.html#a0a2ecaf58e2b69bb4a808e814aeb16a1">tatami::DimensionSelectionType</a></div><div class="ttdeci">DimensionSelectionType</div><div class="ttdef"><b>Definition:</b> Options.hpp:22</div></div>
+<div class="ttc" id="anamespacetatami_html_ae9f8db5316521603085577d977a6955f"><div class="ttname"><a href="namespacetatami.html#ae9f8db5316521603085577d977a6955f">tatami::Extractor</a></div><div class="ttdeci">typename std::conditional&lt; sparse_, SparseExtractor&lt; selection_, Value_, Index_ &gt;, DenseExtractor&lt; selection_, Value_, Index_ &gt; &gt;::type Extractor</div><div class="ttdef"><b>Definition:</b> Extractor.hpp:325</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

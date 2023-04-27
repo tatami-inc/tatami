@@ -1,4 +1,4 @@
-<map id="tatami::DelayedTranspose&lt; T, IDX &gt;" name="tatami::DelayedTranspose&lt; T, IDX &gt;">
-<area shape="rect" id="node1" title="Delayed transposition of a matrix." alt="" coords="5,93,176,133"/>
-<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="29,5,152,45"/>
+<map id="tatami::DelayedTranspose&lt; Value_, Index_ &gt;" name="tatami::DelayedTranspose&lt; Value_, Index_ &gt;">
+<area shape="rect" id="node1" title="Delayed transposition of a matrix." alt="" coords="5,94,176,135"/>
+<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="19,5,162,46"/>
 </map>

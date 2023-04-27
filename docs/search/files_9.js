@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['tatami_2ehpp_0',['tatami.hpp',['../tatami_8hpp.html',1,'']]]
+  ['ranges_2ehpp_0',['ranges.hpp',['../ranges_8hpp.html',1,'']]]
 ];

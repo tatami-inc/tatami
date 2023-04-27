@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['layeredmatrixdata_0',['LayeredMatrixData',['../structtatami_1_1LayeredMatrixData.html',1,'tatami']]]
+  ['hdf5compressedsparsematrix_0',['HDF5CompressedSparseMatrix',['../classtatami_1_1HDF5CompressedSparseMatrix.html',1,'tatami']]],
+  ['hdf5densematrix_1',['HDF5DenseMatrix',['../classtatami_1_1HDF5DenseMatrix.html',1,'tatami']]],
+  ['headerdetails_2',['HeaderDetails',['../structtatami_1_1MatrixMarket_1_1HeaderDetails.html',1,'tatami::MatrixMarket']]]
 ];

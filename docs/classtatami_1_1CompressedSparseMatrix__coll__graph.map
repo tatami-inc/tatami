@@ -1,4 +1,4 @@
-<map id="tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;" name="tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;">
-<area shape="rect" id="node1" title="Compressed sparse matrix representation." alt="" coords="5,93,184,148"/>
-<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type." alt="" coords="33,5,156,45"/>
+<map id="tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;" name="tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;">
+<area shape="rect" id="node1" title="Compressed sparse matrix representation." alt="" coords="5,94,224,165"/>
+<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type." alt="" coords="43,5,186,46"/>
 </map>

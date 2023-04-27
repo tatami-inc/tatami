@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami/base/DenseMatrix.hpp File Reference</title>
+<title>tatami: tatami/base/dense/DenseMatrix.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,7 +71,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_1431006efcc686dc889083f70f9f4d8a.html">base</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_1431006efcc686dc889083f70f9f4d8a.html">base</a></li><li class="navelem"><a class="el" href="dir_6a82516a3e4d7c80718eca740eee3d63.html">dense</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -90,7 +90,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix&lt; ROW, T, IDX, V &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DenseMatrix.html">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Dense matrix representation.  <a href="classtatami_1_1DenseMatrix.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -102,12 +102,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a1c118308300d626e53436a9540dd8bd9"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX  = int, class V  = std::vector&lt;T&gt;&gt; </td></tr>
-<tr class="memitem:a1c118308300d626e53436a9540dd8bd9"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a1c118308300d626e53436a9540dd8bd9">tatami::DenseColumnMatrix</a> = DenseMatrix&lt; false, T, IDX, V &gt;</td></tr>
-<tr class="separator:a1c118308300d626e53436a9540dd8bd9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4db75262ca90f85a4278b90f844cffd"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX  = int, class V  = std::vector&lt;T&gt;&gt; </td></tr>
-<tr class="memitem:ad4db75262ca90f85a4278b90f844cffd"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ad4db75262ca90f85a4278b90f844cffd">tatami::DenseRowMatrix</a> = DenseMatrix&lt; true, T, IDX, V &gt;</td></tr>
-<tr class="separator:ad4db75262ca90f85a4278b90f844cffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac47a769e00660eb7e9b5fcd543bcf2d3"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </td></tr>
+<tr class="memitem:ac47a769e00660eb7e9b5fcd543bcf2d3"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac47a769e00660eb7e9b5fcd543bcf2d3">tatami::DenseColumnMatrix</a> = DenseMatrix&lt; false, Value_, Index_, Storage_ &gt;</td></tr>
+<tr class="separator:ac47a769e00660eb7e9b5fcd543bcf2d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51122d20490b377cd3f4609cc044f314"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </td></tr>
+<tr class="memitem:a51122d20490b377cd3f4609cc044f314"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a51122d20490b377cd3f4609cc044f314">tatami::DenseRowMatrix</a> = DenseMatrix&lt; true, Value_, Index_, Storage_ &gt;</td></tr>
+<tr class="separator:a51122d20490b377cd3f4609cc044f314"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Dense matrix representation. </p>

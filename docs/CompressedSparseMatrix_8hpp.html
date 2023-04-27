@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami/base/CompressedSparseMatrix.hpp File Reference</title>
+<title>tatami: tatami/base/sparse/CompressedSparseMatrix.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,7 +71,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_1431006efcc686dc889083f70f9f4d8a.html">base</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_1431006efcc686dc889083f70f9f4d8a.html">base</a></li><li class="navelem"><a class="el" href="dir_ddb3a8ce7fc34245d87973fc736a971e.html">sparse</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -90,7 +90,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1CompressedSparseMatrix.html">tatami::CompressedSparseMatrix&lt; ROW, T, IDX, U, V, W &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1CompressedSparseMatrix.html">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compressed sparse matrix representation.  <a href="classtatami_1_1CompressedSparseMatrix.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -102,12 +102,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a3d1338ade036e38b6d363a6c8a704a2b"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX , class U  = std::vector&lt;T&gt;, class V  = std::vector&lt;IDX&gt;, class W  = std::vector&lt;size_t&gt;&gt; </td></tr>
-<tr class="memitem:a3d1338ade036e38b6d363a6c8a704a2b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3d1338ade036e38b6d363a6c8a704a2b">tatami::CompressedSparseColumnMatrix</a> = CompressedSparseMatrix&lt; false, T, IDX, U, V, W &gt;</td></tr>
-<tr class="separator:a3d1338ade036e38b6d363a6c8a704a2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a33a0b775b994304c942e990fe12e793e"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX , class U  = std::vector&lt;T&gt;, class V  = std::vector&lt;IDX&gt;, class W  = std::vector&lt;size_t&gt;&gt; </td></tr>
-<tr class="memitem:a33a0b775b994304c942e990fe12e793e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a33a0b775b994304c942e990fe12e793e">tatami::CompressedSparseRowMatrix</a> = CompressedSparseMatrix&lt; true, T, IDX, U, V, W &gt;</td></tr>
-<tr class="separator:a33a0b775b994304c942e990fe12e793e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18cee3a5d9734f0092b03d023cfe4b6a"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class ValueStorage_  = std::vector&lt;Value_&gt;, class IndexStorage_  = std::vector&lt;Index_&gt;, class PointerStorage_  = std::vector&lt;size_t&gt;&gt; </td></tr>
+<tr class="memitem:a18cee3a5d9734f0092b03d023cfe4b6a"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a18cee3a5d9734f0092b03d023cfe4b6a">tatami::CompressedSparseColumnMatrix</a> = CompressedSparseMatrix&lt; false, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</td></tr>
+<tr class="separator:a18cee3a5d9734f0092b03d023cfe4b6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0111adeeb583aeb7e24e9e1e25be4aa0"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class ValueStorage_  = std::vector&lt;Value_&gt;, class IndexStorage_  = std::vector&lt;Index_&gt;, class PointerStorage_  = std::vector&lt;size_t&gt;&gt; </td></tr>
+<tr class="memitem:a0111adeeb583aeb7e24e9e1e25be4aa0"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a0111adeeb583aeb7e24e9e1e25be4aa0">tatami::CompressedSparseRowMatrix</a> = CompressedSparseMatrix&lt; true, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</td></tr>
+<tr class="separator:a0111adeeb583aeb7e24e9e1e25be4aa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Compressed sparse matrix representation. </p>

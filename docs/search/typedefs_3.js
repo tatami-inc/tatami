@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['numericmatrix_0',['NumericMatrix',['../namespacetatami.html#a35c670894994f1d620abb55953f98441',1,'tatami']]]
+  ['extractor_0',['Extractor',['../namespacetatami.html#ae9f8db5316521603085577d977a6955f',1,'tatami']]]
 ];

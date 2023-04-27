@@ -1,5 +1,5 @@
-<map id="tatami::HDF5DenseMatrix&lt; T, IDX, transpose &gt;" name="tatami::HDF5DenseMatrix&lt; T, IDX, transpose &gt;">
-<area shape="rect" id="node1" title="Dense matrix backed by a DataSet in a HDF5 file." alt="" coords="7,181,177,221"/>
-<area shape="rect" id="node2" href="$classtatami_1_1VirtualDenseMatrix.html" title=" " alt="" coords="5,93,179,133"/>
-<area shape="rect" id="node3" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="31,5,153,45"/>
+<map id="tatami::HDF5DenseMatrix&lt; Value_, Index_, transpose_ &gt;" name="tatami::HDF5DenseMatrix&lt; Value_, Index_, transpose_ &gt;">
+<area shape="rect" id="node1" title="Dense matrix backed by a DataSet in a HDF5 file." alt="" coords="5,183,205,223"/>
+<area shape="rect" id="node2" href="$classtatami_1_1VirtualDenseMatrix.html" title=" " alt="" coords="19,94,191,135"/>
+<area shape="rect" id="node3" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="34,5,176,46"/>
 </map>

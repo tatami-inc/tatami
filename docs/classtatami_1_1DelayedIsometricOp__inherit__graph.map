@@ -1,4 +1,4 @@
-<map id="tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;" name="tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;">
-<area shape="rect" id="node1" title="Delayed isometric operations on a matrix." alt="" coords="5,93,169,133"/>
-<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="26,5,149,45"/>
+<map id="tatami::DelayedIsometricOp&lt; Value_, Index_, Operation_ &gt;" name="tatami::DelayedIsometricOp&lt; Value_, Index_, Operation_ &gt;">
+<area shape="rect" id="node1" title="Delayed isometric operations on a matrix." alt="" coords="5,94,221,135"/>
+<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="42,5,184,46"/>
 </map>

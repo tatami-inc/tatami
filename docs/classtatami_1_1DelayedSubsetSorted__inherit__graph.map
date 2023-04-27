@@ -1,4 +1,4 @@
-<map id="tatami::DelayedSubsetSorted&lt; MARGIN, T, IDX, V &gt;" name="tatami::DelayedSubsetSorted&lt; MARGIN, T, IDX, V &gt;">
-<area shape="rect" id="node1" title="Delayed subsetting of a matrix with sorted indices." alt="" coords="5,93,195,133"/>
-<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="39,5,161,45"/>
+<map id="tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;" name="tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;">
+<area shape="rect" id="node1" title="Delayed subsetting of a matrix with sorted indices." alt="" coords="5,94,194,150"/>
+<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="28,5,171,46"/>
 </map>

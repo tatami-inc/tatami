@@ -1,4 +1,4 @@
-<map id="tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;" name="tatami::DelayedSubsetBlock&lt; MARGIN, T, IDX &gt;">
-<area shape="rect" id="node1" title="Delayed subsetting to a contiguous block." alt="" coords="5,93,189,133"/>
-<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="36,5,159,45"/>
+<map id="tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;" name="tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;">
+<area shape="rect" id="node1" title="Delayed subsetting to a contiguous block." alt="" coords="5,94,189,135"/>
+<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="26,5,168,46"/>
 </map>

@@ -1,12 +1,10 @@
 var searchData=
 [
-  ['workspace_0',['Workspace',['../classtatami_1_1Workspace.html',1,'tatami']]],
-  ['workspace_2ehpp_1',['Workspace.hpp',['../Workspace_8hpp.html',1,'']]],
-  ['workspace_3c_20workrow_2c_20sparse_20_3e_2',['Workspace&lt; WORKROW, SPARSE &gt;',['../classtatami_1_1Workspace.html',1,'tatami']]],
-  ['workspaceoptions_3',['WorkspaceOptions',['../structtatami_1_1WorkspaceOptions.html',1,'tatami']]],
-  ['wrap_5fshared_5fptr_4',['wrap_shared_ptr',['../namespacetatami.html#a7518f5e8e09a6f6d7d3955b8ea286689',1,'tatami']]],
-  ['wrap_5fshared_5fptr_2ehpp_5',['wrap_shared_ptr.hpp',['../wrap__shared__ptr_8hpp.html',1,'']]],
-  ['write_5fsparse_5fmatrix_5fto_5fhdf5_6',['write_sparse_matrix_to_hdf5',['../namespacetatami.html#ad9cce803e8db12c73f1678ff3c022a19',1,'tatami::write_sparse_matrix_to_hdf5(const Matrix&lt; T, IDX &gt; *mat, H5::Group &amp;location, const WriteSparseMatrixToHdf5Parameters &amp;params)'],['../namespacetatami.html#a39d4f99c974648a98b6d9cf99e4a8ec4',1,'tatami::write_sparse_matrix_to_hdf5(const Matrix&lt; T, IDX &gt; *mat, H5::Group &amp;location)']]],
-  ['write_5fsparse_5fmatrix_5fto_5fhdf5_2ehpp_7',['write_sparse_matrix_to_hdf5.hpp',['../write__sparse__matrix__to__hdf5_8hpp.html',1,'']]],
-  ['writesparsematrixtohdf5parameters_8',['WriteSparseMatrixToHdf5Parameters',['../structtatami_1_1WriteSparseMatrixToHdf5Parameters.html',1,'tatami']]]
+  ['value_0',['value',['../structtatami_1_1SparseRange.html#a6bd0dcad11850847dd8dd336e1932732',1,'tatami::SparseRange::value()'],['../structtatami_1_1SparseRangeCopy.html#a6f924c14d5830aedf2d175b850099b45',1,'tatami::SparseRangeCopy::value()']]],
+  ['value_5ftype_1',['value_type',['../classtatami_1_1Matrix.html#a5b783d3ab440b7696c635a4b16516ba8',1,'tatami::Matrix::value_type()'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a452df712534d47fdb8543805affd038b',1,'tatami::SomeNumericArray::Iterator::value_type()']]],
+  ['variances_2ehpp_2',['variances.hpp',['../variances_8hpp.html',1,'']]],
+  ['virtualdensematrix_3',['VirtualDenseMatrix',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]],
+  ['virtualdensematrix_2ehpp_4',['VirtualDenseMatrix.hpp',['../VirtualDenseMatrix_8hpp.html',1,'']]],
+  ['virtualdensematrix_3c_20value_5f_2c_20index_5f_20_3e_5',['VirtualDenseMatrix&lt; Value_, Index_ &gt;',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]],
+  ['virtualdensematrix_3c_20value_5f_2c_20int_20_3e_6',['VirtualDenseMatrix&lt; Value_, int &gt;',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]]
 ];

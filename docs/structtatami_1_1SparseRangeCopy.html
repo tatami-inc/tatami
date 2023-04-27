@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::SparseRangeCopy&lt; T, IDX &gt; Struct Template Reference</title>
+<title>tatami: tatami::SparseRangeCopy&lt; Value, Index &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -79,7 +79,7 @@ $(function() {
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="structtatami_1_1SparseRangeCopy-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami::SparseRangeCopy&lt; T, IDX &gt; Struct Template Reference</div></div>
+  <div class="headertitle"><div class="title">tatami::SparseRangeCopy&lt; Value, Index &gt; Struct Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -90,43 +90,45 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ae1c1cf4105e456edd364343c09412aa7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SparseRangeCopy.html#ae1c1cf4105e456edd364343c09412aa7">SparseRangeCopy</a> (size_t n)</td></tr>
-<tr class="separator:ae1c1cf4105e456edd364343c09412aa7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ddd45e45bb70ea81655a5a5c55de4e7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SparseRangeCopy.html#a3ddd45e45bb70ea81655a5a5c55de4e7">SparseRangeCopy</a> (Index n)</td></tr>
+<tr class="separator:a3ddd45e45bb70ea81655a5a5c55de4e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a3091fafa3385c97f6c21e251e0ad951a"><td class="memItemLeft" align="right" valign="top">std::vector&lt; T &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SparseRangeCopy.html#a3091fafa3385c97f6c21e251e0ad951a">value</a></td></tr>
-<tr class="separator:a3091fafa3385c97f6c21e251e0ad951a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7313c71408288136db76d5a33abf158c"><td class="memItemLeft" align="right" valign="top">std::vector&lt; IDX &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SparseRangeCopy.html#a7313c71408288136db76d5a33abf158c">index</a></td></tr>
-<tr class="separator:a7313c71408288136db76d5a33abf158c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adab7f22070406ccdf552d15c60d88f7b"><td class="memItemLeft" align="right" valign="top">Index&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SparseRangeCopy.html#adab7f22070406ccdf552d15c60d88f7b">number</a> = 0</td></tr>
+<tr class="separator:adab7f22070406ccdf552d15c60d88f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f924c14d5830aedf2d175b850099b45"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Value &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SparseRangeCopy.html#a6f924c14d5830aedf2d175b850099b45">value</a></td></tr>
+<tr class="separator:a6f924c14d5830aedf2d175b850099b45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a62432f2387296b4070ce917e3c2eaac8"><td class="memItemLeft" align="right" valign="top">std::vector&lt; Index &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SparseRangeCopy.html#a62432f2387296b4070ce917e3c2eaac8">index</a></td></tr>
+<tr class="separator:a62432f2387296b4070ce917e3c2eaac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename T, typename IDX&gt;<br />
-struct tatami::SparseRangeCopy&lt; T, IDX &gt;</div><p>A range of a sparse vector with copying. </p>
-<p>This class defines a range along a sparse vector, where the values and indices of the non-zero elements are copied into internal <code>vector</code>s. It provides more memory safety than the <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> class, at the cost of extra allocation and copying.</p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;typename Value, typename Index&gt;<br />
+struct tatami::SparseRangeCopy&lt; Value, Index &gt;</div><p>A range of a sparse vector with copying. </p>
+<p>This class defines a range along a sparse vector, where the values and indices of the structural non-zero elements are copied into internal <code>vector</code>s. It provides more memory safety than the <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> class, at the cost of extra allocation and copying.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">T</td><td>Type of value. </td></tr>
-    <tr><td class="paramname">IDX</td><td>Type of index. </td></tr>
+    <tr><td class="paramname">Value</td><td>Data value type, should be numeric. </td></tr>
+    <tr><td class="paramname">Index</td><td>Row/column index type, should be integer. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ae1c1cf4105e456edd364343c09412aa7" name="ae1c1cf4105e456edd364343c09412aa7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1c1cf4105e456edd364343c09412aa7">&#9670;&#160;</a></span>SparseRangeCopy()</h2>
+<a id="a3ddd45e45bb70ea81655a5a5c55de4e7" name="a3ddd45e45bb70ea81655a5a5c55de4e7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ddd45e45bb70ea81655a5a5c55de4e7">&#9670;&#160;</a></span>SparseRangeCopy()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename IDX &gt; </div>
+template&lt;typename Value , typename Index &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1SparseRangeCopy.html">tatami::SparseRangeCopy</a>&lt; T, IDX &gt;::SparseRangeCopy </td>
+          <td class="memname"><a class="el" href="structtatami_1_1SparseRangeCopy.html">tatami::SparseRangeCopy</a>&lt; Value, Index &gt;::SparseRangeCopy </td>
           <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
+          <td class="paramtype">Index&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
           <td></td>
         </tr>
@@ -139,7 +141,7 @@ template&lt;typename T , typename IDX &gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">n</td><td>Number of non-zero elements. </td></tr>
+    <tr><td class="paramname">n</td><td>Number of structural non-zeros. </td></tr>
   </table>
   </dd>
 </dl>
@@ -147,38 +149,55 @@ template&lt;typename T , typename IDX &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="a3091fafa3385c97f6c21e251e0ad951a" name="a3091fafa3385c97f6c21e251e0ad951a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3091fafa3385c97f6c21e251e0ad951a">&#9670;&#160;</a></span>value</h2>
+<a id="adab7f22070406ccdf552d15c60d88f7b" name="adab7f22070406ccdf552d15c60d88f7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adab7f22070406ccdf552d15c60d88f7b">&#9670;&#160;</a></span>number</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename IDX &gt; </div>
+template&lt;typename Value , typename Index &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;T&gt; <a class="el" href="structtatami_1_1SparseRangeCopy.html">tatami::SparseRangeCopy</a>&lt; T, IDX &gt;::value</td>
+          <td class="memname">Index <a class="el" href="structtatami_1_1SparseRangeCopy.html">tatami::SparseRangeCopy</a>&lt; Value, Index &gt;::number = 0</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Values of the non-zero elements.</p>
+<p>Number of structural non-zero elements. </p>
+
+</div>
+</div>
+<a id="a6f924c14d5830aedf2d175b850099b45" name="a6f924c14d5830aedf2d175b850099b45"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f924c14d5830aedf2d175b850099b45">&#9670;&#160;</a></span>value</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value , typename Index &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt;Value&gt; <a class="el" href="structtatami_1_1SparseRangeCopy.html">tatami::SparseRangeCopy</a>&lt; Value, Index &gt;::value</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Values of the structural non-zeros.</p>
 <p>Note that this may not be filled if extraction was performed with a <code>SparseExtractMode</code> that did not extract the values. </p>
 
 </div>
 </div>
-<a id="a7313c71408288136db76d5a33abf158c" name="a7313c71408288136db76d5a33abf158c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7313c71408288136db76d5a33abf158c">&#9670;&#160;</a></span>index</h2>
+<a id="a62432f2387296b4070ce917e3c2eaac8" name="a62432f2387296b4070ce917e3c2eaac8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a62432f2387296b4070ce917e3c2eaac8">&#9670;&#160;</a></span>index</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T , typename IDX &gt; </div>
+template&lt;typename Value , typename Index &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::vector&lt;IDX&gt; <a class="el" href="structtatami_1_1SparseRangeCopy.html">tatami::SparseRangeCopy</a>&lt; T, IDX &gt;::index</td>
+          <td class="memname">std::vector&lt;Index&gt; <a class="el" href="structtatami_1_1SparseRangeCopy.html">tatami::SparseRangeCopy</a>&lt; Value, Index &gt;::index</td>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Indices of the non-zero elements. This should be of the same length as <code>value</code>.</p>
+<p>Indices of the structural non-zeros. This should be of the same length as <code>value</code>.</p>
 <p>Note that this may not be filled if extraction was performed with a <code>SparseExtractMode</code> that did not extract the indices. </p>
 
 </div>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.6"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami/base/DelayedIsometricOp.hpp File Reference</title>
+<title>tatami: tatami/base/isometric/DelayedIsometricOp.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,7 +71,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_1431006efcc686dc889083f70f9f4d8a.html">base</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_1431006efcc686dc889083f70f9f4d8a.html">base</a></li><li class="navelem"><a class="el" href="dir_cb901a003bd01f8d51d8444815f77ca9.html">isometric</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -90,7 +90,7 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html">tatami::DelayedIsometricOp&lt; T, IDX, OP &gt;</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html">tatami::DelayedIsometricOp&lt; Value_, Index_, Operation_ &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed isometric operations on a matrix.  <a href="classtatami_1_1DelayedIsometricOp.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
@@ -102,9 +102,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a0e2cd6fd2c5bba7eb83582619ffc9cea"><td class="memTemplParams" colspan="2">template&lt;class MAT , class OP &gt; </td></tr>
-<tr class="memitem:a0e2cd6fd2c5bba7eb83582619ffc9cea"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; MAT &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a0e2cd6fd2c5bba7eb83582619ffc9cea">tatami::make_DelayedIsometricOp</a> (std::shared_ptr&lt; MAT &gt; p, OP op)</td></tr>
-<tr class="separator:a0e2cd6fd2c5bba7eb83582619ffc9cea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc6db928df0451c6794676e3c9e11960"><td class="memTemplParams" colspan="2">template&lt;class Matrix_ , class Operation_ &gt; </td></tr>
+<tr class="memitem:afc6db928df0451c6794676e3c9e11960"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; typename Matrix_::value_type, typename Matrix_::index_type &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#afc6db928df0451c6794676e3c9e11960">tatami::make_DelayedIsometricOp</a> (std::shared_ptr&lt; Matrix_ &gt; p, Operation_ op)</td></tr>
+<tr class="separator:afc6db928df0451c6794676e3c9e11960"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Delayed isometric operations. </p>
