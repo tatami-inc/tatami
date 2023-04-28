@@ -14,6 +14,7 @@
 
 #include "../_tests/test_column_access.h"
 #include "../_tests/test_row_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
 template<class L, class R>
@@ -161,5 +162,22 @@ TEST(RunningVariances, SensibleZeros) {
             EXPECT_FLOAT_EQ(running_means2[i], running_means[i]);
             EXPECT_FLOAT_EQ(running_vars2[i], running_vars[i]);
         }
+    }
+}
+
+TEST(ComputingDimVariances, CrankyOracle) {
+    size_t NR = 155, NC = 172;
+    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
+    auto dense_row = make_CrankyMatrix(raw_dense);
+
+    {
+        auto ref = tatami::column_variances(raw_dense.get());
+        EXPECT_EQ(ref, tatami::column_variances(dense_row.get()));
+    }
+
+    {
+        auto ref = tatami::row_variances(raw_dense.get());
+        EXPECT_EQ(ref, tatami::row_variances(dense_row.get()));
     }
 }

@@ -14,6 +14,7 @@
 
 #include "../_tests/test_column_access.h"
 #include "../_tests/test_row_access.h"
+#include "../_tests/test_oracle_access.h"
 #include "../_tests/simulate_vector.h"
 
 TEST(ComputingDimSums, RowSums) {
@@ -68,4 +69,22 @@ TEST(ComputingDimSums, ColumnSums) {
     EXPECT_EQ(ref, tatami::column_sums(dense_column.get(), 3));
     EXPECT_EQ(ref, tatami::column_sums(sparse_column.get(), 3));
     EXPECT_EQ(ref, tatami::column_sums(sparse_column.get(), 3));
+}
+
+TEST(ComputingDimSums, CrankyOracle) {
+    size_t NR = 199, NC = 102;
+    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
+    auto dense_row = make_CrankyMatrix(raw_dense);
+    auto dense_column = make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
+
+    {
+        auto ref = tatami::column_sums(raw_dense.get());
+        EXPECT_EQ(ref, tatami::column_sums(dense_row.get()));
+    }
+
+    {
+        auto ref = tatami::row_sums(raw_dense.get());
+        EXPECT_EQ(ref, tatami::row_sums(dense_row.get()));
+    }
 }
