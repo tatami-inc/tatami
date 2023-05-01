@@ -5,6 +5,7 @@
 #include "tatami/base/Matrix.hpp"
 #include "tatami/utils/Oracles.hpp"
 #include <random>
+#include <deque>
 
 template<typename Value_, typename Index_> 
 class CrankyMatrix : public tatami::Matrix<Value_, Index_> {
