@@ -9,6 +9,7 @@
 #include <cmath>
 
 #include "../../base/dense/VirtualDenseMatrix.hpp"
+#include "../../utils/Oracles.hpp"
 #include "utils.hpp"
 
 /**
@@ -190,14 +191,13 @@ private:
         std::vector<std::vector<Value_> > temp_cache_data;
         std::unordered_map<Index_, Index_> temp_cache_exists;
         std::vector<std::pair<Index_, Index_> > cache_to_extract;
-        size_t oracle_counter = 0;
         typename std::conditional<accrow_ == transpose_, std::vector<std::pair<Index_, Index_> >, bool>::type cache_transpose_info;
 
     public:
         // Prediction members.
-        std::unique_ptr<Oracle<Index_> > oracle;
-        std::vector<Index_> predictions;
-        size_t used_predictions = 0;
+        OracleStream<Index_> predictor;
+        size_t predictions_made = 0;
+        size_t predictions_fulfilled = 0;
     };
 
 private:
@@ -251,7 +251,7 @@ private:
         }
 
         void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            base.oracle = std::move(o);
+            base.predictor.set(std::move(o));
         }
     };
 
@@ -316,9 +316,7 @@ private:
 
 private:
     template<bool accrow_, typename ExtractType_>
-    const Value_* extract(Index_ i, Value_* buffer, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
-        // If there isn't any space for caching, we just extract directly.
-        if (work.cache_data.empty()) {
+    const Value_* extract_without_cache(Index_ i, Value_* buffer, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
@@ -333,7 +331,148 @@ private:
 #else
         });
 #endif
-            return buffer;
+
+        return buffer;
+    }
+
+    template<bool accrow_, typename ExtractType_>
+    Index_ extract_with_oracle(Index_ chunk, Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
+        if (work.predictions_made > work.predictions_fulfilled) {
+            ++(work.predictions_fulfilled);
+            return work.cache_exists.find(chunk)->second; // oracle better be right, otherwise this is a segfault!
+        }
+
+        /* We use the oracle to batch together multiple HDF5 library
+         * calls so that we don't have to reenter the critical section
+         * for every fetch() call. Extracted data are cached for 
+         * easy parallel retrieval without involving the HDF5 library.
+         *
+         * We don't bother trying to bundle everything into a single
+         * HDF5 call, as this is a pain to pull data out into the
+         * individual cache buffers afterwards.
+         */
+        Index_ used_values = 0;
+        Index_ num_chunks = work.cache_data.size();
+
+        work.temp_cache_data.resize(num_chunks);
+        work.temp_cache_exists.clear();
+        work.cache_to_extract.clear();
+        work.predictions_made = 0;
+
+        size_t num_predictions = static_cast<size_t>(num_chunks) * chunk_mydim * 2; // double the cache size, basically.
+        for (size_t p = 0; p < num_predictions; ++p) {
+            Index_ current;
+            if (!work.predictor.next(current)) {
+                break;
+            }
+
+            ++work.predictions_made;
+            auto curchunk = current / chunk_mydim;
+            if (work.temp_cache_exists.find(curchunk) == work.temp_cache_exists.end()) {
+                work.temp_cache_exists[curchunk] = used_values;
+
+                auto it2 = work.cache_exists.find(curchunk);
+                if (it2 != work.cache_exists.end()) {
+                    work.temp_cache_data[used_values].swap(work.cache_data[it2->second]);
+                    work.cache_exists.erase(it2);
+                } else {
+                    work.cache_to_extract.emplace_back(curchunk, used_values);
+                }
+
+                ++used_values;
+                if (used_values == num_chunks) {
+                    break;
+                }
+            }
+        }
+
+        auto it2 = work.cache_exists.begin();
+        for (const auto& x : work.cache_to_extract) {
+            auto& cache_target = work.temp_cache_data[x.second];
+            if (it2 == work.cache_exists.end()) {
+                cache_target.resize(work.per_cache_size);
+            } else {
+                cache_target.swap(work.cache_data[it2->second]);
+                ++it2;                        
+            }
+        }
+
+        if constexpr(accrow_ == transpose_) {
+            work.cache_transpose_info.clear();
+        }
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
+        for (const auto& x : work.cache_to_extract) {
+            auto& cache_target = work.temp_cache_data[x.second];
+            auto actual_dim = extract_chunk<accrow_>(x.first, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
+            if constexpr(accrow_ == transpose_) {
+                work.cache_transpose_info.emplace_back(x.second, actual_dim);
+            }
+        }
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
+        // Applying transpositions to all cached buffers for easier retrieval, but only once the lock is released.
+        if constexpr(accrow_ == transpose_) {
+            for (const auto& x : work.cache_transpose_info) {
+                transpose(work.temp_cache_data[x.first], work.transposition_buffer, x.second, extract_length);
+            }
+        }
+
+        work.cache_data.swap(work.temp_cache_data);
+        work.cache_exists.swap(work.temp_cache_exists);
+        work.predictions_fulfilled = 1; // well, because we just used one.
+        return work.cache_exists.find(chunk)->second;
+    }
+
+    template<bool accrow_, typename ExtractType_>
+    Index_ extract_without_oracle(Index_ chunk, Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
+        // TODO: implement an LRU cache rather than just holding one chunk in memory.
+        // This should provide some improvement for non-oracular random access.
+        auto& cache_target = work.cache_data[0];
+        cache_target.resize(work.per_cache_size);
+        Index_ actual_dim;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
+        actual_dim = extract_chunk<accrow_>(chunk, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
+        // Applying a transposition for easier retrieval, but only once the lock is released.
+        if constexpr(accrow_ == transpose_) {
+            transpose(work.cache_data.front(), work.transposition_buffer, actual_dim, extract_length);
+        }
+
+        work.cache_exists.clear();
+        work.cache_exists[chunk] = 0;
+        return 0;
+    }
+
+    template<bool accrow_, typename ExtractType_>
+    const Value_* extract(Index_ i, Value_* buffer, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
+        // If there isn't any space for caching, we just extract directly.
+        if (work.cache_data.empty()) {
+            return extract_without_cache(i, buffer, extract_value, extract_length, work);
         }
 
         Index_ chunk_mydim, mydim;
@@ -345,165 +484,16 @@ private:
             mydim = seconddim;
         }
 
-        std::cout << "Accessing " << i << std::endl;
         Index_ chunk = i / chunk_mydim;
-        auto it = work.cache_exists.find(chunk);
+        Index_ index = i % chunk_mydim;
+
         Index_ found;
-
-        if (it != work.cache_exists.end()) {
-            found = it->second;
-
-            if (work.oracle) {
-                ++work.oracle_counter;
-            }
-        } else if (work.oracle) {
-            /* We use the oracle to batch together multiple HDF5 library
-             * calls so that we don't have to reenter the critical section
-             * for every fetch() call. Extracted data are cached for 
-             * easy parallel retrieval without involving the HDF5 library.
-             *
-             * We don't bother trying to bundle everything into a single
-             * HDF5 call, as this is a pain to pull data out into the
-             * individual cache buffers afterwards.
-             */
-            Index_ used_values = 0;
-            Index_ num_chunks = work.cache_data.size();
-            work.temp_cache_data.resize(num_chunks);
-            work.temp_cache_exists.clear();
-            work.cache_to_extract.clear();
-            auto& used_predictions = work.used_predictions; 
-
-            // Multiple invocations of predict(), or if we hit the chunk limit earlier.
-            int max_invoc = std::max(num_chunks, static_cast<Index_>(10));
-            for (int invoc = 0; invoc < num_chunks && used_values < num_chunks; ++invoc) { 
-                std::cout << "Invocation " << invoc << std::endl;
-                if (used_predictions == work.predictions.size()) {
-                    work.predictions.resize(chunk_mydim);
-                    size_t filled = work.oracle->predict(work.predictions.data(), work.predictions.size());
-                    for (size_t f = 0; f < filled; ++f) {
-                        std::cout << "- Predictions are: " << work.predictions[f] << std::endl;
-                    }
-                    if (filled == 0) {
-                        break;
-                    }
-                    used_predictions = 0;
-                    work.predictions.resize(filled);
-                    work.
-                }
-
-                for (size_t end = work.predictions.size(); used_predictions < end; ++used_predictions) {
-                    auto curchunk = work.predictions[used_predictions] / chunk_mydim;
-                    std::cout << "Prediction is " << work.predictions[used_predictions] << " (chunk " << curchunk << ")" << std::endl;
-                    if (work.temp_cache_exists.find(curchunk) == work.temp_cache_exists.end()) {
-                        work.temp_cache_exists[curchunk] = used_values;
-
-                        auto it2 = work.cache_exists.find(curchunk);
-                        if (it2 != work.cache_exists.end()) {
-                            work.temp_cache_data[used_values].swap(work.cache_data[it2->second]);
-                            work.cache_exists.erase(it2);
-                        } else {
-                            work.cache_to_extract.emplace_back(curchunk, used_values);
-                        }
-
-                        ++used_values;
-                        if (used_values == num_chunks) {
-                            break;
-                        }
-                    }
-                }
-            }
-            std::cout << "Invocation complete" << std::endl;
-
-            auto it2 = work.cache_exists.begin();
-            for (const auto& x : work.cache_to_extract) {
-                auto& cache_target = work.temp_cache_data[x.second];
-                if (it2 == work.cache_exists.end()) {
-                    cache_target.resize(work.per_cache_size);
-                } else {
-                    cache_target.swap(work.cache_data[it2->second]);
-                    ++it2;                        
-                }
-            }
-            std::cout << "Ready to extract" << std::endl;
-
-            if constexpr(accrow_ == transpose_) {
-                work.cache_transpose_info.clear();
-            }
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK
-            #pragma omp critical
-            {
-#else
-            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
-#endif
-
-            for (const auto& x : work.cache_to_extract) {
-                auto& cache_target = work.temp_cache_data[x.second];
-                auto actual_dim = extract_chunk<accrow_>(x.first, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
-                if constexpr(accrow_ == transpose_) {
-                    work.cache_transpose_info.emplace_back(x.second, actual_dim);
-                }
-            }
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK
-            }
-#else
-            });
-#endif
-
-            // Applying transpositions to all cached buffers for easier retrieval, but only once the lock is released.
-            if constexpr(accrow_ == transpose_) {
-                for (const auto& x : work.cache_transpose_info) {
-                    transpose(work.temp_cache_data[x.first], work.transposition_buffer, x.second, extract_length);
-                }
-            }
-
-            std::cout << "transposition done!" << std::endl;
-
-            work.cache_data.swap(work.temp_cache_data);
-            work.cache_exists.swap(work.temp_cache_exists);
-
-            std::cout << "Looking for " << chunk << std::endl;
-            for (auto x : work.cache_exists) {
-                std::cout << "\t" << x.first << " - " << x.second << std::endl;
-            }
-            found = work.cache_exists.find(chunk)->second;
-
+        if (work.predictor.active()) {
+            found = extract_with_oracle(chunk, mydim, chunk_mydim, extract_value, extract_length, work);
         } else {
-            std::cout << "HItting the non-oracle" << std::endl;
-            // TODO: implement an LRU cache rather than just holding one chunk in memory.
-            // This should provide some improvement for non-oracular random access.
-            auto& cache_target = work.cache_data[0];
-            cache_target.resize(work.per_cache_size);
-            Index_ actual_dim;
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK
-            #pragma omp critical
-            {
-#else
-            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
-#endif
-
-            actual_dim = extract_chunk<accrow_>(chunk, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK
-            }
-#else
-            });
-#endif
-
-            // Applying a transposition for easier retrieval, but only once the lock is released.
-            if constexpr(accrow_ == transpose_) {
-                transpose(work.cache_data.front(), work.transposition_buffer, actual_dim, extract_length);
-            }
-
-            work.cache_exists.clear();
-            work.cache_exists[chunk] = 0;
-            found = 0;
+            found = extract_without_oracle(chunk, mydim, chunk_mydim, extract_value, extract_length, work);;
         }
 
-        std::cout << "indexeing " << std::endl;
-        Index_ index = i % chunk_mydim;
         const auto& cache_data = work.cache_data[found];
         auto wIt = cache_data.begin() + index * extract_length;
         std::copy(wIt, wIt + extract_length, buffer);
