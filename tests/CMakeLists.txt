@@ -37,6 +37,7 @@ add_executable(
     src/utils/convert_to_sparse.cpp
     src/utils/bind_intersection.cpp
     src/utils/compress_sparse_triplets.cpp
+    src/utils/Oracles.cpp
 )
 
 target_link_libraries(
