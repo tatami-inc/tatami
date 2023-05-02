@@ -74,6 +74,76 @@ private:
     size_t counter = 0;
 };
 
+/**
+ * @brief Stream predictions from the oracle.
+ *
+ * This provides a friendlier interface to the `Oracle` classes that manages the prediction buffer.
+ * Consumers of `Oracle` predictions can receive and process one prediction at a time via the `next()` method,
+ * without worrying about the allocation and consumption of the buffer filled by `Oracle::predict()`.
+ *
+ * The `OracleStream` is primarily intended for `Matrix` developers to use within subclass implementations that can exploit oracular predictions.
+ * Users should not have to construct `OracleStream` instances.
+ * 
+ * @tparam Index_ Integer type of the row/column indices.
+ */
+template<typename Index_>
+struct OracleStream {
+    /**
+     * Default constructor.
+     */
+    OracleStream() = default;
+
+    /**
+     * @param o Pointer to an `Oracle` instance.
+     */
+    OracleStream(std::unique_ptr<Oracle<Index_> > o) : oracle(std::move(o)) {}
+
+    bool active() const {
+        return oracle.get() != nullptr;
+    }
+
+    /**
+     * Replace the existing `Oracle`.
+     * This assumes that existing `Oracle`'s predictions have been completely consumed by `next()`;
+     * any unused predictions will be discarded.
+     *
+     * @param o Pointer to an `Oracle` instance.
+     */
+    void set(std::unique_ptr<Oracle<Index_> > o) {
+        predictions.clear();
+        used = 0;
+        oracle = std::move(o);
+    }
+
+    /**
+     * @param[out] prediction The next prediction, set on output.
+     *
+     * @return Whether the stream of predictions has been exhausted.
+     * If `false`, the value of `prediction` may be used on output;
+     * otherwise, it should be ignored.
+     */
+    bool next(Index_& prediction) {
+        if (used == predictions.size()) {
+            predictions.resize(100); // take up to 100 predictions at a time.
+            used = 0;
+            auto filled = oracle->predict(predictions.data(), predictions.size());
+            if (filled == 0) {
+                return false;
+            }
+            predictions.resize(filled);
+        }
+
+        prediction = predictions[used];
+        ++used;
+        return true;
+    }
+
+private:
+    std::unique_ptr<Oracle<Index_> > oracle;
+    std::vector<Index_> predictions;
+    size_t used = 0;
+};
+
 }
 
 #endif
