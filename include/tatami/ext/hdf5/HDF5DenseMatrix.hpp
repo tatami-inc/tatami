@@ -152,6 +152,18 @@ public:
 
 private:
     template<bool accrow_>
+    struct OracleInfo {
+        std::vector<std::vector<Value_> > temp_cache_data;
+        std::unordered_map<Index_, Index_> temp_cache_exists;
+        std::vector<std::pair<Index_, Index_> > cache_to_extract;
+        typename std::conditional<accrow_ == transpose_, std::vector<std::pair<Index_, Index_> >, bool>::type cache_transpose_info;
+
+        OracleStream<Index_> prediction_stream;
+        size_t predictions_made = 0;
+        size_t predictions_fulfilled = 0;
+    };
+
+    template<bool accrow_>
     struct Workspace {
         void fill(const HDF5DenseMatrix* parent, Index_ other_dim) {
             // Turn off HDF5's caching, as we'll be handling that. This allows us
@@ -170,7 +182,6 @@ private:
 
             size_t nchunks = static_cast<double>(parent->total_cache_size) / per_cache_size;
             cache_data.resize(nchunks);
-            std::cout << nchunks << "\t" << parent->total_cache_size << "\t" << per_cache_size << std::endl;
         }
 
     public:
@@ -187,17 +198,8 @@ private:
         std::unordered_map<Index_, Index_> cache_exists;
         typename std::conditional<accrow_ == transpose_, std::vector<Value_>, bool>::type transposition_buffer;
 
-        // Oracle-only.
-        std::vector<std::vector<Value_> > temp_cache_data;
-        std::unordered_map<Index_, Index_> temp_cache_exists;
-        std::vector<std::pair<Index_, Index_> > cache_to_extract;
-        typename std::conditional<accrow_ == transpose_, std::vector<std::pair<Index_, Index_> >, bool>::type cache_transpose_info;
-
-    public:
-        // Prediction members.
-        OracleStream<Index_> predictor;
-        size_t predictions_made = 0;
-        size_t predictions_fulfilled = 0;
+        // Cache with an oracle.
+        std::unique_ptr<OracleInfo<accrow_> > predictor;
     };
 
 private:
@@ -251,7 +253,8 @@ private:
         }
 
         void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            base.predictor.set(std::move(o));
+            base.predictor.reset(new OracleInfo<accrow_>);
+            base.predictor->prediction_stream.set(std::move(o));
         }
     };
 
@@ -337,8 +340,9 @@ private:
 
     template<bool accrow_, typename ExtractType_>
     Index_ extract_with_oracle(Index_ chunk, Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
-        if (work.predictions_made > work.predictions_fulfilled) {
-            ++(work.predictions_fulfilled);
+        auto& pred = *work.predictor;
+        if (pred.predictions_made > pred.predictions_fulfilled) {
+            ++(pred.predictions_fulfilled);
             return work.cache_exists.find(chunk)->second; // oracle better be right, otherwise this is a segfault!
         }
 
@@ -354,29 +358,29 @@ private:
         Index_ used_values = 0;
         Index_ num_chunks = work.cache_data.size();
 
-        work.temp_cache_data.resize(num_chunks);
-        work.temp_cache_exists.clear();
-        work.cache_to_extract.clear();
-        work.predictions_made = 0;
+        pred.temp_cache_data.resize(num_chunks);
+        pred.temp_cache_exists.clear();
+        pred.cache_to_extract.clear();
+        pred.predictions_made = 0;
 
         size_t num_predictions = static_cast<size_t>(num_chunks) * chunk_mydim * 2; // double the cache size, basically.
         for (size_t p = 0; p < num_predictions; ++p) {
             Index_ current;
-            if (!work.predictor.next(current)) {
+            if (!pred.prediction_stream.next(current)) {
                 break;
             }
 
-            ++work.predictions_made;
+            ++pred.predictions_made;
             auto curchunk = current / chunk_mydim;
-            if (work.temp_cache_exists.find(curchunk) == work.temp_cache_exists.end()) {
-                work.temp_cache_exists[curchunk] = used_values;
+            if (pred.temp_cache_exists.find(curchunk) == pred.temp_cache_exists.end()) {
+                pred.temp_cache_exists[curchunk] = used_values;
 
                 auto it2 = work.cache_exists.find(curchunk);
                 if (it2 != work.cache_exists.end()) {
-                    work.temp_cache_data[used_values].swap(work.cache_data[it2->second]);
+                    pred.temp_cache_data[used_values].swap(work.cache_data[it2->second]);
                     work.cache_exists.erase(it2);
                 } else {
-                    work.cache_to_extract.emplace_back(curchunk, used_values);
+                    pred.cache_to_extract.emplace_back(curchunk, used_values);
                 }
 
                 ++used_values;
@@ -387,8 +391,8 @@ private:
         }
 
         auto it2 = work.cache_exists.begin();
-        for (const auto& x : work.cache_to_extract) {
-            auto& cache_target = work.temp_cache_data[x.second];
+        for (const auto& x : pred.cache_to_extract) {
+            auto& cache_target = pred.temp_cache_data[x.second];
             if (it2 == work.cache_exists.end()) {
                 cache_target.resize(work.per_cache_size);
             } else {
@@ -398,7 +402,7 @@ private:
         }
 
         if constexpr(accrow_ == transpose_) {
-            work.cache_transpose_info.clear();
+            pred.cache_transpose_info.clear();
         }
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
@@ -408,11 +412,11 @@ private:
         TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
 #endif
 
-        for (const auto& x : work.cache_to_extract) {
-            auto& cache_target = work.temp_cache_data[x.second];
+        for (const auto& x : pred.cache_to_extract) {
+            auto& cache_target = pred.temp_cache_data[x.second];
             auto actual_dim = extract_chunk<accrow_>(x.first, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
             if constexpr(accrow_ == transpose_) {
-                work.cache_transpose_info.emplace_back(x.second, actual_dim);
+                pred.cache_transpose_info.emplace_back(x.second, actual_dim);
             }
         }
 
@@ -424,14 +428,14 @@ private:
 
         // Applying transpositions to all cached buffers for easier retrieval, but only once the lock is released.
         if constexpr(accrow_ == transpose_) {
-            for (const auto& x : work.cache_transpose_info) {
-                transpose(work.temp_cache_data[x.first], work.transposition_buffer, x.second, extract_length);
+            for (const auto& x : pred.cache_transpose_info) {
+                transpose(pred.temp_cache_data[x.first], work.transposition_buffer, x.second, extract_length);
             }
         }
 
-        work.cache_data.swap(work.temp_cache_data);
-        work.cache_exists.swap(work.temp_cache_exists);
-        work.predictions_fulfilled = 1; // well, because we just used one.
+        work.cache_data.swap(pred.temp_cache_data);
+        work.cache_exists.swap(pred.temp_cache_exists);
+        pred.predictions_fulfilled = 1; // well, because we just used one.
         return work.cache_exists.find(chunk)->second;
     }
 
@@ -488,7 +492,7 @@ private:
         Index_ index = i % chunk_mydim;
 
         Index_ found;
-        if (work.predictor.active()) {
+        if (work.predictor) {
             found = extract_with_oracle(chunk, mydim, chunk_mydim, extract_value, extract_length, work);
         } else {
             found = extract_without_oracle(chunk, mydim, chunk_mydim, extract_value, extract_length, work);;
