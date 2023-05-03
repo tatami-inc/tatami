@@ -184,7 +184,7 @@ TEST_P(HDF5DenseAccessMiscTest, Apply) {
     auto chunk_sizes = std::get<0>(param);
     dump(chunk_sizes);
 
-    auto cache_size = NR * NC * 8 / 20;
+    auto cache_size = (NR * NC * 8) / 20;
     tatami::HDF5DenseMatrix<double, int> mat(fpath, name, cache_size);
     tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
 
@@ -192,12 +192,41 @@ TEST_P(HDF5DenseAccessMiscTest, Apply) {
     EXPECT_EQ(tatami::column_sums(&mat), tatami::column_sums(&ref));
 }
 
+TEST_P(HDF5DenseAccessMiscTest, FullyRandomized) {
+    // Check that the LRU cache works as expected.
+    auto param = GetParam(); 
+    auto chunk_sizes = std::get<0>(param);
+    dump(chunk_sizes);
+
+    auto cache_size = (NR * NC * 8) / 5;
+    tatami::HDF5DenseMatrix<double, int> mat(fpath, name, cache_size);
+    tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
+
+    {
+        auto m_ext = mat.dense_row();
+        auto r_ext = ref.dense_row();
+        for (size_t r0 = 0; r0 < NR; ++r0) {
+            auto r = (r0 % 2 ? NR - r0/2 - 1 : r0/2); // flip-flip between the last and first.
+            EXPECT_EQ(m_ext->fetch(r), r_ext->fetch(r));
+        }
+    }
+
+    {
+        auto m_ext = mat.dense_column();
+        auto r_ext = ref.dense_column();
+        for (size_t c0 = 0; c0 < NC; ++c0) {
+            auto c = (c0 % 2 ? NC - c0/2 - 1 : c0/2); // flip-flip between the last and first.
+            EXPECT_EQ(m_ext->fetch(c), r_ext->fetch(c));
+        }
+    }
+}
+
 TEST_P(HDF5DenseAccessMiscTest, Oracle) {
     auto param = GetParam(); 
     auto chunk_sizes = std::get<0>(param);
     dump(chunk_sizes);
 
-    auto cache_size = NR * NC * 8 / 10;
+    auto cache_size = (NR * NC * 8) / 10;
     tatami::HDF5DenseMatrix<double, int> mat(fpath, name, cache_size);
     tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
 

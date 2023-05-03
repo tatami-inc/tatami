@@ -460,7 +460,7 @@ private:
 
         // Applying a transposition for easier retrieval, but only once the lock is released.
         if constexpr(accrow_ == transpose_) {
-            transpose(work.cache_data.front(), work.transposition_buffer, actual_dim, extract_length);
+            transpose(cache_target, work.transposition_buffer, actual_dim, extract_length);
         }
 
         return location;
