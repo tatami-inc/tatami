@@ -7,6 +7,8 @@
 #include <cstdint>
 #include <type_traits>
 #include <cmath>
+#include <queue>
+#include <vector>
 
 #include "../../base/dense/VirtualDenseMatrix.hpp"
 #include "../../utils/Oracles.hpp"
@@ -152,15 +154,24 @@ public:
 
 private:
     template<bool accrow_>
-    struct OracleInfo {
-        std::vector<std::vector<Value_> > temp_cache_data;
-        std::unordered_map<Index_, Index_> temp_cache_exists;
-        std::vector<std::pair<Index_, Index_> > cache_to_extract;
+    struct OracleCache {
+        std::unordered_map<Index_, Index_> cache_exists, next_cache_exists;
+        std::vector<std::vector<Value_> > next_cache_data;
+        std::vector<std::pair<Index_, Index_> > chunks_in_need; 
         typename std::conditional<accrow_ == transpose_, std::vector<std::pair<Index_, Index_> >, bool>::type cache_transpose_info;
 
         OracleStream<Index_> prediction_stream;
-        size_t predictions_made = 0;
+        std::vector<std::pair<Index_, Index_> > predictions_made;
         size_t predictions_fulfilled = 0;
+    };
+
+    struct LruCache {
+        std::unordered_map<Index_, Index_> cache_exists;
+        std::vector<size_t> cache_access;
+        std::vector<Index_> cache_id;
+        typedef std::pair<size_t, Index_> Timestamp;
+        std::priority_queue<Timestamp, std::deque<Timestamp>, std::greater<Timestamp> > last_touched;
+        size_t time = 0;
     };
 
     template<bool accrow_>
@@ -182,6 +193,8 @@ private:
 
             size_t nchunks = static_cast<double>(parent->total_cache_size) / per_cache_size;
             cache_data.resize(nchunks);
+
+            lru.reset(new LruCache);
         }
 
     public:
@@ -195,11 +208,13 @@ private:
         // Caching members.
         size_t per_cache_size;
         std::vector<std::vector<Value_> > cache_data;
-        std::unordered_map<Index_, Index_> cache_exists;
         typename std::conditional<accrow_ == transpose_, std::vector<Value_>, bool>::type transposition_buffer;
 
         // Cache with an oracle.
-        std::unique_ptr<OracleInfo<accrow_> > predictor;
+        std::unique_ptr<OracleCache<accrow_> > predictor;
+
+        // LruCache without an oracle.
+        std::unique_ptr<LruCache> lru;
     };
 
 private:
@@ -253,8 +268,9 @@ private:
         }
 
         void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            base.predictor.reset(new OracleInfo<accrow_>);
+            base.predictor.reset(new OracleCache<accrow_>);
             base.predictor->prediction_stream.set(std::move(o));
+            base.lru.reset();
         }
     };
 
@@ -339,11 +355,10 @@ private:
     }
 
     template<bool accrow_, typename ExtractType_>
-    Index_ extract_with_oracle(Index_ chunk, Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
+    std::pair<Index_, Index_> extract_with_oracle(Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
         auto& pred = *work.predictor;
-        if (pred.predictions_made > pred.predictions_fulfilled) {
-            ++(pred.predictions_fulfilled);
-            return work.cache_exists.find(chunk)->second; // oracle better be right, otherwise this is a segfault!
+        if (pred.predictions_made.size() > pred.predictions_fulfilled) {
+            return pred.predictions_made[pred.predictions_fulfilled++];
         }
 
         /* We use the oracle to batch together multiple HDF5 library
@@ -355,49 +370,45 @@ private:
          * HDF5 call, as this is a pain to pull data out into the
          * individual cache buffers afterwards.
          */
-        Index_ used_values = 0;
         Index_ num_chunks = work.cache_data.size();
+        Index_ used = 0;
 
-        pred.temp_cache_data.resize(num_chunks);
-        pred.temp_cache_exists.clear();
-        pred.cache_to_extract.clear();
-        pred.predictions_made = 0;
+        pred.next_cache_data.resize(num_chunks); 
+        pred.chunks_in_need.clear();
+        pred.chunks_in_need.reserve(num_chunks);
 
-        size_t num_predictions = static_cast<size_t>(num_chunks) * chunk_mydim * 2; // double the cache size, basically.
-        for (size_t p = 0; p < num_predictions; ++p) {
+        size_t max_predictions = static_cast<size_t>(num_chunks) * chunk_mydim * 2; // double the cache size, basically.
+        pred.predictions_made.clear();
+        pred.predictions_made.reserve(max_predictions);
+
+        for (size_t p = 0; p < max_predictions; ++p) {
             Index_ current;
             if (!pred.prediction_stream.next(current)) {
                 break;
             }
 
-            ++pred.predictions_made;
             auto curchunk = current / chunk_mydim;
-            if (pred.temp_cache_exists.find(curchunk) == pred.temp_cache_exists.end()) {
-                pred.temp_cache_exists[curchunk] = used_values;
+            auto curindex = current % chunk_mydim;
 
-                auto it2 = work.cache_exists.find(curchunk);
-                if (it2 != work.cache_exists.end()) {
-                    pred.temp_cache_data[used_values].swap(work.cache_data[it2->second]);
-                    work.cache_exists.erase(it2);
+            auto it = pred.next_cache_exists.find(curchunk);
+            if (it == pred.next_cache_exists.end()) {
+                pred.next_cache_exists[curchunk] = used;
+                pred.predictions_made.emplace_back(used, curindex);
+
+                auto it2 = pred.cache_exists.find(curchunk);
+                if (it2 != pred.cache_exists.end()) {
+                    pred.next_cache_data[used].swap(work.cache_data[it->second]);
                 } else {
-                    pred.cache_to_extract.emplace_back(curchunk, used_values);
+                    pred.next_cache_data[used].resize(work.per_cache_size);
+                    pred.chunks_in_need.emplace_back(curchunk, used);
                 }
 
-                ++used_values;
-                if (used_values == num_chunks) {
+                ++used;
+                if (used == num_chunks) {
                     break;
                 }
-            }
-        }
-
-        auto it2 = work.cache_exists.begin();
-        for (const auto& x : pred.cache_to_extract) {
-            auto& cache_target = pred.temp_cache_data[x.second];
-            if (it2 == work.cache_exists.end()) {
-                cache_target.resize(work.per_cache_size);
             } else {
-                cache_target.swap(work.cache_data[it2->second]);
-                ++it2;                        
+                pred.predictions_made.emplace_back(it->second, curindex);
             }
         }
 
@@ -412,11 +423,11 @@ private:
         TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
 #endif
 
-        for (const auto& x : pred.cache_to_extract) {
-            auto& cache_target = pred.temp_cache_data[x.second];
-            auto actual_dim = extract_chunk<accrow_>(x.first, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
+        for (auto& c : pred.chunks_in_need) {
+            auto& cache_target = pred.next_cache_data[c.second];
+            auto actual_dim = extract_chunk<accrow_>(c.first, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
             if constexpr(accrow_ == transpose_) {
-                pred.cache_transpose_info.emplace_back(x.second, actual_dim);
+                pred.cache_transpose_info.emplace_back(c.second, actual_dim);
             }
         }
 
@@ -429,21 +440,62 @@ private:
         // Applying transpositions to all cached buffers for easier retrieval, but only once the lock is released.
         if constexpr(accrow_ == transpose_) {
             for (const auto& x : pred.cache_transpose_info) {
-                transpose(pred.temp_cache_data[x.first], work.transposition_buffer, x.second, extract_length);
+                transpose(pred.next_cache_data[x.first], work.transposition_buffer, x.second, extract_length);
             }
         }
 
-        work.cache_data.swap(pred.temp_cache_data);
-        work.cache_exists.swap(pred.temp_cache_exists);
+        work.cache_data.swap(pred.next_cache_data);
+        pred.cache_exists.swap(pred.next_cache_exists);
         pred.predictions_fulfilled = 1; // well, because we just used one.
-        return work.cache_exists.find(chunk)->second;
+        return pred.predictions_made.front(); // assuming at least one prediction was made, otherwise, why was fetch() even called?
     }
 
     template<bool accrow_, typename ExtractType_>
     Index_ extract_without_oracle(Index_ chunk, Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
-        // TODO: implement an LRU cache rather than just holding one chunk in memory.
-        // This should provide some improvement for non-oracular random access.
-        auto& cache_target = work.cache_data[0];
+        auto& lru = *(work.lru);
+        ++lru.time;
+
+        auto it = lru.cache_exists.find(chunk);
+        if (it != lru.cache_exists.end()) {
+            auto cache = it->second;
+            ++lru.cache_access[cache];
+            return cache;
+        }
+
+        lru.cache_access.resize(work.cache_data.size());
+        lru.cache_id.resize(work.cache_data.size());
+
+        Index_ location;
+        if (lru.cache_exists.size() == work.cache_data.size()) {
+            // Evicting the most-untouched cache by going through the
+            // queue and iteratively updating the access times.
+            while (1) {
+                auto& top = lru.last_touched.top(); // assumes that cache_data is not empty, otherwise why are we here?
+                auto target = top.second;
+                const auto& access = lru.cache_access[target];
+
+                lru.last_touched.pop();
+                if (lru.last_touched.empty() || access <= lru.last_touched.top().first) { 
+                    // Access only ever increases, so if it's already less than
+                    // the access time of the next element, we might as well evict it now.
+                    location = target;
+                    break;
+                }
+
+                lru.last_touched.emplace(access, target);
+            }
+
+            lru.cache_exists.erase(lru.cache_id[location]);
+        } else {
+            location = lru.cache_exists.size();
+        }
+
+        lru.cache_id[location] = chunk;
+        lru.cache_access[location] = lru.time;
+        lru.cache_exists[chunk] = location;
+        lru.last_touched.emplace(lru.time, location);
+
+        auto& cache_target = work.cache_data[location];
         cache_target.resize(work.per_cache_size);
         Index_ actual_dim;
 
@@ -467,9 +519,7 @@ private:
             transpose(work.cache_data.front(), work.transposition_buffer, actual_dim, extract_length);
         }
 
-        work.cache_exists.clear();
-        work.cache_exists[chunk] = 0;
-        return 0;
+        return location;
     }
 
     template<bool accrow_, typename ExtractType_>
@@ -488,13 +538,15 @@ private:
             mydim = seconddim;
         }
 
-        Index_ chunk = i / chunk_mydim;
-        Index_ index = i % chunk_mydim;
-
         Index_ found;
+        Index_ index;
         if (work.predictor) {
-            found = extract_with_oracle(chunk, mydim, chunk_mydim, extract_value, extract_length, work);
+            auto out = extract_with_oracle(mydim, chunk_mydim, extract_value, extract_length, work);
+            found = out.first;
+            index = out.second;
         } else {
+            auto chunk = i / chunk_mydim;
+            index = i % chunk_mydim;
             found = extract_without_oracle(chunk, mydim, chunk_mydim, extract_value, extract_length, work);;
         }
 
