@@ -343,7 +343,7 @@ private:
                 if (it2 != pred.cache_exists.end()) {
                     pred.next_cache_data[used].swap(work.cache_data[it2->second]);
                 } else {
-                    pred.next_cache_data[used].resize(work.per_cache_size);
+                    pred.next_cache_data[used].resize(work.per_cache_size); // this resize will eventually be a no-op when both cache_data and next_cache_data are filled.
                     pred.chunks_in_need.emplace_back(curchunk, used);
                 }
 
