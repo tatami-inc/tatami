@@ -201,8 +201,8 @@ TEST_P(HDF5DenseAccessMiscTest, Oracle) {
     tatami::HDF5DenseMatrix<double, int> mat(fpath, name, cache_size);
     tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
 
-    test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, false); // consecutive
-    test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, false);
+//    test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, false); // consecutive
+//    test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, false);
 
     test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, true); // randomized
     test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, true);

@@ -194,7 +194,7 @@ private:
             size_t nchunks = static_cast<double>(parent->total_cache_size) / per_cache_size;
             cache_data.resize(nchunks);
 
-            lru.reset(new LruCache);
+            historian.reset(new LruCache);
         }
 
     public:
@@ -211,67 +211,10 @@ private:
         typename std::conditional<accrow_ == transpose_, std::vector<Value_>, bool>::type transposition_buffer;
 
         // Cache with an oracle.
-        std::unique_ptr<OracleCache<accrow_> > predictor;
+        std::unique_ptr<OracleCache<accrow_> > futurist;
 
-        // LruCache without an oracle.
-        std::unique_ptr<LruCache> lru;
-    };
-
-private:
-    template<bool accrow_, DimensionSelectionType selection_>
-    struct Hdf5Extractor : public Extractor<selection_, false, Value_, Index_> {
-        Hdf5Extractor(const HDF5DenseMatrix* p) : parent(p) {
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->full_length = (accrow_ ? parent->ncol() : parent->nrow());
-                base.fill(parent, this->full_length); 
-            }
-        }
-
-        Hdf5Extractor(const HDF5DenseMatrix* p, Index_ start, Index_ length) : parent(p) {
-            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->block_start = start;
-                this->block_length = length;
-                base.fill(parent, this->block_length); 
-            }
-        }
-
-        Hdf5Extractor(const HDF5DenseMatrix* p, std::vector<Index_> idx) : parent(p) {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                this->index_length = idx.size();
-                indices = std::move(idx);
-                base.fill(parent, this->index_length); 
-            }
-        }
-
-    protected:
-        const HDF5DenseMatrix* parent;
-        Workspace<accrow_> base;
-        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
-
-    public:
-        const Index_* index_start() const {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                return indices.data();
-            } else {
-                return NULL;
-            }
-        }
-
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                return parent->extract<accrow_>(i, buffer, 0, this->full_length, this->base);
-            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                return parent->extract<accrow_>(i, buffer, this->block_start, this->block_length, this->base);
-            } else {
-                return parent->extract<accrow_>(i, buffer, this->indices, this->index_length, this->base);
-            }
-        }
-
-        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            base.predictor.reset(new OracleCache<accrow_>);
-            base.predictor->prediction_stream.set(std::move(o));
-            base.lru.reset();
-        }
+        // Cache without an oracle.
+        std::unique_ptr<LruCache> historian;
     };
 
 private:
@@ -356,7 +299,7 @@ private:
 
     template<bool accrow_, typename ExtractType_>
     std::pair<Index_, Index_> extract_with_oracle(Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
-        auto& pred = *work.predictor;
+        auto& pred = *work.futurist;
         if (pred.predictions_made.size() > pred.predictions_fulfilled) {
             return pred.predictions_made[pred.predictions_fulfilled++];
         }
@@ -373,6 +316,7 @@ private:
         Index_ num_chunks = work.cache_data.size();
         Index_ used = 0;
 
+        pred.next_cache_exists.clear();
         pred.next_cache_data.resize(num_chunks); 
         pred.chunks_in_need.clear();
         pred.chunks_in_need.reserve(num_chunks);
@@ -397,7 +341,7 @@ private:
 
                 auto it2 = pred.cache_exists.find(curchunk);
                 if (it2 != pred.cache_exists.end()) {
-                    pred.next_cache_data[used].swap(work.cache_data[it->second]);
+                    pred.next_cache_data[used].swap(work.cache_data[it2->second]);
                 } else {
                     pred.next_cache_data[used].resize(work.per_cache_size);
                     pred.chunks_in_need.emplace_back(curchunk, used);
@@ -423,7 +367,7 @@ private:
         TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
 #endif
 
-        for (auto& c : pred.chunks_in_need) {
+        for (const auto& c : pred.chunks_in_need) {
             auto& cache_target = pred.next_cache_data[c.second];
             auto actual_dim = extract_chunk<accrow_>(c.first, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
             if constexpr(accrow_ == transpose_) {
@@ -452,48 +396,48 @@ private:
 
     template<bool accrow_, typename ExtractType_>
     Index_ extract_without_oracle(Index_ chunk, Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
-        auto& lru = *(work.lru);
-        ++lru.time;
+        auto& historian = *(work.historian);
+        ++historian.time;
 
-        auto it = lru.cache_exists.find(chunk);
-        if (it != lru.cache_exists.end()) {
+        auto it = historian.cache_exists.find(chunk);
+        if (it != historian.cache_exists.end()) {
             auto cache = it->second;
-            ++lru.cache_access[cache];
+            ++historian.cache_access[cache];
             return cache;
         }
 
-        lru.cache_access.resize(work.cache_data.size());
-        lru.cache_id.resize(work.cache_data.size());
+        historian.cache_access.resize(work.cache_data.size());
+        historian.cache_id.resize(work.cache_data.size());
 
         Index_ location;
-        if (lru.cache_exists.size() == work.cache_data.size()) {
+        if (historian.cache_exists.size() == work.cache_data.size()) {
             // Evicting the most-untouched cache by going through the
             // queue and iteratively updating the access times.
             while (1) {
-                auto& top = lru.last_touched.top(); // assumes that cache_data is not empty, otherwise why are we here?
+                auto& top = historian.last_touched.top(); // assumes that cache_data is not empty, otherwise why are we here?
                 auto target = top.second;
-                const auto& access = lru.cache_access[target];
+                const auto& access = historian.cache_access[target];
 
-                lru.last_touched.pop();
-                if (lru.last_touched.empty() || access <= lru.last_touched.top().first) { 
+                historian.last_touched.pop();
+                if (historian.last_touched.empty() || access <= historian.last_touched.top().first) { 
                     // Access only ever increases, so if it's already less than
                     // the access time of the next element, we might as well evict it now.
                     location = target;
                     break;
                 }
 
-                lru.last_touched.emplace(access, target);
+                historian.last_touched.emplace(access, target);
             }
 
-            lru.cache_exists.erase(lru.cache_id[location]);
+            historian.cache_exists.erase(historian.cache_id[location]);
         } else {
-            location = lru.cache_exists.size();
+            location = historian.cache_exists.size();
         }
 
-        lru.cache_id[location] = chunk;
-        lru.cache_access[location] = lru.time;
-        lru.cache_exists[chunk] = location;
-        lru.last_touched.emplace(lru.time, location);
+        historian.cache_id[location] = chunk;
+        historian.cache_access[location] = historian.time;
+        historian.cache_exists[chunk] = location;
+        historian.last_touched.emplace(historian.time, location);
 
         auto& cache_target = work.cache_data[location];
         cache_target.resize(work.per_cache_size);
@@ -540,7 +484,7 @@ private:
 
         Index_ found;
         Index_ index;
-        if (work.predictor) {
+        if (work.futurist) {
             auto out = extract_with_oracle(mydim, chunk_mydim, extract_value, extract_length, work);
             found = out.first;
             index = out.second;
@@ -557,6 +501,62 @@ private:
     }
 
 private:
+    template<bool accrow_, DimensionSelectionType selection_>
+    struct Hdf5Extractor : public Extractor<selection_, false, Value_, Index_> {
+        Hdf5Extractor(const HDF5DenseMatrix* p) : parent(p) {
+            if constexpr(selection_ == DimensionSelectionType::FULL) {
+                this->full_length = (accrow_ ? parent->ncol() : parent->nrow());
+                base.fill(parent, this->full_length); 
+            }
+        }
+
+        Hdf5Extractor(const HDF5DenseMatrix* p, Index_ start, Index_ length) : parent(p) {
+            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                this->block_start = start;
+                this->block_length = length;
+                base.fill(parent, this->block_length); 
+            }
+        }
+
+        Hdf5Extractor(const HDF5DenseMatrix* p, std::vector<Index_> idx) : parent(p) {
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                this->index_length = idx.size();
+                indices = std::move(idx);
+                base.fill(parent, this->index_length); 
+            }
+        }
+
+    protected:
+        const HDF5DenseMatrix* parent;
+        Workspace<accrow_> base;
+        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
+
+    public:
+        const Index_* index_start() const {
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                return indices.data();
+            } else {
+                return NULL;
+            }
+        }
+
+        const Value_* fetch(Index_ i, Value_* buffer) {
+            if constexpr(selection_ == DimensionSelectionType::FULL) {
+                return parent->extract<accrow_>(i, buffer, 0, this->full_length, this->base);
+            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                return parent->extract<accrow_>(i, buffer, this->block_start, this->block_length, this->base);
+            } else {
+                return parent->extract<accrow_>(i, buffer, this->indices, this->index_length, this->base);
+            }
+        }
+
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
+            base.futurist.reset(new OracleCache<accrow_>);
+            base.futurist->prediction_stream.set(std::move(o));
+            base.historian.reset();
+        }
+    };
+
     template<bool accrow_, DimensionSelectionType selection_, typename ... Args_>
     std::unique_ptr<Extractor<selection_, false, Value_, Index_> > populate(const Options& opt, Args_... args) const {
         std::unique_ptr<Extractor<selection_, false, Value_, Index_> > output;
