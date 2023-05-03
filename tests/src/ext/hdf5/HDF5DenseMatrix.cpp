@@ -18,6 +18,7 @@ std::mutex hdf5_lock; // declared in hdf5_custom_lock.h, defined here.
 
 #include "../../_tests/test_column_access.h"
 #include "../../_tests/test_row_access.h"
+#include "../../_tests/test_oracle_access.h"
 #include "../../_tests/simulate_vector.h"
 
 const size_t NR = 200, NC = 100;
@@ -154,23 +155,6 @@ TEST_P(HDF5DenseAccessTest, Transposed) {
     test_simple_row_access(&mat, &ref, FORWARD, JUMP);
 }
 
-TEST_P(HDF5DenseAccessTest, Apply) {
-    // Putting it through its paces for correct parallelization via apply.
-    auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-
-    auto chunk_sizes = std::get<2>(param);
-    dump(chunk_sizes);
-
-    auto cache_size = std::get<3>(param) ? NC * 4 : 0;
-    tatami::HDF5DenseMatrix<double, int> mat(fpath, name, cache_size);
-    tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
-
-    EXPECT_EQ(tatami::row_sums(&mat), tatami::row_sums(&ref));
-    EXPECT_EQ(tatami::column_sums(&mat), tatami::column_sums(&ref));
-}
-
 INSTANTIATE_TEST_CASE_P(
     HDF5DenseMatrix,
     HDF5DenseAccessTest,
@@ -186,6 +170,85 @@ INSTANTIATE_TEST_CASE_P(
             std::make_pair(0, 0)
         ),
         ::testing::Values(true, false) // Whether to cache or not.
+    )
+);
+
+/*************************************
+ *************************************/
+
+class HDF5DenseAccessMiscTest : public ::testing::TestWithParam<std::tuple<std::pair<int, int> > >, public HDF5DenseMatrixTestMethods {};
+
+TEST_P(HDF5DenseAccessMiscTest, Apply) {
+    // Putting it through its paces for correct parallelization via apply.
+    auto param = GetParam(); 
+    auto chunk_sizes = std::get<0>(param);
+    dump(chunk_sizes);
+
+    auto cache_size = (NR * NC * 8) / 20;
+    tatami::HDF5DenseMatrix<double, int> mat(fpath, name, cache_size);
+    tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
+
+    EXPECT_EQ(tatami::row_sums(&mat), tatami::row_sums(&ref));
+    EXPECT_EQ(tatami::column_sums(&mat), tatami::column_sums(&ref));
+}
+
+TEST_P(HDF5DenseAccessMiscTest, FullyRandomized) {
+    // Check that the LRU cache works as expected.
+    auto param = GetParam(); 
+    auto chunk_sizes = std::get<0>(param);
+    dump(chunk_sizes);
+
+    auto cache_size = (NR * NC * 8) / 5;
+    tatami::HDF5DenseMatrix<double, int> mat(fpath, name, cache_size);
+    tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
+
+    {
+        auto m_ext = mat.dense_row();
+        auto r_ext = ref.dense_row();
+        for (size_t r0 = 0; r0 < NR; ++r0) {
+            auto r = (r0 % 2 ? NR - r0/2 - 1 : r0/2); // flip-flip between the last and first.
+            EXPECT_EQ(m_ext->fetch(r), r_ext->fetch(r));
+        }
+    }
+
+    {
+        auto m_ext = mat.dense_column();
+        auto r_ext = ref.dense_column();
+        for (size_t c0 = 0; c0 < NC; ++c0) {
+            auto c = (c0 % 2 ? NC - c0/2 - 1 : c0/2); // flip-flip between the last and first.
+            EXPECT_EQ(m_ext->fetch(c), r_ext->fetch(c));
+        }
+    }
+}
+
+TEST_P(HDF5DenseAccessMiscTest, Oracle) {
+    auto param = GetParam(); 
+    auto chunk_sizes = std::get<0>(param);
+    dump(chunk_sizes);
+
+    auto cache_size = (NR * NC * 8) / 10;
+    tatami::HDF5DenseMatrix<double, int> mat(fpath, name, cache_size);
+    tatami::DenseRowMatrix<double, int> ref(NR, NC, values);
+
+    test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, false); // consecutive
+    test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, false);
+
+    test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, true); // randomized
+    test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, true);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    HDF5DenseMatrix,
+    HDF5DenseAccessMiscTest,
+    ::testing::Combine(
+        ::testing::Values(
+            std::make_pair(NR, 1),
+            std::make_pair(1, NC),
+            std::make_pair(7, 13), // using chunk sizes that are a little odd to check for off-by-one errors.
+            std::make_pair(13, 7),
+            std::make_pair(11, 11),
+            std::make_pair(0, 0)
+        )
     )
 );
 
