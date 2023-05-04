@@ -7,7 +7,7 @@
 #include <cstdint>
 #include <type_traits>
 #include <cmath>
-#include <queue>
+#include <list>
 #include <vector>
 
 #include "../../base/dense/VirtualDenseMatrix.hpp"
@@ -156,7 +156,7 @@ private:
     template<bool accrow_>
     struct OracleCache {
         std::unordered_map<Index_, Index_> cache_exists, next_cache_exists;
-        std::vector<std::vector<Value_> > next_cache_data;
+        std::vector<std::vector<Value_> > cache_data, next_cache_data;
         std::vector<std::pair<Index_, Index_> > chunks_in_need; 
         typename std::conditional<accrow_ == transpose_, std::vector<std::pair<Index_, Index_> >, bool>::type cache_transpose_info;
 
@@ -166,12 +166,9 @@ private:
     };
 
     struct LruCache {
-        std::unordered_map<Index_, Index_> cache_exists;
-        std::vector<size_t> cache_access;
-        std::vector<Index_> cache_id;
-        typedef std::pair<size_t, Index_> Timestamp;
-        std::priority_queue<Timestamp, std::deque<Timestamp>, std::greater<Timestamp> > last_touched;
-        size_t time = 0;
+        typedef std::pair<std::vector<Value_>, Index_> Element;
+        std::list<Element> cache_data;
+        std::unordered_map<Index_, typename std::list<Element>::iterator> cache_exists;
     };
 
     template<bool accrow_>
@@ -190,9 +187,7 @@ private:
 
             auto chunk_dim = (accrow_ != transpose_ ? parent->chunk_firstdim : parent->chunk_seconddim);
             per_cache_size = static_cast<size_t>(chunk_dim) * static_cast<size_t>(other_dim);
-
-            size_t nchunks = static_cast<double>(parent->total_cache_size) / per_cache_size;
-            cache_data.resize(nchunks);
+            num_chunks = static_cast<double>(parent->total_cache_size) / per_cache_size;
 
             historian.reset(new LruCache);
         }
@@ -207,7 +202,7 @@ private:
     public:
         // Caching members.
         size_t per_cache_size;
-        std::vector<std::vector<Value_> > cache_data;
+        Index_ num_chunks;
         typename std::conditional<accrow_ == transpose_, std::vector<Value_>, bool>::type transposition_buffer;
 
         // Cache with an oracle.
@@ -298,10 +293,11 @@ private:
     }
 
     template<bool accrow_, typename ExtractType_>
-    std::pair<Index_, Index_> extract_with_oracle(Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
+    const Value_* extract_with_oracle(Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
         auto& pred = *work.futurist;
         if (pred.predictions_made.size() > pred.predictions_fulfilled) {
-            return pred.predictions_made[pred.predictions_fulfilled++];
+            const auto& chosen = pred.predictions_made[pred.predictions_fulfilled++];
+            return pred.cache_data[chosen.first].data() + extract_length * chosen.second;
         }
 
         /* We use the oracle to batch together multiple HDF5 library
@@ -313,7 +309,7 @@ private:
          * HDF5 call, as this is a pain to pull data out into the
          * individual cache buffers afterwards.
          */
-        Index_ num_chunks = work.cache_data.size();
+        Index_ num_chunks = work.num_chunks;
         Index_ used = 0;
 
         pred.next_cache_exists.clear();
@@ -341,7 +337,7 @@ private:
 
                 auto it2 = pred.cache_exists.find(curchunk);
                 if (it2 != pred.cache_exists.end()) {
-                    pred.next_cache_data[used].swap(work.cache_data[it2->second]);
+                    pred.next_cache_data[used].swap(pred.cache_data[it2->second]);
                 } else {
                     pred.next_cache_data[used].resize(work.per_cache_size); // this resize will eventually be a no-op when both cache_data and next_cache_data are filled.
                     pred.chunks_in_need.emplace_back(curchunk, used);
@@ -388,59 +384,41 @@ private:
             }
         }
 
-        work.cache_data.swap(pred.next_cache_data);
+        pred.cache_data.swap(pred.next_cache_data);
         pred.cache_exists.swap(pred.next_cache_exists);
+
         pred.predictions_fulfilled = 1; // well, because we just used one.
-        return pred.predictions_made.front(); // assuming at least one prediction was made, otherwise, why was fetch() even called?
+        const auto& chosen = pred.predictions_made.front(); // assuming at least one prediction was made, otherwise, why was fetch() even called?
+        return pred.cache_data[chosen.first].data() + extract_length * chosen.second;
     }
 
     template<bool accrow_, typename ExtractType_>
-    Index_ extract_without_oracle(Index_ chunk, Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
-        auto& historian = *(work.historian);
-        ++historian.time;
+    const Value_* extract_without_oracle(Index_ i, Index_ mydim, Index_ chunk_mydim, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
+        auto chunk = i / chunk_mydim;
+        auto index = i % chunk_mydim;
 
+        auto& historian = *(work.historian);
         auto it = historian.cache_exists.find(chunk);
         if (it != historian.cache_exists.end()) {
-            auto cache = it->second;
-            ++historian.cache_access[cache];
-            return cache;
+            auto chosen = it->second;
+            historian.cache_data.splice(historian.cache_data.end(), historian.cache_data, chosen); // move to end.
+            return chosen->first.data() + index * extract_length;
         }
 
-        historian.cache_access.resize(work.cache_data.size());
-        historian.cache_id.resize(work.cache_data.size());
-
-        Index_ location;
-        if (historian.cache_exists.size() == work.cache_data.size()) {
-            // Evicting the most-untouched cache by going through the
-            // queue and iteratively updating the access times.
-            while (1) {
-                auto& top = historian.last_touched.top(); // assumes that cache_data is not empty, otherwise why are we here?
-                auto target = top.second;
-                const auto& access = historian.cache_access[target];
-
-                historian.last_touched.pop();
-                if (historian.last_touched.empty() || access <= historian.last_touched.top().first) { 
-                    // Access only ever increases, so if it's already less than
-                    // the access time of the next element, we might as well evict it now.
-                    location = target;
-                    break;
-                }
-
-                historian.last_touched.emplace(access, target);
-            }
-
-            historian.cache_exists.erase(historian.cache_id[location]);
+        // Adding a new last element, or recycling the front to the back.
+        typename std::list<typename LruCache::Element>::iterator location;
+        if (historian.cache_data.size() < static_cast<size_t>(work.num_chunks)) {
+            historian.cache_data.emplace_back(std::vector<Value_>(work.per_cache_size), chunk);
+            location = std::prev(historian.cache_data.end());
         } else {
-            location = historian.cache_exists.size();
+            location = historian.cache_data.begin();
+            historian.cache_exists.erase(location->second);
+            location->second = chunk;
+            historian.cache_data.splice(historian.cache_data.end(), historian.cache_data, location); // move to end.
         }
-
-        historian.cache_id[location] = chunk;
-        historian.cache_access[location] = historian.time;
         historian.cache_exists[chunk] = location;
-        historian.last_touched.emplace(historian.time, location);
 
-        auto& cache_target = work.cache_data[location];
-        cache_target.resize(work.per_cache_size);
+        auto& cache_target = location->first;
         Index_ actual_dim;
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
@@ -463,13 +441,13 @@ private:
             transpose(cache_target, work.transposition_buffer, actual_dim, extract_length);
         }
 
-        return location;
+        return cache_target.data() + index * extract_length;
     }
 
     template<bool accrow_, typename ExtractType_>
     const Value_* extract(Index_ i, Value_* buffer, const ExtractType_& extract_value, Index_ extract_length, Workspace<accrow_>& work) const {
         // If there isn't any space for caching, we just extract directly.
-        if (work.cache_data.empty()) {
+        if (work.num_chunks == 0) {
             return extract_without_cache(i, buffer, extract_value, extract_length, work);
         }
 
@@ -482,21 +460,14 @@ private:
             mydim = seconddim;
         }
 
-        Index_ found;
-        Index_ index;
+        const Value_* cache;
         if (work.futurist) {
-            auto out = extract_with_oracle(mydim, chunk_mydim, extract_value, extract_length, work);
-            found = out.first;
-            index = out.second;
+            cache = extract_with_oracle(mydim, chunk_mydim, extract_value, extract_length, work);
         } else {
-            auto chunk = i / chunk_mydim;
-            index = i % chunk_mydim;
-            found = extract_without_oracle(chunk, mydim, chunk_mydim, extract_value, extract_length, work);;
+            cache = extract_without_oracle(i, mydim, chunk_mydim, extract_value, extract_length, work);;
         }
 
-        const auto& cache_data = work.cache_data[found];
-        auto wIt = cache_data.begin() + index * extract_length;
-        std::copy(wIt, wIt + extract_length, buffer);
+        std::copy(cache, cache + extract_length, buffer);
         return buffer;
     }
 
