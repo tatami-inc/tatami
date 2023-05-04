@@ -312,10 +312,15 @@ private:
         Index_ num_chunks = work.num_chunks;
         Index_ used = 0;
 
-        pred.next_cache_exists.clear();
-        pred.next_cache_data.resize(num_chunks); 
-        pred.chunks_in_need.clear();
-        pred.chunks_in_need.reserve(num_chunks);
+        bool starting = pred.cache_data.empty();
+        if (starting) {
+            pred.cache_data.resize(num_chunks);
+            pred.next_cache_data.resize(num_chunks, std::vector<Value_>(1)); // using a placeholder value for availability checks.
+            pred.chunks_in_need.reserve(num_chunks);
+        } else {
+            pred.next_cache_exists.clear();
+            pred.chunks_in_need.clear();
+        }
 
         size_t max_predictions = static_cast<size_t>(num_chunks) * chunk_mydim * 2; // double the cache size, basically.
         pred.predictions_made.clear();
@@ -339,7 +344,6 @@ private:
                 if (it2 != pred.cache_exists.end()) {
                     pred.next_cache_data[used].swap(pred.cache_data[it2->second]);
                 } else {
-                    pred.next_cache_data[used].resize(work.per_cache_size); // this resize will eventually be a no-op when both cache_data and next_cache_data are filled.
                     pred.chunks_in_need.emplace_back(curchunk, used);
                 }
 
@@ -350,6 +354,44 @@ private:
             } else {
                 pred.predictions_made.emplace_back(it->second, curindex);
             }
+        }
+
+        /**
+         * Doing a linear scan across chunks to find the currently unused cache
+         * elements. This is the simplest and safest approach; trying to keep
+         * track of the unused caches would require a scan to fill a map/set
+         * anyway, and deleting an iterator from cache_exists only works if
+         * cache_exists actually contains all cache elements, which it might
+         * not be if we reached max_predictions without filling up the cache.
+         *
+         * In any case, a linear scan should be pretty good for consecutive
+         * access; the first cache elements would be the oldest, so there
+         * wouldn't be any wasted iterations to find available cache elements.
+         */
+        size_t search = 0;
+        for (const auto& c : pred.chunks_in_need) {
+            // If we're lucky enough to already be sitting on an allocation
+            // (e.g., if the last call to this function didn't consume all
+            // cache elements), we just use it directly.
+            if (pred.next_cache_data[c.second].empty()) { 
+                while (pred.cache_data[search].empty()) { 
+                    ++search;
+                }
+
+#ifdef DEBUG
+                // This should never reach the end, as there should always be
+                // 'num_chunks' non-empty elements across cache_data and
+                // next_cache_data. Nonetheless, we add an assertion here.
+                if (search >= pred.cache_data.size()) {
+                    throw std::runtime_error("internal cache management error for HDF5DenseMatrix with oracles");
+                }
+#endif
+
+                pred.next_cache_data[c.second].swap(pred.cache_data[search]);
+                ++search;
+            }
+
+            pred.next_cache_data[c.second].resize(work.per_cache_size); // eventually no-op when all available caches are of the right size.
         }
 
         if constexpr(accrow_ == transpose_) {

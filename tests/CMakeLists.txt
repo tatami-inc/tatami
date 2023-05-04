@@ -128,6 +128,7 @@ if (TEST_HDF5)
             src/ext/hdf5/load_hdf5_matrix.cpp
             src/ext/hdf5/write_sparse_matrix_to_hdf5.cpp
         )
+        target_compile_definitions(h5test PRIVATE DEBUG=1)
 
         # Also checking the custom parallelization in the HDF5 libraries.
         add_executable(
