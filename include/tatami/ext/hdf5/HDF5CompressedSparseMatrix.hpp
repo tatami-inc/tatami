@@ -176,41 +176,287 @@ public:
 
     using Matrix<Value_, Index_>::sparse_column;
 
+    /********************************************
+     ************ Primary extraction ************
+     ********************************************/
 private:
-    struct H5Core {
+    struct CacheElement {
+        std::vector<Value_> value;
+        std::vector<Index_> index;
+        size_t index_offset = 0;
+        size_t valid_length = 0;
+        size_t byte_size = 0;
+        bool init = false;
+    };
+    
+    template<bool accrow_>
+    struct OracleCache {
+        std::unordered_map<Index_, Index_> cache_exists, next_cache_exists;
+        std::vector<CacheElement> cache_data, next_cache_data;
+        std::vector<std::pair<Index_, Index_> > chunks_in_need; 
+
+        OracleStream<Index_> prediction_stream;
+        std::vector<Index_> predictions_made;
+        size_t predictions_fulfilled = 0;
+    };
+
+    struct LruCache {
+        typedef std::pair<CacheElement, Index_> Element;
+        std::list<Element> cache_data;
+        std::unordered_map<Index_, typename std::list<Element>::iterator> cache_exists;
+        size_t current_cache_size;
+    };
+
+    struct Workspace {
+        void fill(const HDF5DenseMatrix* parent, Index_ cache_size) {
+            // TODO: set more suitable chunk cache values here, to avoid re-reading
+            // chunks on the boundaries of the primary cache.
+            file.openFile(parent->file_name, H5F_ACC_RDONLY);
+
+            data = core.file.openDataSet(parent->data_name);
+            index = core.file.openDataSet(parent->index_name);
+            dataspace = core.data.getSpace();
+
+            extraction_bounds.resize(cache_size, std::pair<size_t, size_t>(-1, 0));
+
+            historian.reset(new LruCache);
+        }
+
+    public:
         H5::H5File file;
         H5::DataSet data, index;
         H5::DataSpace dataspace;
         H5::DataSpace memspace;
 
-        std::vector<Index_> index_cache;
+    public:
+        // Caching members.
+        size_t cache_size_limit;
+
+        // Cache with an oracle.
+        std::unique_ptr<OracleCache<accrow_> > futurist;
+
+        // Cache without an oracle.
+        std::unique_ptr<LruCache> historian;
+
+    public:
+        // Cache for re-use.
+        std::vector<std::pair<size_t, size_t> > extraction_bounds;
     };
 
-    void fill_core(H5Core& core) const {
-        // TODO: set more suitable chunk cache values here, to avoid re-reading
-        // chunks on the boundaries of the primary cache.
-        core.file.openFile(file_name, H5F_ACC_RDONLY);
+private:
+    void extract_base(Index_ i, CacheElement& cache, Workspace& work, Index_ start_index, Index_ end_index, bool needs_value) const {
+        auto start_ptr = pointers[i], len = pointers[i+1] - start_ptr;
+        cache.index.resize(len); // this should be full length, to avoid discrepancies when cache_for_reuse = true.
 
-        core.data = core.file.openDataSet(data_name);
-        core.index = core.file.openDataSet(index_name);
-        core.dataspace = core.data.getSpace();
+        bool excache_hit = false;
+        if (work.extraction_bounds.size()) {
+            const auto& current = work.extraction_bounds[i];
+            if (current.first != -1) {
+                excache_hit = true;
+                len = current.second;
+                start_ptr += cache.index_offset;
+            }
+        }
+
+        dataspace.selectHyperslab(H5S_SELECT_SET, &len, &start_ptr);
+        memspace.setExtentSimple(1, &len);
+        memspace.selectAll();
+        index.read(cache.index.data(), HDF5::define_mem_type<Index_>(), core.memspace, core.dataspace);
+
+        cache.byte_size = len * sizeof(Index_); // for cache usage calculations.
+        cache.index_offset = 0; // to avoid another binary search in callers.
+
+        // Now we decide whether or not to constrict the retrieval zone for values (and for future indices).
+        if (!excache_hit) {
+            if (start_index) {
+                cache.index_offset = std::lower_bound(cache.index.data(), cache.index.data() + len, start_index) - cache.index.data();
+                start_ptr += cache.index_offset;
+            }
+            if (end_index < (row_ ? ncols : nrows)) {
+                auto start = cache.index.data(), + cache.index_offset;
+                len = std::lower_bound(start, cache.index.data() + len, end_index) - start;
+            }
+
+            if (needs_value) {
+                dataspace.selectHyperslab(H5S_SELECT_SET, &len, &start_ptr);
+                memspace.setExtentSimple(1, &len);
+                memspace.selectAll();
+            }
+            if (work.extraction_bounds.size()) {
+                work.extraction_bounds[i] = std::pair<size_t, size_t>(cache.index_offset, len);
+            }
+        }
+
+        // Storing the final number of non-zeros.
+        cache.valid_length = len;
+
+        if (needs_value) {
+            cache.value.resize(len);
+            data.read(cache.value.data(), HDF5::define_mem_type<Value_>(), core.memspace, core.dataspace);
+            cache.byte_size += len * sizeof(Value_);
+        }
     }
 
-    struct PrimaryH5Core : public H5Core {
-        std::vector<Value_> data_cache;
-        Index_ current_cache_id = 0;
-        bool init = false;
+private:
+    CacheElement& populate_cache_without_oracle(Index_ i, Workspace& work, Index_ start_index, Index_ end_index, bool needs_value) const {
+        auto& historian = *(work.historian);
+        auto it = historian.cache_exists.find(chunk);
+        if (it != historian.cache_exists.end()) {
+            auto chosen = it->second;
+            historian.cache_data.splice(historian.cache_data.end(), historian.cache_data, chosen); // move to end.
+            return chosen->first;
+        }
 
-        std::vector<size_t> starts;
-    };
+        // Estimating the size of the next cache element.
+        size_t next_element_size = (pointers[i + 1] - pointers[i]) * (sizeof(Value_) + sizeof(Index_));
 
-    void fill_core(PrimaryH5Core& core, Index_ cache_size) const {
-        fill_core(core);
-        core.starts.resize(cache_size, -1);
+        // Adding a new last element, or recycling the front to the back.
+        typename std::list<typename LruCache::Element>::iterator location;
+        if (historian.current_cache_size + next_element_size <= work.cache_size_limit) {
+            historian.cache_data.emplace_back(std::vector<Value_>(work.per_cache_size), chunk);
+            location = std::prev(historian.cache_data.end());
+        } else {
+            location = historian.cache_data.begin();
+            historian.cache_exists.erase(location->second);
+            work.current_cache_size -= location->first.byte_size;
+            location->second = chunk;
+            historian.cache_data.splice(historian.cache_data.end(), historian.cache_data, location); // move to end.
+        }
+        historian.cache_exists[chunk] = location;
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
+            extract_base(i, location->first, work, start_index, end_index, needs_value);
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
+        historian.current_cache_size += (location->first).byte_size;
+        return location->first;
     }
 
-    template<bool accrow_>
-    using ConditionalH5Core = typename std::conditional<accrow_ == row_, PrimaryH5Core, H5Core>::type;
+    const CacheElement& extract_with_oracle(Workspace& work, Index_ start_index, Index_ end_index, bool needs_value)
+        auto& pred = *work.futurist;
+        if (pred.predictions_made.size() > pred.predictions_fulfilled) {
+            auto chosen = pred.predictions_made[pred.predictions_fulfilled++];
+            return pred.cache_data[chosen];
+        }
+
+        // Same logic as in the dense case.
+        Index_ used = 0;
+
+        bool starting = pred.cache_data.empty();
+        if (starting) {
+            pred.cache_data.resize(num_chunks);
+            pred.next_cache_data.resize(num_chunks); 
+            for (auto& x : pred.next_cache_data) {
+                x.init = true;
+            }
+            pred.chunks_in_need.reserve(num_chunks);
+        } else {
+            pred.next_cache_exists.clear();
+            pred.chunks_in_need.clear();
+        }
+
+        size_t max_predictions = static_cast<size_t>(num_chunks) * chunk_mydim * 2; // double the cache size, basically.
+        pred.predictions_made.clear();
+        pred.predictions_made.reserve(max_predictions);
+        size_t anticipated_size = 0;
+
+        for (size_t p = 0; p < max_predictions; ++p) {
+            Index_ current;
+            if (!pred.prediction_stream.next(current)) {
+                break;
+            }
+            pred.predictions_made.push_back(current);
+
+            auto it = pred.next_cache_exists.find(current);
+            if (it == pred.next_cache_exists.end()) {
+                auto it2 = pred.cache_exists.find(curchunk);
+                if (it2 != pred.cache_exists.end()) {
+                    pred.next_cache_data[used].swap(pred.cache_data[it2->second]);
+                    anticipated_size += pred.next_cache_data[used].byte_size;
+                    if (antitipated_size > work.cache_size_limit) {
+                        break;
+                    }
+                } else {
+                    size_t next_element_size = (pointers[current + 1] - pointers[current]) * (sizeof(Value_) + sizeof(Index_));
+                    anticipated_size += next_element_size;
+                    if (antitipated_size > work.cache_size_limit) {
+                        break;
+                    }
+                    pred.chunks_in_need.emplace_back(current, used);
+                }
+                pred.next_cache_exists[current] = used;
+
+            } else {
+                pred.predictions_made.emplace_back(current);
+            }
+        }
+
+        // See corresponding logic in the HDF5DenseMatrix.
+        size_t search = 0;
+        for (const auto& c : pred.chunks_in_need) {
+            if (pred.next_cache_data[c.second].init) { 
+                while (pred.cache_data[search].init) { 
+                    ++search;
+                }
+
+#ifdef DEBUG
+                if (search >= pred.cache_data.size()) {
+                    throw std::runtime_error("internal cache management error for HDF5DenseMatrix with oracles");
+                }
+#endif
+
+                pred.next_cache_data[c.second].swap(pred.cache_data[search]);
+                ++search;
+            }
+        }
+
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        #pragma omp critical
+        {
+#else
+        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+#endif
+
+        for (const auto& c : pred.chunks_in_need) {
+            auto& cache_target = pred.next_cache_data[c.second];
+            auto actual_dim = extract_chunk<accrow_>(c.first, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
+            if constexpr(accrow_ == transpose_) {
+                pred.cache_transpose_info.emplace_back(c.second, actual_dim);
+            }
+        }
+
+#ifndef TATAMI_HDF5_PARALLEL_LOCK
+        }
+#else
+        });
+#endif
+
+        // Applying transpositions to all cached buffers for easier retrieval, but only once the lock is released.
+        if constexpr(accrow_ == transpose_) {
+            for (const auto& x : pred.cache_transpose_info) {
+                transpose(pred.next_cache_data[x.first], work.transposition_buffer, x.second, extract_length);
+            }
+        }
+
+        pred.cache_data.swap(pred.next_cache_data);
+        pred.cache_exists.swap(pred.next_cache_exists);
+
+        pred.predictions_fulfilled = 1; // well, because we just used one.
+        const auto& chosen = pred.predictions_made.front(); // assuming at least one prediction was made, otherwise, why was fetch() even called?
+        return pred.cache_data[chosen.first].data() + extract_length * chosen.second;
+    }
 
     /********************************************
      ************ Primary extraction ************
@@ -471,6 +717,24 @@ private:
     // multiple re-reads from file when we exceed the cache. So, any caching
     // would be just turning an extremely bad access pattern into a very bad
     // pattern, when users shouldn't even be calling this at all... 
+    struct H5Core {
+        H5::H5File file;
+        H5::DataSet data, index;
+        H5::DataSpace dataspace;
+        H5::DataSpace memspace;
+
+        std::vector<Index_> index_cache;
+    };
+
+    void fill_core(H5Core& core) const {
+        // TODO: set more suitable chunk cache values here, to avoid re-reading
+        // chunks on the boundaries of the primary cache.
+        core.file.openFile(file_name, H5F_ACC_RDONLY);
+
+        core.data = core.file.openDataSet(data_name);
+        core.index = core.file.openDataSet(index_name);
+        core.dataspace = core.data.getSpace();
+    }
 
     template<class Function_>
     bool extract_secondary_raw(Index_ primary, Index_ secondary, Function_& fill, H5Core& core, bool needs_value) const {
