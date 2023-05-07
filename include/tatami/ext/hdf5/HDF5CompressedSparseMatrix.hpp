@@ -7,8 +7,10 @@
 #include <cstdint>
 #include <type_traits>
 #include <cmath>
+#include <list>
 
 #include "../../base/Matrix.hpp"
+#include "../../utils/Oracles.hpp"
 #include "utils.hpp"
 
 /**
@@ -50,8 +52,8 @@ class HDF5CompressedSparseMatrix : public tatami::Matrix<Value_, Index_> {
     std::string data_name, index_name;
     std::vector<hsize_t> pointers;
 
-    std::vector<Index_> primary_cache_id;
-    std::vector<std::pair<Index_, Index_> > primary_cache_limits;
+    size_t cache_size_limit;
+    Index_ max_non_zeros;
 
 public:
     /**
@@ -75,10 +77,8 @@ public:
         file_name(file),
         data_name(std::move(vals)),
         index_name(std::move(idx)),
-        pointers(row_ ? nr + 1 : nc + 1)
+        pointers(static_cast<size_t>(row_ ? nr : nc) + 1)
     {
-        size_t total_element_size;
-
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
@@ -117,28 +117,14 @@ public:
         });
 #endif
 
-        // Setting up the cache parameters.
-        Index_ primary_dim = pointers.size() - 1;
-        primary_cache_id.resize(primary_dim);
-        if (primary_dim) {
-            primary_cache_limits.emplace_back(0, pointers[1]);
-        }
-
-        size_t effective_cache_limit = cache_limit / (sizeof(Value_) + sizeof(Index_));
-        Index_ counter = 0, start = 0;
-        for (size_t i = 1; i < primary_dim; ++i) {
-            Index_ end = pointers[i + 1];
-            if (end - start <= effective_cache_limit) {
-                primary_cache_limits.back().second = end;
-            } else {
-                ++counter;
-                start = pointers[i];
-                primary_cache_limits.emplace_back(start, end);
+        cache_size_limit = cache_limit;
+        max_non_zeros = 0;
+        for (size_t i = 1; i < pointers.size(); ++i) {
+            Index_ diff = pointers[i] - pointers[i-1];
+            if (diff > max_non_zeros) {
+                max_non_zeros = diff;
             }
-            primary_cache_id[i] = counter;
         }
-
-        return;
     }
 
 public:
@@ -180,44 +166,53 @@ public:
      ************ Primary extraction ************
      ********************************************/
 private:
-    struct CacheElement {
-        std::vector<Value_> value;
-        std::vector<Index_> index;
-        size_t index_offset = 0;
-        size_t valid_length = 0;
-        size_t byte_size = 0;
-        bool init = false;
-    };
-    
-    template<bool accrow_>
     struct OracleCache {
+        struct Element {
+            size_t data_offset;
+            size_t mem_offset;
+            Index_ length;
+            bool bounded;
+        };
+
+        std::vector<Value_> cache_value;
+        std::vector<Index_> cache_index;
         std::unordered_map<Index_, Index_> cache_exists, next_cache_exists;
-        std::vector<CacheElement> cache_data, next_cache_data;
-        std::vector<std::pair<Index_, Index_> > chunks_in_need; 
+        std::vector<Element> cache_data, next_cache_data;
 
         OracleStream<Index_> prediction_stream;
         std::vector<Index_> predictions_made;
+        std::vector<std::pair<Index_, Index_> > needed;
+        std::vector<Index_> present;
         size_t predictions_fulfilled = 0;
+
+        size_t max_cache_elements = -1;
     };
 
     struct LruCache {
-        typedef std::pair<CacheElement, Index_> Element;
+        struct Element {
+            std::vector<Value_> value;
+            std::vector<Index_> index;
+            Index_ length;
+            Index_ id;
+            bool bounded;
+        };
+
         std::list<Element> cache_data;
         std::unordered_map<Index_, typename std::list<Element>::iterator> cache_exists;
-        size_t current_cache_size;
+        size_t max_cache_number = -1;
     };
 
-    struct Workspace {
-        void fill(const HDF5DenseMatrix* parent, Index_ cache_size) {
+    struct PrimaryWorkspace {
+        void fill(const HDF5CompressedSparseMatrix* parent, Index_ extraction_cache_size) {
             // TODO: set more suitable chunk cache values here, to avoid re-reading
             // chunks on the boundaries of the primary cache.
             file.openFile(parent->file_name, H5F_ACC_RDONLY);
 
-            data = core.file.openDataSet(parent->data_name);
-            index = core.file.openDataSet(parent->index_name);
-            dataspace = core.data.getSpace();
+            data = file.openDataSet(parent->data_name);
+            index = file.openDataSet(parent->index_name);
+            dataspace = data.getSpace();
 
-            extraction_bounds.resize(cache_size, std::pair<size_t, size_t>(-1, 0));
+            extraction_bounds.resize(extraction_cache_size, std::pair<size_t, size_t>(-1, 0));
 
             historian.reset(new LruCache);
         }
@@ -229,11 +224,8 @@ private:
         H5::DataSpace memspace;
 
     public:
-        // Caching members.
-        size_t cache_size_limit;
-
         // Cache with an oracle.
-        std::unique_ptr<OracleCache<accrow_> > futurist;
+        std::unique_ptr<OracleCache> futurist;
 
         // Cache without an oracle.
         std::unique_ptr<LruCache> historian;
@@ -244,85 +236,96 @@ private:
     };
 
 private:
-    void extract_base(Index_ i, CacheElement& cache, Workspace& work, Index_ start_index, Index_ end_index, bool needs_value) const {
-        auto start_ptr = pointers[i], len = pointers[i+1] - start_ptr;
-        cache.index.resize(len); // this should be full length, to avoid discrepancies when cache_for_reuse = true.
+    struct Extracted {
+        Extracted() = default;
 
-        bool excache_hit = false;
-        if (work.extraction_bounds.size()) {
-            const auto& current = work.extraction_bounds[i];
-            if (current.first != -1) {
-                excache_hit = true;
-                len = current.second;
-                start_ptr += cache.index_offset;
-            }
+        Extracted(const typename LruCache::Element& cache) {
+            value = cache.value.data();
+            index = cache.index.data();
+            length = cache.length;
+            bounded = cache.bounded;
         }
 
-        dataspace.selectHyperslab(H5S_SELECT_SET, &len, &start_ptr);
-        memspace.setExtentSimple(1, &len);
-        memspace.selectAll();
-        index.read(cache.index.data(), HDF5::define_mem_type<Index_>(), core.memspace, core.dataspace);
-
-        cache.byte_size = len * sizeof(Index_); // for cache usage calculations.
-        cache.index_offset = 0; // to avoid another binary search in callers.
-
-        // Now we decide whether or not to constrict the retrieval zone for values (and for future indices).
-        if (!excache_hit) {
-            if (start_index) {
-                cache.index_offset = std::lower_bound(cache.index.data(), cache.index.data() + len, start_index) - cache.index.data();
-                start_ptr += cache.index_offset;
-            }
-            if (end_index < (row_ ? ncols : nrows)) {
-                auto start = cache.index.data(), + cache.index_offset;
-                len = std::lower_bound(start, cache.index.data() + len, end_index) - start;
-            }
-
+        Extracted(const OracleCache& cache, Index_ i, bool needs_value) {
+            const auto& element = cache.cache_data[i];
+            auto offset = element.mem_offset;
             if (needs_value) {
-                dataspace.selectHyperslab(H5S_SELECT_SET, &len, &start_ptr);
-                memspace.setExtentSimple(1, &len);
-                memspace.selectAll();
+                value = cache.cache_value.data() + offset;
             }
-            if (work.extraction_bounds.size()) {
-                work.extraction_bounds[i] = std::pair<size_t, size_t>(cache.index_offset, len);
-            }
+            index = cache.cache_index.data() + offset;
+            length = element.length;
+            bounded = element.bounded;
         }
 
-        // Storing the final number of non-zeros.
-        cache.valid_length = len;
+        const Value_* value;
+        const Index_* index;
+        Index_ length;
+        bool bounded;
+    };
 
-        if (needs_value) {
-            cache.value.resize(len);
-            data.read(cache.value.data(), HDF5::define_mem_type<Value_>(), core.memspace, core.dataspace);
-            cache.byte_size += len * sizeof(Value_);
-        }
-    }
-
-private:
-    CacheElement& populate_cache_without_oracle(Index_ i, Workspace& work, Index_ start_index, Index_ end_index, bool needs_value) const {
+    Extracted extract_primary_without_oracle(Index_ i, PrimaryWorkspace& work, bool needs_value) const {
         auto& historian = *(work.historian);
-        auto it = historian.cache_exists.find(chunk);
+        auto it = historian.cache_exists.find(i);
         if (it != historian.cache_exists.end()) {
             auto chosen = it->second;
             historian.cache_data.splice(historian.cache_data.end(), historian.cache_data, chosen); // move to end.
-            return chosen->first;
+            return Extracted(*chosen);
         }
 
-        // Estimating the size of the next cache element.
-        size_t next_element_size = (pointers[i + 1] - pointers[i]) * (sizeof(Value_) + sizeof(Index_));
+        // Check if bounds already exist from the reusable cache. If so,
+        // we can use them to reduce the amount of data I/O.
+        hsize_t extraction_start = pointers[i];
+        hsize_t extraction_len = pointers[i + 1] - pointers[i];
+        bool bounded = false;
+
+        if (work.extraction_bounds.size()) {
+            const auto& current = work.extraction_bounds[i];
+            if (current.first != -1) {
+                bounded = true;
+                extraction_start = current.first;
+                extraction_len = current.second;
+            }
+        }
+
+        // Need to use the max_cache_number as the capacity of each recycled
+        // vector may be much larger than the reported size of the chunk; this
+        // would cause us to overrun the cache_size_limit if we recycled the
+        // vector enough times such that each cache element had capacity equal
+        // to the maximum number of non-zero elements in any dimension element.
+        //
+        // Alternatives would be to create a new Element on every recycling
+        // iteration, or to hope that shrink_to_fit() behaves. Both would allow
+        // us to store more cache elements but would involve reallocations,
+        // which degrades perf in the most common case where a dimension
+        // element is accessed no more than once during iteration.
+        if (historian.max_cache_number == -1) {
+            historian.max_cache_number = cache_size_limit / (max_non_zeros * ((needs_value ? sizeof(Value_) : 0) + sizeof(Index_)));
+            if (historian.max_cache_number == 0) {
+                historian.max_cache_number = 1;
+            }
+        }
 
         // Adding a new last element, or recycling the front to the back.
+        // We initialize each element with the maximum number of non-zeros to avoid reallocations.
         typename std::list<typename LruCache::Element>::iterator location;
-        if (historian.current_cache_size + next_element_size <= work.cache_size_limit) {
-            historian.cache_data.emplace_back(std::vector<Value_>(work.per_cache_size), chunk);
+        if (historian.cache_data.size() < historian.max_cache_number) {
+            historian.cache_data.push_back(typename LruCache::Element());
             location = std::prev(historian.cache_data.end());
+            location->index.resize(max_non_zeros);
+            if (needs_value) {
+                location->value.resize(max_non_zeros);
+            }
         } else {
             location = historian.cache_data.begin();
-            historian.cache_exists.erase(location->second);
-            work.current_cache_size -= location->first.byte_size;
-            location->second = chunk;
+            historian.cache_exists.erase(location->id);
             historian.cache_data.splice(historian.cache_data.end(), historian.cache_data, location); // move to end.
         }
-        historian.cache_exists[chunk] = location;
+        historian.cache_exists[i] = location;
+
+        auto& current_cache = *location;
+        current_cache.id = i;
+        current_cache.length = extraction_len;
+        current_cache.bounded = bounded;
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
@@ -331,7 +334,14 @@ private:
         TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
 #endif
 
-            extract_base(i, location->first, work, start_index, end_index, needs_value);
+        work.dataspace.selectHyperslab(H5S_SELECT_SET, &extraction_len, &extraction_start);
+        work.memspace.setExtentSimple(1, &extraction_len);
+        work.memspace.selectAll();
+        work.index.read(current_cache.index.data(), HDF5::define_mem_type<Index_>(), work.memspace, work.dataspace);
+
+        if (needs_value) {
+            work.data.read(current_cache.value.data(), HDF5::define_mem_type<Value_>(), work.memspace, work.dataspace);
+        }
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
         }
@@ -339,258 +349,316 @@ private:
         });
 #endif
 
-        historian.current_cache_size += (location->first).byte_size;
-        return location->first;
+        return Extracted(current_cache);
     }
 
-    const CacheElement& extract_with_oracle(Workspace& work, Index_ start_index, Index_ end_index, bool needs_value)
+    Extracted extract_primary_with_oracle(Index_ i, PrimaryWorkspace& work, bool needs_value) const {
         auto& pred = *work.futurist;
         if (pred.predictions_made.size() > pred.predictions_fulfilled) {
             auto chosen = pred.predictions_made[pred.predictions_fulfilled++];
-            return pred.cache_data[chosen];
+            return Extracted(pred, chosen, needs_value);
         }
 
-        // Same logic as in the dense case.
-        Index_ used = 0;
-
-        bool starting = pred.cache_data.empty();
-        if (starting) {
-            pred.cache_data.resize(num_chunks);
-            pred.next_cache_data.resize(num_chunks); 
-            for (auto& x : pred.next_cache_data) {
-                x.init = true;
-            }
-            pred.chunks_in_need.reserve(num_chunks);
+        // Grow the number of predictions over time, until we get to a point
+        // where we consistently fill the cache.
+        size_t max_predictions = pred.predictions_made.size() * 2; 
+        if (max_predictions < 100) {
+            max_predictions = 100;
         } else {
-            pred.next_cache_exists.clear();
-            pred.chunks_in_need.clear();
+            size_t upper = (row_ ? nrows : ncols);
+            if (max_predictions > upper) {
+                max_predictions = upper;
+            }
         }
 
-        size_t max_predictions = static_cast<size_t>(num_chunks) * chunk_mydim * 2; // double the cache size, basically.
         pred.predictions_made.clear();
-        pred.predictions_made.reserve(max_predictions);
-        size_t anticipated_size = 0;
+        pred.needed.clear();
+        pred.present.clear();
+        pred.next_cache_data.clear();
+        pred.next_cache_exists.clear();
+
+        // Here, we use a giant contiguous buffer to optimize for
+        // near-consecutive iteration. This allows the HDF5 library to pull out
+        // long strips of data from the file.  It also allows us to maximize
+        // the use of the cache_size_limit by accounting for differences in the
+        // non-zeros for each element, rather than conservatively assuming
+        // they're all at max (as in the LRU case). The downside is that we
+        // need to do some copying within the cache to make space for new
+        // reads, but that works out to be no more than one extra copy per
+        // fetch() call, which is tolerable. I suppose we could do better
+        // by defragmenting within this buffer but that's probably overkill.
+        if (pred.max_cache_elements == -1) {
+            pred.max_cache_elements = cache_size_limit / ((needs_value ? sizeof(Value_) : 0) + sizeof(Index_));
+            if (pred.max_cache_elements < max_non_zeros) {
+                pred.max_cache_elements = max_non_zeros; // make sure we have enough space to store the largest possible primary dimension element.
+            }
+            pred.cache_index.resize(pred.max_cache_elements);
+            if (needs_value) {
+                pred.cache_value.resize(pred.max_cache_elements);
+            }
+        }
+        size_t filled_elements = 0;
 
         for (size_t p = 0; p < max_predictions; ++p) {
             Index_ current;
             if (!pred.prediction_stream.next(current)) {
                 break;
             }
-            pred.predictions_made.push_back(current);
 
-            auto it = pred.next_cache_exists.find(current);
-            if (it == pred.next_cache_exists.end()) {
-                auto it2 = pred.cache_exists.find(curchunk);
-                if (it2 != pred.cache_exists.end()) {
-                    pred.next_cache_data[used].swap(pred.cache_data[it2->second]);
-                    anticipated_size += pred.next_cache_data[used].byte_size;
-                    if (antitipated_size > work.cache_size_limit) {
-                        break;
-                    }
-                } else {
-                    size_t next_element_size = (pointers[current + 1] - pointers[current]) * (sizeof(Value_) + sizeof(Index_));
-                    anticipated_size += next_element_size;
-                    if (antitipated_size > work.cache_size_limit) {
-                        break;
-                    }
-                    pred.chunks_in_need.emplace_back(current, used);
-                }
+            // Seeing if this element already exists somewhere.
+            auto nit = pred.next_cache_exists.find(current);
+            if (nit != pred.next_cache_exists.end()) {
+                pred.predictions_made.push_back(nit->second);
+                continue;
+            }
+
+            auto it = pred.cache_exists.find(current);
+            if (it != pred.cache_exists.end()) {
+                pred.predictions_made.push_back(it->second);
+                Index_ used = pred.next_cache_data.size();
                 pred.next_cache_exists[current] = used;
-
-            } else {
-                pred.predictions_made.emplace_back(current);
+                pred.present.push_back(used);
+                pred.next_cache_data.push_back(std::move(pred.cache_data[it->second]));
+                filled_elements += pred.next_cache_data.back().length;
+                continue;
             }
+
+            // Check if bounds already exist from the reusable cache. If so,
+            // we can use them to reduce the amount of data I/O.
+            hsize_t extraction_start = pointers[i];
+            hsize_t extraction_len = pointers[i + 1] - pointers[i];
+            bool bounded = false;
+
+            if (work.extraction_bounds.size()) {
+                const auto& current = work.extraction_bounds[i];
+                if (current.first != -1) {
+                    bounded = true;
+                    extraction_start = current.first;
+                    extraction_len = current.second;
+                }
+            }
+
+            filled_elements += extraction_len;
+            if (filled_elements > pred.max_cache_elements) {
+                break;
+            }
+
+            Index_ used = pred.next_cache_data.size();
+            pred.predictions_made.push_back(used);
+            pred.needed.emplace_back(i, used);
+            pred.next_cache_exists[current] = used;
+
+            typename OracleCache::Element latest;
+            latest.data_offset = extraction_start;
+            latest.length = extraction_len;
+            latest.bounded = bounded;
+            pred.next_cache_data.push_back(std::move(latest));
         }
 
-        // See corresponding logic in the HDF5DenseMatrix.
-        size_t search = 0;
-        for (const auto& c : pred.chunks_in_need) {
-            if (pred.next_cache_data[c.second].init) { 
-                while (pred.cache_data[search].init) { 
-                    ++search;
+        if (pred.needed.size()) {
+            size_t dest_offset = 0;
+
+            if (pred.present.size()) {
+                // Shuffling all re-used elements to the start of the buffer,
+                // so that we can perform a contiguous extraction of the needed
+                // elements in the rest of the buffer. This needs some sorting
+                // to ensure that we're not clobbering one re-used element's
+                // contents when shifting another element to the start.
+                auto comp = [&](size_t l, size_t r) -> bool {
+                    return pred.next_cache_data[l].mem_offset < pred.next_cache_data[r].mem_offset;
+                };
+
+                bool present_sorted = true;
+                for (size_t i = 1, end = pred.present.size(); i < end; ++i) {
+                    if (!comp(i-1, i)) {
+                        present_sorted = false;
+                        break;
+                    }
+                }
+                if (!present_sorted) {
+                    std::sort(pred.present.begin(), pred.present.end(), comp);
                 }
 
-#ifdef DEBUG
-                if (search >= pred.cache_data.size()) {
-                    throw std::runtime_error("internal cache management error for HDF5DenseMatrix with oracles");
+                for (const auto& p : pred.present) {
+                    auto& info = pred.next_cache_data[p];
+                    auto isrc = pred.cache_index.begin() + info.mem_offset;
+                    std::copy(isrc, isrc + info.length, pred.cache_index.begin() + dest_offset);
+                    if (needs_value) {
+                        auto vsrc = pred.cache_value.begin() + info.mem_offset;
+                        std::copy(vsrc, vsrc + info.length, pred.cache_value.begin() + dest_offset); 
+                    }
+                    info.mem_offset = dest_offset;
+                    dest_offset += info.length;
                 }
-#endif
-
-                pred.next_cache_data[c.second].swap(pred.cache_data[search]);
-                ++search;
             }
-        }
 
+            // Sorting so that we get consecutive accesses in the subsequent loop.
+            // This should improve re-use of partially read chunks inside the HDF5 call.
+            bool sorted = true;
+            for (size_t i = 1, end = pred.needed.size(); i < end; ++i) {
+                if (pred.needed[i-1].first < pred.needed[i].first) {
+                    sorted = false; // no need to check second element, as the first element is always unique.
+                    break;
+                }
+            }
+            if (!sorted) {
+                std::sort(pred.needed.begin(), pred.needed.end());
+            }
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
-        #pragma omp critical
-        {
+            #pragma omp critical
+            {
 #else
-        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
+            TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
 #endif
 
-        for (const auto& c : pred.chunks_in_need) {
-            auto& cache_target = pred.next_cache_data[c.second];
-            auto actual_dim = extract_chunk<accrow_>(c.first, mydim, chunk_mydim, cache_target.data(), extract_value, extract_length, work);
-            if constexpr(accrow_ == transpose_) {
-                pred.cache_transpose_info.emplace_back(c.second, actual_dim);
+            size_t sofar = 0;
+            hsize_t combined_len = 0;
+            work.dataspace.selectNone();
+
+            while (sofar < pred.needed.size()) {
+                auto& first = pred.next_cache_data[pred.needed[sofar].second];
+                first.mem_offset = dest_offset + combined_len;
+                hsize_t src_offset = first.data_offset;
+                hsize_t len = first.length;
+                ++sofar;
+
+                // Finding the stretch of consecutive extractions, and bundling them into a single hyperslab.
+                for (; sofar < pred.needed.size(); ++sofar) {
+                    auto& next = pred.next_cache_data[pred.needed[sofar].second];
+                    if (src_offset + len < next.data_offset) {
+                        break;
+                    }
+                    next.mem_offset = first.mem_offset + len;
+                    len += next.length;
+                }
+
+                work.dataspace.selectHyperslab(H5S_SELECT_OR, &len, &src_offset);
+                combined_len += len;
             }
-        }
+
+            work.memspace.setExtentSimple(1, &combined_len);
+            work.memspace.selectAll();
+            work.index.read(pred.cache_index.data() + dest_offset, HDF5::define_mem_type<Index_>(), work.memspace, work.dataspace);
+            if (needs_value) {
+                work.data.read(pred.cache_value.data() + dest_offset, HDF5::define_mem_type<Value_>(), work.memspace, work.dataspace);
+            }
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
-        }
-#else
-        });
-#endif
-
-        // Applying transpositions to all cached buffers for easier retrieval, but only once the lock is released.
-        if constexpr(accrow_ == transpose_) {
-            for (const auto& x : pred.cache_transpose_info) {
-                transpose(pred.next_cache_data[x.first], work.transposition_buffer, x.second, extract_length);
             }
+#else
+            });
+#endif
         }
 
         pred.cache_data.swap(pred.next_cache_data);
         pred.cache_exists.swap(pred.next_cache_exists);
-
-        pred.predictions_fulfilled = 1; // well, because we just used one.
-        const auto& chosen = pred.predictions_made.front(); // assuming at least one prediction was made, otherwise, why was fetch() even called?
-        return pred.cache_data[chosen.first].data() + extract_length * chosen.second;
+        return Extracted(pred, pred.predictions_made.front(), needs_value);
     }
 
     /********************************************
      ************ Primary extraction ************
      ********************************************/
 private:
-    void populate_primary_cache(size_t i, PrimaryH5Core& core, bool needs_value) const {
-        if (primary_cache_id[i] == core.current_cache_id && core.init) {
-            return;
-        }
-
-        core.init = true;
-        core.current_cache_id = primary_cache_id[i];
-
-        // Pulling out the entire chunk of primary dimensions containing
-        // 'i'. We have to do this for all indices, regardless of the
-        // slicing/indexing. 
-        const auto& limits = primary_cache_limits[core.current_cache_id];
-        hsize_t offset = limits.first;
-        hsize_t count = limits.second - limits.first;
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK
-        #pragma omp critical
-        {
-#else
-        TATAMI_HDF5_PARALLEL_LOCK([&]() -> void {
-#endif
-
-        core.dataspace.selectHyperslab(H5S_SELECT_SET, &count, &offset);
-        core.memspace.setExtentSimple(1, &count);
-        core.memspace.selectAll();
-
-        core.index_cache.resize(count);
-        core.index.read(core.index_cache.data(), HDF5::define_mem_type<Index_>(), core.memspace, core.dataspace);
-
-        if (needs_value) {
-            // In theory, we could avoid extracting data for the entire column when
-            // populating the cache for sliced or indexed queries. In practice,
-            // each chunk is often larger than the number of non-zeroes in a
-            // column, so we end up having to pull out the entire column anyway.
-            // Also, I want to get out of this critical region ASAP and do my
-            // indexing elsewhere. 
-
-            core.data_cache.resize(count);
-            core.data.read(core.data_cache.data(), HDF5::define_mem_type<Value_>(), core.memspace, core.dataspace);
-        }
-
-#ifndef TATAMI_HDF5_PARALLEL_LOCK 
-        }
-#else
-        });
-#endif
-
-    };
-
     template<class Function_>
-    void extract_primary_raw(size_t i, Function_ fill, Index_ start, Index_ length, PrimaryH5Core& core, bool needs_value) const {
-        if (length == 0) {
-            return;
-        }
-
-        Index_ primary_length = pointers[i + 1] - pointers[i];
-        if (primary_length ==0) {
-            return;
-        }
-
-        populate_primary_cache(i, core, needs_value);
-
-        const auto& limits = primary_cache_limits[core.current_cache_id];
-        Index_ offset = pointers[i] - limits.first;
-        auto istart = core.index_cache.begin() + offset;
-
-        Index_ request_start = 0;
-        if (start > *istart) { // 'istart' guaranteed to be valid from length check above.
-            bool do_cache = !core.starts.empty();
-            if (do_cache && core.starts[i] != -1) {
-                request_start = core.starts[i];
-            } else {
-                request_start = std::lower_bound(istart, istart + primary_length, start) - istart;
-                if (do_cache) {
-                    core.starts[i] = request_start;
-                }
-            }
-        }
-
-        istart += request_start;
-        Index_ end = start + length;
-        if (needs_value) {
-            auto dstart = core.data_cache.begin() + offset + request_start;
-            for (size_t i = request_start; i < primary_length && *istart < end; ++i, ++istart, ++dstart) {
-                fill(*istart, *dstart);
-            }
+    void extract_primary_raw(size_t i, Function_ fill, Index_ start, PrimaryWorkspace& work, bool needs_value) const {
+        Extracted details;
+        if (work.futurist) {
+            details = extract_primary_with_oracle(i, work, needs_value);
         } else {
-            for (size_t i = request_start; i < primary_length && *istart < end; ++i, ++istart) {
-                fill(*istart, 0);
+            details = extract_primary_without_oracle(i, work, needs_value);
+        }
+
+        auto istart = details.index;
+        auto iend = details.index + details.length;
+        size_t offset = 0;
+
+        // If we used the extraction_bounds during extraction, there's no need
+        // to do another search. Similarly, if we didn't use the extraction_bounds
+        // (e.g., it was already cached) but we have extraction_bounds available,
+        // we can again skip the binary search.
+        if (!details.bounded && start) {
+            bool hit = false;
+            if (work.extraction_bounds.size()) {
+                auto& target = work.extraction_bounds[i];
+                if (target.first != -1) {
+                    hit = true;
+                    offset = target.first - pointers[i];
+                    istart += offset;
+                }
+            } 
+
+            if (!hit) {
+                istart = std::lower_bound(details.index, iend, start);
+                offset = istart - details.index;
+            }
+        }
+
+        size_t iterated = fill(istart, iend, (needs_value ? details.value + offset : NULL));
+
+        if (work.extraction_bounds.size()) {
+            auto& target = work.extraction_bounds[i];
+            if (target.first == -1) {
+                target.first = pointers[i] + offset;
+                target.second = iterated;
             }
         }
 
         return;
     }
 
-    const Value_* extract_primary(size_t i, Value_* dbuffer, Index_ start, Index_ length, PrimaryH5Core& core) const {
-        std::fill(dbuffer, dbuffer + length, 0);
+    const Value_* extract_primary(size_t i, Value_* buffer, Index_ start, Index_ length, PrimaryWorkspace& work) const {
+        std::fill(buffer, buffer + length, 0);
 
-        extract_primary_raw(i, 
-            [&](Index_ pos, Value_ value) -> void {
-                dbuffer[pos - start] = value;
-            }, 
-            start, 
-            length, 
-            core, 
-            true
-        );
+        if (length) {
+            extract_primary_raw(i, 
 
-        return dbuffer;
+                [&](const Index_* is, const Index_* ie, const Value_* vs) -> size_t {
+                    auto ioriginal = is;
+                    Index_ end = start + length;
+                    for (; is != ie && *is < end; ++is, ++vs) {
+                        buffer[*is - start] = *vs;
+                    }
+                    return is - ioriginal;
+                },
+
+                start, 
+                work,
+                true
+            );
+        }
+
+        return buffer;
     }
 
-    SparseRange<Value_, Index_> extract_primary(size_t i, Value_* dbuffer, Index_* ibuffer, Index_ start, Index_ length, PrimaryH5Core& core, bool needs_value, bool needs_index) const {
+    SparseRange<Value_, Index_> extract_primary(size_t i, Value_* dbuffer, Index_* ibuffer, Index_ start, Index_ length, PrimaryWorkspace& work, bool needs_value, bool needs_index) const {
         Index_ counter = 0;
 
-        extract_primary_raw(i, 
-            [&](Index_ pos, Value_ value) -> void {
-                if (needs_index) {
-                    ibuffer[counter] = pos;
-                }
-                if (needs_value) {
-                    dbuffer[counter] = value;
-                }
-                ++counter;
-            }, 
-            start, 
-            length, 
-            core, 
-            needs_value
-        );
+        if (length) {
+            extract_primary_raw(i, 
+
+                [&](const Index_* is, const Index_* ie, const Value_* vs) -> Index_ {
+                    auto ioriginal = is;
+                    Index_ end = start + length;
+                    for (; is != ie && *is < end; ++is) {
+                        ++counter;                        
+                    }
+
+                    if (needs_index) {
+                        std::copy(ioriginal, ioriginal + counter, ibuffer);
+                    }
+                    if (needs_value) {
+                        std::copy(vs, vs + counter, dbuffer);
+                    }
+
+                    return counter;
+                },
+
+                start, 
+                work,
+                needs_value
+            );
+        }
 
         if (!needs_value) {
             dbuffer = NULL;
@@ -602,101 +670,98 @@ private:
         return SparseRange<Value_, Index_>(counter, dbuffer, ibuffer);
     }
 
-    template<class Function_, class Skip_>
-    void extract_primary_raw(size_t i, Function_ fill, Skip_ skip, const std::vector<Index_>& indices, PrimaryH5Core& core, bool needs_value) const {
-        if (indices.empty()) {
-            return;
-        }
-
-        Index_ primary_length = pointers[i + 1] - pointers[i];
-        if (primary_length ==0) {
-            return;
-        }
-
-        populate_primary_cache(i, core, needs_value);
-
-        const auto& limits = primary_cache_limits[core.current_cache_id];
-        Index_ offset = pointers[i] - limits.first;
-        auto istart = core.index_cache.begin() + offset;
-        auto iend = istart + primary_length;
-
-        Index_ quick_shift = 0;
-        if (indices[0] > *istart) { // Both are guaranteed to valid, from length check above.
-            bool do_cache = !core.starts.empty();
-            if (do_cache && core.starts[i] != -1) {
-                quick_shift = core.starts[i];
-            } else {
-                quick_shift = std::lower_bound(istart, istart + primary_length, indices[0]) - istart;
-                if (do_cache) {
-                    core.starts[i] = quick_shift;
+    template<class Fill_, class Skip_>
+    static size_t indexed_extraction(const Index_* istart, const Index_* iend, const Value_* vstart, const std::vector<Index_>& indices, Fill_ fill, Skip_ skip) {
+        auto ioriginal = istart;
+        if (vstart) {
+            for (auto idx : indices) {
+                while (istart != iend && *istart < idx) {
+                    ++istart;
+                    ++vstart;
                 }
-            }
-        }
-
-        istart += quick_shift;
-        auto dstart = core.data_cache.begin();
-        if (needs_value) {
-            dstart += offset + quick_shift;
-        }
-
-        for (auto idx : indices) {
-            while (istart != iend && *istart < idx) {
-                ++istart;
-                ++dstart;
-            }
-            if (istart == iend) {
-                break;
-            }
-            if (*istart == idx) {
-                if (needs_value) {
-                    fill(idx, *dstart);
+                if (istart == iend) {
+                    break;
+                }
+                if (*istart == idx) {
+                    fill(idx, *vstart);
                 } else {
-                    fill(idx, 0);
+                    skip();
                 }
-            } else {
-                skip();
+            }
+        } else {
+            for (auto idx : indices) {
+                while (istart != iend && *istart < idx) {
+                    ++istart;
+                }
+                if (istart == iend) {
+                    break;
+                }
+                if (*istart == idx) {
+                    fill(idx, 0);
+                } else {
+                    skip();
+                }
             }
         }
+
+        return istart - ioriginal;
     }
 
-    const Value_* extract_primary(size_t i, Value_* buffer, const std::vector<Index_>& indices, PrimaryH5Core& core) const {
+    const Value_* extract_primary(size_t i, Value_* buffer, const std::vector<Index_>& indices, PrimaryWorkspace& work) const {
         std::fill(buffer, buffer + indices.size(), 0);
         auto original = buffer;
 
-        extract_primary_raw(i, 
-            [&](Index_, Value_ value) -> void {
-                *buffer = value;
-                ++buffer;
-            }, 
-            [&]() -> void{
-                ++buffer;
-            },
-            indices, 
-            core,
-            true
-        );
+        if (indices.size()) {
+            extract_primary_raw(i, 
+
+                [&](const Index_* is, const Index_* ie, const Value_* vs) -> size_t {
+                    std::fill(buffer, buffer + indices.size(), 0);
+                    return indexed_extraction(is, ie, vs, indices, 
+                        [&](Index_, Value_ value) -> void {
+                            *buffer = value;
+                            ++buffer;
+                        },
+                        [&]() -> void {
+                            ++buffer;
+                        }
+                    );
+                },
+
+                indices.front(),
+                work,
+                true
+            );
+        }
 
         return original;
     }
 
-    SparseRange<Value_, Index_> extract_primary(size_t i, Value_* dbuffer, Index_* ibuffer, const std::vector<Index_>& indices, PrimaryH5Core& core, bool needs_value, bool needs_index) const {
+    SparseRange<Value_, Index_> extract_primary(size_t i, Value_* dbuffer, Index_* ibuffer, const std::vector<Index_>& indices, PrimaryWorkspace& work, bool needs_value, bool needs_index) const {
         Index_ counter = 0;
 
-        extract_primary_raw(i, 
-            [&](Index_ pos, Value_ value) -> void {
-                if (needs_value) {
-                    dbuffer[counter] = value;
-                }
-                if (needs_index) {
-                    ibuffer[counter] = pos;
-                }
-                ++counter;
-            }, 
-            []() -> void {},
-            indices, 
-            core,
-            needs_value
-        );
+        if (indices.size()) {
+            extract_primary_raw(i, 
+
+                [&](const Index_* is, const Index_* ie, const Value_* vs) -> size_t {
+                    return indexed_extraction(is, ie, vs, indices,
+                        [&](Index_ pos, Value_ value) -> void {
+                            if (needs_value) {
+                                dbuffer[counter] = value;
+                            }
+                            if (needs_index) {
+                                ibuffer[counter] = pos;
+                            }
+                            ++counter;
+                        },
+                        []() -> void {}
+                    );
+                },
+
+                indices.front(),
+                work,
+                needs_value
+            );
+        }
 
         if (!needs_index) {
             ibuffer = NULL;
@@ -717,27 +782,27 @@ private:
     // multiple re-reads from file when we exceed the cache. So, any caching
     // would be just turning an extremely bad access pattern into a very bad
     // pattern, when users shouldn't even be calling this at all... 
-    struct H5Core {
+    struct SecondaryWorkspace {
         H5::H5File file;
         H5::DataSet data, index;
         H5::DataSpace dataspace;
         H5::DataSpace memspace;
 
+        void fill(const HDF5CompressedSparseMatrix* parent) {
+            // TODO: set more suitable chunk cache values here, to avoid re-reading
+            // chunks on the boundaries of the primary cache.
+            file.openFile(parent->file_name, H5F_ACC_RDONLY);
+
+            data = file.openDataSet(parent->data_name);
+            index = file.openDataSet(parent->index_name);
+            dataspace = data.getSpace();
+        }
+
         std::vector<Index_> index_cache;
     };
 
-    void fill_core(H5Core& core) const {
-        // TODO: set more suitable chunk cache values here, to avoid re-reading
-        // chunks on the boundaries of the primary cache.
-        core.file.openFile(file_name, H5F_ACC_RDONLY);
-
-        core.data = core.file.openDataSet(data_name);
-        core.index = core.file.openDataSet(index_name);
-        core.dataspace = core.data.getSpace();
-    }
-
     template<class Function_>
-    bool extract_secondary_raw(Index_ primary, Index_ secondary, Function_& fill, H5Core& core, bool needs_value) const {
+    bool extract_secondary_raw(Index_ primary, Index_ secondary, Function_& fill, SecondaryWorkspace& core, bool needs_value) const {
         hsize_t left = pointers[primary], right = pointers[primary + 1];
         core.index_cache.resize(right - left);
 
@@ -771,7 +836,7 @@ private:
     }
 
     template<class Function_>
-    void extract_secondary_raw_loop(size_t i, Function_ fill, Index_ start, Index_ length, H5Core& core, bool needs_value) const {
+    void extract_secondary_raw_loop(size_t i, Function_ fill, Index_ start, Index_ length, SecondaryWorkspace& core, bool needs_value) const {
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
@@ -791,7 +856,7 @@ private:
 #endif
     }
 
-    const Value_* extract_secondary(size_t i, Value_* buffer, Index_ start, Index_ length, H5Core& core) const {
+    const Value_* extract_secondary(size_t i, Value_* buffer, Index_ start, Index_ length, SecondaryWorkspace& core) const {
         std::fill(buffer, buffer + length, 0);
 
         extract_secondary_raw_loop(i, 
@@ -807,7 +872,7 @@ private:
         return buffer;
     }
 
-    SparseRange<Value_, Index_> extract_secondary(size_t i, Value_* dbuffer, Index_* ibuffer, Index_ start, Index_ length, H5Core& core, bool needs_value, bool needs_index) const {
+    SparseRange<Value_, Index_> extract_secondary(size_t i, Value_* dbuffer, Index_* ibuffer, Index_ start, Index_ length, SecondaryWorkspace& core, bool needs_value, bool needs_index) const {
         Index_ counter = 0;
 
         extract_secondary_raw_loop(i, 
@@ -837,7 +902,7 @@ private:
     }
 
     template<class Function_, class Skip_>
-    void extract_secondary_raw_loop(size_t i, Function_ fill, Skip_ skip, const std::vector<Index_>& indices, H5Core& core, bool needs_value) const {
+    void extract_secondary_raw_loop(size_t i, Function_ fill, Skip_ skip, const std::vector<Index_>& indices, SecondaryWorkspace& core, bool needs_value) const {
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
         #pragma omp critical
         {
@@ -858,7 +923,7 @@ private:
 #endif
     }
 
-    const Value_* extract_secondary(size_t i, Value_* buffer, const std::vector<Index_>& indices, H5Core& core) const {
+    const Value_* extract_secondary(size_t i, Value_* buffer, const std::vector<Index_>& indices, SecondaryWorkspace& core) const {
         std::fill(buffer, buffer + indices.size(), 0);
         auto original = buffer;
         extract_secondary_raw_loop(i, 
@@ -876,7 +941,7 @@ private:
         return original;
     }
 
-    SparseRange<Value_, Index_> extract_secondary(size_t i, Value_* dbuffer, Index_* ibuffer, const std::vector<Index_>& indices, H5Core& core, bool needs_value, bool needs_index) const {
+    SparseRange<Value_, Index_> extract_secondary(size_t i, Value_* dbuffer, Index_* ibuffer, const std::vector<Index_>& indices, SecondaryWorkspace& core, bool needs_value, bool needs_index) const {
         Index_ counter = 0;
 
         extract_secondary_raw_loop(i, 
@@ -918,12 +983,12 @@ private:
 
             if constexpr(row_ == accrow_) {
                 if (opt.cache_for_reuse) {
-                    parent->fill_core(core, accrow_ ? parent->nrows : parent->ncols);
+                    core.fill(parent, accrow_ ? parent->nrows : parent->ncols);
                 } else {
-                    parent->fill_core(core, 0);
+                    core.fill(parent, 0);
                 }
             } else {
-                parent->fill_core(core);
+                core.fill(parent);
             }
         }
 
@@ -943,7 +1008,7 @@ private:
 
     protected:
         const HDF5CompressedSparseMatrix* parent;
-        ConditionalH5Core<accrow_> core;
+        typename std::conditional<row_ == accrow_, PrimaryWorkspace, SecondaryWorkspace>::type core;
         typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
 
     public:
@@ -956,8 +1021,12 @@ private:
         }
 
     public:
-        void set_oracle(std::unique_ptr<Oracle<Index_> >) {
-            return; // TODO: add proper support for oracle handling.
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
+            if constexpr(row_ == accrow_) {
+                core.futurist.reset(new OracleCache);
+                core.futurist->prediction_stream.set(std::move(o));
+                core.historian.reset();
+            }
         }
     };
 
