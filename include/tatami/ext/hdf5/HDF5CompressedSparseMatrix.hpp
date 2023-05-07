@@ -181,7 +181,7 @@ private:
 
         OracleStream<Index_> prediction_stream;
         std::vector<Index_> predictions_made;
-        std::vector<std::pair<Index_, Index_> > needed;
+        std::vector<Index_> needed;
         std::vector<Index_> present;
         size_t predictions_fulfilled = 0;
 
@@ -352,7 +352,26 @@ private:
         return Extracted(current_cache);
     }
 
-    Extracted extract_primary_with_oracle(Index_ i, PrimaryWorkspace& work, bool needs_value) const {
+    template<class Function_>
+    static void sort_by_field(std::vector<int>& indices, Function_ field) {
+        auto comp = [&field](size_t l, size_t r) -> bool {
+            return field(l) < field(r);
+        };
+
+        bool sorted = true;
+        for (size_t i = 1, end = indices.size(); i < end; ++i) {
+            if (!comp(indices[i-1], indices[i])) {
+                sorted = false;
+                break;
+            }
+        }
+
+        if (!sorted) {
+            std::sort(indices.begin(), indices.end(), comp);
+        }
+    }
+
+    Extracted extract_primary_with_oracle(PrimaryWorkspace& work, bool needs_value) const {
         auto& pred = *work.futurist;
         if (pred.predictions_made.size() > pred.predictions_fulfilled) {
             auto chosen = pred.predictions_made[pred.predictions_fulfilled++];
@@ -414,38 +433,45 @@ private:
 
             auto it = pred.cache_exists.find(current);
             if (it != pred.cache_exists.end()) {
-                pred.predictions_made.push_back(it->second);
+                auto& candidate = pred.cache_data[it->second];
+                filled_elements += candidate.length;
+                if (filled_elements > pred.max_cache_elements) {
+                    pred.prediction_stream.back();
+                    break;
+                }
+
                 Index_ used = pred.next_cache_data.size();
-                pred.next_cache_exists[current] = used;
+                pred.predictions_made.push_back(used);
                 pred.present.push_back(used);
-                pred.next_cache_data.push_back(std::move(pred.cache_data[it->second]));
-                filled_elements += pred.next_cache_data.back().length;
+                pred.next_cache_exists[current] = used;
+                pred.next_cache_data.push_back(std::move(candidate));
                 continue;
             }
 
             // Check if bounds already exist from the reusable cache. If so,
             // we can use them to reduce the amount of data I/O.
-            hsize_t extraction_start = pointers[i];
-            hsize_t extraction_len = pointers[i + 1] - pointers[i];
+            hsize_t extraction_start = pointers[current];
+            hsize_t extraction_len = pointers[current + 1] - pointers[current];
             bool bounded = false;
 
             if (work.extraction_bounds.size()) {
-                const auto& current = work.extraction_bounds[i];
-                if (current.first != -1) {
+                const auto& bounds = work.extraction_bounds[current];
+                if (bounds.first != -1) {
                     bounded = true;
-                    extraction_start = current.first;
-                    extraction_len = current.second;
+                    extraction_start = bounds.first;
+                    extraction_len = bounds.second;
                 }
             }
 
             filled_elements += extraction_len;
             if (filled_elements > pred.max_cache_elements) {
+                pred.prediction_stream.back();
                 break;
             }
 
             Index_ used = pred.next_cache_data.size();
             pred.predictions_made.push_back(used);
-            pred.needed.emplace_back(i, used);
+            pred.needed.emplace_back(used);
             pred.next_cache_exists[current] = used;
 
             typename OracleCache::Element latest;
@@ -464,24 +490,18 @@ private:
                 // elements in the rest of the buffer. This needs some sorting
                 // to ensure that we're not clobbering one re-used element's
                 // contents when shifting another element to the start.
-                auto comp = [&](size_t l, size_t r) -> bool {
-                    return pred.next_cache_data[l].mem_offset < pred.next_cache_data[r].mem_offset;
-                };
-
-                bool present_sorted = true;
-                for (size_t i = 1, end = pred.present.size(); i < end; ++i) {
-                    if (!comp(i-1, i)) {
-                        present_sorted = false;
-                        break;
-                    }
-                }
-                if (!present_sorted) {
-                    std::sort(pred.present.begin(), pred.present.end(), comp);
-                }
+                sort_by_field(pred.present, [&pred](size_t i) -> size_t { return pred.next_cache_data[i].mem_offset; });
 
                 for (const auto& p : pred.present) {
                     auto& info = pred.next_cache_data[p];
                     auto isrc = pred.cache_index.begin() + info.mem_offset;
+
+#ifdef DEBUG
+                    if (info.mem_offset < dest_offset) {
+                        throw std::runtime_error("detected clobbering of memory cache from overlapping offsets");
+                    }
+#endif
+
                     std::copy(isrc, isrc + info.length, pred.cache_index.begin() + dest_offset);
                     if (needs_value) {
                         auto vsrc = pred.cache_value.begin() + info.mem_offset;
@@ -492,18 +512,9 @@ private:
                 }
             }
 
-            // Sorting so that we get consecutive accesses in the subsequent loop.
+            // Sorting so that we get consecutive accesses in the hyperslab construction.
             // This should improve re-use of partially read chunks inside the HDF5 call.
-            bool sorted = true;
-            for (size_t i = 1, end = pred.needed.size(); i < end; ++i) {
-                if (pred.needed[i-1].first < pred.needed[i].first) {
-                    sorted = false; // no need to check second element, as the first element is always unique.
-                    break;
-                }
-            }
-            if (!sorted) {
-                std::sort(pred.needed.begin(), pred.needed.end());
-            }
+            sort_by_field(pred.needed, [&pred](size_t i) -> size_t { return pred.next_cache_data[i].data_offset; });
 
 #ifndef TATAMI_HDF5_PARALLEL_LOCK
             #pragma omp critical
@@ -517,7 +528,7 @@ private:
             work.dataspace.selectNone();
 
             while (sofar < pred.needed.size()) {
-                auto& first = pred.next_cache_data[pred.needed[sofar].second];
+                auto& first = pred.next_cache_data[pred.needed[sofar]];
                 first.mem_offset = dest_offset + combined_len;
                 hsize_t src_offset = first.data_offset;
                 hsize_t len = first.length;
@@ -525,7 +536,7 @@ private:
 
                 // Finding the stretch of consecutive extractions, and bundling them into a single hyperslab.
                 for (; sofar < pred.needed.size(); ++sofar) {
-                    auto& next = pred.next_cache_data[pred.needed[sofar].second];
+                    auto& next = pred.next_cache_data[pred.needed[sofar]];
                     if (src_offset + len < next.data_offset) {
                         break;
                     }
@@ -553,6 +564,7 @@ private:
 
         pred.cache_data.swap(pred.next_cache_data);
         pred.cache_exists.swap(pred.next_cache_exists);
+        pred.predictions_fulfilled = 1; // using the first one now.
         return Extracted(pred, pred.predictions_made.front(), needs_value);
     }
 
@@ -564,7 +576,7 @@ private:
     void extract_primary_raw(size_t i, Function_ fill, Index_ start, PrimaryWorkspace& work, bool needs_value) const {
         Extracted details;
         if (work.futurist) {
-            details = extract_primary_with_oracle(i, work, needs_value);
+            details = extract_primary_with_oracle(work, needs_value);
         } else {
             details = extract_primary_without_oracle(i, work, needs_value);
         }
@@ -670,6 +682,7 @@ private:
         return SparseRange<Value_, Index_>(counter, dbuffer, ibuffer);
     }
 
+private:
     template<class Fill_, class Skip_>
     static size_t indexed_extraction(const Index_* istart, const Index_* iend, const Value_* vstart, bool needs_value, const std::vector<Index_>& indices, Fill_ fill, Skip_ skip) {
         auto ioriginal = istart;
