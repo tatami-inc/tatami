@@ -196,8 +196,9 @@ TEST_P(HDF5DenseAccessMiscTest, Apply) {
     EXPECT_EQ(tatami::column_sums(&mat), tatami::column_sums(&ref));
 }
 
-TEST_P(HDF5DenseAccessMiscTest, FullyRandomized) {
-    // Check that the LRU cache works as expected.
+TEST_P(HDF5DenseAccessMiscTest, LruReuse) {
+    // Check that the LRU cache works as expected when cache elements are
+    // constantly re-used in a manner that changes the last accessed element.
     auto param = GetParam(); 
     auto chunk_sizes = std::get<0>(param);
     dump(chunk_sizes);
@@ -209,7 +210,7 @@ TEST_P(HDF5DenseAccessMiscTest, FullyRandomized) {
         auto m_ext = mat.dense_row();
         auto r_ext = ref.dense_row();
         for (size_t r0 = 0; r0 < NR; ++r0) {
-            auto r = (r0 % 2 ? NR - r0/2 - 1 : r0/2); // flip-flip between the last and first.
+            auto r = (r0 % 2 ? NR - r0/2 - 1 : r0/2); // alternate between the last and first chunk.
             EXPECT_EQ(m_ext->fetch(r), r_ext->fetch(r));
         }
     }
@@ -218,7 +219,7 @@ TEST_P(HDF5DenseAccessMiscTest, FullyRandomized) {
         auto m_ext = mat.dense_column();
         auto r_ext = ref.dense_column();
         for (size_t c0 = 0; c0 < NC; ++c0) {
-            auto c = (c0 % 2 ? NC - c0/2 - 1 : c0/2); // flip-flip between the last and first.
+            auto c = (c0 % 2 ? NC - c0/2 - 1 : c0/2); // alternate between the last and first.
             EXPECT_EQ(m_ext->fetch(c), r_ext->fetch(c));
         }
     }
