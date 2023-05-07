@@ -100,6 +100,8 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><b>active</b> () const</
 <tr class="separator:aa870c1926cb411c6de10be96956459ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a370450d2c7194730cd61a8cc8f8ec390"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1OracleStream.html#a370450d2c7194730cd61a8cc8f8ec390">next</a> (Index_ &amp;prediction)</td></tr>
 <tr class="separator:a370450d2c7194730cd61a8cc8f8ec390"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3ce855b3a8ffa7887b20f489faf1a68e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1OracleStream.html#a3ce855b3a8ffa7887b20f489faf1a68e">back</a> ()</td></tr>
+<tr class="separator:a3ce855b3a8ffa7887b20f489faf1a68e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Index_&gt;<br />
@@ -243,6 +245,35 @@ template&lt;typename Index_ &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Whether the stream of predictions has been exhausted. If <code>false</code>, the value of <code>prediction</code> may be used on output; otherwise, it should be ignored. </dd></dl>
+
+</div>
+</div>
+<a id="a3ce855b3a8ffa7887b20f489faf1a68e" name="a3ce855b3a8ffa7887b20f489faf1a68e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3ce855b3a8ffa7887b20f489faf1a68e">&#9670;&#160;</a></span>back()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool <a class="el" href="structtatami_1_1OracleStream.html">tatami::OracleStream</a>&lt; Index_ &gt;::back </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Move the state backwards by one prediction. This is guaranteed to work at least once after calling <code><a class="el" href="structtatami_1_1OracleStream.html#a370450d2c7194730cd61a8cc8f8ec390">next()</a></code>; multiple calls may or may not work, depending on whether the previous state has already been discarded. It is most useful for loops that need to inspect the next prediction before deciding whether to use it.</p>
+<dl class="section return"><dt>Returns</dt><dd>Whether or not the state was moved back successfully. This is guaranteed to be <code>true</code> once after a call to <code><a class="el" href="structtatami_1_1OracleStream.html#a370450d2c7194730cd61a8cc8f8ec390">next()</a></code>. </dd></dl>
 
 </div>
 </div>
