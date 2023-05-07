@@ -27,7 +27,7 @@ protected:
     std::string name;
     CompressedSparseDetails<double> triplets;
 
-    void dump(const int& caching, size_t NR, size_t NC) {
+    void dump(int chunk, size_t NR, size_t NC) {
         fpath = temp_file_path("tatami-sparse-test.h5");
         H5::H5File fhandle(fpath, H5F_ACC_TRUNC);
         name = "stuff";
@@ -39,11 +39,11 @@ protected:
         }
 
         H5::DSetCreatPropList plist(H5::DSetCreatPropList::DEFAULT.getId());
-        if (caching == 0) {
+        if (chunk == 0) {
             plist.setLayout(H5D_CONTIGUOUS);
         } else {
             plist.setLayout(H5D_CHUNKED);
-            hsize_t chunkdim = std::min(triplets.value.size(), static_cast<size_t>(caching));
+            hsize_t chunkdim = std::min(triplets.value.size(), static_cast<size_t>(chunk));
             plist.setChunk(1, &chunkdim);
         }
 
@@ -71,6 +71,14 @@ protected:
 
         return;
     }
+
+    void dump(size_t NR, size_t NC) {
+        dump(50, NR, NC); // just using any chunk size here.
+    }
+
+    static size_t compute_cache_size(size_t NR, size_t NC, double fraction) {
+        return static_cast<double>(NR * NC) * fraction * static_cast<double>(sizeof(double) + sizeof(int));
+    }
 };
 
 /*************************************
@@ -80,7 +88,7 @@ class HDF5SparseUtilsTest : public ::testing::Test, public HDF5SparseMatrixTestM
 
 TEST_F(HDF5SparseUtilsTest, Basic) {
     const size_t NR = 200, NC = 100;
-    dump(50, NR, NC);
+    dump(NR, NC);
 
     {
         tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr");
@@ -100,20 +108,20 @@ TEST_F(HDF5SparseUtilsTest, Basic) {
 /*************************************
  *************************************/
 
-class HDF5SparseAccessTest : public ::testing::TestWithParam<std::tuple<bool, int, int> >, public HDF5SparseMatrixTestMethods {};
+class HDF5SparseAccessTest : public ::testing::TestWithParam<std::tuple<bool, int, int, double> >, public HDF5SparseMatrixTestMethods {};
 
 TEST_P(HDF5SparseAccessTest, Primary) {
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
 
-    auto caching = std::get<2>(param);
     const size_t NR = 200, NC = 100;
-    dump(caching, NR, NC);
+    dump(std::get<2>(param), NR, NC);
+    int cache_size = compute_cache_size(NR, NC, std::get<3>(param));
 
     {
         // We limit the cache size to ensure that the cache management is not trivial.
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NR * 2); 
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size); 
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -127,7 +135,7 @@ TEST_P(HDF5SparseAccessTest, Primary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 3);
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
@@ -146,12 +154,12 @@ TEST_P(HDF5SparseAccessTest, Secondary) {
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
 
-    auto caching = std::get<2>(param);
     const size_t NR = 50, NC = 10; // much smaller for the secondary dimension.
-    dump(caching, NR, NC);
+    dump(std::get<2>(param), NR, NC);
+    int cache_size = compute_cache_size(NR, NC, std::get<3>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NC * 2);
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -165,7 +173,7 @@ TEST_P(HDF5SparseAccessTest, Secondary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NR * 1.5);
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
@@ -179,40 +187,21 @@ TEST_P(HDF5SparseAccessTest, Secondary) {
     }
 }
 
-TEST_P(HDF5SparseAccessTest, Apply) {
-    // Just putting it through its paces for correct parallelization via apply.
-    size_t NR = 500;
-    size_t NC = 200;
-    dump(10, NR, NC);
-
-    tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NR * 1.5);
-    tatami::CompressedSparseMatrix<
-        true, 
-        double, 
-        int, 
-        decltype(triplets.value), 
-        decltype(triplets.index), 
-        decltype(triplets.ptr)
-    > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
-
-    EXPECT_EQ(tatami::row_sums(&mat), tatami::row_sums(&ref));
-    EXPECT_EQ(tatami::column_sums(&mat), tatami::column_sums(&ref));
-}
-
 INSTANTIATE_TEST_CASE_P(
     HDF5SparseMatrix,
     HDF5SparseAccessTest,
     ::testing::Combine(
         ::testing::Values(true, false),
         ::testing::Values(1, 3),
-        ::testing::Values(0, 10, 100)
+        ::testing::Values(0, 100), // chunk size
+        ::testing::Values(0, 0.001, 0.01) // cache size
     )
 );
 
 /*************************************
  *************************************/
 
-class HDF5SparseSlicedTest : public ::testing::TestWithParam<std::tuple<bool, int, std::vector<double>, int> >, public HDF5SparseMatrixTestMethods {};
+class HDF5SparseSlicedTest : public ::testing::TestWithParam<std::tuple<bool, int, std::vector<double>, int, double> >, public HDF5SparseMatrixTestMethods {};
 
 TEST_P(HDF5SparseSlicedTest, Primary) {
     auto param = GetParam();
@@ -220,12 +209,12 @@ TEST_P(HDF5SparseSlicedTest, Primary) {
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
 
-    auto caching = std::get<3>(param);
-    const size_t NR = 200, NC = 100;
-    dump(caching, NR, NC);
+    const size_t NR = 128, NC = 256;
+    dump(std::get<3>(param), NR, NC);
+    int cache_size = compute_cache_size(NR, NC, std::get<4>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NR * 1.5);
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -240,7 +229,7 @@ TEST_P(HDF5SparseSlicedTest, Primary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 1);
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
@@ -261,12 +250,12 @@ TEST_P(HDF5SparseSlicedTest, Secondary) {
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
 
-    auto caching = std::get<3>(param);
     const size_t NR = 50, NC = 10; // much smaller for the secondary dimension.
-    dump(caching, NR, NC);
+    dump(std::get<3>(param), NR, NC);
+    int cache_size = compute_cache_size(NR, NC, std::get<4>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NC * 1.5);
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -281,7 +270,7 @@ TEST_P(HDF5SparseSlicedTest, Secondary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 2);
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
@@ -307,14 +296,15 @@ INSTANTIATE_TEST_CASE_P(
             std::vector<double>({ 0.222, 0.888 }), 
             std::vector<double>({ 0.555, 1 })
         ),
-        ::testing::Values(0, 10, 100) // chunk size
+        ::testing::Values(0, 100), // chunk size
+        ::testing::Values(0, 0.001, 0.01, 0.02) // cache size
     )
 );
 
 /*************************************
  *************************************/
 
-class HDF5SparseIndexedTest : public ::testing::TestWithParam<std::tuple<bool, int, std::vector<double>, int> >, public HDF5SparseMatrixTestMethods {};
+class HDF5SparseIndexedTest : public ::testing::TestWithParam<std::tuple<bool, int, std::vector<double>, int, double> >, public HDF5SparseMatrixTestMethods {};
 
 TEST_P(HDF5SparseIndexedTest, Primary) {
     auto param = GetParam();
@@ -322,12 +312,12 @@ TEST_P(HDF5SparseIndexedTest, Primary) {
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
 
-    auto caching = std::get<3>(param);
     const size_t NR = 200, NC = 100;
-    dump(caching, NR, NC);
+    dump(std::get<3>(param), NR, NC);
+    int cache_size = compute_cache_size(NR, NC, std::get<4>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NR * 1.5);
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -342,7 +332,7 @@ TEST_P(HDF5SparseIndexedTest, Primary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 1);
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
@@ -363,12 +353,12 @@ TEST_P(HDF5SparseIndexedTest, Secondary) {
     size_t JUMP = std::get<1>(param);
     auto interval_info = std::get<2>(param);
 
-    auto caching = std::get<3>(param);
     const size_t NR = 50, NC = 10; // much smaller for the secondary dimension.
-    dump(caching, NR, NC);
+    dump(std::get<3>(param), NR, NC);
+    int cache_size = compute_cache_size(NR, NC, std::get<4>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", NC * 1.5);
+        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             true, 
             double, 
@@ -383,7 +373,7 @@ TEST_P(HDF5SparseIndexedTest, Secondary) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", NC * 2);
+        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
         tatami::CompressedSparseMatrix<
             false, 
             double, 
@@ -409,7 +399,8 @@ INSTANTIATE_TEST_CASE_P(
             std::vector<double>({ 0.322, 8 }), 
             std::vector<double>({ 0.455, 9 })
         ),
-        ::testing::Values(0, 10, 100) // chunk size
+        ::testing::Values(0, 100), // chunk size
+        ::testing::Values(0, 0.001, 0.01, 0.02) // cache size
     )
 );
 
@@ -421,10 +412,8 @@ class HDF5SparseBasicCacheTest : public ::testing::TestWithParam<double>, public
 TEST_P(HDF5SparseBasicCacheTest, LruRandomized) {
     // Check that the LRU cache works as expected with totally random access.
     const size_t NR = 100, NC = 150; 
-    dump(100, NR, NC);
-
-    int cache_multiplier = GetParam();
-    int cache_size = static_cast<double>(NR * NC) * cache_multiplier * static_cast<double>(sizeof(double) + sizeof(int));
+    dump(NR, NC);
+    int cache_size = compute_cache_size(NR, NC, GetParam());
 
     {
         tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
@@ -470,10 +459,8 @@ TEST_P(HDF5SparseBasicCacheTest, LruRandomized) {
 TEST_P(HDF5SparseBasicCacheTest, SimpleOracle) {
     // Checking that access with an oracle behaves as expected.
     const size_t NR = 189, NC = 123; 
-    dump(100, NR, NC);
-
-    int cache_multiplier = GetParam();
-    int cache_size = static_cast<double>(NR * NC) * cache_multiplier * static_cast<double>(sizeof(double) + sizeof(int));
+    dump(NR, NC);
+    int cache_size = compute_cache_size(NR, NC, GetParam());
 
     {
         tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
@@ -534,7 +521,7 @@ protected:
         double cache_multiplier = std::get<0>(params);
         int interval_jump = std::get<1>(params);
         int interval_size = std::get<2>(params);
-        int cache_size = static_cast<double>(NR * NC) * cache_multiplier * static_cast<double>(sizeof(double) + sizeof(int));
+        int cache_size = compute_cache_size(NR, NC, cache_multiplier);
 
         mat.reset(new tatami::HDF5CompressedSparseMatrix<true, double, int>(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size));
         ref.reset(new tatami::CompressedSparseMatrix<
@@ -615,4 +602,36 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(1, 3), // jump between intervals
         ::testing::Values(5, 10, 20) // reuse interval size
     )
+);
+
+/*************************************
+ *************************************/
+
+class HDF5SparseApplyTest : public ::testing::TestWithParam<double>, public HDF5SparseMatrixTestMethods {};
+
+TEST_P(HDF5SparseApplyTest, Basic) {
+    // Just putting it through its paces for correct oracular parallelization via apply.
+    size_t NR = 500;
+    size_t NC = 200;
+    dump(NR, NC);
+    int cache_size = compute_cache_size(NR, NC, GetParam());
+
+    tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
+    tatami::CompressedSparseMatrix<
+        true, 
+        double, 
+        int, 
+        decltype(triplets.value), 
+        decltype(triplets.index), 
+        decltype(triplets.ptr)
+    > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+
+    EXPECT_EQ(tatami::row_sums(&mat), tatami::row_sums(&ref));
+    EXPECT_EQ(tatami::column_sums(&mat), tatami::column_sums(&ref));
+}
+
+INSTANTIATE_TEST_CASE_P(
+    HDF5SparseMatrix,
+    HDF5SparseApplyTest,
+    ::testing::Values(0, 0.001, 0.01, 0.1) // cache size multiplier
 );
