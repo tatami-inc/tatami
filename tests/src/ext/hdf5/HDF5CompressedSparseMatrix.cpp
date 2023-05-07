@@ -487,7 +487,10 @@ TEST_P(HDF5SparseBasicCacheTest, SimpleOracle) {
         > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
 
         test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, false); // consecutive
+        test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, false, 0.3 * NR, 0.5 * NR); // consecutive with bounds
+
         test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, true); // randomized
+        test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, true, 0.2 * NR, 0.6 * NR); // randomized with bounds
     }
 
     {
@@ -502,7 +505,10 @@ TEST_P(HDF5SparseBasicCacheTest, SimpleOracle) {
         > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
 
         test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, false); // consecutive
+        test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, false, 0.1 * NR, 0.7 * NR); // consecutive with bounds
+
         test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, true); // randomized
+        test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, true, 0.25 * NR, 0.6 * NR); // randomized with bounds
     }
 }
 
