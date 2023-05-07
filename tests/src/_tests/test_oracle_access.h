@@ -171,16 +171,16 @@ std::shared_ptr<tatami::Matrix<Value_, Index_> > make_CrankyMatrix(std::shared_p
     return std::shared_ptr<tatami::Matrix<Value_, Index_> >(new CrankyMatrix<Value_, Index_>(std::move(p), predict_to));
 }
 
-template<class Matrix>
-void test_oracle_column_access(const Matrix* ptr, const Matrix* ref, bool randomized) {
+template<class Matrix, typename ... Args_>
+void test_oracle_column_access(const Matrix* ptr, const Matrix* ref, bool randomized, Args_... args) {
     int NR = ptr->nrow();
     int NC = ptr->ncol();
 
-    auto pwork = ref->dense_column();
-    auto swork = ref->sparse_column();
+    auto pwork = ref->dense_column(args...);
+    auto swork = ref->sparse_column(args...);
 
-    auto pwork_o = ptr->dense_column();
-    auto swork_o = ptr->sparse_column();
+    auto pwork_o = ptr->dense_column(args...);
+    auto swork_o = ptr->sparse_column(args...);
 
     auto iterator = [&](int i) -> void {
         auto expected = pwork->fetch(i);
@@ -218,16 +218,16 @@ void test_oracle_column_access(const Matrix* ptr, const Matrix* ref, bool random
     }
 }
 
-template<class Matrix>
-void test_oracle_row_access(const Matrix* ptr, const Matrix* ref, bool randomized) {
+template<class Matrix, typename ... Args_>
+void test_oracle_row_access(const Matrix* ptr, const Matrix* ref, bool randomized, Args_... args) {
     int NR = ptr->nrow();
     int NC = ptr->ncol();
 
-    auto pwork = ref->dense_row();
-    auto swork = ref->sparse_row();
+    auto pwork = ref->dense_row(args...);
+    auto swork = ref->sparse_row(args...);
 
-    auto pwork_o = ptr->dense_row();
-    auto swork_o = ptr->sparse_row();
+    auto pwork_o = ptr->dense_row(args...);
+    auto swork_o = ptr->sparse_row(args...);
 
     auto iterator = [&](int i) -> void {
         auto expected = pwork->fetch(i);

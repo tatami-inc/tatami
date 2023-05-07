@@ -138,6 +138,25 @@ struct OracleStream {
         return true;
     }
 
+    /**
+     * Move the state backwards by one prediction.
+     * This is guaranteed to work at least once after calling `next()`;
+     * multiple calls may or may not work, depending on whether the previous state has already been discarded.
+     * It is most useful for loops that need to inspect the next prediction before deciding whether to use it.
+     *
+     * @return Whether or not the state was moved back successfully.
+     * This is guaranteed to be `true` once after a call to `next()`.
+     */
+    bool back() {
+        // Easy to see that, in next(), any successful call leaves us with used > 0.
+        // So at least one invocation of unwind() will be successful.
+        if (!used) {
+            return false;
+        }
+        --used;
+        return true; 
+    }
+
 private:
     std::unique_ptr<Oracle<Index_> > oracle;
     std::vector<Index_> predictions;
