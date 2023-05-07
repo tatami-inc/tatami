@@ -671,9 +671,9 @@ private:
     }
 
     template<class Fill_, class Skip_>
-    static size_t indexed_extraction(const Index_* istart, const Index_* iend, const Value_* vstart, const std::vector<Index_>& indices, Fill_ fill, Skip_ skip) {
+    static size_t indexed_extraction(const Index_* istart, const Index_* iend, const Value_* vstart, bool needs_value, const std::vector<Index_>& indices, Fill_ fill, Skip_ skip) {
         auto ioriginal = istart;
-        if (vstart) {
+        if (needs_value) {
             for (auto idx : indices) {
                 while (istart != iend && *istart < idx) {
                     ++istart;
@@ -684,6 +684,8 @@ private:
                 }
                 if (*istart == idx) {
                     fill(idx, *vstart);
+                    ++istart;
+                    ++vstart;
                 } else {
                     skip();
                 }
@@ -698,6 +700,7 @@ private:
                 }
                 if (*istart == idx) {
                     fill(idx, 0);
+                    ++istart;
                 } else {
                     skip();
                 }
@@ -715,8 +718,7 @@ private:
             extract_primary_raw(i, 
 
                 [&](const Index_* is, const Index_* ie, const Value_* vs) -> size_t {
-                    std::fill(buffer, buffer + indices.size(), 0);
-                    return indexed_extraction(is, ie, vs, indices, 
+                    return indexed_extraction(is, ie, vs, true, indices, 
                         [&](Index_, Value_ value) -> void {
                             *buffer = value;
                             ++buffer;
@@ -743,7 +745,7 @@ private:
             extract_primary_raw(i, 
 
                 [&](const Index_* is, const Index_* ie, const Value_* vs) -> size_t {
-                    return indexed_extraction(is, ie, vs, indices,
+                    return indexed_extraction(is, ie, vs, needs_value, indices,
                         [&](Index_ pos, Value_ value) -> void {
                             if (needs_value) {
                                 dbuffer[counter] = value;
