@@ -23,7 +23,7 @@ namespace tatami {
 /**
  * @brief Semi-compressed sparse matrix representation.
  *
- * This refers to a sparse matrix where counts greater than 1 are represented by duplicated indices.
+ * This refers to a sparse matrix of non-negative integers, where counts greater than 1 are represented by duplicated indices.
  * For data where the vast majority of counts are 1, the semi-compressed representation reduces memory usage by eliminating the storage of the values.
  * Nonetheless, it is still capable of handling larger counts on the rare occasions that they do occur.
  *
@@ -45,7 +45,7 @@ template<
     class IndexStorage_ = std::vector<Index_>, 
     class PointerStorage_ = std::vector<size_t> 
 >
-class CompressedSparseMatrix : public Matrix<Value_, Index_> {
+class SemiCompressedSparseMatrix : public Matrix<Value_, Index_> {
 public:
     /**
      * @param nr Number of rows.
@@ -58,11 +58,45 @@ public:
      * `ptr` is ordered with first and last values set to 0 and the number of non-zero elements, respectively;
      * and `idx` is ordered within each interval defined by successive elements of `ptr`.
      */
-    CompressedSparseMatrix(Index_ nr, Index_ nc, IndexStorage_ idx, PointerStorage_ ptr, bool check=true) : 
-        nrows(nr), ncols(nc), values(std::move(vals)), indices(std::move(idx)), indptrs(std::move(ptr)) 
+    SemiCompressedSparseMatrix(Index_ nr, Index_ nc, IndexStorage_ idx, PointerStorage_ ptr, bool check=true) : 
+        nrows(nr), ncols(nc), indices(std::move(idx)), indptrs(std::move(ptr)) 
     {
-        check_values(check); 
-        return;
+        if (check) {
+            if (row_) {
+                if (indptrs.size() != static_cast<size_t>(nrows) + 1){
+                    throw std::runtime_error("length of 'indptrs' should be equal to 'nrows + 1'");
+                }
+            } else {
+                if (indptrs.size() != static_cast<size_t>(ncols) + 1){
+                    throw std::runtime_error("length of 'indptrs' should be equal to 'ncols + 1'");
+                }
+            }
+
+            if (indptrs[0] != 0) {
+                throw std::runtime_error("first element of 'indptrs' should be zero");
+            }
+            if (static_cast<size_t>(indptrs[indptrs.size() - 1]) != indices.size()) {
+                throw std::runtime_error("last element of 'indptrs' should be equal to length of 'indices'");
+            }
+
+            size_t counter = 0;
+            for (size_t i = 1; i < indptrs.size(); ++i) {
+                if (indptrs[i] < indptrs[i-1]) {
+                    throw std::runtime_error("'indptrs' should be in increasing order");
+                }
+
+                if (counter < indices.size()) {
+                    auto previous = indices[counter];
+                    ++counter;
+                    while (counter < static_cast<size_t>(indptrs[i])) {
+                        if (previous > indices[counter]) {
+                            throw std::runtime_error("'indices' should be non-decreasing within each " + (row_ ? std::string("row") : std::string("column")));
+                        }
+                        ++counter;
+                    }
+                }
+            }
+        }
     }
 
 private:
@@ -70,48 +104,8 @@ private:
     IndexStorage_ indices;
     PointerStorage_ indptrs;
 
-    void check_values(bool check) {
-        if (!check) {
-            return;
-        }
-
-        if (row_) {
-            if (indptrs.size() != static_cast<size_t>(nrows) + 1){
-                throw std::runtime_error("length of 'indptrs' should be equal to 'nrows + 1'");
-            }
-        } else {
-            if (indptrs.size() != static_cast<size_t>(ncols) + 1){
-                throw std::runtime_error("length of 'indptrs' should be equal to 'ncols + 1'");
-            }
-        }
-
-        if (indptrs[0] != 0) {
-            throw std::runtime_error("first element of 'indptrs' should be zero");
-        }
-        if (static_cast<size_t>(indptrs[indptrs.size() - 1]) != indices.size()) {
-            throw std::runtime_error("last element of 'indptrs' should be equal to length of 'indices'");
-        }
-
-        size_t counter = 0;
-        for (size_t i = 1; i < indptrs.size(); ++i) {
-            if (indptrs[i] < indptrs[i-1]) {
-                throw std::runtime_error("'indptrs' should be in increasing order");
-            }
-
-            if (counter < indices.size()) {
-                auto previous = indices[counter];
-                ++counter;
-                while (counter < static_cast<size_t>(indptrs[i])) {
-                    if (previous > indices[counter]) {
-                        throw std::runtime_error("'indices' should be non-decreasing within each " + (row_ ? std::string("row") : std::string("column")));
-                    }
-                    ++counter;
-                }
-            }
-        }
-
-        return;
-    }
+    typedef typename std::remove_reference<decltype(std::declval<IndexStorage_>()[0])>::type index_type;
+    typedef typename std::remove_reference<decltype(std::declval<PointerStorage_>()[0])>::type indptr_type;
 
 public:
     Index_ nrow() const { return nrows; }
@@ -137,21 +131,21 @@ public:
 
 private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_>
-    struct CompressedExtractorBase : public Extractor<selection_, sparse_, Value_, Index_> {
-        CompressedExtractorBase(const CompressedSparseMatrix* p, const Options& opt) : parent(p), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {
+    struct SemiCompressedExtractorBase : public Extractor<selection_, sparse_, Value_, Index_> {
+        SemiCompressedExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt) : parent(p), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->full_length = (accrow_ ? parent->ncols : parent->nrows);
             }
         }
 
-        CompressedExtractorBase(const CompressedSparseMatrix* p, const Options& opt, Index_ bs, Index_ bl) : CompressedExtractorBase(p, opt) {
+        SemiCompressedExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt, Index_ bs, Index_ bl) : SemiCompressedExtractorBase(p, opt) {
             if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->block_start = bs;
                 this->block_length = bl;
             }
         }
 
-        CompressedExtractorBase(const CompressedSparseMatrix* p, const Options& opt, std::vector<Index_> i) : CompressedExtractorBase(p, opt) {
+        SemiCompressedExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt, std::vector<Index_> i) : SemiCompressedExtractorBase(p, opt) {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
                 subset_indices = std::move(i);
                 this->index_length = subset_indices.size();
@@ -172,7 +166,7 @@ private:
         }
 
     protected:
-        const CompressedSparseMatrix* parent;
+        const SemiCompressedSparseMatrix* parent;
         typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type subset_indices;
         bool needs_value = false;
         bool needs_index = false;
@@ -183,7 +177,7 @@ private:
      ***********************************/
 private:
     struct PrimaryWorkspace {
-        std::vector<std::pair<size_t, size_t> > cached;
+        std::vector<size_t> cached;
     };
 
     Index_ max_secondary_index() const {
@@ -194,54 +188,50 @@ private:
         }
     }
 
-    std::pair<size_t, size_t> primary_dimension(Index_ i, Index_ start, Index_ length, PrimaryWorkspace& work) const {
+    indptr_type primary_start(Index_ i, Index_ start, PrimaryWorkspace& work) const {
         bool do_cache = !(work.cached.empty());
         if (do_cache) {
             auto val = work.cached[i];
-            if (val.first != -1) {
+            if (val != -1) {
                 return val;
             }
         }
 
-        auto iIt = indices.begin() + indptrs[i], eIt = indices.begin() + indptrs[i + 1]; 
-
+        auto outstart = indptrs[i];
         if (start) { // Jumping ahead if non-zero.
-            iIt = std::lower_bound(iIt, eIt, start);
+            auto iIt = indices.begin() + indptrs[i], eIt = indices.begin() + indptrs[i + 1]; 
+            outstart = std::lower_bound(iIt, eIt, start) - indices.begin();
         } 
-
-        auto last = start + length;
-        if (last != max_secondary_index()) { // Jumping to last element.
-            eIt = std::lower_bound(iIt, eIt, last);
-        }
-
-        size_t outstart = iIt - indices.begin();
-        size_t outlength = eIt - iIt;
         if (do_cache) {
-            work.cached[i].first = outstart;
-            work.cached[i].second = outlength;
+            work.cached[i] = outstart;
         }
 
-        return std::make_pair(outstart, outlength);
+        return outstart;
     }
 
     SparseRange<Value_, Index_> primary_dimension_raw(Index_ i, Index_ start, Index_ length, PrimaryWorkspace& work, Value_* out_values, Index_* out_indices) const {
-        auto obtained = primary_dimension(i, start, length, work);
+        auto position = primary_start(i, start, work);
+        auto limit = indptrs[i + 1];
+        auto end = start + length;
 
-        auto position = obtained.first;
-        auto last = position + obtained.second;
-        int count = 0;
+        SparseRange<Value_, Index_> output;
+        output.number = 0;
+        output.value = out_values;
+        output.index = out_indices;
+        auto& count = output.number;
 
-        while (position < last) {
+        while (position < limit && indices[position] < end) {
+            auto curdex = indices[position];
             auto copy = position;
             ++copy;
-            for (; copy < last && indices[copy] == indices[position]; ++position) {}
+            for (; copy < limit && indices[copy] == curdex; ++copy) {}
 
             if (out_values) {
-                *out_values = position - copy;
+                *out_values = copy - position;
                 ++out_values;
             }
             if (out_indices) {
-                *out_indices = indices[position];
+                *out_indices = curdex;
                 ++out_indices;
             }
 
@@ -249,24 +239,22 @@ private:
             position = copy;
         }
 
-        SparseRange<Value_, Index_> output;
-        output.number = count;
-        output.value = (out_values ? out_values : NULL);
-        output.index = (out_indices ? out_indices : NULL);
         return output;
     }
 
     void primary_dimension_expanded(Index_ i, Index_ start, Index_ length, PrimaryWorkspace& work, Value_* out_values) const {
         std::fill(out_values, out_values + length, static_cast<Value_>(0));
-        auto obtained = primary_dimension(i, start, length, work);
+        auto position = primary_start(i, start, work);
+        auto limit = indptrs[i + 1];
+        auto end = start + length;
 
-        auto position = obtained.first;
-        auto last = position + obtained.second;
-        while (position < last) {
+        while (position < limit && indices[position] < end) {
+            auto curdex = indices[position];
             auto copy = position;
             ++copy;
-            for (; copy < last && indices[copy] == indices[position]; ++position) {}
-            *out_values[indices[position] - start] = position - copy;
+            for (; copy < limit && indices[copy] == curdex; ++copy) {}
+            out_values[curdex - start] = copy - position;
+            position = copy;
         }
 
         return;
@@ -284,11 +272,11 @@ private:
         if (indices[0]) { // Only jumping ahead if the start is non-zero.
             bool do_cache = !work.cached.empty();
             if (do_cache) {
-                if (work.cached[i].first != -1) { // retrieving the jump from cache, if we came here before.
-                    iIt += work.cached[i].first;
+                if (work.cached[i] != -1) { // retrieving the jump from cache, if we came here before.
+                    iIt += work.cached[i];
                 } else {
                     auto iIt2 = std::lower_bound(iIt, eIt, subset[0]);
-                    work.cached[i].first = iIt2 - iIt;
+                    work.cached[i] = iIt2 - iIt;
                     iIt = iIt2;
                 }
             } else {
@@ -378,9 +366,9 @@ private:
 
 private:
     template<DimensionSelectionType selection_, bool sparse_>
-    struct PrimaryExtractorBase : public CompressedExtractorBase<row_, selection_, sparse_> {
+    struct PrimaryExtractorBase : public SemiCompressedExtractorBase<row_, selection_, sparse_> {
         template<typename ...Args_>
-        PrimaryExtractorBase(const CompressedSparseMatrix* p, const Options& opt, Args_... args) : CompressedExtractorBase<row_, selection_, sparse_>(p, opt, std::move(args)...) {
+        PrimaryExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : SemiCompressedExtractorBase<row_, selection_, sparse_>(p, opt, std::move(args)...) {
             bool spawn_cache = false;
 
             if constexpr(selection_ == DimensionSelectionType::BLOCK) {
@@ -392,7 +380,7 @@ private:
             }
 
             if (spawn_cache) {
-                work.cached.resize(row_ ? this->parent->nrows : this->parent->ncols, std::pair<size_t, size_t>(-1, 0));
+                work.cached.resize(row_ ? this->parent->nrows : this->parent->ncols, -1);
             }
         }
 
@@ -403,7 +391,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DensePrimaryExtractor : public PrimaryExtractorBase<selection_, false> {
         template<typename ...Args_>
-        DensePrimaryExtractor(const CompressedSparseMatrix* p, const Options& opt, Args_... args) : PrimaryExtractorBase<selection_, false>(p, opt, std::move(args)...) {}
+        DensePrimaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : PrimaryExtractorBase<selection_, false>(p, opt, std::move(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -420,7 +408,7 @@ private:
     template<DimensionSelectionType selection_>
     struct SparsePrimaryExtractor : public PrimaryExtractorBase<selection_, true> {
         template<typename ...Args_>
-        SparsePrimaryExtractor(const CompressedSparseMatrix* p, const Options& opt, Args_... args) : PrimaryExtractorBase<selection_, true>(p, opt, std::move(args)...) {}
+        SparsePrimaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : PrimaryExtractorBase<selection_, true>(p, opt, std::move(args)...) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             if (!this->needs_value) {
@@ -445,14 +433,9 @@ private:
      *************************************/
 private:
     struct SecondaryWorkspace {
-        typedef typename std::remove_reference<decltype(std::declval<IndexStorage_>()[0])>::type index_type;
-        typedef typename std::remove_reference<decltype(std::declval<PointerStorage_>()[0])>::type indptr_type;
-
         SecondaryWorkspace() = default;
 
-        SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) :
-            current_indptrs(idp.begin() + start, idp.begin() + start + length), current_indices(length)
-        {
+        SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) : current_indptrs(length), current_indices(length) {
             /* Here, the general idea is to store a local copy of the actual
              * row indices (for CSC matrices; column indices, for CSR matrices)
              * so that we don't have to keep on doing cache-unfriendly look-ups
@@ -463,6 +446,7 @@ private:
              */
             auto idpIt = idp.begin() + start;
             for (Index_ i = 0; i < length; ++i, ++idpIt) {
+                current_indptrs[i].pointer = *idpIt;
                 current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
             }
             return;
@@ -498,9 +482,9 @@ private:
     };
 
 private:
-    void update_secondary_position(typename SecondaryWorkspace::Position& curptr) const {
+    void update_secondary_position(typename SecondaryWorkspace::Position& curptr, indptr_type limit) const {
         if (!curptr.scanned) {
-            auto current = indices[curptr.pointer];
+            auto curdex = indices[curptr.pointer];
             curptr.count = 0;
             auto copy = curptr.pointer;
             do {
@@ -510,7 +494,7 @@ private:
             curptr.scanned = true;
         }
     }
-   
+
     template<class Store_>
     void secondary_dimension_above(Index_ secondary, Index_ primary, Index_ index_primary, SecondaryWorkspace& work, Store_& output) const {
         auto& curdex = work.current_indices[index_primary];
@@ -521,7 +505,7 @@ private:
         if (secondary > curdex) {
             auto max_index = max_secondary_index();
             auto limit = indptrs[primary + 1];
-            update_secondary_position(curptr);
+            update_secondary_position(curptr, limit);
             curptr.pointer += curptr.count;
             curptr.scanned = false;
 
@@ -568,7 +552,7 @@ private:
         } 
 
         if (secondary == curdex) { // assuming secondary < max_index, of course.
-            update_secondary_position(curptr);
+            update_secondary_position(curptr, indptrs[primary + 1]);
             output.add(primary, curptr.count);
         } else {
             output.skip(primary);
@@ -588,18 +572,18 @@ private:
                     // in which case we can just jump there directly rather than 
                     // doing an unnecessary binary search.
                     curptr.pointer = indptrs[primary];
-                    curdex = indices[curptr];
+                    curdex = indices[curptr.pointer];
                 } else {
                     // Otherwise, searching indices below the existing position.
                     curptr.pointer = std::lower_bound(indices.begin() + indptrs[primary], indices.begin() + curptr.pointer, secondary) - indices.begin();
-                    curdex = (curptr < limit ? indices[curptr] : max_secondary_index());
+                    curdex = (curptr.pointer < limit ? indices[curptr.pointer] : max_secondary_index());
                 }
                 curptr.scanned = false;
             }
         }
 
         if (secondary == curdex) { // assuming secondary < max_index, of course.
-            update_secondary_position(curptr);
+            update_secondary_position(curptr, indptrs[primary + 1]);
             output.add(primary, curptr.count);
         } else {
             output.skip(primary);
@@ -692,9 +676,9 @@ private:
 
 private:
     template<DimensionSelectionType selection_, bool sparse_>
-    struct SecondaryExtractorBase : public CompressedExtractorBase<!row_, selection_, sparse_> {
+    struct SecondaryExtractorBase : public SemiCompressedExtractorBase<!row_, selection_, sparse_> {
         template<typename ...Args_>
-        SecondaryExtractorBase(const CompressedSparseMatrix* p, const Options& opt, Args_... args) : CompressedExtractorBase<!row_, selection_, sparse_>(p, opt, std::move(args)...) {
+        SecondaryExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : SemiCompressedExtractorBase<!row_, selection_, sparse_>(p, opt, std::move(args)...) {
             auto max_index = this->parent->max_secondary_index();
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -713,7 +697,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DenseSecondaryExtractor : public SecondaryExtractorBase<selection_, false> {
         template<typename ...Args_>
-        DenseSecondaryExtractor(const CompressedSparseMatrix* p, const Options& opt, Args_... args) : SecondaryExtractorBase<selection_, false>(p, opt, std::move(args)...) {}
+        DenseSecondaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : SecondaryExtractorBase<selection_, false>(p, opt, std::move(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -730,7 +714,7 @@ private:
     template<DimensionSelectionType selection_>
     struct SparseSecondaryExtractor : public SecondaryExtractorBase<selection_, true> {
         template<typename ...Args_>
-        SparseSecondaryExtractor(const CompressedSparseMatrix* p, const Options& opt, Args_... args) : SecondaryExtractorBase<selection_, true>(p, opt, std::move(args)...) {}
+        SparseSecondaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : SecondaryExtractorBase<selection_, true>(p, opt, std::move(args)...) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             if (!this->needs_value) {
@@ -831,14 +815,14 @@ public:
  * See `tatami::SemiCompressedSparseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >
-using CompressedSparseColumnMatrix = CompressedSparseMatrix<false, Value_, Index_, IndexStorage_, PointerStorage_>;
+using SemiCompressedSparseColumnMatrix = SemiCompressedSparseMatrix<false, Value_, Index_, IndexStorage_, PointerStorage_>;
 
 /**
  * Semi-compressed sparse row matrix.
  * See `tatami::SemiCompressedSparseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >
-using CompressedSparseRowMatrix = CompressedSparseMatrix<true, Value_, Index_, IndexStorage_, PointerStorage_>;
+using SemiCompressedSparseRowMatrix = SemiCompressedSparseMatrix<true, Value_, Index_, IndexStorage_, PointerStorage_>;
 
 }
 
