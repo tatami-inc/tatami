@@ -4,6 +4,7 @@
 #include "base/dense/DenseMatrix.hpp"
 
 #include "base/sparse/CompressedSparseMatrix.hpp"
+#include "base/sparse/SemiCompressedSparseMatrix.hpp"
 
 #include "base/isometric/DelayedIsometricOp.hpp"
 
