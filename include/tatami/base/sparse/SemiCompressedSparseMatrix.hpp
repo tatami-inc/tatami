@@ -9,6 +9,7 @@
 #include <memory>
 #include <utility>
 #include <stdexcept>
+#include <string>
 
 /**
  * @file SemiCompressedSparseMatrix.hpp
