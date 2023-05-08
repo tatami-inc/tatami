@@ -478,6 +478,19 @@ TEST_P(HDF5SparseBasicCacheTest, SimpleOracle) {
 
         test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, true); // randomized
         test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, true, 0.2 * NR, 0.6 * NR); // randomized with bounds
+
+        // Oracle-based extraction still works if we turn off value extraction.
+        tatami::Options opt;
+        opt.sparse_extract_value = false;
+        auto mwork = mat.sparse_row(opt);
+        mwork->set_oracle(std::make_unique<tatami::ConsecutiveOracle<int> >(0, NR));
+        auto rwork = ref.sparse_row(opt);
+        for (size_t r = 0; r < NR; ++r) {
+            auto mout = mwork->fetch(r);
+            auto rout = rwork->fetch(r);
+            EXPECT_EQ(mout.index, rout.index);
+            EXPECT_EQ(mout.value.size(), 0);
+        }
     }
 
     {
@@ -499,6 +512,41 @@ TEST_P(HDF5SparseBasicCacheTest, SimpleOracle) {
     }
 }
 
+TEST_P(HDF5SparseBasicCacheTest, Repeated) {
+    size_t NR = 199, NC = 288;
+    dump(NR, NC);
+    int cache_size = compute_cache_size(NR, NC, GetParam());
+
+    // Check that we re-use the cache effectively when no new elements are
+    // requested; no additional extractions from file should occur.
+    std::vector<int> predictions;
+    int counter = 0;
+    for (size_t i = 0; i < NR * 10; ++i) {
+        predictions.push_back(i % 2);
+    }
+
+    tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
+    tatami::CompressedSparseMatrix<
+        true, 
+        double, 
+        int, 
+        decltype(triplets.value), 
+        decltype(triplets.index), 
+        decltype(triplets.ptr)
+    > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+
+    auto rwork = ref.dense_row();
+    auto mwork = mat.dense_row();
+    auto mwork_o = mat.dense_row();
+    mwork_o->set_oracle(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()));
+
+    for (auto i : predictions) {
+        auto expected = rwork->fetch(i);
+        EXPECT_EQ(mwork->fetch(i), expected);
+        EXPECT_EQ(mwork_o->fetch(i), expected);
+    }
+}
+
 INSTANTIATE_TEST_CASE_P(
     HDF5SparseMatrix,
     HDF5SparseBasicCacheTest,
@@ -516,7 +564,7 @@ protected:
 
     template<class Params_>
     void assemble(const Params_& params) {
-        dump(100, NR, NC);
+        dump(NR, NC);
 
         double cache_multiplier = std::get<0>(params);
         int interval_jump = std::get<1>(params);
