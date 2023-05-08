@@ -79,6 +79,37 @@ protected:
     static size_t compute_cache_size(size_t NR, size_t NC, double fraction) {
         return static_cast<double>(NR * NC) * fraction * static_cast<double>(sizeof(double) + sizeof(int));
     }
+
+    template<bool row_>
+    auto create_matrix(size_t NR, size_t NC, size_t cache_size) const {
+        return tatami::HDF5CompressedSparseMatrix<row_, double, int>(
+            row_ ? NR : NC, 
+            row_ ? NC : NR, 
+            fpath, 
+            name + "/data", 
+            name + "/index", 
+            name + "/indptr", 
+            cache_size
+        ); 
+    }
+
+    template<bool row_>
+    auto create_reference(size_t NR, size_t NC) const {
+        return tatami::CompressedSparseMatrix<
+            row_, 
+            double, 
+            int, 
+            decltype(triplets.value), 
+            decltype(triplets.index), 
+            decltype(triplets.ptr)
+        >(
+            row_ ? NR : NC, 
+            row_ ? NC : NR, 
+            triplets.value, 
+            triplets.index, 
+            triplets.ptr
+        );
+    }
 };
 
 /*************************************
@@ -117,34 +148,17 @@ TEST_P(HDF5SparseAccessTest, Primary) {
 
     const size_t NR = 200, NC = 100;
     dump(std::get<2>(param), NR, NC);
-    int cache_size = compute_cache_size(NR, NC, std::get<3>(param));
+    int cache_size = compute_cache_size(NR, NC, std::get<3>(param)); // We limit the cache size to ensure that the cache management is not trivial.
 
     {
-        // We limit the cache size to ensure that the cache management is not trivial.
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size); 
-        tatami::CompressedSparseMatrix<
-            true, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<true>(NR, NC, cache_size);
+        auto ref = create_reference<true>(NR, NC);
         test_simple_row_access(&mat, &ref, FORWARD, JUMP);
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            false, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<false>(NR, NC, cache_size);
+        auto ref = create_reference<false>(NR, NC);
         test_simple_column_access(&mat, &ref, FORWARD, JUMP);
     }
 }
@@ -159,31 +173,15 @@ TEST_P(HDF5SparseAccessTest, Secondary) {
     int cache_size = compute_cache_size(NR, NC, std::get<3>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            true, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<true>(NR, NC, cache_size);
+        auto ref = create_reference<true>(NR, NC);
         test_simple_column_access(&mat, &ref, FORWARD, JUMP);
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            false, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
-
-        test_simple_column_access(&mat, &ref, FORWARD, JUMP);
+        auto mat = create_matrix<false>(NR, NC, cache_size);
+        auto ref = create_reference<false>(NR, NC);
+        test_simple_row_access(&mat, &ref, FORWARD, JUMP);
     }
 }
 
@@ -214,31 +212,15 @@ TEST_P(HDF5SparseSlicedTest, Primary) {
     int cache_size = compute_cache_size(NR, NC, std::get<4>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            true, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<true>(NR, NC, cache_size);
+        auto ref = create_reference<true>(NR, NC);
         size_t FIRST = interval_info[0] * NC, LAST = interval_info[1] * NC;
         test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LAST);
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            false, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<false>(NR, NC, cache_size);
+        auto ref = create_reference<false>(NR, NC);
         size_t FIRST = interval_info[0] * NC, LAST = interval_info[1] * NC; // NC is deliberate, due to the transposition.
         test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LAST);
     }
@@ -255,31 +237,15 @@ TEST_P(HDF5SparseSlicedTest, Secondary) {
     int cache_size = compute_cache_size(NR, NC, std::get<4>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            true, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<true>(NR, NC, cache_size);
+        auto ref = create_reference<true>(NR, NC);
         size_t FIRST = interval_info[0] * NR, LAST = interval_info[1] * NR;
         test_sliced_column_access(&mat, &ref, FORWARD, JUMP, FIRST, LAST);
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            false, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<false>(NR, NC, cache_size);
+        auto ref = create_reference<false>(NR, NC);
         size_t FIRST = interval_info[0] * NC, LAST = interval_info[1] * NC;
         test_sliced_row_access(&mat, &ref, FORWARD, JUMP, FIRST, LAST);
     }
@@ -317,31 +283,15 @@ TEST_P(HDF5SparseIndexedTest, Primary) {
     int cache_size = compute_cache_size(NR, NC, std::get<4>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            true, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<true>(NR, NC, cache_size);
+        auto ref = create_reference<true>(NR, NC);
         size_t FIRST = interval_info[0] * NC, STEP = interval_info[1];
         test_indexed_row_access(&mat, &ref, FORWARD, JUMP, FIRST, STEP);
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            false, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<false>(NR, NC, cache_size);
+        auto ref = create_reference<false>(NR, NC);
         size_t FIRST = interval_info[0] * NC, STEP = interval_info[1]; // NC is deliberate, due to the transposition.
         test_indexed_column_access(&mat, &ref, FORWARD, JUMP, FIRST, STEP);
     }
@@ -358,31 +308,15 @@ TEST_P(HDF5SparseIndexedTest, Secondary) {
     int cache_size = compute_cache_size(NR, NC, std::get<4>(param));
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            true, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<true>(NR, NC, cache_size);
+        auto ref = create_reference<true>(NR, NC);
         size_t FIRST = interval_info[0] * NR, STEP = interval_info[1];
         test_indexed_column_access(&mat, &ref, FORWARD, JUMP, FIRST, STEP);
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            false, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
-
+        auto mat = create_matrix<false>(NR, NC, cache_size);
+        auto ref = create_reference<false>(NR, NC);
         size_t FIRST = interval_info[0] * NC, STEP = interval_info[1];
         test_indexed_row_access(&mat, &ref, FORWARD, JUMP, FIRST, STEP);
     }
@@ -416,15 +350,8 @@ TEST_P(HDF5SparseBasicCacheTest, LruRandomized) {
     int cache_size = compute_cache_size(NR, NC, GetParam());
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            true, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+        auto mat = create_matrix<true>(NR, NC, cache_size);
+        auto ref = create_reference<true>(NR, NC);
 
         std::mt19937_64 rng(cache_size * 123);
         auto m_ext = mat.dense_row();
@@ -436,15 +363,8 @@ TEST_P(HDF5SparseBasicCacheTest, LruRandomized) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            false, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
+        auto mat = create_matrix<false>(NR, NC, cache_size);
+        auto ref = create_reference<false>(NR, NC);
 
         std::mt19937_64 rng(cache_size * 456);
         auto m_ext = mat.dense_column();
@@ -463,15 +383,8 @@ TEST_P(HDF5SparseBasicCacheTest, SimpleOracle) {
     int cache_size = compute_cache_size(NR, NC, GetParam());
 
     {
-        tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            true, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+        auto mat = create_matrix<true>(NR, NC, cache_size);
+        auto ref = create_reference<true>(NR, NC);
 
         test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, false); // consecutive
         test_oracle_row_access<tatami::NumericMatrix>(&mat, &ref, false, 0.3 * NR, 0.5 * NR); // consecutive with bounds
@@ -494,15 +407,8 @@ TEST_P(HDF5SparseBasicCacheTest, SimpleOracle) {
     }
 
     {
-        tatami::HDF5CompressedSparseMatrix<false, double, int> mat(NC, NR, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-        tatami::CompressedSparseMatrix<
-            false, 
-            double, 
-            int, 
-            decltype(triplets.value), 
-            decltype(triplets.index), 
-            decltype(triplets.ptr)
-        > ref(NC, NR, triplets.value, triplets.index, triplets.ptr);
+        auto mat = create_matrix<false>(NR, NC, cache_size);
+        auto ref = create_reference<false>(NR, NC);
 
         test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, false); // consecutive
         test_oracle_column_access<tatami::NumericMatrix>(&mat, &ref, false, 0.1 * NR, 0.7 * NR); // consecutive with bounds
@@ -525,15 +431,8 @@ TEST_P(HDF5SparseBasicCacheTest, Repeated) {
         predictions.push_back(i % 2);
     }
 
-    tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-    tatami::CompressedSparseMatrix<
-        true, 
-        double, 
-        int, 
-        decltype(triplets.value), 
-        decltype(triplets.index), 
-        decltype(triplets.ptr)
-    > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+    auto mat = create_matrix<true>(NR, NC, cache_size);
+    auto ref = create_reference<true>(NR, NC);
 
     auto rwork = ref.dense_row();
     auto mwork = mat.dense_row();
@@ -664,15 +563,8 @@ TEST_P(HDF5SparseApplyTest, Basic) {
     dump(NR, NC);
     int cache_size = compute_cache_size(NR, NC, GetParam());
 
-    tatami::HDF5CompressedSparseMatrix<true, double, int> mat(NR, NC, fpath, name + "/data", name + "/index", name + "/indptr", cache_size);
-    tatami::CompressedSparseMatrix<
-        true, 
-        double, 
-        int, 
-        decltype(triplets.value), 
-        decltype(triplets.index), 
-        decltype(triplets.ptr)
-    > ref(NR, NC, triplets.value, triplets.index, triplets.ptr);
+    auto mat = create_matrix<true>(NR, NC, cache_size);
+    auto ref = create_reference<true>(NR, NC);
 
     EXPECT_EQ(tatami::row_sums(&mat), tatami::row_sums(&ref));
     EXPECT_EQ(tatami::column_sums(&mat), tatami::column_sums(&ref));
