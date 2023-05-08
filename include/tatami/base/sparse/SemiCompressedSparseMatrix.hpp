@@ -226,10 +226,11 @@ private:
 
     SparseRange<Value_, Index_> primary_dimension_raw(Index_ i, Index_ start, Index_ length, PrimaryWorkspace& work, Value_* out_values, Index_* out_indices) const {
         auto obtained = primary_dimension(i, start, length, work);
-        SparseRange<Value_, Index_> output(obtained.second);
 
         auto position = obtained.first;
         auto last = position + obtained.second;
+        int count = 0;
+
         while (position < last) {
             auto copy = position;
             ++copy;
@@ -244,9 +245,12 @@ private:
                 ++out_indices;
             }
 
+            ++count;
             position = copy;
         }
 
+        SparseRange<Value_, Index_> output;
+        output.number = count;
         output.value = (out_values ? out_values : NULL);
         output.index = (out_indices ? out_indices : NULL);
         return output;
