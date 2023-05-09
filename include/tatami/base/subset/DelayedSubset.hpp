@@ -214,11 +214,11 @@ private:
                 // Need to force extraction of indices for correct duplication.
                 copy.sparse_extract_index = true;
 
-                return new_extractor<margin_ != 0, sparse_>(mat.get(), copy, std::move(idx));
+                return new_extractor<margin_ != 0, sparse_>(mat.get(), std::move(idx), copy);
             }
         }
 
-        return new_extractor<margin_ != 0, sparse_>(mat.get(), opt, std::move(idx));
+        return new_extractor<margin_ != 0, sparse_>(mat.get(), std::move(idx), opt);
     }
 
     template<class Extractor_>

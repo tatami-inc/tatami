@@ -106,7 +106,7 @@ private:
         AlongExtractor(const DelayedSubsetBlock* parent, const Options& opt) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->full_length = (margin_ == 0 ? parent->nrow() : parent->ncol());
-                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, parent->block_start, parent->block_length);
+                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), parent->block_start, parent->block_length, opt);
             }
         }
 
@@ -114,7 +114,7 @@ private:
             if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->block_start = bs;
                 this->block_length = bl;
-                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, bs + parent->block_start, bl);
+                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), bs + parent->block_start, bl, opt);
             }
         }
 
@@ -128,7 +128,7 @@ private:
                 for (auto& x : local) {
                     x += parent->block_start;
                 }
-                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), opt, std::move(local));
+                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), std::move(local), opt);
             }
         }
 
@@ -264,7 +264,7 @@ private:
                 output.reset(new DenseAlongExtractor<selection_>(this, opt, std::move(args)...));
             }
         } else {
-            auto ptr = new_extractor<accrow_, sparse_>(this->mat.get(), opt, std::move(args)...);
+            auto ptr = new_extractor<accrow_, sparse_>(this->mat.get(), std::move(args)..., opt);
             if constexpr(sparse_) {
                 output.reset(new SparseAcrossExtractor<selection_>(std::move(ptr), this->block_start));
             } else {
