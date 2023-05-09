@@ -126,7 +126,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DenseCastExtractor : public CastExtractor<selection_, false> {
         template<typename ...Args_>
-        DenseCastExtractor(std::unique_ptr<Extractor<selection_, false, Value_in_, Index_in_> > inner, Args_... args) : CastExtractor<selection_, false>(std::move(inner), std::move(args)...) {
+        DenseCastExtractor(std::unique_ptr<Extractor<selection_, false, Value_in_, Index_in_> > inner, Args_&& ... args) : CastExtractor<selection_, false>(std::move(inner), std::forward<Args_>(args)...) {
             if constexpr(!same_Value_type_) {
                 internal_buffer.resize(extracted_length<selection_, Index_out_>(*this));
             }
@@ -149,7 +149,9 @@ private:
     template<DimensionSelectionType selection_>
     struct SparseCastExtractor : public CastExtractor<selection_, true> {
         template<typename ...Args_>
-        SparseCastExtractor(std::unique_ptr<Extractor<selection_, true, Value_in_, Index_in_> > inner, Args_... args) : CastExtractor<selection_, true>(std::move(inner), std::move(args)...) {
+        SparseCastExtractor(std::unique_ptr<Extractor<selection_, true, Value_in_, Index_in_> > inner, Args_&& ... args) : 
+            CastExtractor<selection_, true>(std::move(inner), std::forward<Args_>(args)...) 
+        {
             if constexpr(!same_Value_type_) {
                 internal_vbuffer.resize(extracted_length<selection_, Index_out_>(*this));
             }

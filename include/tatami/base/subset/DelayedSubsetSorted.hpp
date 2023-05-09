@@ -497,11 +497,11 @@ private:
     }
 
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& options, Args_... args) const {
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& options, Args_&& ... args) const {
         if constexpr(accrow_ == (margin_ == 0)) {
-            return subset_utils::populate_perpendicular<accrow_, selection_, sparse_>(mat.get(), indices, options, std::move(args)...);
+            return subset_utils::populate_perpendicular<accrow_, selection_, sparse_>(mat.get(), indices, options, std::forward<Args_>(args)...);
         } else {
-            return populate_parallel<sparse_>(options, std::move(args)...);
+            return populate_parallel<sparse_>(options, std::forward<Args_>(args)...);
         }
     }
 

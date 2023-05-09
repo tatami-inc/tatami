@@ -287,21 +287,21 @@ private:
      **********************************************/
 private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > propagate(const Options& opt, Args_... args) const {
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > propagate(const Options& opt, Args_&& ... args) const {
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(!sparse_) {
-            auto inner = new_extractor<accrow_, false>(mat.get(), std::move(args)..., opt);
+            auto inner = new_extractor<accrow_, false>(mat.get(), std::forward<Args_>(args)..., opt);
             output.reset(new DenseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
 
         } else if constexpr(!Operation_::sparse_) {
             bool report_value = opt.sparse_extract_value;
             bool report_index = opt.sparse_extract_index;
-            auto inner = new_extractor<accrow_, false>(mat.get(), std::move(args)..., opt);
+            auto inner = new_extractor<accrow_, false>(mat.get(), std::forward<Args_>(args)..., opt);
             output.reset(new DensifiedSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
 
         } else if constexpr((accrow_ && !Operation_::needs_column_) || (!accrow_ && !Operation_::needs_row_)) { // i.e., extraction indices aren't required for the operation.
-            auto inner = new_extractor<accrow_, true>(mat.get(), std::move(args)..., opt);
+            auto inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., opt);
             output.reset(new SimpleSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
 
         } else {
@@ -312,9 +312,9 @@ private:
             if (report_value && !report_index) {
                 auto optcopy = opt;
                 optcopy.sparse_extract_index = true; // if we get to this clause, we need the indices; otherwise we'd have constructed a SimpleSparseIsometricExtractor.
-                inner = new_extractor<accrow_, true>(mat.get(), std::move(args)..., optcopy);
+                inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., optcopy);
             } else {
-                inner = new_extractor<accrow_, true>(mat.get(), std::move(args)..., opt);
+                inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., opt);
             }
 
             output.reset(new RegularSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));

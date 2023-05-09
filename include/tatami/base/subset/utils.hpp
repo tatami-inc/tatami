@@ -96,15 +96,15 @@ std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_perpen
     const Matrix<Value_, Index_>* mat, 
     const IndexStorage_& indices, 
     const Options& options, 
-    Args_... args)
+    Args_&& ... args)
 {
     // TODO: handle variable access patterns here.
     std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
     if constexpr(sparse_) {
-        output.reset(new SparsePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, std::move(args)..., options), indices));
+        output.reset(new SparsePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, std::forward<Args_>(args)..., options), indices));
     } else {
-        output.reset(new DensePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, std::move(args)..., options), indices));
+        output.reset(new DensePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, std::forward<Args_>(args)..., options), indices));
     }
     return output;
 }

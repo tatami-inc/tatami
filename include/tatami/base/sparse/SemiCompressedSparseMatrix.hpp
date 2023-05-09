@@ -369,7 +369,7 @@ private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct PrimaryExtractorBase : public SemiCompressedExtractorBase<row_, selection_, sparse_> {
         template<typename ...Args_>
-        PrimaryExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : SemiCompressedExtractorBase<row_, selection_, sparse_>(p, opt, std::move(args)...) {
+        PrimaryExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : SemiCompressedExtractorBase<row_, selection_, sparse_>(p, opt, std::forward<Args_>(args)...) {
             bool spawn_cache = false;
 
             if constexpr(selection_ == DimensionSelectionType::BLOCK) {
@@ -392,7 +392,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DensePrimaryExtractor : public PrimaryExtractorBase<selection_, false> {
         template<typename ...Args_>
-        DensePrimaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : PrimaryExtractorBase<selection_, false>(p, opt, std::move(args)...) {}
+        DensePrimaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : PrimaryExtractorBase<selection_, false>(p, opt, std::forward<Args_>(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -409,7 +409,7 @@ private:
     template<DimensionSelectionType selection_>
     struct SparsePrimaryExtractor : public PrimaryExtractorBase<selection_, true> {
         template<typename ...Args_>
-        SparsePrimaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : PrimaryExtractorBase<selection_, true>(p, opt, std::move(args)...) {}
+        SparsePrimaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : PrimaryExtractorBase<selection_, true>(p, opt, std::forward<Args_>(args)...) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             if (!this->needs_value) {
@@ -679,7 +679,7 @@ private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct SecondaryExtractorBase : public SemiCompressedExtractorBase<!row_, selection_, sparse_> {
         template<typename ...Args_>
-        SecondaryExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : SemiCompressedExtractorBase<!row_, selection_, sparse_>(p, opt, std::move(args)...) {
+        SecondaryExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : SemiCompressedExtractorBase<!row_, selection_, sparse_>(p, opt, std::forward<Args_>(args)...) {
             auto max_index = this->parent->max_secondary_index();
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -698,7 +698,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DenseSecondaryExtractor : public SecondaryExtractorBase<selection_, false> {
         template<typename ...Args_>
-        DenseSecondaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : SecondaryExtractorBase<selection_, false>(p, opt, std::move(args)...) {}
+        DenseSecondaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : SecondaryExtractorBase<selection_, false>(p, opt, std::forward<Args_>(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -715,7 +715,7 @@ private:
     template<DimensionSelectionType selection_>
     struct SparseSecondaryExtractor : public SecondaryExtractorBase<selection_, true> {
         template<typename ...Args_>
-        SparseSecondaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_... args) : SecondaryExtractorBase<selection_, true>(p, opt, std::move(args)...) {}
+        SparseSecondaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : SecondaryExtractorBase<selection_, true>(p, opt, std::forward<Args_>(args)...) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             if (!this->needs_value) {
@@ -740,20 +740,20 @@ private:
      *************************************/
 private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_> 
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_... args) const { 
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_&& ... args) const { 
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(accrow_ == row_) {
             if constexpr(sparse_) {
-                output.reset(new SparsePrimaryExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new SparsePrimaryExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             } else {
-                output.reset(new DensePrimaryExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new DensePrimaryExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             }
         } else {
             if constexpr(sparse_) {
-                output.reset(new SparseSecondaryExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new SparseSecondaryExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             } else {
-                output.reset(new DenseSecondaryExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new DenseSecondaryExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             }
         }
 

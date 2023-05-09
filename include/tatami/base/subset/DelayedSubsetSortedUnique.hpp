@@ -163,8 +163,8 @@ private:
     template<DimensionSelectionType selection_>
     struct DenseParallelWorkspace : public ParallelWorkspaceBase<selection_, false> {
         template<typename ... Args_>
-        DenseParallelWorkspace(const DelayedSubsetSortedUnique* parent, const Options& opt, Args_... args) : 
-            ParallelWorkspaceBase<selection_, false>(parent, opt, std::move(args)...) {}
+        DenseParallelWorkspace(const DelayedSubsetSortedUnique* parent, const Options& opt, Args_&& ... args) : 
+            ParallelWorkspaceBase<selection_, false>(parent, opt, std::forward<Args_>(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             return this->internal->fetch(i, buffer);
@@ -174,8 +174,8 @@ private:
     template<DimensionSelectionType selection_>
     struct SparseParallelWorkspace : public ParallelWorkspaceBase<selection_, true> {
         template<typename ... Args_>
-        SparseParallelWorkspace(const DelayedSubsetSortedUnique* p, const Options& opt, Args_... args) : 
-            ParallelWorkspaceBase<selection_, true>(p, opt, std::move(args)...), parent(p) {}
+        SparseParallelWorkspace(const DelayedSubsetSortedUnique* p, const Options& opt, Args_&& ... args) : 
+            ParallelWorkspaceBase<selection_, true>(p, opt, std::forward<Args_>(args)...), parent(p) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             auto raw = this->internal->fetch(i, vbuffer, ibuffer);
@@ -200,17 +200,17 @@ private:
      ******************************************/
 private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_... args) const {
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_&& ... args) const {
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(accrow_ == (margin_ == 0)) {
             // TODO: fiddle with the access limits in 'opt'.
-            return subset_utils::populate_perpendicular<accrow_, selection_, sparse_>(mat.get(), indices, opt, std::move(args)...);
+            return subset_utils::populate_perpendicular<accrow_, selection_, sparse_>(mat.get(), indices, opt, std::forward<Args_>(args)...);
         } else {
             if constexpr(sparse_) {
-                output.reset(new SparseParallelWorkspace<selection_>(this, opt, std::move(args)...));
+                output.reset(new SparseParallelWorkspace<selection_>(this, opt, std::forward<Args_>(args)...));
             } else {
-                output.reset(new DenseParallelWorkspace<selection_>(this, opt, std::move(args)...));
+                output.reset(new DenseParallelWorkspace<selection_>(this, opt, std::forward<Args_>(args)...));
             }
         }
 

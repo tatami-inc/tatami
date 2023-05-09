@@ -153,7 +153,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DenseAlongExtractor : public AlongExtractor<selection_, false> {
         template<typename ...Args_>
-        DenseAlongExtractor(const DelayedSubsetBlock* p, Args_... args) : AlongExtractor<selection_, false>(p, std::move(args)...) {}
+        DenseAlongExtractor(const DelayedSubsetBlock* p, Args_&& ... args) : AlongExtractor<selection_, false>(p, std::forward<Args_>(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             return this->internal->fetch(i, buffer);
@@ -163,7 +163,7 @@ private:
     template<DimensionSelectionType selection_>
     struct SparseAlongExtractor : public AlongExtractor<selection_, true> {
         template<typename ...Args_>
-        SparseAlongExtractor(const DelayedSubsetBlock* p, Args_... args) : AlongExtractor<selection_, true>(p, std::move(args)...), offset(p->block_start) {}
+        SparseAlongExtractor(const DelayedSubsetBlock* p, Args_&& ... args) : AlongExtractor<selection_, true>(p, std::forward<Args_>(args)...), offset(p->block_start) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             auto out = this->internal->fetch(i, vbuffer, ibuffer);
@@ -254,17 +254,17 @@ private:
      ********************************/
 private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_... args) const {
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_&& ... args) const {
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(accrow_ != (margin_ == 0)) {
             if constexpr(sparse_) {
-                output.reset(new SparseAlongExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new SparseAlongExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             } else {
-                output.reset(new DenseAlongExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new DenseAlongExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             }
         } else {
-            auto ptr = new_extractor<accrow_, sparse_>(this->mat.get(), std::move(args)..., opt);
+            auto ptr = new_extractor<accrow_, sparse_>(this->mat.get(), std::forward<Args_>(args)..., opt);
             if constexpr(sparse_) {
                 output.reset(new SparseAcrossExtractor<selection_>(std::move(ptr), this->block_start));
             } else {

@@ -370,7 +370,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DenseParallelExtractor : public ParallelExtractor<selection_, false> {
         template<typename ... Args_>
-        DenseParallelExtractor(const DelayedBind* p, const Options& opt, Args_... args) : ParallelExtractor<selection_, false>(p, opt, std::move(args)...) {}
+        DenseParallelExtractor(const DelayedBind* p, const Options& opt, Args_&& ... args) : ParallelExtractor<selection_, false>(p, opt, std::forward<Args_>(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             auto copy = buffer;
@@ -385,8 +385,8 @@ private:
     template<DimensionSelectionType selection_>
     struct SparseParallelExtractor : public ParallelExtractor<selection_, true> {
         template<typename ... Args_>
-        SparseParallelExtractor(const DelayedBind* p, const Options& opt, Args_... args) : 
-            ParallelExtractor<selection_, true>(p, opt, std::move(args)...),
+        SparseParallelExtractor(const DelayedBind* p, const Options& opt, Args_&& ... args) : 
+            ParallelExtractor<selection_, true>(p, opt, std::forward<Args_>(args)...),
             needs_value(opt.sparse_extract_value), 
             needs_index(opt.sparse_extract_index)
         {}
@@ -626,7 +626,7 @@ private:
     template<DimensionSelectionType selection_>
     struct DensePerpendicularExtractor : public PerpendicularExtractor<selection_, false> {
         template<typename ... Args_>
-        DensePerpendicularExtractor(const DelayedBind* p, const Options& opt, Args_... args) : PerpendicularExtractor<selection_, false>(p, opt, std::move(args)...) {}
+        DensePerpendicularExtractor(const DelayedBind* p, const Options& opt, Args_&& ... args) : PerpendicularExtractor<selection_, false>(p, opt, std::forward<Args_>(args)...) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             size_t chosen = this->choose_segment(i);
@@ -637,7 +637,7 @@ private:
     template<DimensionSelectionType selection_>
     struct SparsePerpendicularExtractor : public PerpendicularExtractor<selection_, true> {
         template<typename ... Args_>
-        SparsePerpendicularExtractor(const DelayedBind* p, const Options& opt, Args_... args) : PerpendicularExtractor<selection_, true>(p, opt, std::move(args)...) {}
+        SparsePerpendicularExtractor(const DelayedBind* p, const Options& opt, Args_&& ... args) : PerpendicularExtractor<selection_, true>(p, opt, std::forward<Args_>(args)...) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             size_t chosen = this->choose_segment(i);
@@ -649,21 +649,21 @@ private:
      ********** Public methods **********
      ************************************/
 private:
-    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args... args) const {
+    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_&&... args) const {
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(sparse_) {
             if constexpr(accrow_ == (margin_ == 0)) {
-                output.reset(new SparsePerpendicularExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new SparsePerpendicularExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             } else {
-                output.reset(new SparseParallelExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new SparseParallelExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             }
         } else {
             if constexpr(accrow_ == (margin_ == 0)) {
-                output.reset(new DensePerpendicularExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new DensePerpendicularExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             } else {
-                output.reset(new DenseParallelExtractor<selection_>(this, opt, std::move(args)...));
+                output.reset(new DenseParallelExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
             }
         }
 
