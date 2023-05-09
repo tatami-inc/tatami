@@ -45,19 +45,17 @@ Output_ compute_median(Value_* buffer, size_t n) {
 
 template<typename Output_, bool row_, typename Value_, typename Index_>
 std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int threads) {
-    DirectApplyConfiguration<row_, Value_, Index_> config(p);
-
-    auto dim = config.target_dim;
+    auto dim = (row_ ? p->nrow() : p->ncol());
     std::vector<Output_> output(dim);
-
-    auto otherdim = config.other_dim;
-    Options opt;
+    auto otherdim = (row_ ? p->ncol() : p->nrow());
 
     if (p->sparse()) {
+        Options opt;
         opt.sparse_extract_index = false;
-        opt.sparse_ordered_index = false; // we'll be sorting by value.
+        opt.sparse_ordered_index = false; // we'll be sorting by value anyway.
+
         parallelize([&](int t, Index_ s, Index_ e) -> void {
-            auto ext = config.template extractor<true>(s, e, opt);
+            auto ext = consecutive_extractor<row_, true>(p, s, e, opt);
 
             std::vector<Value_> buffer(otherdim);
             auto vbuffer = buffer.data();
@@ -110,7 +108,7 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
     } else {
         parallelize([&](int t, Index_ s, Index_ e) -> void {
             std::vector<Value_> buffer(otherdim);
-            auto ext = config.template extractor<false>(s, e, opt);
+            auto ext = consecutive_extractor<row_, false>(p, s, e);
             for (Index_ i = s; i < e; ++i) {
                 ext->fetch_copy(i, buffer.data());
                 output[i] = compute_median<Output_>(buffer.data(), otherdim);

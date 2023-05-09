@@ -61,170 +61,31 @@ void parallelize(Function_ fun, size_t tasks, size_t threads) {
 }
 
 /**
- * @cond
+ * @tparam row_ Whether to perform extraction on rows.
+ * @tparam sparse_ Whether to perform sparse retrieval.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column index.
+ * @tparam Args_ Types of further arguments to pass to `Matrix::dense_row` or `Matrix::dense_column`.
+ *
+ * @param mat Matrix to iterate over.
+ * @param from Index of the first row/column of the iteration range.
+ * @param to Index of the last row/column of the iteration range.
+ * @param args Further arguments to pass to `Matrix::dense_row` or `Matrix::dense_column`.
+ *
+ * @return An `Extractor` object for iteration over consecutive rows/columns in `[from, to)`.
+ *
+ * This function is equivalent to `new_extractor()` but additionally calls `Extractor::set_oracle()` with a `ConsecutiveOracle` instance.
+ * `Matrix` implementations that are oracle-aware can then perform pre-fetching of future accesses for greater performance.
+ * Of course, this assumes that the iteration over the target dimension does actually involve consecutive elements from `from` to `to`.
  */
-template<bool row_, bool sparse_, typename Value_, typename Index_>
-auto direct_extractor(const Matrix<Value_, Index_>* mat, bool uses_oracle, Index_ from, Index_ to, const Options& opt) {
-    if constexpr(sparse_) {
-        auto ext = (row_ ? mat->sparse_row(opt) : mat->sparse_column(opt));
-        if (uses_oracle) {
-            ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(from, to - from));
-        }
-        return ext;
-    } else {
-        auto ext = (row_ ? mat->dense_row(opt) : mat->dense_column(opt));
-        if (uses_oracle) {
-            ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(from, to - from));
-        }
-        return ext;
+template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>
+auto consecutive_extractor(const Matrix<Value_, Index_>* mat, Index_ from, Index_ to, Args_&&... args) {
+    auto ext = new_extractor<row_, sparse_>(mat, std::forward<Args_>(args)...);
+    if (mat->uses_oracle(row_)) {
+        ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(from, to - from));
     }
+    return ext;
 }
-/**
- * @endcond
- */
-
-/**
- * @brief Configuration for bidimensional apply.
- *
- * Set up the iteration across a `Matrix` in its preferred iteration dimension.
- * More specifically, we consider each matrix to be a collection of equi-length target vectors, where we wish to compute a statistic for each target vector.
- * We can do so directly by iterating over the target vectors; or we can do so in a "running" manner, where statistics for target vectors can be computed by iterating over the non-target vectors.
- * Use of this class assumes that the desired statistic can be computed in a running manner, which is helpful if the preferred iteration dimension is not the same as that required to iterate directly over the target vectors.
- *
- * @tparam row_ Whether each row is a target vector, e.g., to compute row-wise statistics.
- * @tparam Value_ Type of the matrix value.
- * @tparam Index_ Type of the row/column index.
- */
-template<bool row_, typename Value_, typename Index_>
-struct BidimensionalApplyConfiguration {
-    /**
-     * @param mat Pointer to the `Matrix` instance.
-     */
-    BidimensionalApplyConfiguration(const Matrix<Value_, Index_>* mat) :
-        matrix(mat), 
-        prefer_rows(matrix->prefer_rows()),
-        uses_oracle(matrix->uses_oracle(prefer_rows)),
-        target_dim(row_ ? matrix->nrow() : matrix->ncol()),
-        other_dim(row_ ? matrix->ncol() : matrix->nrow())
-    {}
-
-private:
-    const Matrix<Value_, Index_>* matrix;
-
-public:
-    /**
-     * Whether the matrix prefers iteration over the rows.
-     * Same as `Matrix::prefer_rows()` but is just reported here for convenience.
-     */
-    bool prefer_rows;
-
-private:
-    bool uses_oracle; // need to do this little shuffle to avoid problems with initialization order.
-
-public:
-    /**
-     * Extent of the dimension containing the target vectors, i.e., the number of target vectors.
-     */
-    Index_ target_dim;
-
-    /**
-     * Extent of the dimension containing the non-target vectors, i.e., the "other" dimension, for which we don't want to compute statistics.
-     */
-    Index_ other_dim;
-
-    /**
-     * @param s Index of the first target vector.
-     * @param e First index past the last target vector.
-     * @param opt Options to pass to the extractor construction methods in `Matrix`.
-     *
-     * @return An `Extractor` object for iterating over the target dimension in the range `[s, e)`.
-     * It is assumed that the caller will iteratively call `fetch()` for consecutive indices from `s` to `e`.
-     */
-    template<bool sparse_>
-    auto direct(Index_ s, Index_ e, const Options& opt) const {
-        return direct_extractor<row_, sparse_>(matrix, uses_oracle, s, e, opt);
-    }
-
-    /**
-     * @param s Index of the first target vector.
-     * @param e First index past the last target vector.
-     * @param opt Options to pass to the extractor construction methods in `Matrix`.
-     *
-     * @return An `Extractor` object for iterating over the non-target dimensions,
-     * extracting the range `[s, e)` from each target vector.
-     * It is assumed that the caller will iteratively call `fetch()` for consecutive indices from 0 to `BidimensionalApplyConfiguration::other_dim`.
-     */
-    template<bool sparse_>
-    auto running(Index_ s, Index_ e, const Options& opt) const {
-        Index_ len = e - s;
-        if constexpr(sparse_) {
-            auto ext = (row_ ? matrix->sparse_column(s, len, opt) : matrix->sparse_row(s, len, opt));
-            if (uses_oracle) {
-                ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(0, other_dim));
-            }
-            return ext;
-        } else {
-            auto ext = (row_ ? matrix->dense_column(s, len, opt) : matrix->dense_row(s, len, opt));
-            if (uses_oracle) {
-                ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(0, other_dim));
-            }
-            return ext;
-        }
-    }
-};
-
-/**
- * @brief Configuration for direct apply.
- *
- * Set up the iteration across a `Matrix` in the specified iteration dimension.
- * More specifically, we consider each matrix to be a collection of equi-length target vectors, where we wish to compute a statistic for each target vector.
- * We do so directly by iterating over the target vectors, ignoring any preference in `Matrix::prefer_rows()`.
- * This is useful when a statistic cannot be computed in a running manner.
- *
- * @tparam row_ Whether each row is a target vector, e.g., to compute row-wise statistics.
- * @tparam Value_ Type of the matrix value.
- * @tparam Index_ Type of the row/column index.
- */
-template<bool row_, typename Value_, typename Index_>
-struct DirectApplyConfiguration {
-    /**
-     * @param mat Pointer to the `Matrix` instance.
-     */
-    DirectApplyConfiguration(const Matrix<Value_, Index_>* mat) :
-        matrix(mat), 
-        uses_oracle(matrix->uses_oracle(row_)),
-        target_dim(row_ ? matrix->nrow() : matrix->ncol()),
-        other_dim(row_ ? matrix->ncol() : matrix->nrow())
-    {}
-
-private:
-    const Matrix<Value_, Index_>* matrix;
-    bool uses_oracle;
-
-public:
-    /**
-     * Extent of the dimension containing the target vectors, i.e., the number of target vectors.
-     */
-    Index_ target_dim;
-
-    /**
-     * Extent of the dimension containing the non-target vectors, i.e., the "other" dimension, for which we don't want to compute statistics.
-     */
-    Index_ other_dim;
-
-    /**
-     * @param s Index of the first target vector.
-     * @param e First index past the last target vector.
-     * @param opt Options to pass to the extractor construction methods in `Matrix`.
-     *
-     * @return An `Extractor` object for iterating over the target dimension in the range `[s, e)`.
-     * It is assumed that the caller will iteratively call `fetch()` for consecutive indices from `s` to `e`.
-     */
-    template<bool sparse_>
-    auto extractor(Index_ s, Index_ e, const Options& opt) const {
-        return direct_extractor<row_, sparse_>(matrix, uses_oracle, s, e, opt);
-    }
-};
 
 }
 

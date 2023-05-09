@@ -21,20 +21,17 @@ namespace stats {
  */
 template<typename Output_, bool row_, typename Value_, typename Index_>
 std::vector<Output_> dimension_sums(const Matrix<Value_, Index_>* p, int threads) {
-    BidimensionalApplyConfiguration<row_, Value_, Index_> config(p);
-
-    auto dim = config.target_dim;
+    auto dim = (row_ ? p->nrow() : p->ncol());
     std::vector<Output_> output(dim);
-
-    auto otherdim = config.other_dim;
-    const bool direct = config.prefer_rows == row_;
-    Options opt;
+    auto otherdim = (row_ ? p->ncol() : p->nrow());
+    const bool direct = p->prefer_rows() == row_;
 
     if (p->sparse()) {
         if (direct) {
+            Options opt;
             opt.sparse_extract_index = false;
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = config.template direct<true>(s, e, opt);
+                auto ext = consecutive_extractor<row_, true>(p, s, e, opt);
                 std::vector<Value_> vbuffer(otherdim);
                 for (Index_ i = s; i < e; ++i) {
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
@@ -44,7 +41,7 @@ std::vector<Output_> dimension_sums(const Matrix<Value_, Index_>* p, int threads
 
         } else {
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = config.template running<true>(s, e, opt);
+                auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, e);
                 auto len = ext->block_length;
                 std::vector<Value_> vbuffer(ext->block_length);
                 std::vector<Index_> ibuffer(ext->block_length);
@@ -60,7 +57,7 @@ std::vector<Output_> dimension_sums(const Matrix<Value_, Index_>* p, int threads
     } else {
         if (direct) {
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = config.template direct<false>(s, e, opt);
+                auto ext = consecutive_extractor<row_, false>(p, s, e);
                 std::vector<Value_> buffer(otherdim);
                 for (Index_ i = s; i < e; ++i) {
                     auto out = ext->fetch(i, buffer.data());
@@ -70,7 +67,7 @@ std::vector<Output_> dimension_sums(const Matrix<Value_, Index_>* p, int threads
 
         } else {
             parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = config.template running<false>(s, e, opt);
+                auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, e);
                 std::vector<Value_> buffer(ext->block_length);
                 auto len = ext->block_length;
                 for (Index_ i = 0; i < otherdim; ++i) {
