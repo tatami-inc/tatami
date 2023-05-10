@@ -24,6 +24,5 @@ var searchData=
   ['delayedsubtractvectorhelper_21',['DelayedSubtractVectorHelper',['../structtatami_1_1DelayedSubtractVectorHelper.html',1,'tatami']]],
   ['delayedtranspose_22',['DelayedTranspose',['../classtatami_1_1DelayedTranspose.html',1,'tatami']]],
   ['denseextractor_23',['DenseExtractor',['../classtatami_1_1DenseExtractor.html',1,'tatami']]],
-  ['densematrix_24',['DenseMatrix',['../classtatami_1_1DenseMatrix.html',1,'tatami']]],
-  ['directapplyconfiguration_25',['DirectApplyConfiguration',['../structtatami_1_1DirectApplyConfiguration.html',1,'tatami']]]
+  ['densematrix_24',['DenseMatrix',['../classtatami_1_1DenseMatrix.html',1,'tatami']]]
 ];

@@ -1,3 +1,5 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structtatami_1_1MatrixMarket_1_1HeaderDetails.html" title="Details extracted from a Matrix Market header." alt="" coords="5,5,144,46"/>
+<area shape="rect" id="node1" href="$structtatami_1_1Oracle.html" title="Predict future access requests." alt="" coords="5,46,167,72"/>
+<area shape="rect" id="node2" href="$structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses of a consecutive sequence." alt="" coords="215,5,388,46"/>
+<area shape="rect" id="node3" href="$structtatami_1_1FixedOracle.html" title="Predict future accesses from a known sequence." alt="" coords="235,71,368,111"/>
 </map>

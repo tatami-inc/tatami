@@ -20,6 +20,5 @@ var searchData=
   ['oracle_17',['Oracle',['../structtatami_1_1Oracle.html',1,'tatami']]],
   ['oracle_3c_20index_5fin_5f_20_3e_18',['Oracle&lt; Index_in_ &gt;',['../structtatami_1_1Oracle.html',1,'tatami']]],
   ['oracles_2ehpp_19',['Oracles.hpp',['../Oracles_8hpp.html',1,'']]],
-  ['oraclestream_20',['OracleStream',['../structtatami_1_1OracleStream.html#a293c82567a7c94b9dc86e39110b30688',1,'tatami::OracleStream::OracleStream()=default'],['../structtatami_1_1OracleStream.html#abac31a84479939fec89f7037a5dd8f06',1,'tatami::OracleStream::OracleStream(std::unique_ptr&lt; Oracle&lt; Index_ &gt; &gt; o)'],['../structtatami_1_1OracleStream.html',1,'tatami::OracleStream&lt; Index_ &gt;']]],
-  ['other_5fdim_21',['other_dim',['../structtatami_1_1BidimensionalApplyConfiguration.html#ada5ee6180bdc4d0c5200db2056143c51',1,'tatami::BidimensionalApplyConfiguration::other_dim()'],['../structtatami_1_1DirectApplyConfiguration.html#aa4cbe3a7b8ee35ea85fa664884a809bb',1,'tatami::DirectApplyConfiguration::other_dim()']]]
+  ['oraclestream_20',['OracleStream',['../structtatami_1_1OracleStream.html#a293c82567a7c94b9dc86e39110b30688',1,'tatami::OracleStream::OracleStream()=default'],['../structtatami_1_1OracleStream.html#abac31a84479939fec89f7037a5dd8f06',1,'tatami::OracleStream::OracleStream(std::unique_ptr&lt; Oracle&lt; Index_ &gt; &gt; o)'],['../structtatami_1_1OracleStream.html',1,'tatami::OracleStream&lt; Index_ &gt;']]]
 ];

@@ -76,7 +76,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
   <div class="headertitle"><div class="title">utils.hpp File Reference</div></div>
@@ -88,15 +87,6 @@ $(function() {
 
 <p><a href="stats_2utils_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
-Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1BidimensionalApplyConfiguration.html">tatami::BidimensionalApplyConfiguration&lt; row_, Value_, Index_ &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration for bidimensional apply.  <a href="structtatami_1_1BidimensionalApplyConfiguration.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DirectApplyConfiguration.html">tatami::DirectApplyConfiguration&lt; row_, Value_, Index_ &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Configuration for direct apply.  <a href="structtatami_1_1DirectApplyConfiguration.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacetatami"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
@@ -108,6 +98,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a29ce7a2219ea60d45de1aa3d4de66063"><td class="memTemplParams" colspan="2">template&lt;bool parallel_ = true, class Function_ &gt; </td></tr>
 <tr class="memitem:a29ce7a2219ea60d45de1aa3d4de66063"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">tatami::parallelize</a> (Function_ fun, size_t tasks, size_t threads)</td></tr>
 <tr class="separator:a29ce7a2219ea60d45de1aa3d4de66063"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6a46a8dbae5746b2f50a2282ba830859"><td class="memTemplParams" colspan="2">template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
+<tr class="memitem:a6a46a8dbae5746b2f50a2282ba830859"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a6a46a8dbae5746b2f50a2282ba830859">tatami::consecutive_extractor</a> (const Matrix&lt; Value_, Index_ &gt; *mat, Index_ from, Index_ to, Args_ &amp;&amp;... args)</td></tr>
+<tr class="separator:a6a46a8dbae5746b2f50a2282ba830859"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Utilities for computing matrix statistics. </p>

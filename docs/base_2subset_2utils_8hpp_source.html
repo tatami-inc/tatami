@@ -176,15 +176,15 @@ $(function() {
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    <span class="keyword">const</span> Matrix&lt;Value_, Index_&gt;* mat, </div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    <span class="keyword">const</span> IndexStorage_&amp; indices, </div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keyword">const</span> Options&amp; options, </div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    Args_... args)</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    Args_&amp;&amp; ... args)</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>{</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    <span class="comment">// TODO: handle variable access patterns here.</span></div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    std::unique_ptr&lt;Extractor&lt;selection_, sparse_, Value_, Index_&gt; &gt; output;</div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
 <div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        output.reset(<span class="keyword">new</span> SparsePerpendicularExtractor&lt;selection_, Value_, Index_, IndexStorage_&gt;(new_extractor&lt;accrow_, sparse_&gt;(mat, options, std::move(args)...), indices));</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        output.reset(<span class="keyword">new</span> SparsePerpendicularExtractor&lt;selection_, Value_, Index_, IndexStorage_&gt;(new_extractor&lt;accrow_, sparse_&gt;(mat, std::forward&lt;Args_&gt;(args)..., options), indices));</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        output.reset(<span class="keyword">new</span> DensePerpendicularExtractor&lt;selection_, Value_, Index_, IndexStorage_&gt;(new_extractor&lt;accrow_, sparse_&gt;(mat, options, std::move(args)...), indices));</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        output.reset(<span class="keyword">new</span> DensePerpendicularExtractor&lt;selection_, Value_, Index_, IndexStorage_&gt;(new_extractor&lt;accrow_, sparse_&gt;(mat, std::forward&lt;Args_&gt;(args)..., options), indices));</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    }</div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    <span class="keywordflow">return</span> output;</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>}</div>

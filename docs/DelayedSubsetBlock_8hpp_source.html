@@ -158,7 +158,7 @@ $(function() {
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        AlongExtractor(<span class="keyword">const</span> DelayedSubsetBlock* parent, <span class="keyword">const</span> Options&amp; opt) {</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(selection_ == DimensionSelectionType::FULL) {</div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>                this-&gt;full_length = (margin_ == 0 ? parent-&gt;nrow() : parent-&gt;ncol());</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                internal = new_extractor&lt;margin_ != 0, sparse_&gt;(parent-&gt;mat.get(), opt, parent-&gt;block_start, parent-&gt;block_length);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>                internal = new_extractor&lt;margin_ != 0, sparse_&gt;(parent-&gt;mat.get(), parent-&gt;block_start, parent-&gt;block_length, opt);</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            }</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        }</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
@@ -166,7 +166,7 @@ $(function() {
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(selection_ == DimensionSelectionType::BLOCK) {</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                this-&gt;block_start = bs;</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                this-&gt;block_length = bl;</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>                internal = new_extractor&lt;margin_ != 0, sparse_&gt;(parent-&gt;mat.get(), opt, bs + parent-&gt;block_start, bl);</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>                internal = new_extractor&lt;margin_ != 0, sparse_&gt;(parent-&gt;mat.get(), bs + parent-&gt;block_start, bl, opt);</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>            }</div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        }</div>
 <div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
@@ -180,7 +180,7 @@ $(function() {
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>                <span class="keywordflow">for</span> (<span class="keyword">auto</span>&amp; x : local) {</div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>                    x += parent-&gt;block_start;</div>
 <div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                }</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                internal = new_extractor&lt;margin_ != 0, sparse_&gt;(parent-&gt;mat.get(), opt, std::move(local));</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                internal = new_extractor&lt;margin_ != 0, sparse_&gt;(parent-&gt;mat.get(), std::move(local), opt);</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>            }</div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>        }</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
@@ -205,7 +205,7 @@ $(function() {
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="keyword">template</span>&lt;DimensionSelectionType selection_&gt;</div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    <span class="keyword">struct </span>DenseAlongExtractor : <span class="keyword">public</span> AlongExtractor&lt;selection_, false&gt; {</div>
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ...Args_&gt;</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        DenseAlongExtractor(<span class="keyword">const</span> DelayedSubsetBlock* p, Args_... args) : AlongExtractor&lt;selection_, false&gt;(p, std::move(args)...) {}</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        DenseAlongExtractor(<span class="keyword">const</span> DelayedSubsetBlock* p, Args_&amp;&amp; ... args) : AlongExtractor&lt;selection_, false&gt;(p, std::forward&lt;Args_&gt;(args)...) {}</div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span> </div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>        <span class="keyword">const</span> Value_* fetch(Index_ i, Value_* buffer) {</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>            <span class="keywordflow">return</span> this-&gt;internal-&gt;fetch(i, buffer);</div>
@@ -215,7 +215,7 @@ $(function() {
 <div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>    <span class="keyword">template</span>&lt;DimensionSelectionType selection_&gt;</div>
 <div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>    <span class="keyword">struct </span>SparseAlongExtractor : <span class="keyword">public</span> AlongExtractor&lt;selection_, true&gt; {</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span>        <span class="keyword">template</span>&lt;<span class="keyword">typename</span> ...Args_&gt;</div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        SparseAlongExtractor(<span class="keyword">const</span> DelayedSubsetBlock* p, Args_... args) : AlongExtractor&lt;selection_, true&gt;(p, std::move(args)...), offset(p-&gt;block_start) {}</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        SparseAlongExtractor(<span class="keyword">const</span> DelayedSubsetBlock* p, Args_&amp;&amp; ... args) : AlongExtractor&lt;selection_, true&gt;(p, std::forward&lt;Args_&gt;(args)...), offset(p-&gt;block_start) {}</div>
 <div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        SparseRange&lt;Value_, Index_&gt; fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>            <span class="keyword">auto</span> out = this-&gt;internal-&gt;fetch(i, vbuffer, ibuffer);</div>
@@ -306,17 +306,17 @@ $(function() {
 <div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span><span class="comment">     ********************************/</span></div>
 <div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> accrow_, <a class="code hl_enumeration" href="namespacetatami.html#a0a2ecaf58e2b69bb4a808e814aeb16a1">DimensionSelectionType</a> selection_, <span class="keywordtype">bool</span> sparse_, <span class="keyword">typename</span> ... Args_&gt;</div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    std::unique_ptr&lt;Extractor&lt;selection_, sparse_, Value_, Index_&gt; &gt; populate(<span class="keyword">const</span> Options&amp; opt, Args_... args)<span class="keyword"> const </span>{</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>    std::unique_ptr&lt;Extractor&lt;selection_, sparse_, Value_, Index_&gt; &gt; populate(<span class="keyword">const</span> Options&amp; opt, Args_&amp;&amp; ... args)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>        std::unique_ptr&lt;Extractor&lt;selection_, sparse_, Value_, Index_&gt; &gt; output;</div>
 <div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span> </div>
 <div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(accrow_ != (margin_ == 0)) {</div>
 <div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                output.reset(<span class="keyword">new</span> SparseAlongExtractor&lt;selection_&gt;(<span class="keyword">this</span>, opt, std::move(args)...));</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>                output.reset(<span class="keyword">new</span> SparseAlongExtractor&lt;selection_&gt;(<span class="keyword">this</span>, opt, std::forward&lt;Args_&gt;(args)...));</div>
 <div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                output.reset(<span class="keyword">new</span> DenseAlongExtractor&lt;selection_&gt;(<span class="keyword">this</span>, opt, std::move(args)...));</div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>                output.reset(<span class="keyword">new</span> DenseAlongExtractor&lt;selection_&gt;(<span class="keyword">this</span>, opt, std::forward&lt;Args_&gt;(args)...));</div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>            }</div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>            <span class="keyword">auto</span> ptr = new_extractor&lt;accrow_, sparse_&gt;(this-&gt;mat.get(), opt, std::move(args)...);</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>            <span class="keyword">auto</span> ptr = new_extractor&lt;accrow_, sparse_&gt;(this-&gt;mat.get(), std::forward&lt;Args_&gt;(args)..., opt);</div>
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>            <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(sparse_) {</div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>                output.reset(<span class="keyword">new</span> SparseAcrossExtractor&lt;selection_&gt;(std::move(ptr), this-&gt;block_start));</div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>            } <span class="keywordflow">else</span> {</div>

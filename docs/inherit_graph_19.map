@@ -1,3 +1,14 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$structtatami_1_1LayeredMatrixData.html" title="Pointer and permutations for a layered sparse matrix." alt="" coords="5,5,177,46"/>
+<area shape="rect" id="node1" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="5,316,148,357"/>
+<area shape="rect" id="node2" href="$classtatami_1_1VirtualDenseMatrix.html" title=" " alt="" coords="217,5,390,46"/>
+<area shape="rect" id="node4" href="$classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix." alt="" coords="213,71,394,111"/>
+<area shape="rect" id="node5" href="$classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix." alt="" coords="196,136,411,177"/>
+<area shape="rect" id="node6" href="$classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices." alt="" coords="222,201,385,256"/>
+<area shape="rect" id="node7" href="$classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block." alt="" coords="212,280,395,321"/>
+<area shape="rect" id="node8" href="$classtatami_1_1DelayedSubsetSorted.html" title="Delayed subsetting of a matrix with sorted indices." alt="" coords="209,345,398,400"/>
+<area shape="rect" id="node9" href="$classtatami_1_1DelayedSubsetSortedUnique.html" title="Delayed subsetting of a matrix with sorted, unique indices." alt="" coords="209,425,398,480"/>
+<area shape="rect" id="node10" href="$classtatami_1_1DelayedSubsetUnique.html" title="Delayed subsetting of a matrix with unique indices." alt="" coords="208,505,399,560"/>
+<area shape="rect" id="node11" href="$classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix." alt="" coords="218,584,389,625"/>
+<area shape="rect" id="node12" href="$classtatami_1_1HDF5CompressedSparseMatrix.html" title="Compressed sparse matrix in a HDF5 file." alt="" coords="198,649,409,690"/>
+<area shape="rect" id="node3" href="$classtatami_1_1HDF5DenseMatrix.html" title="Dense matrix backed by a DataSet in a HDF5 file." alt="" coords="459,5,658,46"/>
 </map>
