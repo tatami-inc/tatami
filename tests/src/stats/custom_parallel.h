@@ -17,7 +17,7 @@ static void custom_parallelize(Function_ f, size_t ntasks, size_t nworkers, size
         if (start >= end) {
             break;
         }
-        jobs.emplace_back(f, w, start, end);
+        jobs.emplace_back(f, w, start, end - start);
         start += jobs_per_worker;
     }
 

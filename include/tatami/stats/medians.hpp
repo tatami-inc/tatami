@@ -54,12 +54,12 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
         opt.sparse_extract_index = false;
         opt.sparse_ordered_index = false; // we'll be sorting by value anyway.
 
-        parallelize([&](int t, Index_ s, Index_ e) -> void {
-            auto ext = consecutive_extractor<row_, true>(p, s, e, opt);
+        parallelize([&](int t, Index_ s, Index_ l) -> void {
+            auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
 
             std::vector<Value_> buffer(otherdim);
             auto vbuffer = buffer.data();
-            for (Index_ i = s; i < e; ++i) {
+            for (Index_ i = s, e = s + l; i < e; ++i) {
                 auto range = ext->fetch_copy(i, vbuffer, NULL);
                 auto n = range.number;
 
@@ -106,10 +106,10 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
         }, dim, threads);
 
     } else {
-        parallelize([&](int t, Index_ s, Index_ e) -> void {
+        parallelize([&](int t, Index_ s, Index_ l) -> void {
             std::vector<Value_> buffer(otherdim);
-            auto ext = consecutive_extractor<row_, false>(p, s, e);
-            for (Index_ i = s; i < e; ++i) {
+            auto ext = consecutive_extractor<row_, false>(p, s, l);
+            for (Index_ i = s, e = s + l; i < e; ++i) {
                 ext->fetch_copy(i, buffer.data());
                 output[i] = compute_median<Output_>(buffer.data(), otherdim);
             }

@@ -241,18 +241,18 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
         if (direct) {
             Options opt;
             opt.sparse_extract_index = false;
-            parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = consecutive_extractor<row_, true>(p, s, e);
+            parallelize([&](size_t, Index_ s, Index_ l) {
+                auto ext = consecutive_extractor<row_, true>(p, s, l);
                 std::vector<Value_> vbuffer(otherdim);
-                for (Index_ i = s; i < e; ++i) {
+                for (Index_ i = s, e = s + l; i < e; ++i) {
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
                     output[i] = variances::compute_direct<Output_>(out, otherdim).second;
                 }
             }, dim, threads);
 
         } else {
-            parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, e);
+            parallelize([&](size_t, Index_ s, Index_ l) {
+                auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, l);
                 auto len = ext->block_length;
                 std::vector<Value_> vbuffer(len);
                 std::vector<Index_> ibuffer(len);
@@ -272,18 +272,18 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
 
     } else {
         if (direct) {
-            parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = consecutive_extractor<row_, false>(p, s, e);
+            parallelize([&](size_t, Index_ s, Index_ l) {
+                auto ext = consecutive_extractor<row_, false>(p, s, l);
                 std::vector<Value_> buffer(otherdim);
-                for (Index_ i = s; i < e; ++i) {
+                for (Index_ i = s, e = s + l; i < e; ++i) {
                     auto out = ext->fetch(i, buffer.data());
                     output[i] = variances::compute_direct<Output_>(out, otherdim).second;
                 }
             }, dim, threads);
 
         } else {
-            parallelize([&](size_t, Index_ s, Index_ e) {
-                auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, e);
+            parallelize([&](size_t, Index_ s, Index_ l) {
+                auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, l);
                 auto len = ext->block_length;
                 std::vector<Value_> buffer(len);
 
