@@ -372,9 +372,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a29ce7a2219ea60d45de1aa3d4de66063"><td class="memTemplParams" colspan="2">template&lt;bool parallel_ = true, class Function_ &gt; </td></tr>
 <tr class="memitem:a29ce7a2219ea60d45de1aa3d4de66063"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a> (Function_ fun, size_t tasks, size_t threads)</td></tr>
 <tr class="separator:a29ce7a2219ea60d45de1aa3d4de66063"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a46a8dbae5746b2f50a2282ba830859"><td class="memTemplParams" colspan="2">template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
-<tr class="memitem:a6a46a8dbae5746b2f50a2282ba830859"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a6a46a8dbae5746b2f50a2282ba830859">consecutive_extractor</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *mat, Index_ from, Index_ to, Args_ &amp;&amp;... args)</td></tr>
-<tr class="separator:a6a46a8dbae5746b2f50a2282ba830859"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memTemplParams" colspan="2">template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
+<tr class="memitem:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a36c6ecf33bcb87e1ed33c0a7d744dd82">consecutive_extractor</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</td></tr>
+<tr class="separator:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac37af9a76d15f08a3634881696a27f65"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
 <tr class="memitem:ac37af9a76d15f08a3634881696a27f65"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac37af9a76d15f08a3634881696a27f65">column_variances</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
 <tr class="separator:ac37af9a76d15f08a3634881696a27f65"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1863,8 +1863,8 @@ template&lt;bool parallel_ = true, class Function_ &gt; </div>
     <tr><td class="paramname">parallel_</td><td>Whether the tasks should be run in parallel. If <code>false</code>, no parallelization is performed and all tasks are run on the current thread. </td></tr>
     <tr><td class="paramname">Function_</td><td>Function to be applied for a contiguous range of tasks. This should accept three arguments:<ul>
 <li><code>thread</code>, the thread number executing this task range.</li>
-<li><code>start</code>, the start index of the task range.</li>
-<li><code>end</code>, the first index past the end of the task range.</li>
+<li><code>task_start</code>, the start index of the task range.</li>
+<li><code>task_length</code>, the number of tasks in the task range.</li>
 </ul>
 </td></tr>
   </table>
@@ -1881,8 +1881,8 @@ template&lt;bool parallel_ = true, class Function_ &gt; </div>
 
 </div>
 </div>
-<a id="a6a46a8dbae5746b2f50a2282ba830859" name="a6a46a8dbae5746b2f50a2282ba830859"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6a46a8dbae5746b2f50a2282ba830859">&#9670;&#160;</a></span>consecutive_extractor()</h2>
+<a id="a36c6ecf33bcb87e1ed33c0a7d744dd82" name="a36c6ecf33bcb87e1ed33c0a7d744dd82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a36c6ecf33bcb87e1ed33c0a7d744dd82">&#9670;&#160;</a></span>consecutive_extractor()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1899,13 +1899,13 @@ template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typenam
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Index_&#160;</td>
-          <td class="paramname"><em>from</em>, </td>
+          <td class="paramname"><em>iter_start</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Index_&#160;</td>
-          <td class="paramname"><em>to</em>, </td>
+          <td class="paramname"><em>iter_length</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -1933,14 +1933,14 @@ template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typenam
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">mat</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> to iterate over. </td></tr>
-    <tr><td class="paramname">from</td><td>Index of the first row/column of the iteration range. </td></tr>
-    <tr><td class="paramname">to</td><td>Index of the last row/column of the iteration range. </td></tr>
+    <tr><td class="paramname">iter_start</td><td>Index of the first row/column of the iteration range. </td></tr>
+    <tr><td class="paramname">iter_length</td><td>Number of rows/columns in the iteration range. </td></tr>
     <tr><td class="paramname">args</td><td>Further arguments to pass to <code><a class="el" href="classtatami_1_1Matrix.html#aa29b9428f53453369256d7febc9ed0fc">Matrix::dense_row</a></code> or <code><a class="el" href="classtatami_1_1Matrix.html#a9f6c3453a5c0c28a764f300f45bf860f">Matrix::dense_column</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An <code>Extractor</code> object for iteration over consecutive rows/columns in <code>[from, to)</code>.</dd></dl>
-<p>This function is equivalent to <code><a class="el" href="namespacetatami.html#a95b6638dceda82d82a7579dc88a45709">new_extractor()</a></code> but additionally calls <code>Extractor::set_oracle()</code> with a <code><a class="el" href="structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses of a consecutive sequence.">ConsecutiveOracle</a></code> instance. <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> implementations that are oracle-aware can then perform pre-fetching of future accesses for greater performance. Of course, this assumes that the iteration over the target dimension does actually involve consecutive elements from <code>from</code> to <code>to</code>. </p>
+<dl class="section return"><dt>Returns</dt><dd>An <code>Extractor</code> object for iteration over consecutive rows/columns in <code>[iter_start, iter_start + iter_length)</code>.</dd></dl>
+<p>This function is equivalent to <code><a class="el" href="namespacetatami.html#a95b6638dceda82d82a7579dc88a45709">new_extractor()</a></code> but additionally calls <code>Extractor::set_oracle()</code> with a <code><a class="el" href="structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses of a consecutive sequence.">ConsecutiveOracle</a></code> instance. <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> implementations that are oracle-aware can then perform pre-fetching of future accesses for greater performance. Of course, this assumes that the iteration over the target dimension does actually involve consecutive elements from <code>iter_start</code> to <code>iter_start + iter_length</code>. </p>
 
 </div>
 </div>

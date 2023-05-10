@@ -109,11 +109,11 @@ $(function() {
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span> </div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="keywordflow">if</span> (direct) {</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            opt.sparse_extract_index = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ e) {</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, true&gt;(p, s, e, opt);</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>            <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, true&gt;(p, s, l, opt);</div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>                std::vector&lt;Value_&gt; vbuffer(otherdim);</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span> </div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                <span class="keywordflow">for</span> (Index_ i = s; i &lt; e; ++i) {</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                <span class="keywordflow">for</span> (Index_ i = s, e = s + l; i &lt; e; ++i) {</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                    <span class="keyword">auto</span> out = ext-&gt;fetch(i, vbuffer.data(), NULL);</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span> </div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>                    <span class="comment">// If there&#39;s no non-zero values, we just leave the min/max as zero.</span></div>
@@ -135,8 +135,8 @@ $(function() {
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            }, dim, threads);</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ e) {</div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;!row_, true&gt;(p, 0, otherdim, s, e, opt);</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;!row_, true&gt;(p, 0, otherdim, s, l, opt);</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>                <span class="keyword">auto</span> len = ext-&gt;block_length;</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                std::vector&lt;Value_&gt; vbuffer(len);</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                std::vector&lt;Index_&gt; ibuffer(len);</div>
@@ -164,7 +164,7 @@ $(function() {
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>                }</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>                <span class="comment">// Handling the zeros.</span></div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                <span class="keywordflow">for</span> (Index_ i = s; i &lt; e; ++i) {</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>                <span class="keywordflow">for</span> (Index_ i = s, e = s + l; i &lt; e; ++i) {</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>                    <span class="keywordflow">if</span> (counter[i - s] &lt; otherdim) {</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>                        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(store_min) {</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>                            <span class="keywordflow">if</span> (min_out[i] &gt; 0) {</div>
@@ -183,10 +183,10 @@ $(function() {
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="keywordflow">if</span> (direct) {</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ e) {</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, false&gt;(p, s, e);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, false&gt;(p, s, l);</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>                std::vector&lt;Value_&gt; buffer(otherdim);</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                <span class="keywordflow">for</span> (Index_ i = s; i &lt; e; ++i) {</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                <span class="keywordflow">for</span> (Index_ i = s, e = s + l; i &lt; e; ++i) {</div>
 <div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>                    <span class="keyword">auto</span> ptr = ext-&gt;fetch(i, buffer.data());</div>
 <div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>                    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(store_min) {</div>
 <div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>                        min_out[i] = *std::min_element(ptr, ptr + otherdim);</div>
@@ -198,8 +198,8 @@ $(function() {
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>            }, dim, threads);</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span> </div>
 <div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>            <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ e) {</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;!row_, false&gt;(p, 0, otherdim, s, e);</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>            <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;!row_, false&gt;(p, 0, otherdim, s, l);</div>
 <div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                <span class="keyword">auto</span> len = ext-&gt;block_length;</div>
 <div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>                std::vector&lt;Value_&gt; buffer(len);</div>
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>

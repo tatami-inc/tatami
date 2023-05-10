@@ -125,12 +125,12 @@ $(function() {
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        opt.sparse_extract_index = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        opt.sparse_ordered_index = <span class="keyword">false</span>; <span class="comment">// we&#39;ll be sorting by value anyway.</span></div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">int</span> t, Index_ s, Index_ e) -&gt; <span class="keywordtype">void</span> {</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, true&gt;(p, s, e, opt);</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">int</span> t, Index_ s, Index_ l) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, true&gt;(p, s, l, opt);</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>            std::vector&lt;Value_&gt; buffer(otherdim);</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>            <span class="keyword">auto</span> vbuffer = buffer.data();</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            <span class="keywordflow">for</span> (Index_ i = s; i &lt; e; ++i) {</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>            <span class="keywordflow">for</span> (Index_ i = s, e = s + l; i &lt; e; ++i) {</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>                <span class="keyword">auto</span> range = ext-&gt;fetch_copy(i, vbuffer, NULL);</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                <span class="keyword">auto</span> n = range.number;</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span> </div>
@@ -177,10 +177,10 @@ $(function() {
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        }, dim, threads);</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">int</span> t, Index_ s, Index_ e) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <a class="code hl_function" href="namespacetatami.html#a29ce7a2219ea60d45de1aa3d4de66063">parallelize</a>([&amp;](<span class="keywordtype">int</span> t, Index_ s, Index_ l) -&gt; <span class="keywordtype">void</span> {</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            std::vector&lt;Value_&gt; buffer(otherdim);</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, false&gt;(p, s, e);</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            <span class="keywordflow">for</span> (Index_ i = s; i &lt; e; ++i) {</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, false&gt;(p, s, l);</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            <span class="keywordflow">for</span> (Index_ i = s, e = s + l; i &lt; e; ++i) {</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>                ext-&gt;fetch_copy(i, buffer.data());</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>                output[i] = compute_median&lt;Output_&gt;(buffer.data(), otherdim);</div>
 <div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>            }</div>
