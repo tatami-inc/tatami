@@ -387,21 +387,21 @@ Functions</h2></td></tr>
 <tr class="memitem:ab17e92414b0bff60f7b7a6431ac8a330"><td class="memTemplParams" colspan="2">template&lt;bool ROW, class U , class V , class W &gt; </td></tr>
 <tr class="memitem:ab17e92414b0bff60f7b7a6431ac8a330"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; size_t &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ab17e92414b0bff60f7b7a6431ac8a330">compress_sparse_triplets</a> (size_t nr, size_t nc, U &amp;values, V &amp;rows, W &amp;cols)</td></tr>
 <tr class="separator:ab17e92414b0bff60f7b7a6431ac8a330"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad0d7491b6f276aa973035997335e4348"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename StoredValue_ , class Matrix_ &gt; </td></tr>
-<tr class="memitem:ad0d7491b6f276aa973035997335e4348"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ad0d7491b6f276aa973035997335e4348">convert_to_dense</a> (const Matrix_ *incoming, StoredValue_ *store)</td></tr>
-<tr class="separator:ad0d7491b6f276aa973035997335e4348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3a3d90517e85cb2e368d32e8ed7fd02"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename Value_  = double, typename Index  = int, typename StoredValue_  = Value_, class Matrix_ &gt; </td></tr>
-<tr class="memitem:ac3a3d90517e85cb2e368d32e8ed7fd02"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac3a3d90517e85cb2e368d32e8ed7fd02">convert_to_dense</a> (const Matrix_ *incoming)</td></tr>
-<tr class="separator:ac3a3d90517e85cb2e368d32e8ed7fd02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac4329fd7aa86b596c049a3f6edcec113"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, class Matrix_ &gt; </td></tr>
-<tr class="memitem:ac4329fd7aa86b596c049a3f6edcec113"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac4329fd7aa86b596c049a3f6edcec113">convert_to_dense</a> (const Matrix_ *incoming, int order)</td></tr>
-<tr class="separator:ac4329fd7aa86b596c049a3f6edcec113"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a708fd4d20020bc1ecdc350285d185292"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename StoredIndex_  = Index_, class InputMatrix_ &gt; </td></tr>
-<tr class="memitem:a708fd4d20020bc1ecdc350285d185292"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a708fd4d20020bc1ecdc350285d185292">convert_to_sparse</a> (const InputMatrix_ *incoming, double reserve=0.1)</td></tr>
-<tr class="separator:a708fd4d20020bc1ecdc350285d185292"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89d56579ce664fc5b6699a409b7870c2"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename StoredIndex_  = Index_, class InputMatrix_ &gt; </td></tr>
-<tr class="memitem:a89d56579ce664fc5b6699a409b7870c2"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a89d56579ce664fc5b6699a409b7870c2">convert_to_sparse</a> (const InputMatrix_ *incoming, int order)</td></tr>
-<tr class="separator:a89d56579ce664fc5b6699a409b7870c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afaccb18d22f35a4ed6b6a7091342da06"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename StoredValue_ , class Matrix_ &gt; </td></tr>
+<tr class="memitem:afaccb18d22f35a4ed6b6a7091342da06"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#afaccb18d22f35a4ed6b6a7091342da06">convert_to_dense</a> (const Matrix_ *incoming, StoredValue_ *store, int threads=1)</td></tr>
+<tr class="separator:afaccb18d22f35a4ed6b6a7091342da06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af80143ac537339fe8dafd892632e96de"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename Value_  = double, typename Index  = int, typename StoredValue_  = Value_, class Matrix_ &gt; </td></tr>
+<tr class="memitem:af80143ac537339fe8dafd892632e96de"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#af80143ac537339fe8dafd892632e96de">convert_to_dense</a> (const Matrix_ *incoming, int threads=1)</td></tr>
+<tr class="separator:af80143ac537339fe8dafd892632e96de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64e8745f8aaaa5ad93c6ce65a0a6591e"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, class Matrix_ &gt; </td></tr>
+<tr class="memitem:a64e8745f8aaaa5ad93c6ce65a0a6591e"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a64e8745f8aaaa5ad93c6ce65a0a6591e">convert_to_dense</a> (const Matrix_ *incoming, int order, int threads=1)</td></tr>
+<tr class="separator:a64e8745f8aaaa5ad93c6ce65a0a6591e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a220c47e470b3ade64ede7303e50ca92d"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename StoredIndex_  = Index_, class InputMatrix_ &gt; </td></tr>
+<tr class="memitem:a220c47e470b3ade64ede7303e50ca92d"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a220c47e470b3ade64ede7303e50ca92d">convert_to_sparse</a> (const InputMatrix_ *incoming, int threads=1)</td></tr>
+<tr class="separator:a220c47e470b3ade64ede7303e50ca92d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5847f3cd78ce89170ca43262d7f5f8e3"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename StoredIndex_  = Index_, class InputMatrix_ &gt; </td></tr>
+<tr class="memitem:a5847f3cd78ce89170ca43262d7f5f8e3"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a5847f3cd78ce89170ca43262d7f5f8e3">convert_to_sparse</a> (const InputMatrix_ *incoming, int order, int threads=1)</td></tr>
+<tr class="separator:a5847f3cd78ce89170ca43262d7f5f8e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7518f5e8e09a6f6d7d3955b8ea286689"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
 <tr class="memitem:a7518f5e8e09a6f6d7d3955b8ea286689"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a7518f5e8e09a6f6d7d3955b8ea286689">wrap_shared_ptr</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *ptr)</td></tr>
 <tr class="separator:a7518f5e8e09a6f6d7d3955b8ea286689"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2154,8 +2154,8 @@ template&lt;bool ROW, class U , class V , class W &gt; </div>
 
 </div>
 </div>
-<a id="ad0d7491b6f276aa973035997335e4348" name="ad0d7491b6f276aa973035997335e4348"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad0d7491b6f276aa973035997335e4348">&#9670;&#160;</a></span>convert_to_dense() <span class="overload">[1/3]</span></h2>
+<a id="afaccb18d22f35a4ed6b6a7091342da06" name="afaccb18d22f35a4ed6b6a7091342da06"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afaccb18d22f35a4ed6b6a7091342da06">&#9670;&#160;</a></span>convert_to_dense() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2172,7 +2172,13 @@ template&lt;bool row_, typename StoredValue_ , class Matrix_ &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">StoredValue_ *&#160;</td>
-          <td class="paramname"><em>store</em>&#160;</td>
+          <td class="paramname"><em>store</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2193,14 +2199,15 @@ template&lt;bool row_, typename StoredValue_ , class Matrix_ &gt; </div>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">store</td><td>Pointer to an array of length equal to the product of the dimensions of <code>incoming</code>. On output, this is filled with values from <code>incoming</code> in row- or column-major format depending on <code>row_</code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">threads</td><td>Number of threads to use. </td></tr>
   </table>
   </dd>
 </dl>
 
 </div>
 </div>
-<a id="ac3a3d90517e85cb2e368d32e8ed7fd02" name="ac3a3d90517e85cb2e368d32e8ed7fd02"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3a3d90517e85cb2e368d32e8ed7fd02">&#9670;&#160;</a></span>convert_to_dense() <span class="overload">[2/3]</span></h2>
+<a id="af80143ac537339fe8dafd892632e96de" name="af80143ac537339fe8dafd892632e96de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af80143ac537339fe8dafd892632e96de">&#9670;&#160;</a></span>convert_to_dense() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2214,8 +2221,18 @@ template&lt;bool row_, typename Value_  = double, typename Index  = int, typenam
           <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index &gt; &gt; tatami::convert_to_dense </td>
           <td>(</td>
           <td class="paramtype">const Matrix_ *&#160;</td>
-          <td class="paramname"><em>incoming</em></td><td>)</td>
+          <td class="paramname"><em>incoming</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -2236,7 +2253,8 @@ template&lt;bool row_, typename Value_  = double, typename Index  = int, typenam
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>.</td></tr>
+    <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">threads</td><td>Number of threads to use.</td></tr>
   </table>
   </dd>
 </dl>
@@ -2244,8 +2262,8 @@ template&lt;bool row_, typename Value_  = double, typename Index  = int, typenam
 
 </div>
 </div>
-<a id="ac4329fd7aa86b596c049a3f6edcec113" name="ac4329fd7aa86b596c049a3f6edcec113"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac4329fd7aa86b596c049a3f6edcec113">&#9670;&#160;</a></span>convert_to_dense() <span class="overload">[3/3]</span></h2>
+<a id="a64e8745f8aaaa5ad93c6ce65a0a6591e" name="a64e8745f8aaaa5ad93c6ce65a0a6591e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a64e8745f8aaaa5ad93c6ce65a0a6591e">&#9670;&#160;</a></span>convert_to_dense() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2262,7 +2280,13 @@ template&lt;typename Value_  = double, typename Index_  = int, typename StoredVa
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>order</em>&#160;</td>
+          <td class="paramname"><em>order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2284,7 +2308,8 @@ template&lt;typename Value_  = double, typename Index_  = int, typename StoredVa
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">order</td><td>Ordering of values in the output dense matrix - row-major (0) or column-major (1). If set to -1, the ordering is chosen based on <code><a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix::prefer_rows()</a></code>.</td></tr>
+    <tr><td class="paramname">order</td><td>Ordering of values in the output dense matrix - row-major (0) or column-major (1). If set to -1, the ordering is chosen based on <code><a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix::prefer_rows()</a></code>. </td></tr>
+    <tr><td class="paramname">threads</td><td>Number of threads to use.</td></tr>
   </table>
   </dd>
 </dl>
@@ -2292,8 +2317,8 @@ template&lt;typename Value_  = double, typename Index_  = int, typename StoredVa
 
 </div>
 </div>
-<a id="a708fd4d20020bc1ecdc350285d185292" name="a708fd4d20020bc1ecdc350285d185292"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a708fd4d20020bc1ecdc350285d185292">&#9670;&#160;</a></span>convert_to_sparse() <span class="overload">[1/2]</span></h2>
+<a id="a220c47e470b3ade64ede7303e50ca92d" name="a220c47e470b3ade64ede7303e50ca92d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a220c47e470b3ade64ede7303e50ca92d">&#9670;&#160;</a></span>convert_to_sparse() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2312,8 +2337,8 @@ template&lt;bool row_, typename Value_  = double, typename Index_  = int, typena
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>reserve</em> = <code>0.1</code>&#160;</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2341,7 +2366,7 @@ template&lt;bool row_, typename Value_  = double, typename Index_  = int, typena
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>, possibly containing delayed operations. </td></tr>
-    <tr><td class="paramname">reserve</td><td>The expected density of non-zero values in <code>incoming</code>. A slight overestimate will avoid reallocation of the temporary vectors.</td></tr>
+    <tr><td class="paramname">threads</td><td>Number of threads to use.</td></tr>
   </table>
   </dd>
 </dl>
@@ -2349,8 +2374,8 @@ template&lt;bool row_, typename Value_  = double, typename Index_  = int, typena
 
 </div>
 </div>
-<a id="a89d56579ce664fc5b6699a409b7870c2" name="a89d56579ce664fc5b6699a409b7870c2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a89d56579ce664fc5b6699a409b7870c2">&#9670;&#160;</a></span>convert_to_sparse() <span class="overload">[2/2]</span></h2>
+<a id="a5847f3cd78ce89170ca43262d7f5f8e3" name="a5847f3cd78ce89170ca43262d7f5f8e3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5847f3cd78ce89170ca43262d7f5f8e3">&#9670;&#160;</a></span>convert_to_sparse() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -2367,7 +2392,13 @@ template&lt;typename Value_  = double, typename Index_  = int, typename StoredVa
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>order</em>&#160;</td>
+          <td class="paramname"><em>order</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>threads</em> = <code>1</code>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -2390,7 +2421,8 @@ template&lt;typename Value_  = double, typename Index_  = int, typename StoredVa
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">tatami::Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">order</td><td>Ordering of values in the output matrix - compressed sparse row (0) or column (1). If set to -1, the ordering is chosen based on <code><a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix::prefer_rows()</a></code>.</td></tr>
+    <tr><td class="paramname">order</td><td>Ordering of values in the output matrix - compressed sparse row (0) or column (1). If set to -1, the ordering is chosen based on <code><a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix::prefer_rows()</a></code>. </td></tr>
+    <tr><td class="paramname">threads</td><td>Number of threads to use.</td></tr>
   </table>
   </dd>
 </dl>
