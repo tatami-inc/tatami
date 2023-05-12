@@ -40,6 +40,11 @@ TEST_P(ConvertToDenseTest, RowToRow) {
         std::vector<int> expected2(start, start + NC);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
+
+    // Works in parallel.
+    auto convertedP = tatami::convert_to_dense<true>(&mat, 3);
+    test_simple_row_access(convertedP.get(), &mat, true, 1);
+    test_simple_column_access(convertedP.get(), &mat, true, 1);
 }
 
 TEST_P(ConvertToDenseTest, ColumnToColumn) {
@@ -86,6 +91,11 @@ TEST_P(ConvertToDenseTest, RowToColumn) {
         std::vector<int> expected2(start, start + NC);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
+
+    // Works in parallel.
+    auto convertedP = tatami::convert_to_dense<false>(&mat, 3);
+    test_simple_row_access(convertedP.get(), &mat, true, 1);
+    test_simple_column_access(convertedP.get(), &mat, true, 1);
 }
 
 TEST_P(ConvertToDenseTest, ColumnToRow) {

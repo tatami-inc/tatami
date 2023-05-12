@@ -28,6 +28,11 @@ TEST(ConvertToSparse, RowToRow) {
         std::vector<int> expected2(start, start + NC);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
+
+    // Parallelized.
+    auto convertedP = tatami::convert_to_sparse<true>(&mat, 3);
+    test_simple_row_access(convertedP.get(), &mat, true, 1);
+    test_simple_column_access(convertedP.get(), &mat, true, 1);
 }
 
 TEST(ConvertToSparse, ColumnToColumn) {
@@ -75,6 +80,11 @@ TEST(ConvertToSparse, RowToColumn) {
         std::vector<int> expected2(start, start + NC);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
+
+    // Parallelized.
+    auto convertedP = tatami::convert_to_sparse<false>(&mat, 3);
+    test_simple_row_access(convertedP.get(), &mat, true, 1);
+    test_simple_column_access(convertedP.get(), &mat, true, 1);
 }
 
 TEST(ConvertToSparse, ColumnToRow) {
