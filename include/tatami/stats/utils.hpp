@@ -17,9 +17,8 @@ namespace tatami {
 
 /**
  * Apply a function to a set of tasks, distributing them to threads via OpenMP if enabled.
- * Callers can specify a custom parallelization scheme by defining a `TATAMI_CUSTOM_PARALLEL` function-like macro, which should accept four arguments:
- * `fun`, `tasks` and `threads` as below, as well as a `worker_size` argument that specifies the size of each task range
- * (the last is provided for convenience only, to avoid the need to re-compute it inside the macro).
+ * Callers can specify a custom parallelization scheme by defining a `TATAMI_CUSTOM_PARALLEL` function-like macro, 
+ * which should accept the `fun`, `tasks` and `threads` arguments as below.
  *
  * @tparam parallel_ Whether the tasks should be run in parallel.
  * If `false`, no parallelization is performed and all tasks are run on the current thread.
@@ -37,10 +36,11 @@ template<bool parallel_ = true, class Function_>
 void parallelize(Function_ fun, size_t tasks, size_t threads) {
 #if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
     if constexpr(parallel_) {
-        size_t worker_size = std::ceil(static_cast<double>(tasks) / static_cast<double>(threads));
 
         if (threads > 1) {
 #ifndef TATAMI_CUSTOM_PARALLEL
+            size_t worker_size = std::ceil(static_cast<double>(tasks) / static_cast<double>(threads));
+
             #pragma omp parallel for num_threads(threads)
             for (size_t t = 0; t < threads; ++t) {
                 size_t start = worker_size * t, end = std::min(tasks, start + worker_size);
@@ -49,7 +49,7 @@ void parallelize(Function_ fun, size_t tasks, size_t threads) {
                 }
             }
 #else
-            TATAMI_CUSTOM_PARALLEL(std::move(fun), tasks, threads, worker_size);
+            TATAMI_CUSTOM_PARALLEL(std::move(fun), tasks, threads);
 #endif
             return;
         }
