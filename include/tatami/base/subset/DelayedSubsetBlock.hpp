@@ -36,12 +36,7 @@ public:
      * @param f Index of the start of the block. This should be a row index if `margin_ = 0` and a column index otherwise.
      * @param l Index of the one-past-the-end of the block.
      */
-    DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > p, Index_ f, Index_ l) : mat(p), block_start(f), block_length(l - f) {}
-
-    /**
-     * @copydoc DelayedSubsetBlock
-     */
-    DelayedSubsetBlock(std::shared_ptr<Matrix<Value_, Index_> > p, Index_ f, Index_ l) : mat(p), block_start(f), block_length(l - f) {}
+    DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > p, Index_ f, Index_ l) : mat(std::move(p)), block_start(f), block_length(l - f) {}
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > mat;
@@ -331,7 +326,8 @@ public:
  *
  * @tparam margin_ Dimension along which the addition is to occur.
  * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
- * @tparam Matrix_ A specialized `Matrix`, to be automatically deducted.
+ * @tparam Value_ Type of matrix value.
+ * @tparam Index_ Integer type for the row/column indices.
  *
  * @param p Pointer to the underlying (pre-subset) `Matrix`.
  * @param f Index of the start of the block. This should be a row index if `margin_ = 0` and a column index otherwise.
@@ -339,10 +335,21 @@ public:
  *
  * @return A pointer to a `DelayedSubsetBlock` instance.
  */
-template<int margin_, class Matrix_>
-std::shared_ptr<Matrix_> make_DelayedSubsetBlock(std::shared_ptr<Matrix_> p, typename Matrix_::index_type f, typename Matrix_::index_type l) {
-    return std::shared_ptr<Matrix_>(new DelayedSubsetBlock<margin_, typename Matrix_::value_type, typename Matrix_::index_type>(p, f, l));
+template<int margin_, typename Value_, typename Index_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > p, Index_ f, Index_ l) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<margin_, Value_, Index_>(std::move(p), f, l));
 }
+
+/**
+ * @cond
+ */
+template<int margin_, typename Value_, typename Index_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<Matrix<Value_, Index_> > p, Index_ f, Index_ l) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<margin_, Value_, Index_>(std::move(p), f, l));
+}
+/**
+ * @endcond
+ */
 
 }
 

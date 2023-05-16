@@ -467,3 +467,16 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(true, false)  // use random or consecutive oracle.
     )
 );
+
+/****************************************************
+ ****************************************************/
+
+TEST(DelayedSubset, ConstOverload) {
+    int NR = 9, NC = 7;
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
+    std::vector<int> subset{ 1, 3, 5 };
+
+    auto sub = tatami::make_DelayedSubset<0>(dense, subset);
+    EXPECT_EQ(sub->ncol(), NC);
+    EXPECT_EQ(sub->nrow(), subset.size());
+}

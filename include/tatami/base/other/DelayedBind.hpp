@@ -28,7 +28,7 @@ namespace tatami {
  * @tparam margin_ Dimension along which the combining is to occur.
  * If 0, the matrices are combined along the rows; if 1, the combining is applied along the columns.
  * @tparam Value_ Type of matrix value.
- * @tparam Data_ Type of index value.
+ * @tparam Index_ Type of index value.
  */
 template<int margin_, typename Value_, typename Index_>
 class DelayedBind : public Matrix<Value_, Index_> {
@@ -726,15 +726,33 @@ public:
  *
  * @tparam margin_ Dimension along which the combining is to occur.
  * If 0, matrices are combined along the rows; if 1, matrices are combined to the columns.
- * @tparam Matrix_ A realized `Matrix` class, possibly const. 
+ * @tparam Value_ Type of matrix value.
+ * @tparam Index_ Type of index value.
  *
  * @param ps Pointers to `Matrix` objects.
  *
  * @return A pointer to a `DelayedBind` instance.
  */
-template<int margin_, class Matrix_>
-std::shared_ptr<Matrix_> make_DelayedBind(std::vector<std::shared_ptr<Matrix_> > ps) {
-    return std::shared_ptr<Matrix_>(new DelayedBind<margin_, typename Matrix_::value_type, typename Matrix_::index_type>(std::move(ps)));
+template<int margin_, typename Value_, typename Index_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > ps) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<margin_, Value_, Index_>(std::move(ps)));
+}
+
+/**
+ * A `make_*` helper function to enable partial template deduction of supplied types.
+ *
+ * @tparam margin_ Dimension along which the combining is to occur.
+ * If 0, matrices are combined along the rows; if 1, matrices are combined to the columns.
+ * @tparam Value_ Type of matrix value.
+ * @tparam Index_ Type of index value.
+ *
+ * @param ps Pointers to `const` `Matrix` objects.
+ *
+ * @return A pointer to a `DelayedBind` instance.
+ */
+template<int margin_, typename Value_, typename Index_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<margin_, Value_, Index_>(std::move(ps)));
 }
 
 }

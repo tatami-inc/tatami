@@ -192,3 +192,14 @@ INSTANTIATE_TEST_CASE_P(
     TransposeOracleTest,
     ::testing::Values(true, false)  // use random or consecutive oracle.
 );
+
+TEST(TransposeTest, ConstOverload) {
+    int nrow = 10, ncol = 15;
+    auto simulated = simulate_sparse_vector<double>(nrow * ncol, 0.05);
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
+    auto tdense = tatami::make_DelayedTranspose(dense);
+
+    // Cursory checks.
+    EXPECT_EQ(dense->nrow(), tdense->ncol());
+    EXPECT_EQ(dense->ncol(), tdense->nrow());
+}

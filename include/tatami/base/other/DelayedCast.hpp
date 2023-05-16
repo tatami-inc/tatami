@@ -33,7 +33,7 @@ public:
     /**
      * @param p Pointer to the `Matrix` instance to cast from.
      */
-    DelayedCast(std::shared_ptr<Matrix<Value_in_, Index_in_> > p) : ptr(std::move(p)) {}
+    DelayedCast(std::shared_ptr<const Matrix<Value_in_, Index_in_> > p) : ptr(std::move(p)) {}
 
 public:
     Index_out_ nrow() const {
@@ -61,7 +61,7 @@ public:
     }
 
 private:
-    std::shared_ptr<Matrix<Value_in_, Index_in_> > ptr;
+    std::shared_ptr<const Matrix<Value_in_, Index_in_> > ptr;
     static constexpr bool same_Value_type_ = std::is_same<Value_in_, Value_out_>::value;
     static constexpr bool same_Index_type_ = std::is_same<Index_in_, Index_out_>::value;
 
@@ -312,15 +312,28 @@ public:
  *
  * @tparam Value_out_ Data type to cast to.
  * @tparam Index_out_ Index type to cast to.
- * @tparam Matrix_ A realized `Matrix` class, possibly one that is `const`.
+ * @tparam Value_in_ Data type to cast from.
+ * @tparam Index_in_ Index type to cast from.
  *
- * @param p Pointer to the `Matrix` instance to cast from.
+ * @param p Pointer to the (possbly `const`) `Matrix` instance to cast from.
  * @return Pointer to a `Matrix` instance of the desired interface type.
  */
-template<typename Value_out_, typename Index_out_, class Matrix_>
-std::shared_ptr<Matrix<Value_out_, Index_out_> > make_DelayedCast(std::shared_ptr<Matrix_> p) {
-    return std::shared_ptr<Matrix<Value_out_, Index_out_> >(new DelayedCast<Value_out_, Index_out_, typename Matrix_::value_type, typename Matrix_::index_type>(std::move(p)));
+template<typename Value_out_, typename Index_out_, typename Value_in_, typename Index_in_>
+std::shared_ptr<Matrix<Value_out_, Index_out_> > make_DelayedCast(std::shared_ptr<const Matrix<Value_in_, Index_in_> > p) {
+    return std::shared_ptr<Matrix<Value_out_, Index_out_> >(new DelayedCast<Value_out_, Index_out_, Value_in_, Index_in_>(std::move(p)));
 }
+
+/**
+ * @cond
+ */
+template<typename Value_out_, typename Index_out_, typename Value_in_, typename Index_in_>
+std::shared_ptr<Matrix<Value_out_, Index_out_> > make_DelayedCast(std::shared_ptr<Matrix<Value_in_, Index_in_> > p) {
+    return std::shared_ptr<Matrix<Value_out_, Index_out_> >(new DelayedCast<Value_out_, Index_out_, Value_in_, Index_in_>(std::move(p)));
+}
+/**
+ * @endcond
+ */
+
 
 }
 

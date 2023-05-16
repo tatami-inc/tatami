@@ -377,19 +377,32 @@ public:
 /**
  * A `make_*` helper function to enable partial template deduction of supplied types.
  *
- * @tparam Matrix_ A realized `Matrix` class, possibly one that is `const`.
+ * @tparam Value_ Type of matrix value.
+ * @tparam Index_ Type of index value.
  * @tparam Operation_ Helper class defining the operation.
  *
- * @param p Pointer to a `Matrix`.
+ * @param p Pointer to a (possibly `const`) `Matrix`.
  * @param op Instance of the operation helper class.
  *
  * @return Instance of a `DelayedIsometricOp` clas.
  */
-template<class Matrix_, class Operation_>
-std::shared_ptr<Matrix<typename Matrix_::value_type, typename Matrix_::index_type> > make_DelayedIsometricOp(std::shared_ptr<Matrix_> p, Operation_ op) {
+template<typename Value_, typename Index_, class Operation_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > p, Operation_ op) {
     typedef typename std::remove_reference<Operation_>::type Op_;
-    return std::shared_ptr<Matrix_>(new DelayedIsometricOp<typename Matrix_::value_type, typename Matrix_::index_type, Op_>(p, std::move(op)));
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedIsometricOp<Value_, Index_, Op_>(std::move(p), std::move(op)));
 }
+
+/**
+ * @cond
+ */
+template<typename Value_, typename Index_, class Operation_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedIsometricOp(std::shared_ptr<Matrix<Value_, Index_> > p, Operation_ op) {
+    typedef typename std::remove_reference<Operation_>::type Op_;
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedIsometricOp<Value_, Index_, Op_>(std::move(p), std::move(op)));
+}
+/**
+ * @endcond
+ */
 
 }
 

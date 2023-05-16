@@ -771,3 +771,21 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(true, false)  // use random or consecutive oracle.
     )
 );
+
+/***********************************
+ ********* CONST OVERLOADS *********
+ ***********************************/
+
+TEST(ArithVector, ConstOverload) {
+    int nrow = 23, ncol = 42;
+    auto simulated = simulate_sparse_vector<double>(nrow * ncol, 0.1);
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
+
+    auto vec = std::vector<double>(nrow);
+    auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
+    auto mat = tatami::make_DelayedIsometricOp(dense, std::move(op));
+
+    // cursory checks.
+    EXPECT_EQ(mat->nrow(), dense->nrow());
+    EXPECT_EQ(mat->ncol(), dense->ncol());
+}

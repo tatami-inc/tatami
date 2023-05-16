@@ -129,6 +129,16 @@ TEST_F(DelayedBindUtilsTest, EmptyBind) {
     }
 }
 
+TEST_F(DelayedBindUtilsTest, ConstOverloads) {
+    assemble({ 10, 50 }, 20, true); 
+    std::vector<std::shared_ptr<const tatami::NumericMatrix> > const_collected({ bound_dense, bound_sparse });
+    auto const_combined = tatami::make_DelayedBind<0>(std::move(const_collected));
+
+    // Some cursory checks.
+    EXPECT_EQ(const_combined->nrow(), 120); // i.e., (10 + 50) * 2 
+    EXPECT_EQ(const_combined->ncol(), 20);
+}
+
 /****************************
  ****************************/
 
