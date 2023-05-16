@@ -115,8 +115,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a0f449056dc91663ed8d31d2bcaadb3d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43de336cf9987caf8d2c59c6fe23602c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html#a43de336cf9987caf8d2c59c6fe23602c">sparse</a> () const</td></tr>
 <tr class="separator:a43de336cf9987caf8d2c59c6fe23602c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0366548c6005913651ae54e12fa36f9b"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html#a0366548c6005913651ae54e12fa36f9b">sparse_proportion</a> () const</td></tr>
+<tr class="separator:a0366548c6005913651ae54e12fa36f9b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adcb174f1a959314888c42b0cb9cecd2c"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html#adcb174f1a959314888c42b0cb9cecd2c">prefer_rows</a> () const</td></tr>
 <tr class="separator:adcb174f1a959314888c42b0cb9cecd2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e9c0bbab0df9e793888cec744c1478d"><td class="memItemLeft" align="right" valign="top">double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html#a8e9c0bbab0df9e793888cec744c1478d">prefer_rows_proportion</a> () const</td></tr>
+<tr class="separator:a8e9c0bbab0df9e793888cec744c1478d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa3666db63a8ca6d4ec6be26811667cbd"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html#aa3666db63a8ca6d4ec6be26811667cbd">uses_oracle</a> (bool) const</td></tr>
 <tr class="separator:aa3666db63a8ca6d4ec6be26811667cbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b4741f8cbb28b8430e5900f284023cc"><td class="memItemLeft" align="right" valign="top">std::unique_ptr&lt; <a class="el" href="namespacetatami.html#a6008dbced6de41e5619156b5335f5762">FullDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html#a1b4741f8cbb28b8430e5900f284023cc">dense_row</a> (const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const</td></tr>
@@ -150,10 +154,12 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a1f6fec43d5bae3f831841646bc02377b inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9de24a05a6aee62d4ba59799a73242e7 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a9de24a05a6aee62d4ba59799a73242e7">sparse</a> () const=0</td></tr>
 <tr class="separator:a9de24a05a6aee62d4ba59799a73242e7 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a1a29b602b903201fc36ad65f76c78c inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a8a1a29b602b903201fc36ad65f76c78c">sparse_proportion</a> () const=0</td></tr>
+<tr class="separator:a8a1a29b602b903201fc36ad65f76c78c inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a69382d2a4e66cda1a9eb48dc25ab113a inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">prefer_rows</a> () const=0</td></tr>
 <tr class="separator:a69382d2a4e66cda1a9eb48dc25ab113a inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a05e685281df3de36d1b1995bd72553e6 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::pair&lt; double, double &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a05e685281df3de36d1b1995bd72553e6">dimension_preference</a> () const</td></tr>
-<tr class="separator:a05e685281df3de36d1b1995bd72553e6 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ddcc730155ca894df1c58b0a963d5e7 inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a2ddcc730155ca894df1c58b0a963d5e7">prefer_rows_proportion</a> () const=0</td></tr>
+<tr class="separator:a2ddcc730155ca894df1c58b0a963d5e7 inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a68da21245203cf9349648c5452cdb2ca inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#a68da21245203cf9349648c5452cdb2ca">uses_oracle</a> (bool row) const=0</td></tr>
 <tr class="separator:a68da21245203cf9349648c5452cdb2ca inherit pub_methods_classtatami_1_1Matrix"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa29b9428f53453369256d7febc9ed0fc inherit pub_methods_classtatami_1_1Matrix"><td class="memItemLeft" align="right" valign="top">virtual std::unique_ptr&lt; <a class="el" href="namespacetatami.html#a6008dbced6de41e5619156b5335f5762">FullDenseExtractor</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1Matrix.html#aa29b9428f53453369256d7febc9ed0fc">dense_row</a> (const <a class="el" href="structtatami_1_1Options.html">Options</a> &amp;opt) const=0</td></tr>
@@ -401,6 +407,37 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
 
 </div>
 </div>
+<a id="a0366548c6005913651ae54e12fa36f9b" name="a0366548c6005913651ae54e12fa36f9b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0366548c6005913651ae54e12fa36f9b">&#9670;&#160;</a></span>sparse_proportion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html">tatami::HDF5CompressedSparseMatrix</a>&lt; row_, Value_, Index_ &gt;::sparse_proportion </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that is sparse.</dd></dl>
+<p>This is defined as the proportion of matrix elements that lie within sparse submatrices. It is intended for use in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> representations that consist of combinations of multiple submatrices (e.g., <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code>), allowing them to derive a suitable value for <code><a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html#a43de336cf9987caf8d2c59c6fe23602c">sparse()</a></code> based on whether most of its submatrices are sparse. (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.) </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a8a1a29b602b903201fc36ad65f76c78c">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
 <a id="adcb174f1a959314888c42b0cb9cecd2c" name="adcb174f1a959314888c42b0cb9cecd2c"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#adcb174f1a959314888c42b0cb9cecd2c">&#9670;&#160;</a></span>prefer_rows()</h2>
 
@@ -428,6 +465,37 @@ template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
 <dl class="section return"><dt>Returns</dt><dd><code>true</code> if this is in compressed sparse row format. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a8e9c0bbab0df9e793888cec744c1478d" name="a8e9c0bbab0df9e793888cec744c1478d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e9c0bbab0df9e793888cec744c1478d">&#9670;&#160;</a></span>prefer_rows_proportion()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool row_, typename Value_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">double <a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html">tatami::HDF5CompressedSparseMatrix</a>&lt; row_, Value_, Index_ &gt;::prefer_rows_proportion </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that prefers row-level access.</dd></dl>
+<p>This is defined as the proportion of matrix elements that lie within submatrices that prefer row-level access. It is useful for determining the return value of <code><a class="el" href="classtatami_1_1HDF5CompressedSparseMatrix.html#adcb174f1a959314888c42b0cb9cecd2c">prefer_rows()</a></code> in combined matrices consisting of both row- and column-preferred submatrices. In such cases, the net preference can be determined based on the combined size of the submatrices for each preference. (A more granular approach would be to report the iteration cost on each dimension, but this is difficult to estimate.) </p>
+
+<p>Implements <a class="el" href="classtatami_1_1Matrix.html#a2ddcc730155ca894df1c58b0a963d5e7">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
 </div>
 </div>
