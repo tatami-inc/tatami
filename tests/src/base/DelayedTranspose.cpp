@@ -45,19 +45,17 @@ TEST_P(TransposeFullTest, Row) {
 
     EXPECT_EQ(tdense->ncol(), nrow);
     EXPECT_EQ(tdense->nrow(), ncol);
-    EXPECT_FALSE(tdense->prefer_rows());
     EXPECT_FALSE(tdense->sparse());
-    auto cprefs = tdense->dimension_preference();
-    EXPECT_TRUE(cprefs.first == 0);
-    EXPECT_TRUE(cprefs.second > 0);
+    EXPECT_EQ(tdense->sparse_proportion(), 0);
+    EXPECT_FALSE(tdense->prefer_rows());
+    EXPECT_EQ(tdense->prefer_rows_proportion(), 0);
 
     EXPECT_EQ(tsparse->ncol(), nrow);
     EXPECT_EQ(tsparse->nrow(), ncol);
-    EXPECT_TRUE(tsparse->prefer_rows());
     EXPECT_TRUE(tsparse->sparse());
-    auto rprefs = tsparse->dimension_preference();
-    EXPECT_TRUE(rprefs.first > 0);
-    EXPECT_TRUE(rprefs.second == 0);
+    EXPECT_EQ(tsparse->sparse_proportion(), 1);
+    EXPECT_TRUE(tsparse->prefer_rows());
+    EXPECT_EQ(tsparse->prefer_rows_proportion(), 1);
 
     test_simple_row_access(tdense.get(), ref.get(), FORWARD, JUMP);
     test_simple_row_access(tsparse.get(), ref.get(), FORWARD, JUMP);

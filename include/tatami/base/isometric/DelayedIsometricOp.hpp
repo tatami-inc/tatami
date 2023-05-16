@@ -61,8 +61,20 @@ public:
         }
     }
 
+    double sparse_proportion() const {
+        if constexpr(Operation_::sparse_) {
+            return mat->sparse_proportion();
+        } else {
+            return 0;
+        }
+    }
+
     bool prefer_rows() const { 
         return mat->prefer_rows();
+    }
+
+    double prefer_rows_proportion() const { 
+        return mat->prefer_rows_proportion();
     }
 
     bool uses_oracle(bool row) const {

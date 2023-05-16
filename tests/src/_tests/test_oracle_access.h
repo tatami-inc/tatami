@@ -23,9 +23,11 @@ public:
 
     bool sparse() const { return matrix->sparse(); }
 
+    double sparse_proportion() const { return matrix->sparse_proportion(); }
+
     bool prefer_rows() const { return matrix->prefer_rows(); }
 
-    std::pair<double, double> dimension_preference() const { return matrix->dimension_preference(); }
+    double prefer_rows_proportion() const { return matrix->prefer_rows_proportion(); }
 
     bool uses_oracle(bool) const { return true; }
 

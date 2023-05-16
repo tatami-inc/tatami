@@ -72,6 +72,8 @@ public:
 
     bool uses_oracle(bool) const { return false; }
 
+    double prefer_rows_proportion() const { return static_cast<double>(row_); }
+
     using Matrix<Value_, Index_>::dense_row;
 
     using Matrix<Value_, Index_>::dense_column;

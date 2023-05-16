@@ -131,10 +131,14 @@ public:
 
     bool sparse() const { return true; }
 
+    double sparse_proportion() const { return 1; }
+
     /**
      * @return `true` if `ROW = true` (for `CompressedSparseRowMatrix` objects), otherwise returns `false` (for `CompressedSparseColumnMatrix` objects).
      */
     bool prefer_rows() const { return row_; }
+
+    double prefer_rows_proportion() const { return static_cast<double>(row_); }
 
     bool uses_oracle(bool) const { return false; }
 

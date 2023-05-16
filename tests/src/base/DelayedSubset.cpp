@@ -106,10 +106,16 @@ TEST_P(SubsetFullAccessTest, OnRow) {
 
     EXPECT_EQ(sub.size(), dense_subbed->nrow());
     EXPECT_EQ(dense->ncol(), dense_subbed->ncol());
+
     EXPECT_EQ(dense->sparse(), dense_subbed->sparse());
+    EXPECT_EQ(dense->sparse_proportion(), dense_subbed->sparse_proportion());
     EXPECT_EQ(sparse->sparse(), sparse_subbed->sparse());
+    EXPECT_EQ(sparse->sparse_proportion(), sparse_subbed->sparse_proportion());
+
     EXPECT_TRUE(dense_subbed->prefer_rows());
+    EXPECT_EQ(dense->prefer_rows_proportion(), dense_subbed->prefer_rows_proportion());
     EXPECT_FALSE(sparse_subbed->prefer_rows());
+    EXPECT_EQ(sparse->prefer_rows_proportion(), sparse_subbed->prefer_rows_proportion());
 
     size_t FORWARD = std::get<3>(param);
     size_t JUMP = std::get<4>(param);

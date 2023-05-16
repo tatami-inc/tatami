@@ -58,10 +58,21 @@ public:
     virtual Index_ ncol() const = 0;
 
     /**
-     * @return Is this matrix sparse?
+     * @return Boolean indicating whether this matrix is sparse.
+     *
      * This can be used to choose between `sparse_row()` and `dense_row()` when iterating over the rows (similarly so for the columns).
      */
     virtual bool sparse() const = 0;
+
+    /**
+     * @return Approximate proportion of the matrix that is sparse.
+     *
+     * This is defined as the proportion of matrix elements that lie within sparse submatrices.
+     * It is intended for use in `Matrix` representations that consist of combinations of multiple submatrices (e.g., `DelayedBind`),
+     * allowing them to derive a suitable value for `sparse()` based on whether most of its submatrices are sparse.
+     * (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.)
+     */
+    virtual double sparse_proportion() const = 0;
 
     /**
      * @return The preferred dimension for extracting values.
@@ -70,21 +81,14 @@ public:
     virtual bool prefer_rows() const = 0;
 
     /**
-     * @return A `pair` containing the number of matrix elements that prefer row-level access (`first`) or column-level access (`second`).
+     * @return Approximate proportion of the matrix that prefers row-level access.
      *
-     * This method is useful for determining the return value of `prefer_rows()` in combined matrices consisting of both row- and column-preferred submatrices.
+     * This is defined as the proportion of matrix elements that lie within submatrices that prefer row-level access.
+     * It is useful for determining the return value of `prefer_rows()` in combined matrices consisting of both row- and column-preferred submatrices.
      * In such cases, the net preference can be determined based on the combined size of the submatrices for each preference.
-     *
-     * For simpler matrices, the return value contains the total size of the matrix in one of the `double`s and zero in the other.
+     * (A more granular approach would be to report the iteration cost on each dimension, but this is difficult to estimate.)
      */
-    virtual std::pair<double, double> dimension_preference () const {
-        double size = static_cast<double>(nrow()) * static_cast<double>(ncol());
-        if (prefer_rows()) {
-            return std::make_pair(size, 0.0);
-        } else {
-            return std::make_pair(0.0, size);
-        }
-    }
+    virtual double prefer_rows_proportion() const = 0;
 
     /**
      * @param row Row access if `true`, column access otherwise.

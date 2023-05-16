@@ -47,13 +47,16 @@ public:
         return mat->sparse();
     }
 
+    double sparse_proportion() const {
+        return mat->sparse_proportion();
+    }
+
     bool prefer_rows() const {
         return !mat->prefer_rows();
     }
 
-    std::pair<double, double> dimension_preference () const {
-        auto temp = mat->dimension_preference();
-        return std::pair<double, double>(temp.second, temp.first);
+    double prefer_rows_proportion() const {
+        return 1 - mat->prefer_rows_proportion();
     }
 
     bool uses_oracle(bool row) const {

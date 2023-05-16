@@ -18,6 +18,7 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
 
     tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr);
     EXPECT_TRUE(mat.sparse());
+    EXPECT_FALSE(mat.prefer_rows());
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
 
@@ -68,19 +69,15 @@ TEST_F(SparseUtilsTest, Basic) {
     EXPECT_EQ(sparse_row->nrow(), nrow);
 
     EXPECT_FALSE(dense->sparse());
-    EXPECT_TRUE(sparse_column->sparse());
     EXPECT_TRUE(sparse_row->sparse());
+    EXPECT_EQ(sparse_row->sparse_proportion(), 1);
+    EXPECT_TRUE(sparse_column->sparse());
+    EXPECT_EQ(sparse_column->sparse_proportion(), 1);
 
-    EXPECT_FALSE(sparse_column->prefer_rows());
     EXPECT_TRUE(sparse_row->prefer_rows());
-
-    auto cprefs = sparse_column->dimension_preference();
-    EXPECT_TRUE(cprefs.first == 0);
-    EXPECT_TRUE(cprefs.second > 0);
-
-    auto rprefs = sparse_row->dimension_preference();
-    EXPECT_TRUE(rprefs.first > 0);
-    EXPECT_TRUE(rprefs.second == 0);
+    EXPECT_EQ(sparse_row->prefer_rows_proportion(), 1);
+    EXPECT_FALSE(sparse_column->prefer_rows());
+    EXPECT_EQ(sparse_column->prefer_rows_proportion(), 0);
 
     EXPECT_FALSE(sparse_row->uses_oracle(true));
     {

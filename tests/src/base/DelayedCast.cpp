@@ -75,8 +75,9 @@ TEST_P(DelayedCastFullAccess, Dense) {
     EXPECT_EQ(cast_dense->nrow(), nrow);
     EXPECT_EQ(cast_dense->ncol(), ncol);
     EXPECT_EQ(cast_dense->sparse(), dense->sparse());
+    EXPECT_EQ(cast_dense->sparse_proportion(), dense->sparse_proportion());
     EXPECT_EQ(cast_dense->prefer_rows(), dense->prefer_rows());
-    EXPECT_EQ(cast_dense->dimension_preference(), dense->dimension_preference());
+    EXPECT_EQ(cast_dense->prefer_rows_proportion(), dense->prefer_rows_proportion());
 
     test_simple_row_access(cast_dense.get(), dense.get(), FORWARD, JUMP);
     test_simple_column_access(cast_dense.get(), dense.get(), FORWARD, JUMP);
@@ -92,6 +93,13 @@ TEST_P(DelayedCastFullAccess, Sparse) {
     size_t JUMP = std::get<1>(param);
 
     auto cast_sparse = tatami::make_DelayedCast<double, int>(sparse);
+    EXPECT_EQ(cast_sparse->nrow(), nrow);
+    EXPECT_EQ(cast_sparse->ncol(), ncol);
+    EXPECT_EQ(cast_sparse->sparse(), sparse->sparse());
+    EXPECT_EQ(cast_sparse->sparse_proportion(), sparse->sparse_proportion());
+    EXPECT_EQ(cast_sparse->prefer_rows(), sparse->prefer_rows());
+    EXPECT_EQ(cast_sparse->prefer_rows_proportion(), sparse->prefer_rows_proportion());
+
     test_simple_row_access(cast_sparse.get(), sparse.get(), FORWARD, JUMP);
     test_simple_column_access(cast_sparse.get(), sparse.get(), FORWARD, JUMP);
 

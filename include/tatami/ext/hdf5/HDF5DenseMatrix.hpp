@@ -125,6 +125,16 @@ public:
         }
     }
 
+private:
+    bool prefer_rows_internal() const {
+        if constexpr(transpose_) {
+            return !prefer_firstdim;
+        } else {
+            return prefer_firstdim;
+        }
+    }
+
+public:
     /**
      * @return Boolean indicating whether to prefer row extraction.
      *
@@ -133,13 +143,13 @@ public:
      * in such cases, we switch to extraction on the second dimension.
      */
     bool prefer_rows() const {
-        if constexpr(transpose_) {
-            return !prefer_firstdim;
-        } else {
-            return prefer_firstdim;
-        }
+        return prefer_rows_internal();
     }
 
+    double prefer_rows_proportion() const {
+        return static_cast<double>(prefer_rows_internal());
+    }
+    
     bool uses_oracle(bool) const {
         return true;
     }

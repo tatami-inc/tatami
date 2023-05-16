@@ -72,18 +72,15 @@ TEST_P(SubsetBlockFullAccessTest, Row) {
         EXPECT_EQ(block_length, dense_block->ncol());
     }
 
-    EXPECT_TRUE(dense_block->prefer_rows());
-    EXPECT_FALSE(sparse_block->prefer_rows());
     EXPECT_FALSE(dense_block->sparse());
+    EXPECT_EQ(dense_block->sparse_proportion(), 0);
     EXPECT_TRUE(sparse_block->sparse());
+    EXPECT_EQ(sparse_block->sparse_proportion(), 1);
 
-    auto cprefs = sparse_block->dimension_preference();
-    EXPECT_TRUE(cprefs.first == 0);
-    EXPECT_TRUE(cprefs.second > 0);
-
-    auto rprefs = dense_block->dimension_preference();
-    EXPECT_TRUE(rprefs.first > 0);
-    EXPECT_TRUE(rprefs.second == 0);
+    EXPECT_TRUE(dense_block->prefer_rows());
+    EXPECT_EQ(dense_block->prefer_rows_proportion(), 1);
+    EXPECT_FALSE(sparse_block->prefer_rows());
+    EXPECT_EQ(sparse_block->prefer_rows_proportion(), 0);
 
     bool FORWARD = std::get<2>(param);
     bool JUMP = std::get<3>(param);

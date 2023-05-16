@@ -126,6 +126,9 @@ TEST_F(HDF5SparseUtilsTest, Basic) {
         EXPECT_EQ(mat.nrow(), NR);
         EXPECT_EQ(mat.ncol(), NC);
         EXPECT_TRUE(mat.sparse());
+        EXPECT_EQ(mat.sparse_proportion(), 1);
+        EXPECT_TRUE(mat.prefer_rows());
+        EXPECT_EQ(mat.prefer_rows_proportion(), 1);
     }
 
     {
@@ -133,6 +136,9 @@ TEST_F(HDF5SparseUtilsTest, Basic) {
         EXPECT_EQ(mat.nrow(), NC);
         EXPECT_EQ(mat.ncol(), NR);
         EXPECT_TRUE(mat.sparse());
+        EXPECT_EQ(mat.sparse_proportion(), 1);
+        EXPECT_FALSE(mat.prefer_rows());
+        EXPECT_EQ(mat.prefer_rows_proportion(), 0);
     }
 }
 

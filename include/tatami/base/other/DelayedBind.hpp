@@ -70,11 +70,16 @@ public:
             cumulative.resize(sofar + 1);
         }
 
+        double denom = 0;
         for (const auto& x : mats) {
-            if (!(x->sparse())) {
-                stored_sparse = false;
-                break;
-            }
+            double total = x->nrow() * x->ncol();
+            denom += total;
+            sparse_prop += total * x->sparse_proportion();
+            row_prop += total * x->prefer_rows_proportion();
+        }
+        if (denom) {
+            sparse_prop /= denom;
+            row_prop /= denom;
         }
 
         for (int d = 0; d < 2; ++d) {
@@ -85,14 +90,6 @@ public:
                     break;
                 }
             }
-        }
-
-        stored_dimension_preference.first = 0;
-        stored_dimension_preference.second = 0;
-        for (const auto& x : mats) {
-            auto current = x->dimension_preference();
-            stored_dimension_preference.first += current.first;
-            stored_dimension_preference.second += current.second;
         }
     }
 
@@ -105,8 +102,7 @@ private:
     std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > mats;
     std::vector<Index_> cumulative;
 
-    bool stored_sparse = true;
-    std::pair<double, double> stored_dimension_preference;
+    double sparse_prop = 0, row_prop = 0;
     std::array<bool, 2> stored_uses_oracle;
 
 private:
@@ -144,16 +140,19 @@ public:
     }
 
     bool sparse() const {
-        return stored_sparse;
+        return sparse_prop > 0.5;
+    }
+
+    double sparse_proportion() const {
+        return sparse_prop;
     }
 
     bool prefer_rows() const {
-        const auto& dimpref = stored_dimension_preference;
-        return dimpref.first > dimpref.second;
+        return row_prop > 0.5;
     }
 
-    std::pair<double, double> dimension_preference() const {
-        return stored_dimension_preference;
+    double prefer_rows_proportion() const {
+        return row_prop;
     }
 
     bool uses_oracle(bool row) const {

@@ -42,6 +42,8 @@ public:
 
     bool sparse() const { return false; }
 
+    double sparse_proportion() const { return 0; }
+
 private:
     template<DimensionSelectionType selection_>
     struct SparseWrapper : public Extractor<selection_, true, Value_, Index_> {

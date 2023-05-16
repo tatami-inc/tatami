@@ -17,7 +17,10 @@ TEST(DenseMatrix, Basic) {
     tatami::DenseColumnMatrix<double> mat(10, 20, contents);
 
     EXPECT_FALSE(mat.sparse());
+    EXPECT_EQ(mat.sparse_proportion(), 0);
     EXPECT_FALSE(mat.prefer_rows());
+    EXPECT_EQ(mat.prefer_rows_proportion(), 0);
+
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
 

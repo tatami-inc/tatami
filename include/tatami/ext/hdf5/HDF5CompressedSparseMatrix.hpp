@@ -143,11 +143,19 @@ public:
         return true;
     }
 
+    double sparse_proportion() const { 
+        return 1;
+    }
+
     /**
      * @return `true` if this is in compressed sparse row format.
      */
     bool prefer_rows() const {
         return row_;
+    }
+
+    double prefer_rows_proportion() const {
+        return static_cast<double>(row_);
     }
 
     bool uses_oracle(bool) const {

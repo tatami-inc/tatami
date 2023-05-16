@@ -77,12 +77,16 @@ TEST_P(ArithVectorAdditionFullTest, Column) {
     int JUMP = std::get<2>(param);
 
     EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_EQ(dense_mod->sparse_proportion(), 0);
     EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_EQ(sparse_mod->sparse_proportion(), 0);
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
     EXPECT_TRUE(dense_mod->prefer_rows());
+    EXPECT_EQ(dense_mod->prefer_rows_proportion(), 1);
     EXPECT_FALSE(sparse_mod->prefer_rows());
+    EXPECT_EQ(sparse_mod->prefer_rows_proportion(), 0);
 
     test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
@@ -416,7 +420,9 @@ TEST_P(ArithVectorMultiplicationFullTest, Column) {
     int JUMP = std::get<2>(param);
 
     EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_EQ(dense_mod->sparse_proportion(), 0);
     EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_EQ(sparse_mod->sparse_proportion(), 1);
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 

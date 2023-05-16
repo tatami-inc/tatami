@@ -79,6 +79,7 @@ TEST_F(HDF5DenseUtilsTest, Basic) {
     EXPECT_EQ(mat.nrow(), NR);
     EXPECT_EQ(mat.ncol(), NC);
     EXPECT_FALSE(mat.sparse());
+    EXPECT_EQ(mat.sparse_proportion(), 0);
 }
 
 TEST_F(HDF5DenseUtilsTest, Preference) {
@@ -86,9 +87,11 @@ TEST_F(HDF5DenseUtilsTest, Preference) {
         dump(std::make_pair<int, int>(10, 10));
         tatami::HDF5DenseMatrix<double, int> mat(fpath, name);
         EXPECT_TRUE(mat.prefer_rows());
+        EXPECT_EQ(mat.prefer_rows_proportion(), 1);
 
         tatami::HDF5DenseMatrix<double, int, true> tmat(fpath, name);
         EXPECT_FALSE(tmat.prefer_rows());
+        EXPECT_EQ(tmat.prefer_rows_proportion(), 0);
     }
 
     {
