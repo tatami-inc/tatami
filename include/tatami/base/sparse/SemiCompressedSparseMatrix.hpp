@@ -491,11 +491,11 @@ private:
                 ptr.pointer = copy;
             }
 
-            indptr_type get(const Position& ptr) const {
+            static indptr_type get(const Position& ptr) {
                 return ptr.pointer;
             }
 
-            void set(Position& ptr, indptr_type val) const {
+            static void set(Position& ptr, indptr_type val) {
                 ptr.pointer = val;
                 ptr.scanned = false;
                 ptr.count = 0;
@@ -510,13 +510,12 @@ private:
             state(max_index, idx, idp, std::forward<Args_>(args)...) {}
 
         Index_ previous_request = 0;
-        sparse::SimpleSecondaryExtractionWorkspace<Index_, index_type, Position> state;
-        Modifier mod;
+        sparse::SimpleSecondaryExtractionWorkspace<Index_, index_type, Position, Modifier> state;
     };
 
     template<class Store_>
     void secondary_dimension_above(Index_ secondary, Index_ primary, Index_ index_primary, SecondaryWorkspace& work, Store_& output) const {
-        auto curdex = work.state.search_above(secondary, primary, index_primary, indices, indptrs, work.mod);
+        auto curdex = work.state.search_above(secondary, primary, index_primary, indices, indptrs);
         if (secondary == curdex) { // assuming secondary < max_index, of course.
             auto& curptr = work.state.current_indptrs[index_primary];
             work.update_secondary_position(curptr, indices, indptrs[primary + 1]);
@@ -528,7 +527,7 @@ private:
 
     template<class Store_>
     void secondary_dimension_below(Index_ secondary, Index_ primary, Index_ index_primary, SecondaryWorkspace& work, Store_& output) const {
-        auto curdex = work.state.search_below(secondary, primary, index_primary, indices, indptrs, work.mod);
+        auto curdex = work.state.search_below(secondary, primary, index_primary, indices, indptrs);
         if (secondary == curdex) { // assuming secondary < max_index, of course.
             auto& curptr = work.state.current_indptrs[index_primary];
             work.update_secondary_position(curptr, indices, indptrs[primary + 1]);

@@ -503,14 +503,13 @@ private:
         SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Args_&&... args) :
             state(max_index, idx, idp, std::forward<Args_>(args)...) {}
 
-        sparse::SimpleSecondaryExtractionWorkspace<Index_, index_type, indptr_type> state;
+        sparse::SimpleSecondaryExtractionWorkspace<Index_, index_type, indptr_type, Modifier> state;
         Index_ previous_request = 0;
-        Modifier mod;
     };
 
     template<class Store_>
     void secondary_dimension_above(Index_ secondary, Index_ primary, Index_ index_primary, SecondaryWorkspace& work, Store_& output) const {
-        auto curdex = work.state.search_above(secondary, primary, index_primary, indices, indptrs, work.mod);
+        auto curdex = work.state.search_above(secondary, primary, index_primary, indices, indptrs);
         if (secondary == curdex) { // assuming secondary < max_index, of course.
             add_to_store(primary, work.state.current_indptrs[index_primary], output);
         } else {
@@ -520,7 +519,7 @@ private:
 
     template<class Store_>
     void secondary_dimension_below(Index_ secondary, Index_ primary, Index_ index_primary, SecondaryWorkspace& work, Store_& output) const {
-        auto curdex = work.state.search_below(secondary, primary, index_primary, indices, indptrs, work.mod);
+        auto curdex = work.state.search_below(secondary, primary, index_primary, indices, indptrs);
         if (secondary == curdex) { // assuming secondary < max_index, of course.
             add_to_store(primary, work.state.current_indptrs[index_primary], output);
         } else {
