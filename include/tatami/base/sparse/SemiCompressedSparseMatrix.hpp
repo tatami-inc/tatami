@@ -3,6 +3,7 @@
 
 #include "../Matrix.hpp"
 #include "../utils.hpp"
+#include "utils.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -438,126 +439,87 @@ private:
      *************************************/
 private:
     struct SecondaryWorkspace {
-        SecondaryWorkspace() = default;
-
-        SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) : current_indptrs(length), current_indices(length) {
-            /* Here, the general idea is to store a local copy of the actual
-             * row indices (for CSC matrices; column indices, for CSR matrices)
-             * so that we don't have to keep on doing cache-unfriendly look-ups
-             * for the indices based on the pointers that we do have. This assumes
-             * that the density is so low that updates to the local indices are
-             * rare relative to the number of comparisons to those same indices.
-             * Check out the `secondary_dimension()` function for how this is used.
-             */
-            auto idpIt = idp.begin() + start;
-            for (Index_ i = 0; i < length; ++i, ++idpIt) {
-                current_indptrs[i].pointer = *idpIt;
-                current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
-            }
-            return;
-        } 
-
-        SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp) :
-            SecondaryWorkspace(max_index, idx, idp, static_cast<Index_>(0), idp.size() - 1) {}
-
-        SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
-            current_indptrs(length), current_indices(length)
-        {
-            for (Index_ i0 = 0; i0 < length; ++i0) {
-                auto i = subset[i0];
-                current_indptrs[i0].pointer = idp[i];
-                current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
-            }
-            return;
-        } 
-
-        Index_ previous_request = 0;
+        typedef sparse::Stored<IndexStorage_> index_type;
+        typedef sparse::Stored<PointerStorage_> indptr_type;
 
         struct Position {
+            Position() = default;
+            Position(indptr_type p) : pointer(p) {}
             indptr_type pointer;
-            Index_ count;
+            Index_ count = 0;
             bool scanned = false;
         };
-        std::vector<Position> current_indptrs; // the current position of the pointer
 
-        // The current index being pointed to, i.e., current_indices[0] <= indices[current_ptrs[0]]. 
-        // If current_ptrs[0] is out of range, the current index is instead set to the maximum index
-        // (e.g., max rows for CSC matrices).
-        std::vector<index_type> current_indices;
-    };
+    public:
+        static void update_secondary_position(Position& current, const IndexStorage_& indices, indptr_type limit) {
+            if (current.scanned) {
+                return;
+            }
 
-private:
-    void update_secondary_position(typename SecondaryWorkspace::Position& curptr, indptr_type limit) const {
-        if (!curptr.scanned) {
-            auto curdex = indices[curptr.pointer];
-            curptr.count = 0;
-            auto copy = curptr.pointer;
+            auto curdex = indices[current.pointer];
+            auto copy = current.pointer;
             do {
                 ++copy;
             } while (copy < limit && indices[copy] == curdex);
-            curptr.count = copy - curptr.pointer;
-            curptr.scanned = true;
+            current.count = copy - current.pointer;
+            current.scanned = true;
+            return;
         }
-    }
+
+        struct Modifier {
+            static void increment(Position& ptr, const IndexStorage_& indices, indptr_type limit) {
+                update_secondary_position(ptr, indices, limit);
+                ptr.pointer += ptr.count;
+                ptr.scanned = false;
+                ptr.count = 0;
+            }
+
+            static void decrement(Position& ptr, const IndexStorage_& indices, indptr_type limit) {
+                if (ptr.pointer == limit) {
+                    return;
+                }
+
+                auto copy = ptr.pointer;
+                --copy;
+                auto curdex = indices[copy];
+                while (copy > limit && indices[copy - 1] == curdex) {
+                    --copy;
+                }
+
+                ptr.count = ptr.pointer - copy;
+                ptr.scanned = true;
+                ptr.pointer = copy;
+            }
+
+            indptr_type get(const Position& ptr) const {
+                return ptr.pointer;
+            }
+
+            void set(Position& ptr, indptr_type val) const {
+                ptr.pointer = val;
+                ptr.scanned = false;
+                ptr.count = 0;
+            }
+        };
+
+    public:
+        SecondaryWorkspace() = default;
+
+        template<typename ... Args_>
+        SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Args_&&... args) :
+            state(max_index, idx, idp, std::forward<Args_>(args)...) {}
+
+        Index_ previous_request = 0;
+        sparse::SimpleSecondaryExtractionWorkspace<Index_, index_type, Position> state;
+        Modifier mod;
+    };
 
     template<class Store_>
     void secondary_dimension_above(Index_ secondary, Index_ primary, Index_ index_primary, SecondaryWorkspace& work, Store_& output) const {
-        auto& curdex = work.current_indices[index_primary];
-        auto& curptr = work.current_indptrs[index_primary];
-
-        // Remember that we already store the index corresponding to the current indptr.
-        // So, we only need to do more work if the request is greater than that index.
-        if (secondary > curdex) {
-            auto max_index = max_secondary_index();
-            auto limit = indptrs[primary + 1];
-            update_secondary_position(curptr, limit);
-            curptr.pointer += curptr.count;
-            curptr.scanned = false;
-
-            // Having a peek at the index of the next non-zero
-            // element; maybe we're lucky enough that the requested
-            // index is below this, as would be the case for
-            // consecutive or near-consecutive accesses.
-            if (curptr.pointer < limit) {
-                auto candidate = indices[curptr.pointer];
-                if (candidate >= secondary) {
-                    curdex = candidate;
-
-                } else if (secondary + 1 == max_index) {
-                    // Special case if the requested index is at the end of the matrix,
-                    // in which case we can just jump there directly rather than 
-                    // doing an unnecessary binary search. We can assume that there is
-                    // at least one non-zero element in this dimension element (otherwise
-                    // 'secondary > curdex' would not have passed, as curdex would be
-                    // set to 'maxindex'), so 'limit - 1' is a valid expression here.
-                    auto below_limit = limit - 1;
-                    if (indices[below_limit] == secondary) {
-                        curdex = secondary;
-                        curptr.pointer = below_limit;
-                        while (curptr.pointer > indptrs[primary] && indices[curptr.pointer - 1] == curdex) {
-                            --curptr.pointer;
-                        }
-                        curptr.count = limit - curptr.pointer;
-                        curptr.scanned = true;
-                    } else {
-                        curptr.pointer = limit;
-                        curdex = max_index;
-                    }
-
-                } else {
-                    // Otherwise we need to search indices above the existing position.
-                    // If the scanned count is available, we use it to trim the search space.
-                    size_t offset = curptr.pointer + (curptr.scanned ? curptr.count : 0);
-                    curptr.pointer = std::lower_bound(indices.begin() + offset, indices.begin() + limit, secondary) - indices.begin();
-                    curdex = (curptr.pointer < limit ? indices[curptr.pointer] : max_index);
-                }
-            } else {
-                curdex = max_index;
-            }
-        } 
-
+        auto curdex = work.state.search_above(secondary, primary, index_primary, indices, indptrs, work.mod);
         if (secondary == curdex) { // assuming secondary < max_index, of course.
-            update_secondary_position(curptr, indptrs[primary + 1]);
+            auto& curptr = work.state.current_indptrs[index_primary];
+            work.update_secondary_position(curptr, indices, indptrs[primary + 1]);
             output.add(primary, curptr.count);
         } else {
             output.skip(primary);
@@ -566,29 +528,10 @@ private:
 
     template<class Store_>
     void secondary_dimension_below(Index_ secondary, Index_ primary, Index_ index_primary, SecondaryWorkspace& work, Store_& output) const {
-        auto& curdex = work.current_indices[index_primary];
-        auto& curptr = work.current_indptrs[index_primary];
-
-        if (secondary < curdex) {
-            auto limit = indptrs[primary + 1];
-            if (indptrs[primary] < limit) {
-                if (secondary == 0) {
-                    // Special case if the requested index is at the end of the matrix,
-                    // in which case we can just jump there directly rather than 
-                    // doing an unnecessary binary search.
-                    curptr.pointer = indptrs[primary];
-                    curdex = indices[curptr.pointer];
-                } else {
-                    // Otherwise, searching indices below the existing position.
-                    curptr.pointer = std::lower_bound(indices.begin() + indptrs[primary], indices.begin() + curptr.pointer, secondary) - indices.begin();
-                    curdex = (curptr.pointer < limit ? indices[curptr.pointer] : max_secondary_index());
-                }
-                curptr.scanned = false;
-            }
-        }
-
+        auto curdex = work.state.search_below(secondary, primary, index_primary, indices, indptrs, work.mod);
         if (secondary == curdex) { // assuming secondary < max_index, of course.
-            update_secondary_position(curptr, indptrs[primary + 1]);
+            auto& curptr = work.state.current_indptrs[index_primary];
+            work.update_secondary_position(curptr, indices, indptrs[primary + 1]);
             output.add(primary, curptr.count);
         } else {
             output.skip(primary);
