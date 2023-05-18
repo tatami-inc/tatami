@@ -113,49 +113,6 @@ TEST_P(SparseFullAccessTest, Row) {
     test_simple_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
 }
 
-TEST_P(SparseFullAccessTest, Details) {
-    size_t NC = sparse_column->ncol(), NR = sparse_column->nrow();
-    auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-
-    auto work_row = sparse_row->sparse_column();
-    typedef const tatami::CompressedSparseRowMatrix<double, int>::SparseSecondaryExtractor<tatami::DimensionSelectionType::FULL> SSE;
-    auto fetch_offsets = [](const auto* ptr) -> std::vector<size_t> {
-        return dynamic_cast<SSE*>(ptr)->work.current_indptrs;
-    };
-    auto work_col = sparse_column->sparse_column();
-    auto work_row2 = sparse_row->sparse_column();
-
-    for (size_t i = 0; i < NC; i += JUMP) {
-        size_t c = (FORWARD ? i : NC - i - 1);
-
-        // Checking that CSR extraction actually has an effect on the latest indptrs.
-        std::vector<size_t> old_offsets = fetch_offsets(work_row.get());
-        work_row->fetch(c);
-        std::vector<size_t> new_offsets = fetch_offsets(work_row.get());
-
-        if (!FORWARD || c != 0) {
-            EXPECT_NE(old_offsets, new_offsets); 
-        }
-
-        // Double-checking the read-only sparse extractors.
-        std::vector<double> outval(sparse_column->nrow());
-        std::vector<int> outidx(sparse_column->nrow());
-
-        auto x = work_col->fetch(c, outval.data(), outidx.data());
-        EXPECT_TRUE(x.number < NR);
-        EXPECT_FALSE(outval.data()==x.value); // points to internal data.
-        EXPECT_FALSE(outidx.data()==x.index);
-
-        auto y = work_row2->fetch(c, outval.data(), outidx.data());
-        EXPECT_TRUE(y.number < NR);
-        EXPECT_TRUE(outval.data()==y.value); // points to buffer.
-        EXPECT_TRUE(outidx.data()==y.index);
-        EXPECT_EQ(new_offsets, fetch_offsets(work_row2.get()));
-    }
-}
-
 INSTANTIATE_TEST_CASE_P(
     CompressedSparseMatrix,
     SparseFullAccessTest,

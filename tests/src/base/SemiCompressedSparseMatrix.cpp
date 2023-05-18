@@ -255,3 +255,35 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
+/*************************************
+ *************************************/
+
+TEST(SemiCompressedSparseMatrix, ExtremeCounting) {
+    // Checking for correct counting of duplicates at the extremes.
+    std::vector<int> indices {
+        2, 2, 2, 8, 11, 11, 12,
+        3, 4, 4, 7, 10, 10, 12, 15, 18, 18, 18, 18,
+        0, 0, 0, 0,  1,  4,  8,  8,  8, 14, 14
+    };
+
+    std::vector<size_t> indptrs {
+        0,
+        7,
+        19,
+        30
+    };
+
+    tatami::SemiCompressedSparseColumnMatrix<double, int> mat(19, 3, indices, indptrs);
+
+    auto wrk = mat.dense_row();
+    {
+        std::vector<double> temp{ 0, 0, 4 };
+        EXPECT_EQ(wrk->fetch(0), temp);
+
+        temp = std::vector<double>{ 0, 4, 0 };
+        EXPECT_EQ(wrk->fetch(18), temp);
+
+        temp = std::vector<double>{ 0, 0, 4 }; // jumping back to the start.
+        EXPECT_EQ(wrk->fetch(0), temp);
+    }
+}
