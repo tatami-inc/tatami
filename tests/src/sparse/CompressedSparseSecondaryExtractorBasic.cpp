@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/base/sparse/utils.hpp"
+#include "tatami/sparse/CompressedSparseSecondaryExtractorBasic.hpp"
 
 struct SimpleModifier {
     static void increment(size_t& ptr, const std::vector<int>&, const size_t&) { ++ptr; }
@@ -13,8 +13,6 @@ struct SimpleModifier {
 };
 
 TEST(SecondaryExtractionWorkspaceBase, Increment) {
-    tatami::sparse::SecondaryExtractionWorkspaceBase<int, SimpleModifier> test(19);
-
     std::vector<int> indices {
         0, 5, 6, 9, 10,
         1, 8, 12, 18,
@@ -27,6 +25,14 @@ TEST(SecondaryExtractionWorkspaceBase, Increment) {
         9,
         16
     };
+
+    tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+    {
+        std::vector<int> first { 0, 1, 5 };
+        EXPECT_EQ(test.current_indices, first);
+        std::vector<size_t> pointers { 0, 5, 9 };
+        EXPECT_EQ(test.current_indptrs, pointers);
+    }
 
     {
         int curdex = 0;
@@ -94,8 +100,6 @@ TEST(SecondaryExtractionWorkspaceBase, Increment) {
 }
 
 TEST(SecondaryExtractionWorkspaceBase, Decrement) {
-    tatami::sparse::SecondaryExtractionWorkspaceBase<int, SimpleModifier> test(19);
-
     std::vector<int> indices {
         2, 8, 11, 12, 18,
         3, 4, 7, 10, 12, 15,  
@@ -108,6 +112,8 @@ TEST(SecondaryExtractionWorkspaceBase, Decrement) {
         11,
         16
     };
+
+    tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
 
     {
         int curdex = 18;
@@ -192,8 +198,6 @@ TEST(SecondaryExtractionWorkspaceBase, Duplicated) {
         static void set(size_t& ptr, size_t val) { ptr = val; }
     };
 
-    tatami::sparse::SecondaryExtractionWorkspaceBase<int, DuplicatedModifier> test(19);
-
     std::vector<int> indices {
         0, 0, 0, 2, 6, 6, 9, 10, 15, 15, 15, 
         1, 1, 3, 3, 3, 5, 8, 8, 8, 11, 14, 18, 18, 18,
@@ -206,6 +210,8 @@ TEST(SecondaryExtractionWorkspaceBase, Duplicated) {
         25,
         34
     };
+
+    tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, DuplicatedModifier> test(19, indices, indptrs);
 
     // Increment works correctly.
     {

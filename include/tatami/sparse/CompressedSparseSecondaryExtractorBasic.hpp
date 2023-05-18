@@ -1,27 +1,65 @@
-#ifndef TATAMI_SPARSE_UTILS_HPP
-#define TATAMI_SPARSE_UTILS_HPP
+#ifndef TATAMI_COMPRESSED_SPARSE_SECONDARY_EXTRACTOR_BASIC_HPP
+#define TATAMI_COMPRESSED_SPARSE_SECONDARY_EXTRACTOR_BASIC_HPP
 
 #include <vector>
 
 namespace tatami {
 
-namespace sparse {
-
 template<class Storage_>
 using Stored = typename std::remove_reference<decltype(std::declval<Storage_>()[0])>::type;
 
-template<typename StoredIndex_, class CustomPointerModifier_> 
-struct SecondaryExtractionWorkspaceBase {
-private:
+template<typename Index_, typename StoredIndex_, typename CustomPointer_, class CustomPointerModifier_> 
+struct CompressedSparseSecondaryExtractorBasic {
     StoredIndex_ max_index;
 
-public:
-    SecondaryExtractionWorkspaceBase(StoredIndex_ mi) : max_index(mi) {}
+    // The current position of the pointer at each primary element.
+    std::vector<CustomPointer_> current_indptrs; 
 
-    SecondaryExtractionWorkspaceBase() = default;
+    // The current index being pointed to, i.e., current_indices[0] <= indices[current_ptrs[0]]. 
+    // If current_ptrs[0] is out of range, the current index is instead set to the maximum index
+    // (e.g., max rows for CSC matrices).
+    std::vector<StoredIndex_> current_indices;
 
 public:
-    template<typename Index_, class IndexStorage_, class PointerStorage_, class CustomPointer_>
+    CompressedSparseSecondaryExtractorBasic() = default;
+
+    template<class IndexStorage_, class PointerStorage_>
+    CompressedSparseSecondaryExtractorBasic(StoredIndex_ mi, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) :
+        max_index(mi), current_indices(length), current_indptrs(idp.begin() + start, idp.begin() + start + length)
+    {
+        /* Here, the general idea is to store a local copy of the actual
+         * row indices (for CSC matrices; column indices, for CSR matrices)
+         * so that we don't have to keep on doing cache-unfriendly look-ups
+         * for the indices based on the pointers that we do have. This assumes
+         * that the density is so low that updates to the local indices are
+         * rare relative to the number of comparisons to those same indices.
+         * Check out the `secondary_dimension()` function for how this is used.
+         */
+        auto idpIt = idp.begin() + start;
+        for (Index_ i = 0; i < length; ++i, ++idpIt) {
+            current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
+        }
+        return;
+    } 
+
+    template<class IndexStorage_, class PointerStorage_>
+    CompressedSparseSecondaryExtractorBasic(StoredIndex_ mi, const IndexStorage_& idx, const PointerStorage_& idp) :
+        CompressedSparseSecondaryExtractorBasic(mi, idx, idp, static_cast<Index_>(0), static_cast<Index_>(idp.size() - 1)) {}
+
+    template<class IndexStorage_, class PointerStorage_>
+    CompressedSparseSecondaryExtractorBasic(StoredIndex_ mi, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
+        max_index(mi), current_indices(length), current_indptrs(length)
+    {
+        for (Index_ i0 = 0; i0 < length; ++i0) {
+            auto i = subset[i0];
+            current_indptrs[i0] = idp[i];
+            current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
+        }
+        return;
+    }
+
+public:
+    template<class IndexStorage_, class PointerStorage_>
     void search_above(StoredIndex_ secondary, Index_ primary, const IndexStorage_& indices, const PointerStorage_& indptrs, StoredIndex_& curdex, CustomPointer_& curptr) const {
         // Skipping if the curdex (corresponding to curptr) is already higher
         // than secondary.  So, we only need to do more work if the request is
@@ -72,7 +110,15 @@ public:
         curdex = (next_ptr != limit ? indices[next_ptr] : max_index);
     }
 
-    template<typename Index_, class IndexStorage_, class PointerStorage_, class CustomPointer_>
+    template<class IndexStorage_, class PointerStorage_>
+    StoredIndex_ search_above(StoredIndex_ secondary, Index_ primary, Index_ index_primary, const IndexStorage_& indices, const PointerStorage_& indptrs) {
+        auto& curdex = current_indices[index_primary];
+        search_above(secondary, primary, indices, indptrs, curdex, current_indptrs[index_primary]);
+        return curdex;
+    }
+
+public:
+    template<class IndexStorage_, class PointerStorage_>
     void search_below(StoredIndex_ secondary, Index_ primary, const IndexStorage_& indices, const PointerStorage_& indptrs, StoredIndex_& curdex, CustomPointer_& curptr) const {
         if (secondary == curdex) {
             return;
@@ -114,76 +160,14 @@ public:
         CustomPointerModifier_::set(curptr, next_ptr);
         curdex = (next_ptr != indptrs[primary + 1] ? indices[next_ptr] : max_index);
     }
-};
-
-template<typename Index_, typename StoredIndex_, class CustomPointer_, class CustomPointerModifier_>
-struct SimpleSecondaryExtractionWorkspace {
-public:
-    SimpleSecondaryExtractionWorkspace() = default;
-
-    template<class IndexStorage_, class PointerStorage_>
-    SimpleSecondaryExtractionWorkspace(StoredIndex_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) :
-        base(max_index), current_indices(length), current_indptrs(idp.begin() + start, idp.begin() + start + length)
-    {
-        /* Here, the general idea is to store a local copy of the actual
-         * row indices (for CSC matrices; column indices, for CSR matrices)
-         * so that we don't have to keep on doing cache-unfriendly look-ups
-         * for the indices based on the pointers that we do have. This assumes
-         * that the density is so low that updates to the local indices are
-         * rare relative to the number of comparisons to those same indices.
-         * Check out the `secondary_dimension()` function for how this is used.
-         */
-        auto idpIt = idp.begin() + start;
-        for (Index_ i = 0; i < length; ++i, ++idpIt) {
-            current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
-        }
-        return;
-    } 
-
-    template<class IndexStorage_, class PointerStorage_>
-    SimpleSecondaryExtractionWorkspace(StoredIndex_ max_index, const IndexStorage_& idx, const PointerStorage_& idp) :
-        SimpleSecondaryExtractionWorkspace(max_index, idx, idp, static_cast<Index_>(0), static_cast<Index_>(idp.size() - 1)) {}
-
-    template<class IndexStorage_, class PointerStorage_>
-    SimpleSecondaryExtractionWorkspace(StoredIndex_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
-        base(max_index), current_indices(length), current_indptrs(length)
-    {
-        for (Index_ i0 = 0; i0 < length; ++i0) {
-            auto i = subset[i0];
-            current_indptrs[i0] = idp[i];
-            current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
-        }
-        return;
-    }
-
-public:
-    SecondaryExtractionWorkspaceBase<StoredIndex_, CustomPointerModifier_> base;
-
-    // The current position of the pointer at each primary element.
-    std::vector<CustomPointer_> current_indptrs; 
-
-    // The current index being pointed to, i.e., current_indices[0] <= indices[current_ptrs[0]]. 
-    // If current_ptrs[0] is out of range, the current index is instead set to the maximum index
-    // (e.g., max rows for CSC matrices).
-    std::vector<StoredIndex_> current_indices;
-
-public:
-    template<class IndexStorage_, class PointerStorage_>
-    StoredIndex_ search_above(StoredIndex_ secondary, Index_ primary, Index_ index_primary, const IndexStorage_& indices, const PointerStorage_& indptrs) {
-        auto& curdex = current_indices[index_primary];
-        base.search_above(secondary, primary, indices, indptrs, curdex, current_indptrs[index_primary]);
-        return curdex;
-    }
 
     template<class IndexStorage_, class PointerStorage_>
     StoredIndex_ search_below(StoredIndex_ secondary, Index_ primary, Index_ index_primary, const IndexStorage_& indices, const PointerStorage_& indptrs) {
         auto& curdex = current_indices[index_primary];
-        base.search_below(secondary, primary, indices, indptrs, curdex, current_indptrs[index_primary]);
+        search_below(secondary, primary, indices, indptrs, curdex, current_indptrs[index_primary]);
         return curdex;
     }
 };
-
-}
 
 }
 

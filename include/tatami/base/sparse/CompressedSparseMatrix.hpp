@@ -3,7 +3,7 @@
 
 #include "../Matrix.hpp"
 #include "../utils.hpp"
-#include "utils.hpp"
+#include "../../sparse/CompressedSparseSecondaryExtractorBasic.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -485,8 +485,8 @@ private:
      *************************************/
 private:
     struct SecondaryWorkspace {
-        typedef sparse::Stored<IndexStorage_> index_type;
-        typedef sparse::Stored<PointerStorage_> indptr_type;
+        typedef Stored<IndexStorage_> index_type;
+        typedef Stored<PointerStorage_> indptr_type;
 
     public:
         struct Modifier {
@@ -503,7 +503,7 @@ private:
         SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Args_&&... args) :
             state(max_index, idx, idp, std::forward<Args_>(args)...) {}
 
-        sparse::SimpleSecondaryExtractionWorkspace<Index_, index_type, indptr_type, Modifier> state;
+        CompressedSparseSecondaryExtractorBasic<Index_, index_type, indptr_type, Modifier> state;
         Index_ previous_request = 0;
     };
 

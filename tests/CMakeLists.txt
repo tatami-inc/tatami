@@ -26,7 +26,7 @@ add_executable(
     src/base/arith_scalar_helpers.cpp
     src/base/math_helpers.cpp
 
-    src/sparse/utils.cpp
+    src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
 
     src/stats/sums.cpp
     src/stats/variances.cpp
