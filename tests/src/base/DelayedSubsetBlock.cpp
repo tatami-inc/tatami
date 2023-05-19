@@ -7,10 +7,7 @@
 #include "tatami/base/subset/DelayedSubsetBlock.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_oracle_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 template<class PARAM> 
 class SubsetBlockTest : public ::testing::TestWithParam<PARAM> {
@@ -22,7 +19,7 @@ protected:
     int block_length;
 protected:
     void SetUp() {
-        simulated = simulate_sparse_vector<double>(NR * NC, 0.2);
+        simulated = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.2);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulated));
         sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
         return;
@@ -84,8 +81,8 @@ TEST_P(SubsetBlockFullAccessTest, Row) {
 
     bool FORWARD = std::get<2>(param);
     bool JUMP = std::get<3>(param);
-    test_simple_row_access(dense_block.get(), ref.get(), FORWARD, JUMP);
-    test_simple_row_access(sparse_block.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_block.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_block.get(), ref.get(), FORWARD, JUMP);
 }
 
 TEST_P(SubsetBlockFullAccessTest, Column) {
@@ -94,8 +91,8 @@ TEST_P(SubsetBlockFullAccessTest, Column) {
     bool FORWARD = std::get<2>(param);
     bool JUMP = std::get<3>(param);
 
-    test_simple_column_access(dense_block.get(), ref.get(), FORWARD, JUMP);
-    test_simple_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_block.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -127,8 +124,8 @@ TEST_P(SubsetBlockSlicedAccessTest, Row) {
     auto interval_info = std::get<4>(param);
     int FIRST = interval_info[0] * dense_block->ncol(), LAST = interval_info[1] * dense_block->ncol();
 
-    test_sliced_row_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_row_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 TEST_P(SubsetBlockSlicedAccessTest, Column) {
@@ -140,8 +137,8 @@ TEST_P(SubsetBlockSlicedAccessTest, Column) {
     auto interval_info = std::get<4>(param);
     int FIRST = interval_info[0] * dense_block->nrow(), LAST = interval_info[1] * dense_block->nrow();
 
-    test_sliced_column_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -178,8 +175,8 @@ TEST_P(SubsetBlockIndexedAccessTest, Row) {
     auto interval_info = std::get<4>(param);
     int FIRST = interval_info[0] * dense_block->ncol(), STEP = interval_info[1] * dense_block->ncol();
 
-    test_indexed_row_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_row_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 TEST_P(SubsetBlockIndexedAccessTest, Column) {
@@ -191,8 +188,8 @@ TEST_P(SubsetBlockIndexedAccessTest, Column) {
     auto interval_info = std::get<4>(param);
     int FIRST = interval_info[0] * dense_block->nrow(), STEP = interval_info[1] * dense_block->nrow();
 
-    test_indexed_column_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(dense_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -226,7 +223,7 @@ protected:
 protected:
     template<class PARAM>
     void assemble(const PARAM& param) {
-        auto simulated = simulate_sparse_vector<double>(NR * NC, 0.2);
+        auto simulated = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.2);
         auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulated));
         auto sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
 
@@ -238,13 +235,13 @@ protected:
         if (std::get<0>(param)) {
             dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, last);
             sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, first, last);
-            wrapped_dense_block = tatami::make_DelayedSubsetBlock<0>(make_CrankyMatrix(dense), first, last);
-            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<0>(make_CrankyMatrix(sparse), first, last);
+            wrapped_dense_block = tatami::make_DelayedSubsetBlock<0>(tatami_test::make_CrankyMatrix(dense), first, last);
+            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<0>(tatami_test::make_CrankyMatrix(sparse), first, last);
         } else {
             dense_block = tatami::make_DelayedSubsetBlock<1>(dense, first, last);
             sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, first, last);
-            wrapped_dense_block = tatami::make_DelayedSubsetBlock<1>(make_CrankyMatrix(dense), first, last);
-            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<1>(make_CrankyMatrix(sparse), first, last);
+            wrapped_dense_block = tatami::make_DelayedSubsetBlock<1>(tatami_test::make_CrankyMatrix(dense), first, last);
+            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<1>(tatami_test::make_CrankyMatrix(sparse), first, last);
         }
     }
 };
@@ -257,11 +254,11 @@ TEST_P(SubsetBlockOracleTest, Validate) {
     EXPECT_FALSE(dense_block->uses_oracle(true));
     EXPECT_TRUE(wrapped_dense_block->uses_oracle(true));
 
-    test_oracle_column_access(wrapped_dense_block.get(), dense_block.get(), random);
-    test_oracle_column_access(wrapped_sparse_block.get(), sparse_block.get(), random);
+    tatami_test::test_oracle_column_access(wrapped_dense_block.get(), dense_block.get(), random);
+    tatami_test::test_oracle_column_access(wrapped_sparse_block.get(), sparse_block.get(), random);
 
-    test_oracle_row_access(wrapped_dense_block.get(), dense_block.get(), random);
-    test_oracle_row_access(wrapped_sparse_block.get(), sparse_block.get(), random);
+    tatami_test::test_oracle_row_access(wrapped_dense_block.get(), dense_block.get(), random);
+    tatami_test::test_oracle_row_access(wrapped_sparse_block.get(), sparse_block.get(), random);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -283,7 +280,7 @@ INSTANTIATE_TEST_CASE_P(
 
 TEST(DelayedSubsetBlock, ConstOverload) {
     int NR = 9, NC = 7;
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
     auto sub = tatami::make_DelayedSubsetBlock<1>(dense, static_cast<int>(5), static_cast<int>(8));
     EXPECT_EQ(sub->ncol(), 3);
     EXPECT_EQ(sub->nrow(), NR);

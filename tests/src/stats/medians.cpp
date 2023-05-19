@@ -12,14 +12,11 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/medians.hpp"
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_oracle_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 TEST(ComputingDimMedians, SparseMedians) {
     size_t NR = 111, NC = 222;
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.09)));
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.09)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
@@ -87,7 +84,7 @@ protected:
 
 TEST_P(MedianTriangularTest, Positive) {
     size_t order = GetParam();
-    auto dump = simulate_dense_vector<double>(order * order, 0.1, 1);
+    auto dump = tatami_test::simulate_dense_vector<double>(order * order, 0.1, 1);
     triangularize(order, dump);
 
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(order, order, dump));
@@ -111,7 +108,7 @@ TEST_P(MedianTriangularTest, Positive) {
 TEST_P(MedianTriangularTest, Negative) {
     // Seeing what happens if all non-zeros are less than zero.
     size_t order = GetParam();
-    auto dump = simulate_dense_vector<double>(order * order, -2, -0.1);
+    auto dump = tatami_test::simulate_dense_vector<double>(order * order, -2, -0.1);
     triangularize(order, dump);
 
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(order, order, dump));
@@ -135,7 +132,7 @@ TEST_P(MedianTriangularTest, Negative) {
 TEST_P(MedianTriangularTest, Mixed) {
     // Mixing up the ratios of non-zeros on both sides of zero.
     size_t order = GetParam();
-    auto dump = simulate_dense_vector<double>(order * order, -2, 2);
+    auto dump = tatami_test::simulate_dense_vector<double>(order * order, -2, 2);
     triangularize(order, dump);
 
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(order, order, dump));
@@ -176,10 +173,10 @@ TEST(ComputingDimMedians, RowMediansNaN) {
 
 TEST(ComputingDimMedians, CrankyOracle) {
     size_t NR = 199, NC = 252;
-    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
     auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
-    auto dense_row = make_CrankyMatrix(raw_dense);
-    auto dense_column = make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
+    auto dense_row = tatami_test::make_CrankyMatrix(raw_dense);
+    auto dense_column = tatami_test::make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
 
     {
         auto ref = tatami::column_medians(raw_dense.get());

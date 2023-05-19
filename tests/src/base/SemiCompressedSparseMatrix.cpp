@@ -6,9 +6,7 @@
 #include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/base/sparse/SemiCompressedSparseMatrix.hpp"
 
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_column_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 TEST(SemiCompressedSparseMatrix, ConstructionEmpty) {
     std::vector<int> indices;
@@ -22,8 +20,8 @@ TEST(SemiCompressedSparseMatrix, ConstructionEmpty) {
 
     // Comparing access for an empty matrix.
     tatami::DenseColumnMatrix<double, int> dense(10, 20, std::vector<double>(200));
-    test_simple_column_access(&mat, &dense, true, 1);
-    test_simple_row_access(&mat, &dense, true, 1);
+    tatami_test::test_simple_column_access(&mat, &dense, true, 1);
+    tatami_test::test_simple_row_access(&mat, &dense, true, 1);
 
     // Same for row-major.
     indptr.resize(11);
@@ -31,8 +29,8 @@ TEST(SemiCompressedSparseMatrix, ConstructionEmpty) {
     EXPECT_TRUE(rmat.sparse());
     EXPECT_EQ(rmat.nrow(), 10);
     EXPECT_EQ(rmat.ncol(), 20);
-    test_simple_column_access(&rmat, &dense, true, 1);
-    test_simple_row_access(&rmat, &dense, true, 1);
+    tatami_test::test_simple_column_access(&rmat, &dense, true, 1);
+    tatami_test::test_simple_row_access(&rmat, &dense, true, 1);
 }
 
 /*************************************
@@ -44,7 +42,7 @@ protected:
     std::shared_ptr<tatami::NumericMatrix> dense, sparse_row, sparse_column;
 
     void assemble() {
-        auto simulated = simulate_sparse_vector<double>(nrow * ncol, 0.05, 1, 4);
+        auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05, 1, 4);
         for (auto& s : simulated) {
             s = static_cast<int>(s);
         }
@@ -138,16 +136,16 @@ TEST_P(SemiSparseFullAccessTest, Column) {
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
-    test_simple_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP);
-//    test_simple_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP);
+//    tatami_test::test_simple_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
 }
 
 TEST_P(SemiSparseFullAccessTest, Row) {
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
-    test_simple_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP);
-    test_simple_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -177,8 +175,8 @@ TEST_P(SemiSparseSlicedAccessTest, Column) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    test_sliced_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 TEST_P(SemiSparseSlicedAccessTest, Row) {
@@ -188,8 +186,8 @@ TEST_P(SemiSparseSlicedAccessTest, Row) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
 
-    test_sliced_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -225,8 +223,8 @@ TEST_P(SemiSparseIndexedAccessTest, Column) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    test_indexed_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 TEST_P(SemiSparseIndexedAccessTest, Row) {
@@ -237,8 +235,8 @@ TEST_P(SemiSparseIndexedAccessTest, Row) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
 
-    test_indexed_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(

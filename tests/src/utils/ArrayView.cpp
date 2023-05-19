@@ -3,8 +3,7 @@
 #include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/base/sparse/CompressedSparseMatrix.hpp"
 
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_column_access.h"
+#include "tatami_test/tatami_test.hpp"
 
 #include <cstdint>
 #include <numeric>
@@ -18,8 +17,8 @@ TEST(ArrayView, DenseMatrix) {
     tatami::ArrayView<int> arr(values.data(), values.size());
     tatami::DenseColumnMatrix<double, int, decltype(arr)> alt(nr, nc, arr);
 
-    test_simple_row_access(&alt, &ref, true, 1);
-    test_simple_column_access(&alt, &ref, true, 1);
+    tatami_test::test_simple_row_access(&alt, &ref, true, 1);
+    tatami_test::test_simple_column_access(&alt, &ref, true, 1);
 }
 
 TEST(ArrayView, SparseMatrix) {
@@ -34,6 +33,6 @@ TEST(ArrayView, SparseMatrix) {
     tatami::ArrayView<size_t> indarr(indptrs.data(), indptrs.size());
     tatami::CompressedSparseColumnMatrix<double, int, decltype(varr), decltype(iarr), decltype(indarr)> alt(nr, nc, varr, iarr, indarr);
 
-    test_simple_row_access(&alt, &ref, true, 1);
-    test_simple_column_access(&alt, &ref, true, 1);
+    tatami_test::test_simple_row_access(&alt, &ref, true, 1);
+    tatami_test::test_simple_column_access(&alt, &ref, true, 1);
 }

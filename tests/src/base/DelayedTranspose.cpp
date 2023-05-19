@@ -7,10 +7,7 @@
 #include "tatami/base/other/DelayedTranspose.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_oracle_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 template<class PARAM>
 class TransposeTest: public ::testing::TestWithParam<PARAM> {
@@ -20,7 +17,7 @@ protected:
     std::vector<double> simulated;
 protected:
     void SetUp() {
-        simulated = simulate_sparse_vector<double>(nrow * ncol, 0.05);
+        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
         tdense = tatami::make_DelayedTranspose(dense);
@@ -57,16 +54,16 @@ TEST_P(TransposeFullTest, Row) {
     EXPECT_TRUE(tsparse->prefer_rows());
     EXPECT_EQ(tsparse->prefer_rows_proportion(), 1);
 
-    test_simple_row_access(tdense.get(), ref.get(), FORWARD, JUMP);
-    test_simple_row_access(tsparse.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(tdense.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(tsparse.get(), ref.get(), FORWARD, JUMP);
 }
 
 TEST_P(TransposeFullTest, Column) {
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
-    test_simple_column_access(tdense.get(), ref.get(), FORWARD, JUMP);
-    test_simple_column_access(tsparse.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(tdense.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(tsparse.get(), ref.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -87,8 +84,8 @@ TEST_P(TransposeBlockTest, Row) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * tdense->ncol(), LAST = interval_info[1] * tdense->ncol();
 
-    test_sliced_row_access(tdense.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_row_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(tdense.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 TEST_P(TransposeBlockTest, Column) {
@@ -98,8 +95,8 @@ TEST_P(TransposeBlockTest, Column) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * tdense->nrow(), LAST = interval_info[1] * tdense->nrow();
 
-    test_sliced_column_access(tdense.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_column_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(tdense.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -126,8 +123,8 @@ TEST_P(TransposeIndexTest, Column) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    test_indexed_column_access(tdense.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_column_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(tdense.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 TEST_P(TransposeIndexTest, Row) {
@@ -138,8 +135,8 @@ TEST_P(TransposeIndexTest, Row) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
 
-    test_indexed_row_access(tdense.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_row_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(tdense.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -162,13 +159,13 @@ protected:
     std::shared_ptr<tatami::NumericMatrix> tdense, tsparse, wrapped_dense, wrapped_sparse;
 
     void extra_assemble() {
-        auto simulated = simulate_sparse_vector<double>(nrow * ncol, 0.05);
+        auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05);
         auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(simulated)));
         auto sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
         tdense = tatami::make_DelayedTranspose(dense);
         tsparse = tatami::make_DelayedTranspose(sparse);
-        wrapped_dense = tatami::make_DelayedTranspose(make_CrankyMatrix(dense));
-        wrapped_sparse = tatami::make_DelayedTranspose(make_CrankyMatrix(sparse));
+        wrapped_dense = tatami::make_DelayedTranspose(tatami_test::make_CrankyMatrix(dense));
+        wrapped_sparse = tatami::make_DelayedTranspose(tatami_test::make_CrankyMatrix(sparse));
     }
 };
 
@@ -178,11 +175,11 @@ TEST_P(TransposeOracleTest, Validate) {
     EXPECT_FALSE(tdense->uses_oracle(true));
     EXPECT_TRUE(wrapped_dense->uses_oracle(true));
 
-    test_oracle_column_access(wrapped_dense.get(), tdense.get(), random);
-    test_oracle_column_access(wrapped_sparse.get(), tsparse.get(), random);
+    tatami_test::test_oracle_column_access(wrapped_dense.get(), tdense.get(), random);
+    tatami_test::test_oracle_column_access(wrapped_sparse.get(), tsparse.get(), random);
 
-    test_oracle_row_access(wrapped_dense.get(), tdense.get(), random);
-    test_oracle_row_access(wrapped_sparse.get(), tsparse.get(), random);
+    tatami_test::test_oracle_row_access(wrapped_dense.get(), tdense.get(), random);
+    tatami_test::test_oracle_row_access(wrapped_sparse.get(), tsparse.get(), random);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -193,7 +190,7 @@ INSTANTIATE_TEST_CASE_P(
 
 TEST(TransposeTest, ConstOverload) {
     int nrow = 10, ncol = 15;
-    auto simulated = simulate_sparse_vector<double>(nrow * ncol, 0.05);
+    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05);
     auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
     auto tdense = tatami::make_DelayedTranspose(dense);
 

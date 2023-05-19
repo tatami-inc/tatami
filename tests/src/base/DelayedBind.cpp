@@ -7,10 +7,7 @@
 #include "tatami/base/other/DelayedBind.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_oracle_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 class DelayedBindTestMethods {
 protected:
@@ -22,7 +19,7 @@ protected:
         std::vector<std::shared_ptr<tatami::NumericMatrix> > collected_dense, collected_sparse;
 
         for (size_t i = 0; i < lengths.size(); ++i) {
-            auto to_add = simulate_sparse_vector<double>(lengths[i] * dim, 0.2, /* lower = */ -10, /* upper = */ 10, /* seed = */ i * 1000);
+            auto to_add = tatami_test::simulate_sparse_vector<double>(lengths[i] * dim, 0.2, /* lower = */ -10, /* upper = */ 10, /* seed = */ i * 1000);
             concat.insert(concat.end(), to_add.begin(), to_add.end());
             n_total += lengths[i];
 
@@ -153,11 +150,11 @@ TEST_P(DelayedBindFullAccessTest, Basic) {
     int FORWARD = std::get<2>(param);
     int JUMP = std::get<3>(param);
 
-    test_simple_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP);
-    test_simple_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP);
 
-    test_simple_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP);
-    test_simple_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP);
 }
 
 static auto spawn_bind_scenarios () {
@@ -196,11 +193,11 @@ TEST_P(DelayedBindSlicedAccessTest, Basic) {
     size_t RFIRST = interval_info[0] * manual->nrow(), RLAST = interval_info[1] * manual->nrow();
     size_t CFIRST = interval_info[0] * manual->ncol(), CLAST = interval_info[1] * manual->ncol();
 
-    test_sliced_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
-    test_sliced_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
+    tatami_test::test_sliced_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
+    tatami_test::test_sliced_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
 
-    test_sliced_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
-    test_sliced_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
+    tatami_test::test_sliced_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
+    tatami_test::test_sliced_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -235,11 +232,11 @@ TEST_P(DelayedBindIndexedAccessTest, Basic) {
         CFIRST = interval_info[0] * manual->ncol(), 
         STEP = interval_info[1];
 
-    test_indexed_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
-    test_indexed_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
+    tatami_test::test_indexed_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
+    tatami_test::test_indexed_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
 
-    test_indexed_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
-    test_indexed_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
+    tatami_test::test_indexed_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
+    tatami_test::test_indexed_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -269,7 +266,7 @@ protected:
     void assemble(const std::vector<int>& lengths, int dim, bool row) {
         for (size_t i = 0; i < lengths.size(); ++i) {
             int len = lengths[i];
-            auto to_add = simulate_sparse_compressed<double>(len, dim, 0.2, /* lower = */ -10, /* upper = */ 10, /* seed = */ i * 99);
+            auto to_add = tatami_test::simulate_sparse_compressed<double>(len, dim, 0.2, /* lower = */ -10, /* upper = */ 10, /* seed = */ i * 99);
             if (row) {
                 collected.emplace_back(new tatami::CompressedSparseRowMatrix<double, int>(len, dim, std::move(to_add.value), std::move(to_add.index), std::move(to_add.ptr)));
             } else {
@@ -298,15 +295,15 @@ TEST_P(DelayedBindOracleTest, AllOracular) {
 
     for (size_t m = 0; m < collected.size(); ++m) {
         int step_size = (m + 1) * 10; // variable prediction number across bound matrices, for some variety.
-        collected[m] = make_CrankyMatrix(std::move(collected[m]), step_size);
+        collected[m] = tatami_test::make_CrankyMatrix(std::move(collected[m]), step_size);
     }
     auto wrapped_bound = combine(std::move(collected), std::get<1>(param));
 
     EXPECT_FALSE(bound->uses_oracle(true));
     EXPECT_TRUE(wrapped_bound->uses_oracle(true));
 
-    test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
-    test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
+    tatami_test::test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
+    tatami_test::test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
 }
 
 TEST_P(DelayedBindOracleTest, FirstOracular) {
@@ -314,14 +311,14 @@ TEST_P(DelayedBindOracleTest, FirstOracular) {
     assemble(std::get<0>(param), 350, std::get<1>(param));
     auto random = std::get<2>(param);
 
-    collected.front() = make_CrankyMatrix(std::move(collected.front()));
+    collected.front() = tatami_test::make_CrankyMatrix(std::move(collected.front()));
     auto wrapped_bound = combine(std::move(collected), std::get<1>(param));
 
     EXPECT_FALSE(bound->uses_oracle(true));
     EXPECT_TRUE(wrapped_bound->uses_oracle(true));
 
-    test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
-    test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
+    tatami_test::test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
+    tatami_test::test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
 }
 
 TEST_P(DelayedBindOracleTest, LastOracular) {
@@ -329,14 +326,14 @@ TEST_P(DelayedBindOracleTest, LastOracular) {
     assemble(std::get<0>(param), 540, std::get<1>(param));
     auto random = std::get<2>(param);
 
-    collected.back() = make_CrankyMatrix(std::move(collected.back()));
+    collected.back() = tatami_test::make_CrankyMatrix(std::move(collected.back()));
     auto wrapped_bound = combine(std::move(collected), std::get<1>(param));
 
     EXPECT_FALSE(bound->uses_oracle(true));
     EXPECT_TRUE(wrapped_bound->uses_oracle(true));
 
-    test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
-    test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
+    tatami_test::test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
+    tatami_test::test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -359,7 +356,7 @@ TEST_F(DelayedBindOracleTest2, Elongated) {
     size_t NC = 200;
     assemble({ 10, 20, 30 }, NC, true);
     for (size_t m = 0; m < collected.size(); ++m) {
-        collected[m] = make_CrankyMatrix(std::move(collected[m]), 20 - m); // again, some variety in the prediction numbers.
+        collected[m] = tatami_test::make_CrankyMatrix(std::move(collected[m]), 20 - m); // again, some variety in the prediction numbers.
     }
     auto wrapped_bound = combine(std::move(collected), true); // combining by row.
 

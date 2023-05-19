@@ -1,7 +1,10 @@
-#ifndef TEST_COLUMN_ACCESS_H
-#define TEST_COLUMN_ACCESS_H
-#include "utils.h"
+#ifndef TATAMI_TEST_COLUMN_ACCESS_H
+#define TATAMI_TEST_COLUMN_ACCESS_H
+
+#include "utils.hpp"
 #include <type_traits>
+
+namespace tatami_test {
 
 template<class Matrix, class Matrix2, class Function1, class Function2, typename ...Args>
 void test_simple_column_access_base(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, Function1 expector, Function2 sparse_expand, Args... args) {
@@ -170,6 +173,8 @@ void test_indexed_column_access(const Matrix* ptr, const Matrix2* ref, bool forw
 
     auto swork = ptr->sparse_column(indices);
     EXPECT_EQ(std::vector<int>(swork->index_start(), swork->index_start() + swork->index_length), indices);
+}
+
 }
 
 #endif

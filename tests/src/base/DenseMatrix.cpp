@@ -5,9 +5,7 @@
 #include <numeric>
 
 #include "tatami/base/dense/DenseMatrix.hpp"
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 TEST(DenseMatrix, Basic) {
     std::vector<double> contents(200);
@@ -80,7 +78,7 @@ protected:
     std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column;
 
     void assemble() {
-        auto simulated = simulate_dense_vector<double>(nrow * ncol, 0.05);
+        auto simulated = tatami_test::simulate_dense_vector<double>(nrow * ncol, 0.05);
 
         auto transposed = std::vector<double>(nrow * ncol);
         for (size_t c = 0; c < ncol; ++c) {
@@ -130,16 +128,16 @@ TEST_P(DenseFullAccessTest, Column) {
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
-    test_simple_column_access(dense_row.get(), dense_column.get(), FORWARD, JUMP);
-    test_simple_column_access(dense_column.get(), dense_row.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_row.get(), dense_column.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_column.get(), dense_row.get(), FORWARD, JUMP);
 }
 
 TEST_P(DenseFullAccessTest, Row) {
     auto param = GetParam(); 
     bool FORWARD = std::get<0>(param);
     size_t JUMP = std::get<1>(param);
-    test_simple_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP);
-    test_simple_row_access(dense_column.get(), dense_row.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_column.get(), dense_row.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -170,8 +168,8 @@ TEST_P(DenseSlicedAccessTest, Column) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    test_sliced_column_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_column_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 TEST_P(DenseSlicedAccessTest, Row) {
@@ -182,8 +180,8 @@ TEST_P(DenseSlicedAccessTest, Row) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
 
-    test_sliced_row_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -219,8 +217,8 @@ TEST_P(DenseIndexedAccessTest, Column) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    test_indexed_column_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_column_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 TEST_P(DenseIndexedAccessTest, Row) {
@@ -231,8 +229,8 @@ TEST_P(DenseIndexedAccessTest, Row) {
     auto interval_info = std::get<2>(param);
     size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
 
-    test_indexed_row_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(

@@ -12,10 +12,7 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/variances.hpp"
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_oracle_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 template<class L, class R>
 void compare_double_vectors (const L& left, const R& right) {
@@ -28,7 +25,7 @@ void compare_double_vectors (const L& left, const R& right) {
 
 TEST(ComputingDimVariances, RowVariances) {
     size_t NR = 109, NC = 82;
-    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
@@ -63,7 +60,7 @@ TEST(ComputingDimVariances, RowVariances) {
 
 TEST(ComputingDimVariances, ColumnVariances) {
     size_t NR = 99, NC = 92;
-    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
@@ -110,7 +107,7 @@ TEST(ComputingDimVariances, RowVariancesNaN) {
 
 TEST(RunningVariances, SensibleZeros) {
     size_t NR = 55, NC = 52;
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulate_sparse_vector<double>(NR * NC, 0.1)));
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     // We force the first (non-zero) value to be zero, and we check that 
@@ -167,9 +164,9 @@ TEST(RunningVariances, SensibleZeros) {
 
 TEST(ComputingDimVariances, CrankyOracle) {
     size_t NR = 155, NC = 172;
-    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
     auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
-    auto dense_row = make_CrankyMatrix(raw_dense);
+    auto dense_row = tatami_test::make_CrankyMatrix(raw_dense);
 
     {
         auto ref = tatami::column_variances(raw_dense.get());

@@ -4,9 +4,7 @@
 #include "tatami/base/sparse/CompressedSparseMatrix.hpp"
 #include "tatami/utils/convert_to_dense.hpp"
 
-#include "../_tests/simulate_vector.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_column_access.h"
+#include "tatami_test/tatami_test.hpp"
 
 class ConvertToDenseTest : public ::testing::TestWithParam<std::tuple<int, int> > {
 protected:
@@ -21,14 +19,14 @@ protected:
 
 TEST_P(ConvertToDenseTest, RowToRow) {
     assemble(GetParam());
-    auto vec = simulate_dense_vector<double>(NR * NC);
+    auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
     tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_dense<true>(&mat);
     EXPECT_TRUE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    test_simple_row_access(converted.get(), &mat, true, 1);
-    test_simple_column_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_dense<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted2->prefer_rows());
@@ -43,20 +41,20 @@ TEST_P(ConvertToDenseTest, RowToRow) {
 
     // Works in parallel.
     auto convertedP = tatami::convert_to_dense<true>(&mat, 3);
-    test_simple_row_access(convertedP.get(), &mat, true, 1);
-    test_simple_column_access(convertedP.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(convertedP.get(), &mat, true, 1);
+    tatami_test::test_simple_column_access(convertedP.get(), &mat, true, 1);
 }
 
 TEST_P(ConvertToDenseTest, ColumnToColumn) {
     assemble(GetParam());
-    auto vec = simulate_dense_vector<double>(NR * NC);
+    auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
     tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_dense<false>(&mat);
     EXPECT_FALSE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    test_simple_row_access(converted.get(), &mat, true, 1);
-    test_simple_column_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_dense<false, int, size_t>(&mat); // works for a different type.
     EXPECT_FALSE(converted2->prefer_rows());
@@ -72,14 +70,14 @@ TEST_P(ConvertToDenseTest, ColumnToColumn) {
 
 TEST_P(ConvertToDenseTest, RowToColumn) {
     assemble(GetParam());
-    auto vec = simulate_dense_vector<double>(NR * NC);
+    auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
     tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_dense<false>(&mat);
     EXPECT_FALSE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    test_simple_row_access(converted.get(), &mat, true, 1);
-    test_simple_column_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_dense<false, int, size_t>(&mat); // works for a different type.
     EXPECT_FALSE(converted2->prefer_rows());
@@ -94,20 +92,20 @@ TEST_P(ConvertToDenseTest, RowToColumn) {
 
     // Works in parallel.
     auto convertedP = tatami::convert_to_dense<false>(&mat, 3);
-    test_simple_row_access(convertedP.get(), &mat, true, 1);
-    test_simple_column_access(convertedP.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(convertedP.get(), &mat, true, 1);
+    tatami_test::test_simple_column_access(convertedP.get(), &mat, true, 1);
 }
 
 TEST_P(ConvertToDenseTest, ColumnToRow) {
     assemble(GetParam());
-    auto vec = simulate_dense_vector<double>(NR * NC);
+    auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
     tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
 
     auto converted = tatami::convert_to_dense<true>(&mat);
     EXPECT_TRUE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    test_simple_row_access(converted.get(), &mat, true, 1);
-    test_simple_column_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_column_access(converted.get(), &mat, true, 1);
 
     auto converted2 = tatami::convert_to_dense<true, int, size_t>(&mat); // works for a different type.
     EXPECT_TRUE(converted2->prefer_rows());
@@ -123,7 +121,7 @@ TEST_P(ConvertToDenseTest, ColumnToRow) {
 
 TEST_P(ConvertToDenseTest, Automatic) {
     assemble(GetParam());
-    auto vec = simulate_dense_vector<double>(NR * NC);
+    auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
 
     {
         tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
@@ -143,45 +141,45 @@ TEST_P(ConvertToDenseTest, FromSparse) {
 
     // From a row-major sparse matrix.
     {
-        auto vec = simulate_sparse_compressed<double>(NR, NC, 0.2);
+        auto vec = tatami_test::simulate_sparse_compressed<double>(NR, NC, 0.2);
         tatami::CompressedSparseRowMatrix<double, int> smat(NR, NC, std::move(vec.value), std::move(vec.index), std::move(vec.ptr));
 
         {
             auto converted = tatami::convert_to_dense<true>(&smat);
             EXPECT_TRUE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-            test_simple_row_access(converted.get(), &smat, true, 1);
-            test_simple_column_access(converted.get(), &smat, true, 1);
+            tatami_test::test_simple_row_access(converted.get(), &smat, true, 1);
+            tatami_test::test_simple_column_access(converted.get(), &smat, true, 1);
         }
 
         {
             auto converted = tatami::convert_to_dense<false>(&smat);
             EXPECT_FALSE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-            test_simple_row_access(converted.get(), &smat, true, 1);
-            test_simple_column_access(converted.get(), &smat, true, 1);
+            tatami_test::test_simple_row_access(converted.get(), &smat, true, 1);
+            tatami_test::test_simple_column_access(converted.get(), &smat, true, 1);
         }
     }
 
     // From a row-major sparse matrix.
     {
-        auto vec = simulate_sparse_compressed<double>(NC, NR, 0.2);
+        auto vec = tatami_test::simulate_sparse_compressed<double>(NC, NR, 0.2);
         tatami::CompressedSparseColumnMatrix<double, int> smat(NR, NC, std::move(vec.value), std::move(vec.index), std::move(vec.ptr));
 
         {
             auto converted = tatami::convert_to_dense<true>(&smat);
             EXPECT_TRUE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-            test_simple_row_access(converted.get(), &smat, true, 1);
-            test_simple_column_access(converted.get(), &smat, true, 1);
+            tatami_test::test_simple_row_access(converted.get(), &smat, true, 1);
+            tatami_test::test_simple_column_access(converted.get(), &smat, true, 1);
         }
 
         {
             auto converted = tatami::convert_to_dense<false>(&smat);
             EXPECT_FALSE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-            test_simple_row_access(converted.get(), &smat, true, 1);
-            test_simple_column_access(converted.get(), &smat, true, 1);
+            tatami_test::test_simple_row_access(converted.get(), &smat, true, 1);
+            tatami_test::test_simple_column_access(converted.get(), &smat, true, 1);
         }
     }
 }

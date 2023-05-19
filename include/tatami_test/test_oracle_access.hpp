@@ -1,11 +1,14 @@
-#ifndef TATAMI_TEST_CRANKY_MATRIX_HPP
-#define TATAMI_TEST_CRANKY_MATRIX_HPP
+#ifndef TATAMI_TEST_ORACLE_ACCESS_HPP
+#define TATAMI_TEST_ORACLE_ACCESS_HPP
 
 #include <gtest/gtest.h>
-#include "tatami/base/Matrix.hpp"
-#include "tatami/utils/Oracles.hpp"
+
+#include "../tatami/base/Matrix.hpp"
+#include "../tatami/utils/Oracles.hpp"
 #include <random>
 #include <deque>
+
+namespace tatami_test {
 
 template<typename Value_, typename Index_> 
 class CrankyMatrix : public tatami::Matrix<Value_, Index_> {
@@ -265,6 +268,8 @@ void test_oracle_row_access(const Matrix* ptr, const Matrix* ref, bool randomize
             iterator(i);
         }
     }
+}
+
 }
 
 #endif

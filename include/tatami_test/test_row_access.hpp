@@ -1,6 +1,10 @@
-#ifndef TEST_ROW_ACCESS_H
-#define TEST_ROW_ACCESS_H
-#include "utils.h"
+#ifndef TATAMI_TEST_ROW_ACCESS_HPP
+#define TATAMI_TEST_ROW_ACCESS_HPP
+
+#include "utils.hpp"
+#include <type_traits>
+
+namespace tatami_test {
 
 template<class Matrix, class Matrix2, class Function1, class Function2, typename ...Args>
 void test_simple_row_access_base(const Matrix* ptr, const Matrix2* ref, bool forward, int jump, Function1 expector, Function2 sparse_expand, Args... args) {
@@ -168,6 +172,8 @@ void test_indexed_row_access(const Matrix* ptr, const Matrix2* ref, bool forward
 
     auto swork = ptr->sparse_row(indices);
     EXPECT_EQ(std::vector<int>(swork->index_start(), swork->index_start() + swork->index_length), indices);
+}
+
 }
 
 #endif

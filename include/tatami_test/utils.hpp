@@ -1,9 +1,13 @@
-#ifndef TEST_UTILS_H
-#define TEST_UTILS_H
+#ifndef TATAMI_TEST_UTILS_HPP
+#define TATAMI_TEST_UTILS_HPP
 
 #include <cmath>
-#include "tatami/base/SparseRange.hpp"
-#include "tatami/base/Options.hpp"
+#include <vector>
+
+#include "../tatami/base/SparseRange.hpp"
+#include "../tatami/base/Options.hpp"
+
+namespace tatami_test {
 
 inline std::pair<size_t, size_t> wrap_intervals(size_t first, size_t last, size_t max) {
     size_t diff = last - first;
@@ -38,6 +42,8 @@ bool is_increasing(const std::vector<IDX>& indices) {
         }
     }
     return true;
+}
+
 }
 
 #endif

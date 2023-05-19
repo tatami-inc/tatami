@@ -1,12 +1,14 @@
-#ifndef SIMULATE_VECTOR_H
-#define SIMULATE_VECTOR_H
+#ifndef TATAMI_TEST_SIMULATE_VECTOR_HPP
+#define TATAMI_TEST_SIMULATE_VECTOR_HPP
 
 #include <random>
 #include <vector>
 #include <memory>
 
-#include "tatami/base/Matrix.hpp"
-#include "tatami/base/dense/DenseMatrix.hpp"
+#include "../tatami/base/Matrix.hpp"
+#include "../tatami/base/dense/DenseMatrix.hpp"
+
+namespace tatami_test {
 
 template<typename T>
 std::vector<T> simulate_dense_vector(size_t length, double lower = 0, double upper = 100, size_t seed = 1234567890) {
@@ -62,6 +64,8 @@ CompressedSparseDetails<T> simulate_sparse_compressed(size_t primary, size_t sec
     }
 
     return output;
+}
+
 }
 
 #endif

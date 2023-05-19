@@ -5,7 +5,8 @@
 
 #include "tatami/utils/bind_intersection.hpp"
 #include "tatami/base/dense/DenseMatrix.hpp"
-#include "../_tests/simulate_vector.h"
+
+#include "tatami_test/tatami_test.hpp"
 
 class BindIntersectionTest : public ::testing::Test {
 protected:   
@@ -41,7 +42,7 @@ TEST_F(BindIntersectionTest, NoOp) {
 
     for (int i = 0; i < 3; ++i) {
         size_t cur_NC = 5 * (i + 1);
-        auto vec = simulate_dense_vector<double>(NR * cur_NC, i /** seed **/);
+        auto vec = tatami_test::simulate_dense_vector<double>(NR * cur_NC, i /** seed **/);
         collected.emplace_back(new tatami::DenseMatrix<true, double, int>(NR, cur_NC, std::move(vec)));
         NC += cur_NC;
     }
@@ -86,7 +87,7 @@ TEST_F(BindIntersectionTest, Shuffled) {
 
     for (int i = 0; i < 3; ++i) {
         size_t cur_NC = 5 * (i + 1);
-        auto vec = simulate_dense_vector<double>(NR * cur_NC, i /** seed **/);
+        auto vec = tatami_test::simulate_dense_vector<double>(NR * cur_NC, i /** seed **/);
         collected.emplace_back(new tatami::DenseMatrix<true, double, int>(NR, cur_NC, std::move(vec)));
         NC += cur_NC;
     }
@@ -133,7 +134,7 @@ TEST_F(BindIntersectionTest, Uncommon) {
     for (int i = 0; i < 3; ++i) {
         size_t NR = 5 + i;
         size_t cur_NC = 5 * (i + 1);
-        auto vec = simulate_dense_vector<double>(NR * cur_NC, i /** seed **/);
+        auto vec = tatami_test::simulate_dense_vector<double>(NR * cur_NC, i /** seed **/);
         collected.emplace_back(new tatami::DenseMatrix<true, double, int>(NR, cur_NC, std::move(vec)));
         NC += cur_NC;
     }
@@ -184,7 +185,7 @@ TEST_F(BindIntersectionTest, NoCommon) {
 
     for (int i = 0; i < 2; ++i) {
         size_t cur_NC = 5 * (i + 1);
-        auto vec = simulate_dense_vector<double>(NR * cur_NC, i /** seed **/);
+        auto vec = tatami_test::simulate_dense_vector<double>(NR * cur_NC, i /** seed **/);
         collected.emplace_back(new tatami::DenseMatrix<true, double, int>(NR, cur_NC, std::move(vec)));
         NC += cur_NC;
     }
@@ -210,7 +211,7 @@ TEST_F(BindIntersectionTest, ByRows) {
     for (int i = 0; i < 3; ++i) {
         size_t NC = 10 - i * 2;
         size_t cur_NR = (i + 1) * 10;
-        auto vec = simulate_dense_vector<double>(cur_NR * NC, i /** seed **/);
+        auto vec = tatami_test::simulate_dense_vector<double>(cur_NR * NC, i /** seed **/);
         collected.emplace_back(new tatami::DenseMatrix<true, double, int>(cur_NR, NC, std::move(vec)));
         NR += cur_NR;
     }

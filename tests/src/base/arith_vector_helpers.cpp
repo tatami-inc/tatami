@@ -7,10 +7,7 @@
 #include "tatami/base/isometric/DelayedIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_oracle_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 template<class PARAM>
 class ArithVectorTest : public ::testing::TestWithParam<PARAM> {
@@ -20,7 +17,7 @@ protected:
     std::vector<double> simulated;
 protected:
     void SetUp() {
-        simulated = simulate_sparse_vector<double>(nrow * ncol, 0.1);
+        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
         return;
@@ -88,8 +85,8 @@ TEST_P(ArithVectorAdditionFullTest, Column) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
     EXPECT_EQ(sparse_mod->prefer_rows_proportion(), 0);
 
-    test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
 TEST_P(ArithVectorAdditionFullTest, Row) {
@@ -98,8 +95,8 @@ TEST_P(ArithVectorAdditionFullTest, Row) {
     bool FORWARD = std::get<1>(param);
     int JUMP = std::get<2>(param);
 
-    test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -123,8 +120,8 @@ TEST_P(ArithVectorAdditionBlockTest, Column) {
     auto interval_info = std::get<3>(param);
     size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 TEST_P(ArithVectorAdditionBlockTest, Row) {
@@ -136,8 +133,8 @@ TEST_P(ArithVectorAdditionBlockTest, Row) {
     auto interval_info = std::get<3>(param);
     size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
 
-    test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -167,8 +164,8 @@ TEST_P(ArithVectorAdditionIndexTest, Column) {
     auto interval_info = std::get<3>(param);
     size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 TEST_P(ArithVectorAdditionIndexTest, Row) {
@@ -180,8 +177,8 @@ TEST_P(ArithVectorAdditionIndexTest, Row) {
     auto interval_info = std::get<3>(param);
     size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
 
-    test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -265,8 +262,8 @@ TEST_P(ArithVectorSubtractionFullTest, Column) {
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 
-    test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
 TEST_P(ArithVectorSubtractionFullTest, Row) {
@@ -275,8 +272,8 @@ TEST_P(ArithVectorSubtractionFullTest, Row) {
     bool FORWARD = std::get<2>(param);
     int JUMP = std::get<3>(param);
 
-    test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -301,8 +298,8 @@ TEST_P(ArithVectorSubtractionBlockTest, Column) {
     auto interval_info = std::get<4>(param);
     size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 TEST_P(ArithVectorSubtractionBlockTest, Row) {
@@ -314,8 +311,8 @@ TEST_P(ArithVectorSubtractionBlockTest, Row) {
     auto interval_info = std::get<4>(param);
     size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
 
-    test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -345,8 +342,8 @@ TEST_P(ArithVectorSubtractionIndexTest, Column) {
     auto interval_info = std::get<4>(param);
     size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 TEST_P(ArithVectorSubtractionIndexTest, Row) {
@@ -358,8 +355,8 @@ TEST_P(ArithVectorSubtractionIndexTest, Row) {
     auto interval_info = std::get<4>(param);
     size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
 
-    test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -429,8 +426,8 @@ TEST_P(ArithVectorMultiplicationFullTest, Column) {
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 
-    test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
 TEST_P(ArithVectorMultiplicationFullTest, Row) {
@@ -439,8 +436,8 @@ TEST_P(ArithVectorMultiplicationFullTest, Row) {
     bool FORWARD = std::get<1>(param);
     int JUMP = std::get<2>(param);
 
-    test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -464,8 +461,8 @@ TEST_P(ArithVectorMultiplicationBlockTest, Column) {
     auto interval_info = std::get<3>(param);
     size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 TEST_P(ArithVectorMultiplicationBlockTest, Row) {
@@ -477,8 +474,8 @@ TEST_P(ArithVectorMultiplicationBlockTest, Row) {
     auto interval_info = std::get<3>(param);
     size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
 
-    test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -508,8 +505,8 @@ TEST_P(ArithVectorMultiplicationIndexTest, Column) {
     auto interval_info = std::get<3>(param);
     size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 TEST_P(ArithVectorMultiplicationIndexTest, Row) {
@@ -521,8 +518,8 @@ TEST_P(ArithVectorMultiplicationIndexTest, Row) {
     auto interval_info = std::get<3>(param);
     size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
 
-    test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -615,8 +612,8 @@ TEST_P(ArithVectorDivisionFullTest, Column) {
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 
-    test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
 TEST_P(ArithVectorDivisionFullTest, Row) {
@@ -625,8 +622,8 @@ TEST_P(ArithVectorDivisionFullTest, Row) {
     bool FORWARD = std::get<2>(param);
     int JUMP = std::get<3>(param);
 
-    test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -651,8 +648,8 @@ TEST_P(ArithVectorDivisionBlockTest, Column) {
     auto interval_info = std::get<4>(param);
     size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 TEST_P(ArithVectorDivisionBlockTest, Row) {
@@ -664,8 +661,8 @@ TEST_P(ArithVectorDivisionBlockTest, Row) {
     auto interval_info = std::get<4>(param);
     size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
 
-    test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -695,8 +692,8 @@ TEST_P(ArithVectorDivisionIndexTest, Column) {
     auto interval_info = std::get<4>(param);
     size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 TEST_P(ArithVectorDivisionIndexTest, Row) {
@@ -708,8 +705,8 @@ TEST_P(ArithVectorDivisionIndexTest, Row) {
     auto interval_info = std::get<4>(param);
     size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
 
-    test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -744,14 +741,14 @@ protected:
             auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
             dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
             sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
-            wrapped_dense_mod = tatami::make_DelayedIsometricOp(make_CrankyMatrix(this->dense), op);
-            wrapped_sparse_mod = tatami::make_DelayedIsometricOp(make_CrankyMatrix(this->sparse), op);
+            wrapped_dense_mod = tatami::make_DelayedIsometricOp(tatami_test::make_CrankyMatrix(this->dense), op);
+            wrapped_sparse_mod = tatami::make_DelayedIsometricOp(tatami_test::make_CrankyMatrix(this->sparse), op);
         } else {
             auto op = tatami::make_DelayedAddVectorHelper<1>(vec);
             dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
             sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
-            wrapped_dense_mod = tatami::make_DelayedIsometricOp(make_CrankyMatrix(this->dense), op);
-            wrapped_sparse_mod = tatami::make_DelayedIsometricOp(make_CrankyMatrix(this->sparse), op);
+            wrapped_dense_mod = tatami::make_DelayedIsometricOp(tatami_test::make_CrankyMatrix(this->dense), op);
+            wrapped_sparse_mod = tatami::make_DelayedIsometricOp(tatami_test::make_CrankyMatrix(this->sparse), op);
         }
     }
 };
@@ -762,11 +759,11 @@ TEST_P(ArithVectorOracleTest, Validate) {
     EXPECT_FALSE(dense_mod->uses_oracle(true));
     EXPECT_TRUE(wrapped_dense_mod->uses_oracle(true));
 
-    test_oracle_column_access(wrapped_dense_mod.get(), dense_mod.get(), std::get<1>(param));
-    test_oracle_column_access(wrapped_sparse_mod.get(), sparse_mod.get(), std::get<1>(param));
+    tatami_test::test_oracle_column_access(wrapped_dense_mod.get(), dense_mod.get(), std::get<1>(param));
+    tatami_test::test_oracle_column_access(wrapped_sparse_mod.get(), sparse_mod.get(), std::get<1>(param));
 
-    test_oracle_row_access(wrapped_dense_mod.get(), dense_mod.get(), std::get<1>(param));
-    test_oracle_row_access(wrapped_sparse_mod.get(), sparse_mod.get(), std::get<1>(param));
+    tatami_test::test_oracle_row_access(wrapped_dense_mod.get(), dense_mod.get(), std::get<1>(param));
+    tatami_test::test_oracle_row_access(wrapped_sparse_mod.get(), sparse_mod.get(), std::get<1>(param));
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -784,7 +781,7 @@ INSTANTIATE_TEST_CASE_P(
 
 TEST(ArithVector, ConstOverload) {
     int nrow = 23, ncol = 42;
-    auto simulated = simulate_sparse_vector<double>(nrow * ncol, 0.1);
+    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
     auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
 
     auto vec = std::vector<double>(nrow);

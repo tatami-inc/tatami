@@ -12,15 +12,12 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/ranges.hpp"
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_oracle_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 class ComputingDimExtremesTest : public ::testing::TestWithParam<std::pair<double, double> > {
 protected:
     static std::vector<double> simulate(size_t NR, size_t NC, std::pair<double, double> limits) {
-        return simulate_sparse_vector<double>(NR * NC, 0.1, limits.first, limits.second);
+        return tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1, limits.first, limits.second);
     }
 };
 
@@ -247,10 +244,10 @@ TEST(ComputingDimExtremes, Empty) {
 
 TEST(ComputingDimExtremes, CrankyOracle) {
     size_t NR = 199, NC = 252;
-    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
     auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
-    auto dense_row = make_CrankyMatrix(raw_dense);
-    auto dense_column = make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
+    auto dense_row = tatami_test::make_CrankyMatrix(raw_dense);
+    auto dense_column = tatami_test::make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
 
     {
         auto ref = tatami::column_mins(raw_dense.get());

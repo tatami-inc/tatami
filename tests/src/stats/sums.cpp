@@ -12,14 +12,11 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 #include "tatami/stats/sums.hpp"
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/test_oracle_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 TEST(ComputingDimSums, RowSums) {
     size_t NR = 99, NC = 152;
-    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
@@ -46,7 +43,7 @@ TEST(ComputingDimSums, RowSums) {
 
 TEST(ComputingDimSums, ColumnSums) {
     size_t NR = 79, NC = 62;
-    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
@@ -73,10 +70,10 @@ TEST(ComputingDimSums, ColumnSums) {
 
 TEST(ComputingDimSums, CrankyOracle) {
     size_t NR = 199, NC = 102;
-    auto dump = simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
     auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
-    auto dense_row = make_CrankyMatrix(raw_dense);
-    auto dense_column = make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
+    auto dense_row = tatami_test::make_CrankyMatrix(raw_dense);
+    auto dense_column = tatami_test::make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
 
     {
         auto ref = tatami::column_sums(raw_dense.get());

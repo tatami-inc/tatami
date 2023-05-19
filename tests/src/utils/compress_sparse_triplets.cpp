@@ -8,7 +8,7 @@
 #include "tatami/utils/compress_sparse_triplets.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 template<class V, class U>
 void permuter(const U& values, const V& rows, const V& cols, U& values2, V& rows2, V& cols2) {
@@ -33,7 +33,7 @@ void permuter(const U& values, const V& rows, const V& cols, U& values2, V& rows
 
 TEST(compress_sparse_triplets, CompressionByColumn) {
     size_t NR = 100, NC = 50;
-    auto simulated = simulate_sparse_compressed<double>(NC, NR, 0.1);
+    auto simulated = tatami_test::simulate_sparse_compressed<double>(NC, NR, 0.1);
     const auto& rows = simulated.index;
     const auto& values = simulated.value;
 
@@ -62,7 +62,7 @@ TEST(compress_sparse_triplets, CompressionByColumn) {
 
 TEST(compress_sparse_triplets, CompressionByRow) {
     size_t NR = 80, NC = 60;
-    auto simulated = simulate_sparse_compressed<double>(NR, NC, 0.1);
+    auto simulated = tatami_test::simulate_sparse_compressed<double>(NR, NC, 0.1);
     const auto& cols = simulated.index;
     const auto& values = simulated.value;
 

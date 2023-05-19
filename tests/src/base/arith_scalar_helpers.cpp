@@ -8,9 +8,7 @@
 #include "tatami/base/isometric/DelayedIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
-#include "../_tests/test_column_access.h"
-#include "../_tests/test_row_access.h"
-#include "../_tests/simulate_vector.h"
+#include "tatami_test/tatami_test.hpp"
 
 template<class PARAM> 
 class ArithScalarTest : public ::testing::TestWithParam<PARAM> {
@@ -20,7 +18,7 @@ protected:
     std::vector<double> simulated;
 protected:
     void SetUp() {
-        simulated = simulate_sparse_vector<double>(nrow * ncol, 0.1);
+        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
         return;
@@ -61,11 +59,11 @@ TEST_P(ArithScalarAdditionTest, Basic) {
     int JUMP = 1;
     auto ref = reference(val);
 
-    test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
 
-    test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -119,11 +117,11 @@ TEST_P(ArithScalarSubtractionTest, ColumnAccess) {
     int JUMP = 1;
     auto ref = reference(val, on_right);
 
-    test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
 
-    test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -166,11 +164,11 @@ TEST_P(ArithScalarMultiplicationTest, ColumnAccess) {
     int JUMP = 1;
     auto ref = reference(val);
 
-    test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
 
-    test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -232,11 +230,11 @@ TEST_P(ArithScalarDivisionTest, ColumnAccess) {
     int JUMP = 1;
     auto ref = reference(val, on_right);
 
-    test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
 
-    test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
