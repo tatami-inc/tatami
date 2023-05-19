@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['hdf5compressedsparsematrix_0',['HDF5CompressedSparseMatrix',['../classtatami_1_1HDF5CompressedSparseMatrix.html#a62cd55541e30747ee1f3f4d883970c24',1,'tatami::HDF5CompressedSparseMatrix']]],
-  ['hdf5densematrix_1',['HDF5DenseMatrix',['../classtatami_1_1HDF5DenseMatrix.html#a0683e47f2528658134ec02c50d197d52',1,'tatami::HDF5DenseMatrix']]]
+  ['index_5fstart_0',['index_start',['../structtatami_1_1IndexExtractor.html#a089566f519e13b933bc58c9cf48f14bf',1,'tatami::IndexExtractor']]],
+  ['iterator_1',['Iterator',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#aaec76c06dc4b04937e4c0e16233a7fdb',1,'tatami::SomeNumericArray::Iterator::Iterator()'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a47aa875df6ad992824acccefb811c4d4',1,'tatami::SomeNumericArray::Iterator::Iterator(const SomeNumericArray *p, size_t i)']]]
 ];

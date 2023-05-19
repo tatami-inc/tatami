@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['index_5fstart_0',['index_start',['../structtatami_1_1IndexExtractor.html#a089566f519e13b933bc58c9cf48f14bf',1,'tatami::IndexExtractor']]],
-  ['iterator_1',['Iterator',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#aaec76c06dc4b04937e4c0e16233a7fdb',1,'tatami::SomeNumericArray::Iterator::Iterator()'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a47aa875df6ad992824acccefb811c4d4',1,'tatami::SomeNumericArray::Iterator::Iterator(const SomeNumericArray *p, size_t i)']]]
+  ['load_5flayered_5fsparse_5fmatrix_5ffrom_5fbuffer_0',['load_layered_sparse_matrix_from_buffer',['../namespacetatami_1_1MatrixMarket.html#af7655515516f20bf22da4311b7e8dcc5',1,'tatami::MatrixMarket']]],
+  ['load_5flayered_5fsparse_5fmatrix_5ffrom_5ffile_1',['load_layered_sparse_matrix_from_file',['../namespacetatami_1_1MatrixMarket.html#a1957591502ac286ad6b1bcae78ee75f9',1,'tatami::MatrixMarket']]],
+  ['load_5fsparse_5fmatrix_5ffrom_5fbuffer_2',['load_sparse_matrix_from_buffer',['../namespacetatami_1_1MatrixMarket.html#abca83cf0a5a51b93f78991719c8bd772',1,'tatami::MatrixMarket']]],
+  ['load_5fsparse_5fmatrix_5ffrom_5ffile_3',['load_sparse_matrix_from_file',['../namespacetatami_1_1MatrixMarket.html#acb8ab6a2dba7c9b9088245792d8dd4c5',1,'tatami::MatrixMarket']]]
 ];

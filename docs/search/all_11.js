@@ -5,6 +5,5 @@ var searchData=
   ['variances_2ehpp_2',['variances.hpp',['../variances_8hpp.html',1,'']]],
   ['virtualdensematrix_3',['VirtualDenseMatrix',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]],
   ['virtualdensematrix_2ehpp_4',['VirtualDenseMatrix.hpp',['../VirtualDenseMatrix_8hpp.html',1,'']]],
-  ['virtualdensematrix_3c_20value_5f_2c_20index_5f_20_3e_5',['VirtualDenseMatrix&lt; Value_, Index_ &gt;',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]],
-  ['virtualdensematrix_3c_20value_5f_2c_20int_20_3e_6',['VirtualDenseMatrix&lt; Value_, int &gt;',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]]
+  ['virtualdensematrix_3c_20value_5f_2c_20int_20_3e_5',['VirtualDenseMatrix&lt; Value_, int &gt;',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]]
 ];
