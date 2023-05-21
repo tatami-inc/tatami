@@ -25,11 +25,10 @@ private:
     //
     // If 'lower_bound = false', this vector instead contains:
     // - 'indices[current_indptrs[i] - 1]', if 'current_indptrs[i]' does not lie at the start of the primary dimension element.
-    // - otherwise, an undefined value.
+    // - otherwise, -1 or the unsigned equivalent.
     std::vector<StoredIndex_> current_indices;
 
     // Closest value in 'current_indices' to the 'last_request', to see whether we can short-circuit the iteration.
-    // If 'lower_bound = false', this is set to 'max_index' if all values in 'current_indices' are undefined.
     StoredIndex_ closest_current_index;
 
     // What was the last requested index on the secondary dimension?
@@ -183,12 +182,6 @@ public:
     }
 
 public:
-    void update_closest_index(StoredIndex_ curdex) {
-        if (closest_current_index == max_index || closest_current_index < curdex) {
-            closest_current_index = curdex;
-        } 
-    }
-
     template<bool check_index_, class IndexStorage_, class PointerStorage_, class StoreFunction_, class SkipFunction_>
     void search_below(
         StoredIndex_ secondary, 
@@ -199,30 +192,32 @@ public:
         StoreFunction_& store,
         SkipFunction_& skip
     ) {
-        auto& curptr = current_indptrs[index_primary];
-
-        // Can't decrement anymore, in which case we quit. Note that there's
-        // no need to check if 'indices[curptr] == secondary'; we only enter
-        // this function if 'last_request > secondary', and we know that
+        // In the context of this function, there's no need to check if
+        // 'indices[curptr] == secondary'; we only enter this function if
+        // 'last_request > secondary', and we already know that
         // 'indices[curptr] >= last_request > secondary'.
-        auto lower_limit = indptrs[primary];
-        auto raw_ptr = CustomPointerModifier_::get(curptr);
-        if (raw_ptr == lower_limit) {
-            skip(primary);
-            return;
-        }
-    
+
         // Checking if the next-lowest index is below the requested
         // 'secondary', at which point we can just quit without a
         // cache-unfriendly lookup to 'indices'. This is valid as we know that
         // we are not at the start of the dimension at this point. 
         auto& curdex = current_indices[index_primary];
         if constexpr(check_index_) {
-            if (curdex < secondary) {
-                update_closest_index(curdex);
+            if (curdex < secondary || curdex == -1) { // need to check -1 separately, in case StoredIndex_ is unsigned.
                 skip(primary);
                 return;
             }
+        }
+
+        curdex = -1;
+        auto& curptr = current_indptrs[index_primary];
+
+        // Can't decrement anymore, in which case we quit. 
+        auto lower_limit = indptrs[primary];
+        auto raw_ptr = CustomPointerModifier_::get(curptr);
+        if (raw_ptr == lower_limit) {
+            skip(primary);
+            return;
         }
 
         // Special case if the requested index is at the end of the matrix, in
@@ -233,7 +228,6 @@ public:
             CustomPointerModifier_::set(curptr, first_ptr);
 
             if (indices[first_ptr] == secondary) {
-                closest_current_index = secondary;
                 store(primary, curptr);
             } else {
                 skip(primary);
@@ -248,14 +242,15 @@ public:
         auto candidate = indices[raw_ptr];
         if (candidate < secondary) {
             curdex = candidate;
-            update_closest_index(curdex);
             skip(primary);
             return;
         }
 
         if (candidate == secondary) {
             CustomPointerModifier_::decrement(curptr, indices, lower_limit);
-            closest_current_index = secondary;
+            if (raw_ptr != lower_limit) {
+                curdex = indices[raw_ptr - 1]; // cheap decrement to inspect the next-lowest element.
+            }
             store(primary, curptr);
             return;
         }
@@ -264,25 +259,17 @@ public:
         Stored<PointerStorage_> next_ptr = std::lower_bound(indices.begin() + lower_limit, indices.begin() + raw_ptr, secondary) - indices.begin();
         CustomPointerModifier_::set(curptr, next_ptr);
 
-        if (next_ptr == indptrs[primary + 1]) {
-            skip(primary);
-            return;
-        }
-
-        if (indices[next_ptr] == secondary) {
-            closest_current_index = secondary;
-            store(primary, curptr);
-            return;
-        }
-
-        if (next_ptr == lower_limit) {
+        if (next_ptr == indptrs[primary + 1] || next_ptr == lower_limit) {
             skip(primary);
             return;
         }
 
         curdex = indices[next_ptr - 1]; // cheap decrement to inspect the next-lowest element.
-        update_closest_index(curdex);
-        skip(primary);
+        if (indices[next_ptr] == secondary) {
+            store(primary, curptr);
+        } else {
+            skip(primary);
+        }
         return;
     }
 
@@ -321,20 +308,31 @@ public:
 
         } else {
             if (!lower_bound) {
-                if (closest_current_index == max_index || secondary > closest_current_index) {
+                if (closest_current_index == -1 || secondary > closest_current_index) {
                     return false;
                 }
-
-                closest_current_index = max_index; // this will be set to the maximum by search_below.
                 for (Index_ p = 0; p < primary_length; ++p) {
                     search_below<true>(secondary, p, to_primary(p), indices, indptrs, store, skip);
                 }
+
             } else {
-                closest_current_index = max_index; // ditto.
                 for (Index_ p = 0; p < primary_length; ++p) {
                     search_below<false>(secondary, p, to_primary(p), indices, indptrs, store, skip);
                 }
                 lower_bound = false;
+            }
+
+            if constexpr(std::is_signed<StoredIndex_>::value) {
+                if (primary_length) {
+                    closest_current_index = *std::max_element(current_indices.begin(), current_indices.end());
+                }
+            } else {
+                closest_current_index = -1;
+                for (auto x : current_indices) {
+                    if (x != -1 && (x > closest_current_index || closest_current_index == -1)) {
+                        closest_current_index = x;
+                    }
+                }
             }
         }
 
