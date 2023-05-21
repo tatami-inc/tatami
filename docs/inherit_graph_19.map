@@ -1,11 +1,19 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="5,251,148,291"/>
-<area shape="rect" id="node2" href="$classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix." alt="" coords="213,5,394,46"/>
-<area shape="rect" id="node3" href="$classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix." alt="" coords="196,71,411,111"/>
-<area shape="rect" id="node4" href="$classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices." alt="" coords="222,135,385,191"/>
-<area shape="rect" id="node5" href="$classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block." alt="" coords="212,215,395,255"/>
-<area shape="rect" id="node6" href="$classtatami_1_1DelayedSubsetSorted.html" title="Delayed subsetting of a matrix with sorted indices." alt="" coords="209,279,398,335"/>
-<area shape="rect" id="node7" href="$classtatami_1_1DelayedSubsetSortedUnique.html" title="Delayed subsetting of a matrix with sorted, unique indices." alt="" coords="209,359,398,415"/>
-<area shape="rect" id="node8" href="$classtatami_1_1DelayedSubsetUnique.html" title="Delayed subsetting of a matrix with unique indices." alt="" coords="208,439,399,495"/>
-<area shape="rect" id="node9" href="$classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix." alt="" coords="218,519,389,559"/>
+<area shape="rect" id="Node000000" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="5,251,148,291"/>
+<area shape="rect" id="Node000001" href="$classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix." alt="" coords="213,5,394,46"/>
+<area shape="poly" id="edge9_Node000000_Node000001" title=" " alt="" coords="86,235,101,194,124,146,155,98,194,57,213,44,216,49,197,61,159,102,128,149,106,196,91,237"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1DelayedIsometricOp.html" title="Delayed isometric operations on a matrix." alt="" coords="196,71,411,111"/>
+<area shape="poly" id="edge10_Node000000_Node000002" title=" " alt="" coords="94,237,135,177,162,147,194,121,214,110,217,114,197,125,166,151,139,181,98,240"/>
+<area shape="rect" id="Node000003" href="$classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices." alt="" coords="222,135,385,191"/>
+<area shape="poly" id="edge11_Node000000_Node000003" title=" " alt="" coords="121,240,194,201,221,189,223,194,197,205,124,245"/>
+<area shape="rect" id="Node000004" href="$classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block." alt="" coords="212,215,395,255"/>
+<area shape="poly" id="edge12_Node000000_Node000004" title=" " alt="" coords="162,255,211,247,212,252,163,260"/>
+<area shape="rect" id="Node000005" href="$classtatami_1_1DelayedSubsetSorted.html" title="Delayed subsetting of a matrix with sorted indices." alt="" coords="209,279,398,335"/>
+<area shape="poly" id="edge13_Node000000_Node000005" title=" " alt="" coords="163,282,209,289,208,295,162,287"/>
+<area shape="rect" id="Node000006" href="$classtatami_1_1DelayedSubsetSortedUnique.html" title="Delayed subsetting of a matrix with sorted, unique indices." alt="" coords="209,359,398,415"/>
+<area shape="poly" id="edge14_Node000000_Node000006" title=" " alt="" coords="119,298,197,345,222,356,220,361,194,349,117,302"/>
+<area shape="rect" id="Node000007" href="$classtatami_1_1DelayedSubsetUnique.html" title="Delayed subsetting of a matrix with unique indices." alt="" coords="208,439,399,495"/>
+<area shape="poly" id="edge15_Node000000_Node000007" title=" " alt="" coords="97,303,138,365,166,397,197,425,215,436,213,441,194,429,162,401,134,368,93,305"/>
+<area shape="rect" id="Node000008" href="$classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix." alt="" coords="218,519,389,559"/>
+<area shape="poly" id="edge16_Node000000_Node000008" title=" " alt="" coords="88,305,102,350,124,404,156,459,175,483,197,505,219,519,216,523,194,509,171,487,151,462,120,407,97,352,83,306"/>
 </map>

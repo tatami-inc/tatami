@@ -1,4 +1,5 @@
 <map id="tatami::FullExtractor&lt; Index_ &gt;" name="tatami::FullExtractor&lt; Index_ &gt;">
-<area shape="rect" id="node1" title="Virtual base class for full access." alt="" coords="10,94,145,135"/>
-<area shape="rect" id="node2" href="$structtatami_1_1ExtractorBase.html" title="Virtual base extractor class." alt="" coords="5,5,150,46"/>
+<area shape="rect" id="Node000001" title="Virtual base class for full access." alt="" coords="10,94,145,135"/>
+<area shape="rect" id="Node000002" href="$structtatami_1_1ExtractorBase.html" title="Virtual base extractor class." alt="" coords="5,5,150,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="80,61,80,94,75,94,75,61"/>
 </map>
