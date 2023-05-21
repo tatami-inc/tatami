@@ -1,13 +1,13 @@
 # A C++ API for all sorts of matrices 
 
-![Unit tests](https://github.com/LTLA/tatami/actions/workflows/run-tests.yaml/badge.svg)
-![Gallery](https://github.com/LTLA/tatami/actions/workflows/run-gallery.yaml/badge.svg)
-![Documentation](https://github.com/LTLA/tatami/actions/workflows/doxygenate.yaml/badge.svg)
-[![Codecov](https://codecov.io/gh/LTLA/tatami/branch/master/graph/badge.svg?token=Z189ORCLLR)](https://codecov.io/gh/LTLA/tatami)
+![Unit tests](https://github.com/tatami-inc/tatami/actions/workflows/run-tests.yaml/badge.svg)
+![Gallery](https://github.com/tatami-inc/tatami/actions/workflows/run-gallery.yaml/badge.svg)
+![Documentation](https://github.com/tatami-inc/tatami/actions/workflows/doxygenate.yaml/badge.svg)
+[![Codecov](https://codecov.io/gh/tatami-inc/tatami/branch/master/graph/badge.svg?token=Z189ORCLLR)](https://codecov.io/gh/tatami-inc/tatami)
 
 ## Overview
 
-**tatami** is a spiritual successor to the [**beachmat** C++ API](https://github.com/LTLA/beachmat) that provides read access to different matrix representations.
+**tatami** is a spiritual successor to the [**beachmat** C++ API](https://github.com/tatami-inc/beachmat) that provides read access to different matrix representations.
 Specifically, applications can use **tatami** to read rows and/or columns of a matrix without any knowledge of the specific matrix representation.
 This allows application developers to write a single piece of code that will work seamlessly with different inputs, even if the underlying representation varies at run-time.
 
@@ -75,12 +75,12 @@ This is supported with the following methods:
 - `prefer_rows()` indicates whether a matrix is more efficiently access along its rows (e.g., row-major dense matrices).
 
 This allows client developers to design special code paths to take advantage of these properties - 
-the [`colsums.cpp`](https://github.com/LTLA/tatami/tree/master/gallery/src/colsums.cpp) example is particularly demonstrative.
+the [`colsums.cpp`](https://github.com/tatami-inc/tatami/tree/master/gallery/src/colsums.cpp) example is particularly demonstrative.
 
 All methods in **tatami** are `const` and thus can be used concurrently.
 Any mutable information that needs to persist across API calls is handled by passing a writeable pointer to a `workspace` object to each call.
 This can be used to cache information across calls for greater efficiency, e.g., when iterating across consecutive rows or columns of a matrix;
-run the [`sparse_workspace.cpp`](https://github.com/LTLA/tatami/tree/master/gallery/src/sparse_workspace.cpp) example to compare performance.
+run the [`sparse_workspace.cpp`](https://github.com/tatami-inc/tatami/tree/master/gallery/src/sparse_workspace.cpp) example to compare performance.
 
 ```cpp
 auto wrk = mat->new_row_workspace();
@@ -90,8 +90,8 @@ for (size_t i = 0; i < mat->nrow(); ++i) {
 }
 ```
 
-Check out the [reference documentation](https://ltla.github.io/tatami) for more details on the available classes and operations.
-The [gallery](https://github.com/LTLA/tatami/tree/master/gallery) also contains worked examples for common operations based on row/column traversals.
+Check out the [reference documentation](https://tatami-inc.github.io/tatami) for more details on the available classes and operations.
+The [gallery](https://github.com/tatami-inc/tatami/tree/master/gallery) also contains worked examples for common operations based on row/column traversals.
 
 ## API design
 
@@ -127,12 +127,12 @@ and then copy this cheaply into an `Eigen::MatrixXd` or `Eigen::SparseMatrix` fo
 
 If you're using CMake, you just need to add something like this to your `CMakeLists.txt`:
 
-```
+```cmake
 include(FetchContent)
 
 FetchContent_Declare(
   tatami
-  GIT_REPOSITORY https://github.com/LTLA/tatami
+  GIT_REPOSITORY https://github.com/tatami-inc/tatami
   GIT_TAG master # or any version of interest 
 )
 
@@ -141,7 +141,7 @@ FetchContent_MakeAvailable(tatami)
 
 Then you can link to **tatami** to make the headers available during compilation:
 
-```
+```cmake
 # For executables:
 target_link_libraries(myexe tatami)
 
