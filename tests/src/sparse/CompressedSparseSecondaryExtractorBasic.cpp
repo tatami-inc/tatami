@@ -224,6 +224,18 @@ TEST(SecondaryExtractionWorkspaceBase, Decrement) {
 
         EXPECT_FALSE(test.search(6, n, identity, indices2, indptrs, store_fun, skip_fun)); 
         EXPECT_FALSE(test.search(5, n, identity, indices2, indptrs, store_fun, skip_fun));
+
+        EXPECT_TRUE(test.search(4, n, identity, indices2, indptrs, store_fun, skip_fun)); 
+        expected = std::vector<int>{ -1, 6, 13 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(2, n, identity, indices2, indptrs, store_fun, skip_fun)); 
+        expected = std::vector<int>{ 0, -1, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(0, n, identity, indices2, indptrs, store_fun, skip_fun)); 
+        expected = std::vector<int>{ -1, -1, 11 };
+        EXPECT_EQ(results, expected);
     }
 }
 
