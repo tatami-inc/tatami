@@ -14,33 +14,33 @@ enable_testing()
 add_executable(
     libtest 
 
-    src/base/DenseMatrix.cpp
+#    src/base/DenseMatrix.cpp
     src/base/CompressedSparseMatrix.cpp
-    src/base/SemiCompressedSparseMatrix.cpp
-    src/base/DelayedBind.cpp
-    src/base/DelayedSubset.cpp
-    src/base/DelayedSubsetBlock.cpp
-    src/base/DelayedTranspose.cpp
-    src/base/DelayedCast.cpp
-    src/base/arith_vector_helpers.cpp
-    src/base/arith_scalar_helpers.cpp
-    src/base/math_helpers.cpp
-
-    src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
-
-    src/stats/sums.cpp
-    src/stats/variances.cpp
-    src/stats/medians.cpp
-    src/stats/ranges.cpp
-
-    src/utils/wrap_shared_ptr.cpp
-    src/utils/SomeNumericArray.cpp
-    src/utils/ArrayView.cpp
-    src/utils/convert_to_dense.cpp
-    src/utils/convert_to_sparse.cpp
-    src/utils/bind_intersection.cpp
-    src/utils/compress_sparse_triplets.cpp
-    src/utils/Oracles.cpp
+#    src/base/SemiCompressedSparseMatrix.cpp
+#    src/base/DelayedBind.cpp
+#    src/base/DelayedSubset.cpp
+#    src/base/DelayedSubsetBlock.cpp
+#    src/base/DelayedTranspose.cpp
+#    src/base/DelayedCast.cpp
+#    src/base/arith_vector_helpers.cpp
+#    src/base/arith_scalar_helpers.cpp
+#    src/base/math_helpers.cpp
+#
+##    src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
+#
+#    src/stats/sums.cpp
+#    src/stats/variances.cpp
+#    src/stats/medians.cpp
+#    src/stats/ranges.cpp
+#
+#    src/utils/wrap_shared_ptr.cpp
+#    src/utils/SomeNumericArray.cpp
+#    src/utils/ArrayView.cpp
+#    src/utils/convert_to_dense.cpp
+#    src/utils/convert_to_sparse.cpp
+#    src/utils/bind_intersection.cpp
+#    src/utils/compress_sparse_triplets.cpp
+#    src/utils/Oracles.cpp
 )
 
 target_link_libraries(
