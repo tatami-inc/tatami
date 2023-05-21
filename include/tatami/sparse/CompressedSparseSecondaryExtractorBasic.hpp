@@ -48,7 +48,6 @@ public:
          * for the indices based on the pointers that we do have. This assumes
          * that the density is so low that updates to the local indices are
          * rare relative to the number of comparisons to those same indices.
-         * Check out the `secondary_dimension()` function for how this is used.
          */
         auto idpIt = idp.begin() + start;
         for (Index_ i = 0; i < length; ++i, ++idpIt) {
