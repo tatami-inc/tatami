@@ -216,3 +216,24 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
+/*************************************
+ *************************************/
+
+TEST(CompressedSparseMatrix, SecondarySkip) {
+    int nrow = 201, ncol = 12;
+    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05);
+
+    for (int c = 0; c < ncol; ++c) { // injecting some all-zero rows that should be skipped.
+        auto start = c * nrow + simulated.data();
+        std::fill(start + 12, start + 50, 0);
+        std::fill(start + 70, start + 100, 0);
+        std::fill(start + 130, start + 140, 0);
+        std::fill(start + 160, start + 190, 0);
+    }
+
+    tatami::DenseRowMatrix<double, int> dense(nrow, ncol, tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05));
+    auto sparse_column = tatami::convert_to_sparse<false>(&dense);
+
+    tatami_test::test_simple_row_access(sparse_column.get(), &dense, true, 1); // forward
+    tatami_test::test_simple_row_access(sparse_column.get(), &dense, false, 1); // backward
+}

@@ -439,7 +439,6 @@ private:
      *************************************/
 private:
     struct SecondaryWorkspace {
-        typedef Stored<IndexStorage_> index_type;
         typedef Stored<PointerStorage_> indptr_type;
 
         struct Position {
@@ -509,50 +508,27 @@ private:
         SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Args_&&... args) :
             state(max_index, idx, idp, std::forward<Args_>(args)...) {}
 
-        Index_ previous_request = 0;
         CompressedSparseSecondaryExtractorBasic<Index_, index_type, Position, Modifier> state;
     };
 
     template<class Store_>
-    void secondary_dimension_above(Index_ secondary, Index_ primary, Index_ index_primary, SecondaryWorkspace& work, Store_& output) const {
-        auto curdex = work.state.search_above(secondary, primary, index_primary, indices, indptrs);
-        if (secondary == curdex) { // assuming secondary < max_index, of course.
-            auto& curptr = work.state.current_indptrs[index_primary];
-            work.update_secondary_position(curptr, indices, indptrs[primary + 1]);
-            output.add(primary, curptr.count);
-        } else {
-            output.skip(primary);
-        }
-    }
-
-    template<class Store_>
-    void secondary_dimension_below(Index_ secondary, Index_ primary, Index_ index_primary, SecondaryWorkspace& work, Store_& output) const {
-        auto curdex = work.state.search_below(secondary, primary, index_primary, indices, indptrs);
-        if (secondary == curdex) { // assuming secondary < max_index, of course.
-            auto& curptr = work.state.current_indptrs[index_primary];
-            work.update_secondary_position(curptr, indices, indptrs[primary + 1]);
-            output.add(primary, curptr.count);
-        } else {
-            output.skip(primary);
-        }
-    }
-
-private:
-    template<class Store_>
-    void secondary_dimension_loop(Index_ i, Index_ start, Index_ length, SecondaryWorkspace& work, Store_& store) const {
-        Index_ prev_i = work.previous_request;
-
-        if (i >= prev_i) {
-            for (Index_ current = 0; current < length; ++current) {
-                secondary_dimension_above(i, current + start, current, work, store);
+    void secondary_dimension_loop(Index_ i, Index_ start, Index_ length, SecondaryWorkspace& work, Store_& output) const {
+        work.state.search(
+            i, 
+            length, 
+            [&](Index_ p) -> Index_ { 
+                return p + start; 
+            },
+            indices,
+            indptrs,
+            [&](Index_ primary, typename SecondaryWorkspace::Position& curptr) -> void {
+                work.update_secondary_position(curptr, indices, indptrs[primary + 1]);
+                output.add(primary, curptr.count);
+            },
+            [&](Index_ primary) -> void {
+                output.skip(primary);
             }
-        } else {
-            for (Index_ current = 0; current < length; ++current) {
-                secondary_dimension_below(i, current + start, current, work, store);
-            }
-        }
-
-        work.previous_request = i;
+        );
         return;
     }
 
@@ -589,19 +565,22 @@ private:
 
     template<class Store_>
     void secondary_dimension_loop(Index_ i, const Index_* subset, Index_ length, SecondaryWorkspace& work, Store_& output) const {
-        Index_ prev_i = work.previous_request;
-
-        if (i >= prev_i) {
-            for (Index_ current = 0; current < length; ++current) {
-                secondary_dimension_above(i, subset[current], current, work, output);
+        work.state.search(
+            i, 
+            length, 
+            [&](Index_ p) -> Index_ { 
+                return subset[p];
+            },
+            indices,
+            indptrs,
+            [&](Index_ primary, typename SecondaryWorkspace::Position& curptr) -> void {
+                work.update_secondary_position(curptr, indices, indptrs[primary + 1]);
+                output.add(primary, curptr.count);
+            },
+            [&](Index_ primary) -> void {
+                output.skip(primary);
             }
-        } else {
-            for (Index_ current = 0; current < length; ++current) {
-                secondary_dimension_below(i, subset[current], current, work, output);
-            }
-        }
-
-        work.previous_request = i;
+        );
         return;
     }
 
