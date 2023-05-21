@@ -25,7 +25,7 @@ private:
     //
     // If 'lower_bound = false', this vector instead contains:
     // - 'indices[current_indptrs[i] - 1]', if 'current_indptrs[i]' does not lie at the start of the primary dimension element.
-    // - otherwise, -1 or the unsigned equivalent.
+    // - otherwise, 'decrement_fail', i.e., -1 or its unsigned equivalent.
     std::vector<StoredIndex_> current_indices;
 
     // Closest value in 'current_indices' to the 'last_request', to see whether we can short-circuit the iteration.
@@ -182,6 +182,8 @@ public:
     }
 
 public:
+    static constexpr StoredIndex_ decrement_fail = -1;
+
     template<bool check_index_, class IndexStorage_, class PointerStorage_, class StoreFunction_, class SkipFunction_>
     void search_below(
         StoredIndex_ secondary, 
@@ -203,13 +205,13 @@ public:
         // we are not at the start of the dimension at this point. 
         auto& curdex = current_indices[index_primary];
         if constexpr(check_index_) {
-            if (curdex < secondary || curdex == -1) { // need to check -1 separately, in case StoredIndex_ is unsigned.
+            if (curdex < secondary || curdex == decrement_fail) { // need to check decrement_fail separately, in case StoredIndex_ is unsigned.
                 skip(primary);
                 return;
             }
         }
 
-        curdex = -1;
+        curdex = decrement_fail;
         auto& curptr = current_indptrs[index_primary];
 
         // Can't decrement anymore, in which case we quit. 
@@ -259,17 +261,23 @@ public:
         Stored<PointerStorage_> next_ptr = std::lower_bound(indices.begin() + lower_limit, indices.begin() + raw_ptr, secondary) - indices.begin();
         CustomPointerModifier_::set(curptr, next_ptr);
 
-        if (next_ptr == indptrs[primary + 1] || next_ptr == lower_limit) {
+        if (next_ptr == indptrs[primary + 1]) {
             skip(primary);
             return;
         }
 
-        curdex = indices[next_ptr - 1]; // cheap decrement to inspect the next-lowest element.
         if (indices[next_ptr] == secondary) {
+            if (next_ptr != lower_limit) {
+                curdex = indices[next_ptr - 1]; // cheap decrement to inspect the next-lowest element.
+            }
             store(primary, curptr);
-        } else {
-            skip(primary);
+            return;
         }
+
+        if (next_ptr != lower_limit) {
+            curdex = indices[next_ptr - 1]; // cheap decrement to inspect the next-lowest element.
+        }
+        skip(primary);
         return;
     }
 
@@ -308,7 +316,7 @@ public:
 
         } else {
             if (!lower_bound) {
-                if (closest_current_index == -1 || secondary > closest_current_index) {
+                if (closest_current_index == decrement_fail || secondary > closest_current_index) {
                     return false;
                 }
                 for (Index_ p = 0; p < primary_length; ++p) {
@@ -327,9 +335,9 @@ public:
                     closest_current_index = *std::max_element(current_indices.begin(), current_indices.end());
                 }
             } else {
-                closest_current_index = -1;
+                closest_current_index = decrement_fail;
                 for (auto x : current_indices) {
-                    if (x != -1 && (x > closest_current_index || closest_current_index == -1)) {
+                    if (x != decrement_fail && (x > closest_current_index || closest_current_index == decrement_fail)) {
                         closest_current_index = x;
                     }
                 }

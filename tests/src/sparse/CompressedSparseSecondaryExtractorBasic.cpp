@@ -6,8 +6,12 @@
 #include "tatami/sparse/CompressedSparseSecondaryExtractorBasic.hpp"
 
 struct SimpleModifier {
-    static void increment(size_t& ptr, const std::vector<int>&, const size_t&) { ++ptr; }
-    static void decrement(size_t& ptr, const std::vector<int>&, const size_t&) { --ptr; }
+    template<typename StoredIndex_>
+    static void increment(size_t& ptr, const std::vector<StoredIndex_>&, const size_t&) { ++ptr; }
+
+    template<typename StoredIndex_>
+    static void decrement(size_t& ptr, const std::vector<StoredIndex_>&, const size_t&) { --ptr; }
+
     static size_t get(size_t ptr) { return ptr; }
     static void set(size_t& ptr, size_t val) { ptr = val; }
 };
@@ -196,6 +200,30 @@ TEST(SecondaryExtractionWorkspaceBase, Decrement) {
         EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_TRUE(test.search(17, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_FALSE(test.search(16, n, identity, indices, indptrs, store_fun, skip_fun)); 
+    }
+
+    // Unsigned index type is handled correctly.
+    {
+        std::vector<unsigned char> indices2(indices.begin(), indices.end());
+        tatami::CompressedSparseSecondaryExtractorBasic<int, unsigned char, size_t, SimpleModifier> test(19, indices2, indptrs);
+        EXPECT_TRUE(test.search(18, n, identity, indices2, indptrs, store_fun, skip_fun));
+        EXPECT_TRUE(test.search(17, n, identity, indices2, indptrs, store_fun, skip_fun));
+
+        // Short circuits correctly.
+        EXPECT_FALSE(test.search(16, n, identity, indices2, indptrs, store_fun, skip_fun));
+
+        // Then continues working.
+        EXPECT_TRUE(test.search(15, n, identity, indices2, indptrs, store_fun, skip_fun)); 
+        std::vector<int> expected{ -1, 10, -1 };
+        EXPECT_EQ(results, expected);
+
+        // Jump and then more decrements.
+        EXPECT_TRUE(test.search(7, n, identity, indices2, indptrs, store_fun, skip_fun)); 
+        expected = std::vector<int>{ -1, 7, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_FALSE(test.search(6, n, identity, indices2, indptrs, store_fun, skip_fun)); 
+        EXPECT_FALSE(test.search(5, n, identity, indices2, indptrs, store_fun, skip_fun));
     }
 }
 
