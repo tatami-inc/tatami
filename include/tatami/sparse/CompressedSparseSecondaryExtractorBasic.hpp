@@ -10,13 +10,14 @@ using Stored = typename std::remove_reference<decltype(std::declval<Storage_>()[
 
 template<typename Index_, typename StoredIndex_, typename CustomPointer_, class CustomPointerModifier_> 
 struct CompressedSparseSecondaryExtractorBasic {
+private:
     StoredIndex_ max_index;
 
     // The current position of the pointer at each primary element.
     std::vector<CustomPointer_> current_indptrs; 
 
     // Whether to move forward or back.
-    bool lower_bound = false;
+    bool lower_bound = true;
 
     // If 'lower_bound = true', this vector contains the current index being pointed to, i.e., 'current_indices[i] := indices[current_indptrs[i]]'.
     // We store this here as it is more cache-friendly than doing a look-up to 'indices'.
@@ -253,7 +254,7 @@ public:
         auto candidate = indices[raw_ptr];
         if (candidate < secondary) {
             curdex = candidate;
-            update_closest_index(candidate);
+            update_closest_index(curdex);
             skip(primary);
             return;
         }

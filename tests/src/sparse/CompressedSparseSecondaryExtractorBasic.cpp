@@ -26,76 +26,98 @@ TEST(SecondaryExtractionWorkspaceBase, Increment) {
         16
     };
 
-    tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+    size_t n = 3;
+    auto identity = [](int i) -> int { return i; };
+    std::vector<int> results(n);
+    auto store_fun = [&](int i, size_t p) -> void { results[i] = p; };
+    auto skip_fun = [&](int i) -> void { results[i] = -1; };
+
+    // Checking consecutive or semi-consecutive increments.
     {
-        std::vector<int> first { 0, 1, 5 };
-        EXPECT_EQ(test.current_indices, first);
-        std::vector<size_t> pointers { 0, 5, 9 };
-        EXPECT_EQ(test.current_indptrs, pointers);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+
+        EXPECT_TRUE(test.search(0, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ 0, -1, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(1, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int> { -1, 5, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(3, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int> { -1, -1, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(5, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int> { 1, -1, 9 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(6, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int> { 2, -1, -1 };
+        EXPECT_EQ(results, expected);
     }
 
+    // Checking a big jump that triggers a binary search.
     {
-        int curdex = 0;
-        size_t curptr = 0;
-        test.search_above(0, 0, indices, indptrs, curdex, curptr); // no-op.
-        EXPECT_EQ(curdex, 0);
-        EXPECT_EQ(curptr, 0);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
 
-        test.search_above(1, 0, indices, indptrs, curdex, curptr); // consecutive increase.
-        EXPECT_EQ(curdex, 5);
-        EXPECT_EQ(curptr, 1);
+        EXPECT_TRUE(test.search(15, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ -1, -1, 14 };
+        EXPECT_EQ(results, expected);
 
-        test.search_above(3, 0, indices, indptrs, curdex, curptr); // no-op, curdex is still above the requested secondary index.
-        EXPECT_EQ(curdex, 5);
-        EXPECT_EQ(curptr, 1);
+        // subsequent consecutive searches still work.
+        EXPECT_TRUE(test.search(16, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int> { -1, -1, -1 };
+        EXPECT_EQ(results, expected);
 
-        test.search_above(5, 0, indices, indptrs, curdex, curptr); // hit!
-        EXPECT_EQ(curdex, 5);
-        EXPECT_EQ(curptr, 1);
-
-        test.search_above(6, 0, indices, indptrs, curdex, curptr); // consecutive increase.
-        EXPECT_EQ(curdex, 6);
-        EXPECT_EQ(curptr, 2);
+        EXPECT_TRUE(test.search(17, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int> { -1, -1, 15 };
+        EXPECT_EQ(results, expected);
     }
 
+    // Checking a direct big jump to the end.
     {
-        int curdex = 1;
-        size_t curptr = 5;
-        test.search_above(0, 1, indices, indptrs, curdex, curptr); // no-op, curdex is still above the requested secondary index.
-        EXPECT_EQ(curdex, 1);
-        EXPECT_EQ(curptr, 5);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
 
-        test.search_above(15, 1, indices, indptrs, curdex, curptr); // big jump, triggers binary search.
-        EXPECT_EQ(curdex, 18);
-        EXPECT_EQ(curptr, 8);
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ -1, 8, -1 };
+        EXPECT_EQ(results, expected);
     }
 
+    // Short-circuits work correctly.
     {
-        int curdex = 1;
-        size_t curptr = 5;
-        test.search_above(18, 1, indices, indptrs, curdex, curptr); // direct big jump to end.
-        EXPECT_EQ(curdex, 18);
-        EXPECT_EQ(curptr, 8);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+
+        EXPECT_TRUE(test.search(1, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ -1, 5, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(2, n, identity, indices, indptrs, store_fun, skip_fun)); 
+        expected = std::vector<int>{ -1, -1, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_FALSE(test.search(2, n, identity, indices, indptrs, store_fun, skip_fun)); 
+        EXPECT_FALSE(test.search(3, n, identity, indices, indptrs, store_fun, skip_fun)); 
+        EXPECT_FALSE(test.search(4, n, identity, indices, indptrs, store_fun, skip_fun)); 
     }
 
+    // Repeated requests are honored.
     {
-        int curdex = 5;
-        size_t curptr = 9;
-        test.search_above(11, 2, indices, indptrs, curdex, curptr); // big jump (1)
-        EXPECT_EQ(curdex, 12);
-        EXPECT_EQ(curptr, 12);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
 
-        test.search_above(17, 2, indices, indptrs, curdex, curptr); // big jump (2)
-        EXPECT_EQ(curdex, 17);
-        EXPECT_EQ(curptr, 15);
-    }
+        EXPECT_TRUE(test.search(5, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ 1, -1, 9 };
+        EXPECT_EQ(results, expected);
 
-    {
-        int curdex = 5;
-        size_t curptr = 9;
-        test.search_above(18, 2, indices, indptrs, curdex, curptr); // big jump to end, but without a match.
-        EXPECT_EQ(curdex, 19);
-        EXPECT_EQ(curptr, 16);
+        EXPECT_TRUE(test.search(5, n, identity, indices, indptrs, store_fun, skip_fun));
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, 8, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+        EXPECT_EQ(results, expected);
     }
 }
 
@@ -106,73 +128,161 @@ TEST(SecondaryExtractionWorkspaceBase, Decrement) {
         0, 1, 4, 8, 14
     };
 
-    std::vector<size_t> indptrs {
+    std::vector<int> indptrs {
         0,
         5,
         11,
         16
     };
 
-    tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+    size_t n = 3;
+    auto identity = [](int i) -> int { return i; };
+    std::vector<int> results(n);
+    auto store_fun = [&](int i, size_t p) -> void { results[i] = p; };
+    auto skip_fun = [&](int i) -> void { results[i] = -1; };
+
+    // Checking consecutive or semi-consecutive decrements.
+    {
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ 4, -1, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(17, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, -1, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(15, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, 10, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(14, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, -1, 15 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(12, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ 3, 9, -1 };
+        EXPECT_EQ(results, expected);
+    }
+
+    // Checking the jumps.
+    {
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+
+        EXPECT_TRUE(test.search(10, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ -1, 8, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(1, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, -1, 12 };
+        EXPECT_EQ(results, expected);
+    }
+
+    // Big jump to zero.
+    {
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+
+        EXPECT_TRUE(test.search(0, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ -1, -1, 11 };
+        EXPECT_EQ(results, expected);
+    }
+
+    // Short-circuits work correctly.
+    {
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+        EXPECT_TRUE(test.search(17, n, identity, indices, indptrs, store_fun, skip_fun));
+        EXPECT_FALSE(test.search(16, n, identity, indices, indptrs, store_fun, skip_fun)); 
+    }
+}
+
+TEST(SecondaryExtractionWorkspaceBase, Alternating) {
+    std::vector<int> indices {
+        0, 1, 3, 5, 6, 18,
+        2, 6, 8, 9, 10, 11, 17, 18,
+        4, 6, 7, 8, 10, 11, 14, 15, 16
+    };
+
+    std::vector<int> indptrs {
+        0,
+        6,
+        14,
+        23
+    };
+
+    size_t n = 3;
+    auto identity = [](int i) -> int { return i; };
+    std::vector<int> results(n);
+    auto store_fun = [&](int i, size_t p) -> void { results[i] = p; };
+    auto skip_fun = [&](int i) -> void { results[i] = -1; };
 
     {
-        int curdex = 18;
-        size_t curptr = 4;
-        test.search_below(18, 0, indices, indptrs, curdex, curptr); // no-op.
-        EXPECT_EQ(curdex, 18);
-        EXPECT_EQ(curptr, 4);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
 
-        test.search_below(15, 0, indices, indptrs, curdex, curptr); // no-op, curdex is still the lower bound.
-        EXPECT_EQ(curdex, 18);
-        EXPECT_EQ(curptr, 4);
+        // Jump up, followed by decrements.
+        EXPECT_TRUE(test.search(15, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ -1, -1, 21 };
+        EXPECT_EQ(results, expected);
 
-        test.search_below(12, 0, indices, indptrs, curdex, curptr); // decrease.
-        EXPECT_EQ(curdex, 12);
-        EXPECT_EQ(curptr, 3);
+        EXPECT_TRUE(test.search(14, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, -1, 20 };
+        EXPECT_EQ(results, expected);
 
-        test.search_below(11, 0, indices, indptrs, curdex, curptr); // another consecutive decrease.
-        EXPECT_EQ(curdex, 11);
-        EXPECT_EQ(curptr, 2);
+        EXPECT_TRUE(test.search(11, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, 11, 19 };
+        EXPECT_EQ(results, expected);
 
-        test.search_below(9, 0, indices, indptrs, curdex, curptr); // no-op, curdex is still the lower bound.
-        EXPECT_EQ(curdex, 11);
-        EXPECT_EQ(curptr, 2);
+        // Jumps down, followed by increments
+        EXPECT_TRUE(test.search(4, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, -1, 14 };
+        EXPECT_EQ(results, expected);
 
-        test.search_below(1, 0, indices, indptrs, curdex, curptr); // big jump.
-        EXPECT_EQ(curdex, 2);
-        EXPECT_EQ(curptr, 0);
+        EXPECT_TRUE(test.search(6, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ 4, 7, 15 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(8, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, 8, 17 };
+        EXPECT_EQ(results, expected);
     }
 
     {
-        int curdex = 19;
-        size_t curptr = 11;
-        test.search_below(18, 1, indices, indptrs, curdex, curptr); // no-op, still the lower bound..
-        EXPECT_EQ(curdex, 19);
-        EXPECT_EQ(curptr, 11);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
 
-        test.search_below(9, 1, indices, indptrs, curdex, curptr); // big jump (1).
-        EXPECT_EQ(curdex, 10);
-        EXPECT_EQ(curptr, 8);
+        // Jump to end, followed by decrements.
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ 5, 13, -1 };
+        EXPECT_EQ(results, expected);
 
-        test.search_below(1, 1, indices, indptrs, curdex, curptr); // big jump (2).
-        EXPECT_EQ(curdex, 3);
-        EXPECT_EQ(curptr, 5);
-    }
+        EXPECT_TRUE(test.search(17, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, 12, -1 };
+        EXPECT_EQ(results, expected);
 
-    {
-        int curdex = 19;
-        size_t curptr = 11;
-        test.search_below(0, 1, indices, indptrs, curdex, curptr); // big jump to zero but no match.
-        EXPECT_EQ(curdex, 3);
-        EXPECT_EQ(curptr, 5);
-    }
+        // Jump to start, followed by increments.
+        EXPECT_TRUE(test.search(0, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ 0, -1, -1 };
+        EXPECT_EQ(results, expected);
 
-    {
-        int curdex = 19;
-        size_t curptr = 16;
-        test.search_below(0, 2, indices, indptrs, curdex, curptr); // big jump to zero, with a match.
-        EXPECT_EQ(curdex, 0);
-        EXPECT_EQ(curptr, 11);
+        EXPECT_TRUE(test.search(1, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ 1, -1, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(2, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, 6, -1 };
+        EXPECT_EQ(results, expected);
+
+        // Jump to end, followed by decrements, and then a repeated element (which is processed using the increment functionality).
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+
+        EXPECT_TRUE(test.search(17, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, 12, -1 };
+        EXPECT_EQ(results, expected);
+
+        EXPECT_TRUE(test.search(17, n, identity, indices, indptrs, store_fun, skip_fun));
+        EXPECT_EQ(results, expected);
     }
 }
 
@@ -211,67 +321,57 @@ TEST(SecondaryExtractionWorkspaceBase, Duplicated) {
         34
     };
 
-    tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, DuplicatedModifier> test(19, indices, indptrs);
+    size_t n = 3;
+    auto identity = [](int i) -> int { return i; };
+    std::vector<int> results(n);
+    auto store_fun = [&](int i, size_t p) -> void { results[i] = p; };
+    auto skip_fun = [&](int i) -> void { results[i] = -1; };
 
-    // Increment works correctly.
+    // Increments.
     {
-        int curdex = 0;
-        size_t curptr = 0;
-        test.search_above(0, 0, indices, indptrs, curdex, curptr); // no-op.
-        EXPECT_EQ(curdex, 0);
-        EXPECT_EQ(curptr, 0);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, DuplicatedModifier> test(19, indices, indptrs);
 
-        test.search_above(1, 0, indices, indptrs, curdex, curptr); // increment to next lower bound.
-        EXPECT_EQ(curdex, 2);
-        EXPECT_EQ(curptr, 3);
+        EXPECT_TRUE(test.search(0, n, identity, indices, indptrs, store_fun, skip_fun));
+        std::vector<int> expected{ 0, -1, -1 };
+        EXPECT_EQ(expected, results);
 
-        test.search_above(2, 0, indices, indptrs, curdex, curptr); // no-op.
-        EXPECT_EQ(curdex, 2);
-        EXPECT_EQ(curptr, 3);
+        EXPECT_TRUE(test.search(1, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ -1, 11, -1 };
+        EXPECT_EQ(expected, results);
 
-        test.search_above(7, 0, indices, indptrs, curdex, curptr); // big jump.
-        EXPECT_EQ(curdex, 9);
-        EXPECT_EQ(curptr, 6);
+        EXPECT_TRUE(test.search(2, n, identity, indices, indptrs, store_fun, skip_fun));
+        expected = std::vector<int>{ 3, -1, 25 };
+        EXPECT_EQ(expected, results);
 
-        test.search_above(15, 0, indices, indptrs, curdex, curptr); // another big jump.
-        EXPECT_EQ(curdex, 15);
-        EXPECT_EQ(curptr, 8);
+        EXPECT_TRUE(test.search(7, n, identity, indices, indptrs, store_fun, skip_fun)); // big jump.
+        expected = std::vector<int>{ -1, -1, 27 };
+        EXPECT_EQ(expected, results);
+
+        EXPECT_TRUE(test.search(15, n, identity, indices, indptrs, store_fun, skip_fun)); // another big jump.
+        expected = std::vector<int>{ 8, -1, 33 };
+        EXPECT_EQ(expected, results);
     }
 
     {
-        int curdex = 0;
-        size_t curptr = 11;
-        test.search_above(10, 1, indices, indptrs, curdex, curptr); // jumps work correctly.
-        EXPECT_EQ(curdex, 11);
-        EXPECT_EQ(curptr, 20);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, DuplicatedModifier> test(19, indices, indptrs);
 
-        test.search_above(18, 1, indices, indptrs, curdex, curptr); // jump to end works correctly.
-        EXPECT_EQ(curdex, 18);
-        EXPECT_EQ(curptr, 22);
+        EXPECT_TRUE(test.search(10, n, identity, indices, indptrs, store_fun, skip_fun)); // jumps work correctly.
+        std::vector<int> expected{ 7, -1, -1 };
+        EXPECT_EQ(expected, results);
+
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun)); // jump to end works correctly.
+        expected = std::vector<int>{ -1, 22, -1 };
     }
 
     // Decrement works correctly.
     {
-        int curdex = 19;
-        size_t curptr = 34;
-        test.search_below(16, 2, indices, indptrs, curdex, curptr); // no-op.
-        EXPECT_EQ(curdex, 19);
-        EXPECT_EQ(curptr, 34);
+        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, DuplicatedModifier> test(19, indices, indptrs);
+        EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun)); // jump to end works correctly.
+        std::vector<int> expected{ -1, 22, -1 };
+        EXPECT_EQ(expected, results);
 
-        test.search_below(15, 2, indices, indptrs, curdex, curptr); // decrement.
-        EXPECT_EQ(curdex, 15);
-        EXPECT_EQ(curptr, 33);
-
-        test.search_below(8, 2, indices, indptrs, curdex, curptr); // big jump.
-        EXPECT_EQ(curdex, 8);
-        EXPECT_EQ(curptr, 29);
-
-        test.search_below(7, 2, indices, indptrs, curdex, curptr); // decrement.
-        EXPECT_EQ(curdex, 7);
-        EXPECT_EQ(curptr, 27);
-
-        test.search_below(0, 2, indices, indptrs, curdex, curptr); // jump to zero.
-        EXPECT_EQ(curdex, 2);
-        EXPECT_EQ(curptr, 25);
+        EXPECT_TRUE(test.search(15, n, identity, indices, indptrs, store_fun, skip_fun)); // decrement.
+        expected = std::vector<int>{ 8, -1, 33 };
+        EXPECT_EQ(expected, results);
     }
 }

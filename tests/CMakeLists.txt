@@ -16,7 +16,7 @@ add_executable(
 
 #    src/base/DenseMatrix.cpp
     src/base/CompressedSparseMatrix.cpp
-#    src/base/SemiCompressedSparseMatrix.cpp
+    src/base/SemiCompressedSparseMatrix.cpp
 #    src/base/DelayedBind.cpp
 #    src/base/DelayedSubset.cpp
 #    src/base/DelayedSubsetBlock.cpp
@@ -26,7 +26,7 @@ add_executable(
 #    src/base/arith_scalar_helpers.cpp
 #    src/base/math_helpers.cpp
 #
-##    src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
+    src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
 #
 #    src/stats/sums.cpp
 #    src/stats/variances.cpp
