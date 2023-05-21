@@ -75,7 +75,7 @@ public:
     }
 
 public:
-    template<class IndexStorage_, class PointerStorage_, class StoreFunction_, class SkipFunction_>
+    template<bool reset_index_, class IndexStorage_, class PointerStorage_, class StoreFunction_, class SkipFunction_>
     void search_above_or_equal(
         StoredIndex_ secondary, 
         Index_ index_primary,
@@ -87,8 +87,10 @@ public:
     ) {
         auto& curdex = current_indices[index_primary];
 
-        // Fixing this if we were previously iterating in the wrong direction.
-        if (!lower_bound) {
+        // Templated check to avoid having to incur the cost of hitting this,
+        // given that index resets are irrelevant for the common case of
+        // incremented iteration over consecutive secondary elements.
+        if constexpr(reset_index_) {
             auto limit = indptrs[primary + 1];
             auto curptr = current_indptrs[index_primary];
             auto raw_ptr = CustomPointerModifier_::get(curptr);
@@ -104,14 +106,12 @@ public:
         // greater than the stored index.  This also catches cases where we're
         // at the end of the dimension, as curdex is set to max_index.
         if (curdex > secondary) {
-            closest_current_index = std::min(curdex, closest_current_index);
             skip(primary);
             return;
         }
 
         auto& curptr = current_indptrs[index_primary];
         if (curdex == secondary) {
-            closest_current_index = secondary;
             store(primary, curptr);
             return;
         }
@@ -127,7 +127,6 @@ public:
                 CustomPointerModifier_::set(curptr, limit); // don't set directly to 'limit - 1' as this won't be the start of the run in semi-compressed mode.
                 CustomPointerModifier_::decrement(curptr, indices, indptrs[primary]);
                 curdex = secondary;
-                closest_current_index = secondary;
                 store(primary, curptr);
             } else {
                 CustomPointerModifier_::set(curptr, limit);
@@ -150,13 +149,11 @@ public:
 
         curdex = indices[raw_ptr];
         if (curdex > secondary) {
-            closest_current_index = std::min(curdex, closest_current_index);
             skip(primary);
             return;
         }
 
         if (curdex == secondary) {
-            closest_current_index = secondary;
             store(primary, curptr);
             return;
         }
@@ -177,12 +174,10 @@ public:
 
         curdex = indices[next_ptr];
         if (curdex > secondary) {
-            closest_current_index = std::min(curdex, closest_current_index);
             skip(primary);
             return;
         }
 
-        closest_current_index = secondary;
         store(primary, curptr);
         return;
     }
@@ -194,7 +189,7 @@ public:
         } 
     }
 
-    template<class IndexStorage_, class PointerStorage_, class StoreFunction_, class SkipFunction_>
+    template<bool check_index_, class IndexStorage_, class PointerStorage_, class StoreFunction_, class SkipFunction_>
     void search_below(
         StoredIndex_ secondary, 
         Index_ index_primary, 
@@ -222,7 +217,7 @@ public:
         // cache-unfriendly lookup to 'indices'. This is valid as we know that
         // we are not at the start of the dimension at this point. 
         auto& curdex = current_indices[index_primary];
-        if (!lower_bound) {
+        if constexpr(check_index_) {
             if (curdex < secondary) {
                 update_closest_index(curdex);
                 skip(primary);
@@ -303,28 +298,44 @@ public:
         SkipFunction_ skip
     ) {
         if (secondary >= last_request) {
-            if (lower_bound && secondary < closest_current_index) {
-                return false;
+            if (lower_bound) {
+                if (secondary < closest_current_index) {
+                    return false;
+                }
+                for (Index_ p = 0; p < primary_length; ++p) {
+                    search_above_or_equal<false>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                }
+
+            } else {
+                for (Index_ p = 0; p < primary_length; ++p) {
+                    search_above_or_equal<true>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                }
+                lower_bound = true;
             }
 
-            closest_current_index = max_index; // resetting this.
-            for (Index_ p = 0; p < primary_length; ++p) {
-                search_above_or_equal(secondary, p, to_primary(p), indices, indptrs, store, skip);
+            // Doing a single min_element call is faster than successive min() calls
+            // within search_above_or_equal() on GCC. Who knows why.
+            if (primary_length) {
+                closest_current_index = *std::min_element(current_indices.begin(), current_indices.end());
             }
-
-            lower_bound = true;
 
         } else {
-            if (!lower_bound && (closest_current_index == max_index || secondary > closest_current_index)) {
-                return false;
-            }
+            if (!lower_bound) {
+                if (closest_current_index == max_index || secondary > closest_current_index) {
+                    return false;
+                }
 
-            closest_current_index = max_index; // resetting this.
-            for (Index_ p = 0; p < primary_length; ++p) {
-                search_below(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                closest_current_index = max_index; // this will be set to the maximum by search_below.
+                for (Index_ p = 0; p < primary_length; ++p) {
+                    search_below<true>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                }
+            } else {
+                closest_current_index = max_index; // ditto.
+                for (Index_ p = 0; p < primary_length; ++p) {
+                    search_below<false>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                }
+                lower_bound = false;
             }
-
-            lower_bound = false;
         }
 
         last_request = secondary;
