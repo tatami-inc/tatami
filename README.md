@@ -75,8 +75,8 @@ auto raw_ptr = new tatami::CompressedSparseColumnMatrix(
 std::shared_ptr<tatami::Matrix<double, int> > mat(raw_ptr);
 ```
 
-We typically create a `shared_ptr` to a `tatami::Matrix` to levearage run-time polymorphism.
-This allows downstream applications to easily handle a variety of different input representations by compiling against the `tatami::Matrix` interface.
+We typically create a `shared_ptr` to a `tatami::Matrix` to leverage run-time polymorphism.
+This enables downstream applications to accept many different matrix representations by compiling against the `tatami::Matrix` interface.
 Alternatively, applications may use templating to achieve compile-time polymorphism on the different **tatami** subclasses,
 but this is rather restrictive without providing obvious performance benefits. 
 
@@ -265,14 +265,14 @@ auto rowvars = tatami::row_variances(mat.get());
 ```
 
 **tatami** is strictly intended for row/column access and does not directly support matrix algebra or decompositions. 
-If this is needed, applications should write their own code, e.g., by using **tatami**'s extractors to implement matrix multiplication.
-Alternatively, we can transfer data from **tatami** into other frameworks [**Eigen**](https://eigen.tuxfamily.org/) for complex matrix operations,
+If these high-level operations are needed, applications should write their own code, e.g., by using **tatami**'s extractors to implement matrix multiplication.
+Alternatively, we can transfer data from **tatami** into other frameworks like [**Eigen**](https://eigen.tuxfamily.org/) for complex matrix operations,
 effectively trading the diversity of representations for a more comprehensive suite of operations.
-A frequent pattern is to use **tatami** to load the input data, which is usually in a custom format to save memory for large datasets;
-process it into a smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis;
+For example, we like to use **tatami** to load the input data, which is usually in a custom format to save memory for large datasets;
+process it into a much smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis;
 and then copy this cheaply into an `Eigen::MatrixXd` or `Eigen::SparseMatrix` for more computationally intensive work.
 
-It is not possible to alter the matrix contents via the **tatami** API.
+It is not possible to modify the matrix contents via the **tatami** API.
 This is especially relevant for matrices with delayed operations or those referring to remote data stores, where reading the matrix data is trivial but writing is not guaranteed to work.
 Experience suggests that a matrix writer abstraction is less useful than the equivalent reader abstraction.
 This is because applications typically control the output format, so there is no need to accommodate a diversity of formats via an abstract interface.
