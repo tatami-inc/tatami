@@ -59,10 +59,6 @@ Users can create an instance of a concrete `tatami::Matrix` subclass by using on
 | Delayed cast                               | `make_DelayedCast()`               |
 |--------------------------------------------|------------------------------------|
 
-We typically create a `shared_ptr` to a `tatami::NumericMatrix`, relying on run-time polymorphism to determine the right method to call.
-This allows downstream applications to easily handle a variety of different input representations without recompilation.
-Alternatively, applications may use templating to achieve compile-time polymorphism on the different **tatami** subclasses,
-but this is rather restrictive without providing obvious performance benefits. 
 For example, to create a compressed sparse matrix from sparse triplet data, we could do:
 
 ```cpp
@@ -78,11 +74,21 @@ auto raw_ptr = new tatami::CompressedSparseColumnMatrix(
     std::move(indptrs)
 );
 
-std::shared_ptr<tatami::NumericMatrix> mat(raw_ptr);
+std::shared_ptr<tatami::Matrix<double, int> > mat(raw_ptr);
 ```
 
+We typically create a `shared_ptr` to a `tatami::Matrix` to levearage run-time polymorphism.
+This allows downstream applications to easily handle a variety of different input representations by compiling against the `tatami::Matrix` interface.
+Alternatively, applications may use templating to achieve compile-time polymorphism on the different **tatami** subclasses,
+but this is rather restrictive without providing obvious performance benefits. 
+
+We use templating to define the type of values returned by the interface.
+This includes the type of the data (most typically `double`) as well as the type of row/column indices (default `int`, but one could imagine using, e.g., `size_t`).
+It is worth noting that the storage type does not need to be the same as the interface type.
+For example, developers could store a matrix of small counts as `uint16_t` while returning `double`s for compatibility with downstream mathematical code.
+
 The delayed operations are ~stolen from~ inspired by those in the [**DelayedArray**](https://github.com/Bioconductor/DelayedArray) package.
-Isometric operations are worth mentioning as they account for matrix-scalar/vector arithmetic and various mathematical operations.
+Isometric operations are particularly useful as they accommodate matrix-scalar/vector arithmetic and various mathematical operations.
 For example, we could apply a sparsity-breaking delayed operation to our sparse matrix `mat` without actually creating a dense matrix:
 
 ```cpp
@@ -90,8 +96,8 @@ tatami::DelayedAddScalarHelper<double> op(1);
 auto mat2 = tatami::make_DelayedIsometricOp(mat, std::move(op));
 ```
 
-Check out the [reference documentation](https://tatami-inc.github.io/tatami) for more details on the available classes and operations.
-Some libraries in the [**@tatami-inc**](https://github.com/tatami-inc) organization implement further extensions of **tatami**'s interface, e.g., for HDF5-backed matrices.
+Some libraries in the [**@tatami-inc**](https://github.com/tatami-inc) organization implement further extensions of **tatami**'s interface, 
+e.g., for [HDF5-backed matrices](https://github.com/tatami-inc/tatami_hdf5) and [R-based matrices](https://github.com/tatami-inc/tatami_r).
 
 ### Extracting matrix contents
 
@@ -117,7 +123,8 @@ In some matrix representations (e.g., with a `DenseMatrix`), the returned pointe
 However, this is not the case in general so we need to allocate a buffer of appropriate length (`buffer`) in which the dense contents _might_ be stored.
 Users should use `tatami::DenseExtractor::fetch_copy()` if they want to force a copy of the row contents into the buffer.
 
-Alternatively, we could extract sparse columns via `tatami::SparseExtractor::fetch()`, which returns a `tatami::SparseRange` containing pointers to arrays of (structurally non-zero) values and their row indices.
+Alternatively, we could extract sparse columns via `tatami::SparseExtractor::fetch()`, 
+which returns a `tatami::SparseRange` containing pointers to arrays of (structurally non-zero) values and their row indices.
 This provides some opportunities for optimization in algorithms that only need to operate on non-zero values.
 The `fetch()` call requires buffers for both arrays - again, this may not be used for matrix subclasses with contiguous internal storage of the values/indices.
 
@@ -139,8 +146,11 @@ This provides some opportunities for optimization by avoiding the unnecessary ex
 To do so, we define a range of elements or supply a vector containing the indices of the elements of interest during `Extractor` construction:
 
 ```cpp
-auto bext = mat->dense_column(5, 12); // Get rows [5, 17) from each column.
-auto iext = mat->sparse_row(std::vector<int>{ 1, 3, 5, 7 }); // Get these columns from each row.
+// Get rows [5, 17) from each column.
+auto bext = mat->dense_column(5, 12); 
+
+// Get these columns from each row.
+auto iext = mat->sparse_row(std::vector<int>{ 1, 3, 5, 7 });
 ```
 
 ### Handling different access patterns
@@ -154,9 +164,8 @@ This is supported with the following methods:
 Users can then write dedicated code paths to take advantage of these properties.
 For example, we might use different algorithms for dense data, where we don't have to look up indices; and for sparse data, if we can avoid the uninteresting zero values.
 Similarly, if we want to compute a row-wise statistic, but the matrix is more efficiently accessed by column according to `prefer_rows()`,
-we could iterate on the columns and attempt to compute the statistic in a "running" manner.
-(See [`colsums.cpp`](gallery/src/colsums.cpp) for a good example.)
-In the most complex cases, this results in code that looks like:
+we could iterate on the columns and attempt to compute the statistic in a "running" manner (see [`colsums.cpp`](gallery/src/colsums.cpp) for an example).
+In the most complex cases, this leads to code like:
 
 ```cpp
 if (mat->sparse()) {
@@ -178,10 +187,14 @@ if (mat->sparse()) {
 }
 ```
 
+Of course, this assumes that it is possible to provide sparse-specific optimizations as well as running calculations for the statistic of interest.
+In most cases, only a subset of the extraction patterns are actually feasible so special code paths would not be beneficial.
+
 ### Supporting parallelization
 
-The nature of the `Extractor` means that the `fetch()` calls themselves are not `const` and thus not thread-safe.
-Fortunately, the solution is simple - just create a separate `Extractor` (and buffers) for each thread.
+The mutable nature of an `Extractor` instance means that the `fetch()` calls themselves are not `const`.
+This means that the same extractor cannot be safely re-used across different threads as each call to `fetch()` will modify the extractor's contents.
+Fortunately, the solution is simple - just create a separate `Extractor` (and the associated buffers) for each thread.
 With OpenMP, this looks like:
 
 ```cpp
@@ -199,7 +212,8 @@ With OpenMP, this looks like:
 ```
 
 Users may also consider using the `tatami::parallelize()` function, which accepts a function with the range of jobs (in this case, rows) to be processed in each thread.
-This responds to the `TATAMI_CUSTOM_PARALLEL` macro, which allows applications to easily change their parallelization scheme, e.g., if their toolchain does not support OpenMP.
+This responds to the `TATAMI_CUSTOM_PARALLEL` macro, which allows applications to easily change their parallelization scheme.
+For example, if a toolchain does not support OpenMP, an application can define the macro to switch to using `<thread>` instead.
 
 ```cpp
 tatami::parallelize([&](int thread, int start, int length) -> void {
@@ -215,7 +229,8 @@ tatami::parallelize([&](int thread, int start, int length) -> void {
 ### Defining an oracle
 
 Advanced users can provide each `Extractor` with an `Oracle` that specifies the rows/columns to be accessed by future calls to `fetch()`.
-Knowledge of the future access pattern enables optimizations in some `Matrix` implementations, e.g., file-backed matrices can pre-fetch and cache the required data in fewer disk reads.
+Knowledge of the future access pattern enables optimizations in some `Matrix` implementations, 
+e.g., file-backed matrices can reduce the number of disk reads by pre-fetching the right data for future accesses.
 The most obvious use case involves accessing consecutive rows/columns:
 
 ```cpp
@@ -226,45 +241,42 @@ for (int r = 0; r < NR; ++r) {
 }
 ```
 
-In fact, this use case is so common that we can just use the `tatami::consecutive_extractor` function:
+In fact, this use case is so common that we can just use the `tatami::consecutive_extractor()` wrapper to set the oracle.
+The first template boolean specifies whether we want row access, the second boolean specifies whether we want sparse extraction,
+and the numbers specify the start and length of the sequence of consecutive elements.
 
 ```cpp
-auto cwrk = tatami::consecutive_extractor</* row = */ true, /* sparse = */ false>(mat.get(), 0, NR);
+auto cwrk = tatami::consecutive_extractor<true, false>(mat.get(), 0, NR);
 ```
 
+Alternatively, we can use the `FixedOracle` class with an array of row/column indices that are known ahead of time.
+Advanced users can also define their own `Oracle` subclasses to provide dynamic custom predictions, e.g., based on PRNG output.
 
-Check out the [reference documentation](https://tatami-inc.github.io/tatami) for more details on the available classes and operations.
-The [gallery](https://github.com/tatami-inc/tatami/tree/master/gallery) also contains worked examples for common operations based on row/column traversals.
+In all cases where an oracle is supplied, the subsequent `fetch()` calls should exactly match the predictions returned by the oracle.
+Failing to do so will result in undefined behavior.
 
-## Developer comments
-
-### API design
-
-We use templating to define the type of values returned by the interface.
-This includes the type of the data (most typically `double`) as well as the type of row/column indices (default `int`, but one could imagine using, e.g., `size_t`).
-It is worth noting that the storage type does not need to be the same as the interface type.
-For example, developers could store a matrix of small counts as `uint16_t` while returning `double`s for compatibility with downstream mathematical code.
-
-Classes are named with `CamelCase`, while all functions, methods and members use `snake_case`.
-
-### Other operations
+### Comments on other operations
 
 As previously mentioned, **tatami** is designed to pull out rows or columns of a matrix, and little else.
 Some support is provided for basic statistics in the same vein as the [**matrixStats**](https://github.com/HenrikBengtsson/matrixStats) package:
 
 ```cpp
-auto colsums = tatami::column_sums(mat);
-auto rowvars = tatami::row_variances(mat);
+auto colsums = tatami::column_sums(mat.get());
+auto rowvars = tatami::row_variances(mat.get());
 ```
 
-**tatami** does not support matrix algebra or decompositions.
-For this we typically use [**Eigen**](https://eigen.tuxfamily.org/), effectively trading the diversity of representations for a much more comprehensive suite of operations.
+**tatami** is strictly intended for row/column access and does not directly support matrix algebra or decompositions. 
+If this is needed, applications should write their own code, e.g., by using **tatami**'s extractors to implement matrix multiplication.
+Alternatively, we can transfer data from **tatami** into other frameworks [**Eigen**](https://eigen.tuxfamily.org/) for complex matrix operations,
+effectively trading the diversity of representations for a more comprehensive suite of operations.
 A frequent pattern is to use **tatami** to load the input data, which is usually in a custom format to save memory for large datasets;
 process it into a smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis;
 and then copy this cheaply into an `Eigen::MatrixXd` or `Eigen::SparseMatrix` for more computationally intensive work.
 
-It is not possible to alter the matrix contents via the API.
+It is not possible to alter the matrix contents via the **tatami** API.
 This is especially relevant for matrices with delayed operations or those referring to remote data stores, where reading the matrix data is trivial but writing is not guaranteed to work.
+Experience suggests that a matrix writer abstraction is less useful than the equivalent reader abstraction.
+This is because applications typically control the output format, so there is no need to accommodate a diversity of formats via an abstract interface.
 
 ## Building projects 
 
@@ -293,8 +305,16 @@ target_link_libraries(mylib INTERFACE tatami)
 ```
 
 If you're not using CMake, the simple approach is to just copy the files - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
-If you want to read Matrix Market files, you'll also need to add the [**buffin**](https://github.com/clusterfork/buffin) header-only library to the compiler's search path.
+If you want to read Matrix Market files, you'll also need to add the [**byteme**](https://github.com/clusterfork/byteme) header-only library to the compiler's search path.
 
-## TODO
+## Links
 
-- Add bindings for TileDB.
+Check out the [reference documentation](https://tatami-inc.github.io/tatami) for more details on each function and class.
+
+The [gallery](gallery/) also contains worked examples for common operations based on row/column traversals.
+
+The [**tatami_hdf5**](https://github.com/tatami-inc/tatami_hdf5) repository contains **tatami** bindings for HDF5-backed matrices.
+
+The [**tatami_r**](https://github.com/tatami-inc/tatami_r) repository contains **tatami** bindings for matrix-like objects in R.
+
+The [**beachmat**](https://github.com/tatami-inc/beachmat) package vendors the **tatami** headers for easy use by other R packages.
