@@ -46,7 +46,6 @@ Application developers can write code that works interchangeably with a variety 
 
 Users can create an instance of a concrete `tatami::Matrix` subclass by using one of the constructors or the equivalent `make_*` utility:
 
-|--------------------------------------------|------------------------------------|
 | Description                                | Class or function                  |
 |--------------------------------------------|------------------------------------|
 | Dense matrix                               | `DenseMatrix`                      |
@@ -57,7 +56,6 @@ Users can create an instance of a concrete `tatami::Matrix` subclass by using on
 | Delayed subset                             | `make_DelayedSubset()`             |
 | Delayed transpose                          | `make_DelayedTranspose()`          |
 | Delayed cast                               | `make_DelayedCast()`               |
-|--------------------------------------------|------------------------------------|
 
 For example, to create a compressed sparse matrix from sparse triplet data, we could do:
 
