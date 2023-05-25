@@ -119,9 +119,10 @@ for (int r = 0; r < NR; ++r) {
 ```
 
 The `tatami::DenseExtractor::fetch()` method returns a pointer to an array of length equal to the number of columns that contains each row's contents.
-In some matrix representations (e.g., with a `DenseMatrix`), the returned pointer directly refers to the internal data store of the matrix, avoiding the need for any additional memory space.
-However, this is not the case in general so we need to allocate a buffer of appropriate length (`buffer`) in which the dense contents _might_ be stored.
-Users should use `tatami::DenseExtractor::fetch_copy()` if they want to force a copy of the row contents into the buffer.
+In some matrix representations (e.g., `DenseMatrix`), the returned pointer directly refers to the matrix's internal data store.
+However, this is not the case in general so we need to allocate a buffer of appropriate length (`buffer`) in which the dense contents can be stored;
+if this buffer is used, the returned pointer refers to the buffer start.
+Users can also use `tatami::DenseExtractor::fetch_copy()` if they want to force a copy of the row contents into the buffer, regardless of the representation.
 
 Alternatively, we could extract sparse columns via `tatami::SparseExtractor::fetch()`, 
 which returns a `tatami::SparseRange` containing pointers to arrays of (structurally non-zero) values and their row indices.
@@ -213,7 +214,7 @@ With OpenMP, this looks like:
 
 Users may also consider using the `tatami::parallelize()` function, which accepts a function with the range of jobs (in this case, rows) to be processed in each thread.
 This responds to the `TATAMI_CUSTOM_PARALLEL` macro, which allows applications to easily change their parallelization scheme.
-For example, if a toolchain does not support OpenMP, an application can define the macro to switch to using `<thread>` instead.
+For example, if a toolchain does not support OpenMP, an application can set the macro to switch to `<thread>` instead.
 
 ```cpp
 tatami::parallelize([&](int thread, int start, int length) -> void {
@@ -255,7 +256,7 @@ Advanced users can also define their own `Oracle` subclasses to provide dynamic 
 In all cases where an oracle is supplied, the subsequent `fetch()` calls should exactly match the predictions returned by the oracle.
 Failing to do so will result in undefined behavior.
 
-### Comments on other operations
+## Comments on other operations
 
 As previously mentioned, **tatami** is designed to pull out rows or columns of a matrix, and little else.
 Some support is provided for basic statistics in the same vein as the [**matrixStats**](https://github.com/HenrikBengtsson/matrixStats) package:
