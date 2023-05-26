@@ -28,6 +28,9 @@ add_executable(
 
     src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
 
+    src/chunked/LruChunkCache.cpp
+    src/chunked/OracleChunkCache.cpp
+
     src/stats/sums.cpp
     src/stats/variances.cpp
     src/stats/medians.cpp

@@ -24,7 +24,7 @@ namespace tatami {
 template<typename Id_, class ChunkContents_> 
 class LruChunkCache {
 private:
-    typedef std::pair<ChunkContents, Id_> Element;
+    typedef std::pair<ChunkContents_, Id_> Element;
     std::list<Element> cache_data;
     std::unordered_map<Id_, typename std::list<Element>::iterator> cache_exists;
     size_t max_chunks; 
@@ -50,24 +50,25 @@ public:
      * If the chunk does not exist and there is still space in the cache, a new chunk is created and populated with the contents of chunk `id`.
      * If the chunk does not exist and there is no space in the cache, the least recently used chunk is evicted and its `ChunkContents_` is populated with the contents of chunk `id`.
      */
-    const ChunkContents& find_chunk(Id_ id, Cfunction_ create, Pfunction_ populate) {
+    template<class Cfunction_, class Pfunction_>
+    const ChunkContents_& find_chunk(Id_ id, Cfunction_ create, Pfunction_ populate) {
         auto it = cache_exists.find(id);
         if (it != cache_exists.end()) {
             auto chosen = it->second;
             cache_data.splice(cache_data.end(), cache_data, chosen); // move to end.
             return chosen->first;
         } else {
-            typename std::list<typename LruCache::Element>::iterator location;
+            typename std::list<Element>::iterator location;
             if (cache_data.size() < max_chunks) {
-                cache_data.emplace_back(create(), chunk);
+                cache_data.emplace_back(create(), id);
                 location = std::prev(cache_data.end());
             } else {
                 location = cache_data.begin();
                 cache_exists.erase(location->second);
-                location->second = chunk;
+                location->second = id;
                 cache_data.splice(cache_data.end(), cache_data, location); // move to end.
             }
-            cache_exists[chunk] = location;
+            cache_exists[id] = location;
 
             auto& chunk = location->first;
             populate(id, chunk);
