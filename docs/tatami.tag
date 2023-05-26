@@ -357,6 +357,20 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>LruChunkCache.hpp</name>
+    <path>tatami/chunked/</path>
+    <filename>LruChunkCache_8hpp.html</filename>
+    <class kind="class">tatami::LruChunkCache</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>OracleChunkCache.hpp</name>
+    <path>tatami/chunked/</path>
+    <filename>OracleChunkCache_8hpp.html</filename>
+    <class kind="class">tatami::OracleChunkCache</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>layered.hpp</name>
     <path>tatami/ext/</path>
     <filename>layered_8hpp.html</filename>
@@ -3300,6 +3314,26 @@
     </member>
   </compound>
   <compound kind="class">
+    <name>tatami::LruChunkCache</name>
+    <filename>classtatami_1_1LruChunkCache.html</filename>
+    <templarg>typename Id_</templarg>
+    <templarg>class ChunkContents_</templarg>
+    <member kind="function">
+      <type></type>
+      <name>LruChunkCache</name>
+      <anchorfile>classtatami_1_1LruChunkCache.html</anchorfile>
+      <anchor>a064612c107fa2ce3625dc512bbcb3a0f</anchor>
+      <arglist>(size_t m)</arglist>
+    </member>
+    <member kind="function">
+      <type>const ChunkContents_ &amp;</type>
+      <name>find_chunk</name>
+      <anchorfile>classtatami_1_1LruChunkCache.html</anchorfile>
+      <anchor>a17636ac967438f3ca1579a33af523e03</anchor>
+      <arglist>(Id_ id, Cfunction_ create, Pfunction_ populate)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>tatami::Matrix</name>
     <filename>classtatami_1_1Matrix.html</filename>
     <templarg>typename Value_</templarg>
@@ -3578,6 +3612,27 @@
       <anchorfile>structtatami_1_1Oracle.html</anchorfile>
       <anchor>a32ab54d21fc982580f18bea802d89f48</anchor>
       <arglist>(Index_ *predicted, size_t number)=0</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::OracleChunkCache</name>
+    <filename>classtatami_1_1OracleChunkCache.html</filename>
+    <templarg>typename Id_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>class ChunkContents_</templarg>
+    <member kind="function">
+      <type></type>
+      <name>OracleChunkCache</name>
+      <anchorfile>classtatami_1_1OracleChunkCache.html</anchorfile>
+      <anchor>a0bd9bfcb80bcaa3c92ccde442c6c15a9</anchor>
+      <arglist>(std::unique_ptr&lt; Oracle&lt; Index_ &gt; &gt; oracle, size_t per_iteration, size_t num_chunks)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::pair&lt; const ChunkContents_ *, Index_ &gt;</type>
+      <name>next_chunk</name>
+      <anchorfile>classtatami_1_1OracleChunkCache.html</anchorfile>
+      <anchor>a85322f0675c67217a450e061880e0065</anchor>
+      <arglist>(Ifunction_ identify, Sfunction_ swap, Rfunction_ ready, Afunction_ allocate, Pfunction_ populate)</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -4106,9 +4161,11 @@
     <class kind="struct">tatami::FullExtractor</class>
     <class kind="struct">tatami::IndexExtractor</class>
     <class kind="struct">tatami::LayeredMatrixData</class>
+    <class kind="class">tatami::LruChunkCache</class>
     <class kind="class">tatami::Matrix</class>
     <class kind="struct">tatami::Options</class>
     <class kind="struct">tatami::Oracle</class>
+    <class kind="class">tatami::OracleChunkCache</class>
     <class kind="struct">tatami::OracleStream</class>
     <class kind="class">tatami::SemiCompressedSparseMatrix</class>
     <class kind="struct">tatami::SomeNumericArray</class>

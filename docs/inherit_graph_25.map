@@ -1,3 +1,7 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="Node000000" href="$structtatami_1_1Oracle.html" title=" " alt="" coords="5,5,149,46"/>
+<area shape="rect" id="Node000000" href="$structtatami_1_1Oracle.html" title="Predict future access requests." alt="" coords="5,46,167,72"/>
+<area shape="rect" id="Node000001" href="$structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses of a consecutive sequence." alt="" coords="215,5,388,46"/>
+<area shape="poly" id="edge18_Node000000_Node000001" title=" " alt="" coords="181,42,214,37,214,42,182,47"/>
+<area shape="rect" id="Node000002" href="$structtatami_1_1FixedOracle.html" title="Predict future accesses from a known sequence." alt="" coords="235,71,368,111"/>
+<area shape="poly" id="edge19_Node000000_Node000002" title=" " alt="" coords="182,71,235,79,234,84,181,76"/>
 </map>
