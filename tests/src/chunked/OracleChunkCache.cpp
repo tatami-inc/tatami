@@ -36,6 +36,34 @@ protected:
     }
 };
 
+TEST_F(OracleChunkCacheTest, Consecutive) {
+    std::vector<int> predictions{
+        11, // Cycle 1
+        22, 
+        33,
+        44, // Cycle 2
+        55,
+        66,
+        77, // Cycle 3
+        88,
+        99
+    };
+
+    tatami::OracleChunkCache<unsigned char, int, TestChunk> cache(std::make_unique<tatami::FixedOracle<int> >(predictions.data(), predictions.size()), 100, 3);
+    int counter = 0;
+    int nalloc = 0;
+
+    for (int i = 1; i < 9; ++i) {
+        auto out = next(cache, counter, nalloc); 
+        EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(i));
+        EXPECT_EQ(out.first->cycle_number, i - 1);
+        EXPECT_TRUE(out.first->alloc);
+        EXPECT_EQ(out.second, i);
+    }
+
+    EXPECT_EQ(nalloc, 3); // respects the max cache size.
+}
+
 TEST_F(OracleChunkCacheTest, AllPredictions) {
     std::vector<int> predictions{
         11, // Cycle 1

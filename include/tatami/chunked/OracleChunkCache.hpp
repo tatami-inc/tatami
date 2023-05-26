@@ -153,6 +153,9 @@ public:
                     swap(next_cache_data[c.second], cache_data[search]);
                     ++search;
                 } else {
+                    // This should be called no more than 'max_chunks' times across the lifetime of this Cache object. 
+                    // At any given point in time, allocated chunks will be interspersed between 'cache_data' and 'next_cache_data', 
+                    // so either 'next_cache_data[c.second]' is already ready, or we'll find a ready chunk from the linear scan through 'cache_data'.
                     allocate(next_cache_data[c.second]);
                 }
             }
