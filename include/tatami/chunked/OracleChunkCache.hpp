@@ -112,6 +112,11 @@ public:
 
             auto it = next_cache_exists.find(curchunk);
             if (it == next_cache_exists.end()) {
+                if (used == max_chunks) {
+                    prediction_stream.back();
+                    break;
+                }
+
                 next_cache_exists[curchunk] = used;
                 predictions_made.emplace_back(used, curindex);
 
@@ -123,9 +128,6 @@ public:
                 }
 
                 ++used;
-                if (used == max_chunks) {
-                    break;
-                }
             } else {
                 predictions_made.emplace_back(it->second, curindex);
             }

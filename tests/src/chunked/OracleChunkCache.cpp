@@ -70,15 +70,15 @@ TEST_F(OracleChunkCacheTest, AllPredictions) {
         22, 
         12, 
         31,
-        23, // Cycle 2
+        23, 
         14, 
         28,
-        45, 
-        11, // Cycle 3
+        45, // Cycle 2
+        11, 
         36,
         32,
-        42,
-        24, // Cycle 4
+        42, // Cycle 3
+        24,
         15
     };
 
@@ -142,13 +142,13 @@ TEST_F(OracleChunkCacheTest, AllPredictions) {
 
     out = next(cache, counter, nalloc); // fetching 36.
     EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(3));
-    EXPECT_EQ(out.first->cycle_number, 4);
+    EXPECT_EQ(out.first->cycle_number, 2);
     EXPECT_TRUE(out.first->alloc);
     EXPECT_EQ(out.second, 6);
 
     out = next(cache, counter, nalloc); // fetching 32.
     EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(3));
-    EXPECT_EQ(out.first->cycle_number, 4);
+    EXPECT_EQ(out.first->cycle_number, 2);
     EXPECT_TRUE(out.first->alloc);
     EXPECT_EQ(out.second, 2);
 
@@ -160,7 +160,7 @@ TEST_F(OracleChunkCacheTest, AllPredictions) {
 
     out = next(cache, counter, nalloc); // fetching 24.
     EXPECT_EQ(out.first->chunk_id, static_cast<unsigned char>(2));
-    EXPECT_EQ(out.first->cycle_number, 5);
+    EXPECT_EQ(out.first->cycle_number, 4);
     EXPECT_TRUE(out.first->alloc);
     EXPECT_EQ(out.second, 4);
 
