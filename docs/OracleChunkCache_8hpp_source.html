@@ -138,62 +138,65 @@ $(function() {
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            <span class="keyword">auto</span> it = next_cache_exists.find(curchunk);</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>            <span class="keywordflow">if</span> (it == next_cache_exists.end()) {</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                next_cache_exists[curchunk] = used;</div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                predictions_made.emplace_back(used, curindex);</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                <span class="keyword">auto</span> it2 = cache_exists.find(curchunk);</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>                <span class="keywordflow">if</span> (it2 != cache_exists.end()) {</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>                    swap(next_cache_data[used], cache_data[it2-&gt;second]);</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>                    chunks_in_need.emplace_back(curchunk, used);</div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>                }</div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span> </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>                ++used;</div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>                <span class="keywordflow">if</span> (used == max_chunks) {</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>                <span class="keywordflow">if</span> (used == max_chunks) {</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>                    prediction_stream.<a class="code hl_function" href="structtatami_1_1OracleStream.html#a3ce855b3a8ffa7887b20f489faf1a68e">back</a>();</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>                    <span class="keywordflow">break</span>;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>                }</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span> </div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>                next_cache_exists[curchunk] = used;</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>                predictions_made.emplace_back(used, curindex);</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>                <span class="keyword">auto</span> it2 = cache_exists.find(curchunk);</div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>                <span class="keywordflow">if</span> (it2 != cache_exists.end()) {</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>                    swap(next_cache_data[used], cache_data[it2-&gt;second]);</div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>                    chunks_in_need.emplace_back(curchunk, used);</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>                }</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>            } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                predictions_made.emplace_back(it-&gt;second, curindex);</div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>            }</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>        }</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        <span class="keywordtype">size_t</span> search = 0;</div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : chunks_in_need) {</div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>            <span class="keywordflow">if</span> (!ready(next_cache_data[c.second])) {</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>                <span class="keywordflow">while</span> (search &lt; cache_data.size() &amp;&amp; !ready(cache_data[search])) {</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>                    ++search;</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>                }</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                <span class="keywordflow">if</span> (search &lt; cache_data.size()) {</div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>                    swap(next_cache_data[c.second], cache_data[search]);</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>                    ++search;</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>                } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                    <span class="comment">// This should be called no more than &#39;max_chunks&#39; times across the lifetime of this Cache object. </span></div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                    <span class="comment">// At any given point in time, allocated chunks will be interspersed between &#39;cache_data&#39; and &#39;next_cache_data&#39;, </span></div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                    <span class="comment">// so either &#39;next_cache_data[c.second]&#39; is already ready, or we&#39;ll find a ready chunk from the linear scan through &#39;cache_data&#39;.</span></div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>                    allocate(next_cache_data[c.second]);</div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>                }</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>            }</div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>        }</div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        populate(chunks_in_need, next_cache_data);</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span> </div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>                ++used;</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>            } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>                predictions_made.emplace_back(it-&gt;second, curindex);</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>            }</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>        }</div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span> </div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        <span class="keywordtype">size_t</span> search = 0;</div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>        <span class="keywordflow">for</span> (<span class="keyword">const</span> <span class="keyword">auto</span>&amp; c : chunks_in_need) {</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>            <span class="keywordflow">if</span> (!ready(next_cache_data[c.second])) {</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>                <span class="keywordflow">while</span> (search &lt; cache_data.size() &amp;&amp; !ready(cache_data[search])) {</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>                    ++search;</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>                }</div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>                <span class="keywordflow">if</span> (search &lt; cache_data.size()) {</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>                    swap(next_cache_data[c.second], cache_data[search]);</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>                    ++search;</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>                } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>                    <span class="comment">// This should be called no more than &#39;max_chunks&#39; times across the lifetime of this Cache object. </span></div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>                    <span class="comment">// At any given point in time, allocated chunks will be interspersed between &#39;cache_data&#39; and &#39;next_cache_data&#39;, </span></div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>                    <span class="comment">// so either &#39;next_cache_data[c.second]&#39; is already ready, or we&#39;ll find a ready chunk from the linear scan through &#39;cache_data&#39;.</span></div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>                    allocate(next_cache_data[c.second]);</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>                }</div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>            }</div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>        }</div>
 <div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
-<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        cache_data.swap(next_cache_data);</div>
-<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span>        cache_exists.swap(next_cache_exists);</div>
-<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        predictions_fulfilled = 1; <span class="comment">// well, because we just used one.</span></div>
-<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; chosen = predictions_made.front(); <span class="comment">// assuming at least one prediction was made, otherwise, why was this function even called?</span></div>
-<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        <span class="keywordflow">return</span> std::make_pair(cache_data.data() + chosen.first, chosen.second);</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    }</div>
-<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>};</div>
-<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
-<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>}</div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span>        populate(chunks_in_need, next_cache_data);</div>
+<div class="line"><a id="l00167" name="l00167"></a><span class="lineno">  167</span> </div>
+<div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>        cache_data.swap(next_cache_data);</div>
+<div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>        cache_exists.swap(next_cache_exists);</div>
+<div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>        predictions_fulfilled = 1; <span class="comment">// well, because we just used one.</span></div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; chosen = predictions_made.front(); <span class="comment">// assuming at least one prediction was made, otherwise, why was this function even called?</span></div>
+<div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>        <span class="keywordflow">return</span> std::make_pair(cache_data.data() + chosen.first, chosen.second);</div>
+<div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span>    }</div>
+<div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span>};</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span> </div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>}</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span> </div>
+<div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1OracleChunkCache_html"><div class="ttname"><a href="classtatami_1_1OracleChunkCache.html">tatami::OracleChunkCache</a></div><div class="ttdoc">Oracle-aware cache for chunks.</div><div class="ttdef"><b>Definition</b> OracleChunkCache.hpp:27</div></div>
 <div class="ttc" id="aclasstatami_1_1OracleChunkCache_html_a0bd9bfcb80bcaa3c92ccde442c6c15a9"><div class="ttname"><a href="classtatami_1_1OracleChunkCache.html#a0bd9bfcb80bcaa3c92ccde442c6c15a9">tatami::OracleChunkCache::OracleChunkCache</a></div><div class="ttdeci">OracleChunkCache(std::unique_ptr&lt; Oracle&lt; Index_ &gt; &gt; oracle, size_t per_iteration, size_t num_chunks)</div><div class="ttdef"><b>Definition</b> OracleChunkCache.hpp:44</div></div>
 <div class="ttc" id="aclasstatami_1_1OracleChunkCache_html_a85322f0675c67217a450e061880e0065"><div class="ttname"><a href="classtatami_1_1OracleChunkCache.html#a85322f0675c67217a450e061880e0065">tatami::OracleChunkCache::next_chunk</a></div><div class="ttdeci">std::pair&lt; const ChunkContents_ *, Index_ &gt; next_chunk(Ifunction_ identify, Sfunction_ swap, Rfunction_ ready, Afunction_ allocate, Pfunction_ populate)</div><div class="ttdef"><b>Definition</b> OracleChunkCache.hpp:91</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> DenseMatrix.hpp:19</div></div>
 <div class="ttc" id="astructtatami_1_1OracleStream_html"><div class="ttname"><a href="structtatami_1_1OracleStream.html">tatami::OracleStream</a></div><div class="ttdoc">Stream predictions from the oracle.</div><div class="ttdef"><b>Definition</b> Oracles.hpp:90</div></div>
 <div class="ttc" id="astructtatami_1_1OracleStream_html_a370450d2c7194730cd61a8cc8f8ec390"><div class="ttname"><a href="structtatami_1_1OracleStream.html#a370450d2c7194730cd61a8cc8f8ec390">tatami::OracleStream::next</a></div><div class="ttdeci">bool next(Index_ &amp;prediction)</div><div class="ttdef"><b>Definition</b> Oracles.hpp:125</div></div>
+<div class="ttc" id="astructtatami_1_1OracleStream_html_a3ce855b3a8ffa7887b20f489faf1a68e"><div class="ttname"><a href="structtatami_1_1OracleStream.html#a3ce855b3a8ffa7887b20f489faf1a68e">tatami::OracleStream::back</a></div><div class="ttdeci">bool back()</div><div class="ttdef"><b>Definition</b> Oracles.hpp:150</div></div>
 <div class="ttc" id="astructtatami_1_1Oracle_html"><div class="ttname"><a href="structtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests.</div><div class="ttdef"><b>Definition</b> Options.hpp:62</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
