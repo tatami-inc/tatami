@@ -7,10 +7,16 @@
 
 namespace tatami_test {
 
-inline auto temp_file_path(std::string base) {
+inline auto temp_file_path(const std::string& base) {
     auto path = std::filesystem::temp_directory_path();
     path.append(base);
     return path;
+}
+
+inline void remove_file_path(const std::string& path) {
+    if (std::filesystem::exists(path)) {
+        std::filesystem::remove_all(path);
+    }
 }
 
 }
@@ -21,10 +27,16 @@ inline auto temp_file_path(std::string base) {
 
 namespace tatami_test {
 
-inline auto temp_file_path(std::string base) {
+inline auto temp_file_path(const std::string& base) {
     auto path = std::experimental::filesystem::temp_directory_path();
     path.append(base);
     return path;
+}
+
+inline void remove_file_path(const std::string& path) {
+    if (std::experimental::filesystem::exists(path)) {
+        std::experimental::filesystem::remove_all(path);
+    }
 }
 
 }
