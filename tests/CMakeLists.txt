@@ -44,6 +44,7 @@ add_executable(
     src/utils/bind_intersection.cpp
     src/utils/compress_sparse_triplets.cpp
     src/utils/Oracles.cpp
+    src/utils/process_consecutive_indices.cpp
 )
 
 target_link_libraries(

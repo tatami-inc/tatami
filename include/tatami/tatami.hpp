@@ -23,6 +23,7 @@
 #include "utils/SomeNumericArray.hpp"
 #include "utils/bind_intersection.hpp"
 #include "utils/Oracles.hpp"
+#include "utils/process_consecutive_indices.hpp"
 
 #include "chunked/LruChunkCache.hpp"
 #include "chunked/OracleChunkCache.hpp"
