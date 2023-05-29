@@ -723,6 +723,19 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>process_consecutive_indices.hpp</name>
+    <path>tatami/utils/</path>
+    <filename>process__consecutive__indices_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>void</type>
+      <name>process_consecutive_indices</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af01c93a616eb99f6a17861a8b19f7ee0</anchor>
+      <arglist>(const Index_ *indices, Index_ length, Function_ fun)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>SomeNumericArray.hpp</name>
     <path>tatami/utils/</path>
     <filename>SomeNumericArray_8hpp.html</filename>
@@ -4518,6 +4531,13 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a5847f3cd78ce89170ca43262d7f5f8e3</anchor>
       <arglist>(const InputMatrix_ *incoming, int order, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>process_consecutive_indices</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af01c93a616eb99f6a17861a8b19f7ee0</anchor>
+      <arglist>(const Index_ *indices, Index_ length, Function_ fun)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; const Matrix&lt; T, IDX &gt; &gt;</type>

@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['wrap_5fshared_5fptr_2ehpp_0',['wrap_shared_ptr.hpp',['../wrap__shared__ptr_8hpp.html',1,'']]]
+  ['variances_2ehpp_0',['variances.hpp',['../variances_8hpp.html',1,'']]],
+  ['virtualdensematrix_2ehpp_1',['VirtualDenseMatrix.hpp',['../VirtualDenseMatrix_8hpp.html',1,'']]]
 ];

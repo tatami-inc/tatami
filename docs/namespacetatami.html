@@ -391,6 +391,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a5847f3cd78ce89170ca43262d7f5f8e3"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename StoredIndex_  = Index_, class InputMatrix_ &gt; </td></tr>
 <tr class="memitem:a5847f3cd78ce89170ca43262d7f5f8e3"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a5847f3cd78ce89170ca43262d7f5f8e3">convert_to_sparse</a> (const InputMatrix_ *incoming, int order, int threads=1)</td></tr>
 <tr class="separator:a5847f3cd78ce89170ca43262d7f5f8e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af01c93a616eb99f6a17861a8b19f7ee0"><td class="memTemplParams" colspan="2">template&lt;typename Index_ , class Function_ &gt; </td></tr>
+<tr class="memitem:af01c93a616eb99f6a17861a8b19f7ee0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#af01c93a616eb99f6a17861a8b19f7ee0">process_consecutive_indices</a> (const Index_ *indices, Index_ length, Function_ fun)</td></tr>
+<tr class="separator:af01c93a616eb99f6a17861a8b19f7ee0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7518f5e8e09a6f6d7d3955b8ea286689"><td class="memTemplParams" colspan="2">template&lt;typename T , typename IDX &gt; </td></tr>
 <tr class="memitem:a7518f5e8e09a6f6d7d3955b8ea286689"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a7518f5e8e09a6f6d7d3955b8ea286689">wrap_shared_ptr</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; T, IDX &gt; *ptr)</td></tr>
 <tr class="separator:a7518f5e8e09a6f6d7d3955b8ea286689"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -2215,6 +2218,58 @@ template&lt;typename Value_  = double, typename Index_  = int, typename StoredVa
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A pointer to a new <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">tatami::CompressedSparseMatrix</a></code>, with the same dimensions and type as the matrix referenced by <code>incoming</code>. </dd></dl>
+
+</div>
+</div>
+<a id="af01c93a616eb99f6a17861a8b19f7ee0" name="af01c93a616eb99f6a17861a8b19f7ee0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af01c93a616eb99f6a17861a8b19f7ee0">&#9670;&#160;</a></span>process_consecutive_indices()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Index_ , class Function_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void tatami::process_consecutive_indices </td>
+          <td>(</td>
+          <td class="paramtype">const Index_ *&#160;</td>
+          <td class="paramname"><em>indices</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Index_&#160;</td>
+          <td class="paramname"><em>length</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Function_&#160;</td>
+          <td class="paramname"><em>fun</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Process runs of consecutive indices that are used in the index-aware <code>dense_row()</code>, <code>sparse_column()</code>, etc. methods. This provides some opportunities for optimization when the indices contain contiguous stretches. For example, third-party libraries can be asked to process blocks of observations rather than handling them one at a time.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices. </td></tr>
+    <tr><td class="paramname">Function_</td><td>Function to apply to each contiguous run.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">indices</td><td>Pointer to an array of sorted and unique indices for row/column elements. </td></tr>
+    <tr><td class="paramname">length</td><td>Length of the array pointed to by <code>indices</code>. </td></tr>
+    <tr><td class="paramname">fun</td><td>Function to apply to each contiguous run of indices. This should take two arguments - the start index of each run, and the length of the run. Calls to <code>fun</code> are guaranteed to contain increasing start indices with non-overlapping runs. The return value of this function is ignored. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
