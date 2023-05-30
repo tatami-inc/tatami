@@ -59,3 +59,35 @@ TEST(LruChunkCache, Basic) {
     EXPECT_EQ(out.first, 10);
     EXPECT_EQ(out.second, 0);
 }
+
+TEST(LruChunkCache, Solo) {
+    tatami::LruChunkCache<int, std::pair<int, int> > cache(1);
+
+    int counter = 0;
+    auto creator = []() -> std::pair<int, int> {
+        return std::pair<int, int>(0, 0); 
+    };
+    auto populator = [&](int i, std::pair<int, int>& chunk) -> void {
+        chunk.first = i;
+        chunk.second = counter;
+        ++counter;
+        return;
+    };
+
+    auto out = cache.find_chunk(10, creator, populator); // new allocation, now we're full.
+    EXPECT_EQ(out.first, 10);
+    EXPECT_EQ(out.second, 0);
+
+    out = cache.find_chunk(10, creator, populator); // retrieve from cache.
+    EXPECT_EQ(out.first, 10);
+    EXPECT_EQ(out.second, 0);
+
+    out = cache.find_chunk(40, creator, populator); // evict the chunk and fill with 40.
+    EXPECT_EQ(out.first, 40);
+    EXPECT_EQ(out.second, 1);
+
+    out = cache.find_chunk(10, creator, populator); // evict the chunk and refill with 10.
+    EXPECT_EQ(out.first, 10);
+    EXPECT_EQ(out.second, 2);
+}
+
