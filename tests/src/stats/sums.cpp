@@ -78,10 +78,12 @@ TEST(ComputingDimSums, CrankyOracle) {
     {
         auto ref = tatami::column_sums(raw_dense.get());
         EXPECT_EQ(ref, tatami::column_sums(dense_row.get()));
+        EXPECT_EQ(ref, tatami::column_sums(dense_row.get(), 2)); // Works correctly when parallelized.
     }
 
     {
         auto ref = tatami::row_sums(raw_dense.get());
         EXPECT_EQ(ref, tatami::row_sums(dense_row.get()));
+        EXPECT_EQ(ref, tatami::row_sums(dense_row.get(), 3));
     }
 }

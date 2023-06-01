@@ -31,7 +31,7 @@ TEST(OracleStream, Replacement) {
     }
 
     // Valid after replacement.
-    auto test2 = std::make_unique<tatami::ConsecutiveOracle<int> >(1000, 2000);
+    auto test2 = std::make_unique<tatami::ConsecutiveOracle<int> >(1000, 999);
     streamer.set(std::move(test2));
 
     int counter = 1000;
@@ -41,5 +41,5 @@ TEST(OracleStream, Replacement) {
         ++counter;
     }
 
-    EXPECT_EQ(counter, 2000);
+    EXPECT_EQ(counter, 1999);
 }

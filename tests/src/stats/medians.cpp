@@ -181,10 +181,12 @@ TEST(ComputingDimMedians, CrankyOracle) {
     {
         auto ref = tatami::column_medians(raw_dense.get());
         EXPECT_EQ(ref, tatami::column_medians(dense_row.get()));
+        EXPECT_EQ(ref, tatami::column_medians(dense_row.get(), 2)); // works correctly with parallelization.
     }
 
     {
         auto ref = tatami::row_medians(raw_dense.get());
         EXPECT_EQ(ref, tatami::row_medians(dense_row.get()));
+        EXPECT_EQ(ref, tatami::row_medians(dense_row.get(), 3));
     }
 }

@@ -171,10 +171,12 @@ TEST(ComputingDimVariances, CrankyOracle) {
     {
         auto ref = tatami::column_variances(raw_dense.get());
         EXPECT_EQ(ref, tatami::column_variances(dense_row.get()));
+        EXPECT_EQ(ref, tatami::column_variances(dense_row.get(), 2)); // works correctly when parallelized.
     }
 
     {
         auto ref = tatami::row_variances(raw_dense.get());
         EXPECT_EQ(ref, tatami::row_variances(dense_row.get()));
+        EXPECT_EQ(ref, tatami::row_variances(dense_row.get(), 3));
     }
 }

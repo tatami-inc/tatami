@@ -252,10 +252,12 @@ TEST(ComputingDimExtremes, CrankyOracle) {
     {
         auto ref = tatami::column_mins(raw_dense.get());
         EXPECT_EQ(ref, tatami::column_mins(dense_row.get()));
+        EXPECT_EQ(ref, tatami::column_mins(dense_row.get(), 2)); // works correctly with parallelization.
     }
 
     {
         auto ref = tatami::row_mins(raw_dense.get());
         EXPECT_EQ(ref, tatami::row_mins(dense_row.get()));
+        EXPECT_EQ(ref, tatami::row_mins(dense_row.get(), 2));
     }
 }

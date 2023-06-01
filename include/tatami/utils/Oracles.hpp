@@ -54,9 +54,9 @@ template<typename Index_>
 struct ConsecutiveOracle : public Oracle<Index_> {
     /**
      * @param s Start index of the consecutive sequence.
-     * @param e One past the end of the sequence.
+     * @param l Length of the sequence.
      */
-    ConsecutiveOracle(Index_ s, Index_ e) : end(e), counter(s) {}
+    ConsecutiveOracle(Index_ s, Index_ l) : end(s + l), counter(s) {}
 
     size_t predict(Index_* buffer, size_t number) {
         auto upto = counter + number;
