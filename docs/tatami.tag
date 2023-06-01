@@ -357,6 +357,26 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>utils.hpp</name>
+    <path>tatami/stats/</path>
+    <filename>stats_2utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>void</type>
+      <name>parallelize</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a29ce7a2219ea60d45de1aa3d4de66063</anchor>
+      <arglist>(Function_ fun, size_t tasks, size_t threads)</arglist>
+    </member>
+    <member kind="function">
+      <type>auto</type>
+      <name>consecutive_extractor</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>LruChunkCache.hpp</name>
     <path>tatami/chunked/</path>
     <filename>LruChunkCache_8hpp.html</filename>
@@ -369,6 +389,31 @@
     <filename>OracleChunkCache_8hpp.html</filename>
     <class kind="class">tatami::OracleChunkCache</class>
     <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>convert_to_layered_sparse.hpp</name>
+    <path>tatami/ext/layered/</path>
+    <filename>convert__to__layered__sparse_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
+      <name>convert_to_layered_sparse</name>
+      <anchorfile>convert__to__layered__sparse_8hpp.html</anchorfile>
+      <anchor>a8a10c9d0fdbf5076e8583d1068a7f6d6</anchor>
+      <arglist>(const Matrix *incoming)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>LayeredMatrixData.hpp</name>
+    <path>tatami/ext/layered/</path>
+    <filename>LayeredMatrixData_8hpp.html</filename>
+    <class kind="struct">tatami::LayeredMatrixData</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>MatrixMarket.hpp</name>
+    <path>tatami/ext/</path>
+    <filename>MatrixMarket_8hpp.html</filename>
   </compound>
   <compound kind="file">
     <name>layered.hpp</name>
@@ -395,31 +440,6 @@
       <anchor>af7655515516f20bf22da4311b7e8dcc5</anchor>
       <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
     </member>
-  </compound>
-  <compound kind="file">
-    <name>convert_to_layered_sparse.hpp</name>
-    <path>tatami/ext/layered/</path>
-    <filename>convert__to__layered__sparse_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
-      <name>convert_to_layered_sparse</name>
-      <anchorfile>convert__to__layered__sparse_8hpp.html</anchorfile>
-      <anchor>a8a10c9d0fdbf5076e8583d1068a7f6d6</anchor>
-      <arglist>(const Matrix *incoming)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>LayeredMatrixData.hpp</name>
-    <path>tatami/ext/layered/</path>
-    <filename>LayeredMatrixData_8hpp.html</filename>
-    <class kind="struct">tatami::LayeredMatrixData</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>MatrixMarket.hpp</name>
-    <path>tatami/ext/</path>
-    <filename>MatrixMarket_8hpp.html</filename>
   </compound>
   <compound kind="file">
     <name>simple.hpp</name>
@@ -543,26 +563,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a53a658059404691856bef57fb85d83d6</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>utils.hpp</name>
-    <path>tatami/stats/</path>
-    <filename>stats_2utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>parallelize</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a29ce7a2219ea60d45de1aa3d4de66063</anchor>
-      <arglist>(Function_ fun, size_t tasks, size_t threads)</arglist>
-    </member>
-    <member kind="function">
-      <type>auto</type>
-      <name>consecutive_extractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
     </member>
   </compound>
   <compound kind="file">
