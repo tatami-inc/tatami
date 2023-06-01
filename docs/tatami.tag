@@ -983,8 +983,8 @@
       <type></type>
       <name>ConsecutiveOracle</name>
       <anchorfile>structtatami_1_1ConsecutiveOracle.html</anchorfile>
-      <anchor>a4efff1a6ab639d3d95b3ea617339bb56</anchor>
-      <arglist>(Index_ s, Index_ e)</arglist>
+      <anchor>a4e896a9ad264a7a88e28fd1c4bce76c3</anchor>
+      <arglist>(Index_ s, Index_ l)</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>

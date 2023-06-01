@@ -109,8 +109,8 @@ Collaboration diagram for tatami::ConsecutiveOracle&lt; Index_ &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4efff1a6ab639d3d95b3ea617339bb56"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1ConsecutiveOracle.html#a4efff1a6ab639d3d95b3ea617339bb56">ConsecutiveOracle</a> (Index_ s, Index_ e)</td></tr>
-<tr class="separator:a4efff1a6ab639d3d95b3ea617339bb56"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4e896a9ad264a7a88e28fd1c4bce76c3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1ConsecutiveOracle.html#a4e896a9ad264a7a88e28fd1c4bce76c3">ConsecutiveOracle</a> (Index_ s, Index_ l)</td></tr>
+<tr class="separator:a4e896a9ad264a7a88e28fd1c4bce76c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ed7501a227b2ee9b96e78733f166f16"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1ConsecutiveOracle.html#a6ed7501a227b2ee9b96e78733f166f16">predict</a> (Index_ *buffer, size_t number)</td></tr>
 <tr class="separator:a6ed7501a227b2ee9b96e78733f166f16"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32ab54d21fc982580f18bea802d89f48"><td class="memItemLeft" align="right" valign="top">virtual size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1Oracle.html#a32ab54d21fc982580f18bea802d89f48">predict</a> (Index_ *predicted, size_t number)=0</td></tr>
@@ -126,8 +126,8 @@ struct tatami::ConsecutiveOracle&lt; Index_ &gt;</div><p>Predict future accesses
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a4efff1a6ab639d3d95b3ea617339bb56" name="a4efff1a6ab639d3d95b3ea617339bb56"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4efff1a6ab639d3d95b3ea617339bb56">&#9670;&#160;</a></span>ConsecutiveOracle()</h2>
+<a id="a4e896a9ad264a7a88e28fd1c4bce76c3" name="a4e896a9ad264a7a88e28fd1c4bce76c3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e896a9ad264a7a88e28fd1c4bce76c3">&#9670;&#160;</a></span>ConsecutiveOracle()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -147,7 +147,7 @@ template&lt;typename Index_ &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Index_&#160;</td>
-          <td class="paramname"><em>e</em>&#160;</td>
+          <td class="paramname"><em>l</em>&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -164,7 +164,7 @@ template&lt;typename Index_ &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">s</td><td>Start index of the consecutive sequence. </td></tr>
-    <tr><td class="paramname">e</td><td>One past the end of the sequence. </td></tr>
+    <tr><td class="paramname">l</td><td>Length of the sequence. </td></tr>
   </table>
   </dd>
 </dl>
