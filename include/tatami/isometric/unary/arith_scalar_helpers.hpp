@@ -8,7 +8,7 @@
  *
  * @brief Helper classes for scalar arithmetic operations.
  * 
- * Classes defined here should be used as the `OP` in the `DelayedIsometricOp` class.
+ * Classes defined here should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
 
 namespace tatami {
@@ -16,7 +16,7 @@ namespace tatami {
 /**
  * @brief Add a scalar to all values of a matrix.
  *
- * This should be used as the `OP` in the `DelayedIsometricOp` class.
+ * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam T Type to be returned after addition.
  */
@@ -62,7 +62,7 @@ private:
 /**
  * @brief Multiply a scalar with all values of a matrix.
  *
- * This should be used as the `OP` in the `DelayedIsometricOp` class.
+ * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam T Type to be returned after multiplication.
  */
@@ -109,7 +109,7 @@ private:
 /**
  * @brief Subtract a scalar from all values of a matrix, or vice versa.
  *
- * This should be used as the `OP` in the `DelayedIsometricOp` class.
+ * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam T Type to be returned after subtraction.
  * @tparam RIGHT Should the scalar be subtracted from the matrix value?
@@ -161,7 +161,7 @@ private:
 /**
  * @brief Divide a scalar from all values of a matrix, or vice versa.
  *
- * This should be used as the `OP` in the `DelayedIsometricOp` class.
+ * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam T Type to be returned after division.
  * @tparam RIGHT Should the matrix value be divided by the scalar?

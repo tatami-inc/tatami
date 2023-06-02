@@ -5,7 +5,7 @@
 #include <tuple>
 
 #include "tatami/base/dense/DenseMatrix.hpp"
-#include "tatami/base/isometric/DelayedIsometricOp.hpp"
+#include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
@@ -44,8 +44,8 @@ TEST_P(ArithScalarAdditionTest, Basic) {
     double val = GetParam();
     tatami::DelayedAddScalarHelper<double> op(val);
 
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_FALSE(sparse_mod->sparse());
@@ -99,12 +99,12 @@ TEST_P(ArithScalarSubtractionTest, ColumnAccess) {
     bool on_right = std::get<1>(my_param);
     if (on_right) {
         tatami::DelayedSubtractScalarHelper<true> op(val);
-        dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     } else {
         tatami::DelayedSubtractScalarHelper<false> op(val);
-        dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
     EXPECT_FALSE(dense_mod->sparse());
@@ -151,8 +151,8 @@ protected:
 TEST_P(ArithScalarMultiplicationTest, ColumnAccess) {
     double val = GetParam();
     tatami::DelayedMultiplyScalarHelper<double> op(val);
-    auto dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
@@ -208,12 +208,12 @@ TEST_P(ArithScalarDivisionTest, ColumnAccess) {
     bool on_right = std::get<1>(my_param);
     if (on_right) {
         tatami::DelayedDivideScalarHelper<true> op(val);
-        dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     } else {
         tatami::DelayedDivideScalarHelper<false> op(val);
-        dense_mod = tatami::make_DelayedIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedIsometricOp(sparse, op);
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
     EXPECT_FALSE(dense_mod->sparse());

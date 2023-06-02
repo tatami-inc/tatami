@@ -7,7 +7,7 @@
  * @brief Helper classes for vector arithmetic operations.
  *
  * These classes perform arithmetic operations with a vector parallel to the rows or columns.
- * Classes defined here should be used as the `OP` in the `DelayedIsometricOp` class.
+ * Classes defined here should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
 
 #include <vector>
@@ -18,7 +18,7 @@ namespace tatami {
 /**
  * @brief Add a vector along the rows or columns of a matrix.
  *
- * This should be used as the `OP` in the `DelayedIsometricOp` class.
+ * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam T Type to be returned after addition.
  * @tparam MARGIN Dimension along which the addition is to occur.
@@ -80,7 +80,7 @@ DelayedAddVectorHelper<MARGIN, T, V> make_DelayedAddVectorHelper(V v) {
 /**
  * @brief Subtract a vector from the rows/columns of a matrix, or vice versa.
  *
- * This should be used as the `OP` in the `DelayedIsometricOp` class.
+ * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam T Type to be returned after subtraction.
  * @tparam RIGHT Should the vector be subtracted from the matrix rows/columns?
@@ -153,7 +153,7 @@ DelayedSubtractVectorHelper<RIGHT, MARGIN, T, V> make_DelayedSubtractVectorHelpe
 /**
  * @brief Multiply a vector along the rows or columns of a matrix.
  *
- * This should be used as the `OP` in the `DelayedIsometricOp` class.
+ * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam T Type to be returned after multiplication.
  * @tparam MARGIN Dimension along which the multipication is to occur.
@@ -215,7 +215,7 @@ DelayedMultiplyVectorHelper<MARGIN, T, V> make_DelayedMultiplyVectorHelper(V v) 
 /**
  * @brief Divide the rows/columns of a matrix by a vector, or vice versa.
  *
- * This should be used as the `OP` in the `DelayedIsometricOp` class.
+ * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam T Type to be returned after division.
  * @tparam RIGHT Should the matrix rows/columns be divided by the vector?

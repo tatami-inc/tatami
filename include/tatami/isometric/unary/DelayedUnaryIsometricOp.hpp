@@ -1,14 +1,14 @@
-#ifndef TATAMI_DELAYED_ISOMETRIC_OP_H
-#define TATAMI_DELAYED_ISOMETRIC_OP_H
+#ifndef TATAMI_DELAYED_UNARY_ISOMETRIC_OP_H
+#define TATAMI_DELAYED_UNARY_ISOMETRIC_OP_H
 
 #include <memory>
-#include "../Matrix.hpp"
-#include "../utils.hpp"
+#include "../../base/Matrix.hpp"
+#include "../../base/utils.hpp"
 
 /**
- * @file DelayedIsometricOp.hpp
+ * @file DelayedUnaryIsometricOp.hpp
  *
- * @brief Delayed isometric operations.
+ * @brief Delayed unary isometric operations.
  *
  * This is equivalent to the class of the same name in the **DelayedArray** package.
  */
@@ -16,10 +16,11 @@
 namespace tatami {
 
 /**
- * @brief Delayed isometric operations on a matrix.
+ * @brief Delayed isometric operations on a single matrix.
  *
  * Implements any operation that preserves the shape of the matrix and operates on each matrix value independently.
- * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
+ * This operation is "delayed" in that it is only evaluated on request, e.g., with `DenseExtractor::fetch()` or friends.
+ * We only consider "unary" operations that involve a single `Matrix` - see `DelayedBinaryIsometricOp` for operations between two `Matrix` instances.
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
@@ -27,13 +28,13 @@ namespace tatami {
  * This should accept the row index, column index and value, and return the modified value after applying the operation. 
  */
 template<typename Value_, typename Index_, class Operation_>
-class DelayedIsometricOp : public Matrix<Value_, Index_> {
+class DelayedUnaryIsometricOp : public Matrix<Value_, Index_> {
 public:
     /**
      * @param p Pointer to the underlying matrix.
      * @param op Instance of the functor class.
      */
-    DelayedIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > p, Operation_ op) : mat(p), operation(std::move(op)) {}
+    DelayedUnaryIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > p, Operation_ op) : mat(p), operation(std::move(op)) {}
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > mat;
@@ -92,7 +93,7 @@ public:
 private:
     template<DimensionSelectionType selection_, bool sparse_, bool inner_sparse_>
     struct IsometricExtractorBase : public Extractor<selection_, sparse_, Value_, Index_> {
-        IsometricExtractorBase(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, inner_sparse_, Value_, Index_> > i) : parent(p), internal(std::move(i)) {
+        IsometricExtractorBase(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, inner_sparse_, Value_, Index_> > i) : parent(p), internal(std::move(i)) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->full_length = internal->full_length;
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
@@ -116,11 +117,11 @@ private:
         }
 
     protected:
-        const DelayedIsometricOp* parent;
+        const DelayedUnaryIsometricOp* parent;
 
         std::unique_ptr<Extractor<selection_, inner_sparse_, Value_, Index_> > internal;
 
-        friend class DelayedIsometricOp;
+        friend class DelayedUnaryIsometricOp;
     };
 
     /**************************************
@@ -129,7 +130,7 @@ private:
 private:
     template<bool accrow_, DimensionSelectionType selection_> 
     struct DenseIsometricExtractor : public IsometricExtractorBase<selection_, false, false> {
-        DenseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i) : 
+        DenseIsometricExtractor(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i) : 
             IsometricExtractorBase<selection_, false, false>(p, std::move(i)) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
@@ -185,7 +186,7 @@ private:
     // provide space in the 'ibuffer'.
     template<bool accrow_, DimensionSelectionType selection_> 
     struct SimpleSparseIsometricExtractor : public IsometricExtractorBase<selection_, true, true> {
-        SimpleSparseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i) : 
+        SimpleSparseIsometricExtractor(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i) : 
             IsometricExtractorBase<selection_, true, true>(p, std::move(i)) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
@@ -209,7 +210,7 @@ private:
 
     template<bool accrow_, DimensionSelectionType selection_> 
     struct RegularSparseIsometricExtractor : public IsometricExtractorBase<selection_, true, true> {
-        RegularSparseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i, bool ri, bool report_value) : 
+        RegularSparseIsometricExtractor(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i, bool ri, bool report_value) : 
             IsometricExtractorBase<selection_, true, true>(p, std::move(i)), report_index(ri)
         {
             if (!report_index && report_value) {
@@ -261,7 +262,7 @@ private:
     // so we wont' bother doing that.
     template<bool accrow_, DimensionSelectionType selection_> 
     struct DensifiedSparseIsometricExtractor : public IsometricExtractorBase<selection_, true, false> {
-        DensifiedSparseIsometricExtractor(const DelayedIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i, bool ri, bool rv) : 
+        DensifiedSparseIsometricExtractor(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i, bool ri, bool rv) : 
             IsometricExtractorBase<selection_, true, false>(p, std::move(i)), report_index(ri), report_value(rv)
         {}
 
@@ -396,22 +397,32 @@ public:
  * @param p Pointer to a (possibly `const`) `Matrix`.
  * @param op Instance of the operation helper class.
  *
- * @return Instance of a `DelayedIsometricOp` clas.
+ * @return Instance of a `DelayedUnaryIsometricOp` clas.
  */
 template<typename Value_, typename Index_, class Operation_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > p, Operation_ op) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedUnaryIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > p, Operation_ op) {
     typedef typename std::remove_reference<Operation_>::type Op_;
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedIsometricOp<Value_, Index_, Op_>(std::move(p), std::move(op)));
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedUnaryIsometricOp<Value_, Index_, Op_>(std::move(p), std::move(op)));
 }
 
 /**
  * @cond
  */
+// For automatic template deduction with non-const pointers.
 template<typename Value_, typename Index_, class Operation_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedIsometricOp(std::shared_ptr<Matrix<Value_, Index_> > p, Operation_ op) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedUnaryIsometricOp(std::shared_ptr<Matrix<Value_, Index_> > p, Operation_ op) {
     typedef typename std::remove_reference<Operation_>::type Op_;
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedIsometricOp<Value_, Index_, Op_>(std::move(p), std::move(op)));
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedUnaryIsometricOp<Value_, Index_, Op_>(std::move(p), std::move(op)));
 }
+
+// For back-compatibility.
+template<typename ... Args_>
+auto make_DelayedUnaryIsometricOp(Args_&&... args) {
+    return make_DelayedUnaryIsometricOp(std::forward<Args_>(args)...);
+}
+
+template<typename Value_, typename Index_, class Operation_>
+using DelayedIsometricOp = DelayedUnaryIsometricOp<Value_, Index_, Operation_>;
 /**
  * @endcond
  */

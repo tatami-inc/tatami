@@ -22,9 +22,10 @@ add_executable(
     src/base/DelayedSubsetBlock.cpp
     src/base/DelayedTranspose.cpp
     src/base/DelayedCast.cpp
-    src/base/arith_vector_helpers.cpp
-    src/base/arith_scalar_helpers.cpp
-    src/base/math_helpers.cpp
+
+    src/isometric/unary/arith_vector_helpers.cpp
+    src/isometric/unary/arith_scalar_helpers.cpp
+    src/isometric/unary/math_helpers.cpp
 
     src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
 

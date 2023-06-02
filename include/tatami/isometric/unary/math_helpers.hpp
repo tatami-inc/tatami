@@ -6,7 +6,7 @@
  *
  * @brief Helpers for unary math operations.
  *
- * These classes should be used as the `OP` in the `DelayedIsometricOp` class.
+ * These classes should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
 
 #include <cmath>

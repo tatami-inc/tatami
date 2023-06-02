@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "tatami/base/dense/DenseMatrix.hpp"
-#include "tatami/base/isometric/DelayedIsometricOp.hpp"
+#include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
@@ -47,12 +47,12 @@ protected:
 
         if (row) {
             auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
-            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
         } else {
             auto op = tatami::make_DelayedAddVectorHelper<1>(vec);
-            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
         }
 
         auto refvec = this->simulated;
@@ -212,22 +212,22 @@ protected:
         if (row) {
             if (right) {
                 auto op = tatami::make_DelayedSubtractVectorHelper<true, 0>(vec);
-                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
             } else {
                 auto op = tatami::make_DelayedSubtractVectorHelper<false, 0>(vec);
-                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
             }
         } else {
             if (right) {
                 auto op = tatami::make_DelayedSubtractVectorHelper<true, 1>(vec);
-                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
             } else {
                 auto op = tatami::make_DelayedSubtractVectorHelper<false, 1>(vec);
-                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
             }
         }
 
@@ -390,12 +390,12 @@ protected:
 
         if (row) {
             auto op = tatami::make_DelayedMultiplyVectorHelper<0>(vec);
-            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
         } else {
             auto op = tatami::make_DelayedMultiplyVectorHelper<1>(vec);
-            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
         }
 
         auto refvec = this->simulated;
@@ -553,22 +553,22 @@ protected:
         if (row) {
             if (right) {
                 auto op = tatami::make_DelayedDivideVectorHelper<true, 0>(vec);
-                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
             } else {
                 auto op = tatami::make_DelayedDivideVectorHelper<false, 0>(vec);
-                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
             }
         } else {
             if (right) {
                 auto op = tatami::make_DelayedDivideVectorHelper<true, 1>(vec);
-                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
             } else {
                 auto op = tatami::make_DelayedDivideVectorHelper<false, 1>(vec);
-                dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-                sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
             }
         }
 
@@ -739,16 +739,16 @@ protected:
 
         if (row) {
             auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
-            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
-            wrapped_dense_mod = tatami::make_DelayedIsometricOp(tatami_test::make_CrankyMatrix(this->dense), op);
-            wrapped_sparse_mod = tatami::make_DelayedIsometricOp(tatami_test::make_CrankyMatrix(this->sparse), op);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
+            wrapped_dense_mod = tatami::make_DelayedUnaryIsometricOp(tatami_test::make_CrankyMatrix(this->dense), op);
+            wrapped_sparse_mod = tatami::make_DelayedUnaryIsometricOp(tatami_test::make_CrankyMatrix(this->sparse), op);
         } else {
             auto op = tatami::make_DelayedAddVectorHelper<1>(vec);
-            dense_mod = tatami::make_DelayedIsometricOp(this->dense, op);
-            sparse_mod = tatami::make_DelayedIsometricOp(this->sparse, op);
-            wrapped_dense_mod = tatami::make_DelayedIsometricOp(tatami_test::make_CrankyMatrix(this->dense), op);
-            wrapped_sparse_mod = tatami::make_DelayedIsometricOp(tatami_test::make_CrankyMatrix(this->sparse), op);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op);
+            wrapped_dense_mod = tatami::make_DelayedUnaryIsometricOp(tatami_test::make_CrankyMatrix(this->dense), op);
+            wrapped_sparse_mod = tatami::make_DelayedUnaryIsometricOp(tatami_test::make_CrankyMatrix(this->sparse), op);
         }
     }
 };
@@ -786,7 +786,7 @@ TEST(ArithVector, ConstOverload) {
 
     auto vec = std::vector<double>(nrow);
     auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
-    auto mat = tatami::make_DelayedIsometricOp(dense, std::move(op));
+    auto mat = tatami::make_DelayedUnaryIsometricOp(dense, std::move(op));
 
     // cursory checks.
     EXPECT_EQ(mat->nrow(), dense->nrow());
