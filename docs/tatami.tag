@@ -104,80 +104,6 @@
     </member>
   </compound>
   <compound kind="file">
-    <name>arith_scalar_helpers.hpp</name>
-    <path>tatami/base/isometric/</path>
-    <filename>arith__scalar__helpers_8hpp.html</filename>
-    <class kind="struct">tatami::DelayedAddScalarHelper</class>
-    <class kind="struct">tatami::DelayedMultiplyScalarHelper</class>
-    <class kind="struct">tatami::DelayedSubtractScalarHelper</class>
-    <class kind="struct">tatami::DelayedDivideScalarHelper</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>arith_vector_helpers.hpp</name>
-    <path>tatami/base/isometric/</path>
-    <filename>arith__vector__helpers_8hpp.html</filename>
-    <class kind="struct">tatami::DelayedAddVectorHelper</class>
-    <class kind="struct">tatami::DelayedSubtractVectorHelper</class>
-    <class kind="struct">tatami::DelayedMultiplyVectorHelper</class>
-    <class kind="struct">tatami::DelayedDivideVectorHelper</class>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>DelayedAddVectorHelper&lt; MARGIN, T, V &gt;</type>
-      <name>make_DelayedAddVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa82419090e54a4674d971429e93e6af5</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
-      <name>make_DelayedSubtractVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abb68a8d27e821f213965edab7f029c48</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt;</type>
-      <name>make_DelayedMultiplyVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a316f4cf0ae5a9e83c2dad6ccbbbcfb43</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedDivideVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
-      <name>make_DelayedDivideVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab104e5029db4d09afe0b47a125f457bf</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>DelayedIsometricOp.hpp</name>
-    <path>tatami/base/isometric/</path>
-    <filename>DelayedIsometricOp_8hpp.html</filename>
-    <class kind="class">tatami::DelayedIsometricOp</class>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedIsometricOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a70e92d6c4eb0b1303b02176aa1d016a0</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>math_helpers.hpp</name>
-    <path>tatami/base/isometric/</path>
-    <filename>math__helpers_8hpp.html</filename>
-    <class kind="struct">tatami::DelayedAbsHelper</class>
-    <class kind="struct">tatami::DelayedLogHelper</class>
-    <class kind="struct">tatami::DelayedSqrtHelper</class>
-    <class kind="struct">tatami::DelayedLog1pHelper</class>
-    <class kind="struct">tatami::DelayedRoundHelper</class>
-    <class kind="struct">tatami::DelayedExpHelper</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
     <name>Matrix.hpp</name>
     <path>tatami/base/</path>
     <filename>Matrix_8hpp.html</filename>
@@ -476,6 +402,80 @@
       <anchor>ae0ced3181c20a3281a2ab4844b978313</anchor>
       <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
     </member>
+  </compound>
+  <compound kind="file">
+    <name>arith_scalar_helpers.hpp</name>
+    <path>tatami/isometric_unary/</path>
+    <filename>arith__scalar__helpers_8hpp.html</filename>
+    <class kind="struct">tatami::DelayedAddScalarHelper</class>
+    <class kind="struct">tatami::DelayedMultiplyScalarHelper</class>
+    <class kind="struct">tatami::DelayedSubtractScalarHelper</class>
+    <class kind="struct">tatami::DelayedDivideScalarHelper</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>arith_vector_helpers.hpp</name>
+    <path>tatami/isometric_unary/</path>
+    <filename>arith__vector__helpers_8hpp.html</filename>
+    <class kind="struct">tatami::DelayedAddVectorHelper</class>
+    <class kind="struct">tatami::DelayedSubtractVectorHelper</class>
+    <class kind="struct">tatami::DelayedMultiplyVectorHelper</class>
+    <class kind="struct">tatami::DelayedDivideVectorHelper</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>DelayedAddVectorHelper&lt; MARGIN, T, V &gt;</type>
+      <name>make_DelayedAddVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aa82419090e54a4674d971429e93e6af5</anchor>
+      <arglist>(V v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
+      <name>make_DelayedSubtractVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abb68a8d27e821f213965edab7f029c48</anchor>
+      <arglist>(V v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt;</type>
+      <name>make_DelayedMultiplyVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a316f4cf0ae5a9e83c2dad6ccbbbcfb43</anchor>
+      <arglist>(V v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedDivideVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
+      <name>make_DelayedDivideVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ab104e5029db4d09afe0b47a125f457bf</anchor>
+      <arglist>(V v)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>DelayedUnaryIsometricOp.hpp</name>
+    <path>tatami/isometric_unary/</path>
+    <filename>DelayedUnaryIsometricOp_8hpp.html</filename>
+    <class kind="class">tatami::DelayedUnaryIsometricOp</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedUnaryIsometricOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a07b072944c766d85dc4ce4dc734e0b75</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>math_helpers.hpp</name>
+    <path>tatami/isometric_unary/</path>
+    <filename>math__helpers_8hpp.html</filename>
+    <class kind="struct">tatami::DelayedAbsHelper</class>
+    <class kind="struct">tatami::DelayedLogHelper</class>
+    <class kind="struct">tatami::DelayedSqrtHelper</class>
+    <class kind="struct">tatami::DelayedLog1pHelper</class>
+    <class kind="struct">tatami::DelayedRoundHelper</class>
+    <class kind="struct">tatami::DelayedExpHelper</class>
+    <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>medians.hpp</name>
@@ -1528,154 +1528,6 @@
       <anchorfile>structtatami_1_1DelayedExpHelper.html</anchorfile>
       <anchor>ad145ef0bef810261b962390f52fc0b74</anchor>
       <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="class">
-    <name>tatami::DelayedIsometricOp</name>
-    <filename>classtatami_1_1DelayedIsometricOp.html</filename>
-    <templarg>typename Value_</templarg>
-    <templarg>typename Index_</templarg>
-    <templarg>class Operation_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
-    <member kind="function">
-      <type></type>
-      <name>DelayedIsometricOp</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a09ad56c82df00c2fbf4dcb2e9e4ea163</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</arglist>
-    </member>
-    <member kind="function">
-      <type>Index_</type>
-      <name>nrow</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a9e049edd599e1d740cab6642e5a7e849</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>Index_</type>
-      <name>ncol</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a951f20f06999e5bddd011f054c7eeed0</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>sparse</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>ac6c8b7f109292373883f6a1fca8d91b9</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>sparse_proportion</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a6eba9d97d42a339c406a343990ddc880</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>prefer_rows</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a9dbe5d5a51a0b410a69ba716e30ac8e2</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>double</type>
-      <name>prefer_rows_proportion</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>aeebc419c3764eaca3de72c899beea2a6</anchor>
-      <arglist>() const</arglist>
-    </member>
-    <member kind="function">
-      <type>bool</type>
-      <name>uses_oracle</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a50f95be58421a23d1488bf2f732b7287</anchor>
-      <arglist>(bool row) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>dense_row</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a2a58dc540ba0184ac1cc0ac49bc5d589</anchor>
-      <arglist>(const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>dense_row</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a8b779278a203b0a140efa56632de9b9f</anchor>
-      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>dense_row</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a44bd6c40872239af5aa4dc671d0ffd3a</anchor>
-      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>dense_column</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a3dbcfc5b81fa0ad58ced2727bca2333e</anchor>
-      <arglist>(const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>dense_column</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a6f8d7842bbba944f589bd709708e4e29</anchor>
-      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>dense_column</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>af7fe4fcb465e2f10ff48ad4fbe0259dd</anchor>
-      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; FullSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>sparse_row</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a4209b8829ec4f96b42112dad6cf4e5ed</anchor>
-      <arglist>(const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; BlockSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>sparse_row</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a8ea01736785d73ba2c1454c90eeef0ea</anchor>
-      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; IndexSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>sparse_row</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a7393aa9abb194e585e11bb054f5028c3</anchor>
-      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; FullSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>sparse_column</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a1c766dbead032275d3b98e04a5999e34</anchor>
-      <arglist>(const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; BlockSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>sparse_column</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a34dc46729c63efd7c9ccdad3bf30c736</anchor>
-      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
-    </member>
-    <member kind="function">
-      <type>std::unique_ptr&lt; IndexSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
-      <name>sparse_column</name>
-      <anchorfile>classtatami_1_1DelayedIsometricOp.html</anchorfile>
-      <anchor>a989b7d164611a71a3182baf4f1fb7525</anchor>
-      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -2892,6 +2744,154 @@
       <name>sparse_column</name>
       <anchorfile>classtatami_1_1DelayedTranspose.html</anchorfile>
       <anchor>aaa45e99399c24068984dc2159d1be726</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricOp</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricOp.html</filename>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>class Operation_</templarg>
+    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricOp</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a308f8ac0b9e202bcc1865500f28ee0cf</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>nrow</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a27526af79dcb3b5a3b9460733355137e</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>ncol</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a57d5be64d07b2ca81dc232cbac702ea2</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>abf2131b00738a76e81afb260bc3e4ed4</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>sparse_proportion</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a8975153bf959ef935fb88e0558d0d3e6</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>prefer_rows</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>af5b5d90d807777c8ee966416b2fe44b8</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>prefer_rows_proportion</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a228ccbff3b0bd609ada680f2ed419224</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>uses_oracle</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a9cbdbefdafe60b00f400fac148339566</anchor>
+      <arglist>(bool row) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a8621b45c366fc253ace223469bcf8ff3</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a1ec5c659f9ee6234c4c2cba95dcb9e0d</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>af6551d961b81422de6ef6945a383d6ba</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>ad7f567c47c9e952162dc0ea08ed993b5</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>af17b48717458ee16db84fb5c68d3aff0</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>ac977f1622ef3396eeadb53fd4211c45d</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>acd65b765fcf7d80bf3798f545ed4a6f9</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>abdf36bab2e9f3570338db28d7ae8ca2d</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>afec1641d42641341033df0a01f966579</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a3a71b16bc5028eaaffc19c4eb6deb6a2</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a0d17779f2558cb0325b3a13b3db7d63d</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
+      <anchor>a0b8635c5cfdd8822e289248939b277a0</anchor>
       <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
     </member>
   </compound>
@@ -4152,7 +4152,6 @@
     <class kind="struct">tatami::DelayedDivideScalarHelper</class>
     <class kind="struct">tatami::DelayedDivideVectorHelper</class>
     <class kind="struct">tatami::DelayedExpHelper</class>
-    <class kind="class">tatami::DelayedIsometricOp</class>
     <class kind="struct">tatami::DelayedLog1pHelper</class>
     <class kind="struct">tatami::DelayedLogHelper</class>
     <class kind="struct">tatami::DelayedMultiplyScalarHelper</class>
@@ -4167,6 +4166,7 @@
     <class kind="struct">tatami::DelayedSubtractScalarHelper</class>
     <class kind="struct">tatami::DelayedSubtractVectorHelper</class>
     <class kind="class">tatami::DelayedTranspose</class>
+    <class kind="class">tatami::DelayedUnaryIsometricOp</class>
     <class kind="class">tatami::DenseExtractor</class>
     <class kind="class">tatami::DenseMatrix</class>
     <class kind="struct">tatami::ExtractorBase</class>
@@ -4309,41 +4309,6 @@
       <arglist>(const ConditionalSelectionExtractor&lt; selection_, Index_ &gt; &amp;ex)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedAddVectorHelper&lt; MARGIN, T, V &gt;</type>
-      <name>make_DelayedAddVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa82419090e54a4674d971429e93e6af5</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
-      <name>make_DelayedSubtractVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abb68a8d27e821f213965edab7f029c48</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt;</type>
-      <name>make_DelayedMultiplyVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a316f4cf0ae5a9e83c2dad6ccbbbcfb43</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedDivideVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
-      <name>make_DelayedDivideVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab104e5029db4d09afe0b47a125f457bf</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedIsometricOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a70e92d6c4eb0b1303b02176aa1d016a0</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</arglist>
-    </member>
-    <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>make_DelayedBind</name>
       <anchorfile>namespacetatami.html</anchorfile>
@@ -4384,6 +4349,41 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a95b6638dceda82d82a7579dc88a45709</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *ptr, Args_ &amp;&amp;... args)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedAddVectorHelper&lt; MARGIN, T, V &gt;</type>
+      <name>make_DelayedAddVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aa82419090e54a4674d971429e93e6af5</anchor>
+      <arglist>(V v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
+      <name>make_DelayedSubtractVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abb68a8d27e821f213965edab7f029c48</anchor>
+      <arglist>(V v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt;</type>
+      <name>make_DelayedMultiplyVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a316f4cf0ae5a9e83c2dad6ccbbbcfb43</anchor>
+      <arglist>(V v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedDivideVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
+      <name>make_DelayedDivideVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ab104e5029db4d09afe0b47a125f457bf</anchor>
+      <arglist>(V v)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedUnaryIsometricOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a07b072944c766d85dc4ce4dc734e0b75</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>

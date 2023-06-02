@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.7"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami/base/isometric/DelayedIsometricOp.hpp File Reference</title>
+<title>tatami: tatami/isometric_unary/DelayedUnaryIsometricOp.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,7 +71,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_1431006efcc686dc889083f70f9f4d8a.html">base</a></li><li class="navelem"><a class="el" href="dir_cb901a003bd01f8d51d8444815f77ca9.html">isometric</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_b878cc4321bbbee00150a9a82a8f6935.html">isometric_unary</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -79,19 +79,19 @@ $(function() {
 <a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">DelayedIsometricOp.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">DelayedUnaryIsometricOp.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Delayed isometric operations.  
+<p>Delayed unary isometric operations.  
 <a href="#details">More...</a></p>
 
-<p><a href="DelayedIsometricOp_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="DelayedUnaryIsometricOp_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedIsometricOp.html">tatami::DelayedIsometricOp&lt; Value_, Index_, Operation_ &gt;</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed isometric operations on a matrix.  <a href="classtatami_1_1DelayedIsometricOp.html#details">More...</a><br /></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed isometric operations on a single matrix.  <a href="classtatami_1_1DelayedUnaryIsometricOp.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
@@ -102,12 +102,12 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a70e92d6c4eb0b1303b02176aa1d016a0"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class Operation_ &gt; </td></tr>
-<tr class="memitem:a70e92d6c4eb0b1303b02176aa1d016a0"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a70e92d6c4eb0b1303b02176aa1d016a0">tatami::make_DelayedIsometricOp</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</td></tr>
-<tr class="separator:a70e92d6c4eb0b1303b02176aa1d016a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07b072944c766d85dc4ce4dc734e0b75"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class Operation_ &gt; </td></tr>
+<tr class="memitem:a07b072944c766d85dc4ce4dc734e0b75"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a07b072944c766d85dc4ce4dc734e0b75">tatami::make_DelayedUnaryIsometricOp</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</td></tr>
+<tr class="separator:a07b072944c766d85dc4ce4dc734e0b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>Delayed isometric operations. </p>
+<div class="textblock"><p>Delayed unary isometric operations. </p>
 <p>This is equivalent to the class of the same name in the <b>DelayedArray</b> package. </p>
 </div></div><!-- contents -->
 <!-- start footer part -->
