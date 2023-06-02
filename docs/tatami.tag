@@ -405,7 +405,7 @@
   </compound>
   <compound kind="file">
     <name>arith_scalar_helpers.hpp</name>
-    <path>tatami/isometric_unary/</path>
+    <path>tatami/isometric/unary/</path>
     <filename>arith__scalar__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedAddScalarHelper</class>
     <class kind="struct">tatami::DelayedMultiplyScalarHelper</class>
@@ -415,7 +415,7 @@
   </compound>
   <compound kind="file">
     <name>arith_vector_helpers.hpp</name>
-    <path>tatami/isometric_unary/</path>
+    <path>tatami/isometric/unary/</path>
     <filename>arith__vector__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedAddVectorHelper</class>
     <class kind="struct">tatami::DelayedSubtractVectorHelper</class>
@@ -453,7 +453,7 @@
   </compound>
   <compound kind="file">
     <name>DelayedUnaryIsometricOp.hpp</name>
-    <path>tatami/isometric_unary/</path>
+    <path>tatami/isometric/unary/</path>
     <filename>DelayedUnaryIsometricOp_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricOp</class>
     <namespace>tatami</namespace>
@@ -467,7 +467,7 @@
   </compound>
   <compound kind="file">
     <name>math_helpers.hpp</name>
-    <path>tatami/isometric_unary/</path>
+    <path>tatami/isometric/unary/</path>
     <filename>math__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedAbsHelper</class>
     <class kind="struct">tatami::DelayedLogHelper</class>
