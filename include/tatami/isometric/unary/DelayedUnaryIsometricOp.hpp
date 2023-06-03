@@ -39,7 +39,6 @@ public:
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > mat;
     Operation_ operation;
-    static_assert(std::is_same<Value_, decltype(operation(0, 0, 0))>::value);
 
 public:
     Index_ nrow() const {
@@ -55,7 +54,9 @@ public:
      * Otherwise returns `false`.
      */
     bool sparse() const {
-        if constexpr(Operation_::potential_sparse) {
+        if constexpr(Operation_::always_sparse) {
+            return mat->sparse();
+        } else if constexpr(!Operation_::always_dense) {
             if (operation.actual_sparse()) {
                 return mat->sparse();
             } 
@@ -64,7 +65,9 @@ public:
     }
 
     double sparse_proportion() const {
-        if constexpr(Operation_::potential_sparse) {
+        if constexpr(Operation_::always_sparse) {
+            return mat->sparse_proportion();
+        } else if constexpr(!Operation_::always_dense) {
             if (operation.actual_sparse()) {
                 return mat->sparse_proportion();
             }
@@ -95,7 +98,7 @@ public:
 private:
     template<DimensionSelectionType selection_, bool sparse_, bool inner_sparse_ = sparse_>
     struct IsometricExtractorBase : public Extractor<selection_, sparse_, Value_, Index_> {
-        IsometricExtractorBase(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, Value_, Index_> > i) : parent(p), internal(std::move(i)) {
+        IsometricExtractorBase(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, inner_sparse_, Value_, Index_> > i) : parent(p), internal(std::move(i)) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->full_length = internal->full_length;
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
@@ -139,11 +142,11 @@ private:
             this->internal->fetch_copy(i, buffer);
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                operation.dense<accrow_>(i, 0, this->full_length, buffer);
+                this->parent->operation.template dense<accrow_>(i, 0, this->full_length, buffer);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                operation.dense<accrow_>(i, this->block_start, this->block_length, buffer);
+                this->parent->operation.template dense<accrow_>(i, this->block_start, this->block_length, buffer);
             } else {
-                operation.dense<accrow_>(i, this->internal->index_start(), this->index_length, buffer);
+                this->parent->operation.template dense<accrow_>(i, this->internal->index_start(), this->index_length, buffer);
             }
 
             return buffer;
@@ -172,7 +175,9 @@ private:
                     std::copy(raw.value, raw.value + raw.number, vbuffer);
                 }
 
-                this->parent->operation.sparse<accrow_>(i, raw.number, vbuffer, raw.index);
+                if constexpr(!Operation_::always_dense) { // avoid the need for operations to define sparse if they're always dense.
+                    this->parent->operation.template sparse<accrow_>(i, raw.number, vbuffer, raw.index);
+                }
                 raw.value = vbuffer;
             }
 
@@ -207,7 +212,9 @@ private:
                     std::copy(raw.value, raw.value + raw.number, vbuffer);
                 }
 
-                this->parent->operation.sparse<accrow_>(i, raw.number, vbuffer, raw.index);
+                if constexpr(!Operation_::always_dense) { // avoid the need for operations to define sparse if they're always dense.
+                    this->parent->operation.template sparse<accrow_>(i, raw.number, vbuffer, raw.index);
+                }
                 raw.value = vbuffer;
             }
 
@@ -244,12 +251,15 @@ private:
 
                 // 'expanded' is a special case of 'dense' where we assume that most elements are zero.
                 // This provides some opportunities to precompute the zero transform, if such a value exists.
-                if constexpr(selection_ == DimensionSelectionType::FULL) {
-                    this->parent->operation.expanded<accrow_>(i, 0, this->full_length, vbuffer);
-                } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                    this->parent->operation.expanded<accrow_>(i, this->block_start, this->block_length, vbuffer);
-                } else {
-                    this->parent->operation.expanded<accrow_>(i, this->internal->index_start(), this->index_length, vbuffer);
+                // However, if always_sparse is true, operations can omit the definition of expanded. 
+                if constexpr(!Operation_::always_sparse) {
+                    if constexpr(selection_ == DimensionSelectionType::FULL) {
+                        this->parent->operation.template expanded<accrow_>(i, 0, this->full_length, vbuffer);
+                    } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                        this->parent->operation.template expanded<accrow_>(i, this->block_start, this->block_length, vbuffer);
+                    } else {
+                        this->parent->operation.template expanded<accrow_>(i, this->internal->index_start(), this->index_length, vbuffer);
+                    }
                 }
 
                 output.value = vbuffer;
@@ -288,21 +298,9 @@ private:
         output.reset(new DensifiedSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
     }
 
-    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > propagate(const Options& opt, Args_&& ... args) const {
-        std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
-
-        if constexpr(!sparse_) {
-            auto inner = new_extractor<accrow_, false>(mat.get(), std::forward<Args_>(args)..., opt);
-            output.reset(new DenseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
-
-        } else if constexpr(Operation_::potential_sparse) {
-            fill_densified<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
-
-        } else if (!operation.actual_sparse()) {
-            fill_densified<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
-
-        } else if constexpr((accrow_ && !Operation_::needs_column) || (!accrow_ && !Operation_::needs_row)) { // i.e., extraction indices aren't required for the operation.
+    template<bool accrow_, DimensionSelectionType selection_, typename ... Args_>
+    void fill_sparse(std::unique_ptr<Extractor<selection_, true, Value_, Index_> >& output, const Options& opt, Args_&& ... args) const {
+        if constexpr((accrow_ && !Operation_::needs_column) || (!accrow_ && !Operation_::needs_row)) { // i.e., extraction indices aren't required for the operation.
             auto inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., opt);
             output.reset(new SimpleSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
 
@@ -319,7 +317,25 @@ private:
                 inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., opt);
             }
 
-            output.reset(new RegularSparseIsometricExtractor<accrow_, selection_, densified_>(this, std::move(inner), report_index, report_value));
+            output.reset(new RegularSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
+        }
+    }
+
+    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > propagate(const Options& opt, Args_&& ... args) const {
+        std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
+
+        if constexpr(!sparse_) {
+            auto inner = new_extractor<accrow_, false>(mat.get(), std::forward<Args_>(args)..., opt);
+            output.reset(new DenseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
+        } else if constexpr(Operation_::always_sparse) {
+            fill_sparse<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
+        } else if constexpr(Operation_::always_dense) {
+            fill_densified<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
+        } else if (operation.actual_sparse()) {
+            fill_sparse<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
+        } else {
+            fill_densified<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
         }
 
         return output;
@@ -418,9 +434,7 @@ using DelayedIsometricOp = DelayedUnaryIsometricOp<Value_, Index_, Operation_>;
 
 }
 
-#include "arith_scalar_helpers.hpp"
-
-#include "arith_vector_helpers.hpp"
+#include "arith_helpers.hpp"
 
 #include "math_helpers.hpp"
 

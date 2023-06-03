@@ -89,7 +89,7 @@ TEST_F(MathTest, LogByColumn) {
     auto sparse_mod0 = tatami::make_DelayedUnaryIsometricOp(sparse, op0);
     
     double CONSTANT = 5;
-    tatami::DelayedAddScalarHelper<double> op1(CONSTANT);
+    auto op1 = tatami::make_DelayedAddScalarHelper<double>(CONSTANT);
     auto dense_mod1 = tatami::make_DelayedUnaryIsometricOp(dense_mod0, op1);
     auto sparse_mod1 = tatami::make_DelayedUnaryIsometricOp(sparse_mod0, op1);
 

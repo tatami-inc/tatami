@@ -24,7 +24,7 @@ enum class DelayedArithOp : char {
 /**
  * @cond
  */
-template<DelayedArithOp op_, typename Scalar_, typename Value_, typename Index_>
+template<DelayedArithOp op_, bool right_, typename Scalar_, typename Value_, typename Index_>
 void delayed_arith_run_simple(Scalar_ scalar, Index_ length, Value_* buffer) {
     for (Index_ i = 0; i < length; ++i) {
         if constexpr(op_ == DelayedArithOp::ADD) {
@@ -79,19 +79,15 @@ public:
 
     static constexpr bool needs_column = false;
 
-    static constexpr bool potential_sparse = true;
+    static constexpr bool always_dense = (op_ == DelayedArithOp::DIVIDE && !right_);
+
+    static constexpr bool always_sparse = (op_ == DelayedArithOp::MULTIPLY);
 
     bool actual_sparse() const {
         if constexpr(op_ == DelayedArithOp::ADD || op_ == DelayedArithOp::SUBTRACT) {
             return scalar == 0;
-        } else if (op_ == DelayedArithOp::MULTIPLY) {
-            return true;
-        } else {
-            if constexpr(right_) {
-                return scalar != 0;
-            } else {
-                return false;
-            }
+        } else { // DIVIDE only, as MULTIPLY is always_sparse.
+            return scalar != 0; 
         }
     }
     /**
@@ -104,17 +100,17 @@ public:
      */
     template<bool, typename Value_, typename Index_, typename ExtractType_>
     void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        delayed_arith_run_simple(scalar, length, buffer);
+        delayed_arith_run_simple<op_, right_>(scalar, length, buffer);
     }
 
     template<bool, typename Value_, typename Index_>
     void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
-        delayed_arith_run_simple(scalar, range.number, buffer);
+        delayed_arith_run_simple<op_, right_>(scalar, number, buffer);
     }
 
     template<bool, typename Value_, typename Index_, typename ExtractType_>
     void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        delayed_arith_run_simple(scalar, length, buffer);
+        delayed_arith_run_simple<op_, right_>(scalar, length, buffer);
     }
     /**
      * @endcond
@@ -140,7 +136,7 @@ struct DelayedArithVectorHelper {
      * @param v Vector of values to use in the operation. 
      * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number of columns.
      */
-    DelayedSubtractVectorHelper(Vector_ v) : vec(std::move(v)) {
+    DelayedArithVectorHelper(Vector_ v) : vec(std::move(v)) {
         if constexpr(op_ == DelayedArithOp::ADD || op_ == DelayedArithOp::SUBTRACT) {
             for (auto x : vec) {
                 if (x != 0) {
@@ -173,20 +169,12 @@ public:
 
     static constexpr bool needs_column = false;
 
-    static constexpr bool potential_sparse = true;
+    static constexpr bool always_dense = (op_ == DelayedArithOp::DIVIDE && !right_);
+
+    static constexpr bool always_sparse = (op_ == DelayedArithOp::MULTIPLY);
 
     bool actual_sparse() const {
-        if constexpr(op_ == DelayedArithOp::ADD || op_ == DelayedArithOp::SUBTRACT) {
-            return still_sparse;
-        } else if (op_ == DelayedArithOp::MULTIPLY) {
-            return true;
-        } else {
-            if constexpr(right_) {
-                return still_sparse;
-            } else {
-                return false;
-            }
-        }
+        return still_sparse;
     }
     /**
      * @endcond
@@ -196,10 +184,10 @@ public:
     /**
      * @cond
      */
-    template<bool accrow_, typename Value_, typename Index_, typename ExtractType>
-    void dense(Index_ idx, ExtractType_ start, Index_ length, Value_* buffer) {
+    template<bool accrow_, typename Value_, typename Index_, typename ExtractType_>
+    void dense(Index_ idx, ExtractType_ start, Index_ length, Value_* buffer) const {
         if constexpr(accrow_ == (margin_ == 0)) {
-            delayed_arith_run_simple(vec[idx], length, buffer);
+            delayed_arith_run_simple<op_, right_>(vec[idx], length, buffer);
 
         } else if constexpr(std::is_same<ExtractType_, Index_>::value) {
             for (Index_ i = 0; i < length; ++i) {
@@ -248,38 +236,38 @@ public:
         }
     }
 
-    template<bool, typename Value_, typename Index_>
-    void run(Index_ idx, Index_ number, Value_* buffer, const Index_* indices);
+    template<bool accrow_, typename Value_, typename Index_>
+    void sparse(Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
         if constexpr(accrow_ == (margin_ == 0)) {
-            delayed_arith_run_simple(vec[idx], range.number, buffer);
+            delayed_arith_run_simple<op_, right_>(vec[idx], number, buffer);
 
         } else {
-            for (Index_ i = 0; i < length; ++i) {
+            for (Index_ i = 0; i < number; ++i) {
                 if constexpr(op_ == DelayedArithOp::ADD) {
-                    values[indices[i]] += vec[indices[i]];
+                    buffer[i] += vec[indices[i]];
                 } else if constexpr(op_ == DelayedArithOp::MULTIPLY) {
-                    values[indices[i]] *= vec[indices[i]];
+                    buffer[i] *= vec[indices[i]];
                 } else if constexpr(op_ == DelayedArithOp::SUBTRACT) {
                     if constexpr(right_) {
-                        values[indices[i]] -= vec[indices[i]];
+                        buffer[i] -= vec[indices[i]];
                     } else {
-                        values[indices[i]] = vec[indices[i]] - values[i];
+                        buffer[i] = vec[indices[i]] - buffer[i];
                     }
                 } else {
                     // Assume IEEE behavior if divisor is zero.
                     if constexpr(right_) {
-                        values[indices[i]] /= vec[indices[i]];
+                        buffer[i] /= vec[indices[i]];
                     } else {
-                        values[indices[i]] = vec[indices[i]] / values[i];
+                        buffer[i] = vec[indices[i]] / buffer[i];
                     }
                 }
             }
         }
     }
 
-    template<bool accrow_, typename Value_, typename Index_, typename ExtractType>
-    void expanded(Index_ idx, ExtractType_&& start, Index_ length, Value_* buffer) {
-        dense<accrow_>(idx, std::forward<ExtractType>(start), length, buffer);
+    template<bool accrow_, typename Value_, typename Index_, typename ExtractType_>
+    void expanded(Index_ idx, ExtractType_&& start, Index_ length, Value_* buffer) const {
+        dense<accrow_>(idx, std::forward<ExtractType_>(start), length, buffer);
     }
     /**
      * @endcond

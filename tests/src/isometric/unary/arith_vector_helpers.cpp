@@ -576,13 +576,16 @@ protected:
         for (size_t r = 0; r < this->nrow; ++r) {
             for (size_t c = 0; c < this->ncol; ++c) {
                 auto& x = refvec[r * this->ncol + c];
+                auto val = vec[row ? r : c];
                 if (right) {
-                    x /= vec[row ? r : c];
+                    x /= val;
                 } else {
                     if (x) {
-                        x = vec[row ? r : c] / x;
-                    } else {
+                        x = val / x;
+                    } else if (val > 0) {
                         x = std::numeric_limits<double>::infinity();
+                    } else {
+                        x = -std::numeric_limits<double>::infinity();
                     }
                 }
             }

@@ -42,7 +42,7 @@ protected:
 
 TEST_P(ArithScalarAdditionTest, Basic) {
     double val = GetParam();
-    tatami::DelayedAddScalarHelper<double> op(val);
+    auto op = tatami::make_DelayedAddScalarHelper(val);
 
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
@@ -55,15 +55,28 @@ TEST_P(ArithScalarAdditionTest, Basic) {
     // Toughest tests are handled by the Vector case; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
-    bool FORWARD = true;
-    int JUMP = 1;
     auto ref = reference(val);
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    // Full access.
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, true, 1); 
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, true, 1);
+
+    // Block access.
+    tatami_test::test_sliced_column_access(dense_mod.get(), &ref, true, 1, nrow * 0.25, nrow * 0.9);
+    tatami_test::test_sliced_column_access(sparse_mod.get(), &ref, true, 1, nrow * 0.2, nrow * 0.8); 
+
+    tatami_test::test_sliced_row_access(dense_mod.get(), &ref, true, 1, ncol * 0.1, ncol * 0.5);
+    tatami_test::test_sliced_row_access(sparse_mod.get(), &ref, true, 1, ncol * 0.4, ncol * 0.9);
+
+    // Indexed access.
+    tatami_test::test_indexed_column_access(dense_mod.get(), &ref, true, 1, nrow * 0.25, 10);
+    tatami_test::test_indexed_column_access(sparse_mod.get(), &ref, true, 1, nrow * 0.2, 5);
+
+    tatami_test::test_indexed_row_access(dense_mod.get(), &ref, true, 1, ncol * 0.1, 7);
+    tatami_test::test_indexed_row_access(sparse_mod.get(), &ref, true, 1, ncol * 0.4, 11);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -98,11 +111,11 @@ TEST_P(ArithScalarSubtractionTest, ColumnAccess) {
     double val = std::get<0>(my_param);
     bool on_right = std::get<1>(my_param);
     if (on_right) {
-        tatami::DelayedSubtractScalarHelper<true> op(val);
+        auto op = tatami::make_DelayedSubtractScalarHelper<true>(val);
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     } else {
-        tatami::DelayedSubtractScalarHelper<false> op(val);
+        auto op = tatami::make_DelayedSubtractScalarHelper<false>(val);
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
@@ -113,15 +126,28 @@ TEST_P(ArithScalarSubtractionTest, ColumnAccess) {
     EXPECT_EQ(dense->ncol(), ncol);
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
     auto ref = reference(val, on_right);
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    // Full access.
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, true, 1); 
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, true, 1);
+
+    // Block access.
+    tatami_test::test_sliced_column_access(dense_mod.get(), &ref, true, 1, nrow * 0.25, nrow * 0.9);
+    tatami_test::test_sliced_column_access(sparse_mod.get(), &ref, true, 1, nrow * 0.2, nrow * 0.8); 
+
+    tatami_test::test_sliced_row_access(dense_mod.get(), &ref, true, 1, ncol * 0.1, ncol * 0.5);
+    tatami_test::test_sliced_row_access(sparse_mod.get(), &ref, true, 1, ncol * 0.4, ncol * 0.9);
+
+    // Indexed access.
+    tatami_test::test_indexed_column_access(dense_mod.get(), &ref, true, 1, nrow * 0.25, 10);
+    tatami_test::test_indexed_column_access(sparse_mod.get(), &ref, true, 1, nrow * 0.2, 5);
+
+    tatami_test::test_indexed_row_access(dense_mod.get(), &ref, true, 1, ncol * 0.1, 7);
+    tatami_test::test_indexed_row_access(sparse_mod.get(), &ref, true, 1, ncol * 0.4, 11);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -150,7 +176,7 @@ protected:
 
 TEST_P(ArithScalarMultiplicationTest, ColumnAccess) {
     double val = GetParam();
-    tatami::DelayedMultiplyScalarHelper<double> op(val);
+    auto op = tatami::make_DelayedMultiplyScalarHelper(val);
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
@@ -160,15 +186,28 @@ TEST_P(ArithScalarMultiplicationTest, ColumnAccess) {
     EXPECT_TRUE(sparse_mod->sparse());
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
     auto ref = reference(val);
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    // Full access.
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, true, 1); 
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, true, 1);
+
+    // Block access.
+    tatami_test::test_sliced_column_access(dense_mod.get(), &ref, true, 1, nrow * 0.25, nrow * 0.9);
+    tatami_test::test_sliced_column_access(sparse_mod.get(), &ref, true, 1, nrow * 0.2, nrow * 0.8); 
+
+    tatami_test::test_sliced_row_access(dense_mod.get(), &ref, true, 1, ncol * 0.1, ncol * 0.5);
+    tatami_test::test_sliced_row_access(sparse_mod.get(), &ref, true, 1, ncol * 0.4, ncol * 0.9);
+
+    // Indexed access.
+    tatami_test::test_indexed_column_access(dense_mod.get(), &ref, true, 1, nrow * 0.25, 10);
+    tatami_test::test_indexed_column_access(sparse_mod.get(), &ref, true, 1, nrow * 0.2, 5);
+
+    tatami_test::test_indexed_row_access(dense_mod.get(), &ref, true, 1, ncol * 0.1, 7);
+    tatami_test::test_indexed_row_access(sparse_mod.get(), &ref, true, 1, ncol * 0.4, 11);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -191,8 +230,10 @@ protected:
             } else {
                 if (r) {
                     r = val / r;
-                } else {
+                } else if (val > 0) {
                     r = std::numeric_limits<double>::infinity();
+                } else {
+                    r = -std::numeric_limits<double>::infinity();
                 }
             }
         }
@@ -207,11 +248,11 @@ TEST_P(ArithScalarDivisionTest, ColumnAccess) {
     double val = std::get<0>(my_param);
     bool on_right = std::get<1>(my_param);
     if (on_right) {
-        tatami::DelayedDivideScalarHelper<true> op(val);
+        auto op = tatami::make_DelayedDivideScalarHelper<true>(val);
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     } else {
-        tatami::DelayedDivideScalarHelper<false> op(val);
+        auto op = tatami::make_DelayedDivideScalarHelper<false>(val);
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
@@ -226,15 +267,28 @@ TEST_P(ArithScalarDivisionTest, ColumnAccess) {
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
     auto ref = reference(val, on_right);
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    // Full access.
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, true, 1); 
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, true, 1);
+
+    // Block access.
+    tatami_test::test_sliced_column_access(dense_mod.get(), &ref, true, 1, nrow * 0.25, nrow * 0.9);
+    tatami_test::test_sliced_column_access(sparse_mod.get(), &ref, true, 1, nrow * 0.2, nrow * 0.8); 
+
+    tatami_test::test_sliced_row_access(dense_mod.get(), &ref, true, 1, ncol * 0.1, ncol * 0.5);
+    tatami_test::test_sliced_row_access(sparse_mod.get(), &ref, true, 1, ncol * 0.4, ncol * 0.9);
+
+    // Indexed access.
+    tatami_test::test_indexed_column_access(dense_mod.get(), &ref, true, 1, nrow * 0.25, 10);
+    tatami_test::test_indexed_column_access(sparse_mod.get(), &ref, true, 1, nrow * 0.2, 5);
+
+    tatami_test::test_indexed_row_access(dense_mod.get(), &ref, true, 1, ncol * 0.1, 7);
+    tatami_test::test_indexed_row_access(sparse_mod.get(), &ref, true, 1, ncol * 0.4, 11);
 }
 
 INSTANTIATE_TEST_CASE_P(
