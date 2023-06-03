@@ -244,15 +244,9 @@ protected:
         auto refvec = simulated;
         for (auto& r : refvec) {
             if (on_right) {
-                r /= val;
+                r = careful_division(r, val);
             } else {
-                if (r) {
-                    r = val / r;
-                } else if (val > 0) {
-                    r = std::numeric_limits<double>::infinity();
-                } else {
-                    r = -std::numeric_limits<double>::infinity();
-                }
+                r = careful_division(val, r);
             }
         }
         return tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec));
@@ -399,13 +393,7 @@ TEST_F(ArithScalarZeroedTest, Division) {
 
     auto copy = simulated;
     for (auto& x : copy) {
-        if (x > 0) {
-            x = std::numeric_limits<double>::infinity();
-        } else if (x < 0) {
-            x = -std::numeric_limits<double>::infinity();
-        } else {
-            x = std::numeric_limits<double>::quiet_NaN();
-        }
+        x = careful_division(x, 0.0);
     }
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
 
