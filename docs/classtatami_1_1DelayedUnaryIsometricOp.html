@@ -225,11 +225,36 @@ Additional Inherited Members</h2></td></tr>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename Value_, typename Index_, class Operation_&gt;<br />
 class tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</div><p>Delayed isometric operations on a single matrix. </p>
 <p>Implements any operation that preserves the shape of the matrix and operates on each matrix value independently. This operation is "delayed" in that it is only evaluated on request, e.g., with <code><a class="el" href="classtatami_1_1DenseExtractor.html#a809f1682a0ba66035066175e37bb0e83">DenseExtractor::fetch()</a></code> or friends. We only consider "unary" operations that involve a single <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> - see <code>DelayedBinaryIsometricOp</code> for operations between two <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instances.</p>
+<p>The <code>Operation_</code> class is expected to provide the following static <code>constexpr</code> member variables:</p>
+<ul>
+<li><code>needs_row</code>: whether the operation needs the row index, e.g., if the operation varies by row.</li>
+<li><code>needs_column</code>: whether the operation needs the column index, e.g., if the operation varies by column.</li>
+<li><code>always_dense</code>: whether the operation always yields a dense result when applied on sparse data.</li>
+<li><code>always_sparse</code>: whether the operation always yields a sparse result when applied on sparse data. This should not be <code>true</code> if <code>always_dense</code> is <code>true</code>.</li>
+</ul>
+<p>The class should implement the following method:</p>
+<ul>
+<li><code>void dense&lt;row_&gt;(Index_ i, Index_ start, Index_ length, Value_* buffer) const</code>: This method should apply the operation to all values in <code>buffer</code>, which contains a contiguous block of elements from row <code>i</code> (when <code>row_ = true</code>). This block spans columns from <code>[start, start + length)</code>. If <code>row_ = false</code>, <code>i</code> is instead a column and the block contains rows.</li>
+<li><code>void dense&lt;row_&gt;(Index_ i, const Index_* indices, Index_ length, Value_* buffer) const</code>: This method should apply the operation to all values in <code>buffer</code>, which contains to a subset of elements from row <code>i</code> (when <code>row_ = true</code>). Column indices of the elements in the subset are defined by <code>indices</code>, which is a sorted and unique array of length <code>length</code>w. If <code>row_ = false</code>, <code>i</code> is instead a column and <code>indices</code> contains rows.</li>
+</ul>
+<p>If neither of <code>always_dense</code> or <code>always_sparse</code> is <code>true</code>, the class should also implement:</p>
+<ul>
+<li><code>bool actual_sparse() const</code>: whether this particular instance of the operation yields a sparse result when applied on sparse data. For example, an addition operation remains sparse if the added value is zero.</li>
+</ul>
+<p>If <code>always_sparse = false</code>, the class should implement:</p>
+<ul>
+<li><code>void expanded&lt;row_&gt;(Index_ i, Index_ start, Index_ length, Value_* buffer) const</code>: same as the corresponding <code>dense()</code> method, but with opportunities for optimization where it is known that many input values in <code>buffer</code> are zero.</li>
+<li><code>void expanded&lt;row_&gt;(Index_ i, const Index_* indices, Index_ length, Value_* buffer) const</code>: same as the corresponding <code>dense()</code> method, but with opportunities for optimization where it is known that many input values in <code>buffer</code> are zero.</li>
+</ul>
+<p>If <code>always_dense = false</code>, the class should implement:</p>
+<ul>
+<li><code>void sparse&lt;row_&gt;(Index_ i, Index_ number, Value_* buffer, const Index_* indices) const</code>: This method should apply the operation to all values in <code>buffer</code>, which contains <code>number</code> elements from row <code>i</code> (when <code>row_ = true</code>). The column indices of all elements is contained in <code>indices</code>. If <code>row_ = false</code>, <code>i</code> is instead a column and <code>indices</code> contains row indices.</li>
+</ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
     <tr><td class="paramname">Index_</td><td>Type of index value. </td></tr>
-    <tr><td class="paramname">Operation_</td><td>Functor class implementing the operation. This should accept the row index, column index and value, and return the modified value after applying the operation. </td></tr>
+    <tr><td class="paramname">Operation_</td><td>Class implementing the operation. </td></tr>
   </table>
   </dd>
 </dl>

@@ -404,51 +404,78 @@
     </member>
   </compound>
   <compound kind="file">
-    <name>arith_scalar_helpers.hpp</name>
+    <name>arith_helpers.hpp</name>
     <path>tatami/isometric/unary/</path>
-    <filename>arith__scalar__helpers_8hpp.html</filename>
-    <class kind="struct">tatami::DelayedAddScalarHelper</class>
-    <class kind="struct">tatami::DelayedMultiplyScalarHelper</class>
-    <class kind="struct">tatami::DelayedSubtractScalarHelper</class>
-    <class kind="struct">tatami::DelayedDivideScalarHelper</class>
+    <filename>arith__helpers_8hpp.html</filename>
+    <class kind="struct">tatami::DelayedArithScalarHelper</class>
+    <class kind="struct">tatami::DelayedArithVectorHelper</class>
     <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>arith_vector_helpers.hpp</name>
-    <path>tatami/isometric/unary/</path>
-    <filename>arith__vector__helpers_8hpp.html</filename>
-    <class kind="struct">tatami::DelayedAddVectorHelper</class>
-    <class kind="struct">tatami::DelayedSubtractVectorHelper</class>
-    <class kind="struct">tatami::DelayedMultiplyVectorHelper</class>
-    <class kind="struct">tatami::DelayedDivideVectorHelper</class>
-    <namespace>tatami</namespace>
+    <member kind="enumeration">
+      <type></type>
+      <name>DelayedArithOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aab44a37b3762de0c5b1ffbfceb25fa0f</anchor>
+      <arglist></arglist>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa9eeb52badb613229884838847294b90d">ADD</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa23ebcc4776b613af25dfbe7c8ce4813e">SUBTRACT</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa080aaf8d817ada96fca7096b7b55bd30">MULTIPLY</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa210c66d794cec40488f3f8f634d6c33b">DIVIDE</enumvalue>
+    </member>
     <member kind="function">
-      <type>DelayedAddVectorHelper&lt; MARGIN, T, V &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::ADD, true, Scalar_ &gt;</type>
+      <name>make_DelayedAddScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac0d637bdfb7f4126ded39f6e06b04d3a</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::SUBTRACT, right_, Scalar_ &gt;</type>
+      <name>make_DelayedSubtractScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a54f42d3fa38192c46b1fbd89ffbc96ef</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MULTIPLY, true, Scalar_ &gt;</type>
+      <name>make_DelayedMultiplyScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ab2ae6b934c10ef1ba28be1bc0f3316db</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::DIVIDE, right_, Scalar_ &gt;</type>
+      <name>make_DelayedDivideScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a37bafee11663e77fd079b7df8c542b41</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::ADD, true, margin_, Vector_ &gt;</type>
       <name>make_DelayedAddVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa82419090e54a4674d971429e93e6af5</anchor>
-      <arglist>(V v)</arglist>
+      <anchor>a18d82c78f9847f7f3d7b1924736dc08a</anchor>
+      <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::SUBTRACT, right_, margin_, Vector_ &gt;</type>
       <name>make_DelayedSubtractVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abb68a8d27e821f213965edab7f029c48</anchor>
-      <arglist>(V v)</arglist>
+      <anchor>ae10ad8ba2f67e03997a70bcf344cd0b5</anchor>
+      <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MULTIPLY, true, margin_, Vector_ &gt;</type>
       <name>make_DelayedMultiplyVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a316f4cf0ae5a9e83c2dad6ccbbbcfb43</anchor>
-      <arglist>(V v)</arglist>
+      <anchor>ab5028a7b69c08ecec87064d7b3d83b41</anchor>
+      <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedDivideVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::DIVIDE, right_, margin_, Vector_ &gt;</type>
       <name>make_DelayedDivideVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab104e5029db4d09afe0b47a125f457bf</anchor>
-      <arglist>(V v)</arglist>
+      <anchor>a214dedde7eb472684ce66ec4ba26e77c</anchor>
+      <arglist>(Vector_ v)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -997,116 +1024,34 @@
   <compound kind="struct">
     <name>tatami::DelayedAbsHelper</name>
     <filename>structtatami_1_1DelayedAbsHelper.html</filename>
-    <templarg>typename T</templarg>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedArithScalarHelper</name>
+    <filename>structtatami_1_1DelayedArithScalarHelper.html</filename>
+    <templarg>DelayedArithOp op_</templarg>
+    <templarg>bool right_</templarg>
+    <templarg>typename Scalar_</templarg>
     <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedAbsHelper.html</anchorfile>
-      <anchor>ae1f88bd02c562b770648f23cc2711470</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedAbsHelper.html</anchorfile>
-      <anchor>aafc67de259524e824030550ab13011aa</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedAbsHelper.html</anchorfile>
-      <anchor>aac72feb5d194fccb6809655e97db71e2</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedAbsHelper.html</anchorfile>
-      <anchor>a40fe4bb821193a0834f68b778c472656</anchor>
-      <arglist></arglist>
+      <type></type>
+      <name>DelayedArithScalarHelper</name>
+      <anchorfile>structtatami_1_1DelayedArithScalarHelper.html</anchorfile>
+      <anchor>a47fb79f9445e4003799256162701470c</anchor>
+      <arglist>(Scalar_ s)</arglist>
     </member>
   </compound>
   <compound kind="struct">
-    <name>tatami::DelayedAddScalarHelper</name>
-    <filename>structtatami_1_1DelayedAddScalarHelper.html</filename>
-    <templarg>typename T</templarg>
+    <name>tatami::DelayedArithVectorHelper</name>
+    <filename>structtatami_1_1DelayedArithVectorHelper.html</filename>
+    <templarg>DelayedArithOp op_</templarg>
+    <templarg>bool right_</templarg>
+    <templarg>int margin_</templarg>
+    <templarg>typename Vector_</templarg>
     <member kind="function">
       <type></type>
-      <name>DelayedAddScalarHelper</name>
-      <anchorfile>structtatami_1_1DelayedAddScalarHelper.html</anchorfile>
-      <anchor>a038479e8924a7acc01587a2ea0508a1b</anchor>
-      <arglist>(T s)</arglist>
-    </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedAddScalarHelper.html</anchorfile>
-      <anchor>ac285729c698438913524ced072fb6cbf</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedAddScalarHelper.html</anchorfile>
-      <anchor>a0e8ddacf3d91493b400f653adef66059</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedAddScalarHelper.html</anchorfile>
-      <anchor>a15de20eb4e0babd35bd449c7c0356f78</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedAddScalarHelper.html</anchorfile>
-      <anchor>ab1fff146fca9e14548a9f08188de0e35</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>tatami::DelayedAddVectorHelper</name>
-    <filename>structtatami_1_1DelayedAddVectorHelper.html</filename>
-    <templarg>int MARGIN</templarg>
-    <templarg>typename T</templarg>
-    <templarg>class V</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedAddVectorHelper</name>
-      <anchorfile>structtatami_1_1DelayedAddVectorHelper.html</anchorfile>
-      <anchor>ab4d8c15e312b6b3bafdcd7e9f8f2513e</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedAddVectorHelper.html</anchorfile>
-      <anchor>ab4efab1cf8add8c7314b7f6da5bd3fa4</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedAddVectorHelper.html</anchorfile>
-      <anchor>a7f9ce0431bcad5ab9dc8a79b5e71e18b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedAddVectorHelper.html</anchorfile>
-      <anchor>ae99620d5453f6f207da18771fd9f3d63</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedAddVectorHelper.html</anchorfile>
-      <anchor>a935c85c09fb22b85db6b3c9149f9a2dd</anchor>
-      <arglist></arglist>
+      <name>DelayedArithVectorHelper</name>
+      <anchorfile>structtatami_1_1DelayedArithVectorHelper.html</anchorfile>
+      <anchor>a83a921d90c37170f8a9507be4921cfb8</anchor>
+      <arglist>(Vector_ v)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -1414,121 +1359,9 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>tatami::DelayedDivideScalarHelper</name>
-    <filename>structtatami_1_1DelayedDivideScalarHelper.html</filename>
-    <templarg>bool RIGHT</templarg>
-    <templarg>typename T</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedDivideScalarHelper</name>
-      <anchorfile>structtatami_1_1DelayedDivideScalarHelper.html</anchorfile>
-      <anchor>a32dc69c234baba7c77f03a9ac41766fd</anchor>
-      <arglist>(T s)</arglist>
-    </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedDivideScalarHelper.html</anchorfile>
-      <anchor>a819a3adf111e3067178e92a6f7b2c8c5</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedDivideScalarHelper.html</anchorfile>
-      <anchor>aa52a33e8c62ec2fb4f6a2ad551fc2bd0</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedDivideScalarHelper.html</anchorfile>
-      <anchor>a004a96471b5b983ffdf72716f9ff9149</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedDivideScalarHelper.html</anchorfile>
-      <anchor>a92771f2988221e29390cdf9bbdeb027a</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>tatami::DelayedDivideVectorHelper</name>
-    <filename>structtatami_1_1DelayedDivideVectorHelper.html</filename>
-    <templarg>bool RIGHT</templarg>
-    <templarg>int MARGIN</templarg>
-    <templarg>typename T</templarg>
-    <templarg>class V</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedDivideVectorHelper</name>
-      <anchorfile>structtatami_1_1DelayedDivideVectorHelper.html</anchorfile>
-      <anchor>adf8bad6ea3dd7523dee92f050ae33b13</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedDivideVectorHelper.html</anchorfile>
-      <anchor>a63ca8047273ae80a88165d81be120146</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedDivideVectorHelper.html</anchorfile>
-      <anchor>afa05be70ca3b5ef7c8a5d9a2f479da39</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedDivideVectorHelper.html</anchorfile>
-      <anchor>affbd7fdf4644051641b7af497a30e757</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedDivideVectorHelper.html</anchorfile>
-      <anchor>af29325d80b8100a8a7f728e3d9050bb4</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
     <name>tatami::DelayedExpHelper</name>
     <filename>structtatami_1_1DelayedExpHelper.html</filename>
     <templarg>typename T</templarg>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedExpHelper.html</anchorfile>
-      <anchor>affeefc01a2a66d3704aef703e040d653</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedExpHelper.html</anchorfile>
-      <anchor>af7119e0283f7b49cfab0a1ebcaad1a63</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedExpHelper.html</anchorfile>
-      <anchor>adebad4420563835a9b563939022f8caf</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedExpHelper.html</anchorfile>
-      <anchor>ad145ef0bef810261b962390f52fc0b74</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedLog1pHelper</name>
@@ -1547,34 +1380,6 @@
       <anchorfile>structtatami_1_1DelayedLog1pHelper.html</anchorfile>
       <anchor>ae1fbc1aaae2c404dd4a88b6a15034978</anchor>
       <arglist>(double base)</arglist>
-    </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedLog1pHelper.html</anchorfile>
-      <anchor>a1b82fc162ab70e33f19542f93aa6d387</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedLog1pHelper.html</anchorfile>
-      <anchor>a8a0947ed6dbbec1f598367c2d5f305ce</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedLog1pHelper.html</anchorfile>
-      <anchor>a61543ff7ed9e4985d57d8abeb8e8e44c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedLog1pHelper.html</anchorfile>
-      <anchor>a8e5b43c2cc1b8409718e55798f89ea68</anchor>
-      <arglist></arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -1595,182 +1400,16 @@
       <anchor>a506aca4f5b63bcdaad3ddab4231fd0f7</anchor>
       <arglist>(double base)</arglist>
     </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedLogHelper.html</anchorfile>
-      <anchor>ab443629dd5741c6bba0deb07c8ff92c4</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedLogHelper.html</anchorfile>
-      <anchor>a7be77608c9405d255c03b3df1858979e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedLogHelper.html</anchorfile>
-      <anchor>ad18c2630e67fa8faa2e66b8d4fed6d42</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedLogHelper.html</anchorfile>
-      <anchor>a56a684bb72e50ee986b2c3ff71d0204d</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>tatami::DelayedMultiplyScalarHelper</name>
-    <filename>structtatami_1_1DelayedMultiplyScalarHelper.html</filename>
-    <templarg>typename T</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedMultiplyScalarHelper</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyScalarHelper.html</anchorfile>
-      <anchor>ae3e6b355cb53636374b5d229eb75c2e1</anchor>
-      <arglist>(T s)</arglist>
-    </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyScalarHelper.html</anchorfile>
-      <anchor>aa4469882c45e9c6f37d478bdc9ae7984</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyScalarHelper.html</anchorfile>
-      <anchor>aaaa889a6282ca9dcbdf4414da6798a27</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyScalarHelper.html</anchorfile>
-      <anchor>a4e86086797e8b2d0524bebe102ad8e1a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyScalarHelper.html</anchorfile>
-      <anchor>afa5fe94c939e25718a9515c2fc40c194</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>tatami::DelayedMultiplyVectorHelper</name>
-    <filename>structtatami_1_1DelayedMultiplyVectorHelper.html</filename>
-    <templarg>int MARGIN</templarg>
-    <templarg>typename T</templarg>
-    <templarg>class V</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedMultiplyVectorHelper</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyVectorHelper.html</anchorfile>
-      <anchor>a264178e8902ffd7b728816ca0968e73d</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyVectorHelper.html</anchorfile>
-      <anchor>ac64849c5578ccfbb1262020421448f07</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyVectorHelper.html</anchorfile>
-      <anchor>aecd7bcb7fcfb026308ab23aedf6bce4f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyVectorHelper.html</anchorfile>
-      <anchor>a6f767aebb25acf36159c92049dc42e1d</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedMultiplyVectorHelper.html</anchorfile>
-      <anchor>a900a5bee090779271fa72ac9a749b39c</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedRoundHelper</name>
     <filename>structtatami_1_1DelayedRoundHelper.html</filename>
     <templarg>typename T</templarg>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedRoundHelper.html</anchorfile>
-      <anchor>aa6c9c7ab1d87872d51473361f25bb284</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedRoundHelper.html</anchorfile>
-      <anchor>a86a97924213721bcbdd7a60bf2e307b1</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedRoundHelper.html</anchorfile>
-      <anchor>ab0ef63f284ea59c04d87afb0e297ea23</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedRoundHelper.html</anchorfile>
-      <anchor>a31e20fdc07a26688b906832f9c1d2325</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedSqrtHelper</name>
     <filename>structtatami_1_1DelayedSqrtHelper.html</filename>
     <templarg>typename T</templarg>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedSqrtHelper.html</anchorfile>
-      <anchor>ae0941c96f07180027d17918d6a8df941</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedSqrtHelper.html</anchorfile>
-      <anchor>a503a69a39bc995e83754e885d5728543</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedSqrtHelper.html</anchorfile>
-      <anchor>a22cd75a6a73b81a3a864de25f5f62e24</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedSqrtHelper.html</anchorfile>
-      <anchor>afe09f6ced951d8931418ee7ea6538178</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="class">
     <name>tatami::DelayedSubset</name>
@@ -2514,90 +2153,6 @@
       <anchorfile>classtatami_1_1DelayedSubsetUnique.html</anchorfile>
       <anchor>a4eb8f770e84ca2cb67bedb287a0d27ad</anchor>
       <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;options) const</arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>tatami::DelayedSubtractScalarHelper</name>
-    <filename>structtatami_1_1DelayedSubtractScalarHelper.html</filename>
-    <templarg>bool RIGHT</templarg>
-    <templarg>typename T</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedSubtractScalarHelper</name>
-      <anchorfile>structtatami_1_1DelayedSubtractScalarHelper.html</anchorfile>
-      <anchor>abf2792fab8a48f9a89ee50ad6c6d8da3</anchor>
-      <arglist>(T s)</arglist>
-    </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedSubtractScalarHelper.html</anchorfile>
-      <anchor>ad686b1974b4ff2023a140fef7b9b2620</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedSubtractScalarHelper.html</anchorfile>
-      <anchor>a22961a62ff0ca4a14e14fd58189bf4a7</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedSubtractScalarHelper.html</anchorfile>
-      <anchor>af8863bfbf50f5d116194937d5340c424</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedSubtractScalarHelper.html</anchorfile>
-      <anchor>a94a1f89fb9d8badc425504444bccca2c</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
-    <name>tatami::DelayedSubtractVectorHelper</name>
-    <filename>structtatami_1_1DelayedSubtractVectorHelper.html</filename>
-    <templarg>bool RIGHT</templarg>
-    <templarg>int MARGIN</templarg>
-    <templarg>typename T</templarg>
-    <templarg>class V</templarg>
-    <member kind="function">
-      <type></type>
-      <name>DelayedSubtractVectorHelper</name>
-      <anchorfile>structtatami_1_1DelayedSubtractVectorHelper.html</anchorfile>
-      <anchor>ad9f4a928250416796f4ead2b451d0701</anchor>
-      <arglist>(V v)</arglist>
-    </member>
-    <member kind="function">
-      <type>T</type>
-      <name>operator()</name>
-      <anchorfile>structtatami_1_1DelayedSubtractVectorHelper.html</anchorfile>
-      <anchor>af7b4833df07f470bcbb7bf82c9c5efbe</anchor>
-      <arglist>(size_t r, size_t c, T val) const</arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>sparse_</name>
-      <anchorfile>structtatami_1_1DelayedSubtractVectorHelper.html</anchorfile>
-      <anchor>a611fa78d54d10f856bcfb6ba67db4c2c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_row_</name>
-      <anchorfile>structtatami_1_1DelayedSubtractVectorHelper.html</anchorfile>
-      <anchor>a72b6ea7ba4c03c81abb4f7d82510a2f3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static const bool</type>
-      <name>needs_column_</name>
-      <anchorfile>structtatami_1_1DelayedSubtractVectorHelper.html</anchorfile>
-      <anchor>ac14a39bd201052add2dab5830b03bcdf</anchor>
-      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -4145,17 +3700,13 @@
     <class kind="class">tatami::CompressedSparseMatrix</class>
     <class kind="struct">tatami::ConsecutiveOracle</class>
     <class kind="struct">tatami::DelayedAbsHelper</class>
-    <class kind="struct">tatami::DelayedAddScalarHelper</class>
-    <class kind="struct">tatami::DelayedAddVectorHelper</class>
+    <class kind="struct">tatami::DelayedArithScalarHelper</class>
+    <class kind="struct">tatami::DelayedArithVectorHelper</class>
     <class kind="class">tatami::DelayedBind</class>
     <class kind="class">tatami::DelayedCast</class>
-    <class kind="struct">tatami::DelayedDivideScalarHelper</class>
-    <class kind="struct">tatami::DelayedDivideVectorHelper</class>
     <class kind="struct">tatami::DelayedExpHelper</class>
     <class kind="struct">tatami::DelayedLog1pHelper</class>
     <class kind="struct">tatami::DelayedLogHelper</class>
-    <class kind="struct">tatami::DelayedMultiplyScalarHelper</class>
-    <class kind="struct">tatami::DelayedMultiplyVectorHelper</class>
     <class kind="struct">tatami::DelayedRoundHelper</class>
     <class kind="struct">tatami::DelayedSqrtHelper</class>
     <class kind="class">tatami::DelayedSubset</class>
@@ -4163,8 +3714,6 @@
     <class kind="class">tatami::DelayedSubsetSorted</class>
     <class kind="class">tatami::DelayedSubsetSortedUnique</class>
     <class kind="class">tatami::DelayedSubsetUnique</class>
-    <class kind="struct">tatami::DelayedSubtractScalarHelper</class>
-    <class kind="struct">tatami::DelayedSubtractVectorHelper</class>
     <class kind="class">tatami::DelayedTranspose</class>
     <class kind="class">tatami::DelayedUnaryIsometricOp</class>
     <class kind="class">tatami::DenseExtractor</class>
@@ -4301,6 +3850,17 @@
       <enumvalue file="namespacetatami.html" anchor="a0a2ecaf58e2b69bb4a808e814aeb16a1a4d34f53389ed7f28ca91fc31ea360a66">BLOCK</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="a0a2ecaf58e2b69bb4a808e814aeb16a1acb4ae3b37047fb4b2c0d16f8bf84f076">INDEX</enumvalue>
     </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>DelayedArithOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aab44a37b3762de0c5b1ffbfceb25fa0f</anchor>
+      <arglist></arglist>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa9eeb52badb613229884838847294b90d">ADD</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa23ebcc4776b613af25dfbe7c8ce4813e">SUBTRACT</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa080aaf8d817ada96fca7096b7b55bd30">MULTIPLY</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa210c66d794cec40488f3f8f634d6c33b">DIVIDE</enumvalue>
+    </member>
     <member kind="function">
       <type>Index_</type>
       <name>extracted_length</name>
@@ -4351,32 +3911,60 @@
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *ptr, Args_ &amp;&amp;... args)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedAddVectorHelper&lt; MARGIN, T, V &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::ADD, true, Scalar_ &gt;</type>
+      <name>make_DelayedAddScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac0d637bdfb7f4126ded39f6e06b04d3a</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::SUBTRACT, right_, Scalar_ &gt;</type>
+      <name>make_DelayedSubtractScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a54f42d3fa38192c46b1fbd89ffbc96ef</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MULTIPLY, true, Scalar_ &gt;</type>
+      <name>make_DelayedMultiplyScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ab2ae6b934c10ef1ba28be1bc0f3316db</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::DIVIDE, right_, Scalar_ &gt;</type>
+      <name>make_DelayedDivideScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a37bafee11663e77fd079b7df8c542b41</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::ADD, true, margin_, Vector_ &gt;</type>
       <name>make_DelayedAddVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa82419090e54a4674d971429e93e6af5</anchor>
-      <arglist>(V v)</arglist>
+      <anchor>a18d82c78f9847f7f3d7b1924736dc08a</anchor>
+      <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedSubtractVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::SUBTRACT, right_, margin_, Vector_ &gt;</type>
       <name>make_DelayedSubtractVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abb68a8d27e821f213965edab7f029c48</anchor>
-      <arglist>(V v)</arglist>
+      <anchor>ae10ad8ba2f67e03997a70bcf344cd0b5</anchor>
+      <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedMultiplyVectorHelper&lt; MARGIN, T, V &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MULTIPLY, true, margin_, Vector_ &gt;</type>
       <name>make_DelayedMultiplyVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a316f4cf0ae5a9e83c2dad6ccbbbcfb43</anchor>
-      <arglist>(V v)</arglist>
+      <anchor>ab5028a7b69c08ecec87064d7b3d83b41</anchor>
+      <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedDivideVectorHelper&lt; RIGHT, MARGIN, T, V &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::DIVIDE, right_, margin_, Vector_ &gt;</type>
       <name>make_DelayedDivideVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab104e5029db4d09afe0b47a125f457bf</anchor>
-      <arglist>(V v)</arglist>
+      <anchor>a214dedde7eb472684ce66ec4ba26e77c</anchor>
+      <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.7"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::DelayedLog1pHelper&lt; T &gt; Struct Template Reference</title>
+<title>tatami: tatami::DelayedArithVectorHelper&lt; op_, right_, margin_, Vector_ &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,77 +71,57 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespacetatami.html">tatami</a></li><li class="navelem"><a class="el" href="structtatami_1_1DelayedLog1pHelper.html">DelayedLog1pHelper</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespacetatami.html">tatami</a></li><li class="navelem"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="structtatami_1_1DelayedLog1pHelper-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami::DelayedLog1pHelper&lt; T &gt; Struct Template Reference</div></div>
+<a href="structtatami_1_1DelayedArithVectorHelper-members.html">List of all members</a>  </div>
+  <div class="headertitle"><div class="title">tatami::DelayedArithVectorHelper&lt; op_, right_, margin_, Vector_ &gt; Struct Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>Take the logarithm of a matrix entry plus 1.  
- <a href="structtatami_1_1DelayedLog1pHelper.html#details">More...</a></p>
+<p>Delayed vector arithmetic.  
+ <a href="structtatami_1_1DelayedArithVectorHelper.html#details">More...</a></p>
 
-<p><code>#include &lt;<a class="el" href="math__helpers_8hpp_source.html">math_helpers.hpp</a>&gt;</code></p>
+<p><code>#include &lt;<a class="el" href="arith__helpers_8hpp_source.html">arith_helpers.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a54be07a933d88fa1bfcd54d383a6b327"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedLog1pHelper.html#a54be07a933d88fa1bfcd54d383a6b327">DelayedLog1pHelper</a> ()</td></tr>
-<tr class="separator:a54be07a933d88fa1bfcd54d383a6b327"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1fbc1aaae2c404dd4a88b6a15034978"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedLog1pHelper.html#ae1fbc1aaae2c404dd4a88b6a15034978">DelayedLog1pHelper</a> (double base)</td></tr>
-<tr class="separator:ae1fbc1aaae2c404dd4a88b6a15034978"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83a921d90c37170f8a9507be4921cfb8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html#a83a921d90c37170f8a9507be4921cfb8">DelayedArithVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:a83a921d90c37170f8a9507be4921cfb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;typename T = double&gt;<br />
-struct tatami::DelayedLog1pHelper&lt; T &gt;</div><p>Take the logarithm of a matrix entry plus 1. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#aab44a37b3762de0c5b1ffbfceb25fa0f">DelayedArithOp</a> op_, bool right_, int margin_, typename Vector_&gt;<br />
+struct tatami::DelayedArithVectorHelper&lt; op_, right_, margin_, Vector_ &gt;</div><p>Delayed vector arithmetic. </p>
+<p>This should be used as the <code>OP</code> in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html" title="Delayed isometric operations on a single matrix.">DelayedUnaryIsometricOp</a></code> class.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">op_</td><td>The arithmetic operation. </td></tr>
+    <tr><td class="paramname">right_</td><td>Whether the vector's values should be on the right hand side of the arithmetic operation. Ignored for some <code>op_</code>. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the operation is to occur. If 0, each element of the vector is assumed to correspond to a row, and that value is subtracted from all entries in the same row of the matrix. If 1, each element of the vector is assumed to correspond to a column instead. </td></tr>
+    <tr><td class="paramname">Vector_</td><td>Type of the vector. </td></tr>
+  </table>
+  </dd>
+</dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a54be07a933d88fa1bfcd54d383a6b327" name="a54be07a933d88fa1bfcd54d383a6b327"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a54be07a933d88fa1bfcd54d383a6b327">&#9670;&#160;</a></span>DelayedLog1pHelper() <span class="overload">[1/2]</span></h2>
+<a id="a83a921d90c37170f8a9507be4921cfb8" name="a83a921d90c37170f8a9507be4921cfb8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83a921d90c37170f8a9507be4921cfb8">&#9670;&#160;</a></span>DelayedArithVectorHelper()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
+template&lt;<a class="el" href="namespacetatami.html#aab44a37b3762de0c5b1ffbfceb25fa0f">DelayedArithOp</a> op_, bool right_, int margin_, typename Vector_ &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1DelayedLog1pHelper.html">tatami::DelayedLog1pHelper</a>&lt; T &gt;::DelayedLog1pHelper </td>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">tatami::DelayedArithVectorHelper</a>&lt; op_, right_, margin_, Vector_ &gt;::DelayedArithVectorHelper </td>
           <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Defaults to the natural log. </p>
-
-</div>
-</div>
-<a id="ae1fbc1aaae2c404dd4a88b6a15034978" name="ae1fbc1aaae2c404dd4a88b6a15034978"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1fbc1aaae2c404dd4a88b6a15034978">&#9670;&#160;</a></span>DelayedLog1pHelper() <span class="overload">[2/2]</span></h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="structtatami_1_1DelayedLog1pHelper.html">tatami::DelayedLog1pHelper</a>&lt; T &gt;::DelayedLog1pHelper </td>
-          <td>(</td>
-          <td class="paramtype">double&#160;</td>
-          <td class="paramname"><em>base</em></td><td>)</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -153,7 +133,7 @@ template&lt;typename T  = double&gt; </div>
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">base</td><td>Base of the logarithm. </td></tr>
+    <tr><td class="paramname">v</td><td>Vector of values to use in the operation. This should be of length equal to the number of rows if <code>MARGIN = 0</code>, otherwise it should be of length equal to the number of columns. </td></tr>
   </table>
   </dd>
 </dl>
@@ -161,7 +141,7 @@ template&lt;typename T  = double&gt; </div>
 </div>
 </div>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>tatami/isometric/unary/<a class="el" href="math__helpers_8hpp_source.html">math_helpers.hpp</a></li>
+<li>tatami/isometric/unary/<a class="el" href="arith__helpers_8hpp_source.html">arith_helpers.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->

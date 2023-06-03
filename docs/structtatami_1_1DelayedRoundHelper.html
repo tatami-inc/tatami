@@ -76,8 +76,6 @@ $(function() {
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="structtatami_1_1DelayedRoundHelper-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">tatami::DelayedRoundHelper&lt; T &gt; Struct Template Reference</div></div>
 </div><!--header-->
@@ -87,155 +85,10 @@ $(function() {
  <a href="structtatami_1_1DelayedRoundHelper.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="math__helpers_8hpp_source.html">math_helpers.hpp</a>&gt;</code></p>
-<table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
-Public Member Functions</h2></td></tr>
-<tr class="memitem:aa6c9c7ab1d87872d51473361f25bb284"><td class="memItemLeft" align="right" valign="top">T&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedRoundHelper.html#aa6c9c7ab1d87872d51473361f25bb284">operator()</a> (size_t r, size_t c, T val) const</td></tr>
-<tr class="separator:aa6c9c7ab1d87872d51473361f25bb284"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
-Static Public Attributes</h2></td></tr>
-<tr class="memitem:a86a97924213721bcbdd7a60bf2e307b1"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedRoundHelper.html#a86a97924213721bcbdd7a60bf2e307b1">sparse_</a> = true</td></tr>
-<tr class="separator:a86a97924213721bcbdd7a60bf2e307b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab0ef63f284ea59c04d87afb0e297ea23"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedRoundHelper.html#ab0ef63f284ea59c04d87afb0e297ea23">needs_row_</a> = false</td></tr>
-<tr class="separator:ab0ef63f284ea59c04d87afb0e297ea23"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a31e20fdc07a26688b906832f9c1d2325"><td class="memItemLeft" align="right" valign="top">static const bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedRoundHelper.html#a31e20fdc07a26688b906832f9c1d2325">needs_column_</a> = false</td></tr>
-<tr class="separator:a31e20fdc07a26688b906832f9c1d2325"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;typename T = double&gt;<br />
 struct tatami::DelayedRoundHelper&lt; T &gt;</div><p>Round a matrix entry to the nearest integer. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="aa6c9c7ab1d87872d51473361f25bb284" name="aa6c9c7ab1d87872d51473361f25bb284"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa6c9c7ab1d87872d51473361f25bb284">&#9670;&#160;</a></span>operator()()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">T <a class="el" href="structtatami_1_1DelayedRoundHelper.html">tatami::DelayedRoundHelper</a>&lt; T &gt;::operator() </td>
-          <td>(</td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>r</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>c</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">T&#160;</td>
-          <td class="paramname"><em>val</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">r</td><td>Row index, ignored. </td></tr>
-    <tr><td class="paramname">c</td><td>Column index, ignored. </td></tr>
-    <tr><td class="paramname">val</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> value.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd><code>val</code> rounded to the closest integer value. </dd></dl>
-
-</div>
-</div>
-<h2 class="groupheader">Member Data Documentation</h2>
-<a id="a86a97924213721bcbdd7a60bf2e307b1" name="a86a97924213721bcbdd7a60bf2e307b1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a86a97924213721bcbdd7a60bf2e307b1">&#9670;&#160;</a></span>sparse_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedRoundHelper.html">tatami::DelayedRoundHelper</a>&lt; T &gt;::sparse_ = true</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Sparsity is always preserved. </p>
-
-</div>
-</div>
-<a id="ab0ef63f284ea59c04d87afb0e297ea23" name="ab0ef63f284ea59c04d87afb0e297ea23"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab0ef63f284ea59c04d87afb0e297ea23">&#9670;&#160;</a></span>needs_row_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedRoundHelper.html">tatami::DelayedRoundHelper</a>&lt; T &gt;::needs_row_ = false</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>This does not require row indices. </p>
-
-</div>
-</div>
-<a id="a31e20fdc07a26688b906832f9c1d2325" name="a31e20fdc07a26688b906832f9c1d2325"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a31e20fdc07a26688b906832f9c1d2325">&#9670;&#160;</a></span>needs_column_</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename T  = double&gt; </div>
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">const bool <a class="el" href="structtatami_1_1DelayedRoundHelper.html">tatami::DelayedRoundHelper</a>&lt; T &gt;::needs_column_ = false</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>This does not require column indices. </p>
-
-</div>
-</div>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>tatami/isometric/unary/<a class="el" href="math__helpers_8hpp_source.html">math_helpers.hpp</a></li>
 </ul>
 </div><!-- contents -->
