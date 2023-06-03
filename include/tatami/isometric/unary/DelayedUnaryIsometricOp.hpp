@@ -22,10 +22,47 @@ namespace tatami {
  * This operation is "delayed" in that it is only evaluated on request, e.g., with `DenseExtractor::fetch()` or friends.
  * We only consider "unary" operations that involve a single `Matrix` - see `DelayedBinaryIsometricOp` for operations between two `Matrix` instances.
  *
+ * The `Operation_` class is expected to provide the following static `constexpr` member variables:
+ *
+ * - `needs_row`: whether the operation needs the row index, e.g., if the operation varies by row.
+ * - `needs_column`: whether the operation needs the column index, e.g., if the operation varies by column.
+ * - `always_dense`: whether the operation always yields a dense result when applied on sparse data.
+ * - `always_sparse`: whether the operation always yields a sparse result when applied on sparse data.
+ *   This should not be `true` if `always_dense` is `true`.
+ * 
+ * The class should implement the following method:
+ *
+ * - `void dense<row_>(Index_ i, Index_ start, Index_ length, Value_* buffer) const`: 
+ *   This method should apply the operation to all values in `buffer`, which contains a contiguous block of elements from row `i` (when `row_ = true`).
+ *   This block spans columns from `[start, start + length)`.
+ *   If `row_ = false`, `i` is instead a column and the block contains rows.
+ * - `void dense<row_>(Index_ i, const Index_* indices, Index_ length, Value_* buffer) const`: 
+ *   This method should apply the operation to all values in `buffer`, which contains to a subset of elements from row `i` (when `row_ = true`).
+ *   Column indices of the elements in the subset are defined by `indices`, which is a sorted and unique array of length `length`w.
+ *   If `row_ = false`, `i` is instead a column and `indices` contains rows.
+ * 
+ * If neither of `always_dense` or `always_sparse` is `true`, the class should also implement:
+ *
+ * - `bool actual_sparse() const`: whether this particular instance of the operation yields a sparse result when applied on sparse data.
+ *   For example, an addition operation remains sparse if the added value is zero.
+ * 
+ * If `always_sparse = false`, the class should implement:
+ *
+ * - `void expanded<row_>(Index_ i, Index_ start, Index_ length, Value_* buffer) const`: 
+ *   same as the corresponding `dense()` method, but with opportunities for optimization where it is known that many input values in `buffer` are zero.
+ * - `void expanded<row_>(Index_ i, const Index_* indices, Index_ length, Value_* buffer) const`: 
+ *   same as the corresponding `dense()` method, but with opportunities for optimization where it is known that many input values in `buffer` are zero.
+ *
+ * If `always_dense = false`, the class should implement:
+ *
+ * - `void sparse<row_>(Index_ i, Index_ number, Value_* buffer, const Index_* indices) const`:
+ *   This method should apply the operation to all values in `buffer`, which contains `number` elements from row `i` (when `row_ = true`).
+ *   The column indices of all elements is contained in `indices`.
+ *   If `row_ = false`, `i` is instead a column and `indices` contains row indices.
+ *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
- * @tparam Operation_ Functor class implementing the operation.
- * This should accept the row index, column index and value, and return the modified value after applying the operation. 
+ * @tparam Operation_ Class implementing the operation.
  */
 template<typename Value_, typename Index_, class Operation_>
 class DelayedUnaryIsometricOp : public Matrix<Value_, Index_> {
@@ -39,6 +76,7 @@ public:
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > mat;
     Operation_ operation;
+    static_assert(!Operation_::always_dense && !Operation_::always_sparse);
 
 public:
     Index_ nrow() const {
