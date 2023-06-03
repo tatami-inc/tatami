@@ -8,15 +8,15 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
+#include "utils.h"
 
-template<class PARAM>
-class ArithVectorTest : public ::testing::TestWithParam<PARAM> {
+class ArithVectorUtils {
 protected:
     size_t nrow = 291, ncol = 188;
     std::shared_ptr<tatami::NumericMatrix> dense, sparse;
     std::vector<double> simulated;
 protected:
-    void SetUp() {
+    void assemble() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
@@ -29,6 +29,14 @@ protected:
             output[i] = output[i-1] + jump;
         }
         return output;
+    }
+};
+
+template<class PARAM>
+class ArithVectorTest : public ::testing::TestWithParam<PARAM>, public ArithVectorUtils {
+protected:
+    void SetUp() {
+        assemble();
     }
 };
 
@@ -576,13 +584,16 @@ protected:
         for (size_t r = 0; r < this->nrow; ++r) {
             for (size_t c = 0; c < this->ncol; ++c) {
                 auto& x = refvec[r * this->ncol + c];
+                auto val = vec[row ? r : c];
                 if (right) {
-                    x /= vec[row ? r : c];
+                    x /= val;
                 } else {
                     if (x) {
-                        x = vec[row ? r : c] / x;
-                    } else {
+                        x = val / x;
+                    } else if (val > 0) {
                         x = std::numeric_limits<double>::infinity();
+                    } else {
+                        x = -std::numeric_limits<double>::infinity();
                     }
                 }
             }
@@ -792,3 +803,178 @@ TEST(ArithVector, ConstOverload) {
     EXPECT_EQ(mat->nrow(), dense->nrow());
     EXPECT_EQ(mat->ncol(), dense->ncol());
 }
+
+/**************************
+ ********* ZEROED *********
+ **************************/
+
+class ArithVectorZeroedTest : public ::testing::TestWithParam<bool>, public ArithVectorUtils {
+protected:
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
+
+    void SetUp() {
+        assemble();
+    }
+};
+
+TEST_P(ArithVectorZeroedTest, Addition) {
+    std::vector<double> zeroed(GetParam() ? nrow : ncol);
+
+    if (GetParam()) {
+        auto op = tatami::make_DelayedAddVectorHelper<0>(std::move(zeroed));
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    } else {
+        auto op = tatami::make_DelayedAddVectorHelper<1>(std::move(zeroed));
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    }
+
+    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_TRUE(sparse_mod->sparse());
+
+    tatami_test::test_simple_column_access(dense_mod.get(), dense.get(), true, 1);
+    tatami_test::test_simple_column_access(sparse_mod.get(), sparse.get(), true, 1); 
+
+    tatami_test::test_simple_row_access(dense_mod.get(), dense.get(), true, 1);
+    tatami_test::test_simple_row_access(sparse_mod.get(), sparse.get(), true, 1);
+}
+
+TEST_P(ArithVectorZeroedTest, Subtraction) {
+    std::vector<double> zeroed(GetParam() ? nrow : ncol);
+
+    {
+        if (GetParam()) {
+            auto op = tatami::make_DelayedSubtractVectorHelper<true, 0>(zeroed);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        } else {
+            auto op = tatami::make_DelayedSubtractVectorHelper<true, 1>(zeroed);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        }
+
+        EXPECT_FALSE(dense_mod->sparse());
+        EXPECT_TRUE(sparse_mod->sparse());
+
+        tatami_test::test_simple_column_access(dense_mod.get(), dense.get(), true, 1);
+        tatami_test::test_simple_column_access(sparse_mod.get(), sparse.get(), true, 1); 
+
+        tatami_test::test_simple_row_access(dense_mod.get(), dense.get(), true, 1);
+        tatami_test::test_simple_row_access(sparse_mod.get(), sparse.get(), true, 1);
+    }
+
+    {
+        if (GetParam()) {
+            auto op = tatami::make_DelayedSubtractVectorHelper<false, 0>(zeroed);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        } else {
+            auto op = tatami::make_DelayedSubtractVectorHelper<false, 1>(zeroed);
+            dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+            sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        }
+
+        auto copy = simulated;
+        for (auto& x : copy) {
+            x *= -1;
+        }
+        tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+
+        EXPECT_FALSE(dense_mod->sparse());
+        EXPECT_TRUE(sparse_mod->sparse());
+
+        tatami_test::test_simple_column_access(dense_mod.get(), &ref, true, 1);
+        tatami_test::test_simple_column_access(sparse_mod.get(), &ref, true, 1); 
+
+        tatami_test::test_simple_row_access(dense_mod.get(), &ref, true, 1);
+        tatami_test::test_simple_row_access(sparse_mod.get(), &ref, true, 1);
+    }
+}
+
+TEST_P(ArithVectorZeroedTest, Multiplication) {
+    std::vector<double> zeroed(GetParam() ? nrow : ncol);
+
+    if (GetParam()) {
+        auto op = tatami::make_DelayedMultiplyVectorHelper<0>(std::move(zeroed));
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    } else {
+        auto op = tatami::make_DelayedMultiplyVectorHelper<1>(std::move(zeroed));
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    }
+
+    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::vector<double>(nrow * ncol));
+
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, true, 1); 
+
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, true, 1);
+}
+
+TEST_P(ArithVectorZeroedTest, DivisionAllZero) {
+    std::vector<double> zeroed(GetParam() ? nrow : ncol);
+
+    if (GetParam()) {
+        auto op = tatami::make_DelayedDivideVectorHelper<true, 0>(std::move(zeroed));
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    } else {
+        auto op = tatami::make_DelayedDivideVectorHelper<true, 1>(std::move(zeroed));
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    }
+
+    auto copy = simulated;
+    for (auto& x : copy) {
+        x = careful_division(x, 0.0);
+    }
+    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+
+    EXPECT_FALSE(dense_mod->sparse());
+    test_nan_access(&ref, dense_mod.get());
+
+    EXPECT_FALSE(sparse_mod->sparse());
+    test_nan_access(&ref, sparse_mod.get());
+}
+
+TEST_P(ArithVectorZeroedTest, DivisionOneZero) {
+    // But actually, even 1 zero is enough to break sparsity.
+    std::vector<double> solo_zero(GetParam() ? nrow : ncol, 1);
+    solo_zero[0] = 0;
+    auto copy = simulated;
+
+    if (GetParam()) {
+        auto op = tatami::make_DelayedDivideVectorHelper<true, 0>(std::move(solo_zero));
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+
+        for (int c = 0; c < ncol; ++c) {
+            copy[c] = careful_division(copy[c], 0.0);
+        }
+    } else {
+        auto op = tatami::make_DelayedDivideVectorHelper<true, 1>(std::move(solo_zero));
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+
+        for (int r = 0; r < nrow; ++r) {
+            copy[r * ncol] = careful_division(copy[r * ncol], 0.0);
+        }
+    }
+
+    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+
+    EXPECT_FALSE(dense_mod->sparse());
+    test_nan_access(&ref, dense_mod.get());
+
+    EXPECT_FALSE(sparse_mod->sparse());
+    test_nan_access(&ref, sparse_mod.get());
+}
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorZeroedTest,
+    ::testing::Values(true, false) // add by row, or by column
+);

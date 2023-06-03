@@ -16,33 +16,46 @@ namespace tatami {
 /**
  * @brief Take the absolute value of a matrix entry.
  */
-template<typename T = double>
 struct DelayedAbsHelper {
+public:
     /**
-     * @param r Row index, ignored.
-     * @param c Column index, ignored.
-     * @param val Matrix value.
-     *
-     * @return Absolute value of `val`.
+     * @cond
      */
-    T operator()(size_t r, size_t c, T val) const {
-        return std::abs(val);
+    static constexpr bool always_dense = false;
+
+    static constexpr bool always_sparse = true;
+
+    static constexpr bool needs_row = false;
+
+    static constexpr bool needs_column = false;
+    /**
+     * @endcond
+     */
+
+private:
+    template<typename Value_, typename Index_>
+    void core (Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = std::abs(buffer[i]);
+        }
     }
 
+public:
     /**
-     * Sparsity is always preserved.
+     * @cond
      */
-    static const bool sparse_ = true;
+    template<bool, typename Value_, typename Index_, typename ExtractType_>
+    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+        core(length, buffer);
+    }
 
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
     /**
-     * This does not require row indices.
+     * @endcond
      */
-    static const bool needs_row_ = false;
-
-    /**
-     * This does not require column indices.
-     */
-    static const bool needs_column_ = false;
 };
 
 /**
@@ -60,33 +73,53 @@ struct DelayedLogHelper {
      */
     DelayedLogHelper(double base) : log_base(std::log(base)) {}
 
+public:
     /**
-     * @param r Row index, ignored.
-     * @param c Column index, ignored.
-     * @param val Matrix value.
-     *
-     * @return Logarithm of `val` with the specified base.
+     * @cond
      */
-    T operator()(size_t r, size_t c, T val) const {
-        return std::log(val)/log_base;
+    static constexpr bool always_dense = true;
+
+    static constexpr bool always_sparse = false;
+
+    static const bool needs_row = false;
+
+    static const bool needs_column = false;
+    /**
+     * @endcond
+     */
+
+private:
+    template<typename Value_, typename Index_>
+    void core (Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            if (buffer[i] > 0) {
+                buffer[i] = std::log(buffer[i]) / log_base;
+            } else if (buffer[i] == 0) {
+                buffer[i] = -std::numeric_limits<double>::infinity();
+            } else {
+                buffer[i] = std::numeric_limits<double>::quiet_NaN();
+            }
+        }
     }
 
-    /**
-     * Sparsity is always discarded
-     */
-    static const bool sparse_ = false;
-
-    /**
-     * This does not require row indices.
-     */
-    static const bool needs_row_ = false;
-
-    /**
-     * This does not require column indices.
-     */
-    static const bool needs_column_ = false;
-private:
     const double log_base;
+
+public:
+    /**
+     * @cond
+     */
+    template<bool, typename Value_, typename Index_, typename ExtractType_>
+    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+        core(length, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_, typename ExtractType_>
+    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+        core(length, buffer);
+    }
+    /**
+     * @endcond
+     */
 };
 
 /**
@@ -94,31 +127,45 @@ private:
  */
 template<typename T = double>
 struct DelayedSqrtHelper {
+public:
     /**
-     * @param r Row index, ignored.
-     * @param c Column index, ignored.
-     * @param val Matrix value.
-     *
-     * @return Square root of `val`.
+     * @cond
      */
-    T operator()(size_t r, size_t c, T val) const {
-        return std::sqrt(val);
+    static constexpr bool always_dense = false;
+
+    static constexpr bool always_sparse = true;
+
+    static constexpr bool needs_row = false;
+
+    static constexpr bool needs_column = false;
+    /**
+     * @endcond
+     */
+
+private:
+    template<typename Value_, typename Index_>
+    void core (Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = std::sqrt(buffer[i]);
+        }
     }
 
+public:
     /**
-     * Sparsity is always preserved.
+     * @cond
      */
-    static const bool sparse_ = true;
+    template<bool, typename Value_, typename Index_, typename ExtractType_>
+    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+        core(length, buffer);
+    }
 
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
     /**
-     * This does not require row indices.
+     * @endcond
      */
-    static const bool needs_row_ = false;
-
-    /**
-     * This does not require column indices.
-     */
-    static const bool needs_column_ = false;
 };
 
 /**
@@ -136,33 +183,53 @@ struct DelayedLog1pHelper {
      */
     DelayedLog1pHelper(double base) : log_base(std::log(base)) {}
 
+public:
     /**
-     * @param r Row index, ignored.
-     * @param c Column index, ignored.
-     * @param val Matrix value.
-     *
-     * @return Logarithm of `val + 1` with the specified base.
+     * @cond
      */
-    T operator()(size_t r, size_t c, T val) const {
-        return std::log1p(val)/log_base;
+    static constexpr bool always_dense = false;
+
+    static constexpr bool always_sparse = true;
+
+    static constexpr bool needs_row = false;
+
+    static constexpr bool needs_column = false;
+    /**
+     * @endcond
+     */
+
+private:
+    template<typename Value_, typename Index_>
+    void core (Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            if (buffer[i] > -1) {
+                buffer[i] = std::log1p(buffer[i]) / log_base;
+            } else if (buffer[i] == -1) {
+                buffer[i] = -std::numeric_limits<double>::infinity();
+            } else {
+                buffer[i] = std::numeric_limits<double>::quiet_NaN();
+            }
+        }
     }
 
-    /**
-     * Sparsity is always preserved.
-     */
-    static const bool sparse_ = true;
-
-    /**
-     * This does not require row indices.
-     */
-    static const bool needs_row_ = false;
-
-    /**
-     * This does not require column indices.
-     */
-    static const bool needs_column_ = false;
-private:
     const double log_base;
+
+public:
+    /**
+     * @cond
+     */
+    template<bool, typename Value_, typename Index_, typename ExtractType_>
+    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+        core(length, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+    /**
+     * @endcond
+     */
 };
 
 /**
@@ -170,31 +237,45 @@ private:
  */
 template<typename T = double>
 struct DelayedRoundHelper {
+public:
     /**
-     * @param r Row index, ignored.
-     * @param c Column index, ignored.
-     * @param val Matrix value.
-     *
-     * @return `val` rounded to the closest integer value.
+     * @cond
      */
-    T operator()(size_t r, size_t c, T val) const {
-        return std::round(val);
+    static constexpr bool always_dense = false;
+
+    static constexpr bool always_sparse = true;
+
+    static constexpr bool needs_row = false;
+
+    static constexpr bool needs_column = false;
+    /**
+     * @endcond
+     */
+
+private:
+    template<typename Value_, typename Index_>
+    void core (Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = std::round(buffer[i]);
+        }
     }
 
+public:
     /**
-     * Sparsity is always preserved.
+     * @cond
      */
-    static const bool sparse_ = true;
+    template<bool, typename Value_, typename Index_, typename ExtractType_>
+    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+        core(length, buffer);
+    }
 
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
     /**
-     * This does not require row indices.
+     * @endcond
      */
-    static const bool needs_row_ = false;
-
-    /**
-     * This does not require column indices.
-     */
-    static const bool needs_column_ = false;
 };
 
 /**
@@ -202,31 +283,50 @@ struct DelayedRoundHelper {
  */
 template<typename T = double>
 struct DelayedExpHelper {
+public:
     /**
-     * @param r Row index, ignored.
-     * @param c Column index, ignored.
-     * @param val Matrix value.
-     *
-     * @return `e` to the power of `val`.
+     * @cond
      */
-    T operator()(size_t r, size_t c, T val) const {
-        return std::exp(val);
+    static constexpr bool always_dense = true;
+
+    static constexpr bool always_sparse = false;
+
+    static constexpr bool needs_row = false;
+
+    static constexpr bool needs_column = false;
+    /**
+     * @endcond
+     */
+
+private:
+    template<typename Value_, typename Index_>
+    void core (Index_ length, Value_* buffer) const {
     }
 
+public:
     /**
-     * Sparsity is always discarded.
+     * @cond
      */
-    static const bool sparse_ = false;
+    template<bool, typename Value_, typename Index_, typename ExtractType_>
+    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = std::exp(buffer[i]);
+        }
+    }
 
+    template<bool, typename Value_, typename Index_, typename ExtractType_>
+    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            if (buffer[i]) {
+                buffer[i] = std::exp(buffer[i]);
+            } else {
+                buffer[i] = 1;
+            }
+        }
+    }
     /**
-     * This does not require row indices.
+     * @endcond
      */
-    static const bool needs_row_ = false;
-
-    /**
-     * This does not require column indices.
-     */
-    static const bool needs_column_ = false;
 };
 
 }
