@@ -99,7 +99,7 @@ struct tatami::DelayedArithScalarHelper&lt; op_, right_, Scalar_ &gt;</div><p>De
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">op_</td><td>The arithmetic operation. </td></tr>
-    <tr><td class="paramname">right_</td><td>Whether the scalar should be on the right hand side of the arithmetic operation. Ignored for some <code>op_</code>. </td></tr>
+    <tr><td class="paramname">right_</td><td>Whether the scalar should be on the right hand side of the arithmetic operation. Ignored for commutative operations, e.g., <code>ADD</code> and <code>MULTIPLY</code>. </td></tr>
     <tr><td class="paramname">Scalar_</td><td>Type of the scalar value. </td></tr>
   </table>
   </dd>
