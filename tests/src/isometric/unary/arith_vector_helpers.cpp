@@ -884,11 +884,11 @@ TEST_P(ArithVectorZeroedTest, Subtraction) {
         EXPECT_FALSE(dense_mod->sparse());
         EXPECT_TRUE(sparse_mod->sparse());
 
-        tatami_test::test_simple_column_access(dense_mod.get(), dense.get(), true, 1);
-        tatami_test::test_simple_column_access(sparse_mod.get(), sparse.get(), true, 1); 
+        tatami_test::test_simple_column_access(dense_mod.get(), &ref, true, 1);
+        tatami_test::test_simple_column_access(sparse_mod.get(), &ref, true, 1); 
 
-        tatami_test::test_simple_row_access(dense_mod.get(), dense.get(), true, 1);
-        tatami_test::test_simple_row_access(sparse_mod.get(), sparse.get(), true, 1);
+        tatami_test::test_simple_row_access(dense_mod.get(), &ref, true, 1);
+        tatami_test::test_simple_row_access(sparse_mod.get(), &ref, true, 1);
     }
 }
 
@@ -943,7 +943,7 @@ TEST_P(ArithVectorZeroedTest, DivisionAllZero) {
 TEST_P(ArithVectorZeroedTest, DivisionOneZero) {
     // But actually, even 1 zero is enough to break sparsity.
     std::vector<double> solo_zero(GetParam() ? nrow : ncol, 1);
-    solo_zero[0] = 1;
+    solo_zero[0] = 0;
     auto copy = simulated;
 
     if (GetParam()) {
