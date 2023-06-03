@@ -76,7 +76,7 @@ public:
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > mat;
     Operation_ operation;
-    static_assert(!Operation_::always_dense && !Operation_::always_sparse);
+    static_assert(!Operation_::always_dense || !Operation_::always_sparse);
 
 public:
     Index_ nrow() const {

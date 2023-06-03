@@ -795,3 +795,9 @@ TEST(ArithVector, ConstOverload) {
     EXPECT_EQ(mat->nrow(), dense->nrow());
     EXPECT_EQ(mat->ncol(), dense->ncol());
 }
+
+/**************************
+ ********* ZEROED *********
+ **************************/
+
+
