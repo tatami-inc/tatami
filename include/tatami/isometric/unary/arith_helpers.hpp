@@ -4,7 +4,7 @@
 /**
  * @file arith_helpers.hpp
  *
- * @brief Helper classes for scalar arithmetic operations.
+ * @brief Helper classes for arithmetic operations.
  * 
  * Classes defined here should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
@@ -24,27 +24,41 @@ enum class DelayedArithOp : char {
 /**
  * @cond
  */
+template<DelayedArithOp op_, bool right_, typename Scalar_, typename Value_>
+void delayed_arith_run(Value_& val, Scalar_ scalar) {
+    if constexpr(op_ == DelayedArithOp::ADD) {
+        val += scalar;
+    } else if constexpr(op_ == DelayedArithOp::MULTIPLY) {
+        val *= scalar;
+    } else if constexpr(op_ == DelayedArithOp::SUBTRACT) {
+        if constexpr(right_) {
+            val -= scalar;
+        } else {
+            val = scalar - val;
+        }
+    } else {
+        // Assume IEEE behavior if divisor is zero.
+        if constexpr(right_) {
+            val /= scalar;
+        } else {
+            val = scalar / val;
+        }
+    }
+}
+
 template<DelayedArithOp op_, bool right_, typename Scalar_, typename Value_, typename Index_>
 void delayed_arith_run_simple(Scalar_ scalar, Index_ length, Value_* buffer) {
     for (Index_ i = 0; i < length; ++i) {
-        if constexpr(op_ == DelayedArithOp::ADD) {
-            buffer[i] += scalar;
-        } else if constexpr(op_ == DelayedArithOp::MULTIPLY) {
-            buffer[i] *= scalar;
-        } else if constexpr(op_ == DelayedArithOp::SUBTRACT) {
-            if constexpr(right_) {
-                buffer[i] -= scalar;
-            } else {
-                buffer[i] = scalar - buffer[i];
-            }
-        } else {
-            // Assume IEEE behavior if divisor is zero.
-            if constexpr(right_) {
-                buffer[i] /= scalar;
-            } else {
-                buffer[i] = scalar / buffer[i];
-            }
-        }
+        delayed_arith_run<op_, right_>(buffer[i], scalar);
+    }
+}
+
+template<DelayedArithOp op_, bool right_, typename Scalar_>
+bool delayed_arith_actual_sparse(Scalar_ scalar) {
+    if constexpr(op_ == DelayedArithOp::ADD || op_ == DelayedArithOp::SUBTRACT) {
+        return scalar == 0;
+    } else { // DIVIDE only, as MULTIPLY is always_sparse.
+        return scalar != 0; 
     }
 }
 /**
@@ -58,7 +72,7 @@ void delayed_arith_run_simple(Scalar_ scalar, Index_ length, Value_* buffer) {
  *
  * @tparam op_ The arithmetic operation.
  * @tparam right_ Whether the scalar should be on the right hand side of the arithmetic operation.
- * Ignored for some `op_`.
+ * Ignored for commutative operations, e.g., `ADD` and `MULTIPLY`.
  * @tparam Scalar_ Type of the scalar value.
  */
 template<DelayedArithOp op_, bool right_, typename Scalar_>
@@ -84,11 +98,7 @@ public:
     static constexpr bool always_sparse = (op_ == DelayedArithOp::MULTIPLY);
 
     bool actual_sparse() const {
-        if constexpr(op_ == DelayedArithOp::ADD || op_ == DelayedArithOp::SUBTRACT) {
-            return scalar == 0;
-        } else { // DIVIDE only, as MULTIPLY is always_sparse.
-            return scalar != 0; 
-        }
+        return delayed_arith_actual_sparse<op_, right_>(scalar);
     }
     /**
      * @endcond
@@ -137,22 +147,10 @@ struct DelayedArithVectorHelper {
      * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number of columns.
      */
     DelayedArithVectorHelper(Vector_ v) : vec(std::move(v)) {
-        if constexpr(op_ == DelayedArithOp::ADD || op_ == DelayedArithOp::SUBTRACT) {
-            for (auto x : vec) {
-                if (x != 0) {
-                    still_sparse = false;
-                    break;
-                }
-            }
-        } else if constexpr(op_ == DelayedArithOp::DIVIDE) {
-            if constexpr(right_) {
-                // Division by any zero value renders it non-sparse in my eyes.
-                for (auto x : vec) {
-                    if (x == 0) {
-                        still_sparse = false;
-                        break;
-                    }
-                }
+        for (auto x : vec) {
+            if (!delayed_arith_actual_sparse<op_, right_>(x)) {
+                still_sparse = false;
+                break;
             }
         }
     }
@@ -191,47 +189,12 @@ public:
 
         } else if constexpr(std::is_same<ExtractType_, Index_>::value) {
             for (Index_ i = 0; i < length; ++i) {
-                if constexpr(op_ == DelayedArithOp::ADD) {
-                    buffer[i] += vec[i + start];
-                } else if constexpr(op_ == DelayedArithOp::MULTIPLY) {
-                    buffer[i] *= vec[i + start];
-                } else if constexpr(op_ == DelayedArithOp::SUBTRACT) {
-                    if constexpr(right_) {
-                        buffer[i] -= vec[i + start];
-                    } else {
-                        buffer[i] = vec[i + start] - buffer[i];
-                    }
-                } else {
-                    // Assume IEEE behavior if divisor is zero.
-                    if constexpr(right_) {
-                        buffer[i] /= vec[i + start];
-                    } else {
-                        buffer[i] = vec[i + start] / buffer[i];
-                    }
-                }
+                delayed_arith_run<op_, right_>(buffer[i], vec[i + start]);
             }
 
         } else {
             for (Index_ i = 0; i < length; ++i) {
-                auto scalar = vec[start[i]];
-                if constexpr(op_ == DelayedArithOp::ADD) {
-                    buffer[i] += scalar;
-                } else if constexpr(op_ == DelayedArithOp::MULTIPLY) {
-                    buffer[i] *= scalar;
-                } else if constexpr(op_ == DelayedArithOp::SUBTRACT) {
-                    if constexpr(right_) {
-                        buffer[i] -= scalar;
-                    } else {
-                        buffer[i] = scalar - buffer[i];
-                    }
-                } else {
-                    // Assume IEEE behavior if divisor is zero.
-                    if constexpr(right_) {
-                        buffer[i] /= scalar;
-                    } else {
-                        buffer[i] = scalar / buffer[i];
-                    }
-                }
+                delayed_arith_run<op_, right_>(buffer[i], vec[start[i]]);
             }
         }
     }
@@ -243,24 +206,7 @@ public:
 
         } else {
             for (Index_ i = 0; i < number; ++i) {
-                if constexpr(op_ == DelayedArithOp::ADD) {
-                    buffer[i] += vec[indices[i]];
-                } else if constexpr(op_ == DelayedArithOp::MULTIPLY) {
-                    buffer[i] *= vec[indices[i]];
-                } else if constexpr(op_ == DelayedArithOp::SUBTRACT) {
-                    if constexpr(right_) {
-                        buffer[i] -= vec[indices[i]];
-                    } else {
-                        buffer[i] = vec[indices[i]] - buffer[i];
-                    }
-                } else {
-                    // Assume IEEE behavior if divisor is zero.
-                    if constexpr(right_) {
-                        buffer[i] /= vec[indices[i]];
-                    } else {
-                        buffer[i] = vec[indices[i]] / buffer[i];
-                    }
-                }
+                delayed_arith_run<op_, right_>(buffer[i], vec[indices[i]]);
             }
         }
     }
