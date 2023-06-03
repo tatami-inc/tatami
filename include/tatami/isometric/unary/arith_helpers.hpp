@@ -165,9 +165,9 @@ public:
     /**
      * @cond
      */
-    static constexpr bool needs_row = false;
+    static constexpr bool needs_row = (margin_ == 0);
 
-    static constexpr bool needs_column = false;
+    static constexpr bool needs_column = (margin_ == 1);
 
     static constexpr bool always_dense = (op_ == DelayedArithOp::DIVIDE && !right_);
 
