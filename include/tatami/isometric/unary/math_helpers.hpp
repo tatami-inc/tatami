@@ -92,13 +92,7 @@ private:
     template<typename Value_, typename Index_>
     void core (Index_ length, Value_* buffer) const {
         for (Index_ i = 0; i < length; ++i) {
-            if (buffer[i] > 0) {
-                buffer[i] = std::log(buffer[i]) / log_base;
-            } else if (buffer[i] == 0) {
-                buffer[i] = -std::numeric_limits<double>::infinity();
-            } else {
-                buffer[i] = std::numeric_limits<double>::quiet_NaN();
-            }
+            buffer[i] = std::log(buffer[i]) / log_base;
         }
     }
 
@@ -202,13 +196,7 @@ private:
     template<typename Value_, typename Index_>
     void core (Index_ length, Value_* buffer) const {
         for (Index_ i = 0; i < length; ++i) {
-            if (buffer[i] > -1) {
-                buffer[i] = std::log1p(buffer[i]) / log_base;
-            } else if (buffer[i] == -1) {
-                buffer[i] = -std::numeric_limits<double>::infinity();
-            } else {
-                buffer[i] = std::numeric_limits<double>::quiet_NaN();
-            }
+            buffer[i] = std::log1p(buffer[i]) / log_base;
         }
     }
 
