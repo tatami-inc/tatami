@@ -476,4 +476,6 @@ using DelayedIsometricOp = DelayedUnaryIsometricOp<Value_, Index_, Operation_>;
 
 #include "math_helpers.hpp"
 
+#include "compare_helpers.hpp"
+
 #endif
