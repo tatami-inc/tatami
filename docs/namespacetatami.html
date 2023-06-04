@@ -119,6 +119,12 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedCast.html">DelayedCast</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Recast a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> to a different interface type.  <a href="classtatami_1_1DelayedCast.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed scalar comparison.  <a href="structtatami_1_1DelayedCompareScalarHelper.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed vector comparisons.  <a href="structtatami_1_1DelayedCompareVectorHelper.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedExpHelper.html">DelayedExpHelper</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Use a matrix entry as an exponent.  <a href="structtatami_1_1DelayedExpHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -277,6 +283,17 @@ Enumerations</h2></td></tr>
 , <b>DIVIDE</b>
  }</td></tr>
 <tr class="separator:aab44a37b3762de0c5b1ffbfceb25fa0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4fc175a57ace709941b5ca7ddb19708"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac4fc175a57ace709941b5ca7ddb19708">DelayedCompareOp</a> : char { <br />
+&#160;&#160;<b>EQUAL</b>
+, <b>GREATER_THAN</b>
+, <b>LESS_THAN</b>
+, <b>GREATER_THAN_OR_EQUAL</b>
+, <br />
+&#160;&#160;<b>LESS_THAN_OR_EQUAL</b>
+, <b>NOT_EQUAL</b>
+<br />
+ }</td></tr>
+<tr class="separator:ac4fc175a57ace709941b5ca7ddb19708"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
@@ -325,6 +342,42 @@ Functions</h2></td></tr>
 <tr class="memitem:a214dedde7eb472684ce66ec4ba26e77c"><td class="memTemplParams" colspan="2">template&lt;bool right_, int margin_, typename Vector_ &gt; </td></tr>
 <tr class="memitem:a214dedde7eb472684ce66ec4ba26e77c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a>&lt; DelayedArithOp::DIVIDE, right_, margin_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a214dedde7eb472684ce66ec4ba26e77c">make_DelayedDivideVectorHelper</a> (Vector_ v)</td></tr>
 <tr class="separator:a214dedde7eb472684ce66ec4ba26e77c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac33adddd59d925a091b66c75b22b8eca"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_ &gt; </td></tr>
+<tr class="memitem:ac33adddd59d925a091b66c75b22b8eca"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::EQUAL, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac33adddd59d925a091b66c75b22b8eca">make_DelayedEqualScalarHelper</a> (Scalar_ s)</td></tr>
+<tr class="separator:ac33adddd59d925a091b66c75b22b8eca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f548d89e93cbeaf155df8307a08fc00"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_ &gt; </td></tr>
+<tr class="memitem:a6f548d89e93cbeaf155df8307a08fc00"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::GREATER_THAN, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a6f548d89e93cbeaf155df8307a08fc00">make_DelayedGreaterThanScalarHelper</a> (Scalar_ s)</td></tr>
+<tr class="separator:a6f548d89e93cbeaf155df8307a08fc00"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16b7349067d32a27deff236ca230be92"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_ &gt; </td></tr>
+<tr class="memitem:a16b7349067d32a27deff236ca230be92"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::LESS_THAN, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a16b7349067d32a27deff236ca230be92">make_DelayedLessThanScalarHelper</a> (Scalar_ s)</td></tr>
+<tr class="separator:a16b7349067d32a27deff236ca230be92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a83dd57b5347e89cf434582059254e09e"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_ &gt; </td></tr>
+<tr class="memitem:a83dd57b5347e89cf434582059254e09e"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a83dd57b5347e89cf434582059254e09e">make_DelayedGreaterThanOrEqualScalarHelper</a> (Scalar_ s)</td></tr>
+<tr class="separator:a83dd57b5347e89cf434582059254e09e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92d6a0a320c318c4c3cf4874965562ce"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_ &gt; </td></tr>
+<tr class="memitem:a92d6a0a320c318c4c3cf4874965562ce"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a92d6a0a320c318c4c3cf4874965562ce">make_DelayedLessThanOrEqualScalarHelper</a> (Scalar_ s)</td></tr>
+<tr class="separator:a92d6a0a320c318c4c3cf4874965562ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27b9934b71e5f6d28b8c7f87a8216972"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_ &gt; </td></tr>
+<tr class="memitem:a27b9934b71e5f6d28b8c7f87a8216972"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::NOT_EQUAL, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a27b9934b71e5f6d28b8c7f87a8216972">make_DelayedNotEqualScalarHelper</a> (Scalar_ s)</td></tr>
+<tr class="separator:a27b9934b71e5f6d28b8c7f87a8216972"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a258d8a40e2107e890ed9729d8134702a"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Vector_ &gt; </td></tr>
+<tr class="memitem:a258d8a40e2107e890ed9729d8134702a"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::EQUAL, margin_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a258d8a40e2107e890ed9729d8134702a">make_DelayedEqualVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:a258d8a40e2107e890ed9729d8134702a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8830d636d91bd512aca9c5afb8a10226"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Vector_ &gt; </td></tr>
+<tr class="memitem:a8830d636d91bd512aca9c5afb8a10226"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::GREATER_THAN, margin_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8830d636d91bd512aca9c5afb8a10226">make_DelayedGreaterThanVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:a8830d636d91bd512aca9c5afb8a10226"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e0dac7e0b22aa6d2d5cf1291d57ca5c"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Vector_ &gt; </td></tr>
+<tr class="memitem:a0e0dac7e0b22aa6d2d5cf1291d57ca5c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::LESS_THAN, margin_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a0e0dac7e0b22aa6d2d5cf1291d57ca5c">make_DelayedLessThanVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:a0e0dac7e0b22aa6d2d5cf1291d57ca5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4342079e4437b82cfdb80e9ad6aba34e"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Vector_ &gt; </td></tr>
+<tr class="memitem:a4342079e4437b82cfdb80e9ad6aba34e"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a4342079e4437b82cfdb80e9ad6aba34e">make_DelayedGreaterThanOrEqualVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:a4342079e4437b82cfdb80e9ad6aba34e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a3e3ef7cd498ae62b383f8c34b0b43b"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Vector_ &gt; </td></tr>
+<tr class="memitem:a8a3e3ef7cd498ae62b383f8c34b0b43b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8a3e3ef7cd498ae62b383f8c34b0b43b">make_DelayedLessThanOrEqualVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:a8a3e3ef7cd498ae62b383f8c34b0b43b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6cdc6ca323706821899c20f00e42c52"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Vector_ &gt; </td></tr>
+<tr class="memitem:ab6cdc6ca323706821899c20f00e42c52"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::NOT_EQUAL, margin_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ab6cdc6ca323706821899c20f00e42c52">make_DelayedNotEqualVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:ab6cdc6ca323706821899c20f00e42c52"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07b072944c766d85dc4ce4dc734e0b75"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class Operation_ &gt; </td></tr>
 <tr class="memitem:a07b072944c766d85dc4ce4dc734e0b75"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a07b072944c766d85dc4ce4dc734e0b75">make_DelayedUnaryIsometricOp</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</td></tr>
 <tr class="separator:a07b072944c766d85dc4ce4dc734e0b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -719,6 +772,29 @@ template&lt;typename Value_ , typename Index_ , class IndexStorage_  = std::vect
 </table>
 </div><div class="memdoc">
 <p>Type of the delayed arithmetic operation. </p>
+
+</div>
+</div>
+<a id="ac4fc175a57ace709941b5ca7ddb19708" name="ac4fc175a57ace709941b5ca7ddb19708"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4fc175a57ace709941b5ca7ddb19708">&#9670;&#160;</a></span>DelayedCompareOp</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum class <a class="el" href="namespacetatami.html#ac4fc175a57ace709941b5ca7ddb19708">tatami::DelayedCompareOp</a> : char</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">strong</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Type of the delayed comparison operation. </p>
 
 </div>
 </div>
@@ -1300,6 +1376,408 @@ template&lt;bool right_, int margin_, typename Vector_ &gt; </div>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A helper class for delayed vector division. </dd></dl>
+
+</div>
+</div>
+<a id="ac33adddd59d925a091b66c75b22b8eca" name="ac33adddd59d925a091b66c75b22b8eca"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac33adddd59d925a091b66c75b22b8eca">&#9670;&#160;</a></span>make_DelayedEqualScalarHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::EQUAL, Scalar_ &gt; tatami::make_DelayedEqualScalarHelper </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>Type of the scalar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Scalar value to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed equality comparison to a scalar. </dd></dl>
+
+</div>
+</div>
+<a id="a6f548d89e93cbeaf155df8307a08fc00" name="a6f548d89e93cbeaf155df8307a08fc00"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f548d89e93cbeaf155df8307a08fc00">&#9670;&#160;</a></span>make_DelayedGreaterThanScalarHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::GREATER_THAN, Scalar_ &gt; tatami::make_DelayedGreaterThanScalarHelper </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>Type of the scalar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Scalar value to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed greater-than comparison to a scalar. </dd></dl>
+
+</div>
+</div>
+<a id="a16b7349067d32a27deff236ca230be92" name="a16b7349067d32a27deff236ca230be92"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a16b7349067d32a27deff236ca230be92">&#9670;&#160;</a></span>make_DelayedLessThanScalarHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::LESS_THAN, Scalar_ &gt; tatami::make_DelayedLessThanScalarHelper </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>Type of the scalar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Scalar value to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed less-than comparison to a scalar. </dd></dl>
+
+</div>
+</div>
+<a id="a83dd57b5347e89cf434582059254e09e" name="a83dd57b5347e89cf434582059254e09e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a83dd57b5347e89cf434582059254e09e">&#9670;&#160;</a></span>make_DelayedGreaterThanOrEqualScalarHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, Scalar_ &gt; tatami::make_DelayedGreaterThanOrEqualScalarHelper </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>Type of the scalar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Scalar value to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed greater-than-or-equal comparison to a scalar. </dd></dl>
+
+</div>
+</div>
+<a id="a92d6a0a320c318c4c3cf4874965562ce" name="a92d6a0a320c318c4c3cf4874965562ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a92d6a0a320c318c4c3cf4874965562ce">&#9670;&#160;</a></span>make_DelayedLessThanOrEqualScalarHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, Scalar_ &gt; tatami::make_DelayedLessThanOrEqualScalarHelper </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>Type of the scalar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Scalar value to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed less-than-or-equal comparison to a scalar. </dd></dl>
+
+</div>
+</div>
+<a id="a27b9934b71e5f6d28b8c7f87a8216972" name="a27b9934b71e5f6d28b8c7f87a8216972"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27b9934b71e5f6d28b8c7f87a8216972">&#9670;&#160;</a></span>make_DelayedNotEqualScalarHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Scalar_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareScalarHelper.html">DelayedCompareScalarHelper</a>&lt; DelayedCompareOp::NOT_EQUAL, Scalar_ &gt; tatami::make_DelayedNotEqualScalarHelper </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar_</td><td>Type of the scalar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Scalar value to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed non-equality comparison to a scalar. </dd></dl>
+
+</div>
+</div>
+<a id="a258d8a40e2107e890ed9729d8134702a" name="a258d8a40e2107e890ed9729d8134702a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a258d8a40e2107e890ed9729d8134702a">&#9670;&#160;</a></span>make_DelayedEqualVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int margin_, typename Vector_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::EQUAL, margin_, Vector_ &gt; tatami::make_DelayedEqualVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Vector_</td><td>Type of the vector. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the comparison is to occur, see <code><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html" title="Delayed vector comparisons.">DelayedCompareVectorHelper</a></code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>Vector of values to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed equality comparison to a vector. </dd></dl>
+
+</div>
+</div>
+<a id="a8830d636d91bd512aca9c5afb8a10226" name="a8830d636d91bd512aca9c5afb8a10226"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8830d636d91bd512aca9c5afb8a10226">&#9670;&#160;</a></span>make_DelayedGreaterThanVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int margin_, typename Vector_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::GREATER_THAN, margin_, Vector_ &gt; tatami::make_DelayedGreaterThanVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Vector_</td><td>Type of the vector. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the comparison is to occur, see <code><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html" title="Delayed vector comparisons.">DelayedCompareVectorHelper</a></code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>Vector of values to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed greater-than comparison to a vector. </dd></dl>
+
+</div>
+</div>
+<a id="a0e0dac7e0b22aa6d2d5cf1291d57ca5c" name="a0e0dac7e0b22aa6d2d5cf1291d57ca5c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e0dac7e0b22aa6d2d5cf1291d57ca5c">&#9670;&#160;</a></span>make_DelayedLessThanVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int margin_, typename Vector_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::LESS_THAN, margin_, Vector_ &gt; tatami::make_DelayedLessThanVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Vector_</td><td>Type of the vector. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the comparison is to occur, see <code><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html" title="Delayed vector comparisons.">DelayedCompareVectorHelper</a></code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>Vector of values to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed less-than comparison to a vector. </dd></dl>
+
+</div>
+</div>
+<a id="a4342079e4437b82cfdb80e9ad6aba34e" name="a4342079e4437b82cfdb80e9ad6aba34e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4342079e4437b82cfdb80e9ad6aba34e">&#9670;&#160;</a></span>make_DelayedGreaterThanOrEqualVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int margin_, typename Vector_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Vector_ &gt; tatami::make_DelayedGreaterThanOrEqualVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Vector_</td><td>Type of the vector. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the comparison is to occur, see <code><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html" title="Delayed vector comparisons.">DelayedCompareVectorHelper</a></code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>Vector of values to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed greater-than-or-equal comparison to a vector. </dd></dl>
+
+</div>
+</div>
+<a id="a8a3e3ef7cd498ae62b383f8c34b0b43b" name="a8a3e3ef7cd498ae62b383f8c34b0b43b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8a3e3ef7cd498ae62b383f8c34b0b43b">&#9670;&#160;</a></span>make_DelayedLessThanOrEqualVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int margin_, typename Vector_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Vector_ &gt; tatami::make_DelayedLessThanOrEqualVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Vector_</td><td>Type of the vector. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the comparison is to occur, see <code><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html" title="Delayed vector comparisons.">DelayedCompareVectorHelper</a></code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>Vector of values to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed less-than-or-equal comparison to a vector. </dd></dl>
+
+</div>
+</div>
+<a id="ab6cdc6ca323706821899c20f00e42c52" name="ab6cdc6ca323706821899c20f00e42c52"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6cdc6ca323706821899c20f00e42c52">&#9670;&#160;</a></span>make_DelayedNotEqualVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int margin_, typename Vector_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html">DelayedCompareVectorHelper</a>&lt; DelayedCompareOp::NOT_EQUAL, margin_, Vector_ &gt; tatami::make_DelayedNotEqualVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Vector_</td><td>Type of the vector. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the comparison is to occur, see <code><a class="el" href="structtatami_1_1DelayedCompareVectorHelper.html" title="Delayed vector comparisons.">DelayedCompareVectorHelper</a></code>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>Vector of values to be compared. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed non-equality comparison to a vector. </dd></dl>
 
 </div>
 </div>
