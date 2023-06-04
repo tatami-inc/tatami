@@ -32,21 +32,17 @@ protected:
     }
 };
 
-template<class PARAM>
-class ArithVectorTest : public ::testing::TestWithParam<PARAM>, public ArithVectorUtils {
-protected:
-    void SetUp() {
-        assemble();
-    }
-};
-
 /****************************
  ********* ADDITION *********
  ****************************/
 
 template<class PARAM>
-class ArithVectorAdditionTest : public ArithVectorTest<PARAM> {
+class ArithVectorAdditionTest : public ::testing::TestWithParam<PARAM>, public ArithVectorUtils {
 protected:
+    void SetUp() {
+        assemble();
+    }
+
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
     std::vector<double> vec;
 
@@ -75,7 +71,7 @@ protected:
 
 using ArithVectorAdditionFullTest = ArithVectorAdditionTest<std::tuple<bool, bool, size_t> >;
 
-TEST_P(ArithVectorAdditionFullTest, Column) {
+TEST_P(ArithVectorAdditionFullTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param));
     bool FORWARD = std::get<1>(param);
@@ -95,13 +91,6 @@ TEST_P(ArithVectorAdditionFullTest, Column) {
 
     tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
-}
-
-TEST_P(ArithVectorAdditionFullTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param));
-    bool FORWARD = std::get<1>(param);
-    int JUMP = std::get<2>(param);
 
     tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
@@ -119,30 +108,25 @@ INSTANTIATE_TEST_CASE_P(
 
 using ArithVectorAdditionBlockTest = ArithVectorAdditionTest<std::tuple<bool, bool, size_t, std::vector<double> > >;
 
-TEST_P(ArithVectorAdditionBlockTest, Column) {
+TEST_P(ArithVectorAdditionBlockTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param));
 
     bool FORWARD = std::get<1>(param);
     size_t JUMP = std::get<2>(param);
     auto interval_info = std::get<3>(param);
-    size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-}
+    {
+        size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
+        tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
 
-TEST_P(ArithVectorAdditionBlockTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param));
-
-    bool FORWARD = std::get<1>(param);
-    size_t JUMP = std::get<2>(param);
-    auto interval_info = std::get<3>(param);
-    size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
-
-    tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    {
+        size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
+        tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -163,30 +147,25 @@ INSTANTIATE_TEST_CASE_P(
 
 using ArithVectorAdditionIndexTest = ArithVectorAdditionTest<std::tuple<bool, bool, size_t, std::vector<double> > >;
 
-TEST_P(ArithVectorAdditionIndexTest, Column) {
+TEST_P(ArithVectorAdditionIndexTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param));
 
     bool FORWARD = std::get<1>(param);
     size_t JUMP = std::get<2>(param);
     auto interval_info = std::get<3>(param);
-    size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-}
+    {
+        size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
+        tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
 
-TEST_P(ArithVectorAdditionIndexTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param));
-
-    bool FORWARD = std::get<1>(param);
-    size_t JUMP = std::get<2>(param);
-    auto interval_info = std::get<3>(param);
-    size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
-
-    tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    {
+        size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
+        tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -209,8 +188,12 @@ INSTANTIATE_TEST_CASE_P(
  *******************************/
 
 template<class PARAM>
-class ArithVectorSubtractionTest : public ArithVectorTest<PARAM> {
+class ArithVectorSubtractionTest : public ::testing::TestWithParam<PARAM>, public ArithVectorUtils {
 protected:
+    void SetUp() {
+        assemble();
+    }
+
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
     std::vector<double> vec;
 
@@ -256,7 +239,7 @@ protected:
 
 using ArithVectorSubtractionFullTest = ArithVectorSubtractionTest<std::tuple<bool, bool, bool, size_t> >;
 
-TEST_P(ArithVectorSubtractionFullTest, Column) {
+TEST_P(ArithVectorSubtractionFullTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param), std::get<1>(param));
     bool FORWARD = std::get<2>(param);
@@ -272,13 +255,6 @@ TEST_P(ArithVectorSubtractionFullTest, Column) {
 
     tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
-}
-
-TEST_P(ArithVectorSubtractionFullTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param), std::get<1>(param));
-    bool FORWARD = std::get<2>(param);
-    int JUMP = std::get<3>(param);
 
     tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
@@ -297,30 +273,25 @@ INSTANTIATE_TEST_CASE_P(
 
 using ArithVectorSubtractionBlockTest = ArithVectorSubtractionTest<std::tuple<bool, bool, bool, size_t, std::vector<double> > >;
 
-TEST_P(ArithVectorSubtractionBlockTest, Column) {
+TEST_P(ArithVectorSubtractionBlockTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param), std::get<1>(param));
 
     bool FORWARD = std::get<2>(param);
     size_t JUMP = std::get<3>(param);
     auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-}
+    {
+        size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
+        tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
 
-TEST_P(ArithVectorSubtractionBlockTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param), std::get<1>(param));
-
-    bool FORWARD = std::get<2>(param);
-    size_t JUMP = std::get<3>(param);
-    auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
-
-    tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    {
+        size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
+        tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -341,30 +312,25 @@ INSTANTIATE_TEST_CASE_P(
 
 using ArithVectorSubtractionIndexTest = ArithVectorSubtractionTest<std::tuple<bool, bool, bool, size_t, std::vector<double> > >;
 
-TEST_P(ArithVectorSubtractionIndexTest, Column) {
+TEST_P(ArithVectorSubtractionIndexTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param), std::get<1>(param));
 
     bool FORWARD = std::get<2>(param);
     size_t JUMP = std::get<3>(param);
     auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-}
+    {
+        size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
+        tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
 
-TEST_P(ArithVectorSubtractionIndexTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param), std::get<1>(param));
-
-    bool FORWARD = std::get<2>(param);
-    size_t JUMP = std::get<3>(param);
-    auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
-
-    tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    {
+        size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
+        tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -388,8 +354,12 @@ INSTANTIATE_TEST_CASE_P(
  **********************************/
 
 template<class PARAM>
-class ArithVectorMultiplicationTest : public ArithVectorTest<PARAM> {
+class ArithVectorMultiplicationTest : public ::testing::TestWithParam<PARAM>, public ArithVectorUtils {
 protected:
+    void SetUp() {
+        assemble();
+    }
+
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
     std::vector<double> vec;
 
@@ -418,7 +388,7 @@ protected:
 
 using ArithVectorMultiplicationFullTest = ArithVectorMultiplicationTest<std::tuple<bool, bool, size_t> >;
 
-TEST_P(ArithVectorMultiplicationFullTest, Column) {
+TEST_P(ArithVectorMultiplicationFullTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param));
     bool FORWARD = std::get<1>(param);
@@ -436,13 +406,6 @@ TEST_P(ArithVectorMultiplicationFullTest, Column) {
 
     tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
-}
-
-TEST_P(ArithVectorMultiplicationFullTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param));
-    bool FORWARD = std::get<1>(param);
-    int JUMP = std::get<2>(param);
 
     tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
@@ -460,30 +423,25 @@ INSTANTIATE_TEST_CASE_P(
 
 using ArithVectorMultiplicationBlockTest = ArithVectorMultiplicationTest<std::tuple<bool, bool, size_t, std::vector<double> > >;
 
-TEST_P(ArithVectorMultiplicationBlockTest, Column) {
+TEST_P(ArithVectorMultiplicationBlockTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param));
 
     bool FORWARD = std::get<1>(param);
     size_t JUMP = std::get<2>(param);
     auto interval_info = std::get<3>(param);
-    size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-}
+    {
+        size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
+        tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
 
-TEST_P(ArithVectorMultiplicationBlockTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param));
-
-    bool FORWARD = std::get<1>(param);
-    size_t JUMP = std::get<2>(param);
-    auto interval_info = std::get<3>(param);
-    size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
-
-    tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    {
+        size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
+        tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -504,30 +462,25 @@ INSTANTIATE_TEST_CASE_P(
 
 using ArithVectorMultiplicationIndexTest = ArithVectorMultiplicationTest<std::tuple<bool, bool, size_t, std::vector<double> > >;
 
-TEST_P(ArithVectorMultiplicationIndexTest, Column) {
+TEST_P(ArithVectorMultiplicationIndexTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param));
 
     bool FORWARD = std::get<1>(param);
     size_t JUMP = std::get<2>(param);
     auto interval_info = std::get<3>(param);
-    size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-}
+    {
+        size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
+        tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
 
-TEST_P(ArithVectorMultiplicationIndexTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param));
-
-    bool FORWARD = std::get<1>(param);
-    size_t JUMP = std::get<2>(param);
-    auto interval_info = std::get<3>(param);
-    size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
-
-    tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    {
+        size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
+        tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -550,8 +503,12 @@ INSTANTIATE_TEST_CASE_P(
  ****************************/
 
 template<class PARAM>
-class ArithVectorDivisionTest : public ArithVectorTest<PARAM> {
+class ArithVectorDivisionTest : public ::testing::TestWithParam<PARAM>, public ArithVectorUtils {
 protected:
+    void SetUp() {
+        assemble();
+    }
+
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
     std::vector<double> vec;
 
@@ -604,7 +561,7 @@ protected:
 
 using ArithVectorDivisionFullTest = ArithVectorDivisionTest<std::tuple<bool, bool, bool, size_t> >;
 
-TEST_P(ArithVectorDivisionFullTest, Column) {
+TEST_P(ArithVectorDivisionFullTest, Basic) {
     auto param = GetParam();
     auto RIGHT = std::get<1>(param);
     extra_assemble(std::get<0>(param), RIGHT);
@@ -625,13 +582,6 @@ TEST_P(ArithVectorDivisionFullTest, Column) {
 
     tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
-}
-
-TEST_P(ArithVectorDivisionFullTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param), std::get<1>(param));
-    bool FORWARD = std::get<2>(param);
-    int JUMP = std::get<3>(param);
 
     tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
@@ -650,30 +600,25 @@ INSTANTIATE_TEST_CASE_P(
 
 using ArithVectorDivisionBlockTest = ArithVectorDivisionTest<std::tuple<bool, bool, bool, size_t, std::vector<double> > >;
 
-TEST_P(ArithVectorDivisionBlockTest, Column) {
+TEST_P(ArithVectorDivisionBlockTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param), std::get<1>(param));
 
     bool FORWARD = std::get<2>(param);
     size_t JUMP = std::get<3>(param);
     auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
 
-    tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-}
+    {
+        size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
+        tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
 
-TEST_P(ArithVectorDivisionBlockTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param), std::get<1>(param));
-
-    bool FORWARD = std::get<2>(param);
-    size_t JUMP = std::get<3>(param);
-    auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
-
-    tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    {
+        size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
+        tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -694,30 +639,25 @@ INSTANTIATE_TEST_CASE_P(
 
 using ArithVectorDivisionIndexTest = ArithVectorDivisionTest<std::tuple<bool, bool, bool, size_t, std::vector<double> > >;
 
-TEST_P(ArithVectorDivisionIndexTest, Column) {
+TEST_P(ArithVectorDivisionIndexTest, Basic) {
     auto param = GetParam();
     extra_assemble(std::get<0>(param), std::get<1>(param));
 
     bool FORWARD = std::get<2>(param);
     size_t JUMP = std::get<3>(param);
     auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
 
-    tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-}
+    {
+        size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
+        tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
 
-TEST_P(ArithVectorDivisionIndexTest, Row) {
-    auto param = GetParam();
-    extra_assemble(std::get<0>(param), std::get<1>(param));
-
-    bool FORWARD = std::get<2>(param);
-    size_t JUMP = std::get<3>(param);
-    auto interval_info = std::get<4>(param);
-    size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
-
-    tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    {
+        size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
+        tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -740,8 +680,12 @@ INSTANTIATE_TEST_CASE_P(
  ********* ORACLE *********
  **************************/
 
-class ArithVectorOracleTest : public ArithVectorTest<std::tuple<bool, bool> > {
+class ArithVectorOracleTest : public ::testing::TestWithParam<std::tuple<bool, bool> >, public ArithVectorUtils {
 protected:
+    void SetUp() {
+        assemble();
+    }
+
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, wrapped_dense_mod, wrapped_sparse_mod;
     std::vector<double> vec;
 
