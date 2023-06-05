@@ -1,5 +1,5 @@
-#ifndef TATAMI_DELAYED_UNARY_ISOMETRIC_OP_H
-#define TATAMI_DELAYED_UNARY_ISOMETRIC_OP_H
+#ifndef TATAMI_DELAYED_BINARY_ISOMETRIC_OP_H
+#define TATAMI_DELAYED_BINARY_ISOMETRIC_OP_H
 
 #include <memory>
 #include "../../base/Matrix.hpp"
@@ -24,7 +24,7 @@ namespace tatami {
  *
  * The `Operation_` class is expected to provide the following static `constexpr` member variables:
  *
- * - `sparse`: whether the operation can be optimized if both input matrices are sparse.
+ * - `always_sparse`: whether the operation can be optimized to return a sparse result if both input matrices are sparse.
  * 
  * The class should implement the following method:
  *
@@ -41,7 +41,7 @@ namespace tatami {
  *   The subset is defined by column indices in the `indices` array of length `length`.
  *   If `row_ = false`, `i` is instead a column and `indices` contains rows.
  * 
- * If `sparse = true`, the class should implement:
+ * If `always_sparse = true`, the class should implement:
  *
  * - `Index_ sparse<row_, needs_value, needs_index>(Index_ i, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const`:
  *   This method should apply the operation to the sparse values in `left` and `right`, 
@@ -81,11 +81,11 @@ private:
 
 public:
     Index_ nrow() const {
-        return mat->nrow();
+        return left->nrow();
     }
 
     Index_ ncol() const {
-        return mat->ncol();
+        return left->ncol();
     }
 
     /**
@@ -142,18 +142,18 @@ private:
             right_internal(std::move(r))
         {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->full_length = internal->full_length;
+                this->full_length = left_internal->full_length;
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->block_start = internal->block_start;
-                this->block_length = internal->block_length;
+                this->block_start = left_internal->block_start;
+                this->block_length = left_internal->block_length;
             } else {
-                this->index_length = internal->index_length;
+                this->index_length = left_internal->index_length;
             }
         }
 
         const Index_* index_start() const {
             if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                return internal->index_start();
+                return left_internal->index_start();
             } else {
                 return NULL;
             }
@@ -221,7 +221,7 @@ private:
             report_value(rv),
             report_index(ri)
         {
-            auto n = extracted_length<selection_, Index_>(*this):
+            auto n = extracted_length<selection_, Index_>(*this);
             left_internal_ibuffer.resize(n);
             right_internal_ibuffer.resize(n);
 
@@ -251,7 +251,7 @@ private:
                 output.number = operation.sparse<accrow_, false, false>(i, left_ranges, right_ranges, NULL, NULL);
             }
 
-            return raw;
+            return output;
         }
 
     protected:
@@ -273,7 +273,7 @@ private:
         DensifiedSparseIsometricExtractor(
             const DelayedBinaryIsometricOp* p, 
             std::unique_ptr<Extractor<selection_, false, Value_, Index_> > l, 
-            std::unique_ptr<Extractor<selection_, false, Value_, Index_> > r 
+            std::unique_ptr<Extractor<selection_, false, Value_, Index_> > r,
             bool rv,
             bool ri
         ) :
@@ -331,12 +331,12 @@ private:
      **********************************************/
 private:
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > propagate(const Options& opt, Args_&& ... args) const {
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > propagate(const Options& opt, Args_ ... args) const {
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(!sparse_) {
-            auto left_inner = new_extractor<accrow_, false>(left.get(), std::forward<Args_>(args)..., opt);
-            auto right_inner = new_extractor<accrow_, false>(right.get(), std::forward<Args_>(args)..., opt);
+            auto left_inner = new_extractor<accrow_, false>(left.get(), args..., opt); // Explicit copy of the variadic args here.
+            auto right_inner = new_extractor<accrow_, false>(right.get(), std::move(args)..., opt); // Do a move once we don't need them anymore.
             output.reset(new DenseIsometricExtractor<accrow_, selection_>(this, std::move(left_inner), std::move(right_inner)));
 
         } else if constexpr(Operation_::sparse) {
@@ -347,15 +347,15 @@ private:
             optcopy.sparse_extract_index = true; // We need the indices to combine things properly.
             optcopy.sparse_ordered_index = true; // Make life easier for operation implementers.
 
-            auto left_inner = new_extractor<accrow_, true>(left.get(), std::forward<Args_>(args)..., optcopy);
-            auto right_inner = new_extractor<accrow_, true>(right.get(), std::forward<Args_>(args)..., optcopy);
+            auto left_inner = new_extractor<accrow_, true>(left.get(), args..., optcopy);
+            auto right_inner = new_extractor<accrow_, true>(right.get(), std::move(args)..., optcopy);
             output.reset(new RegularSparseIsometricExtractor<accrow_, selection_>(this, std::move(left_inner), std::move(right_inner), report_value, report_index));
 
         } else {
             bool report_value = opt.sparse_extract_value;
             bool report_index = opt.sparse_extract_index;
-            auto left_inner = new_extractor<accrow_, false>(left.get(), std::forward<Args_>(args)..., opt);
-            auto right_inner = new_extractor<accrow_, false>(right.get(), std::forward<Args_>(args)..., opt);
+            auto left_inner = new_extractor<accrow_, false>(left.get(), args..., opt);
+            auto right_inner = new_extractor<accrow_, false>(right.get(), std::move(args)..., opt);
             output.reset(new DensifiedSparseIsometricExtractor<accrow_, selection_>(this, std::move(left_inner), std::move(right_inner), report_value, report_index));
         }
 
@@ -440,15 +440,6 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shar
     typedef typename std::remove_reference<Operation_>::type Op_;
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBinaryIsometricOp<Value_, Index_, Op_>(std::move(p), std::move(op)));
 }
-
-// For back-compatibility.
-template<typename ... Args_>
-auto make_DelayedBinaryIsometricOp(Args_&&... args) {
-    return make_DelayedBinaryIsometricOp(std::forward<Args_>(args)...);
-}
-
-template<typename Value_, typename Index_, class Operation_>
-using DelayedIsometricOp = DelayedBinaryIsometricOp<Value_, Index_, Operation_>;
 /**
  * @endcond
  */
