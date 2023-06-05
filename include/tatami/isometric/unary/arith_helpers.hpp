@@ -1,10 +1,12 @@
-#ifndef TATAMI_ARITH_HELPERS_H
-#define TATAMI_ARITH_HELPERS_H
+#ifndef TATAMI_UNARY_ARITH_HELPERS_H
+#define TATAMI_UNARY_ARITH_HELPERS_H
+
+#include "../arith_utils.hpp"
 
 /**
  * @file arith_helpers.hpp
  *
- * @brief Helper classes for arithmetic operations.
+ * @brief Helper classes for delayed unary arithmetic operations.
  * 
  * Classes defined here should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
@@ -12,40 +14,8 @@
 namespace tatami {
 
 /**
- * Type of the delayed arithmetic operation.
- */
-enum class DelayedArithOp : char { 
-    ADD, 
-    SUBTRACT,
-    MULTIPLY,
-    DIVIDE
-};
-
-/**
  * @cond
  */
-template<DelayedArithOp op_, bool right_, typename Scalar_, typename Value_>
-void delayed_arith_run(Value_& val, Scalar_ scalar) {
-    if constexpr(op_ == DelayedArithOp::ADD) {
-        val += scalar;
-    } else if constexpr(op_ == DelayedArithOp::MULTIPLY) {
-        val *= scalar;
-    } else if constexpr(op_ == DelayedArithOp::SUBTRACT) {
-        if constexpr(right_) {
-            val -= scalar;
-        } else {
-            val = scalar - val;
-        }
-    } else {
-        // Assume IEEE behavior if divisor is zero.
-        if constexpr(right_) {
-            val /= scalar;
-        } else {
-            val = scalar / val;
-        }
-    }
-}
-
 template<DelayedArithOp op_, bool right_, typename Scalar_, typename Value_, typename Index_>
 void delayed_arith_run_simple(Scalar_ scalar, Index_ length, Value_* buffer) {
     for (Index_ i = 0; i < length; ++i) {
