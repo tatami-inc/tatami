@@ -361,11 +361,11 @@ private:
 
                 if constexpr(!Operation_::always_sparse) {
                     if constexpr(selection_ == DimensionSelectionType::FULL) {
-                        this->parent->operation.template expanded<accrow_>(i, 0, this->full_length, vbuffer, rptr);
+                        this->parent->operation.template dense<accrow_>(i, 0, this->full_length, vbuffer, rptr);
                     } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                        this->parent->operation.template expanded<accrow_>(i, this->block_start, this->block_length, vbuffer, rptr);
+                        this->parent->operation.template dense<accrow_>(i, this->block_start, this->block_length, vbuffer, rptr);
                     } else {
-                        this->parent->operation.template expanded<accrow_>(i, this->internal->index_start(), this->index_length, vbuffer, rptr);
+                        this->parent->operation.template dense<accrow_>(i, this->left_internal->index_start(), this->index_length, vbuffer, rptr);
                     }
                 }
 
@@ -378,7 +378,7 @@ private:
                 } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                     std::iota(ibuffer, ibuffer + this->block_length, this->block_start);
                 } else {
-                    auto xptr = this->internal->index_start();
+                    auto xptr = this->left_internal->index_start();
                     std::copy(xptr, xptr + this->index_length, ibuffer);
                 }
 
