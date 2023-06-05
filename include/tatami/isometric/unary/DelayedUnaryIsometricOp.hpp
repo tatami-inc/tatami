@@ -57,8 +57,8 @@ namespace tatami {
  *
  * - `void sparse<row_>(Index_ i, Index_ number, Value_* buffer, const Index_* indices) const`:
  *   This method should apply the operation to all values in `buffer`, which contains `number` elements from row `i` (when `row_ = true`).
- *   The column indices of all elements is contained in `indices`.
- *   If `row_ = false`, `i` is instead a column and `indices` contains row indices.
+ *   The column indices of all elements is contained in `indices` - unless `needs_column = false`, in which case `indices` may be `NULL`.
+ *   If `row_ = false`, `i` is instead a column and `indices` contains row indices (or is `NULL`, if `needs_row = false`).
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
@@ -71,7 +71,7 @@ public:
      * @param p Pointer to the underlying matrix.
      * @param op Instance of the functor class.
      */
-    DelayedUnaryIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > p, Operation_ op) : mat(p), operation(std::move(op)) {}
+    DelayedUnaryIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > p, Operation_ op) : mat(std::move(p)), operation(std::move(op)) {}
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > mat;
@@ -163,8 +163,6 @@ private:
         const DelayedUnaryIsometricOp* parent;
 
         std::unique_ptr<Extractor<selection_, inner_sparse_, Value_, Index_> > internal;
-
-        friend class DelayedUnaryIsometricOp;
     };
 
     /**************************************

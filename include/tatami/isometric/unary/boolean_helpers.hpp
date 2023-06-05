@@ -255,39 +255,39 @@ public:
 };
 
 /**
- * @return A helper class for delayed NOT operation.
+ * @return A helper class for a delayed NOT operation.
  */
 inline DelayedBooleanNotHelper make_DelayedBooleanNotHelper() {
     return DelayedBooleanNotHelper();
 }
 
 /**
- * @param s Scalar value to be compared.
- * @return A helper class for delayed AND operation with a scalar.
+ * @param s Scalar value to use in the operation.
+ * @return A helper class for a delayed AND operation with a scalar.
  */
 inline DelayedBooleanScalarHelper<DelayedBooleanOp::AND> make_DelayedBooleanAndScalarHelper(bool s) {
     return DelayedBooleanScalarHelper<DelayedBooleanOp::AND>(s);
 }
 
 /**
- * @param s Scalar value to be compared.
- * @return A helper class for delayed OR operation with a scalar.
+ * @param s Scalar value to use in the operation.
+ * @return A helper class for a delayed OR operation with a scalar.
  */
 inline DelayedBooleanScalarHelper<DelayedBooleanOp::OR> make_DelayedBooleanOrScalarHelper(bool s) {
     return DelayedBooleanScalarHelper<DelayedBooleanOp::OR>(s);
 }
 
 /**
- * @param s Scalar value to be compared.
- * @return A helper class for delayed XOR operation with a scalar.
+ * @param s Scalar value to be used in the operation.
+ * @return A helper class for a delayed XOR operation with a scalar.
  */
 inline DelayedBooleanScalarHelper<DelayedBooleanOp::XOR> make_DelayedBooleanXorScalarHelper(bool s) {
     return DelayedBooleanScalarHelper<DelayedBooleanOp::XOR>(s);
 }
 
 /**
- * @param s Scalar value to be compared.
- * @return A helper class for delayed boolean equality operation with a scalar.
+ * @param s Scalar value to be used in the operation.
+ * @return A helper class for a delayed boolean equality operation with a scalar.
  */
 inline DelayedBooleanScalarHelper<DelayedBooleanOp::EQUAL> make_DelayedBooleanEqualScalarHelper(bool s) {
     return DelayedBooleanScalarHelper<DelayedBooleanOp::EQUAL>(s);
@@ -296,8 +296,8 @@ inline DelayedBooleanScalarHelper<DelayedBooleanOp::EQUAL> make_DelayedBooleanEq
 /**
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedBooleanVectorHelper`.
- * @param v Vector of values to be compared.
- * @return A helper class for delayed AND operation with a vector.
+ * @param v Vector of values to be used in the operation.
+ * @return A helper class for a delayed AND operation with a vector.
  */
 template<int margin_, typename Vector_>
 DelayedBooleanVectorHelper<DelayedBooleanOp::AND, margin_, Vector_> make_DelayedBooleanAndVectorHelper(Vector_ v) {
@@ -307,8 +307,8 @@ DelayedBooleanVectorHelper<DelayedBooleanOp::AND, margin_, Vector_> make_Delayed
 /**
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedBooleanVectorHelper`.
- * @param v Vector of values to be compared.
- * @return A helper class for delayed OR operation with a vector.
+ * @param v Vector of values to be used in the operation.
+ * @return A helper class for a delayed OR operation with a vector.
  */
 template<int margin_, typename Vector_>
 DelayedBooleanVectorHelper<DelayedBooleanOp::OR, margin_, Vector_> make_DelayedBooleanOrVectorHelper(Vector_ v) {
@@ -318,8 +318,8 @@ DelayedBooleanVectorHelper<DelayedBooleanOp::OR, margin_, Vector_> make_DelayedB
 /**
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedBooleanVectorHelper`.
- * @param v Vector of values to be compared.
- * @return A helper class for delayed XOR operation with a vector.
+ * @param v Vector of values to be used in the operation.
+ * @return A helper class for a delayed XOR operation with a vector.
  */
 template<int margin_, typename Vector_>
 DelayedBooleanVectorHelper<DelayedBooleanOp::XOR, margin_, Vector_> make_DelayedBooleanXorVectorHelper(Vector_ v) {
@@ -329,8 +329,8 @@ DelayedBooleanVectorHelper<DelayedBooleanOp::XOR, margin_, Vector_> make_Delayed
 /**
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedBooleanVectorHelper`.
- * @param v Vector of values to be compared.
- * @return A helper class for delayed boolean equality operation with a vector.
+ * @param v Vector of values to be used in the operation.
+ * @return A helper class for a delayed boolean equality operation with a vector.
  */
 template<int margin_, typename Vector_>
 DelayedBooleanVectorHelper<DelayedBooleanOp::EQUAL, margin_, Vector_> make_DelayedBooleanEqualVectorHelper(Vector_ v) {

@@ -224,7 +224,7 @@ public:
 /**
  * @tparam Scalar_ Type of the scalar.
  * @param s Scalar value to be compared.
- * @return A helper class for delayed equality comparison to a scalar.
+ * @return A helper class for a delayed equality comparison to a scalar.
  */
 template<typename Scalar_>
 DelayedCompareScalarHelper<DelayedCompareOp::EQUAL, Scalar_> make_DelayedEqualScalarHelper(Scalar_ s) {
@@ -234,7 +234,7 @@ DelayedCompareScalarHelper<DelayedCompareOp::EQUAL, Scalar_> make_DelayedEqualSc
 /**
  * @tparam Scalar_ Type of the scalar.
  * @param s Scalar value to be compared.
- * @return A helper class for delayed greater-than comparison to a scalar.
+ * @return A helper class for a delayed greater-than comparison to a scalar.
  */
 template<typename Scalar_>
 DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN, Scalar_> make_DelayedGreaterThanScalarHelper(Scalar_ s) {
@@ -244,7 +244,7 @@ DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN, Scalar_> make_Delayed
 /**
  * @tparam Scalar_ Type of the scalar.
  * @param s Scalar value to be compared.
- * @return A helper class for delayed less-than comparison to a scalar.
+ * @return A helper class for a delayed less-than comparison to a scalar.
  */
 template<typename Scalar_>
 DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN, Scalar_> make_DelayedLessThanScalarHelper(Scalar_ s) {
@@ -254,7 +254,7 @@ DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN, Scalar_> make_DelayedLes
 /**
  * @tparam Scalar_ Type of the scalar.
  * @param s Scalar value to be compared.
- * @return A helper class for delayed greater-than-or-equal comparison to a scalar.
+ * @return A helper class for a delayed greater-than-or-equal comparison to a scalar.
  */
 template<typename Scalar_>
 DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, Scalar_> make_DelayedGreaterThanOrEqualScalarHelper(Scalar_ s) {
@@ -264,7 +264,7 @@ DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, Scalar_> mak
 /**
  * @tparam Scalar_ Type of the scalar.
  * @param s Scalar value to be compared.
- * @return A helper class for delayed less-than-or-equal comparison to a scalar.
+ * @return A helper class for a delayed less-than-or-equal comparison to a scalar.
  */
 template<typename Scalar_>
 DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, Scalar_> make_DelayedLessThanOrEqualScalarHelper(Scalar_ s) {
@@ -274,7 +274,7 @@ DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, Scalar_> make_D
 /**
  * @tparam Scalar_ Type of the scalar.
  * @param s Scalar value to be compared.
- * @return A helper class for delayed non-equality comparison to a scalar.
+ * @return A helper class for a delayed non-equality comparison to a scalar.
  */
 template<typename Scalar_>
 DelayedCompareScalarHelper<DelayedCompareOp::NOT_EQUAL, Scalar_> make_DelayedNotEqualScalarHelper(Scalar_ s) {
@@ -285,7 +285,7 @@ DelayedCompareScalarHelper<DelayedCompareOp::NOT_EQUAL, Scalar_> make_DelayedNot
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @param v Vector of values to be compared.
- * @return A helper class for delayed equality comparison to a vector.
+ * @return A helper class for a delayed equality comparison to a vector.
  */
 template<int margin_, typename Vector_>
 DelayedCompareVectorHelper<DelayedCompareOp::EQUAL, margin_, Vector_> make_DelayedEqualVectorHelper(Vector_ v) {
@@ -296,7 +296,7 @@ DelayedCompareVectorHelper<DelayedCompareOp::EQUAL, margin_, Vector_> make_Delay
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @param v Vector of values to be compared.
- * @return A helper class for delayed greater-than comparison to a vector.
+ * @return A helper class for a delayed greater-than comparison to a vector.
  */
 template<int margin_, typename Vector_>
 DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN, margin_, Vector_> make_DelayedGreaterThanVectorHelper(Vector_ v) {
@@ -307,7 +307,7 @@ DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN, margin_, Vector_> mak
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @param v Vector of values to be compared.
- * @return A helper class for delayed less-than comparison to a vector.
+ * @return A helper class for a delayed less-than comparison to a vector.
  */
 template<int margin_, typename Vector_>
 DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN, margin_, Vector_> make_DelayedLessThanVectorHelper(Vector_ v) {
@@ -318,7 +318,7 @@ DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN, margin_, Vector_> make_D
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @param v Vector of values to be compared.
- * @return A helper class for delayed greater-than-or-equal comparison to a vector.
+ * @return A helper class for a delayed greater-than-or-equal comparison to a vector.
  */
 template<int margin_, typename Vector_>
 DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Vector_> make_DelayedGreaterThanOrEqualVectorHelper(Vector_ v) {
@@ -329,7 +329,7 @@ DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Vec
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @param v Vector of values to be compared.
- * @return A helper class for delayed less-than-or-equal comparison to a vector.
+ * @return A helper class for a delayed less-than-or-equal comparison to a vector.
  */
 template<int margin_, typename Vector_>
 DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Vector_> make_DelayedLessThanOrEqualVectorHelper(Vector_ v) {
@@ -340,7 +340,7 @@ DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Vector
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @param v Vector of values to be compared.
- * @return A helper class for delayed non-equality comparison to a vector.
+ * @return A helper class for a delayed non-equality comparison to a vector.
  */
 template<int margin_, typename Vector_>
 DelayedCompareVectorHelper<DelayedCompareOp::NOT_EQUAL, margin_, Vector_> make_DelayedNotEqualVectorHelper(Vector_ v) {
