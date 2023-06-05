@@ -75,11 +75,15 @@ public:
             if (left.index[lcount] < right.index[rcount]) {
                 if constexpr(!must_have_both) {
                     advance_left();
+                } else {
+                    ++lcount;
                 }
 
             } else if (left.index[lcount] > right.index[rcount]) {
                 if constexpr(!must_have_both) {
                     advance_right();
+                } else {
+                    ++rcount;
                 }
 
             } else {
