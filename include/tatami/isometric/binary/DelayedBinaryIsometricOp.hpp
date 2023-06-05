@@ -2,6 +2,7 @@
 #define TATAMI_DELAYED_BINARY_ISOMETRIC_OP_H
 
 #include <memory>
+#include <deque>
 #include "../../base/Matrix.hpp"
 #include "../../base/utils.hpp"
 
@@ -93,14 +94,14 @@ public:
      * Otherwise returns `false`.
      */
     bool sparse() const {
-        if constexpr(Operation_::sparse) {
+        if constexpr(Operation_::always_sparse) {
             return left->sparse() && right->sparse();
         }
         return false;
     }
 
     double sparse_proportion() const {
-        if constexpr(Operation_::sparse) {
+        if constexpr(Operation_::always_sparse) {
             // Well, better than nothing.
             return (left->sparse_proportion() + right->sparse_proportion())/2;
         }
@@ -116,9 +117,7 @@ public:
     }
 
     bool uses_oracle(bool row) const {
-        // TODO: insert oracle.
-        return false;
-        //return left->uses_oracle(row) || right->uses_oracle(row);
+        return left->uses_oracle(row) || right->uses_oracle(row);
     }
 
     using Matrix<Value_, Index_>::dense_row;
@@ -130,7 +129,7 @@ public:
     using Matrix<Value_, Index_>::sparse_column;
 
 private:
-    template<DimensionSelectionType selection_, bool sparse_, bool inner_sparse_ = sparse_>
+    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, bool inner_sparse_ = sparse_>
     struct IsometricExtractorBase : public Extractor<selection_, sparse_, Value_, Index_> {
         IsometricExtractorBase(
             const DelayedBinaryIsometricOp* p, 
@@ -159,14 +158,83 @@ private:
             }
         }
 
-        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            // Need to propagate the oracle!
-        }
-
     protected:
         const DelayedBinaryIsometricOp* parent;
-
         std::unique_ptr<Extractor<selection_, inner_sparse_, Value_, Index_> > left_internal, right_internal;
+
+    private:
+        // Need to basically clone the oracle stream.
+        struct ParentOracle {
+            ParentOracle(std::unique_ptr<Oracle<Index_> > o) : source(std::move(o)) {}
+
+            size_t fill(bool left, Index_* buffer, size_t number) {
+                auto& current = (left ? left_counter : right_counter);
+                size_t end = current + number;
+                size_t available = stream.size();
+
+                if (available >= end) {
+                    std::copy(stream.begin() + current, stream.begin() + end, buffer);
+                    current = end;
+                    return number;
+                }
+
+                size_t handled = 0;
+                if (current < available) {
+                    std::copy(stream.begin() + current, stream.end(), buffer);
+                    handled = available - current;
+                    buffer += handled;
+                    number -= handled;
+                }
+
+                size_t filled = source->predict(buffer, number);
+                current = available + filled;
+
+                // Try to slim down if the accumulated stream has gotten too big.
+                if (stream.size() >= 10000) { 
+                    size_t minimum = std::min(left_counter, right_counter);
+                    if (minimum) {
+                        stream.erase(stream.begin(), stream.begin() + minimum);
+                        left_counter -= minimum;
+                        right_counter -= minimum;
+                    }
+                }
+
+                stream.insert(stream.end(), buffer, buffer + filled);
+                return filled + handled;
+            }
+        private:
+            std::unique_ptr<Oracle<Index_> > source;
+            std::deque<Index_> stream;
+            size_t left_counter = 0, right_counter = 0;
+        };
+
+        struct ChildOracle : public Oracle<Index_> {
+            ChildOracle(ParentOracle* o, bool l) : parent(o), left(l) {}
+            size_t predict(Index_* buffer, size_t number) {
+                return parent->fill(left, buffer, number);
+            }
+        private:
+            ParentOracle* parent;
+            bool left;
+        };
+
+        std::unique_ptr<ParentOracle> parent_oracle;
+
+    public:
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
+            auto left_use = parent->left->uses_oracle(accrow_);
+            auto right_use = parent->right->uses_oracle(accrow_);
+
+            if (left_use && right_use) {
+                parent_oracle.reset(new ParentOracle(std::move(o)));
+                left_internal->set_oracle(std::make_unique<ChildOracle>(parent_oracle.get(), true));
+                right_internal->set_oracle(std::make_unique<ChildOracle>(parent_oracle.get(), false));
+            } else if (left_use) {
+                left_internal->set_oracle(std::move(o));
+            } else if (right_use) {
+                right_internal->set_oracle(std::move(o));
+            }
+        }
     };
 
     /**************************************
@@ -174,15 +242,15 @@ private:
      **************************************/
 private:
     template<bool accrow_, DimensionSelectionType selection_> 
-    struct DenseIsometricExtractor : public IsometricExtractorBase<selection_, false> {
+    struct DenseIsometricExtractor : public IsometricExtractorBase<accrow_, selection_, false> {
         DenseIsometricExtractor(
             const DelayedBinaryIsometricOp* p, 
             std::unique_ptr<Extractor<selection_, false, Value_, Index_> > l, 
             std::unique_ptr<Extractor<selection_, false, Value_, Index_> > r 
         ) : 
-            IsometricExtractorBase<selection_, false, false>(p, std::move(l), std::move(r))
+            IsometricExtractorBase<accrow_, selection_, false, false>(p, std::move(l), std::move(r))
         {
-            holding_buffer.resize(extracted_length<selection_, Index_>(this));
+            holding_buffer.resize(extracted_length<selection_, Index_>(*this));
         }
 
         const Value_* fetch(Index_ i, Value_* buffer) {
@@ -194,7 +262,7 @@ private:
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->parent->operation.template dense<accrow_>(i, this->block_start, this->block_length, buffer, rptr);
             } else {
-                this->parent->operation.template dense<accrow_>(i, this->internal->index_start(), this->index_length, buffer, rptr);
+                this->parent->operation.template dense<accrow_>(i, this->left_internal->index_start(), this->index_length, buffer, rptr);
             }
 
             return buffer;
@@ -209,7 +277,7 @@ private:
      ***************************************/
 private:
     template<bool accrow_, DimensionSelectionType selection_> 
-    struct RegularSparseIsometricExtractor : public IsometricExtractorBase<selection_, true> {
+    struct RegularSparseIsometricExtractor : public IsometricExtractorBase<accrow_, selection_, true> {
         RegularSparseIsometricExtractor(
             const DelayedBinaryIsometricOp* p, 
             std::unique_ptr<Extractor<selection_, true, Value_, Index_> > l, 
@@ -217,7 +285,7 @@ private:
             bool rv,
             bool ri
         ) : 
-            IsometricExtractorBase<selection_, true, true>(p, std::move(l), std::move(r)), 
+            IsometricExtractorBase<accrow_, selection_, true, true>(p, std::move(l), std::move(r)), 
             report_value(rv),
             report_index(ri)
         {
@@ -238,17 +306,17 @@ private:
             SparseRange<Value_, Index_> output(0, NULL, NULL);
 
             if (report_value && report_index) {
-                output.number = operation.sparse<accrow_, true, true>(i, left_ranges, right_ranges, vbuffer, ibuffer);
+                output.number = this->parent->operation.template sparse<accrow_, true, true, Value_, Index_>(i, left_ranges, right_ranges, vbuffer, ibuffer);
                 output.value = vbuffer;
                 output.index = ibuffer;
             } else if (report_value) {
-                output.number = operation.sparse<accrow_, true, false>(i, left_ranges, right_ranges, vbuffer, NULL);
+                output.number = this->parent->operation.template sparse<accrow_, true, false, Value_, Index_>(i, left_ranges, right_ranges, vbuffer, NULL);
                 output.value = vbuffer;
             } else if (report_index) {
-                output.number = operation.sparse<accrow_, false, true>(i, left_ranges, right_ranges, NULL, ibuffer);
+                output.number = this->parent->operation.template sparse<accrow_, false, true, Value_, Index_>(i, left_ranges, right_ranges, NULL, ibuffer);
                 output.index = ibuffer;
             } else {
-                output.number = operation.sparse<accrow_, false, false>(i, left_ranges, right_ranges, NULL, NULL);
+                output.number = this->parent->operation.template sparse<accrow_, false, false, Value_, Index_>(i, left_ranges, right_ranges, NULL, NULL);
             }
 
             return output;
@@ -269,7 +337,7 @@ private:
     // we don't want the values, but that's a pretty niche optimization,
     // so we won't bother doing that.
     template<bool accrow_, DimensionSelectionType selection_>
-    struct DensifiedSparseIsometricExtractor : public IsometricExtractorBase<selection_, true, false> {
+    struct DensifiedSparseIsometricExtractor : public IsometricExtractorBase<accrow_, selection_, true, false> {
         DensifiedSparseIsometricExtractor(
             const DelayedBinaryIsometricOp* p, 
             std::unique_ptr<Extractor<selection_, false, Value_, Index_> > l, 
@@ -277,11 +345,11 @@ private:
             bool rv,
             bool ri
         ) :
-            IsometricExtractorBase<selection_, true, false>(p, std::move(l), std::move(r)), 
+            IsometricExtractorBase<accrow_, selection_, true, false>(p, std::move(l), std::move(r)), 
             report_value(rv),
             report_index(ri) 
         {
-            holding_buffer.resize(extracted_length<selection_, Index_>(this));
+            holding_buffer.resize(extracted_length<selection_, Index_>(*this));
         }
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
@@ -339,7 +407,7 @@ private:
             auto right_inner = new_extractor<accrow_, false>(right.get(), std::move(args)..., opt); // Do a move once we don't need them anymore.
             output.reset(new DenseIsometricExtractor<accrow_, selection_>(this, std::move(left_inner), std::move(right_inner)));
 
-        } else if constexpr(Operation_::sparse) {
+        } else if constexpr(Operation_::always_sparse) {
             bool report_value = opt.sparse_extract_value;
             bool report_index = opt.sparse_extract_index;
 
@@ -420,15 +488,16 @@ public:
  * @tparam Index_ Type of index value.
  * @tparam Operation_ Helper class defining the operation.
  *
- * @param p Pointer to a (possibly `const`) `Matrix`.
+ * @param left Pointer to a (possibly `const`) `Matrix`.
+ * @param right Pointer to a (possibly `const`) `Matrix`.
  * @param op Instance of the operation helper class.
  *
  * @return Instance of a `DelayedBinaryIsometricOp` clas.
  */
 template<typename Value_, typename Index_, class Operation_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > p, Operation_ op) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > left, std::shared_ptr<const Matrix<Value_, Index_> > right, Operation_ op) {
     typedef typename std::remove_reference<Operation_>::type Op_;
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBinaryIsometricOp<Value_, Index_, Op_>(std::move(p), std::move(op)));
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBinaryIsometricOp<Value_, Index_, Op_>(std::move(left), std::move(right), std::move(op)));
 }
 
 /**
@@ -436,9 +505,9 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shar
  */
 // For automatic template deduction with non-const pointers.
 template<typename Value_, typename Index_, class Operation_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shared_ptr<Matrix<Value_, Index_> > p, Operation_ op) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shared_ptr<Matrix<Value_, Index_> > left, std::shared_ptr<Matrix<Value_, Index_> > right, Operation_ op) {
     typedef typename std::remove_reference<Operation_>::type Op_;
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBinaryIsometricOp<Value_, Index_, Op_>(std::move(p), std::move(op)));
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBinaryIsometricOp<Value_, Index_, Op_>(std::move(left), std::move(right), std::move(op)));
 }
 /**
  * @endcond

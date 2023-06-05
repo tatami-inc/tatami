@@ -1,6 +1,8 @@
 #ifndef TATAMI_BINARY_ARITH_HELPERS_H
 #define TATAMI_BINARY_ARITH_HELPERS_H
 
+#include "../arith_utils.hpp"
+
 /**
  * @file arith_helpers.hpp
  *

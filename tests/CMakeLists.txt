@@ -30,6 +30,7 @@ add_executable(
     src/isometric/unary/compare_vector_helpers.cpp
     src/isometric/unary/boolean_scalar_helpers.cpp
     src/isometric/unary/boolean_vector_helpers.cpp
+    src/isometric/binary/arith_helpers.cpp
 
     src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
 
