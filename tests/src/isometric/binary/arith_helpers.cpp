@@ -8,6 +8,7 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
+#include "../unary/utils.h" // TODO: fix this.
 
 class BinaryArithUtils {
 protected:
@@ -20,7 +21,7 @@ protected:
         dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_left));
         sparse_left = tatami::convert_to_sparse<false>(dense_left.get()); // column major.
 
-        simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -5, /* upper = */ 5, /* seed */ 67890);
+        simulated_right = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -5, /* upper = */ 5, /* seed */ 67890);
         dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_right));
         sparse_right = tatami::convert_to_sparse<false>(dense_right.get()); // column major.
         return;
@@ -443,7 +444,7 @@ protected:
 
         auto refvec = this->simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
-            refvec[i] /= this->simulated_right[i];
+            refvec[i] = careful_division(refvec[i], this->simulated_right[i]);
         }
         ref.reset(new tatami::DenseRowMatrix<double>(this->nrow, this->ncol, std::move(refvec)));
     }
