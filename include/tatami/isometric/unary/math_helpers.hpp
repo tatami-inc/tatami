@@ -60,8 +60,10 @@ public:
 
 /**
  * @brief Take the logarithm of a matrix entry.
+ * 
+ * @tparam Base_ Numeric type for the log base.
  */
-template<typename T = double>
+template<typename Base_ = double>
 struct DelayedLogHelper {
     /**
      * Defaults to the natural log.
@@ -71,7 +73,7 @@ struct DelayedLogHelper {
     /**
      * @param base Base of the logarithm.
      */
-    DelayedLogHelper(double base) : log_base(std::log(base)) {}
+    DelayedLogHelper(Base_ base) : log_base(std::log(base)) {}
 
 public:
     /**
@@ -96,7 +98,7 @@ private:
         }
     }
 
-    const double log_base;
+    const Base_ log_base;
 
 public:
     /**
@@ -119,7 +121,6 @@ public:
 /**
  * @brief Take the square root of a matrix entry.
  */
-template<typename T = double>
 struct DelayedSqrtHelper {
 public:
     /**
@@ -164,8 +165,10 @@ public:
 
 /**
  * @brief Take the logarithm of a matrix entry plus 1.
+ *
+ * @tparam Base_ Numeric type for the log base.
  */
-template<typename T = double>
+template<typename Base_ = double>
 struct DelayedLog1pHelper {
     /**
      * Defaults to the natural log.
@@ -175,7 +178,7 @@ struct DelayedLog1pHelper {
     /**
      * @param base Base of the logarithm.
      */
-    DelayedLog1pHelper(double base) : log_base(std::log(base)) {}
+    DelayedLog1pHelper(Base_ base) : log_base(std::log(base)) {}
 
 public:
     /**
@@ -200,7 +203,7 @@ private:
         }
     }
 
-    const double log_base;
+    const Base_ log_base;
 
 public:
     /**
@@ -223,7 +226,6 @@ public:
 /**
  * @brief Round a matrix entry to the nearest integer.
  */
-template<typename T = double>
 struct DelayedRoundHelper {
 public:
     /**
@@ -269,7 +271,6 @@ public:
 /**
  * @brief Use a matrix entry as an exponent.
  */
-template<typename T = double>
 struct DelayedExpHelper {
 public:
     /**

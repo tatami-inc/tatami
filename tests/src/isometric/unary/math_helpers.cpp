@@ -123,7 +123,7 @@ TEST_F(MathTest, LogByColumn) {
 
     // Trying with another base.
     {
-        tatami::DelayedLogHelper op(2);
+        tatami::DelayedLogHelper op(2.0);
         auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_mod1, op);
         auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_mod1, op);
 
@@ -185,7 +185,7 @@ TEST_F(MathTest, Log1pByColumn) {
 
     // Trying with another base.
     {
-        tatami::DelayedLog1pHelper op(2);
+        tatami::DelayedLog1pHelper op(2.0);
         auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_mod0, op);
         auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_mod0, op);
 
