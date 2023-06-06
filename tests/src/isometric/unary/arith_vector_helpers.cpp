@@ -878,10 +878,14 @@ TEST_P(ArithVectorZeroedTest, DivisionAllZero) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
 
     EXPECT_FALSE(dense_mod->sparse());
-    test_nan_access(&ref, dense_mod.get());
-
     EXPECT_FALSE(sparse_mod->sparse());
-    test_nan_access(&ref, sparse_mod.get());
+
+    // Turning on NaN protection.
+    tatami_test::test_simple_column_access<true>(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_column_access<true>(sparse_mod.get(), &ref, true, 1); 
+
+    tatami_test::test_simple_row_access<true>(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_row_access<true>(sparse_mod.get(), &ref, true, 1);
 }
 
 TEST_P(ArithVectorZeroedTest, DivisionOneZero) {
@@ -911,10 +915,14 @@ TEST_P(ArithVectorZeroedTest, DivisionOneZero) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
 
     EXPECT_FALSE(dense_mod->sparse());
-    test_nan_access(&ref, dense_mod.get());
-
     EXPECT_FALSE(sparse_mod->sparse());
-    test_nan_access(&ref, sparse_mod.get());
+
+    // Turning on NaN protection.
+    tatami_test::test_simple_column_access<true>(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_column_access<true>(sparse_mod.get(), &ref, true, 1); 
+
+    tatami_test::test_simple_row_access<true>(dense_mod.get(), &ref, true, 1);
+    tatami_test::test_simple_row_access<true>(sparse_mod.get(), &ref, true, 1);
 }
 
 INSTANTIATE_TEST_CASE_P(
