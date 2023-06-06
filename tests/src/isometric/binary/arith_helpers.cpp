@@ -16,11 +16,11 @@ protected:
     std::vector<double> simulated_left, simulated_right;
 protected:
     void assemble() {
-        simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
+        simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -5, /* upper = */ 5, /* seed */ 12345);
         dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_left));
         sparse_left = tatami::convert_to_sparse<false>(dense_left.get()); // column major.
 
-        simulated_right = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
+        simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -5, /* upper = */ 5, /* seed */ 67890);
         dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_right));
         sparse_right = tatami::convert_to_sparse<false>(dense_right.get()); // column major.
         return;
