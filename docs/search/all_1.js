@@ -9,5 +9,6 @@ var searchData=
   ['blockdenseextractor_6',['BlockDenseExtractor',['../namespacetatami.html#ae75de1fc78b7d361ea8b59a5379ea4da',1,'tatami']]],
   ['blockextractor_7',['BlockExtractor',['../structtatami_1_1BlockExtractor.html',1,'tatami']]],
   ['blocksparseextractor_8',['BlockSparseExtractor',['../namespacetatami.html#ac8d0024399a66ce61f6315f5f46ebb63',1,'tatami']]],
-  ['boolean_5fhelpers_2ehpp_9',['boolean_helpers.hpp',['../boolean__helpers_8hpp.html',1,'']]]
+  ['boolean_5fhelpers_2ehpp_9',['boolean_helpers.hpp',['../binary_2boolean__helpers_8hpp.html',1,'(Global Namespace)'],['../unary_2boolean__helpers_8hpp.html',1,'(Global Namespace)']]],
+  ['boolean_5futils_2ehpp_10',['boolean_utils.hpp',['../boolean__utils_8hpp.html',1,'']]]
 ];

@@ -113,6 +113,18 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed vector arithmetic.  <a href="structtatami_1_1DelayedArithVectorHelper.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed binary arithmetic.  <a href="structtatami_1_1DelayedBinaryArithHelper.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed binary boolean operations.  <a href="structtatami_1_1DelayedBinaryBooleanHelper.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed binary comparison.  <a href="structtatami_1_1DelayedBinaryCompareHelper.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html">DelayedBinaryIsometricOp</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed isometric operations on two matrices.  <a href="classtatami_1_1DelayedBinaryIsometricOp.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedBind.html">DelayedBind</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delayed combining of a matrix.  <a href="classtatami_1_1DelayedBind.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -333,6 +345,37 @@ Functions</h2></td></tr>
 <tr class="memitem:a95b6638dceda82d82a7579dc88a45709"><td class="memTemplParams" colspan="2">template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
 <tr class="memitem:a95b6638dceda82d82a7579dc88a45709"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a95b6638dceda82d82a7579dc88a45709">new_extractor</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *ptr, Args_ &amp;&amp;... args)</td></tr>
 <tr class="separator:a95b6638dceda82d82a7579dc88a45709"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d138b1e7f6a26f814c025363cc3db80"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::ADD &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a1d138b1e7f6a26f814c025363cc3db80">make_DelayedBinaryAddHelper</a> ()</td></tr>
+<tr class="separator:a1d138b1e7f6a26f814c025363cc3db80"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4c951d489cb0f2bb0e90f2cf4a25862"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::SUBTRACT &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac4c951d489cb0f2bb0e90f2cf4a25862">make_DelayedBinarySubtractHelper</a> ()</td></tr>
+<tr class="separator:ac4c951d489cb0f2bb0e90f2cf4a25862"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2569c540083a24f92af8140358e1e9c4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::MULTIPLY &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a2569c540083a24f92af8140358e1e9c4">make_DelayedBinaryMultiplyHelper</a> ()</td></tr>
+<tr class="separator:a2569c540083a24f92af8140358e1e9c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb4cf766f850766b966f7121728a6af8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::DIVIDE &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aeb4cf766f850766b966f7121728a6af8">make_DelayedBinaryDivideHelper</a> ()</td></tr>
+<tr class="separator:aeb4cf766f850766b966f7121728a6af8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1063aea86897ef76e17b1772320b8f7d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a1063aea86897ef76e17b1772320b8f7d">make_DelayedBinaryBooleanEqualHelper</a> ()</td></tr>
+<tr class="separator:a1063aea86897ef76e17b1772320b8f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a31625dbb50d420fe1b0da406f19ef33d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::AND &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a31625dbb50d420fe1b0da406f19ef33d">make_DelayedBinaryBooleanAndHelper</a> ()</td></tr>
+<tr class="separator:a31625dbb50d420fe1b0da406f19ef33d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65bad100b39d9372fbeb23d16dae6588"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::OR &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a65bad100b39d9372fbeb23d16dae6588">make_DelayedBinaryBooleanOrHelper</a> ()</td></tr>
+<tr class="separator:a65bad100b39d9372fbeb23d16dae6588"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb091953ab0f55406935a52b7ecb7350"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::XOR &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aeb091953ab0f55406935a52b7ecb7350">make_DelayedBinaryBooleanXorHelper</a> ()</td></tr>
+<tr class="separator:aeb091953ab0f55406935a52b7ecb7350"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac3599db8f6d19fc9172da45a3b6244fc"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac3599db8f6d19fc9172da45a3b6244fc">make_DelayedBinaryEqualHelper</a> ()</td></tr>
+<tr class="separator:ac3599db8f6d19fc9172da45a3b6244fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abe4fb79c5a2cddab2f5c9cf0bd9fe3d0"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::GREATER_THAN &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#abe4fb79c5a2cddab2f5c9cf0bd9fe3d0">make_DelayedBinaryGreaterThanHelper</a> ()</td></tr>
+<tr class="separator:abe4fb79c5a2cddab2f5c9cf0bd9fe3d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae6a24f5bf2c2c61382aef43f2c8d3362"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::LESS_THAN &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ae6a24f5bf2c2c61382aef43f2c8d3362">make_DelayedBinaryLessThanHelper</a> ()</td></tr>
+<tr class="separator:ae6a24f5bf2c2c61382aef43f2c8d3362"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad31cd299427d73538dc00dcbffa9cd2b"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ad31cd299427d73538dc00dcbffa9cd2b">make_DelayedBinaryGreaterThanOrEqualHelper</a> ()</td></tr>
+<tr class="separator:ad31cd299427d73538dc00dcbffa9cd2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38c7cc26409e5c995b7264164b148f4c"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a38c7cc26409e5c995b7264164b148f4c">make_DelayedBinaryLessThanOrEqualHelper</a> ()</td></tr>
+<tr class="separator:a38c7cc26409e5c995b7264164b148f4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3073c4e33dcf89416af292399ba55c29"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::NOT_EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3073c4e33dcf89416af292399ba55c29">make_DelayedBinaryNotEqualHelper</a> ()</td></tr>
+<tr class="separator:a3073c4e33dcf89416af292399ba55c29"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af39c0767d23c6bdc5f4267f062ef2e17"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class Operation_ &gt; </td></tr>
+<tr class="memitem:af39c0767d23c6bdc5f4267f062ef2e17"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#af39c0767d23c6bdc5f4267f062ef2e17">make_DelayedBinaryIsometricOp</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; right, Operation_ op)</td></tr>
+<tr class="separator:af39c0767d23c6bdc5f4267f062ef2e17"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0d637bdfb7f4126ded39f6e06b04d3a"><td class="memTemplParams" colspan="2">template&lt;typename Scalar_ &gt; </td></tr>
 <tr class="memitem:ac0d637bdfb7f4126ded39f6e06b04d3a"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithScalarHelper.html">DelayedArithScalarHelper</a>&lt; DelayedArithOp::ADD, true, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac0d637bdfb7f4126ded39f6e06b04d3a">make_DelayedAddScalarHelper</a> (Scalar_ s)</td></tr>
 <tr class="separator:ac0d637bdfb7f4126ded39f6e06b04d3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1164,6 +1207,424 @@ template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typenam
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A <code>Extractor</code> object to access the requested dimension of <code>ptr</code>. </dd></dl>
+
+</div>
+</div>
+<a id="a1d138b1e7f6a26f814c025363cc3db80" name="a1d138b1e7f6a26f814c025363cc3db80"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d138b1e7f6a26f814c025363cc3db80">&#9670;&#160;</a></span>make_DelayedBinaryAddHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::ADD &gt; tatami::make_DelayedBinaryAddHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed binary addition. </dd></dl>
+
+</div>
+</div>
+<a id="ac4c951d489cb0f2bb0e90f2cf4a25862" name="ac4c951d489cb0f2bb0e90f2cf4a25862"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac4c951d489cb0f2bb0e90f2cf4a25862">&#9670;&#160;</a></span>make_DelayedBinarySubtractHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::SUBTRACT &gt; tatami::make_DelayedBinarySubtractHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed binary subtraction. </dd></dl>
+
+</div>
+</div>
+<a id="a2569c540083a24f92af8140358e1e9c4" name="a2569c540083a24f92af8140358e1e9c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2569c540083a24f92af8140358e1e9c4">&#9670;&#160;</a></span>make_DelayedBinaryMultiplyHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::MULTIPLY &gt; tatami::make_DelayedBinaryMultiplyHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed binary multiplication. </dd></dl>
+
+</div>
+</div>
+<a id="aeb4cf766f850766b966f7121728a6af8" name="aeb4cf766f850766b966f7121728a6af8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb4cf766f850766b966f7121728a6af8">&#9670;&#160;</a></span>make_DelayedBinaryDivideHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::DIVIDE &gt; tatami::make_DelayedBinaryDivideHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed binary division. </dd></dl>
+
+</div>
+</div>
+<a id="a1063aea86897ef76e17b1772320b8f7d" name="a1063aea86897ef76e17b1772320b8f7d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1063aea86897ef76e17b1772320b8f7d">&#9670;&#160;</a></span>make_DelayedBinaryBooleanEqualHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::EQUAL &gt; tatami::make_DelayedBinaryBooleanEqualHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary boolean equivalence operation. </dd></dl>
+
+</div>
+</div>
+<a id="a31625dbb50d420fe1b0da406f19ef33d" name="a31625dbb50d420fe1b0da406f19ef33d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a31625dbb50d420fe1b0da406f19ef33d">&#9670;&#160;</a></span>make_DelayedBinaryBooleanAndHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::AND &gt; tatami::make_DelayedBinaryBooleanAndHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary AND comparison. </dd></dl>
+
+</div>
+</div>
+<a id="a65bad100b39d9372fbeb23d16dae6588" name="a65bad100b39d9372fbeb23d16dae6588"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65bad100b39d9372fbeb23d16dae6588">&#9670;&#160;</a></span>make_DelayedBinaryBooleanOrHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::OR &gt; tatami::make_DelayedBinaryBooleanOrHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary OR comparison. </dd></dl>
+
+</div>
+</div>
+<a id="aeb091953ab0f55406935a52b7ecb7350" name="aeb091953ab0f55406935a52b7ecb7350"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb091953ab0f55406935a52b7ecb7350">&#9670;&#160;</a></span>make_DelayedBinaryBooleanXorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::XOR &gt; tatami::make_DelayedBinaryBooleanXorHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary XOR comparison. </dd></dl>
+
+</div>
+</div>
+<a id="ac3599db8f6d19fc9172da45a3b6244fc" name="ac3599db8f6d19fc9172da45a3b6244fc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac3599db8f6d19fc9172da45a3b6244fc">&#9670;&#160;</a></span>make_DelayedBinaryEqualHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::EQUAL &gt; tatami::make_DelayedBinaryEqualHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary equality comparison. </dd></dl>
+
+</div>
+</div>
+<a id="abe4fb79c5a2cddab2f5c9cf0bd9fe3d0" name="abe4fb79c5a2cddab2f5c9cf0bd9fe3d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abe4fb79c5a2cddab2f5c9cf0bd9fe3d0">&#9670;&#160;</a></span>make_DelayedBinaryGreaterThanHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::GREATER_THAN &gt; tatami::make_DelayedBinaryGreaterThanHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary greater-than comparison. </dd></dl>
+
+</div>
+</div>
+<a id="ae6a24f5bf2c2c61382aef43f2c8d3362" name="ae6a24f5bf2c2c61382aef43f2c8d3362"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae6a24f5bf2c2c61382aef43f2c8d3362">&#9670;&#160;</a></span>make_DelayedBinaryLessThanHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::LESS_THAN &gt; tatami::make_DelayedBinaryLessThanHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary less-than comparison. </dd></dl>
+
+</div>
+</div>
+<a id="ad31cd299427d73538dc00dcbffa9cd2b" name="ad31cd299427d73538dc00dcbffa9cd2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad31cd299427d73538dc00dcbffa9cd2b">&#9670;&#160;</a></span>make_DelayedBinaryGreaterThanOrEqualHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL &gt; tatami::make_DelayedBinaryGreaterThanOrEqualHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary greater-than-or-equal comparison. </dd></dl>
+
+</div>
+</div>
+<a id="a38c7cc26409e5c995b7264164b148f4c" name="a38c7cc26409e5c995b7264164b148f4c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a38c7cc26409e5c995b7264164b148f4c">&#9670;&#160;</a></span>make_DelayedBinaryLessThanOrEqualHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL &gt; tatami::make_DelayedBinaryLessThanOrEqualHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary less-than-or-equal comparison. </dd></dl>
+
+</div>
+</div>
+<a id="a3073c4e33dcf89416af292399ba55c29" name="a3073c4e33dcf89416af292399ba55c29"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3073c4e33dcf89416af292399ba55c29">&#9670;&#160;</a></span>make_DelayedBinaryNotEqualHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryCompareHelper.html">DelayedBinaryCompareHelper</a>&lt; DelayedCompareOp::NOT_EQUAL &gt; tatami::make_DelayedBinaryNotEqualHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for a delayed binary non-equality comparison to a scalar. </dd></dl>
+
+</div>
+</div>
+<a id="af39c0767d23c6bdc5f4267f062ef2e17" name="af39c0767d23c6bdc5f4267f062ef2e17"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af39c0767d23c6bdc5f4267f062ef2e17">&#9670;&#160;</a></span>make_DelayedBinaryIsometricOp()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ , class Operation_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedBinaryIsometricOp </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td>
+          <td class="paramname"><em>left</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td>
+          <td class="paramname"><em>right</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Operation_&#160;</td>
+          <td class="paramname"><em>op</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of index value. </td></tr>
+    <tr><td class="paramname">Operation_</td><td>Helper class defining the operation.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">left</td><td>Pointer to a (possibly <code>const</code>) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">right</td><td>Pointer to a (possibly <code>const</code>) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">op</td><td>Instance of the operation helper class.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Instance of a <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html" title="Delayed isometric operations on two matrices.">DelayedBinaryIsometricOp</a></code> clas. </dd></dl>
 
 </div>
 </div>

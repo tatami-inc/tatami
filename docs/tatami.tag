@@ -404,11 +404,9 @@
     </member>
   </compound>
   <compound kind="file">
-    <name>arith_helpers.hpp</name>
-    <path>tatami/isometric/unary/</path>
-    <filename>arith__helpers_8hpp.html</filename>
-    <class kind="struct">tatami::DelayedArithScalarHelper</class>
-    <class kind="struct">tatami::DelayedArithVectorHelper</class>
+    <name>arith_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>arith__utils_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="enumeration">
       <type></type>
@@ -421,6 +419,49 @@
       <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa080aaf8d817ada96fca7096b7b55bd30">MULTIPLY</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa210c66d794cec40488f3f8f634d6c33b">DIVIDE</enumvalue>
     </member>
+  </compound>
+  <compound kind="file">
+    <name>arith_helpers.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>binary_2arith__helpers_8hpp.html</filename>
+    <class kind="struct">tatami::DelayedBinaryArithHelper</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::ADD &gt;</type>
+      <name>make_DelayedBinaryAddHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a1d138b1e7f6a26f814c025363cc3db80</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::SUBTRACT &gt;</type>
+      <name>make_DelayedBinarySubtractHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac4c951d489cb0f2bb0e90f2cf4a25862</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::MULTIPLY &gt;</type>
+      <name>make_DelayedBinaryMultiplyHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a2569c540083a24f92af8140358e1e9c4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::DIVIDE &gt;</type>
+      <name>make_DelayedBinaryDivideHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aeb4cf766f850766b966f7121728a6af8</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>arith_helpers.hpp</name>
+    <path>tatami/isometric/unary/</path>
+    <filename>unary_2arith__helpers_8hpp.html</filename>
+    <class kind="struct">tatami::DelayedArithScalarHelper</class>
+    <class kind="struct">tatami::DelayedArithVectorHelper</class>
+    <namespace>tatami</namespace>
     <member kind="function">
       <type>DelayedArithScalarHelper&lt; DelayedArithOp::ADD, true, Scalar_ &gt;</type>
       <name>make_DelayedAddScalarHelper</name>
@@ -480,23 +521,47 @@
   </compound>
   <compound kind="file">
     <name>boolean_helpers.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>binary_2boolean__helpers_8hpp.html</filename>
+    <class kind="struct">tatami::DelayedBinaryBooleanHelper</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::EQUAL &gt;</type>
+      <name>make_DelayedBinaryBooleanEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a1063aea86897ef76e17b1772320b8f7d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::AND &gt;</type>
+      <name>make_DelayedBinaryBooleanAndHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a31625dbb50d420fe1b0da406f19ef33d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::OR &gt;</type>
+      <name>make_DelayedBinaryBooleanOrHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a65bad100b39d9372fbeb23d16dae6588</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::XOR &gt;</type>
+      <name>make_DelayedBinaryBooleanXorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aeb091953ab0f55406935a52b7ecb7350</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>boolean_helpers.hpp</name>
     <path>tatami/isometric/unary/</path>
-    <filename>boolean__helpers_8hpp.html</filename>
+    <filename>unary_2boolean__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedBooleanScalarHelper</class>
     <class kind="struct">tatami::DelayedBooleanNotHelper</class>
     <class kind="struct">tatami::DelayedBooleanVectorHelper</class>
     <namespace>tatami</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>DelayedBooleanOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2104862d4068933ea4cc805c92f82d07</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a558ffc8f5770d8e4f95f51d822685532">AND</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a1d00e7dce692e8dc3f6877f035e3a616">OR</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a97675eb3f268048604dc5155511a2a4d">XOR</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
-    </member>
     <member kind="function">
       <type>DelayedBooleanNotHelper</type>
       <name>make_DelayedBooleanNotHelper</name>
@@ -563,24 +628,60 @@
   </compound>
   <compound kind="file">
     <name>compare_helpers.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>binary_2compare__helpers_8hpp.html</filename>
+    <class kind="struct">tatami::DelayedBinaryCompareHelper</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::EQUAL &gt;</type>
+      <name>make_DelayedBinaryEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac3599db8f6d19fc9172da45a3b6244fc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::GREATER_THAN &gt;</type>
+      <name>make_DelayedBinaryGreaterThanHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abe4fb79c5a2cddab2f5c9cf0bd9fe3d0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::LESS_THAN &gt;</type>
+      <name>make_DelayedBinaryLessThanHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ae6a24f5bf2c2c61382aef43f2c8d3362</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL &gt;</type>
+      <name>make_DelayedBinaryGreaterThanOrEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad31cd299427d73538dc00dcbffa9cd2b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL &gt;</type>
+      <name>make_DelayedBinaryLessThanOrEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a38c7cc26409e5c995b7264164b148f4c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::NOT_EQUAL &gt;</type>
+      <name>make_DelayedBinaryNotEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a3073c4e33dcf89416af292399ba55c29</anchor>
+      <arglist>()</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>compare_helpers.hpp</name>
     <path>tatami/isometric/unary/</path>
-    <filename>compare__helpers_8hpp.html</filename>
+    <filename>unary_2compare__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedCompareScalarHelper</class>
     <class kind="struct">tatami::DelayedCompareVectorHelper</class>
     <namespace>tatami</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>DelayedCompareOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac4fc175a57ace709941b5ca7ddb19708</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a1625ef4fe09f68fa20d3ff6e02cd5c8e">GREATER_THAN</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa327176a0a845c117bdfadec134a95e9">LESS_THAN</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa6eac69202c3dc2978176801a84e4d1d">GREATER_THAN_OR_EQUAL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a8397780541b6289d2a0b991d1c28c432">LESS_THAN_OR_EQUAL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a4ea2d378cdec20f59330f113297bc1ce">NOT_EQUAL</enumvalue>
-    </member>
     <member kind="function">
       <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::EQUAL, Scalar_ &gt;</type>
       <name>make_DelayedEqualScalarHelper</name>
@@ -664,6 +765,56 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab6cdc6ca323706821899c20f00e42c52</anchor>
       <arglist>(Vector_ v)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>DelayedBinaryIsometricOp.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>DelayedBinaryIsometricOp_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricOp</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedBinaryIsometricOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af39c0767d23c6bdc5f4267f062ef2e17</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; right, Operation_ op)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>boolean_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>boolean__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="enumeration">
+      <type></type>
+      <name>DelayedBooleanOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a2104862d4068933ea4cc805c92f82d07</anchor>
+      <arglist></arglist>
+      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a558ffc8f5770d8e4f95f51d822685532">AND</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a1d00e7dce692e8dc3f6877f035e3a616">OR</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a97675eb3f268048604dc5155511a2a4d">XOR</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>compare_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>compare__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="enumeration">
+      <type></type>
+      <name>DelayedCompareOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac4fc175a57ace709941b5ca7ddb19708</anchor>
+      <arglist></arglist>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a1625ef4fe09f68fa20d3ff6e02cd5c8e">GREATER_THAN</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa327176a0a845c117bdfadec134a95e9">LESS_THAN</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa6eac69202c3dc2978176801a84e4d1d">GREATER_THAN_OR_EQUAL</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a8397780541b6289d2a0b991d1c28c432">LESS_THAN_OR_EQUAL</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a4ea2d378cdec20f59330f113297bc1ce">NOT_EQUAL</enumvalue>
     </member>
   </compound>
   <compound kind="file">
@@ -1240,6 +1391,169 @@
       <anchorfile>structtatami_1_1DelayedArithVectorHelper.html</anchorfile>
       <anchor>a83a921d90c37170f8a9507be4921cfb8</anchor>
       <arglist>(Vector_ v)</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedBinaryArithHelper</name>
+    <filename>structtatami_1_1DelayedBinaryArithHelper.html</filename>
+    <templarg>DelayedArithOp op_</templarg>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedBinaryBooleanHelper</name>
+    <filename>structtatami_1_1DelayedBinaryBooleanHelper.html</filename>
+    <templarg>DelayedBooleanOp op_</templarg>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedBinaryCompareHelper</name>
+    <filename>structtatami_1_1DelayedBinaryCompareHelper.html</filename>
+    <templarg>DelayedCompareOp op_</templarg>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedBinaryIsometricOp</name>
+    <filename>classtatami_1_1DelayedBinaryIsometricOp.html</filename>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>class Operation_</templarg>
+    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <member kind="function">
+      <type></type>
+      <name>DelayedBinaryIsometricOp</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>af35faa9b83b2534f4b9d4e6e118b5728</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; l, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; r, Operation_ op)</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>nrow</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>ae948f15be02f19e00dd61056ea958a83</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>ncol</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a28043844566505282c396dfa00b15881</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a6c917133bab98a7937550bb359037d23</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>sparse_proportion</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a9a1adeab0a859ee84f7af45f213b5d2d</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>prefer_rows</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a98ef4a94d64a2055688b9c736823a7d0</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>prefer_rows_proportion</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a5963ab48765408c1ac25dd56d038ba41</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>uses_oracle</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a7b09379690fd41d786df93427ffc816d</anchor>
+      <arglist>(bool row) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>ab475b20177f2308e36ab16c2269f2306</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>ab08cb6e685230a45ffbcf62e72770f06</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a76b120dcf5e8594b1f627fe8aecaa4f4</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>ad79a514a85a201920ca3da1a726bb6ba</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a5d722d31354f593722cb86a5eda9a79c</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>ad9330217c788494fd60c00d1ea796642</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a7111b21e62a770a91eac54a4c612b289</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>ad1c13faa0e69a8c0b4054928dd8217a9</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a6d6563a8ae122d8771e8a9d74970b3af</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>adca14ab1b00e1fe2bb8a28d10d597e3e</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a3b071d6a73682e496c0c662d7cffab48</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
+      <anchor>a5875b9f788ebcdca296f7424342abeed</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -3947,6 +4261,10 @@
     <class kind="struct">tatami::DelayedAbsHelper</class>
     <class kind="struct">tatami::DelayedArithScalarHelper</class>
     <class kind="struct">tatami::DelayedArithVectorHelper</class>
+    <class kind="struct">tatami::DelayedBinaryArithHelper</class>
+    <class kind="struct">tatami::DelayedBinaryBooleanHelper</class>
+    <class kind="struct">tatami::DelayedBinaryCompareHelper</class>
+    <class kind="class">tatami::DelayedBinaryIsometricOp</class>
     <class kind="class">tatami::DelayedBind</class>
     <class kind="struct">tatami::DelayedBooleanNotHelper</class>
     <class kind="struct">tatami::DelayedBooleanScalarHelper</class>
@@ -4183,6 +4501,111 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a95b6638dceda82d82a7579dc88a45709</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *ptr, Args_ &amp;&amp;... args)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::ADD &gt;</type>
+      <name>make_DelayedBinaryAddHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a1d138b1e7f6a26f814c025363cc3db80</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::SUBTRACT &gt;</type>
+      <name>make_DelayedBinarySubtractHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac4c951d489cb0f2bb0e90f2cf4a25862</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::MULTIPLY &gt;</type>
+      <name>make_DelayedBinaryMultiplyHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a2569c540083a24f92af8140358e1e9c4</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::DIVIDE &gt;</type>
+      <name>make_DelayedBinaryDivideHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aeb4cf766f850766b966f7121728a6af8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::EQUAL &gt;</type>
+      <name>make_DelayedBinaryBooleanEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a1063aea86897ef76e17b1772320b8f7d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::AND &gt;</type>
+      <name>make_DelayedBinaryBooleanAndHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a31625dbb50d420fe1b0da406f19ef33d</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::OR &gt;</type>
+      <name>make_DelayedBinaryBooleanOrHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a65bad100b39d9372fbeb23d16dae6588</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::XOR &gt;</type>
+      <name>make_DelayedBinaryBooleanXorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aeb091953ab0f55406935a52b7ecb7350</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::EQUAL &gt;</type>
+      <name>make_DelayedBinaryEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac3599db8f6d19fc9172da45a3b6244fc</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::GREATER_THAN &gt;</type>
+      <name>make_DelayedBinaryGreaterThanHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abe4fb79c5a2cddab2f5c9cf0bd9fe3d0</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::LESS_THAN &gt;</type>
+      <name>make_DelayedBinaryLessThanHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ae6a24f5bf2c2c61382aef43f2c8d3362</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL &gt;</type>
+      <name>make_DelayedBinaryGreaterThanOrEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad31cd299427d73538dc00dcbffa9cd2b</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL &gt;</type>
+      <name>make_DelayedBinaryLessThanOrEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a38c7cc26409e5c995b7264164b148f4c</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::NOT_EQUAL &gt;</type>
+      <name>make_DelayedBinaryNotEqualHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a3073c4e33dcf89416af292399ba55c29</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedBinaryIsometricOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af39c0767d23c6bdc5f4267f062ef2e17</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; right, Operation_ op)</arglist>
     </member>
     <member kind="function">
       <type>DelayedArithScalarHelper&lt; DelayedArithOp::ADD, true, Scalar_ &gt;</type>
