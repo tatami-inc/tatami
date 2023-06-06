@@ -1920,55 +1920,52 @@
   <compound kind="struct">
     <name>tatami::DelayedExpHelper</name>
     <filename>structtatami_1_1DelayedExpHelper.html</filename>
-    <templarg>typename T</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedLog1pHelper</name>
     <filename>structtatami_1_1DelayedLog1pHelper.html</filename>
-    <templarg>typename T</templarg>
+    <templarg>typename Base_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedLog1pHelper</name>
       <anchorfile>structtatami_1_1DelayedLog1pHelper.html</anchorfile>
-      <anchor>a54be07a933d88fa1bfcd54d383a6b327</anchor>
+      <anchor>a5847fceee1574397d169678782c6cec1</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>DelayedLog1pHelper</name>
       <anchorfile>structtatami_1_1DelayedLog1pHelper.html</anchorfile>
-      <anchor>ae1fbc1aaae2c404dd4a88b6a15034978</anchor>
-      <arglist>(double base)</arglist>
+      <anchor>a3d91050db9bb5efca08772f240c04565</anchor>
+      <arglist>(Base_ base)</arglist>
     </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedLogHelper</name>
     <filename>structtatami_1_1DelayedLogHelper.html</filename>
-    <templarg>typename T</templarg>
+    <templarg>typename Base_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedLogHelper</name>
       <anchorfile>structtatami_1_1DelayedLogHelper.html</anchorfile>
-      <anchor>aad43deb006798a17b736adf7cbaa60ef</anchor>
+      <anchor>a38d8847a33d046f36f21fb88d754efcd</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>DelayedLogHelper</name>
       <anchorfile>structtatami_1_1DelayedLogHelper.html</anchorfile>
-      <anchor>a506aca4f5b63bcdaad3ddab4231fd0f7</anchor>
-      <arglist>(double base)</arglist>
+      <anchor>af283f9908c037efa24fe9afa0a33a7ad</anchor>
+      <arglist>(Base_ base)</arglist>
     </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedRoundHelper</name>
     <filename>structtatami_1_1DelayedRoundHelper.html</filename>
-    <templarg>typename T</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedSqrtHelper</name>
     <filename>structtatami_1_1DelayedSqrtHelper.html</filename>
-    <templarg>typename T</templarg>
   </compound>
   <compound kind="class">
     <name>tatami::DelayedSubset</name>
