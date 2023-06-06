@@ -73,6 +73,9 @@ TEST_P(BinaryArithAdditionFullTest, Basic) {
     EXPECT_EQ(sparse_mod->prefer_rows_proportion(), 0);
     EXPECT_EQ(mixed_mod->prefer_rows_proportion(), 0.5);
 
+    EXPECT_FALSE(dense_mod->uses_oracle(true));
+    EXPECT_FALSE(dense_mod->uses_oracle(false));
+
     tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 
@@ -458,13 +461,13 @@ TEST_P(BinaryArithDivisionFullTest, Basic) {
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 
-    tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(mixed_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
-    tatami_test::test_simple_row_access(mixed_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
 INSTANTIATE_TEST_CASE_P(
@@ -486,16 +489,16 @@ TEST_P(BinaryArithDivisionBlockTest, Basic) {
 
     {
         size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
-        tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-        tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-        tatami_test::test_sliced_column_access(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
     }
 
     {
         size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
-        tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-        tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
-        tatami_test::test_sliced_row_access(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
     }
 }
 
@@ -523,16 +526,16 @@ TEST_P(BinaryArithDivisionIndexTest, Basic) {
 
     {
         size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1];
-        tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-        tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-        tatami_test::test_indexed_column_access(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
     }
 
     {
         size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1];
-        tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-        tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
-        tatami_test::test_indexed_row_access(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
     }
 }
 
@@ -550,74 +553,104 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
-///**************************
-// ********* ORACLE *********
-// **************************/
-//
-//class BinaryArithOracleTest : public ::testing::TestWithParam<std::tuple<bool, bool> >, public BinaryArithUtils {
-//protected:
-//    void SetUp() {
-//        assemble();
-//    }
-//
-//    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, wrapped_dense_mod, wrapped_sparse_mod;
-//    std::vector<double> vec;
-//
-//    void extra_assemble(bool row) {
-//        vec = this->create_vector(row ? this->nrow : this->ncol, 5, 0.5);
-//
-//        if (row) {
-//            auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
-//            dense_mod = tatami::make_DelayedBinaryIsometricOp(this->dense, op);
-//            sparse_mod = tatami::make_DelayedBinaryIsometricOp(this->sparse, op);
-//            wrapped_dense_mod = tatami::make_DelayedBinaryIsometricOp(tatami_test::make_CrankyMatrix(this->dense), op);
-//            wrapped_sparse_mod = tatami::make_DelayedBinaryIsometricOp(tatami_test::make_CrankyMatrix(this->sparse), op);
-//        } else {
-//            auto op = tatami::make_DelayedAddVectorHelper<1>(vec);
-//            dense_mod = tatami::make_DelayedBinaryIsometricOp(this->dense, op);
-//            sparse_mod = tatami::make_DelayedBinaryIsometricOp(this->sparse, op);
-//            wrapped_dense_mod = tatami::make_DelayedBinaryIsometricOp(tatami_test::make_CrankyMatrix(this->dense), op);
-//            wrapped_sparse_mod = tatami::make_DelayedBinaryIsometricOp(tatami_test::make_CrankyMatrix(this->sparse), op);
-//        }
-//    }
-//};
-//
-//TEST_P(BinaryArithOracleTest, Validate) {
-//    auto param = GetParam();
-//    extra_assemble(std::get<0>(param));
-//    EXPECT_FALSE(dense_mod->uses_oracle(true));
-//    EXPECT_TRUE(wrapped_dense_mod->uses_oracle(true));
-//
-//    tatami_test::test_oracle_column_access(wrapped_dense_mod.get(), dense_mod.get(), std::get<1>(param));
-//    tatami_test::test_oracle_column_access(wrapped_sparse_mod.get(), sparse_mod.get(), std::get<1>(param));
-//
-//    tatami_test::test_oracle_row_access(wrapped_dense_mod.get(), dense_mod.get(), std::get<1>(param));
-//    tatami_test::test_oracle_row_access(wrapped_sparse_mod.get(), sparse_mod.get(), std::get<1>(param));
-//}
-//
-//INSTANTIATE_TEST_CASE_P(
-//    BinaryArith,
-//    BinaryArithOracleTest,
-//    ::testing::Combine(
-//        ::testing::Values(true, false), // add by row, or add by column.
-//        ::testing::Values(true, false)  // use random or consecutive oracle.
-//    )
-//);
-//
-///***********************************
-// ********* CONST OVERLOADS *********
-// ***********************************/
-//
-//TEST(BinaryArith, ConstOverload) {
-//    int nrow = 23, ncol = 42;
-//    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
-//    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-//
-//    auto vec = std::vector<double>(nrow);
-//    auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
-//    auto mat = tatami::make_DelayedBinaryIsometricOp(dense, std::move(op));
-//
-//    // cursory checks.
-//    EXPECT_EQ(mat->nrow(), dense->nrow());
-//    EXPECT_EQ(mat->ncol(), dense->ncol());
-//}
+/**************************
+ ********* ORACLE *********
+ **************************/
+
+class BinaryArithOracleTest : public ::testing::TestWithParam<bool>, public BinaryArithUtils {
+protected:
+    std::shared_ptr<tatami::NumericMatrix> wrapped_both, wrapped_left, wrapped_right, ref;
+
+    void SetUp() {
+        assemble();
+
+        auto op = tatami::make_DelayedBinaryAddHelper();
+        auto cranky_left = tatami_test::make_CrankyMatrix(this->dense_left);
+        auto cranky_right = tatami_test::make_CrankyMatrix(this->dense_right);
+
+        wrapped_both = tatami::make_DelayedBinaryIsometricOp(cranky_left, cranky_right, op);
+        wrapped_left = tatami::make_DelayedBinaryIsometricOp(cranky_left, this->dense_right, op);
+        wrapped_right = tatami::make_DelayedBinaryIsometricOp(this->dense_left, cranky_right, op);
+
+        auto refvec = this->simulated_left;
+        for (size_t i = 0; i < refvec.size(); ++i) {
+            refvec[i] += this->simulated_right[i];
+        }
+        ref.reset(new tatami::DenseRowMatrix<double>(this->nrow, this->ncol, std::move(refvec)));
+
+    }
+};
+
+TEST_P(BinaryArithOracleTest, Validate) {
+    auto randomized = GetParam();
+    EXPECT_TRUE(wrapped_both->uses_oracle(true));
+    EXPECT_TRUE(wrapped_left->uses_oracle(true));
+    EXPECT_TRUE(wrapped_right->uses_oracle(true));
+
+    tatami_test::test_oracle_column_access(wrapped_both.get(), ref.get(), randomized);
+    tatami_test::test_oracle_column_access(wrapped_left.get(), ref.get(), randomized);
+    tatami_test::test_oracle_column_access(wrapped_right.get(), ref.get(), randomized);
+
+    tatami_test::test_oracle_row_access(wrapped_both.get(), ref.get(), randomized);
+    tatami_test::test_oracle_row_access(wrapped_left.get(), ref.get(), randomized);
+    tatami_test::test_oracle_row_access(wrapped_right.get(), ref.get(), randomized);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    BinaryArith,
+    BinaryArithOracleTest,
+    ::testing::Values(true, false)  // use random or consecutive oracle.
+);
+
+class BinaryArithOracleTest2 : public ::testing::Test, public BinaryArithUtils {};
+
+TEST_F(BinaryArithOracleTest2, Elongated) {
+    assemble();
+
+    // Adding some variety in the prediction numbers.
+    auto cranky_left = tatami_test::make_CrankyMatrix(this->sparse_left, 23);
+    auto cranky_right = tatami_test::make_CrankyMatrix(this->sparse_right, 37);
+
+    auto op = tatami::make_DelayedBinarySubtractHelper();
+    auto wrapped_both = tatami::make_DelayedBinaryIsometricOp(cranky_left, cranky_right, op);
+    auto ref = tatami::make_DelayedBinaryIsometricOp(this->sparse_left, this->sparse_right, op);
+
+    // Use a very long simulated sequence.
+    // This checks that the collection of expired predictions works correctly
+    // in the DelayedBinaryIsometricOp::ParentOracle class.
+
+    std::mt19937_64 rng(45987324); 
+    std::vector<int> fixed(50000);
+    for (auto& x : fixed) {
+        x = rng() % this->ncol;
+    }
+
+    auto swork = ref->sparse_column();
+    auto swork_o = wrapped_both->sparse_column();
+    swork_o->set_oracle(std::make_unique<tatami::FixedOracle<int> >(fixed.data(), fixed.size()));
+
+    for (auto i : fixed) {
+        auto sexpected = swork->fetch(i);
+        auto sobserved = swork_o->fetch(i);
+        EXPECT_EQ(sexpected.index, sobserved.index);
+        EXPECT_EQ(sexpected.value, sobserved.value);
+    }
+}
+
+/***********************************
+ ********* CONST OVERLOADS *********
+ ***********************************/
+
+TEST(BinaryArith, ConstOverload) {
+    int nrow = 23, ncol = 42;
+    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
+    auto dense_left = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
+    auto dense_right = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
+
+    auto op = tatami::make_DelayedBinaryAddHelper();
+    auto mat = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, std::move(op));
+
+    // cursory checks.
+    EXPECT_EQ(mat->nrow(), nrow);
+    EXPECT_EQ(mat->ncol(), ncol);
+}
