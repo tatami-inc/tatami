@@ -519,4 +519,6 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shar
 
 #include "compare_helpers.hpp"
 
+#include "boolean_helpers.hpp"
+
 #endif
