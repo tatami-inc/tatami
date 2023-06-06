@@ -182,8 +182,12 @@ TEST_P(ArithNonCommutativeScalarTest, Division) {
         quick_test_all(dense_mod.get(), &ref);
         quick_test_all(sparse_mod.get(), &ref);
     } else {
-        test_nan_access(&ref, dense_mod.get());
-        test_nan_access(&ref, sparse_mod.get());
+        // Turning on NaN protection.
+        tatami_test::test_simple_column_access<true>(dense_mod.get(), &ref, true, 1);
+        tatami_test::test_simple_row_access<true>(dense_mod.get(), &ref, true, 1);
+
+        tatami_test::test_simple_column_access<true>(sparse_mod.get(), &ref, true, 1);
+        tatami_test::test_simple_row_access<true>(sparse_mod.get(), &ref, true, 1);
     }
 }
 
