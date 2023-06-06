@@ -7,6 +7,7 @@
 #include "base/sparse/SemiCompressedSparseMatrix.hpp"
 
 #include "isometric/unary/DelayedUnaryIsometricOp.hpp"
+#include "isometric/binary/DelayedBinaryIsometricOp.hpp"
 
 #include "base/other/DelayedBind.hpp"
 #include "base/other/DelayedCast.hpp"

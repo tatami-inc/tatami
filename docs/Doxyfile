@@ -876,7 +876,8 @@ RECURSIVE              = YES
 EXCLUDE                = ../include/tatami/ext/hdf5/utils.hpp \
                          ../include/tatami/ext/layered/utils.hpp \
                          ../include/tatami/stats/config.hpp \
-                         ../include/tatami/base/has_data.hpp
+                         ../include/tatami/base/has_data.hpp \
+                         ../include/tatami/isometric/binary/utils.hpp
 
 # The EXCLUDE_SYMLINKS tag can be used to select whether or not files or
 # directories that are symbolic links (a Unix file system feature) are excluded

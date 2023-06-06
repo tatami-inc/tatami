@@ -1,10 +1,12 @@
 #ifndef TATAMI_COMPARE_HELPERS_H
 #define TATAMI_COMPARE_HELPERS_H
 
+#include "../compare_utils.hpp"
+
 /**
  * @file compare_helpers.hpp
  *
- * @brief Helper classes for comparison operations.
+ * @brief Helper classes for delayed unary comparison operations.
  * 
  * Classes defined here should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
@@ -12,37 +14,8 @@
 namespace tatami {
 
 /**
- * Type of the delayed comparison operation.
- */
-enum class DelayedCompareOp : char { 
-    EQUAL, 
-    GREATER_THAN, 
-    LESS_THAN, 
-    GREATER_THAN_OR_EQUAL, 
-    LESS_THAN_OR_EQUAL, 
-    NOT_EQUAL
-};
-
-/**
  * @cond
  */
-template<DelayedCompareOp op_, typename Scalar_, typename Value_>
-void delayed_compare_run(Value_& val, Scalar_ scalar) {
-    if constexpr(op_ == DelayedCompareOp::EQUAL) {
-        val = val == scalar;
-    } else if constexpr(op_ == DelayedCompareOp::GREATER_THAN) {
-        val = val > scalar;
-    } else if constexpr(op_ == DelayedCompareOp::LESS_THAN) {
-        val = val < scalar;
-    } else if constexpr(op_ == DelayedCompareOp::GREATER_THAN_OR_EQUAL) {
-        val = val >= scalar;
-    } else if constexpr(op_ == DelayedCompareOp::LESS_THAN_OR_EQUAL) {
-        val = val <= scalar;
-    } else { // NOT EQUAL.
-        val = val != scalar;
-    }
-}
-
 template<DelayedCompareOp op_, typename Scalar_, typename Value_, typename Index_>
 void delayed_compare_run_simple(Scalar_ scalar, Index_ length, Value_* buffer) {
     for (Index_ i = 0; i < length; ++i) {

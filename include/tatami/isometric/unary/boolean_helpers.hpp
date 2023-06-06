@@ -1,10 +1,12 @@
 #ifndef TATAMI_BOOLEAN_HELPERS_H
 #define TATAMI_BOOLEAN_HELPERS_H
 
+#include "../boolean_utils.hpp"
+
 /**
  * @file boolean_helpers.hpp
  *
- * @brief Helper classes for boolean operations.
+ * @brief Helper classes for delayed unary boolean operations.
  * 
  * Classes defined here should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
@@ -12,31 +14,8 @@
 namespace tatami {
 
 /**
- * Type of the delayed boolean operation.
- */
-enum class DelayedBooleanOp : char {
-    AND,
-    OR,
-    XOR,
-    EQUAL
-};
-
-/**
  * @cond
  */
-template<DelayedBooleanOp op_, typename Value_>
-void delayed_boolean_run(Value_& val, bool scalar) {
-    if constexpr(op_ == DelayedBooleanOp::AND) {
-        val = val && scalar;
-    } else if constexpr(op_ == DelayedBooleanOp::OR) {
-        val = val || scalar;
-    } else if constexpr(op_ == DelayedBooleanOp::XOR) {
-        val = static_cast<bool>(val) != scalar;
-    } else { // EQUAL.
-        val = static_cast<bool>(val) == scalar;
-    }
-}
-
 template<DelayedBooleanOp op_, typename Value_, typename Index_>
 void delayed_boolean_run_simple(bool scalar, Index_ length, Value_* buffer) {
     for (Index_ i = 0; i < length; ++i) {
