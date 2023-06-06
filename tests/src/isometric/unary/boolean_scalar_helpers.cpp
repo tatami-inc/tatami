@@ -9,7 +9,7 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
-#include "utils.h"
+#include "../utils.h"
 
 class BooleanScalarTest : public ::testing::TestWithParam<bool> { 
 protected:

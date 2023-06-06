@@ -1,5 +1,5 @@
-#ifndef TATAMI_TEST_ISOMETRIC_UNARY_UTILS_HPP
-#define TATAMI_TEST_ISOMETRIC_UNARY_UTILS_HPP
+#ifndef TATAMI_TEST_ISOMETRIC_UTILS_HPP
+#define TATAMI_TEST_ISOMETRIC_UTILS_HPP
 
 template<typename T>
 T careful_division(T left, T right) {

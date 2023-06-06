@@ -8,7 +8,7 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
-#include "utils.h"
+#include "../utils.h"
 
 class CompareVectorTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
 protected:

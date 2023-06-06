@@ -9,7 +9,7 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
-#include "../unary/utils.h" // TODO: move it out to the top level.
+#include "../utils.h"
 
 class BinaryCompareTest : public ::testing::Test {
 protected:

@@ -8,7 +8,7 @@
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
-#include "../unary/utils.h" // TODO: fix this.
+#include "../utils.h"
 
 class BinaryArithUtils {
 protected:
