@@ -2,6 +2,9 @@
 #define TATAMI_SPARSE_SECONDARY_EXTRACTOR_CORE_HPP
 
 #include <vector>
+#include <type_traits>
+
+#include "utils.hpp"
 
 namespace tatami {
 
@@ -54,33 +57,14 @@ private:
         StoreFunction_ store,
         SkipFunction_ skip
     ) {
-        // If PointerStorage_ is just a bool, then we assume that 'indices' itself
-        // contains the indices for the 'primary' element of the primary dimension,
-        // i.e., the indices for each primary element are fragmented into separate
-        // vectors. In such cases, we can just call size() to get the limits.
-        constexpr bool fragmented = std::is_same<PointerStorage_, bool>::value;
-         
         auto& curdex = current_indices[index_primary];
 
         // Templated check to avoid having to incur the cost of hitting this,
         // given that index resets are irrelevant for the common case of
         // incremented iteration over consecutive secondary elements.
         if constexpr(reset_index_) {
-            const auto& indices = [&]() -> const auto& {
-                if constexpr(fragmented) {
-                    return all_indices[primary];
-                } else {
-                    return all_indices;
-                }
-            }();
-
-            auto limit = [&]{ 
-                if constexpr(fragmented) {
-                    return indices.size();
-                } else {
-                    return indptrs[primary + 1];
-                }
-            }();
+            const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, primary);
+            auto limit = sparse_utils::get_upper_limit(all_indices, indptrs, primary);
 
             const auto& curptr = current_indptrs[index_primary];
             auto raw_ptr = CustomPointerModifier_::get(curptr);
@@ -106,21 +90,10 @@ private:
             return;
         }
 
-        const auto& indices = [&]() -> const auto& {
-            if constexpr(fragmented) {
-                return all_indices[primary];
-            } else {
-                return all_indices;
-            }
-        }();
-
-        auto limit = [&]{ 
-            if constexpr(fragmented) {
-                return indices.size();
-            } else {
-                return indptrs[primary + 1];
-            }
-        }();
+        // Some work is required to switch between compressed and fragmented
+        // modes of operation at compile time.
+        const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, primary);
+        auto limit = sparse_utils::get_upper_limit(all_indices, indptrs, primary);
 
         // Special case if the requested index is at the end of the matrix, in
         // which case we can just jump there directly rather than doing an
@@ -132,14 +105,8 @@ private:
                 // Don't set directly to 'limit - 1' as this won't be the start of the run in semi-compressed mode.
                 // Rather, we need to set it to 'limit' and then decrement it downwards.
                 CustomPointerModifier_::set(curptr, limit); 
-                CustomPointerModifier_::decrement(curptr, indices, [&]{
-                    if constexpr(fragmented) {
-                        return 0;
-                    } else {
-                        return indptrs[primary];
-                    }
-                }());
-                
+                CustomPointerModifier_::decrement(curptr, indices, sparse_utils::get_lower_limit(indptrs, primary));
+
                 curdex = secondary;
                 store(primary, curptr);
             } else {
@@ -230,28 +197,14 @@ private:
         auto& curptr = current_indptrs[index_primary];
 
         // Can't decrement anymore, in which case we quit. 
-        constexpr bool fragmented = std::is_same<PointerStorage_, bool>::value;
-        auto lower_limit = [&]{
-            if constexpr(fragmented) {
-                return 0;
-            } else {
-                return indptrs[primary];
-            }
-        }();
-
+        auto lower_limit = sparse_utils::get_lower_limit(indptrs, primary);
         auto raw_ptr = CustomPointerModifier_::get(curptr);
         if (raw_ptr == lower_limit) {
             skip(primary);
             return;
         }
 
-        const auto& indices = [&]() -> const auto& {
-            if constexpr(fragmented) {
-                return all_indices[primary];
-            } else {
-                return all_indices;
-            }
-        }();
+        const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, primary);
 
         // Special case if the requested index is at the end of the matrix, in
         // which case we can just jump there directly rather than doing an
@@ -320,7 +273,7 @@ protected:
         StoredIndex_ secondary,
         Index_ primary_length,
         PrimaryFunction_ to_primary, 
-        const IndexStorage_& indices,
+        const IndexStorage_& all_indices,
         const PointerStorage_& indptrs,
         StoreFunction_ store,
         SkipFunction_ skip
@@ -331,12 +284,12 @@ protected:
                     return false;
                 }
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_above_or_equal<false>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                    search_above_or_equal<false>(secondary, p, to_primary(p), all_indices, indptrs, store, skip);
                 }
 
             } else {
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_above_or_equal<true>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                    search_above_or_equal<true>(secondary, p, to_primary(p), all_indices, indptrs, store, skip);
                 }
                 lower_bound = true;
             }
@@ -353,12 +306,12 @@ protected:
                     return false;
                 }
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_below<true>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                    search_below<true>(secondary, p, to_primary(p), all_indices, indptrs, store, skip);
                 }
 
             } else {
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_below<false>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                    search_below<false>(secondary, p, to_primary(p), all_indices, indptrs, store, skip);
                 }
                 lower_bound = false;
             }

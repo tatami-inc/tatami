@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "tatami/base/dense/DenseMatrix.hpp"
-#include "tatami/base/sparse/CompressedSparseMatrix.hpp"
+#include "tatami/sparse/CompressedSparseMatrix.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
