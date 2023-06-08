@@ -27,8 +27,8 @@ namespace tatami {
  */
 template<typename NumericPointer_, class IndexStorage_>
 struct CompressedSparseSecondaryPointerModifier {
-    static void increment(NumericPointer_& ptr, const IndexStorage_&, const NumericPointer_&) { ++ptr; }
-    static void decrement(NumericPointer_& ptr, const IndexStorage_&, const NumericPointer_&) { --ptr; }
+    static void increment(NumericPointer_& ptr, const IndexStorage_&, NumericPointer_) { ++ptr; }
+    static void decrement(NumericPointer_& ptr, const IndexStorage_&, NumericPointer_) { --ptr; }
     static NumericPointer_ get(NumericPointer_ ptr) { return ptr; }
     static void set(NumericPointer_& ptr, NumericPointer_ val) { ptr = val; }
 };
@@ -513,27 +513,18 @@ private:
 
     public:
         const Value_* fetch(Index_ i, Value_* buffer) {
+            typename std::conditional<selection_ == DimensionSelectionType::INDEX, ExpandedStoreIndexed, ExpandedStoreBlock>::type store;
+            store.in_values = this->parent->values.data();
+            store.out_values = buffer;
+            std::fill(buffer, buffer + extracted_length<selection_, Index_>(*this), static_cast<Value_>(0));
+
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                ExpandedStoreBlock store;
-                store.in_values = this->parent->values.data();
-                store.out_values = buffer;
                 store.first = 0;
-                std::fill(buffer, buffer + this->full_length, static_cast<Value_>(0));
                 this->secondary_dimension_loop(i, 0, this->full_length, store);
-
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                ExpandedStoreBlock store;
-                store.in_values = this->parent->values.data();
-                store.out_values = buffer;
                 store.first = this->block_start;
-                std::fill(buffer, buffer + this->block_length, static_cast<Value_>(0));
                 this->secondary_dimension_loop(i, this->block_start, this->block_length, store);
-
             } else {
-                ExpandedStoreIndexed store;
-                store.in_values = this->parent->values.data();
-                store.out_values = buffer;
-                std::fill(buffer, buffer + this->index_length, static_cast<Value_>(0));
                 this->secondary_dimension_loop(i, this->subset_indices.data(), this->index_length, store);
             }
 
