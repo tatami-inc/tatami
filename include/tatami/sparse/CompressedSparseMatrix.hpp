@@ -23,78 +23,6 @@
 namespace tatami {
 
 /**
- * @cond
- */
-template<typename NumericPointer_, class IndexStorage_>
-struct CompressedSparseSecondaryPointerModifier {
-    static void increment(NumericPointer_& ptr, const IndexStorage_&, NumericPointer_) { ++ptr; }
-    static void decrement(NumericPointer_& ptr, const IndexStorage_&, NumericPointer_) { --ptr; }
-    static NumericPointer_ get(NumericPointer_ ptr) { return ptr; }
-    static void set(NumericPointer_& ptr, NumericPointer_ val) { ptr = val; }
-};
-
-template<typename Index_, typename StoredIndex_, typename NumericPointer_, class IndexStorage_>
-struct CompressedSparseSecondaryExtractorCore : public SparseSecondaryExtractorCore<Index_, StoredIndex_, NumericPointer_, CompressedSparseSecondaryPointerModifier<NumericPointer_, IndexStorage_> > {
-public:
-    CompressedSparseSecondaryExtractorCore() = default;
-
-    template<class PointerStorage_>
-    CompressedSparseSecondaryExtractorCore(StoredIndex_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) :
-        SparseSecondaryExtractorCore<Index_, StoredIndex_, NumericPointer_, CompressedSparseSecondaryPointerModifier<NumericPointer_, IndexStorage_> >(max_index, length)
-    {
-        auto idpIt = idp.begin() + start;
-        for (Index_ i = 0; i < length; ++i, ++idpIt) {
-            this->current_indptrs[i] = *idpIt;
-            this->current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
-        }
-        this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
-        return;
-    } 
-
-    template<class PointerStorage_>
-    CompressedSparseSecondaryExtractorCore(StoredIndex_ max_index, const IndexStorage_& idx, const PointerStorage_& idp) :
-        CompressedSparseSecondaryExtractorCore(max_index, idx, idp, static_cast<Index_>(0), static_cast<Index_>(idp.size() - 1)) {}
-
-    template<class PointerStorage_>
-    CompressedSparseSecondaryExtractorCore(StoredIndex_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
-        SparseSecondaryExtractorCore<Index_, StoredIndex_, NumericPointer_, CompressedSparseSecondaryPointerModifier<NumericPointer_, IndexStorage_> >(max_index, length)
-    {
-        for (Index_ i0 = 0; i0 < length; ++i0) {
-            auto i = subset[i0];
-            this->current_indptrs[i0] = idp[i];
-            this->current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
-        }
-        this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
-        return;
-    }
-
-public:
-    template<class PointerStorage_, class PrimaryFunction_, class StoreFunction_, class SkipFunction_>
-    bool search(
-        StoredIndex_ secondary,
-        Index_ primary_length,
-        PrimaryFunction_&& to_primary, 
-        const IndexStorage_& indices,
-        const PointerStorage_& indptrs,
-        StoreFunction_&& store,
-        SkipFunction_&& skip
-    ) {
-        return this->search_base(
-            secondary, 
-            primary_length, 
-            std::forward<PrimaryFunction_>(to_primary), 
-            indices, 
-            indptrs, 
-            std::forward<StoreFunction_>(store), 
-            std::forward<SkipFunction_>(skip)
-        );
-    }
-};
-/**
- * @endcond
- */
-
-/**
  * @brief Compressed sparse matrix representation.
  *
  * @tparam row_ Whether this is a compressed sparse row representation.
@@ -415,8 +343,59 @@ private:
      ******* Secondary extraction ********
      *************************************/
 private:
-    typedef Stored<PointerStorage_> indptr_type;
-    typedef CompressedSparseSecondaryExtractorCore<Index_, Stored<IndexStorage_>, indptr_type, IndexStorage_> SecondaryCore;
+    typedef Stored<IndexStorage_> StoredIndex;
+    typedef Stored<PointerStorage_> StoredPointer;
+
+    struct SecondaryModifier {
+        static void increment(StoredPointer& ptr, const IndexStorage_&, StoredPointer) { ++ptr; }
+        static void decrement(StoredPointer& ptr, const IndexStorage_&, StoredPointer) { --ptr; }
+        static StoredPointer get(StoredPointer ptr) { return ptr; }
+        static void set(StoredPointer& ptr, StoredPointer val) { ptr = val; }
+    };
+
+    struct SecondaryCore : public SparseSecondaryExtractorCore<Index_, StoredIndex, StoredPointer, SecondaryModifier> {
+        SecondaryCore() = default;
+
+        SecondaryCore(StoredIndex max_index, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) :
+            SparseSecondaryExtractorCore<Index_, StoredIndex, StoredPointer, SecondaryModifier>(max_index, length)
+        {
+            auto idpIt = idp.begin() + start;
+            for (Index_ i = 0; i < length; ++i, ++idpIt) {
+                this->current_indptrs[i] = *idpIt;
+                this->current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
+            }
+            this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
+            return;
+        } 
+
+        SecondaryCore(StoredIndex max_index, const IndexStorage_& idx, const PointerStorage_& idp) :
+            SecondaryCore(max_index, idx, idp, static_cast<Index_>(0), static_cast<Index_>(idp.size() - 1)) {}
+
+        SecondaryCore(StoredIndex max_index, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
+            SparseSecondaryExtractorCore<Index_, StoredIndex, StoredPointer, SecondaryModifier>(max_index, length)
+        {
+            for (Index_ i0 = 0; i0 < length; ++i0) {
+                auto i = subset[i0];
+                this->current_indptrs[i0] = idp[i];
+                this->current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
+            }
+            this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
+            return;
+        }
+
+        template<class PrimaryFunction_, class StoreFunction_, class SkipFunction_>
+        bool search(StoredIndex secondary, Index_ primary_length, PrimaryFunction_&& to_primary, const IndexStorage_& indices, const PointerStorage_& indptrs, StoreFunction_&& store, SkipFunction_&& skip) {
+            return this->search_base(
+                secondary, 
+                primary_length, 
+                std::forward<PrimaryFunction_>(to_primary), 
+                indices, 
+                indptrs, 
+                std::forward<StoreFunction_>(store), 
+                std::forward<SkipFunction_>(skip)
+            );
+        }
+    };
 
     template<DimensionSelectionType selection_, bool sparse_>
     struct SecondaryExtractorBase : public CompressedExtractorBase<!row_, selection_, sparse_> {
@@ -447,7 +426,7 @@ private:
                 },
                 this->parent->indices,
                 this->parent->indptrs,
-                [&](Index_ primary, indptr_type curptr) -> void {
+                [&](Index_ primary, StoredPointer curptr) -> void {
                     store.add(primary, curptr);
                 },
                 [&](Index_ primary) -> void {
@@ -466,7 +445,7 @@ private:
                 },
                 this->parent->indices,
                 this->parent->indptrs,
-                [&](Index_ primary, indptr_type curptr) -> void {
+                [&](Index_ primary, StoredPointer curptr) -> void {
                     output.add(primary, curptr);
                 },
                 [&](Index_ primary) -> void {
@@ -488,7 +467,7 @@ private:
             Value_* out_values;
             Index_ first;
 
-            void add(Index_ i, indptr_type ptr) {
+            void add(Index_ i, StoredPointer ptr) {
                 out_values[i - first] = in_values[ptr];
                 return;
             }
@@ -500,7 +479,7 @@ private:
             const Value_* in_values;
             Value_* out_values;
 
-            void add(Index_, indptr_type ptr) {
+            void add(Index_, StoredPointer ptr) {
                 *out_values = in_values[ptr];
                 ++out_values;
                 return;

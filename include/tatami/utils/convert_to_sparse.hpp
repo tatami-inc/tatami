@@ -1,7 +1,7 @@
 #ifndef TATAMI_CONVERT_TO_SPARSE_H
 #define TATAMI_CONVERT_TO_SPARSE_H
 
-#include "../base/sparse/CompressedSparseMatrix.hpp"
+#include "../sparse/CompressedSparseMatrix.hpp"
 #include "../stats/utils.hpp"
 
 #include <memory>

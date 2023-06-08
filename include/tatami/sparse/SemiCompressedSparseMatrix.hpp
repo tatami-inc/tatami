@@ -24,141 +24,6 @@
 namespace tatami {
 
 /**
- * @cond
- */
-template<typename Index_, typename NumericPointer_>
-struct SemiCompressedSparseSecondaryPosition {
-    SemiCompressedSparseSecondaryPosition() = default;
-    SemiCompressedSparseSecondaryPosition(NumericPointer_ p) : pointer(p) {}
-    NumericPointer_ pointer;
-    Index_ count = 0;
-    bool scanned = false;
-};
-
-template<typename Index_, typename NumericPointer_, class IndexStorage_>
-void update_semi_compressed_sparse_secondary_position(SemiCompressedSparseSecondaryPosition<Index_, NumericPointer_>& current, const IndexStorage_& indices, NumericPointer_ limit) {
-    if (current.scanned) {
-        return;
-    }
-
-    auto curdex = indices[current.pointer];
-    auto copy = current.pointer;
-    do {
-        ++copy;
-    } while (copy < limit && indices[copy] == curdex);
-    current.count = copy - current.pointer;
-    current.scanned = true;
-    return;
-}
-
-template<typename Index_, typename NumericPointer_, class IndexStorage_>
-struct SemiCompressedSparseSecondaryPositionModifier {
-    static void increment(SemiCompressedSparseSecondaryPosition<Index_, NumericPointer_>& ptr, const IndexStorage_& indices, NumericPointer_ limit) {
-        update_semi_compressed_sparse_secondary_position(ptr, indices, limit);
-        ptr.pointer += ptr.count;
-        ptr.scanned = false;
-        ptr.count = 0;
-    }
-
-    static void decrement(SemiCompressedSparseSecondaryPosition<Index_, NumericPointer_>& ptr, const IndexStorage_& indices, NumericPointer_ limit) {
-        if (ptr.pointer == limit) {
-            return;
-        }
-
-        auto copy = ptr.pointer;
-        --copy;
-        auto curdex = indices[copy];
-        while (copy > limit && indices[copy - 1] == curdex) {
-            --copy;
-        }
-
-        ptr.count = ptr.pointer - copy;
-        ptr.scanned = true;
-        ptr.pointer = copy;
-    }
-
-    static NumericPointer_ get(const SemiCompressedSparseSecondaryPosition<Index_, NumericPointer_>& ptr) {
-        return ptr.pointer;
-    }
-
-    static void set(SemiCompressedSparseSecondaryPosition<Index_, NumericPointer_>& ptr, NumericPointer_ val) {
-        ptr.pointer = val;
-        ptr.scanned = false;
-        ptr.count = 0;
-    }
-};
-
-// Typedef because the full name is too long.
-template<typename Index_, typename StoredIndex_, typename NumericPointer_, class IndexStorage_>
-using SemiCompressedSparseSecondaryExtractorCoreBase = SparseSecondaryExtractorCore<
-    Index_, 
-    StoredIndex_, 
-    SemiCompressedSparseSecondaryPosition<Index_, NumericPointer_>, 
-    SemiCompressedSparseSecondaryPositionModifier<Index_, NumericPointer_, IndexStorage_> 
->;
-
-template<typename Index_, typename StoredIndex_, typename NumericPointer_, class IndexStorage_>
-struct SemiCompressedSparseSecondaryExtractorCore : public SemiCompressedSparseSecondaryExtractorCoreBase<Index_, StoredIndex_, NumericPointer_, IndexStorage_> {
-public:
-    SemiCompressedSparseSecondaryExtractorCore() = default;
-
-    template<class PointerStorage_>
-    SemiCompressedSparseSecondaryExtractorCore(StoredIndex_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) :
-        SemiCompressedSparseSecondaryExtractorCoreBase<Index_, StoredIndex_, NumericPointer_, IndexStorage_>(max_index, length) 
-    {
-        auto idpIt = idp.begin() + start;
-        for (Index_ i = 0; i < length; ++i, ++idpIt) {
-            this->current_indptrs[i] = *idpIt;
-            this->current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
-        }
-        this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
-        return;
-    } 
-
-    template<class PointerStorage_>
-    SemiCompressedSparseSecondaryExtractorCore(StoredIndex_ max_index, const IndexStorage_& idx, const PointerStorage_& idp) :
-        SemiCompressedSparseSecondaryExtractorCore(max_index, idx, idp, static_cast<Index_>(0), static_cast<Index_>(idp.size() - 1)) {}
-
-    template<class PointerStorage_>
-    SemiCompressedSparseSecondaryExtractorCore(StoredIndex_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
-        SemiCompressedSparseSecondaryExtractorCoreBase<Index_, StoredIndex_, NumericPointer_, IndexStorage_>(max_index, length) 
-    {
-        for (Index_ i0 = 0; i0 < length; ++i0) {
-            auto i = subset[i0];
-            this->current_indptrs[i0] = idp[i];
-            this->current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
-        }
-        this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
-        return;
-    }
-
-public:
-    template<class PointerStorage_, class PrimaryFunction_, class StoreFunction_, class SkipFunction_>
-    bool search(
-        StoredIndex_ secondary,
-        Index_ primary_length,
-        PrimaryFunction_&& to_primary, 
-        const IndexStorage_& indices,
-        const PointerStorage_& indptrs,
-        StoreFunction_&& store,
-        SkipFunction_&& skip
-    ) {
-        return this->search_base(
-            secondary, 
-            primary_length, 
-            std::forward<PrimaryFunction_>(to_primary), 
-            indices, 
-            indptrs, 
-            std::forward<StoreFunction_>(store), 
-            std::forward<SkipFunction_>(skip)
-        );
-    }
-};
-/**
- * @endcond
- */
-
-/**
  * @brief Semi-compressed sparse matrix representation.
  *
  * This refers to a sparse matrix of non-negative integers, where counts greater than 1 are represented by duplicated indices.
@@ -242,7 +107,8 @@ private:
     IndexStorage_ indices;
     PointerStorage_ indptrs;
 
-    typedef typename std::remove_reference<decltype(std::declval<PointerStorage_>()[0])>::type indptr_type;
+    typedef Stored<IndexStorage_> StoredIndex;
+    typedef Stored<PointerStorage_> StoredPointer;
 
 public:
     Index_ nrow() const { return nrows; }
@@ -362,7 +228,7 @@ private:
         std::vector<size_t> cached;
 
     protected:
-        indptr_type primary_start(Index_ i, Index_ start) {
+        StoredPointer primary_start(Index_ i, Index_ start) {
             bool do_cache = !cached.empty();
             if (do_cache) {
                 auto val = cached[i];
@@ -564,8 +430,112 @@ private:
      ******* Secondary extraction ********
      *************************************/
 private:
-    typedef SemiCompressedSparseSecondaryExtractorCore<Index_, Stored<IndexStorage_>, indptr_type, IndexStorage_> SecondaryCore;
+    struct Position {
+        Position() = default;
+        Position(StoredPointer p) : pointer(p) {}
+        StoredPointer pointer;
+        Index_ count = 0;
+        bool scanned = false;
+    };
 
+    static void update_secondary_position(Position& current, const IndexStorage_& indices, StoredPointer limit) {
+        if (current.scanned) {
+            return;
+        }
+
+        auto curdex = indices[current.pointer];
+        auto copy = current.pointer;
+        do {
+            ++copy;
+        } while (copy < limit && indices[copy] == curdex);
+        current.count = copy - current.pointer;
+        current.scanned = true;
+        return;
+    }
+
+    struct SecondaryModifier {
+        static void increment(Position& ptr, const IndexStorage_& indices, StoredPointer limit) {
+            update_secondary_position(ptr, indices, limit);
+            ptr.pointer += ptr.count;
+            ptr.scanned = false;
+            ptr.count = 0;
+        }
+
+        static void decrement(Position& ptr, const IndexStorage_& indices, StoredPointer limit) {
+            if (ptr.pointer == limit) {
+                return;
+            }
+
+            auto copy = ptr.pointer;
+            --copy;
+            auto curdex = indices[copy];
+            while (copy > limit && indices[copy - 1] == curdex) {
+                --copy;
+            }
+
+            ptr.count = ptr.pointer - copy;
+            ptr.scanned = true;
+            ptr.pointer = copy;
+        }
+
+        static StoredPointer get(const Position& ptr) {
+            return ptr.pointer;
+        }
+
+        static void set(Position& ptr, StoredPointer val) {
+            ptr.pointer = val;
+            ptr.scanned = false;
+            ptr.count = 0;
+        }
+    };
+
+    struct SecondaryCore : public SparseSecondaryExtractorCore<Index_, StoredIndex, Position, SecondaryModifier> {
+    public:
+        SecondaryCore() = default;
+
+        SecondaryCore(StoredIndex max_index, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) :
+            SparseSecondaryExtractorCore<Index_, StoredIndex, Position, SecondaryModifier>(max_index, length)
+        {
+            auto idpIt = idp.begin() + start;
+            for (Index_ i = 0; i < length; ++i, ++idpIt) {
+                this->current_indptrs[i] = *idpIt;
+                this->current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
+            }
+            this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
+            return;
+        } 
+
+        SecondaryCore(StoredIndex max_index, const IndexStorage_& idx, const PointerStorage_& idp) :
+            SecondaryCore(max_index, idx, idp, static_cast<Index_>(0), static_cast<Index_>(idp.size() - 1)) {}
+
+        SecondaryCore(StoredIndex max_index, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
+            SparseSecondaryExtractorCore<Index_, StoredIndex, Position, SecondaryModifier>(max_index, length)
+        {
+            for (Index_ i0 = 0; i0 < length; ++i0) {
+                auto i = subset[i0];
+                this->current_indptrs[i0] = idp[i];
+                this->current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
+            }
+            this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
+            return;
+        }
+
+    public:
+        template<class PrimaryFunction_, class StoreFunction_, class SkipFunction_>
+        bool search(StoredIndex secondary, Index_ primary_length, PrimaryFunction_&& to_primary, const IndexStorage_& indices, const PointerStorage_& indptrs, StoreFunction_&& store, SkipFunction_&& skip) {
+            return this->search_base(
+                secondary, 
+                primary_length, 
+                std::forward<PrimaryFunction_>(to_primary), 
+                indices, 
+                indptrs, 
+                std::forward<StoreFunction_>(store), 
+                std::forward<SkipFunction_>(skip)
+            );
+        }
+    };
+
+private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct SecondaryExtractorBase : public SemiCompressedExtractorBase<!row_, selection_, sparse_> {
         template<typename ...Args_>
@@ -595,8 +565,8 @@ private:
                 },
                 this->parent->indices,
                 this->parent->indptrs,
-                [&](Index_ primary, SemiCompressedSparseSecondaryPosition<Index_, indptr_type>& curptr) -> void {
-                    update_semi_compressed_sparse_secondary_position(curptr, this->parent->indices, this->parent->indptrs[primary + 1]);
+                [&](Index_ primary, Position& curptr) -> void {
+                    update_secondary_position(curptr, this->parent->indices, this->parent->indptrs[primary + 1]);
                     output.add(primary, curptr.count);
                 },
                 [&](Index_ primary) -> void {
@@ -616,8 +586,8 @@ private:
                 },
                 this->parent->indices,
                 this->parent->indptrs,
-                [&](Index_ primary, SemiCompressedSparseSecondaryPosition<Index_, indptr_type>& curptr) -> void {
-                    update_semi_compressed_sparse_secondary_position(curptr, this->parent->indices, this->parent->indptrs[primary + 1]);
+                [&](Index_ primary, Position& curptr) -> void {
+                    update_secondary_position(curptr, this->parent->indices, this->parent->indptrs[primary + 1]);
                     output.add(primary, curptr.count);
                 },
                 [&](Index_ primary) -> void {
