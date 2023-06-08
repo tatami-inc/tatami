@@ -3,7 +3,7 @@
 
 #include "LayeredMatrixData.hpp"
 #include "utils.hpp"
-#include "../../base/sparse/CompressedSparseMatrix.hpp"
+#include "../../sparse/CompressedSparseMatrix.hpp"
 #include "../../base/other/DelayedBind.hpp"
 #include "../../utils/compress_sparse_triplets.hpp"
 

@@ -15,14 +15,12 @@ add_executable(
     libtest 
 
     src/base/DenseMatrix.cpp
-    src/base/CompressedSparseMatrix.cpp
-    src/base/SemiCompressedSparseMatrix.cpp
     src/base/DelayedBind.cpp
     src/base/DelayedSubset.cpp
     src/base/DelayedSubsetBlock.cpp
     src/base/DelayedTranspose.cpp
     src/base/DelayedCast.cpp
-
+    
     src/isometric/unary/arith_vector_helpers.cpp
     src/isometric/unary/arith_scalar_helpers.cpp
     src/isometric/unary/math_helpers.cpp
@@ -34,16 +32,18 @@ add_executable(
     src/isometric/binary/compare_helpers.cpp
     src/isometric/binary/boolean_helpers.cpp
 
-    src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
+    src/sparse/CompressedSparseMatrix.cpp
+    src/sparse/SemiCompressedSparseMatrix.cpp
+    src/sparse/SparseSecondaryExtractorCore.cpp
 
     src/chunked/LruChunkCache.cpp
     src/chunked/OracleChunkCache.cpp
-
+    
     src/stats/sums.cpp
     src/stats/variances.cpp
     src/stats/medians.cpp
     src/stats/ranges.cpp
-
+    
     src/utils/wrap_shared_ptr.cpp
     src/utils/SomeNumericArray.cpp
     src/utils/ArrayView.cpp

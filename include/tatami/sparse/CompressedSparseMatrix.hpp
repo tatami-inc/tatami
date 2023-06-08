@@ -200,7 +200,7 @@ private:
      ***********************************/
 private:
     struct RawStore {
-        const Value_* in_values;
+        const ValueStorage_* in_values;
 
         Value_* out_values;
         Index_* out_indices;
@@ -213,7 +213,7 @@ private:
                 ++out_indices;
             }
             if (out_values) {
-                *out_values = in_values[ptr];
+                *out_values = (*in_values)[ptr];
                 ++out_values;
             }
             return;
@@ -264,11 +264,11 @@ private:
 
     private:
         struct ExpandedStore {
-            const Value_* in_values;
+            const ValueStorage_* in_values;
             Value_* out_values;
 
             void add(Index_, size_t ptr) {
-                *out_values = in_values[ptr];
+                *out_values = (*in_values)[ptr];
                 ++out_values;
                 return;
             }
@@ -282,7 +282,7 @@ private:
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 auto obtained = sparse_utils::extract_primary_dimension(i, this->parent->indices, this->parent->indptrs);
-                sparse_utils::transplant_primary_expanded(this->parent->values, this->parent->indices, obtained, buffer, 0, this->full_length);
+                sparse_utils::transplant_primary_expanded(this->parent->values, this->parent->indices, obtained, buffer, static_cast<Index_>(0), this->full_length);
 
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 auto obtained = sparse_utils::extract_primary_dimension(i, this->block_start, this->block_length, this->parent->indices, this->parent->indptrs, this->cached);
@@ -291,7 +291,7 @@ private:
             } else {
                 std::fill(buffer, buffer + this->index_length, static_cast<Value_>(0));
                 ExpandedStore store;
-                store.in_values = this->parent->values.data();
+                store.in_values = &(this->parent->values);
                 store.out_values = buffer;
                 sparse_utils::primary_dimension(i, this->subset_indices.data(), this->index_length, this->parent->indices, this->parent->indptrs, this->cached, store);
             }
@@ -330,7 +330,7 @@ private:
 
             } else {
                 RawStore store;
-                store.in_values = this->parent->values.data();
+                store.in_values = &(this->parent->values);
                 store.out_values = vbuffer;
                 store.out_indices = ibuffer;
                 sparse_utils::primary_dimension(i, this->subset_indices.data(), this->index_length, this->parent->indices, this->parent->indptrs, this->cached, store);
@@ -463,12 +463,12 @@ private:
 
     private:
         struct ExpandedStoreBlock {
-            const Value_* in_values;
+            const ValueStorage_* in_values;
             Value_* out_values;
             Index_ first;
 
             void add(Index_ i, StoredPointer ptr) {
-                out_values[i - first] = in_values[ptr];
+                out_values[i - first] = (*in_values)[ptr];
                 return;
             }
 
@@ -476,11 +476,11 @@ private:
         };
 
         struct ExpandedStoreIndexed {
-            const Value_* in_values;
+            const ValueStorage_* in_values;
             Value_* out_values;
 
             void add(Index_, StoredPointer ptr) {
-                *out_values = in_values[ptr];
+                *out_values = (*in_values)[ptr];
                 ++out_values;
                 return;
             }
@@ -493,13 +493,13 @@ private:
     public:
         const Value_* fetch(Index_ i, Value_* buffer) {
             typename std::conditional<selection_ == DimensionSelectionType::INDEX, ExpandedStoreIndexed, ExpandedStoreBlock>::type store;
-            store.in_values = this->parent->values.data();
+            store.in_values = &(this->parent->values);
             store.out_values = buffer;
             std::fill(buffer, buffer + extracted_length<selection_, Index_>(*this), static_cast<Value_>(0));
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 store.first = 0;
-                this->secondary_dimension_loop(i, 0, this->full_length, store);
+                this->secondary_dimension_loop(i, static_cast<Index_>(0), this->full_length, store);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 store.first = this->block_start;
                 this->secondary_dimension_loop(i, this->block_start, this->block_length, store);
@@ -525,12 +525,12 @@ private:
             }
 
             RawStore store;
-            store.in_values = this->parent->values.data();
+            store.in_values = &(this->parent->values);
             store.out_values = vbuffer;
             store.out_indices = ibuffer;
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->secondary_dimension_loop(i, 0, this->full_length, store);
+                this->secondary_dimension_loop(i, static_cast<Index_>(0), this->full_length, store);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 this->secondary_dimension_loop(i, this->block_start, this->block_length, store);
             } else {

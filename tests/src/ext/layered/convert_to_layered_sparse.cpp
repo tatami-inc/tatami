@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "tatami/base/dense/DenseMatrix.hpp"
-#include "tatami/base/sparse/CompressedSparseMatrix.hpp"
+#include "tatami/sparse/CompressedSparseMatrix.hpp"
 #include "tatami/ext/layered.hpp"
 
 #include "mock_layered_sparse_data.h"

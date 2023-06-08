@@ -3,8 +3,8 @@
 
 #include "base/dense/DenseMatrix.hpp"
 
-#include "base/sparse/CompressedSparseMatrix.hpp"
-#include "base/sparse/SemiCompressedSparseMatrix.hpp"
+#include "sparse/CompressedSparseMatrix.hpp"
+#include "sparse/SemiCompressedSparseMatrix.hpp"
 
 #include "isometric/unary/DelayedUnaryIsometricOp.hpp"
 #include "isometric/binary/DelayedBinaryIsometricOp.hpp"
