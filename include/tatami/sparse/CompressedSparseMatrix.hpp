@@ -200,10 +200,14 @@ private:
      ***********************************/
 private:
     struct RawStore {
-        const ValueStorage_* in_values;
+        RawStore(const ValueStorage_& iv, Value_* ov, Index_* oi) : in_values(iv), out_values(ov), out_indices(oi) {}
 
+    private:
+        const ValueStorage_& in_values;
         Value_* out_values;
         Index_* out_indices;
+
+    public:
         Index_ n = 0;
 
         void add(Index_ i, size_t ptr) {
@@ -213,7 +217,7 @@ private:
                 ++out_indices;
             }
             if (out_values) {
-                *out_values = (*in_values)[ptr];
+                *out_values = in_values[ptr];
                 ++out_values;
             }
             return;
@@ -264,11 +268,15 @@ private:
 
     private:
         struct ExpandedStore {
-            const ValueStorage_* in_values;
+            ExpandedStore(const ValueStorage_& iv, Value_* ov) : in_values(iv), out_values(ov) {}
+
+        private:
+            const ValueStorage_& in_values;
             Value_* out_values;
 
+        public:
             void add(Index_, size_t ptr) {
-                *out_values = (*in_values)[ptr];
+                *out_values = in_values[ptr];
                 ++out_values;
                 return;
             }
@@ -290,9 +298,7 @@ private:
 
             } else {
                 std::fill(buffer, buffer + this->index_length, static_cast<Value_>(0));
-                ExpandedStore store;
-                store.in_values = &(this->parent->values);
-                store.out_values = buffer;
+                ExpandedStore store(this->parent->values, buffer);
                 sparse_utils::primary_dimension(i, this->subset_indices.data(), this->index_length, this->parent->indices, this->parent->indptrs, this->cached, store);
             }
 
@@ -329,10 +335,7 @@ private:
                 return output;
 
             } else {
-                RawStore store;
-                store.in_values = &(this->parent->values);
-                store.out_values = vbuffer;
-                store.out_indices = ibuffer;
+                RawStore store(this->parent->values, vbuffer, ibuffer);
                 sparse_utils::primary_dimension(i, this->subset_indices.data(), this->index_length, this->parent->indices, this->parent->indptrs, this->cached, store);
                 return SparseRange<Value_, Index_>(store.n, vbuffer, ibuffer);
             }
@@ -524,11 +527,7 @@ private:
                 ibuffer = NULL;
             }
 
-            RawStore store;
-            store.in_values = &(this->parent->values);
-            store.out_values = vbuffer;
-            store.out_indices = ibuffer;
-
+            RawStore store(this->parent->values, vbuffer, ibuffer);
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->secondary_dimension_loop(i, static_cast<Index_>(0), this->full_length, store);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
