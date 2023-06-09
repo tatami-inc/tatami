@@ -178,48 +178,6 @@
     </member>
   </compound>
   <compound kind="file">
-    <name>CompressedSparseMatrix.hpp</name>
-    <path>tatami/base/sparse/</path>
-    <filename>CompressedSparseMatrix_8hpp.html</filename>
-    <class kind="class">tatami::CompressedSparseMatrix</class>
-    <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>CompressedSparseMatrix&lt; false, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</type>
-      <name>CompressedSparseColumnMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a18cee3a5d9734f0092b03d023cfe4b6a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>CompressedSparseMatrix&lt; true, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</type>
-      <name>CompressedSparseRowMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a0111adeeb583aeb7e24e9e1e25be4aa0</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>SemiCompressedSparseMatrix.hpp</name>
-    <path>tatami/base/sparse/</path>
-    <filename>SemiCompressedSparseMatrix_8hpp.html</filename>
-    <class kind="class">tatami::SemiCompressedSparseMatrix</class>
-    <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>SemiCompressedSparseMatrix&lt; false, Value_, Index_, IndexStorage_, PointerStorage_ &gt;</type>
-      <name>SemiCompressedSparseColumnMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6f03d0d880bc056e09c2cbb80eb2c2ec</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>SemiCompressedSparseMatrix&lt; true, Value_, Index_, IndexStorage_, PointerStorage_ &gt;</type>
-      <name>SemiCompressedSparseRowMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a412cb6ee12f3ee81d404d6eb0e494e4d</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="file">
     <name>SparseRange.hpp</name>
     <path>tatami/base/</path>
     <filename>SparseRange_8hpp.html</filename>
@@ -297,6 +255,31 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>convert_to_layered_sparse.hpp</name>
+    <path>tatami/ext/layered/</path>
+    <filename>convert__to__layered__sparse_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
+      <name>convert_to_layered_sparse</name>
+      <anchorfile>convert__to__layered__sparse_8hpp.html</anchorfile>
+      <anchor>a8a10c9d0fdbf5076e8583d1068a7f6d6</anchor>
+      <arglist>(const Matrix *incoming)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>LayeredMatrixData.hpp</name>
+    <path>tatami/ext/layered/</path>
+    <filename>LayeredMatrixData_8hpp.html</filename>
+    <class kind="struct">tatami::LayeredMatrixData</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>MatrixMarket.hpp</name>
+    <path>tatami/ext/</path>
+    <filename>MatrixMarket_8hpp.html</filename>
+  </compound>
+  <compound kind="file">
     <name>layered.hpp</name>
     <path>tatami/ext/</path>
     <filename>layered_8hpp.html</filename>
@@ -321,31 +304,6 @@
       <anchor>af7655515516f20bf22da4311b7e8dcc5</anchor>
       <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
     </member>
-  </compound>
-  <compound kind="file">
-    <name>convert_to_layered_sparse.hpp</name>
-    <path>tatami/ext/layered/</path>
-    <filename>convert__to__layered__sparse_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
-      <name>convert_to_layered_sparse</name>
-      <anchorfile>convert__to__layered__sparse_8hpp.html</anchorfile>
-      <anchor>a8a10c9d0fdbf5076e8583d1068a7f6d6</anchor>
-      <arglist>(const Matrix *incoming)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>LayeredMatrixData.hpp</name>
-    <path>tatami/ext/layered/</path>
-    <filename>LayeredMatrixData_8hpp.html</filename>
-    <class kind="struct">tatami::LayeredMatrixData</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>MatrixMarket.hpp</name>
-    <path>tatami/ext/</path>
-    <filename>MatrixMarket_8hpp.html</filename>
   </compound>
   <compound kind="file">
     <name>simple.hpp</name>
@@ -824,6 +782,68 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>CompressedSparseMatrix.hpp</name>
+    <path>tatami/sparse/</path>
+    <filename>CompressedSparseMatrix_8hpp.html</filename>
+    <class kind="class">tatami::CompressedSparseMatrix</class>
+    <namespace>tatami</namespace>
+    <member kind="typedef">
+      <type>CompressedSparseMatrix&lt; false, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</type>
+      <name>CompressedSparseColumnMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a18cee3a5d9734f0092b03d023cfe4b6a</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>CompressedSparseMatrix&lt; true, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</type>
+      <name>CompressedSparseRowMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a0111adeeb583aeb7e24e9e1e25be4aa0</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>SemiCompressedSparseMatrix.hpp</name>
+    <path>tatami/sparse/</path>
+    <filename>SemiCompressedSparseMatrix_8hpp.html</filename>
+    <class kind="class">tatami::SemiCompressedSparseMatrix</class>
+    <namespace>tatami</namespace>
+    <member kind="typedef">
+      <type>SemiCompressedSparseMatrix&lt; false, Value_, Index_, IndexStorage_, PointerStorage_ &gt;</type>
+      <name>SemiCompressedSparseColumnMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a6f03d0d880bc056e09c2cbb80eb2c2ec</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>SemiCompressedSparseMatrix&lt; true, Value_, Index_, IndexStorage_, PointerStorage_ &gt;</type>
+      <name>SemiCompressedSparseRowMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a412cb6ee12f3ee81d404d6eb0e494e4d</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>utils.hpp</name>
+    <path>tatami/stats/</path>
+    <filename>stats_2utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>void</type>
+      <name>parallelize</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a29ce7a2219ea60d45de1aa3d4de66063</anchor>
+      <arglist>(Function_ fun, size_t tasks, size_t threads)</arglist>
+    </member>
+    <member kind="function">
+      <type>auto</type>
+      <name>consecutive_extractor</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>medians.hpp</name>
     <path>tatami/stats/</path>
     <filename>medians_8hpp.html</filename>
@@ -909,26 +929,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a53a658059404691856bef57fb85d83d6</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>utils.hpp</name>
-    <path>tatami/stats/</path>
-    <filename>stats_2utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>parallelize</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a29ce7a2219ea60d45de1aa3d4de66063</anchor>
-      <arglist>(Function_ fun, size_t tasks, size_t threads)</arglist>
-    </member>
-    <member kind="function">
-      <type>auto</type>
-      <name>consecutive_extractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
     </member>
   </compound>
   <compound kind="file">
