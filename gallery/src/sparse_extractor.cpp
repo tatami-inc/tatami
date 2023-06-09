@@ -3,7 +3,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "tatami/base/sparse/CompressedSparseMatrix.hpp"
+#include "tatami/sparse/CompressedSparseMatrix.hpp"
 #include "tatami/utils/compress_sparse_triplets.hpp"
 
 /* INTRODUCTION:
