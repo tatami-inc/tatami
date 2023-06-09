@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <type_traits>
+#include <algorithm>
 
 #include "utils.hpp"
 
@@ -17,16 +18,18 @@ protected:
     // The current position of the pointer at each primary element.
     std::vector<CustomPointer_> current_indptrs; 
 
-    // The general idea here is to store a local copy of the indices so that we don't have to keep on doing cache-unfriendly look-ups on the indices based on 'current_indptrs'.
-    // This assumes that the density low enough that updates to the local indices are rare relative to the number of comparisons to those same indices.
-    // 
-    // If 'lower_bound = true', this vector contains the current index being pointed to, i.e., 'current_indices[i] := indices[current_indptrs[i]]'.
-    // We store this here as it is more cache-friendly than doing a look-up to 'indices'.
-    // If 'current_indptrs[i]' is out of range, the current index is instead set to the maximum index (e.g., max rows for CSC matrices).
-    //
-    // If 'lower_bound = false', this vector instead contains:
-    // - 'indices[current_indptrs[i] - 1]', if 'current_indptrs[i]' does not lie at the start of the primary dimension element.
-    // - otherwise, 'decrement_fail', i.e., -1 or its unsigned equivalent.
+    /*
+     * The general idea here is to store a local copy of the indices so that we don't have to keep on doing cache-unfriendly look-ups on the indices based on 'current_indptrs'.
+     * This assumes that the density low enough that updates to the local indices are rare relative to the number of comparisons to those same indices.
+     * 
+     * If 'lower_bound = true', this vector contains the current index being pointed to, i.e., 'current_indices[i] := indices[current_indptrs[i]]'.
+     * We store this here as it is more cache-friendly than doing a look-up to 'indices'.
+     * If 'current_indptrs[i]' is out of range, the current index is instead set to the maximum index (e.g., max rows for CSC matrices).
+     *
+     * If 'lower_bound = false', this vector instead contains:
+     * - 'indices[current_indptrs[i] - 1]', if 'current_indptrs[i]' does not lie at the start of the primary dimension element.
+     * - otherwise, 'decrement_fail', i.e., -1 or its unsigned equivalent.
+     */
     std::vector<StoredIndex_> current_indices;
 
     // Closest value in 'current_indices' to the 'last_request', to see whether we can short-circuit the iteration.

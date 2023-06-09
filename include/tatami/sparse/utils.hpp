@@ -8,10 +8,9 @@ namespace tatami {
 namespace sparse_utils {
 
 /*
- * If PointerStorage_ is just a bool, then we assume that the indices the
- * indices for each primary element are fragmented into separate vectors. In
- * such cases, we can just call size() to get the upper limit, and we can
- * just set the lower limit to zero.
+ * If PointerStorage_ is just a bool, then we assume that the indices for each
+ * primary element are fragmented into separate vectors. In such cases, we can
+ * just call size() to get the upper limit and we set the lower limit to zero.
  *
  * If PointerStorage_ is not a bool, it is assumed to be a vector of pointers
  * in the typical compressed sparse style. In such cases, we actually need to
