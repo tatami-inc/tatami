@@ -53,13 +53,14 @@ public:
     /**
      * @param nr Number of rows.
      * @param nc Number of columns.
-     * @param idx Vector of row indices (if `ROW=false`) or column indices (if `ROW=true`) for the non-zero elements.
+     * @param idx Vector of row indices (if `row_ = false`) or column indices (if `row_ = true`) for the non-zero elements.
      * @param ptr Vector of index pointers.
      * @param check Should the input vectors be checked for validity?
      *
-     * If `check=true`, the constructor will check that `vals` and `idx` have the same length;
-     * `ptr` is ordered with first and last values set to 0 and the number of non-zero elements, respectively;
-     * and `idx` is ordered within each interval defined by successive elements of `ptr`.
+     * If `check=true`, the constructor will check that `ptr` has length equal to the number of rows (if `row_ = true`) or columns (otherwise) plus one;
+     * `ptr` is ordered with first and last values set to 0 and the length of `idx`, respectively;
+     * `idx` is non-decreasing within each interval defined by successive elements of `ptr`;
+     * and all values of `idx` are non-negative and less than the number of columns (if `row_ = true`) or rows (otherwise).
      */
     SemiCompressedSparseMatrix(Index_ nr, Index_ nc, IndexStorage_ idx, PointerStorage_ ptr, bool check=true) : 
         nrows(nr), ncols(nc), indices(std::move(idx)), indptrs(std::move(ptr)) 
@@ -78,24 +79,27 @@ public:
             if (indptrs[0] != 0) {
                 throw std::runtime_error("first element of 'indptrs' should be zero");
             }
-            if (static_cast<size_t>(indptrs[indptrs.size() - 1]) != indices.size()) {
+
+            auto last = indptrs[indptrs.size() - 1]; // don't use back() as this is not guaranteed to be available for arbitrary PointerStorage_.
+            if (static_cast<size_t>(last) != indices.size()) {
                 throw std::runtime_error("last element of 'indptrs' should be equal to length of 'indices'");
             }
 
-            size_t counter = 0;
             for (size_t i = 1; i < indptrs.size(); ++i) {
-                if (indptrs[i] < indptrs[i-1]) {
-                    throw std::runtime_error("'indptrs' should be in increasing order");
+                auto start = indptrs[i- 1], end = indptrs[i];
+                if (end < start || end > last) {
+                    throw std::runtime_error("'indptrs' should be in non-decreasing order");
                 }
 
-                if (counter < indices.size()) {
-                    auto previous = indices[counter];
-                    ++counter;
-                    while (counter < static_cast<size_t>(indptrs[i])) {
-                        if (previous > indices[counter]) {
-                            throw std::runtime_error("'indices' should be non-decreasing within each " + (row_ ? std::string("row") : std::string("column")));
+                for (auto x = start + 1; x < end; ++x) {
+                    if (indices[x - 1] > indices[x]) {
+                        std::string msg = "'indices' should be non-decreasing within each ";
+                        if constexpr(row_) {
+                            msg += "row";
+                        } else {
+                            msg += "column";
                         }
-                        ++counter;
+                        throw std::runtime_error(msg);
                     }
                 }
             }
