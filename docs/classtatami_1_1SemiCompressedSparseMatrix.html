@@ -293,13 +293,13 @@ template&lt;bool row_, typename Value_ , typename Index_  = int, class IndexStor
   <table class="params">
     <tr><td class="paramname">nr</td><td>Number of rows. </td></tr>
     <tr><td class="paramname">nc</td><td>Number of columns. </td></tr>
-    <tr><td class="paramname">idx</td><td>Vector of row indices (if <code>ROW=false</code>) or column indices (if <code>ROW=true</code>) for the non-zero elements. </td></tr>
+    <tr><td class="paramname">idx</td><td>Vector of row indices (if <code>row_ = false</code>) or column indices (if <code>row_ = true</code>) for the non-zero elements. </td></tr>
     <tr><td class="paramname">ptr</td><td>Vector of index pointers. </td></tr>
     <tr><td class="paramname">check</td><td>Should the input vectors be checked for validity?</td></tr>
   </table>
   </dd>
 </dl>
-<p>If <code>check=true</code>, the constructor will check that <code>vals</code> and <code>idx</code> have the same length; <code>ptr</code> is ordered with first and last values set to 0 and the number of non-zero elements, respectively; and <code>idx</code> is ordered within each interval defined by successive elements of <code>ptr</code>. </p>
+<p>If <code>check=true</code>, the constructor will check that <code>ptr</code> has length equal to the number of rows (if <code>row_ = true</code>) or columns (otherwise) plus one; <code>ptr</code> is ordered with first and last values set to 0 and the length of <code>idx</code>, respectively; <code>idx</code> is non-decreasing within each interval defined by successive elements of <code>ptr</code>; and all values of <code>idx</code> are non-negative and less than the number of columns (if <code>row_ = true</code>) or rows (otherwise). </p>
 
 </div>
 </div>

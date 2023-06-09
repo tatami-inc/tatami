@@ -226,10 +226,10 @@ Additional Inherited Members</h2></td></tr>
 class tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</div><p>Compressed sparse matrix representation. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">row_</td><td>Whether this is a compressed sparse row representation. If <code>false</code>, a compressed sparse column representation is used instead. </td></tr>
+    <tr><td class="paramname">row_</td><td>Whether this is a compressed sparse row representation. If <code>false</code>, a compressed sparse column representation is expected instead. </td></tr>
     <tr><td class="paramname">Value_</td><td>Type of the matrix values. </td></tr>
     <tr><td class="paramname">Index_</td><td>Type of the row/column indices. </td></tr>
-    <tr><td class="paramname">ValueStorage_</td><td>Vector class used to store the matrix values internally. This does not necessarily have to contain <code>T</code>, as long as the type is convertible to <code>T</code>. Methods should be available for <code>size()</code>, <code>begin()</code>, <code>end()</code> and <code>[]</code>. If a method is available for <code>data()</code> that returns a <code>const T*</code>, it will also be used. </td></tr>
+    <tr><td class="paramname">ValueStorage_</td><td>Vector class used to store the matrix values internally. This does not necessarily have to contain <code>Value_</code>, as long as the type is convertible to <code>Value_</code>. Methods should be available for <code>size()</code>, <code>begin()</code>, <code>end()</code> and <code>[]</code>. If a method is available for <code>data()</code> that returns a <code>const Value_*</code>, it will also be used. </td></tr>
     <tr><td class="paramname">IndexStorage_</td><td>Vector class used to store the row/column indices internally. This does not necessarily have to contain <code>Index_</code>, as long as the type is convertible to <code>Index_</code>. Methods should be available for <code>size()</code>, <code>begin()</code>, <code>end()</code> and <code>[]</code>. If a method is available for <code>data()</code> that returns a <code>const Index_*</code>, it will also be used. </td></tr>
     <tr><td class="paramname">PointerStorage_</td><td>Vector class used to store the column/row index pointers. Methods should be available for <code>size()</code>, <code>begin()</code>, <code>end()</code> and <code>[]</code>. </td></tr>
   </table>
@@ -300,13 +300,13 @@ template&lt;bool row_, typename Value_ , typename Index_  = int, class ValueStor
     <tr><td class="paramname">nr</td><td>Number of rows. </td></tr>
     <tr><td class="paramname">nc</td><td>Number of columns. </td></tr>
     <tr><td class="paramname">vals</td><td>Vector of non-zero elements. </td></tr>
-    <tr><td class="paramname">idx</td><td>Vector of row indices (if <code>ROW=false</code>) or column indices (if <code>ROW=true</code>) for the non-zero elements. </td></tr>
+    <tr><td class="paramname">idx</td><td>Vector of row indices (if <code>row_ = false</code>) or column indices (if <code>row_ = true</code>) for the non-zero elements. </td></tr>
     <tr><td class="paramname">ptr</td><td>Vector of index pointers. </td></tr>
     <tr><td class="paramname">check</td><td>Should the input vectors be checked for validity?</td></tr>
   </table>
   </dd>
 </dl>
-<p>If <code>check=true</code>, the constructor will check that <code>vals</code> and <code>idx</code> have the same length; <code>ptr</code> is ordered with first and last values set to 0 and the number of non-zero elements, respectively; and <code>idx</code> is ordered within each interval defined by successive elements of <code>ptr</code>. </p>
+<p>If <code>check=true</code>, the constructor will check that <code>vals</code> and <code>idx</code> have the same length, equal to the number of structural non-zero elements; <code>ptr</code> has length equal to the number of rows (if <code>row_ = true</code>) or columns (otherwise) plus one; <code>ptr</code> is non-decreasing with first and last values set to 0 and the number of structural non-zeroes, respectively; <code>idx</code> is strictly increasing within each interval defined by successive elements of <code>ptr</code>; and all values of <code>idx</code> are non-negative and less than the number of columns (if <code>row_ = true</code>) or rows (otherwise). </p>
 
 </div>
 </div>
