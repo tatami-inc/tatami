@@ -42,6 +42,11 @@ std::pair<size_t, size_t> extract_primary_dimension(
         } 
 
         auto last = start + length;
+
+        // Comparing the one-past-the-last requested index with the last observed index at 'eIt'.
+        // If the former is less than the latter, then we need to do a binary search.
+        // If greater than the latter, we restore 'eIt' to its original position.
+        // If equal, then the decremented 'eIt' is already the one-past-the-last index, so we keep it as-is.
         --eIt;
         if (last < *eIt) {
             eIt = std::lower_bound(iIt, eIt, last);
@@ -159,8 +164,6 @@ void primary_dimension(
 
     return;
 }
-
-
 
 }
 
