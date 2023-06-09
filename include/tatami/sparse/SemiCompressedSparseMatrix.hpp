@@ -1,9 +1,10 @@
 #ifndef TATAMI_SEMI_COMPRESSED_SPARSE_MATRIX_H
 #define TATAMI_SEMI_COMPRESSED_SPARSE_MATRIX_H
 
-#include "../Matrix.hpp"
-#include "../utils.hpp"
-#include "../../sparse/CompressedSparseSecondaryExtractorBasic.hpp"
+#include "../base/Matrix.hpp"
+#include "../base/utils.hpp"
+#include "utils.hpp"
+#include "SparseSecondaryExtractorCore.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -106,8 +107,8 @@ private:
     IndexStorage_ indices;
     PointerStorage_ indptrs;
 
-    typedef typename std::remove_reference<decltype(std::declval<IndexStorage_>()[0])>::type index_type;
-    typedef typename std::remove_reference<decltype(std::declval<PointerStorage_>()[0])>::type indptr_type;
+    typedef Stored<IndexStorage_> StoredIndex;
+    typedef Stored<PointerStorage_> StoredPointer;
 
 public:
     Index_ nrow() const { return nrows; }
@@ -182,143 +183,6 @@ private:
      ******* Primary extraction ********
      ***********************************/
 private:
-    struct PrimaryWorkspace {
-        std::vector<size_t> cached;
-    };
-
-    Index_ max_secondary_index() const {
-        if constexpr(row_) {
-            return ncols;
-        } else {
-            return nrows;
-        }
-    }
-
-    indptr_type primary_start(Index_ i, Index_ start, PrimaryWorkspace& work) const {
-        bool do_cache = !(work.cached.empty());
-        if (do_cache) {
-            auto val = work.cached[i];
-            if (val != -1) {
-                return val;
-            }
-        }
-
-        auto outstart = indptrs[i];
-        if (start) { // Jumping ahead if non-zero.
-            auto iIt = indices.begin() + indptrs[i], eIt = indices.begin() + indptrs[i + 1]; 
-            outstart = std::lower_bound(iIt, eIt, start) - indices.begin();
-        } 
-        if (do_cache) {
-            work.cached[i] = outstart;
-        }
-
-        return outstart;
-    }
-
-    SparseRange<Value_, Index_> primary_dimension_raw(Index_ i, Index_ start, Index_ length, PrimaryWorkspace& work, Value_* out_values, Index_* out_indices) const {
-        auto position = primary_start(i, start, work);
-        auto limit = indptrs[i + 1];
-        auto end = start + length;
-
-        SparseRange<Value_, Index_> output;
-        output.number = 0;
-        output.value = out_values;
-        output.index = out_indices;
-        auto& count = output.number;
-
-        while (position < limit && indices[position] < end) {
-            auto curdex = indices[position];
-            auto copy = position;
-            ++copy;
-            for (; copy < limit && indices[copy] == curdex; ++copy) {}
-
-            if (out_values) {
-                *out_values = copy - position;
-                ++out_values;
-            }
-            if (out_indices) {
-                *out_indices = curdex;
-                ++out_indices;
-            }
-
-            ++count;
-            position = copy;
-        }
-
-        return output;
-    }
-
-    void primary_dimension_expanded(Index_ i, Index_ start, Index_ length, PrimaryWorkspace& work, Value_* out_values) const {
-        std::fill(out_values, out_values + length, static_cast<Value_>(0));
-        auto position = primary_start(i, start, work);
-        auto limit = indptrs[i + 1];
-        auto end = start + length;
-
-        while (position < limit && indices[position] < end) {
-            auto curdex = indices[position];
-            auto copy = position;
-            ++copy;
-            for (; copy < limit && indices[copy] == curdex; ++copy) {}
-            out_values[curdex - start] = copy - position;
-            position = copy;
-        }
-
-        return;
-    }
-
-private:
-    template<class Store_>
-    void primary_dimension(Index_ i, const Index_* subset, Index_ length, PrimaryWorkspace& work, Store_& store) const {
-        if (!length) {
-            return;
-        }
-
-        auto iIt = indices.begin() + indptrs[i], eIt = indices.begin() + indptrs[i + 1]; 
-
-        if (indices[0]) { // Only jumping ahead if the start is non-zero.
-            bool do_cache = !work.cached.empty();
-            if (do_cache) {
-                if (work.cached[i] != -1) { // retrieving the jump from cache, if we came here before.
-                    iIt += work.cached[i];
-                } else {
-                    auto iIt2 = std::lower_bound(iIt, eIt, subset[0]);
-                    work.cached[i] = iIt2 - iIt;
-                    iIt = iIt2;
-                }
-            } else {
-                iIt = std::lower_bound(iIt, eIt, subset[0]);
-            }
-        } 
-
-        if (iIt == eIt) {
-            return;
-        }
-
-        for (Index_ counter = 0; counter < length; ++counter) {
-            auto current = subset[counter];
-
-            while (iIt != eIt && current > *iIt) {
-                ++iIt;
-            }
-            if (iIt == eIt) {
-                break;
-            }
-
-            if (current == *iIt) {
-                int count = 0;
-                do {
-                    ++iIt;
-                    ++count;
-                } while (iIt != eIt && current == *iIt);
-                store.add(current, count);
-            } else {
-                store.skip(current);
-            }
-        }
-
-        return;
-    }
-
     struct RawStore {
         Value_* out_values;
         Index_* out_indices;
@@ -340,36 +204,6 @@ private:
         void skip(Index_) {} 
     };
 
-    SparseRange<Value_, Index_> primary_dimension_raw(Index_ i, const Index_* indices, Index_ length, PrimaryWorkspace& work, Value_* out_values, Index_* out_indices) const {
-        RawStore store;
-        store.out_values = out_values;
-        store.out_indices = out_indices;
-        primary_dimension(i, indices, length, work, store);
-        return SparseRange<Value_, Index_>(store.n, out_values, out_indices);
-    } 
-
-    struct ExpandedStoreIndexed {
-        Value_* out_values;
-
-        void add(Index_, Value_ val) {
-            *out_values = val;
-            ++out_values;
-            return;
-        }
-
-        void skip(Index_) {
-            ++out_values;
-        }
-    };
-
-    void primary_dimension_expanded(Index_ i, const Index_* indices, Index_ length, PrimaryWorkspace& work, Value_* out_values) const {
-        std::fill(out_values, out_values + length, static_cast<Value_>(0));
-        ExpandedStoreIndexed store;
-        store.out_values = out_values;
-        primary_dimension(i, indices, length, work, store);
-        return;
-    }
-
 private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct PrimaryExtractorBase : public SemiCompressedExtractorBase<row_, selection_, sparse_> {
@@ -386,36 +220,190 @@ private:
             }
 
             if (spawn_cache) {
-                work.cached.resize(row_ ? this->parent->nrows : this->parent->ncols, -1);
+                cached.resize(row_ ? this->parent->nrows : this->parent->ncols, -1);
             }
         }
 
+    private:
+        std::vector<size_t> cached;
+
     protected:
-        PrimaryWorkspace work;
+        StoredPointer primary_start(Index_ i, Index_ start) {
+            bool do_cache = !cached.empty();
+            if (do_cache) {
+                auto val = cached[i];
+                if (val != -1) {
+                    return val;
+                }
+            }
+
+            auto outstart = this->parent->indptrs[i];
+            if (start) { // Jumping ahead if non-zero.
+                auto iIt = this->parent->indices.begin() + outstart;
+                auto eIt = this->parent->indices.begin() + this->parent->indptrs[i + 1]; 
+                outstart = std::lower_bound(iIt, eIt, start) - this->parent->indices.begin();
+            } 
+
+            if (do_cache) {
+                cached[i] = outstart;
+            }
+
+            return outstart;
+        }
+
+        template<class Store_>
+        void primary_dimension(Index_ i, const Index_* subset, Index_ length, Store_& store) {
+            if (!length) {
+                return;
+            }
+
+            auto iIt = this->parent->indices.begin() + this->parent->indptrs[i];
+            auto eIt = this->parent->indices.begin() + this->parent->indptrs[i + 1]; 
+
+            if (subset[0]) { // Only jumping ahead if the start is non-zero.
+                bool do_cache = !cached.empty();
+                if (do_cache) {
+                    if (cached[i] != -1) { // retrieving the jump from cache, if we came here before.
+                        iIt += cached[i];
+                    } else {
+                        auto iIt2 = std::lower_bound(iIt, eIt, subset[0]);
+                        cached[i] = iIt2 - iIt;
+                        iIt = iIt2;
+                    }
+                } else {
+                    iIt = std::lower_bound(iIt, eIt, subset[0]);
+                }
+            } 
+
+            if (iIt == eIt) {
+                return;
+            }
+
+            for (Index_ counter = 0; counter < length; ++counter) {
+                auto current = subset[counter];
+
+                while (iIt != eIt && current > *iIt) {
+                    ++iIt;
+                }
+                if (iIt == eIt) {
+                    break;
+                }
+
+                if (current == *iIt) {
+                    int count = 0;
+                    do {
+                        ++iIt;
+                        ++count;
+                    } while (iIt != eIt && current == *iIt);
+                    store.add(current, count);
+                } else {
+                    store.skip(current);
+                }
+            }
+
+            return;
+        }
     };
 
+private:
     template<DimensionSelectionType selection_>
     struct DensePrimaryExtractor : public PrimaryExtractorBase<selection_, false> {
         template<typename ...Args_>
         DensePrimaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : PrimaryExtractorBase<selection_, false>(p, opt, std::forward<Args_>(args)...) {}
 
+    private:
+        struct ExpandedStore {
+            Value_* out_values;
+
+            void add(Index_, Value_ val) {
+                *out_values = val;
+                ++out_values;
+                return;
+            }
+
+            void skip(Index_) {
+                ++out_values;
+            }
+        };
+
+        void primary_dimension_expanded(Index_ i, Index_ start, Index_ length, Value_* out_values) {
+            std::fill(out_values, out_values + length, static_cast<Value_>(0));
+            auto position = this->primary_start(i, start);
+            auto limit = this->parent->indptrs[i + 1];
+            auto end = start + length;
+
+            const auto& indices = this->parent->indices;
+            while (position < limit && indices[position] < end) {
+                auto curdex = indices[position];
+                auto copy = position;
+                ++copy;
+                for (; copy < limit && indices[copy] == curdex; ++copy) {}
+                out_values[curdex - start] = copy - position;
+                position = copy;
+            }
+
+            return;
+        }
+
+    public:
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->parent->primary_dimension_expanded(i, static_cast<Index_>(0), this->full_length, this->work, buffer);
+                primary_dimension_expanded(i, static_cast<Index_>(0), this->full_length, buffer);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->parent->primary_dimension_expanded(i, this->block_start, this->block_length, this->work, buffer);
+                primary_dimension_expanded(i, this->block_start, this->block_length, buffer);
             } else {
-                this->parent->primary_dimension_expanded(i, this->subset_indices.data(), this->index_length, this->work, buffer);
+                std::fill(buffer, buffer + this->index_length, static_cast<Value_>(0));
+                ExpandedStore store;
+                store.out_values = buffer;
+                this->primary_dimension(i, this->subset_indices.data(), this->index_length, store);
             }
+
             return buffer;
         }
     };
 
+private:
     template<DimensionSelectionType selection_>
     struct SparsePrimaryExtractor : public PrimaryExtractorBase<selection_, true> {
         template<typename ...Args_>
         SparsePrimaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : PrimaryExtractorBase<selection_, true>(p, opt, std::forward<Args_>(args)...) {}
 
+    private:
+        SparseRange<Value_, Index_> primary_dimension_raw(Index_ i, Index_ start, Index_ length, Value_* out_values, Index_* out_indices) {
+            auto position = this->primary_start(i, start);
+            auto limit = this->parent->indptrs[i + 1];
+            auto end = start + length;
+
+            SparseRange<Value_, Index_> output;
+            output.number = 0;
+            output.value = out_values;
+            output.index = out_indices;
+            auto& count = output.number;
+
+            const auto& indices = this->parent->indices;
+            while (position < limit && indices[position] < end) {
+                auto curdex = indices[position];
+                auto copy = position;
+                ++copy;
+                for (; copy < limit && indices[copy] == curdex; ++copy) {}
+
+                if (out_values) {
+                    *out_values = copy - position;
+                    ++out_values;
+                }
+                if (out_indices) {
+                    *out_indices = curdex;
+                    ++out_indices;
+                }
+
+                ++count;
+                position = copy;
+            }
+
+            return output;
+        }
+
+    public:
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             if (!this->needs_value) {
                 vbuffer = NULL;
@@ -425,11 +413,15 @@ private:
             }
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                return this->parent->primary_dimension_raw(i, static_cast<Index_>(0), this->full_length, this->work, vbuffer, ibuffer);
+                return primary_dimension_raw(i, static_cast<Index_>(0), this->full_length, vbuffer, ibuffer);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                return this->parent->primary_dimension_raw(i, this->block_start, this->block_length, this->work, vbuffer, ibuffer);
+                return primary_dimension_raw(i, this->block_start, this->block_length, vbuffer, ibuffer);
             } else {
-                return this->parent->primary_dimension_raw(i, this->subset_indices.data(), this->index_length, this->work, vbuffer, ibuffer);
+                RawStore store;
+                store.out_values = vbuffer;
+                store.out_indices = ibuffer;
+                this->primary_dimension(i, this->subset_indices.data(), this->index_length, store);
+                return SparseRange<Value_, Index_>(store.n, vbuffer, ibuffer);
             }
         }
     };
@@ -438,205 +430,234 @@ private:
      ******* Secondary extraction ********
      *************************************/
 private:
-    struct SecondaryWorkspace {
-        typedef Stored<PointerStorage_> indptr_type;
+    struct Position {
+        Position() = default;
+        Position(StoredPointer p) : pointer(p) {}
+        StoredPointer pointer;
+        Index_ count = 0;
+        bool scanned = false;
+    };
 
-        struct Position {
-            Position() = default;
-            Position(indptr_type p) : pointer(p) {}
-            indptr_type pointer;
-            Index_ count = 0;
-            bool scanned = false;
-        };
+    static void update_secondary_position(Position& current, const IndexStorage_& indices, StoredPointer limit) {
+        if (current.scanned) {
+            return;
+        }
 
-    public:
-        static void update_secondary_position(Position& current, const IndexStorage_& indices, indptr_type limit) {
-            if (current.scanned) {
+        auto curdex = indices[current.pointer];
+        auto copy = current.pointer;
+        do {
+            ++copy;
+        } while (copy < limit && indices[copy] == curdex);
+        current.count = copy - current.pointer;
+        current.scanned = true;
+        return;
+    }
+
+    struct SecondaryModifier {
+        static void increment(Position& ptr, const IndexStorage_& indices, StoredPointer limit) {
+            update_secondary_position(ptr, indices, limit);
+            ptr.pointer += ptr.count;
+            ptr.scanned = false;
+            ptr.count = 0;
+        }
+
+        static void decrement(Position& ptr, const IndexStorage_& indices, StoredPointer limit) {
+            if (ptr.pointer == limit) {
                 return;
             }
 
-            auto curdex = indices[current.pointer];
-            auto copy = current.pointer;
-            do {
-                ++copy;
-            } while (copy < limit && indices[copy] == curdex);
-            current.count = copy - current.pointer;
-            current.scanned = true;
-            return;
+            auto copy = ptr.pointer;
+            --copy;
+            auto curdex = indices[copy];
+            while (copy > limit && indices[copy - 1] == curdex) {
+                --copy;
+            }
+
+            ptr.count = ptr.pointer - copy;
+            ptr.scanned = true;
+            ptr.pointer = copy;
         }
 
-        struct Modifier {
-            static void increment(Position& ptr, const IndexStorage_& indices, indptr_type limit) {
-                update_secondary_position(ptr, indices, limit);
-                ptr.pointer += ptr.count;
-                ptr.scanned = false;
-                ptr.count = 0;
+        static StoredPointer get(const Position& ptr) {
+            return ptr.pointer;
+        }
+
+        static void set(Position& ptr, StoredPointer val) {
+            ptr.pointer = val;
+            ptr.scanned = false;
+            ptr.count = 0;
+        }
+    };
+
+    struct SecondaryCore : public SparseSecondaryExtractorCore<Index_, StoredIndex, Position, SecondaryModifier> {
+    public:
+        SecondaryCore() = default;
+
+        SecondaryCore(StoredIndex max_index, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) :
+            SparseSecondaryExtractorCore<Index_, StoredIndex, Position, SecondaryModifier>(max_index, length)
+        {
+            auto idpIt = idp.begin() + start;
+            for (Index_ i = 0; i < length; ++i, ++idpIt) {
+                this->current_indptrs[i] = *idpIt;
+                this->current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
             }
+            this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
+            return;
+        } 
 
-            static void decrement(Position& ptr, const IndexStorage_& indices, indptr_type limit) {
-                if (ptr.pointer == limit) {
-                    return;
-                }
+        SecondaryCore(StoredIndex max_index, const IndexStorage_& idx, const PointerStorage_& idp) :
+            SecondaryCore(max_index, idx, idp, static_cast<Index_>(0), static_cast<Index_>(idp.size() - 1)) {}
 
-                auto copy = ptr.pointer;
-                --copy;
-                auto curdex = indices[copy];
-                while (copy > limit && indices[copy - 1] == curdex) {
-                    --copy;
-                }
-
-                ptr.count = ptr.pointer - copy;
-                ptr.scanned = true;
-                ptr.pointer = copy;
+        SecondaryCore(StoredIndex max_index, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
+            SparseSecondaryExtractorCore<Index_, StoredIndex, Position, SecondaryModifier>(max_index, length)
+        {
+            for (Index_ i0 = 0; i0 < length; ++i0) {
+                auto i = subset[i0];
+                this->current_indptrs[i0] = idp[i];
+                this->current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
             }
-
-            static indptr_type get(const Position& ptr) {
-                return ptr.pointer;
-            }
-
-            static void set(Position& ptr, indptr_type val) {
-                ptr.pointer = val;
-                ptr.scanned = false;
-                ptr.count = 0;
-            }
-        };
+            this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
+            return;
+        }
 
     public:
-        SecondaryWorkspace() = default;
-
-        template<typename ... Args_>
-        SecondaryWorkspace(Index_ max_index, const IndexStorage_& idx, const PointerStorage_& idp, Args_&&... args) :
-            state(max_index, idx, idp, std::forward<Args_>(args)...) {}
-
-        CompressedSparseSecondaryExtractorBasic<Index_, index_type, Position, Modifier> state;
-    };
-
-    template<class Store_>
-    void secondary_dimension_loop(Index_ i, Index_ start, Index_ length, SecondaryWorkspace& work, Store_& output) const {
-        work.state.search(
-            i, 
-            length, 
-            [&](Index_ p) -> Index_ { 
-                return p + start; 
-            },
-            indices,
-            indptrs,
-            [&](Index_ primary, typename SecondaryWorkspace::Position& curptr) -> void {
-                work.update_secondary_position(curptr, indices, indptrs[primary + 1]);
-                output.add(primary, curptr.count);
-            },
-            [&](Index_ primary) -> void {
-                output.skip(primary);
-            }
-        );
-        return;
-    }
-
-    SparseRange<Value_, Index_> secondary_dimension_raw(Index_ i, Index_ start, Index_ length, SecondaryWorkspace& work, Value_* out_values, Index_* out_indices) const {
-        RawStore store;
-        store.out_values = out_values;
-        store.out_indices = out_indices;
-        secondary_dimension_loop(i, start, length, work, store);
-        return SparseRange<Value_, Index_>(store.n, out_values, out_indices);
-    }
-
-    struct ExpandedStoreBlock {
-        Value_* out_values;
-        Index_ first;
-
-        static constexpr bool can_ignore_values = false;
-
-        void add(Index_ i, Value_ val) {
-            out_values[i - first] = val;
-            return;
+        template<class PrimaryFunction_, class StoreFunction_, class SkipFunction_>
+        bool search(StoredIndex secondary, Index_ primary_length, PrimaryFunction_&& to_primary, const IndexStorage_& indices, const PointerStorage_& indptrs, StoreFunction_&& store, SkipFunction_&& skip) {
+            return this->search_base(
+                secondary, 
+                primary_length, 
+                std::forward<PrimaryFunction_>(to_primary), 
+                indices, 
+                indptrs, 
+                std::forward<StoreFunction_>(store), 
+                std::forward<SkipFunction_>(skip)
+            );
         }
-
-        void skip(Index_) {} 
     };
-
-    void secondary_dimension_expanded(Index_ i, Index_ start, Index_ length, SecondaryWorkspace& work, Value_* out_values) const {
-        std::fill(out_values, out_values + length, static_cast<Value_>(0));
-        ExpandedStoreBlock store;
-        store.out_values = out_values;
-        store.first = start;
-        secondary_dimension_loop(i, start, length, work, store);
-        return;
-    }
-
-    template<class Store_>
-    void secondary_dimension_loop(Index_ i, const Index_* subset, Index_ length, SecondaryWorkspace& work, Store_& output) const {
-        work.state.search(
-            i, 
-            length, 
-            [&](Index_ p) -> Index_ { 
-                return subset[p];
-            },
-            indices,
-            indptrs,
-            [&](Index_ primary, typename SecondaryWorkspace::Position& curptr) -> void {
-                work.update_secondary_position(curptr, indices, indptrs[primary + 1]);
-                output.add(primary, curptr.count);
-            },
-            [&](Index_ primary) -> void {
-                output.skip(primary);
-            }
-        );
-        return;
-    }
-
-    SparseRange<Value_, Index_> secondary_dimension_raw(Index_ i, const Index_* subset, Index_ length, SecondaryWorkspace& work, Value_* out_values, Index_* out_indices) const {
-        RawStore store;
-        store.out_values = out_values;
-        store.out_indices = out_indices;
-        secondary_dimension_loop(i, subset, length, work, store);
-        return SparseRange<Value_, Index_>(store.n, out_values, out_indices);
-    }
-
-    void secondary_dimension_expanded(Index_ i, const Index_* subset, Index_ length, SecondaryWorkspace& work, Value_* out_values) const {
-        std::fill(out_values, out_values + length, static_cast<Value_>(0));
-        ExpandedStoreIndexed store;
-        store.out_values = out_values;
-        secondary_dimension_loop(i, subset, length, work, store);
-        return;
-    }
 
 private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct SecondaryExtractorBase : public SemiCompressedExtractorBase<!row_, selection_, sparse_> {
         template<typename ...Args_>
         SecondaryExtractorBase(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : SemiCompressedExtractorBase<!row_, selection_, sparse_>(p, opt, std::forward<Args_>(args)...) {
-            auto max_index = this->parent->max_secondary_index();
+            auto max_index = (row_ ? this->parent->ncols : this->parent->nrows);
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                work = SecondaryWorkspace(max_index, this->parent->indices, this->parent->indptrs);
+                state = SecondaryCore(max_index, this->parent->indices, this->parent->indptrs);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                work = SecondaryWorkspace(max_index, this->parent->indices, this->parent->indptrs, this->block_start, this->block_length);
+                state = SecondaryCore(max_index, this->parent->indices, this->parent->indptrs, this->block_start, this->block_length);
             } else {
-                work = SecondaryWorkspace(max_index, this->parent->indices, this->parent->indptrs, this->subset_indices.data(), this->index_length);
+                state = SecondaryCore(max_index, this->parent->indices, this->parent->indptrs, this->subset_indices.data(), this->index_length);
             }
         }
 
-        // Keep public for testing.
-        SecondaryWorkspace work;
+    private:
+        SecondaryCore state;
+
+    protected:
+        template<class Store_>
+        void secondary_dimension_loop(Index_ i, Index_ start, Index_ length, Store_& output) {
+            state.search(
+                i, 
+                length, 
+                [&](Index_ p) -> Index_ { 
+                    return p + start; 
+                },
+                this->parent->indices,
+                this->parent->indptrs,
+                [&](Index_ primary, Position& curptr) -> void {
+                    update_secondary_position(curptr, this->parent->indices, this->parent->indptrs[primary + 1]);
+                    output.add(primary, curptr.count);
+                },
+                [&](Index_ primary) -> void {
+                    output.skip(primary);
+                }
+            );
+            return;
+        }
+
+        template<class Store_>
+        void secondary_dimension_loop(Index_ i, const Index_* subset, Index_ length, Store_& output) {
+            state.search(
+                i, 
+                length, 
+                [&](Index_ p) -> Index_ { 
+                    return subset[p];
+                },
+                this->parent->indices,
+                this->parent->indptrs,
+                [&](Index_ primary, Position& curptr) -> void {
+                    update_secondary_position(curptr, this->parent->indices, this->parent->indptrs[primary + 1]);
+                    output.add(primary, curptr.count);
+                },
+                [&](Index_ primary) -> void {
+                    output.skip(primary);
+                }
+            );
+            return;
+        }
     };
 
+private:
     template<DimensionSelectionType selection_>
     struct DenseSecondaryExtractor : public SecondaryExtractorBase<selection_, false> {
         template<typename ...Args_>
         DenseSecondaryExtractor(const SemiCompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : SecondaryExtractorBase<selection_, false>(p, opt, std::forward<Args_>(args)...) {}
 
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->parent->secondary_dimension_expanded(i, static_cast<Index_>(0), this->full_length, this->work, buffer);
-            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->parent->secondary_dimension_expanded(i, this->block_start, this->block_length, this->work, buffer);
-            } else {
-                this->parent->secondary_dimension_expanded(i, this->subset_indices.data(), this->index_length, this->work, buffer);
+    private:
+        struct ExpandedStoreIndexed {
+            Value_* out_values;
+
+            void add(Index_, Value_ val) {
+                *out_values = val;
+                ++out_values;
+                return;
             }
+
+            void skip(Index_) {
+                ++out_values;
+            }
+        };
+
+        struct ExpandedStoreBlock {
+            Value_* out_values;
+            Index_ first;
+
+            static constexpr bool can_ignore_values = false;
+
+            void add(Index_ i, Value_ val) {
+                out_values[i - first] = val;
+                return;
+            }
+
+            void skip(Index_) {} 
+        };
+
+    public:
+        const Value_* fetch(Index_ i, Value_* buffer) {
+            typename std::conditional<selection_ == DimensionSelectionType::INDEX, ExpandedStoreIndexed, ExpandedStoreBlock>::type store;
+            store.out_values = buffer;
+            std::fill(buffer, buffer + extracted_length<selection_, Index_>(*this), static_cast<Value_>(0));
+
+            if constexpr(selection_ == DimensionSelectionType::FULL) {
+                store.first = 0;
+                this->secondary_dimension_loop(i, static_cast<Index_>(0), this->full_length, store);
+
+            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                store.first = this->block_start;
+                this->secondary_dimension_loop(i, this->block_start, this->block_length, store);
+
+            } else {
+                ExpandedStoreIndexed store;
+                store.out_values = buffer;
+                this->secondary_dimension_loop(i, this->subset_indices.data(), this->index_length, store);
+            }
+
             return buffer;
         }
     };
 
+private:
     template<DimensionSelectionType selection_>
     struct SparseSecondaryExtractor : public SecondaryExtractorBase<selection_, true> {
         template<typename ...Args_>
@@ -650,13 +671,19 @@ private:
                 ibuffer = NULL;
             }
 
+            RawStore store;
+            store.out_values = vbuffer;
+            store.out_indices = ibuffer;
+
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                return this->parent->secondary_dimension_raw(i, static_cast<Index_>(0), this->full_length, this->work, vbuffer, ibuffer);
+                this->secondary_dimension_loop(i, static_cast<Index_>(0), this->full_length, store);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                return this->parent->secondary_dimension_raw(i, this->block_start, this->block_length, this->work, vbuffer, ibuffer);
+                this->secondary_dimension_loop(i, this->block_start, this->block_length, store);
             } else {
-                return this->parent->secondary_dimension_raw(i, this->subset_indices.data(), this->index_length, this->work, vbuffer, ibuffer);
+                this->secondary_dimension_loop(i, this->subset_indices.data(), this->index_length, store);
             }
+
+            return SparseRange<Value_, Index_>(store.n, vbuffer, ibuffer);
         }
     };
 

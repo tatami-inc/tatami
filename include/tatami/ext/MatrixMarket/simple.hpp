@@ -8,7 +8,7 @@
 #include <cctype>
 #include <string>
 
-#include "../../base/sparse/CompressedSparseMatrix.hpp"
+#include "../../sparse/CompressedSparseMatrix.hpp"
 #include "../../utils/compress_sparse_triplets.hpp"
 
 #include "byteme/RawFileReader.hpp"

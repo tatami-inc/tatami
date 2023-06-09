@@ -3,21 +3,58 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/sparse/CompressedSparseSecondaryExtractorBasic.hpp"
+#include "tatami/sparse/SparseSecondaryExtractorCore.hpp"
 
-class CompressedSparseSecondaryExtractorTest : public ::testing::Test {
+class SparseSecondaryExtractorCore : public ::testing::Test {
 protected:
-    struct SimpleModifier {
-        template<typename StoredIndex_>
-        static void increment(size_t& ptr, const std::vector<StoredIndex_>&, const size_t&) { ++ptr; }
+    template<typename StoredIndex_, typename StoredPointer_, class Modifier_>
+    struct TestSecondaryExtractorCore : public tatami::SparseSecondaryExtractorCore<int, StoredIndex_, StoredPointer_, Modifier_> {
+        TestSecondaryExtractorCore(StoredIndex_ max_index, const std::vector<StoredIndex_>& idx, const std::vector<StoredPointer_>& idp) :
+            tatami::SparseSecondaryExtractorCore<int, StoredIndex_, StoredPointer_, Modifier_>(max_index, static_cast<int>(idp.size() - 1))
+        {
+            auto idpIt = idp.begin();
+            int length = this->current_indptrs.size();
+            for (int i = 0; i < length; ++i, ++idpIt) {
+                this->current_indptrs[i] = *idpIt;
+                this->current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
+            }
+            this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
+            return;
+        } 
 
-        template<typename StoredIndex_>
-        static void decrement(size_t& ptr, const std::vector<StoredIndex_>&, const size_t&) { --ptr; }
-
-        static size_t get(size_t ptr) { return ptr; }
-        static void set(size_t& ptr, size_t val) { ptr = val; }
+    public:
+        template<class PrimaryFunction_, class StoreFunction_, class SkipFunction_>
+        bool search(int secondary, int primary_length, PrimaryFunction_&& to_primary, const std::vector<StoredIndex_>& indices, const std::vector<StoredPointer_>& indptrs, StoreFunction_&& store, SkipFunction_&& skip) {
+            return this->search_base(
+                secondary, 
+                primary_length, 
+                std::forward<PrimaryFunction_>(to_primary), 
+                indices, 
+                indptrs, 
+                std::forward<StoreFunction_>(store), 
+                std::forward<SkipFunction_>(skip)
+            );
+        }
     };
 
+protected:
+    struct SimpleModifier {
+        template<typename StoredPointer_, typename StoredIndex_>
+        static void increment(StoredPointer_& ptr, const std::vector<StoredIndex_>&, StoredPointer_) { ++ptr; }
+
+        template<typename StoredPointer_, typename StoredIndex_>
+        static void decrement(StoredPointer_& ptr, const std::vector<StoredIndex_>&, StoredPointer_) { --ptr; }
+
+        template<typename StoredPointer_>
+        static size_t get(StoredPointer_ ptr) { return ptr; }
+
+        template<typename StoredPointer_>
+        static void set(StoredPointer_& ptr, StoredPointer_ val) { ptr = val; }
+    };
+
+    typedef TestSecondaryExtractorCore<int, size_t, SimpleModifier> SimpleSecondaryExtractorCore;
+
+protected:
     size_t n = 3;
     std::vector<size_t> results;
 
@@ -34,7 +71,7 @@ protected:
     };
 };
 
-TEST_F(CompressedSparseSecondaryExtractorTest, Increment) {
+TEST_F(SparseSecondaryExtractorCore, Increment) {
     std::vector<int> indices {
         0, 5, 6, 9, 10,
         1, 8, 12, 18,
@@ -53,7 +90,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Increment) {
 
     // Checking consecutive or semi-consecutive increments.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        SimpleSecondaryExtractorCore test(19, indices, indptrs);
 
         EXPECT_TRUE(test.search(0, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_EQ(results, expected(0, -1, -1));
@@ -73,7 +110,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Increment) {
 
     // Checking a big jump that triggers a binary search.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        SimpleSecondaryExtractorCore test(19, indices, indptrs);
 
         EXPECT_TRUE(test.search(15, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_EQ(results, expected(-1, -1, 14));
@@ -88,7 +125,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Increment) {
 
     // Checking a direct big jump to the end.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        SimpleSecondaryExtractorCore test(19, indices, indptrs);
 
         EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_EQ(results, expected(-1, 8, -1));
@@ -96,7 +133,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Increment) {
 
     // Short-circuits work correctly.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        SimpleSecondaryExtractorCore test(19, indices, indptrs);
 
         EXPECT_TRUE(test.search(1, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_EQ(results, expected(-1, 5, -1));
@@ -111,7 +148,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Increment) {
 
     // Repeated requests are honored.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        SimpleSecondaryExtractorCore test(19, indices, indptrs);
 
         EXPECT_TRUE(test.search(5, n, identity, indices, indptrs, store_fun, skip_fun));
         auto ex = expected(1, -1, 9);
@@ -129,14 +166,14 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Increment) {
     }
 }
 
-TEST_F(CompressedSparseSecondaryExtractorTest, Decrement) {
+TEST_F(SparseSecondaryExtractorCore, Decrement) {
     std::vector<int> indices {
         2, 8, 11, 12, 18,
         3, 4, 7, 10, 12, 15,  
         0, 1, 4, 8, 14
     };
 
-    std::vector<int> indptrs {
+    std::vector<size_t> indptrs {
         0,
         5,
         11,
@@ -148,7 +185,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Decrement) {
 
     // Checking consecutive or semi-consecutive decrements.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        SimpleSecondaryExtractorCore test(19, indices, indptrs);
 
         EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_EQ(results, expected(4, -1, -1));
@@ -168,7 +205,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Decrement) {
 
     // Checking the jumps.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        SimpleSecondaryExtractorCore test(19, indices, indptrs);
         EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
 
         EXPECT_TRUE(test.search(10, n, identity, indices, indptrs, store_fun, skip_fun));
@@ -180,7 +217,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Decrement) {
 
     // Big jump to zero.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        SimpleSecondaryExtractorCore test(19, indices, indptrs);
         EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
 
         EXPECT_TRUE(test.search(0, n, identity, indices, indptrs, store_fun, skip_fun));
@@ -189,7 +226,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Decrement) {
 
     // Short-circuits work correctly.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        SimpleSecondaryExtractorCore test(19, indices, indptrs);
         EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_TRUE(test.search(17, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_FALSE(test.search(16, n, identity, indices, indptrs, store_fun, skip_fun)); 
@@ -198,7 +235,8 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Decrement) {
     // Unsigned index type is handled correctly.
     {
         std::vector<unsigned char> indices2(indices.begin(), indices.end());
-        tatami::CompressedSparseSecondaryExtractorBasic<int, unsigned char, size_t, SimpleModifier> test(19, indices2, indptrs);
+        TestSecondaryExtractorCore<unsigned char, size_t, SimpleModifier> test(19, indices2, indptrs);
+
         EXPECT_TRUE(test.search(18, n, identity, indices2, indptrs, store_fun, skip_fun));
         EXPECT_TRUE(test.search(17, n, identity, indices2, indptrs, store_fun, skip_fun));
 
@@ -227,14 +265,14 @@ TEST_F(CompressedSparseSecondaryExtractorTest, Decrement) {
     }
 }
 
-TEST_F(CompressedSparseSecondaryExtractorTest,  Alternating) {
+TEST_F(SparseSecondaryExtractorCore, Alternating) {
     std::vector<int> indices {
         0, 1, 3, 5, 6, 18,
         2, 6, 8, 9, 10, 11, 17, 18,
         4, 6, 7, 8, 10, 11, 14, 15, 16
     };
 
-    std::vector<int> indptrs {
+    std::vector<int> indptrs { // using int pointers, for some variety.
         0,
         6,
         14,
@@ -245,7 +283,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest,  Alternating) {
     auto skip_fun = [&](int i) { results[i] = -1; };
 
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        TestSecondaryExtractorCore<int, int, SimpleModifier> test(19, indices, indptrs);
 
         // Jump up, followed by decrements.
         EXPECT_TRUE(test.search(15, n, identity, indices, indptrs, store_fun, skip_fun));
@@ -269,7 +307,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest,  Alternating) {
     }
 
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, SimpleModifier> test(19, indices, indptrs);
+        TestSecondaryExtractorCore<int, int, SimpleModifier> test(19, indices, indptrs);
 
         // Jump to end, followed by decrements.
         EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
@@ -299,7 +337,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest,  Alternating) {
     }
 }
 
-TEST_F(CompressedSparseSecondaryExtractorTest,  Duplicated) {
+TEST_F(SparseSecondaryExtractorCore,  Duplicated) {
     struct DuplicatedModifier {
         static void increment(size_t& ptr, const std::vector<int>& indices, size_t limit) {
             auto current = indices[ptr];
@@ -321,6 +359,8 @@ TEST_F(CompressedSparseSecondaryExtractorTest,  Duplicated) {
         static void set(size_t& ptr, size_t val) { ptr = val; }
     };
 
+    typedef TestSecondaryExtractorCore<int, size_t, DuplicatedModifier> DuplicatedSecondaryExtractorCore;
+
     std::vector<int> indices {
         0, 0, 0, 2, 6, 6, 9, 10, 15, 15, 15, 
         1, 1, 3, 3, 3, 5, 8, 8, 8, 11, 14, 18, 18, 18,
@@ -339,7 +379,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest,  Duplicated) {
 
     // Increments.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, DuplicatedModifier> test(19, indices, indptrs);
+        DuplicatedSecondaryExtractorCore test(19, indices, indptrs);
 
         EXPECT_TRUE(test.search(0, n, identity, indices, indptrs, store_fun, skip_fun));
         EXPECT_EQ(results, expected(0, -1, -1));
@@ -358,7 +398,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest,  Duplicated) {
     }
 
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, DuplicatedModifier> test(19, indices, indptrs);
+        DuplicatedSecondaryExtractorCore test(19, indices, indptrs);
 
         EXPECT_TRUE(test.search(10, n, identity, indices, indptrs, store_fun, skip_fun)); // jumps work correctly.
         EXPECT_EQ(results, expected(7, -1, -1));
@@ -369,7 +409,7 @@ TEST_F(CompressedSparseSecondaryExtractorTest,  Duplicated) {
 
     // Decrement works correctly.
     {
-        tatami::CompressedSparseSecondaryExtractorBasic<int, int, size_t, DuplicatedModifier> test(19, indices, indptrs);
+        DuplicatedSecondaryExtractorCore test(19, indices, indptrs);
         EXPECT_TRUE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun)); // jump to end works correctly.
         EXPECT_EQ(results, expected(-1, 22, -1));
 

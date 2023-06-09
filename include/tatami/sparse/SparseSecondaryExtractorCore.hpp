@@ -1,7 +1,11 @@
-#ifndef TATAMI_COMPRESSED_SPARSE_SECONDARY_EXTRACTOR_BASIC_HPP
-#define TATAMI_COMPRESSED_SPARSE_SECONDARY_EXTRACTOR_BASIC_HPP
+#ifndef TATAMI_SPARSE_SECONDARY_EXTRACTOR_CORE_HPP
+#define TATAMI_SPARSE_SECONDARY_EXTRACTOR_CORE_HPP
 
 #include <vector>
+#include <type_traits>
+#include <algorithm>
+
+#include "utils.hpp"
 
 namespace tatami {
 
@@ -9,80 +13,52 @@ template<class Storage_>
 using Stored = typename std::remove_reference<decltype(std::declval<Storage_>()[0])>::type;
 
 template<typename Index_, typename StoredIndex_, typename CustomPointer_, class CustomPointerModifier_> 
-struct CompressedSparseSecondaryExtractorBasic {
-private:
-    StoredIndex_ max_index;
-
+struct SparseSecondaryExtractorCore {
+protected:
     // The current position of the pointer at each primary element.
     std::vector<CustomPointer_> current_indptrs; 
 
-    // Whether to move forward or back.
-    bool lower_bound = true;
-
-    // If 'lower_bound = true', this vector contains the current index being pointed to, i.e., 'current_indices[i] := indices[current_indptrs[i]]'.
-    // We store this here as it is more cache-friendly than doing a look-up to 'indices'.
-    // If 'current_indptrs[i]' is out of range, the current index is instead set to the maximum index (e.g., max rows for CSC matrices).
-    //
-    // If 'lower_bound = false', this vector instead contains:
-    // - 'indices[current_indptrs[i] - 1]', if 'current_indptrs[i]' does not lie at the start of the primary dimension element.
-    // - otherwise, 'decrement_fail', i.e., -1 or its unsigned equivalent.
+    /*
+     * The general idea here is to store a local copy of the indices so that we don't have to keep on doing cache-unfriendly look-ups on the indices based on 'current_indptrs'.
+     * This assumes that the density low enough that updates to the local indices are rare relative to the number of comparisons to those same indices.
+     * 
+     * If 'lower_bound = true', this vector contains the current index being pointed to, i.e., 'current_indices[i] := indices[current_indptrs[i]]'.
+     * We store this here as it is more cache-friendly than doing a look-up to 'indices'.
+     * If 'current_indptrs[i]' is out of range, the current index is instead set to the maximum index (e.g., max rows for CSC matrices).
+     *
+     * If 'lower_bound = false', this vector instead contains:
+     * - 'indices[current_indptrs[i] - 1]', if 'current_indptrs[i]' does not lie at the start of the primary dimension element.
+     * - otherwise, 'decrement_fail', i.e., -1 or its unsigned equivalent.
+     */
     std::vector<StoredIndex_> current_indices;
 
     // Closest value in 'current_indices' to the 'last_request', to see whether we can short-circuit the iteration.
     StoredIndex_ closest_current_index;
 
+private:
+    StoredIndex_ max_index;
+
+    // Whether to move forward or back.
+    bool lower_bound = true;
+
     // What was the last requested index on the secondary dimension?
     StoredIndex_ last_request = 0;
 
 public:
-    CompressedSparseSecondaryExtractorBasic() = default;
+    SparseSecondaryExtractorCore() = default;
 
-    template<class IndexStorage_, class PointerStorage_>
-    CompressedSparseSecondaryExtractorBasic(StoredIndex_ mi, const IndexStorage_& idx, const PointerStorage_& idp, Index_ start, Index_ length) :
-        max_index(mi), current_indices(length), current_indptrs(idp.begin() + start, idp.begin() + start + length)
-    {
-        /* Here, the general idea is to store a local copy of the actual
-         * row indices (for CSC matrices; column indices, for CSR matrices)
-         * so that we don't have to keep on doing cache-unfriendly look-ups
-         * for the indices based on the pointers that we do have. This assumes
-         * that the density is so low that updates to the local indices are
-         * rare relative to the number of comparisons to those same indices.
-         */
-        auto idpIt = idp.begin() + start;
-        for (Index_ i = 0; i < length; ++i, ++idpIt) {
-            current_indices[i] = (*idpIt < *(idpIt + 1) ? idx[*idpIt] : max_index);
-        }
-        closest_current_index = (length ? *std::min_element(current_indices.begin(), current_indices.end()) : max_index);
-        return;
-    } 
+    SparseSecondaryExtractorCore(StoredIndex_ mi, Index_ length) : max_index(mi), current_indices(length), current_indptrs(length) {}
 
-    template<class IndexStorage_, class PointerStorage_>
-    CompressedSparseSecondaryExtractorBasic(StoredIndex_ mi, const IndexStorage_& idx, const PointerStorage_& idp) :
-        CompressedSparseSecondaryExtractorBasic(mi, idx, idp, static_cast<Index_>(0), static_cast<Index_>(idp.size() - 1)) {}
-
-    template<class IndexStorage_, class PointerStorage_>
-    CompressedSparseSecondaryExtractorBasic(StoredIndex_ mi, const IndexStorage_& idx, const PointerStorage_& idp, const Index_* subset, Index_ length) :
-        max_index(mi), current_indices(length), current_indptrs(length)
-    {
-        for (Index_ i0 = 0; i0 < length; ++i0) {
-            auto i = subset[i0];
-            current_indptrs[i0] = idp[i];
-            current_indices[i0] = (idp[i] < idp[i + 1] ? idx[idp[i]] : max_index);
-        }
-        closest_current_index = (length ? *std::min_element(current_indices.begin(), current_indices.end()) : max_index);
-        return;
-    }
-
-public:
+private:
     template<bool reset_index_, class IndexStorage_, class PointerStorage_, class StoreFunction_, class SkipFunction_>
     void search_above_or_equal(
         StoredIndex_ secondary, 
         Index_ index_primary,
         Index_ primary,
-        const IndexStorage_& indices,
+        const IndexStorage_& all_indices,
         const PointerStorage_& indptrs,
-        StoreFunction_& store,
-        SkipFunction_& skip
+        StoreFunction_ store,
+        SkipFunction_ skip
     ) {
         auto& curdex = current_indices[index_primary];
 
@@ -90,8 +66,10 @@ public:
         // given that index resets are irrelevant for the common case of
         // incremented iteration over consecutive secondary elements.
         if constexpr(reset_index_) {
-            auto limit = indptrs[primary + 1];
-            auto curptr = current_indptrs[index_primary];
+            const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, primary);
+            auto limit = sparse_utils::get_upper_limit(all_indices, indptrs, primary);
+
+            const auto& curptr = current_indptrs[index_primary];
             auto raw_ptr = CustomPointerModifier_::get(curptr);
             if (raw_ptr != limit) {
                 curdex = indices[raw_ptr];
@@ -115,7 +93,10 @@ public:
             return;
         }
 
-        auto limit = indptrs[primary + 1];
+        // Some work is required to switch between compressed and fragmented
+        // modes of operation at compile time.
+        const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, primary);
+        auto limit = sparse_utils::get_upper_limit(all_indices, indptrs, primary);
 
         // Special case if the requested index is at the end of the matrix, in
         // which case we can just jump there directly rather than doing an
@@ -123,8 +104,12 @@ public:
         // as this dimension element should be non-empty if secondary > curdex.
         if (secondary + 1 == max_index) {
             if (indices[limit - 1] == secondary) {
-                CustomPointerModifier_::set(curptr, limit); // don't set directly to 'limit - 1' as this won't be the start of the run in semi-compressed mode.
-                CustomPointerModifier_::decrement(curptr, indices, indptrs[primary]);
+
+                // Don't set directly to 'limit - 1' as this won't be the start of the run in semi-compressed mode.
+                // Rather, we need to set it to 'limit' and then decrement it downwards.
+                CustomPointerModifier_::set(curptr, limit); 
+                CustomPointerModifier_::decrement(curptr, indices, sparse_utils::get_lower_limit(indptrs, primary));
+
                 curdex = secondary;
                 store(primary, curptr);
             } else {
@@ -181,7 +166,7 @@ public:
         return;
     }
 
-public:
+private:
     static constexpr StoredIndex_ decrement_fail = -1;
 
     template<bool check_index_, class IndexStorage_, class PointerStorage_, class StoreFunction_, class SkipFunction_>
@@ -189,10 +174,10 @@ public:
         StoredIndex_ secondary, 
         Index_ index_primary, 
         Index_ primary,
-        const IndexStorage_& indices,
+        const IndexStorage_& all_indices,
         const PointerStorage_& indptrs,
-        StoreFunction_& store,
-        SkipFunction_& skip
+        StoreFunction_ store,
+        SkipFunction_ skip
     ) {
         // In the context of this function, there's no need to check if
         // 'indices[curptr] == secondary'; we only enter this function if
@@ -215,12 +200,14 @@ public:
         auto& curptr = current_indptrs[index_primary];
 
         // Can't decrement anymore, in which case we quit. 
-        auto lower_limit = indptrs[primary];
+        auto lower_limit = sparse_utils::get_lower_limit(indptrs, primary);
         auto raw_ptr = CustomPointerModifier_::get(curptr);
         if (raw_ptr == lower_limit) {
             skip(primary);
             return;
         }
+
+        const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, primary);
 
         // Special case if the requested index is at the end of the matrix, in
         // which case we can just jump there directly rather than doing an
@@ -257,11 +244,13 @@ public:
             return;
         }
 
-        // Otherwise, searching indices below the (just-decremented) position.
+        // Otherwise, searching indices below the current position. We need to
+        // increment to get back to the current position, as it is still possible
+        // that the next position is at 'raw_ptr - 1'.
+        ++raw_ptr;
         Stored<PointerStorage_> next_ptr = std::lower_bound(indices.begin() + lower_limit, indices.begin() + raw_ptr, secondary) - indices.begin();
         CustomPointerModifier_::set(curptr, next_ptr);
-
-        if (next_ptr == indptrs[primary + 1]) {
+        if (next_ptr == raw_ptr) {
             skip(primary);
             return;
         }
@@ -281,13 +270,13 @@ public:
         return;
     }
 
-public:
+protected:
     template<class IndexStorage_, class PointerStorage_, class PrimaryFunction_, class StoreFunction_, class SkipFunction_>
-    bool search(
+    bool search_base(
         StoredIndex_ secondary,
         Index_ primary_length,
         PrimaryFunction_ to_primary, 
-        const IndexStorage_& indices,
+        const IndexStorage_& all_indices,
         const PointerStorage_& indptrs,
         StoreFunction_ store,
         SkipFunction_ skip
@@ -298,12 +287,12 @@ public:
                     return false;
                 }
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_above_or_equal<false>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                    search_above_or_equal<false>(secondary, p, to_primary(p), all_indices, indptrs, store, skip);
                 }
 
             } else {
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_above_or_equal<true>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                    search_above_or_equal<true>(secondary, p, to_primary(p), all_indices, indptrs, store, skip);
                 }
                 lower_bound = true;
             }
@@ -320,12 +309,12 @@ public:
                     return false;
                 }
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_below<true>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                    search_below<true>(secondary, p, to_primary(p), all_indices, indptrs, store, skip);
                 }
 
             } else {
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_below<false>(secondary, p, to_primary(p), indices, indptrs, store, skip);
+                    search_below<false>(secondary, p, to_primary(p), all_indices, indptrs, store, skip);
                 }
                 lower_bound = false;
             }

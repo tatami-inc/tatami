@@ -15,8 +15,6 @@ add_executable(
     libtest 
 
     src/base/DenseMatrix.cpp
-    src/base/CompressedSparseMatrix.cpp
-    src/base/SemiCompressedSparseMatrix.cpp
     src/base/DelayedBind.cpp
     src/base/DelayedSubset.cpp
     src/base/DelayedSubsetBlock.cpp
@@ -34,7 +32,9 @@ add_executable(
     src/isometric/binary/compare_helpers.cpp
     src/isometric/binary/boolean_helpers.cpp
 
-    src/sparse/CompressedSparseSecondaryExtractorBasic.cpp
+    src/sparse/CompressedSparseMatrix.cpp
+    src/sparse/SemiCompressedSparseMatrix.cpp
+    src/sparse/SparseSecondaryExtractorCore.cpp
 
     src/chunked/LruChunkCache.cpp
     src/chunked/OracleChunkCache.cpp
