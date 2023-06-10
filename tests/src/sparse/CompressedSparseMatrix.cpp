@@ -223,17 +223,35 @@ TEST(CompressedSparseMatrix, SecondarySkip) {
     int nrow = 201, ncol = 12;
     auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05);
 
-    for (int c = 0; c < ncol; ++c) { // injecting some all-zero rows that should be skipped.
-        auto start = c * nrow + simulated.data();
-        std::fill(start + 12, start + 50, 0);
-        std::fill(start + 70, start + 100, 0);
-        std::fill(start + 130, start + 140, 0);
-        std::fill(start + 160, start + 190, 0);
+    // Injecting some all-zero rows that should be skipped.
+    {
+        auto start = simulated.data();
+        std::fill(start + ncol * 12,  start + ncol * 50,  0);
+        std::fill(start + ncol * 70,  start + ncol * 100, 0);
+        std::fill(start + ncol * 130, start + ncol * 140, 0);
+        std::fill(start + ncol * 160, start + ncol * 190, 0);
     }
 
-    tatami::DenseRowMatrix<double, int> dense(nrow, ncol, tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05));
-    auto sparse_column = tatami::convert_to_sparse<false>(&dense);
+    tatami::DenseRowMatrix<double, int> dense(nrow, ncol, std::move(simulated));
 
+    // Confirm that we injected the all-zero rows correctly!
+    {
+        int all_zero = 0;
+        auto wrk = dense.dense_row();
+        for (int r = 0; r < nrow; ++r) {
+            auto extracted = wrk->fetch(r);
+            int non_zero = false;
+            for (auto x : extracted) {
+                non_zero += x != 0;
+            }
+            all_zero += (non_zero == 0);
+        }
+        EXPECT_TRUE(all_zero > 100); 
+    }
+
+    // Make a column-sparse compressed matrix, so that we can check
+    // that secondary extraction correctly skips the all-zero rows.
+    auto sparse_column = tatami::convert_to_sparse<false>(&dense);
     tatami_test::test_simple_row_access(sparse_column.get(), &dense, true, 1); // forward
     tatami_test::test_simple_row_access(sparse_column.get(), &dense, false, 1); // backward
 }
