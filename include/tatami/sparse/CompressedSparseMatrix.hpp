@@ -129,7 +129,7 @@ public:
     double sparse_proportion() const { return 1; }
 
     /**
-     * @return `true` if `ROW = true` (for `CompressedSparseRowMatrix` objects), otherwise returns `false` (for `CompressedSparseColumnMatrix` objects).
+     * @return `true` if `row_ = true` (for `CompressedSparseRowMatrix` objects), otherwise returns `false` (for `CompressedSparseColumnMatrix` objects).
      */
     bool prefer_rows() const { return row_; }
 
@@ -192,34 +192,6 @@ private:
      ******* Primary extraction ********
      ***********************************/
 private:
-    struct RawStore {
-        RawStore(const ValueStorage_& iv, Value_* ov, Index_* oi) : in_values(iv), out_values(ov), out_indices(oi) {}
-
-    private:
-        const ValueStorage_& in_values;
-        Value_* out_values;
-        Index_* out_indices;
-
-    public:
-        Index_ n = 0;
-
-        void add(Index_ i, size_t ptr) {
-            ++n;
-            if (out_indices) {
-                *out_indices = i;
-                ++out_indices;
-            }
-            if (out_values) {
-                *out_values = in_values[ptr];
-                ++out_values;
-            }
-            return;
-        }
-
-        void skip(Index_) {} 
-    };
-
-private:
     template<DimensionSelectionType selection_, bool sparse_>
     struct PrimaryExtractorBase : public CompressedExtractorBase<row_, selection_, sparse_> {
         template<typename ...Args_>
@@ -259,26 +231,6 @@ private:
         template<typename ...Args_>
         DensePrimaryExtractor(const CompressedSparseMatrix* p, const Options& opt, Args_&& ... args) : PrimaryExtractorBase<selection_, false>(p, opt, std::forward<Args_>(args)...) {}
 
-    private:
-        struct ExpandedStore {
-            ExpandedStore(const ValueStorage_& iv, Value_* ov) : in_values(iv), out_values(ov) {}
-
-        private:
-            const ValueStorage_& in_values;
-            Value_* out_values;
-
-        public:
-            void add(Index_, size_t ptr) {
-                *out_values = in_values[ptr];
-                ++out_values;
-                return;
-            }
-
-            void skip(Index_) {
-                ++out_values;
-            }
-        };
-
     public:
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -291,7 +243,7 @@ private:
 
             } else {
                 std::fill(buffer, buffer + this->index_length, static_cast<Value_>(0));
-                ExpandedStore store(this->parent->values, buffer);
+                sparse_utils::SimpleExpandedStore<Value_, Index_, ValueStorage_> store(this->parent->values, buffer);
                 sparse_utils::primary_dimension(i, this->subset_indices.data(), this->index_length, this->parent->indices, this->parent->indptrs, this->cached, store);
             }
 
@@ -328,7 +280,7 @@ private:
                 return output;
 
             } else {
-                RawStore store(this->parent->values, vbuffer, ibuffer);
+                sparse_utils::SimpleRawStore<Value_, Index_, ValueStorage_> store(this->parent->values, vbuffer, ibuffer);
                 sparse_utils::primary_dimension(i, this->subset_indices.data(), this->index_length, this->parent->indices, this->parent->indptrs, this->cached, store);
                 return SparseRange<Value_, Index_>(store.n, vbuffer, ibuffer);
             }
@@ -459,12 +411,13 @@ private:
 
     private:
         struct ExpandedStoreBlock {
-            const ValueStorage_* in_values;
+            ExpandedStoreBlock(const ValueStorage_& iv, Value_* ov) : in_values(iv), out_values(ov) {}
+            const ValueStorage_& in_values;
             Value_* out_values;
             Index_ first;
 
             void add(Index_ i, StoredPointer ptr) {
-                out_values[i - first] = (*in_values)[ptr];
+                out_values[i - first] = in_values[ptr];
                 return;
             }
 
@@ -472,11 +425,12 @@ private:
         };
 
         struct ExpandedStoreIndexed {
-            const ValueStorage_* in_values;
+            ExpandedStoreIndexed(const ValueStorage_& iv, Value_* ov) : in_values(iv), out_values(ov) {}
+            const ValueStorage_& in_values;
             Value_* out_values;
 
             void add(Index_, StoredPointer ptr) {
-                *out_values = (*in_values)[ptr];
+                *out_values = in_values[ptr];
                 ++out_values;
                 return;
             }
@@ -488,9 +442,7 @@ private:
 
     public:
         const Value_* fetch(Index_ i, Value_* buffer) {
-            typename std::conditional<selection_ == DimensionSelectionType::INDEX, ExpandedStoreIndexed, ExpandedStoreBlock>::type store;
-            store.in_values = &(this->parent->values);
-            store.out_values = buffer;
+            typename std::conditional<selection_ == DimensionSelectionType::INDEX, ExpandedStoreIndexed, ExpandedStoreBlock>::type store(this->parent->values, buffer);
             std::fill(buffer, buffer + extracted_length<selection_, Index_>(*this), static_cast<Value_>(0));
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -520,7 +472,7 @@ private:
                 ibuffer = NULL;
             }
 
-            RawStore store(this->parent->values, vbuffer, ibuffer);
+            sparse_utils::SimpleRawStore<Value_, Index_, ValueStorage_> store(this->parent->values, vbuffer, ibuffer);
             if constexpr(selection_ == DimensionSelectionType::FULL) {
                 this->secondary_dimension_loop(i, static_cast<Index_>(0), this->full_length, store);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {

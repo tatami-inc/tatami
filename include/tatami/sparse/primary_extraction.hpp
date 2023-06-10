@@ -165,6 +165,55 @@ void primary_dimension(
     return;
 }
 
+// Potential classes to use as Store_ in the primary_dimension() indexed extractor.
+template<typename Value_, typename Index_, class ValueStorage_>
+struct SimpleRawStore {
+    SimpleRawStore(const ValueStorage_& iv, Value_* ov, Index_* oi) : in_values(iv), out_values(ov), out_indices(oi) {}
+
+private:
+    const ValueStorage_& in_values;
+    Value_* out_values;
+    Index_* out_indices;
+
+public:
+    Index_ n = 0;
+
+    void add(Index_ i, size_t ptr) {
+        ++n;
+        if (out_indices) {
+            *out_indices = i;
+            ++out_indices;
+        }
+        if (out_values) {
+            *out_values = in_values[ptr];
+            ++out_values;
+        }
+        return;
+    }
+
+    void skip(Index_) {} 
+};
+
+template<typename Value_, typename Index_, class ValueStorage_>
+struct SimpleExpandedStore {
+    SimpleExpandedStore(const ValueStorage_& iv, Value_* ov) : in_values(iv), out_values(ov) {}
+
+private:
+    const ValueStorage_& in_values;
+    Value_* out_values;
+
+public:
+    void add(Index_, size_t ptr) {
+        *out_values = in_values[ptr];
+        ++out_values;
+        return;
+    }
+
+    void skip(Index_) {
+        ++out_values;
+    }
+};
+
 }
 
 }
