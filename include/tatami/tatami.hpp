@@ -5,6 +5,7 @@
 
 #include "sparse/CompressedSparseMatrix.hpp"
 #include "sparse/SemiCompressedSparseMatrix.hpp"
+#include "sparse/FragmentedSparseMatrix.hpp"
 
 #include "isometric/unary/DelayedUnaryIsometricOp.hpp"
 #include "isometric/binary/DelayedBinaryIsometricOp.hpp"

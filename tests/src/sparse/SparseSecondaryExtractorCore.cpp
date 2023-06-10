@@ -48,8 +48,8 @@ protected:
         template<typename StoredPointer_>
         static size_t get(StoredPointer_ ptr) { return ptr; }
 
-        template<typename StoredPointer_>
-        static void set(StoredPointer_& ptr, StoredPointer_ val) { ptr = val; }
+        template<typename StoredPointer_, typename IncomingPointer_>
+        static void set(StoredPointer_& ptr, IncomingPointer_ val) { ptr = val; }
     };
 
     typedef TestSecondaryExtractorCore<int, size_t, SimpleModifier> SimpleSecondaryExtractorCore;

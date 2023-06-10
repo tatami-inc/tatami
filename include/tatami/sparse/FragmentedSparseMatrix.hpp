@@ -49,7 +49,7 @@ template<
     bool row_, 
     typename Value_, 
     typename Index_ = int, 
-    class ValueVectorStorage_ = std::vector<std::vector<Value_> >
+    class ValueVectorStorage_ = std::vector<std::vector<Value_> >,
     class IndexVectorStorage_ = std::vector<std::vector<Index_> >
 >
 class FragmentedSparseMatrix : public Matrix<Value_, Index_> {
@@ -183,7 +183,7 @@ private:
      ******* Primary extraction ********
      ***********************************/
 private:
-    typedef std::remove_reference<decltype(std::declval<ValueVectorStorage_>()[0])>::type ValueStorage_;
+    typedef typename std::remove_reference<decltype(std::declval<ValueVectorStorage_>()[0])>::type ValueStorage;
 
     template<DimensionSelectionType selection_, bool sparse_>
     struct PrimaryExtractorBase : public FragmentedExtractorBase<row_, selection_, sparse_> {
@@ -227,8 +227,8 @@ private:
     public:
         const Value_* fetch(Index_ i, Value_* buffer) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                auto obtained = sparse_utils::extract_primary_dimension(i, this->parent->indices, true);
-                sparse_utils::transplant_primary_expanded(this->parent->values, this->parent->indices[i], obtained, buffer, static_cast<Index_>(0), this->full_length);
+                auto obtained = sparse_utils::extract_primary_dimension(i, this->parent->indices[i], true);
+                sparse_utils::transplant_primary_expanded(this->parent->values[i], this->parent->indices[i], obtained, buffer, static_cast<Index_>(0), this->full_length);
 
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
                 auto obtained = sparse_utils::extract_primary_dimension(i, this->block_start, this->block_length, this->parent->indices[i], true, this->cached);
@@ -236,7 +236,7 @@ private:
 
             } else {
                 std::fill(buffer, buffer + this->index_length, static_cast<Value_>(0));
-                sparse_utils::SimpleExpandedStore<Value_, Index_, ValueStorage_> store(this->parent->values[i], buffer);
+                sparse_utils::SimpleExpandedStore<Value_, Index_, ValueStorage> store(this->parent->values[i], buffer);
                 sparse_utils::primary_dimension(i, this->subset_indices.data(), this->index_length, this->parent->indices[i], true, this->cached, store);
             }
 
@@ -272,7 +272,7 @@ private:
                 return output;
 
             } else {
-                sparse_utils::SimpleRawStore<Value_, Index_, ValueStorage_> store(this->parent->values[i], vbuffer, ibuffer);
+                sparse_utils::SimpleRawStore<Value_, Index_, ValueStorage> store(this->parent->values[i], vbuffer, ibuffer);
                 sparse_utils::primary_dimension(i, this->subset_indices.data(), this->index_length, this->parent->indices[i], true, this->cached, store);
                 return SparseRange<Value_, Index_>(store.n, vbuffer, ibuffer);
             }
@@ -283,7 +283,7 @@ private:
      ******* Secondary extraction ********
      *************************************/
 private:
-    typedef std::remove_reference<decltype(std::declval<IndexVectorStorage_>()[0])>::type IndexStorage;
+    typedef typename std::remove_reference<decltype(std::declval<IndexVectorStorage_>()[0])>::type IndexStorage;
     typedef Stored<IndexStorage> StoredIndex;
 
     struct SecondaryModifier {
@@ -307,10 +307,10 @@ private:
             return;
         } 
 
-        SecondaryCore(StoredIndex max_index, const IndexStorage& idx) :
+        SecondaryCore(StoredIndex max_index, const IndexVectorStorage_& idx) :
             SecondaryCore(max_index, idx, static_cast<Index_>(0), static_cast<Index_>(idx.size())) {}
 
-        SecondaryCore(StoredIndex max_index, const IndexStorage& idx, const Index_* subset, Index_ length) :
+        SecondaryCore(StoredIndex max_index, const IndexVectorStorage_& idx, const Index_* subset, Index_ length) :
             SparseSecondaryExtractorCore<Index_, StoredIndex, size_t, SecondaryModifier>(max_index, length)
         {
             for (Index_ i0 = 0; i0 < length; ++i0) {
@@ -343,11 +343,11 @@ private:
             auto max_index = (row_ ? this->parent->ncols : this->parent->nrows);
 
             if constexpr(selection_ == DimensionSelectionType::FULL) {
-                state = SecondaryCore(max_index, this->parent->indices, true);
+                state = SecondaryCore(max_index, this->parent->indices);
             } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                state = SecondaryCore(max_index, this->parent->indices, true, this->block_start, this->block_length);
+                state = SecondaryCore(max_index, this->parent->indices, this->block_start, this->block_length);
             } else {
-                state = SecondaryCore(max_index, this->parent->indices, true, this->subset_indices.data(), this->index_length);
+                state = SecondaryCore(max_index, this->parent->indices, this->subset_indices.data(), this->index_length);
             }
         }
 
@@ -364,7 +364,6 @@ private:
                     return p + start; 
                 },
                 this->parent->indices,
-                true,
                 [&](Index_ primary, size_t curptr) -> void {
                     store.add(primary, curptr);
                 },
@@ -383,7 +382,6 @@ private:
                     return subset[p];
                 },
                 this->parent->indices,
-                true,
                 [&](Index_ primary, size_t curptr) -> void {
                     output.add(primary, curptr);
                 },
@@ -403,11 +401,11 @@ private:
     private:
         struct ExpandedStoreBlock {
             ExpandedStoreBlock(const ValueVectorStorage_& iv, Value_* ov) : in_values(iv), out_values(ov) {}
+            Index_ first;
 
         private:
             const ValueVectorStorage_& in_values;
             Value_* out_values;
-            Index_ first;
 
         public:
             void add(Index_ i, size_t ptr) {
@@ -591,15 +589,15 @@ public:
  * Fragmented sparse column matrix.
  * See `tatami::FragmentedSparseMatrix` for details on the template parameters.
  */
-template<typename Value_, typename Index_, class ValueVectorStorage_ = std::vector<Value_>, class IndexVectorStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >
-using FragmentedSparseColumnMatrix = FragmentedSparseMatrix<false, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_, PointerStorage_>;
+template<typename Value_, typename Index_, class ValueVectorStorage_ = std::vector<std::vector<Value_> >, class IndexVectorStorage_ = std::vector<std::vector<Index_> > >
+using FragmentedSparseColumnMatrix = FragmentedSparseMatrix<false, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_>;
 
 /**
  * Fragmented sparse row matrix.
  * See `tatami::FragmentedSparseMatrix` for details on the template parameters.
  */
-template<typename Value_, typename Index_, class ValueVectorStorage_ = std::vector<Value_>, class IndexVectorStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >
-using FragmentedSparseRowMatrix = FragmentedSparseMatrix<true, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_, PointerStorage_>;
+template<typename Value_, typename Index_, class ValueVectorStorage_ = std::vector<std::vector<Value_> >, class IndexVectorStorage_ = std::vector<std::vector<Index_> > >
+using FragmentedSparseRowMatrix = FragmentedSparseMatrix<true, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_>;
 
 }
 

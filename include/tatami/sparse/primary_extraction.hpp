@@ -10,9 +10,9 @@ namespace tatami {
 namespace sparse_utils {
 
 template<typename Index_, class IndexStorage_, class PointerStorage_>
-std::pair<size_t, size_t> extract_primary_dimension(Index_ i, const IndexStorage_& all_indices, const PointerStorage_& indptrs) {
+std::pair<size_t, size_t> extract_primary_dimension(Index_ i, const IndexStorage_& indices, const PointerStorage_& indptrs) {
     auto lower = sparse_utils::get_lower_limit(indptrs, i);
-    return std::pair<size_t, size_t>(lower, sparse_utils::get_upper_limit(all_indices, indptrs, i) - lower);
+    return std::pair<size_t, size_t>(lower, sparse_utils::get_upper_limit(indices, indptrs, i) - lower);
 }
 
 template<typename Index_, class IndexStorage_, class PointerStorage_>
@@ -20,7 +20,7 @@ std::pair<size_t, size_t> extract_primary_dimension(
     Index_ i, 
     Index_ start, 
     Index_ length, 
-    const IndexStorage_& all_indices, 
+    const IndexStorage_& indices, 
     const PointerStorage_& indptrs, 
     std::vector<std::pair<size_t, size_t> >& cached) 
 {
@@ -32,9 +32,8 @@ std::pair<size_t, size_t> extract_primary_dimension(
         }
     }
 
-    const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, i);
     auto iIt = indices.begin() + sparse_utils::get_lower_limit(indptrs, i);
-    auto eIt = indices.begin() + sparse_utils::get_upper_limit(all_indices, indptrs, i);
+    auto eIt = indices.begin() + sparse_utils::get_upper_limit(indices, indptrs, i);
 
     if (iIt != eIt) {
         if (start > *iIt) {
@@ -111,7 +110,7 @@ void primary_dimension(
     Index_ i, 
     const Index_* subset, 
     Index_ length, 
-    const IndexStorage_& all_indices, 
+    const IndexStorage_& indices, 
     const PointerStorage_& indptrs, 
     std::vector<size_t>& cached, 
     Store_& store) 
@@ -120,9 +119,8 @@ void primary_dimension(
         return;
     }
 
-    const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, i);
     auto iIt = indices.begin() + sparse_utils::get_lower_limit(indptrs, i);
-    auto eIt = indices.begin() + sparse_utils::get_upper_limit(all_indices, indptrs, i);
+    auto eIt = indices.begin() + sparse_utils::get_upper_limit(indices, indptrs, i);
 
     if (indices[0]) { // Only jumping ahead if the start is non-zero.
         bool do_cache = !cached.empty();

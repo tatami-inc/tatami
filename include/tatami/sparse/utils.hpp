@@ -34,7 +34,8 @@ const auto& get_indices(const IndexStorage_& all_indices, Index_ primary) {
 template<class IndexStorage_, class PointerStorage_, typename Index_>
 auto get_upper_limit(const IndexStorage_& indices, const PointerStorage_& indptrs, Index_ primary) {
     if constexpr(is_fragmented<PointerStorage_>()) {
-        static_assert(std::is_arithmetic<decltype(indices[0])>::value); // just making sure we got passed in the output of 'get_indices'.
+        // just making sure we got passed in a vector of numbers, rather than a fragmented vector of vectors.
+        static_assert(std::is_arithmetic<typename std::remove_reference<decltype(indices[0])>::type>::value); 
         return indices.size();
     } else {
         return indptrs[primary + 1];

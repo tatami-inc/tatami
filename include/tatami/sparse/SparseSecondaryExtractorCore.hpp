@@ -67,7 +67,7 @@ private:
         // incremented iteration over consecutive secondary elements.
         if constexpr(reset_index_) {
             const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, primary);
-            auto limit = sparse_utils::get_upper_limit(all_indices, indptrs, primary);
+            auto limit = sparse_utils::get_upper_limit(indices, indptrs, primary);
 
             const auto& curptr = current_indptrs[index_primary];
             auto raw_ptr = CustomPointerModifier_::get(curptr);
@@ -96,7 +96,7 @@ private:
         // Some work is required to switch between compressed and fragmented
         // modes of operation at compile time.
         const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, primary);
-        auto limit = sparse_utils::get_upper_limit(all_indices, indptrs, primary);
+        auto limit = sparse_utils::get_upper_limit(indices, indptrs, primary);
 
         // Special case if the requested index is at the end of the matrix, in
         // which case we can just jump there directly rather than doing an
@@ -147,7 +147,7 @@ private:
         // need to pay the cost of using increment() here, as the lower
         // bound search is going to be faster than any increment.
         ++raw_ptr;
-        Stored<PointerStorage_> next_ptr = std::lower_bound(indices.begin() + raw_ptr, indices.begin() + limit, secondary) - indices.begin();
+        auto next_ptr = std::lower_bound(indices.begin() + raw_ptr, indices.begin() + limit, secondary) - indices.begin();
         CustomPointerModifier_::set(curptr, next_ptr);
 
         if (next_ptr == limit) {
@@ -248,7 +248,7 @@ private:
         // increment to get back to the current position, as it is still possible
         // that the next position is at 'raw_ptr - 1'.
         ++raw_ptr;
-        Stored<PointerStorage_> next_ptr = std::lower_bound(indices.begin() + lower_limit, indices.begin() + raw_ptr, secondary) - indices.begin();
+        auto next_ptr = std::lower_bound(indices.begin() + lower_limit, indices.begin() + raw_ptr, secondary) - indices.begin();
         CustomPointerModifier_::set(curptr, next_ptr);
         if (next_ptr == raw_ptr) {
             skip(primary);
