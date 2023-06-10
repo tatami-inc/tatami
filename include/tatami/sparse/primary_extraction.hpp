@@ -10,9 +10,9 @@ namespace tatami {
 namespace sparse_utils {
 
 template<typename Index_, class IndexStorage_, class PointerStorage_>
-std::pair<size_t, size_t> extract_primary_dimension(Index_ i, const IndexStorage_& all_indices, const PointerStorage_& indptrs) {
+std::pair<size_t, size_t> extract_primary_dimension(Index_ i, const IndexStorage_& indices, const PointerStorage_& indptrs) {
     auto lower = sparse_utils::get_lower_limit(indptrs, i);
-    return std::pair<size_t, size_t>(lower, sparse_utils::get_upper_limit(all_indices, indptrs, i) - lower);
+    return std::pair<size_t, size_t>(lower, sparse_utils::get_upper_limit(indices, indptrs, i) - lower);
 }
 
 template<typename Index_, class IndexStorage_, class PointerStorage_>
@@ -20,7 +20,7 @@ std::pair<size_t, size_t> extract_primary_dimension(
     Index_ i, 
     Index_ start, 
     Index_ length, 
-    const IndexStorage_& all_indices, 
+    const IndexStorage_& indices, 
     const PointerStorage_& indptrs, 
     std::vector<std::pair<size_t, size_t> >& cached) 
 {
@@ -32,9 +32,8 @@ std::pair<size_t, size_t> extract_primary_dimension(
         }
     }
 
-    const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, i);
     auto iIt = indices.begin() + sparse_utils::get_lower_limit(indptrs, i);
-    auto eIt = indices.begin() + sparse_utils::get_upper_limit(all_indices, indptrs, i);
+    auto eIt = indices.begin() + sparse_utils::get_upper_limit(indices, indptrs, i);
 
     if (iIt != eIt) {
         if (start > *iIt) {
@@ -111,7 +110,7 @@ void primary_dimension(
     Index_ i, 
     const Index_* subset, 
     Index_ length, 
-    const IndexStorage_& all_indices, 
+    const IndexStorage_& indices, 
     const PointerStorage_& indptrs, 
     std::vector<size_t>& cached, 
     Store_& store) 
@@ -120,9 +119,8 @@ void primary_dimension(
         return;
     }
 
-    const auto& indices = sparse_utils::get_indices<PointerStorage_>(all_indices, i);
     auto iIt = indices.begin() + sparse_utils::get_lower_limit(indptrs, i);
-    auto eIt = indices.begin() + sparse_utils::get_upper_limit(all_indices, indptrs, i);
+    auto eIt = indices.begin() + sparse_utils::get_upper_limit(indices, indptrs, i);
 
     if (indices[0]) { // Only jumping ahead if the start is non-zero.
         bool do_cache = !cached.empty();
@@ -164,6 +162,55 @@ void primary_dimension(
 
     return;
 }
+
+// Potential classes to use as Store_ in the primary_dimension() indexed extractor.
+template<typename Value_, typename Index_, class ValueStorage_>
+struct SimpleRawStore {
+    SimpleRawStore(const ValueStorage_& iv, Value_* ov, Index_* oi) : in_values(iv), out_values(ov), out_indices(oi) {}
+
+private:
+    const ValueStorage_& in_values;
+    Value_* out_values;
+    Index_* out_indices;
+
+public:
+    Index_ n = 0;
+
+    void add(Index_ i, size_t ptr) {
+        ++n;
+        if (out_indices) {
+            *out_indices = i;
+            ++out_indices;
+        }
+        if (out_values) {
+            *out_values = in_values[ptr];
+            ++out_values;
+        }
+        return;
+    }
+
+    void skip(Index_) {} 
+};
+
+template<typename Value_, typename Index_, class ValueStorage_>
+struct SimpleExpandedStore {
+    SimpleExpandedStore(const ValueStorage_& iv, Value_* ov) : in_values(iv), out_values(ov) {}
+
+private:
+    const ValueStorage_& in_values;
+    Value_* out_values;
+
+public:
+    void add(Index_, size_t ptr) {
+        *out_values = in_values[ptr];
+        ++out_values;
+        return;
+    }
+
+    void skip(Index_) {
+        ++out_values;
+    }
+};
 
 }
 

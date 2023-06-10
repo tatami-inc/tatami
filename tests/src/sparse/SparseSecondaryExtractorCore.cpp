@@ -39,17 +39,17 @@ protected:
 
 protected:
     struct SimpleModifier {
-        template<typename StoredPointer_, typename StoredIndex_>
-        static void increment(StoredPointer_& ptr, const std::vector<StoredIndex_>&, StoredPointer_) { ++ptr; }
+        template<typename StoredPointer_, typename StoredIndex_, typename PointerLimit_>
+        static void increment(StoredPointer_& ptr, const std::vector<StoredIndex_>&, PointerLimit_) { ++ptr; }
 
-        template<typename StoredPointer_, typename StoredIndex_>
-        static void decrement(StoredPointer_& ptr, const std::vector<StoredIndex_>&, StoredPointer_) { --ptr; }
+        template<typename StoredPointer_, typename StoredIndex_, typename PointerLimit_>
+        static void decrement(StoredPointer_& ptr, const std::vector<StoredIndex_>&, PointerLimit_) { --ptr; }
 
         template<typename StoredPointer_>
         static size_t get(StoredPointer_ ptr) { return ptr; }
 
-        template<typename StoredPointer_>
-        static void set(StoredPointer_& ptr, StoredPointer_ val) { ptr = val; }
+        template<typename StoredPointer_, typename IncomingPointer_>
+        static void set(StoredPointer_& ptr, IncomingPointer_ val) { ptr = val; }
     };
 
     typedef TestSecondaryExtractorCore<int, size_t, SimpleModifier> SimpleSecondaryExtractorCore;
@@ -417,3 +417,86 @@ TEST_F(SparseSecondaryExtractorCore,  Duplicated) {
         EXPECT_EQ(results, expected(8, -1, 33));
     }
 }
+
+class FragmentedSparseSecondaryExtractorCoreTest : public SparseSecondaryExtractorCore {
+protected:
+    struct FragmentedCore : public tatami::SparseSecondaryExtractorCore<int, int, size_t, SimpleModifier> {
+        FragmentedCore(int max_index, const std::vector<std::vector<int> >& idx) :
+            tatami::SparseSecondaryExtractorCore<int, int, size_t, SimpleModifier>(max_index, idx.size())
+        {
+            auto length = idx.size();
+            for (int i = 0; i < length; ++i) {
+                this->current_indices[i] = (idx[i].empty() ? 0 : idx[i].front());
+            }
+            this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
+            return;
+        } 
+
+    public:
+        template<class PrimaryFunction_, class StoreFunction_, class SkipFunction_>
+        bool search(int secondary, int primary_length, PrimaryFunction_&& to_primary, const std::vector<std::vector<int> >& indices, StoreFunction_&& store, SkipFunction_&& skip) {
+            return this->search_base(
+                secondary, 
+                primary_length, 
+                std::forward<PrimaryFunction_>(to_primary), 
+                indices, 
+                false,
+                std::forward<StoreFunction_>(store), 
+                std::forward<SkipFunction_>(skip)
+            );
+        }
+    };
+};
+
+TEST_F(FragmentedSparseSecondaryExtractorCoreTest, Fragmented) {
+    std::vector<std::vector<int> > indices {
+        { 1, 2, 7, 9, 11, 15 },
+        { 0, 5, 7, 14, 18 },
+        { 3, 8, 10, 13, 16 } 
+    };
+
+    auto store_fun = [&](int i, size_t p) { results[i] = p; };
+    auto skip_fun = [&](int i) { results[i] = -1; };
+
+    // Increments.
+    {
+        FragmentedCore test(19, indices);
+
+        EXPECT_TRUE(test.search(0, n, identity, indices, store_fun, skip_fun));
+        EXPECT_EQ(results, expected(-1, 0, -1));
+
+        EXPECT_TRUE(test.search(1, n, identity, indices, store_fun, skip_fun));
+        EXPECT_EQ(results, expected(0, -1, -1));
+
+        EXPECT_TRUE(test.search(2, n, identity, indices, store_fun, skip_fun));
+        EXPECT_EQ(results, expected(1, -1, -1));
+
+        EXPECT_TRUE(test.search(7, n, identity, indices, store_fun, skip_fun)); // big jump.
+        EXPECT_EQ(results, expected(2, 2, -1));
+
+        EXPECT_TRUE(test.search(15, n, identity, indices, store_fun, skip_fun)); // another big jump.
+        EXPECT_EQ(results, expected(5, -1, -1));
+    }
+
+    {
+        FragmentedCore test(19, indices);
+
+        EXPECT_TRUE(test.search(10, n, identity, indices, store_fun, skip_fun)); // jumps work correctly.
+        EXPECT_EQ(results, expected(-1, -1, 2));
+
+        EXPECT_TRUE(test.search(18, n, identity, indices, store_fun, skip_fun)); // jump to end works correctly.
+        EXPECT_EQ(results, expected(-1, 4, -1));
+    }
+
+    // Decrement works correctly.
+    {
+        FragmentedCore test(19, indices);
+
+        EXPECT_TRUE(test.search(18, n, identity, indices, store_fun, skip_fun)); // jump to end works correctly.
+        EXPECT_EQ(results, expected(-1, 4, -1));
+
+        EXPECT_TRUE(test.search(15, n, identity, indices, store_fun, skip_fun)); // decrement.
+        EXPECT_EQ(results, expected(5, -1, -1));
+    }
+}
+
