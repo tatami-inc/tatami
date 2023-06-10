@@ -194,6 +194,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1FixedOracle.html">FixedOracle</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predict future accesses from a known sequence.  <a href="structtatami_1_1FixedOracle.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fragmented sparse matrix representation.  <a href="classtatami_1_1FragmentedSparseMatrix.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1FullExtractor.html">FullExtractor</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual base class for full access.  <a href="structtatami_1_1FullExtractor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -280,6 +283,12 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a0111adeeb583aeb7e24e9e1e25be4aa0"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class ValueStorage_  = std::vector&lt;Value_&gt;, class IndexStorage_  = std::vector&lt;Index_&gt;, class PointerStorage_  = std::vector&lt;size_t&gt;&gt; </td></tr>
 <tr class="memitem:a0111adeeb583aeb7e24e9e1e25be4aa0"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a0111adeeb583aeb7e24e9e1e25be4aa0">CompressedSparseRowMatrix</a> = <a class="el" href="classtatami_1_1CompressedSparseMatrix.html">CompressedSparseMatrix</a>&lt; true, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</td></tr>
 <tr class="separator:a0111adeeb583aeb7e24e9e1e25be4aa0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b9735bdc6e0a2856cd4747efbbf9f3c"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_  = std::vector&lt;std::vector&lt;Value_&gt; &gt;, class IndexVectorStorage_  = std::vector&lt;std::vector&lt;Index_&gt; &gt;&gt; </td></tr>
+<tr class="memitem:a6b9735bdc6e0a2856cd4747efbbf9f3c"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a6b9735bdc6e0a2856cd4747efbbf9f3c">FragmentedSparseColumnMatrix</a> = <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt; false, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</td></tr>
+<tr class="separator:a6b9735bdc6e0a2856cd4747efbbf9f3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d97fc9bd75052a79bb643d0fb5a0b98"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_  = std::vector&lt;std::vector&lt;Value_&gt; &gt;, class IndexVectorStorage_  = std::vector&lt;std::vector&lt;Index_&gt; &gt;&gt; </td></tr>
+<tr class="memitem:a3d97fc9bd75052a79bb643d0fb5a0b98"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3d97fc9bd75052a79bb643d0fb5a0b98">FragmentedSparseRowMatrix</a> = <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt; true, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</td></tr>
+<tr class="separator:a3d97fc9bd75052a79bb643d0fb5a0b98"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f03d0d880bc056e09c2cbb80eb2c2ec"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class IndexStorage_  = std::vector&lt;Index_&gt;, class PointerStorage_  = std::vector&lt;size_t&gt;&gt; </td></tr>
 <tr class="memitem:a6f03d0d880bc056e09c2cbb80eb2c2ec"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a6f03d0d880bc056e09c2cbb80eb2c2ec">SemiCompressedSparseColumnMatrix</a> = <a class="el" href="classtatami_1_1SemiCompressedSparseMatrix.html">SemiCompressedSparseMatrix</a>&lt; false, Value_, Index_, IndexStorage_, PointerStorage_ &gt;</td></tr>
 <tr class="separator:a6f03d0d880bc056e09c2cbb80eb2c2ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -766,6 +775,40 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_  = std::vect
       </table>
 </div><div class="memdoc">
 <p>Compressed sparse row matrix. See <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">tatami::CompressedSparseMatrix</a></code> for details on the template parameters. </p>
+
+</div>
+</div>
+<a id="a6b9735bdc6e0a2856cd4747efbbf9f3c" name="a6b9735bdc6e0a2856cd4747efbbf9f3c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6b9735bdc6e0a2856cd4747efbbf9f3c">&#9670;&#160;</a></span>FragmentedSparseColumnMatrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_  = std::vector&lt;std::vector&lt;Value_&gt; &gt;, class IndexVectorStorage_  = std::vector&lt;std::vector&lt;Index_&gt; &gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacetatami.html#a6b9735bdc6e0a2856cd4747efbbf9f3c">tatami::FragmentedSparseColumnMatrix</a> = typedef <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;false, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Fragmented sparse column matrix. See <code><a class="el" href="classtatami_1_1FragmentedSparseMatrix.html" title="Fragmented sparse matrix representation.">tatami::FragmentedSparseMatrix</a></code> for details on the template parameters. </p>
+
+</div>
+</div>
+<a id="a3d97fc9bd75052a79bb643d0fb5a0b98" name="a3d97fc9bd75052a79bb643d0fb5a0b98"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d97fc9bd75052a79bb643d0fb5a0b98">&#9670;&#160;</a></span>FragmentedSparseRowMatrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_  = std::vector&lt;std::vector&lt;Value_&gt; &gt;, class IndexVectorStorage_  = std::vector&lt;std::vector&lt;Index_&gt; &gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacetatami.html#a3d97fc9bd75052a79bb643d0fb5a0b98">tatami::FragmentedSparseRowMatrix</a> = typedef <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;true, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Fragmented sparse row matrix. See <code><a class="el" href="classtatami_1_1FragmentedSparseMatrix.html" title="Fragmented sparse matrix representation.">tatami::FragmentedSparseMatrix</a></code> for details on the template parameters. </p>
 
 </div>
 </div>

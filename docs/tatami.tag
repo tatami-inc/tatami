@@ -803,6 +803,27 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>FragmentedSparseMatrix.hpp</name>
+    <path>tatami/sparse/</path>
+    <filename>FragmentedSparseMatrix_8hpp.html</filename>
+    <class kind="class">tatami::FragmentedSparseMatrix</class>
+    <namespace>tatami</namespace>
+    <member kind="typedef">
+      <type>FragmentedSparseMatrix&lt; false, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</type>
+      <name>FragmentedSparseColumnMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a6b9735bdc6e0a2856cd4747efbbf9f3c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>FragmentedSparseMatrix&lt; true, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</type>
+      <name>FragmentedSparseRowMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a3d97fc9bd75052a79bb643d0fb5a0b98</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>SemiCompressedSparseMatrix.hpp</name>
     <path>tatami/sparse/</path>
     <filename>SemiCompressedSparseMatrix_8hpp.html</filename>
@@ -3180,6 +3201,156 @@
       <arglist>(Index_ *predicted, size_t number)</arglist>
     </member>
   </compound>
+  <compound kind="class">
+    <name>tatami::FragmentedSparseMatrix</name>
+    <filename>classtatami_1_1FragmentedSparseMatrix.html</filename>
+    <templarg>bool row_</templarg>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <templarg>class ValueVectorStorage_</templarg>
+    <templarg>class IndexVectorStorage_</templarg>
+    <base>tatami::Matrix</base>
+    <member kind="function">
+      <type></type>
+      <name>FragmentedSparseMatrix</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a75a66fd646bab027ff762cd824e52fb0</anchor>
+      <arglist>(Index_ nr, Index_ nc, ValueVectorStorage_ vals, IndexVectorStorage_ idx, bool check=true)</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>nrow</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a713230b7d55a09d472e09e8363654183</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>Index_</type>
+      <name>ncol</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a6b302efc9d37ff270780579781f259e5</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>sparse</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a93dad37ca355923e02f5fa346dfd74c6</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>sparse_proportion</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>ab1e3895c3ef0e0decf14fd05ec26b9bf</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>prefer_rows</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>ace970c2637bf0070cae8f85e65845fc9</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>double</type>
+      <name>prefer_rows_proportion</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a55f6ca0df7adae11d5a194749803fb18</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>uses_oracle</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>ae712803cedf2672f33d46fb952c99d4a</anchor>
+      <arglist>(bool) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_row</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a4c0df3ff19af3218780c8e69fa48c794</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_row</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>aabb6feb08662d779c77bd42934762ba1</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_row</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a4c88478fb6a11f15e5d02ca1673d1bac</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_column</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a0fb0d3f53b5ae2c8bf3e4b60699ddf62</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_column</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a07d3618a0d47e61599e37f2f55e77e4f</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>dense_column</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a9767cf1003a4418f72b2a3bdbbb4ec34</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_row</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a69bcdaf32f0d8b62954693864eca0f28</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_row</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>afd3cb26fc21e2a7fd4ef8d8186c5ec5d</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_row</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>ac2b5165f7caf5d7972ee4f762b68a845</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; FullSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_column</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a36f443f694e812a8ee151d812c3df30e</anchor>
+      <arglist>(const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; BlockSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_column</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>a17e339136971965ebbc9942f073eb309</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+    </member>
+    <member kind="function">
+      <type>std::unique_ptr&lt; IndexSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <name>sparse_column</name>
+      <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
+      <anchor>afb6e2f27ca5ca808926b0d7b8e52a34b</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+    </member>
+  </compound>
   <compound kind="struct">
     <name>tatami::FullExtractor</name>
     <filename>structtatami_1_1FullExtractor.html</filename>
@@ -4285,6 +4456,7 @@
     <class kind="class">tatami::DenseMatrix</class>
     <class kind="struct">tatami::ExtractorBase</class>
     <class kind="struct">tatami::FixedOracle</class>
+    <class kind="class">tatami::FragmentedSparseMatrix</class>
     <class kind="struct">tatami::FullExtractor</class>
     <class kind="struct">tatami::IndexExtractor</class>
     <class kind="struct">tatami::LayeredMatrixData</class>
@@ -4389,6 +4561,20 @@
       <name>CompressedSparseRowMatrix</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a0111adeeb583aeb7e24e9e1e25be4aa0</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>FragmentedSparseMatrix&lt; false, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</type>
+      <name>FragmentedSparseColumnMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a6b9735bdc6e0a2856cd4747efbbf9f3c</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>FragmentedSparseMatrix&lt; true, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</type>
+      <name>FragmentedSparseRowMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a3d97fc9bd75052a79bb643d0fb5a0b98</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
