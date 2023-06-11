@@ -35,6 +35,41 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
     tatami_test::test_simple_row_access(&rmat, &dense, true, 1);
 }
 
+TEST(CompressedSparseMatrix, ConstructionFail) {
+    std::vector<double> values { 0 };
+    std::vector<int> indices;
+    std::vector<size_t> indptr(21);
+    tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr); }, "same length");
+
+    indices.push_back(0);
+    tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 10, values, indices, indptr); }, "should be equal to 'ncol");
+    tatami_test::throws_error([&]() { tatami::CompressedSparseRowMatrix<double, int> mat(10, 10, values, indices, indptr); }, "should be equal to 'nrow");
+
+    indptr[0] = 1;
+    tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr); }, "should be zero");
+
+    indptr[0] = 0;
+    tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr); }, "should be equal to length");
+
+    indptr.back() = 1;
+    indptr[1] = 1;
+    tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr); }, "non-decreasing");
+
+    indptr[1] = 0;
+    indices[0] = -1;
+    tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr); }, "non-negative");
+
+    indices[0] = 10001;
+    tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr); }, "non-negative");
+
+    indices[0] = 3;
+    indices.push_back(2);
+    values.push_back(2);
+    indptr.back() = indices.size();
+    tatami_test::throws_error([&]() { tatami::CompressedSparseColumnMatrix<double, int> mat(10, 20, values, indices, indptr); }, "strictly increasing");
+    tatami_test::throws_error([&]() { tatami::CompressedSparseRowMatrix<double, int> mat(20, 10, values, indices, indptr); }, "strictly increasing");
+}
+
 /*************************************
  *************************************/
 

@@ -11,7 +11,6 @@
 #include <memory>
 #include <utility>
 #include <stdexcept>
-#include <string>
 
 /**
  * @file FragmentedSparseMatrix.hpp
@@ -83,6 +82,7 @@ public:
                 }
             }
 
+            Stored<Stored<IndexVectorStorage_> > max_index = (row_ ? ncols : nrows);
             for (size_t i = 0, end = indices.size(); i < end; ++i) {
                 const auto& curv = values[i];
                 const auto& curi = indices[i];
@@ -90,15 +90,19 @@ public:
                     throw std::runtime_error("corresponding elements of 'values' and 'indices' should have the same length");
                 }
 
-                for (size_t x = 1, xend = curi.size(); x < xend; ++x) {
-                    if (curi[x-1] >= curi[x]) {
-                        std::string msg = "indices should be strictly increasing within each element of 'indices'";
+                for (auto x : curi) {
+                    if (x < 0 || x >= max_index) {
                         if constexpr(row_) {
-                            msg += "row";
+                            throw std::runtime_error("'indices' should contain non-negative integers less than the number of rows");
                         } else {
-                            msg += "column";
+                            throw std::runtime_error("'indices' should contain non-negative integers less than the number of columns");
                         }
-                        throw std::runtime_error(msg);
+                    }
+                }
+
+                for (size_t j = 1, jend = curi.size(); j < jend; ++j) {
+                    if (curi[j] <= curi[j - 1]) {
+                        throw std::runtime_error("indices should be strictly increasing within each element of 'indices'");
                     }
                 }
             }

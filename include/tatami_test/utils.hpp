@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <vector>
+#include <gtest/gtest.h>
 
 #include "../tatami/base/SparseRange.hpp"
 #include "../tatami/base/Options.hpp"
@@ -51,6 +52,19 @@ void sanitize_nan(std::vector<T>& values, T replacement = 1234567890) {
             if (std::isnan(x)) {
                 x = replacement;
             }
+        }
+    }
+}
+
+template<class Function_>
+void throws_error(Function_ fun, const std::string& msg) {
+    try {
+        fun();
+        FAIL() << "expected error message '" << msg << "', got no error";
+    } catch (std::exception& e) {
+        std::string observed(e.what());
+        if (observed.find(msg) == std::string::npos) {
+            FAIL() << "expected error message '" << msg << "', got '" << observed << "'";
         }
     }
 }

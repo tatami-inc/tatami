@@ -34,6 +34,31 @@ TEST(FragmentedSparseMatrix, ConstructionEmpty) {
     tatami_test::test_simple_row_access(&rmat, &dense, true, 1);
 }
 
+TEST(FragmentedSparseMatrix, ConstructionFail) {
+    std::vector<std::vector<double> > values(20);
+    std::vector<std::vector<int> > indices(19);
+    tatami_test::throws_error([&]() { tatami::FragmentedSparseColumnMatrix<double, int> mat(10, 20, values, indices); }, "same length");
+
+    indices.resize(20);
+    tatami_test::throws_error([&]() { tatami::FragmentedSparseColumnMatrix<double, int> mat(10, 10, values, indices); }, "should be equal to number of columns");
+    tatami_test::throws_error([&]() { tatami::FragmentedSparseRowMatrix<double, int> mat(10, 10, values, indices); }, "should be equal to number of rows");
+
+    indices.front().resize(10);
+    tatami_test::throws_error([&]() { tatami::FragmentedSparseColumnMatrix<double, int> mat(10, 20, values, indices); }, "same length");
+
+    values.front().resize(10);
+    tatami_test::throws_error([&]() { tatami::FragmentedSparseColumnMatrix<double, int> mat(10, 20, values, indices); }, "strictly increasing");
+    tatami_test::throws_error([&]() { tatami::FragmentedSparseRowMatrix<double, int> mat(20, 10, values, indices); }, "strictly increasing");
+
+    values.front().resize(1);
+    indices.front().resize(1);
+    indices.front()[0] = -1;
+    tatami_test::throws_error([&]() { tatami::FragmentedSparseColumnMatrix<double, int> mat(10, 20, values, indices); }, "non-negative");
+
+    indices.front()[0] = 10001;
+    tatami_test::throws_error([&]() { tatami::FragmentedSparseColumnMatrix<double, int> mat(10, 20, values, indices); }, "non-negative");
+}
+
 /*************************************
  *************************************/
 

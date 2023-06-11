@@ -11,7 +11,6 @@
 #include <memory>
 #include <utility>
 #include <stdexcept>
-#include <string>
 
 /**
  * @file CompressedSparseMatrix.hpp
@@ -73,7 +72,7 @@ public:
                 throw std::runtime_error("'values' and 'indices' should be of the same length");
             }
 
-            if (row_) {
+            if constexpr(row_) {
                 if (indptrs.size() != static_cast<size_t>(nrows) + 1){
                     throw std::runtime_error("length of 'indptrs' should be equal to 'nrows + 1'");
                 }
@@ -92,21 +91,30 @@ public:
                 throw std::runtime_error("last element of 'indptrs' should be equal to length of 'indices'");
             }
 
+            Stored<IndexStorage_> max_index = (row_ ? ncols : nrows);
             for (size_t i = 1; i < indptrs.size(); ++i) {
                 auto start = indptrs[i- 1], end = indptrs[i];
                 if (end < start || end > last) {
                     throw std::runtime_error("'indptrs' should be in non-decreasing order");
                 }
 
-                for (auto x = start + 1; x < end; ++x) {
-                    if (indices[x - 1] >= indices[x]) {
-                        std::string msg = "'indices' should be strictly increasing within each ";
+                for (auto x = start; x < end; ++x) {
+                    if (indices[x] < 0 || indices[x] >= max_index) {
                         if constexpr(row_) {
-                            msg += "row";
+                            throw std::runtime_error("'indices' should contain non-negative integers less than the number of rows");
                         } else {
-                            msg += "column";
+                            throw std::runtime_error("'indices' should contain non-negative integers less than the number of columns");
                         }
-                        throw std::runtime_error(msg);
+                    }
+                }
+
+                for (size_t j = start + 1; j < end; ++j) {
+                    if (indices[j] <= indices[j - 1]) {
+                        if constexpr(row_) {
+                            throw std::runtime_error("'indices' should be strictly increasing within each row");
+                        } else {
+                            throw std::runtime_error("'indices' should be strictly increasing within each column");
+                        }
                     }
                 }
             }
