@@ -305,7 +305,7 @@ private:
         {
             for (Index_ i = 0; i < length; ++i) {
                 const auto& curi = idx[i + start];
-                this->current_indices[i] = (curi.empty() ? max_index : curi.front());
+                this->current_indices[i] = (curi.size() == 0 ? max_index : curi[0]);
             }
             this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
             return;
@@ -320,7 +320,7 @@ private:
             for (Index_ i0 = 0; i0 < length; ++i0) {
                 auto i = subset[i0];
                 const auto& curi = idx[i];
-                this->current_indices[i0] = (curi.empty() ? max_index : curi.front());
+                this->current_indices[i0] = (curi.size() == 0 ? max_index : curi[0]);
             }
             this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
             return;

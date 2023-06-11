@@ -5,6 +5,7 @@
 
 #include "tatami/base/dense/DenseMatrix.hpp"
 #include "tatami/sparse/FragmentedSparseMatrix.hpp"
+#include "tatami/utils/ArrayView.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 
@@ -276,3 +277,17 @@ INSTANTIATE_TEST_CASE_P(
         )
     )
 );
+
+/*************************************
+ *************************************/
+
+TEST(FragmentedSparseMatrix, ArrayView) {
+    std::vector<tatami::ArrayView<double> > values(20, tatami::ArrayView<double>(NULL, 0));
+    std::vector<tatami::ArrayView<int> > indices(20, tatami::ArrayView<int>(NULL, 0));
+
+    tatami::FragmentedSparseColumnMatrix<double, int, decltype(values), decltype(indices)> mat(10, 20, values, indices);
+    EXPECT_TRUE(mat.sparse());
+    EXPECT_FALSE(mat.prefer_rows());
+    EXPECT_EQ(mat.nrow(), 10);
+    EXPECT_EQ(mat.ncol(), 20);
+}
