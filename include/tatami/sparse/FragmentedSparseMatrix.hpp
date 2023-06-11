@@ -1,5 +1,5 @@
-#ifndef TATAMI_COMPRESSED_SPARSE_MATRIX_H
-#define TATAMI_COMPRESSED_SPARSE_MATRIX_H
+#ifndef TATAMI_FRAGMENTED_SPARSE_MATRIX_H
+#define TATAMI_FRAGMENTED_SPARSE_MATRIX_H
 
 #include "../base/Matrix.hpp"
 #include "../base/utils.hpp"
