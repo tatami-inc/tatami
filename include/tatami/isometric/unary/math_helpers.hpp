@@ -59,7 +59,7 @@ public:
 };
 
 /**
- * @brief Take the signum of a matrix entry.
+ * @brief Take the sign of a matrix entry.
  */
 template<typename T = double>
 struct DelayedSignHelper {
