@@ -332,6 +332,42 @@ TEST_F(SparseSecondaryExtractorCoreTest, Alternating) {
     }
 }
 
+TEST_F(SparseSecondaryExtractorCoreTest, Empty) {
+    std::vector<int> indices {};
+
+    std::vector<size_t> indptrs { 0, 0, 0, 0 };
+
+    auto store_fun = [&](int i, size_t p) { results[i] = p; };
+    auto skip_fun = [&](int i) { results[i] = -1; };
+
+    SimpleSecondaryExtractorCore<int, size_t> test(19, indices, indptrs);
+    EXPECT_FALSE(test.search(0, n, identity, indices, indptrs, store_fun, skip_fun));
+
+    // Increments returns false.
+    EXPECT_FALSE(test.search(1, n, identity, indices, indptrs, store_fun, skip_fun));
+    EXPECT_FALSE(test.search(2, n, identity, indices, indptrs, store_fun, skip_fun));
+    EXPECT_FALSE(test.search(10, n, identity, indices, indptrs, store_fun, skip_fun));
+
+    // Big jump to the end.
+    EXPECT_FALSE(test.search(18, n, identity, indices, indptrs, store_fun, skip_fun));
+
+    // First decrement switches to lower_bound = false, so it can't short-circuit.
+    EXPECT_TRUE(test.search(17, n, identity, indices, indptrs, store_fun, skip_fun));
+    EXPECT_EQ(results, expected(-1, -1, -1));
+
+    // Next decrements short-circuit properly.
+    EXPECT_FALSE(test.search(16, n, identity, indices, indptrs, store_fun, skip_fun));
+    EXPECT_FALSE(test.search(15, n, identity, indices, indptrs, store_fun, skip_fun));
+    EXPECT_FALSE(test.search(8, n, identity, indices, indptrs, store_fun, skip_fun));
+
+    // Big jump back to the front.
+    EXPECT_FALSE(test.search(0, n, identity, indices, indptrs, store_fun, skip_fun));
+
+    // First increment switches back to lower_bound = true and can't short-circuit.
+    EXPECT_TRUE(test.search(1, n, identity, indices, indptrs, store_fun, skip_fun));
+    EXPECT_EQ(results, expected(-1, -1, -1));
+}
+
 class DuplicatedSparseSecondaryExtractorCoreTest : public SparseSecondaryExtractorCoreTest {
 protected:
     struct DuplicatedModifier {
