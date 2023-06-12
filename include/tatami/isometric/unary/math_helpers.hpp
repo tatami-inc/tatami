@@ -471,11 +471,6 @@ public:
      * @endcond
      */
 
-private:
-    template<typename Value_, typename Index_>
-    void core (Index_ length, Value_* buffer) const {
-    }
-
 public:
     /**
      * @cond
@@ -844,11 +839,6 @@ public:
      * @endcond
      */
 
-private:
-    template<typename Value_, typename Index_>
-    void core (Index_ length, Value_* buffer) const {
-    }
-
 public:
     /**
      * @cond
@@ -894,11 +884,6 @@ public:
     /**
      * @endcond
      */
-
-private:
-    template<typename Value_, typename Index_>
-    void core (Index_ length, Value_* buffer) const {
-    }
 
 public:
     /**
