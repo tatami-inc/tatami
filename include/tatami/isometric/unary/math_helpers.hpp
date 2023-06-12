@@ -82,7 +82,7 @@ private:
     template<typename Value_, typename Index_>
     void core (Index_ length, Value_* buffer) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = (T(0) < buffer[i]) - (buffer[i] < T(0));
+            buffer[i] = (static_cast<T>(0) < buffer[i]) - (buffer[i] < static_cast<T>(0));
         }
     }
 
