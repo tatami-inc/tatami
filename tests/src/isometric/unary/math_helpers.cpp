@@ -114,7 +114,8 @@ TEST_F(MathTest, LogByColumn) {
     tatami::DelayedAbsHelper op0;
     auto dense_mod0 = tatami::make_DelayedUnaryIsometricOp(dense, op0);
     auto sparse_mod0 = tatami::make_DelayedUnaryIsometricOp(sparse, op0);
-    
+
+    // Test log(abs(x) + 5).
     double CONSTANT = 5;
     auto op1 = tatami::make_DelayedAddScalarHelper<double>(CONSTANT);
     auto dense_mod1 = tatami::make_DelayedUnaryIsometricOp(dense_mod0, op1);
@@ -483,6 +484,7 @@ TEST_F(MathTest, TanByColumn) {
 }
 
 TEST_F(MathTest, AsinByColumn) {
+    // Divide simulated values in [-10, 10] by 10 for domain [-1, 1].
     double CONSTANT = 10;
     auto op0 = tatami::make_DelayedDivideScalarHelper<true>(CONSTANT);
     auto dense_mod0 = tatami::make_DelayedUnaryIsometricOp(dense, op0);
@@ -515,6 +517,7 @@ TEST_F(MathTest, AsinByColumn) {
 }
 
 TEST_F(MathTest, AcosByColumn) {
+    // Divide simulated values in [-10, 10] by 10 for domain [-1, 1].
     double CONSTANT = 10;
     auto op0 = tatami::make_DelayedDivideScalarHelper<true>(CONSTANT);
     auto dense_mod0 = tatami::make_DelayedUnaryIsometricOp(dense, op0);
@@ -682,6 +685,7 @@ TEST_F(MathTest, AsinhByColumn) {
 }
 
 TEST_F(MathTest, AcoshByColumn) {
+    // Add 11 to simulated values in [-10, 10] for domain >= 1.
     double CONSTANT = 11;
     auto op0 = tatami::make_DelayedAddScalarHelper<double>(CONSTANT);
     auto dense_mod0 = tatami::make_DelayedUnaryIsometricOp(dense, op0);
@@ -714,6 +718,7 @@ TEST_F(MathTest, AcoshByColumn) {
 }
 
 TEST_F(MathTest, AtanhByColumn) {
+    // Divide simulated values in [-10, 10] by 10 for domain [-1, 1].
     double CONSTANT = 10;
     auto op0 = tatami::make_DelayedDivideScalarHelper<true>(CONSTANT);
     auto dense_mod0 = tatami::make_DelayedUnaryIsometricOp(dense, op0);
