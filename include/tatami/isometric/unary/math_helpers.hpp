@@ -139,13 +139,6 @@ public:
      */
 
 private:
-    template<typename Value_, typename Index_>
-    void core (Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::log(buffer[i]) / log_base;
-        }
-    }
-
     const Base_ log_base;
 
 public:
@@ -154,12 +147,9 @@ public:
      */
     template<bool, typename Value_, typename Index_, typename ExtractType_>
     void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
-    }
-
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = std::log(buffer[i]) / log_base;
+        }
     }
     /**
      * @endcond
@@ -481,17 +471,6 @@ public:
     void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
         for (Index_ i = 0; i < length; ++i) {
             buffer[i] = std::exp(buffer[i]);
-        }
-    }
-
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            if (buffer[i]) {
-                buffer[i] = std::exp(buffer[i]);
-            } else {
-                buffer[i] = 1;
-            }
         }
     }
     /**

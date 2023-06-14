@@ -86,11 +86,6 @@ public:
     void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
         delayed_boolean_run_simple<op_>(scalar, number, buffer);
     }
-
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        delayed_boolean_run_simple<op_>(scalar, length, buffer);
-    }
     /**
      * @endcond
      */
@@ -116,26 +111,15 @@ struct DelayedBooleanNotHelper {
      * @endcond
      */
 
-private:
-    template<typename Value_, typename Index_>
-    void core(Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = !static_cast<bool>(buffer[i]);
-        }
-    }
-
 public:
     /**
      * @cond
      */
     template<bool, typename Value_, typename Index_, typename ExtractType_>
     void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
-    }
-
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = !static_cast<bool>(buffer[i]);
+        }
     }
     /**
      * @endcond
@@ -222,11 +206,6 @@ public:
                 delayed_boolean_run<op_>(buffer[i], vec[indices[i]]);
             }
         }
-    }
-
-    template<bool accrow_, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_ idx, ExtractType_&& start, Index_ length, Value_* buffer) const {
-        dense<accrow_>(idx, std::forward<ExtractType_>(start), length, buffer);
     }
     /**
      * @endcond

@@ -93,11 +93,6 @@ public:
     void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
         delayed_compare_run_simple<op_>(scalar, number, buffer);
     }
-
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        delayed_compare_run_simple<op_>(scalar, length, buffer);
-    }
     /**
      * @endcond
      */
@@ -183,11 +178,6 @@ public:
                 delayed_compare_run<op_>(buffer[i], vec[indices[i]]);
             }
         }
-    }
-
-    template<bool accrow_, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_ idx, ExtractType_&& start, Index_ length, Value_* buffer) const {
-        dense<accrow_>(idx, std::forward<ExtractType_>(start), length, buffer);
     }
     /**
      * @endcond

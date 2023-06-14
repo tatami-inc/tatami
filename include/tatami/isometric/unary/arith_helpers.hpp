@@ -180,11 +180,6 @@ public:
             }
         }
     }
-
-    template<bool accrow_, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_ idx, ExtractType_&& start, Index_ length, Value_* buffer) const {
-        dense<accrow_>(idx, std::forward<ExtractType_>(start), length, buffer);
-    }
     /**
      * @endcond
      */
