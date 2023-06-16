@@ -86,6 +86,13 @@ public:
     void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
         delayed_boolean_run_simple<op_>(scalar, number, buffer);
     }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        Value_ output = 0;
+        delayed_boolean_run<op_>(output, scalar);
+        return output;
+    }
     /**
      * @endcond
      */
@@ -111,15 +118,31 @@ struct DelayedBooleanNotHelper {
      * @endcond
      */
 
+private:
+    template<typename Value_, typename Index_>
+    void core(Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = !static_cast<bool>(buffer[i]);
+        }
+    }
+
 public:
     /**
      * @cond
      */
     template<bool, typename Value_, typename Index_, typename ExtractType_>
     void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = !static_cast<bool>(buffer[i]);
-        }
+        core(length, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        return 1;
     }
     /**
      * @endcond
@@ -206,6 +229,13 @@ public:
                 delayed_boolean_run<op_>(buffer[i], vec[indices[i]]);
             }
         }
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_ idx) const {
+        Value_ output = 0;
+        delayed_boolean_run<op_>(output, vec[idx]);
+        return output;
     }
     /**
      * @endcond

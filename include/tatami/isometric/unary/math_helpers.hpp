@@ -61,7 +61,6 @@ public:
 /**
  * @brief Take the sign of a matrix entry.
  */
-template<typename T = double>
 struct DelayedSignHelper {
 public:
     /**
@@ -141,15 +140,31 @@ public:
 private:
     const Base_ log_base;
 
+    template<typename Value_, typename Index_>
+    void core(Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = std::log(buffer[i]) / log_base;
+        }
+    }
+
 public:
     /**
      * @cond
      */
     template<bool, typename Value_, typename Index_, typename ExtractType_>
     void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::log(buffer[i]) / log_base;
-        }
+        core<Value_, Index_>(length, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        // Use the implementation-defined value.
+        return std::log(static_cast<Value_>(0));
     }
     /**
      * @endcond
@@ -204,7 +219,6 @@ public:
 /**
  * @brief Take the ceiling of a matrix entry.
  */
-template<typename T = double>
 struct DelayedCeilingHelper {
 public:
     /**
@@ -250,7 +264,6 @@ public:
 /**
  * @brief Take the floor of a matrix entry.
  */
-template<typename T = double>
 struct DelayedFloorHelper {
 public:
     /**
@@ -296,7 +309,6 @@ public:
 /**
  * @brief Take the trunc of a matrix entry.
  */
-template<typename T = double>
 struct DelayedTruncHelper {
 public:
     /**
@@ -463,15 +475,31 @@ public:
      * @endcond
      */
 
+private:
+    template<typename Value_, typename Index_>
+    void core(Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = std::exp(buffer[i]);
+        }
+    }
+
 public:
     /**
      * @cond
      */
     template<bool, typename Value_, typename Index_, typename ExtractType_>
     void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::exp(buffer[i]);
-        }
+        core(length, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        return 1.0;
     }
     /**
      * @endcond
@@ -481,7 +509,6 @@ public:
 /**
  * @brief Use a matrix entry as an exponent minus 1.
  */
-template<typename T = double>
 struct DelayedExpm1Helper {
 public:
     /**
@@ -527,7 +554,6 @@ public:
 /**
  * @brief Take the arc cosine of a matrix entry.
  */
-template<typename T = double>
 struct DelayedAcosHelper {
 public:
     /**
@@ -561,9 +587,14 @@ public:
         core(length, buffer);
     }
 
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        return std::acos(0);
     }
     /**
      * @endcond
@@ -573,7 +604,6 @@ public:
 /**
  * @brief Take the inverse hyperbolic cosine of a matrix entry.
  */
-template<typename T = double>
 struct DelayedAcoshHelper {
 public:
     /**
@@ -607,9 +637,14 @@ public:
         core(length, buffer);
     }
 
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        return std::acosh(static_cast<Value_>(0));
     }
     /**
      * @endcond
@@ -619,7 +654,6 @@ public:
 /**
  * @brief Take the arc sine of a matrix entry.
  */
-template<typename T = double>
 struct DelayedAsinHelper {
 public:
     /**
@@ -665,7 +699,6 @@ public:
 /**
  * @brief Take the inverse hyperbolic sine of a matrix entry.
  */
-template<typename T = double>
 struct DelayedAsinhHelper {
 public:
     /**
@@ -711,7 +744,6 @@ public:
 /**
  * @brief Take the arc tangent of a matrix entry.
  */
-template<typename T = double>
 struct DelayedAtanHelper {
 public:
     /**
@@ -757,7 +789,6 @@ public:
 /**
  * @brief Take the inverse hyperbolic tangent of a matrix entry.
  */
-template<typename T = double>
 struct DelayedAtanhHelper {
 public:
     /**
@@ -803,7 +834,6 @@ public:
 /**
  * @brief Take the cosine of a matrix entry.
  */
-template<typename T = double>
 struct DelayedCosHelper {
 public:
     /**
@@ -820,26 +850,31 @@ public:
      * @endcond
      */
 
+private:
+    template<typename Value_, typename Index_>
+    void core(Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = std::cos(buffer[i]);
+        }
+    }
+
 public:
     /**
      * @cond
      */
     template<bool, typename Value_, typename Index_, typename ExtractType_>
     void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::cos(buffer[i]);
-        }
+        core(length, buffer);
     }
 
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            if (buffer[i]) {
-                buffer[i] = std::cos(buffer[i]);
-            } else {
-                buffer[i] = 1;
-            }
-        }
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        return 1.0;
     }
     /**
      * @endcond
@@ -849,7 +884,6 @@ public:
 /**
  * @brief Take the hyperbolic cosine of a matrix entry.
  */
-template<typename T = double>
 struct DelayedCoshHelper {
 public:
     /**
@@ -866,26 +900,31 @@ public:
      * @endcond
      */
 
+private:
+    template<typename Value_, typename Index_>
+    void core(Index_ length, Value_* buffer) const {
+        for (Index_ i = 0; i < length; ++i) {
+            buffer[i] = std::cosh(buffer[i]);
+        }
+    }
+
 public:
     /**
      * @cond
      */
     template<bool, typename Value_, typename Index_, typename ExtractType_>
     void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::cosh(buffer[i]);
-        }
+        core(length, buffer);
     }
 
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        for (Index_ i = 0; i < length; ++i) {
-            if (buffer[i]) {
-                buffer[i] = std::cosh(buffer[i]);
-            } else {
-                buffer[i] = 1;
-            }
-        }
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        return 1.0;
     }
     /**
      * @endcond
@@ -895,7 +934,6 @@ public:
 /**
  * @brief Take the sine of a matrix entry.
  */
-template<typename T = double>
 struct DelayedSinHelper {
 public:
     /**
@@ -941,7 +979,6 @@ public:
 /**
  * @brief Take the hyperbolic sine of a matrix entry.
  */
-template<typename T = double>
 struct DelayedSinhHelper {
 public:
     /**
@@ -987,7 +1024,6 @@ public:
 /**
  * @brief Take the tangent of a matrix entry.
  */
-template<typename T = double>
 struct DelayedTanHelper {
 public:
     /**
@@ -1033,7 +1069,6 @@ public:
 /**
  * @brief Take the hyperbolic tangent of a matrix entry.
  */
-template<typename T = double>
 struct DelayedTanhHelper {
 public:
     /**
@@ -1079,7 +1114,6 @@ public:
 /**
  * @brief Take the gamma of a matrix entry.
  */
-template<typename T = double>
 struct DelayedGammaHelper {
 public:
     /**
@@ -1113,9 +1147,14 @@ public:
         core(length, buffer);
     }
 
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        return std::tgamma(static_cast<Value_>(0));
     }
     /**
      * @endcond
@@ -1125,7 +1164,6 @@ public:
 /**
  * @brief Take the logarithm of the gamma of a matrix entry.
  */
-template<typename T = double>
 struct DelayedLgammaHelper {
 public:
     /**
@@ -1159,9 +1197,14 @@ public:
         core(length, buffer);
     }
 
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<bool, typename Value_, typename Index_>
+    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+        core(number, buffer);
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        return std::lgamma(static_cast<Value_>(0));
     }
     /**
      * @endcond

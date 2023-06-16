@@ -93,6 +93,13 @@ public:
     void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
         delayed_compare_run_simple<op_>(scalar, number, buffer);
     }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        Value_ output = 0;
+        delayed_compare_run<op_>(output, scalar);
+        return output;
+    }
     /**
      * @endcond
      */
@@ -178,6 +185,13 @@ public:
                 delayed_compare_run<op_>(buffer[i], vec[indices[i]]);
             }
         }
+    }
+
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_ idx) const {
+        Value_ output = 0;
+        delayed_compare_run<op_>(output, vec[idx]);
+        return output;
     }
     /**
      * @endcond

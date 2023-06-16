@@ -1,6 +1,8 @@
 #ifndef TATAMI_ARITH_UTILS_HPP
 #define TATAMI_ARITH_UTILS_HPP
 
+#include <limits>
+
 /**
  * @file arith_utils.hpp
  *
@@ -35,10 +37,19 @@ void delayed_arith_run(Value_& val, Scalar_ scalar) {
             val = scalar - val;
         }
     } else {
-        // Assume IEEE behavior if divisor is zero.
         if constexpr(right_) {
+            if constexpr(std::numeric_limits<Value_>::is_iec559) {
+                if (scalar == 0) {
+                    throw std::runtime_error("IEEE division by zero is not supported");
+                }
+            }
             val /= scalar;
         } else {
+            if constexpr(std::numeric_limits<Value_>::is_iec559) {
+                if (val == 0) {
+                    throw std::runtime_error("IEEE division by zero is not supported");
+                }
+            }
             val = scalar / val;
         }
     }
