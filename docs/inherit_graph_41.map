@@ -1,0 +1,21 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="Node000000" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="5,287,148,327"/>
+<area shape="rect" id="Node000001" href="$classtatami_1_1DelayedBinaryIsometricOp.html" title="Delayed isometric operations on two matrices." alt="" coords="196,5,411,46"/>
+<area shape="poly" id="edge10_Node000000_Node000001" title=" " alt="" coords="82,272,96,224,118,166,150,108,170,81,194,57,213,44,216,49,197,61,175,84,155,110,123,168,101,225,88,273"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix." alt="" coords="213,71,394,111"/>
+<area shape="poly" id="edge11_Node000000_Node000002" title=" " alt="" coords="88,272,105,236,128,196,158,155,194,121,213,109,216,114,197,125,162,159,133,199,110,239,93,274"/>
+<area shape="rect" id="Node000003" href="$classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices." alt="" coords="222,135,385,191"/>
+<area shape="poly" id="edge12_Node000000_Node000003" title=" " alt="" coords="105,274,146,236,194,201,220,187,223,192,197,205,149,240,109,278"/>
+<area shape="rect" id="Node000004" href="$classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block." alt="" coords="212,215,395,255"/>
+<area shape="poly" id="edge13_Node000000_Node000004" title=" " alt="" coords="151,279,195,264,231,253,232,258,196,270,153,284"/>
+<area shape="rect" id="Node000005" href="$classtatami_1_1DelayedSubsetSorted.html" title="Delayed subsetting of a matrix with sorted indices." alt="" coords="209,279,398,335"/>
+<area shape="poly" id="edge14_Node000000_Node000005" title=" " alt="" coords="163,304,209,304,209,310,163,310"/>
+<area shape="rect" id="Node000006" href="$classtatami_1_1DelayedSubsetSortedUnique.html" title="Delayed subsetting of a matrix with sorted, unique indices." alt="" coords="209,359,398,415"/>
+<area shape="poly" id="edge15_Node000000_Node000006" title=" " alt="" coords="150,330,223,356,222,361,149,335"/>
+<area shape="rect" id="Node000007" href="$classtatami_1_1DelayedSubsetUnique.html" title="Delayed subsetting of a matrix with unique indices." alt="" coords="208,439,399,495"/>
+<area shape="poly" id="edge16_Node000000_Node000007" title=" " alt="" coords="105,338,146,382,197,425,218,436,215,441,194,429,142,386,101,341"/>
+<area shape="rect" id="Node000008" href="$classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix." alt="" coords="218,519,389,559"/>
+<area shape="poly" id="edge17_Node000000_Node000008" title=" " alt="" coords="92,340,107,379,130,423,160,467,197,505,219,518,216,523,194,509,156,471,125,426,102,381,87,342"/>
+<area shape="rect" id="Node000009" href="$classtatami_1_1DelayedUnaryIsometricOp.html" title="Delayed isometric operations on a single matrix." alt="" coords="196,584,411,625"/>
+<area shape="poly" id="edge18_Node000000_Node000009" title=" " alt="" coords="86,341,99,392,121,453,153,516,173,544,197,569,215,581,212,586,194,573,169,547,148,518,116,455,94,394,81,343"/>
+</map>

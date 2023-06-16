@@ -255,31 +255,6 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>convert_to_layered_sparse.hpp</name>
-    <path>tatami/ext/layered/</path>
-    <filename>convert__to__layered__sparse_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
-      <name>convert_to_layered_sparse</name>
-      <anchorfile>convert__to__layered__sparse_8hpp.html</anchorfile>
-      <anchor>a8a10c9d0fdbf5076e8583d1068a7f6d6</anchor>
-      <arglist>(const Matrix *incoming)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>LayeredMatrixData.hpp</name>
-    <path>tatami/ext/layered/</path>
-    <filename>LayeredMatrixData_8hpp.html</filename>
-    <class kind="struct">tatami::LayeredMatrixData</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>MatrixMarket.hpp</name>
-    <path>tatami/ext/</path>
-    <filename>MatrixMarket_8hpp.html</filename>
-  </compound>
-  <compound kind="file">
     <name>layered.hpp</name>
     <path>tatami/ext/</path>
     <filename>layered_8hpp.html</filename>
@@ -304,6 +279,31 @@
       <anchor>af7655515516f20bf22da4311b7e8dcc5</anchor>
       <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
     </member>
+  </compound>
+  <compound kind="file">
+    <name>convert_to_layered_sparse.hpp</name>
+    <path>tatami/ext/layered/</path>
+    <filename>convert__to__layered__sparse_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
+      <name>convert_to_layered_sparse</name>
+      <anchorfile>convert__to__layered__sparse_8hpp.html</anchorfile>
+      <anchor>a8a10c9d0fdbf5076e8583d1068a7f6d6</anchor>
+      <arglist>(const Matrix *incoming)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>LayeredMatrixData.hpp</name>
+    <path>tatami/ext/layered/</path>
+    <filename>LayeredMatrixData_8hpp.html</filename>
+    <class kind="struct">tatami::LayeredMatrixData</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>MatrixMarket.hpp</name>
+    <path>tatami/ext/</path>
+    <filename>MatrixMarket_8hpp.html</filename>
   </compound>
   <compound kind="file">
     <name>simple.hpp</name>
@@ -774,11 +774,30 @@
     <path>tatami/isometric/unary/</path>
     <filename>math__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedAbsHelper</class>
+    <class kind="struct">tatami::DelayedSignHelper</class>
     <class kind="struct">tatami::DelayedLogHelper</class>
     <class kind="struct">tatami::DelayedSqrtHelper</class>
+    <class kind="struct">tatami::DelayedCeilingHelper</class>
+    <class kind="struct">tatami::DelayedFloorHelper</class>
+    <class kind="struct">tatami::DelayedTruncHelper</class>
     <class kind="struct">tatami::DelayedLog1pHelper</class>
     <class kind="struct">tatami::DelayedRoundHelper</class>
     <class kind="struct">tatami::DelayedExpHelper</class>
+    <class kind="struct">tatami::DelayedExpm1Helper</class>
+    <class kind="struct">tatami::DelayedAcosHelper</class>
+    <class kind="struct">tatami::DelayedAcoshHelper</class>
+    <class kind="struct">tatami::DelayedAsinHelper</class>
+    <class kind="struct">tatami::DelayedAsinhHelper</class>
+    <class kind="struct">tatami::DelayedAtanHelper</class>
+    <class kind="struct">tatami::DelayedAtanhHelper</class>
+    <class kind="struct">tatami::DelayedCosHelper</class>
+    <class kind="struct">tatami::DelayedCoshHelper</class>
+    <class kind="struct">tatami::DelayedSinHelper</class>
+    <class kind="struct">tatami::DelayedSinhHelper</class>
+    <class kind="struct">tatami::DelayedTanHelper</class>
+    <class kind="struct">tatami::DelayedTanhHelper</class>
+    <class kind="struct">tatami::DelayedGammaHelper</class>
+    <class kind="struct">tatami::DelayedLgammaHelper</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -842,26 +861,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a412cb6ee12f3ee81d404d6eb0e494e4d</anchor>
       <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>utils.hpp</name>
-    <path>tatami/stats/</path>
-    <filename>stats_2utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>parallelize</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a29ce7a2219ea60d45de1aa3d4de66063</anchor>
-      <arglist>(Function_ fun, size_t tasks, size_t threads)</arglist>
-    </member>
-    <member kind="function">
-      <type>auto</type>
-      <name>consecutive_extractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -950,6 +949,26 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a53a658059404691856bef57fb85d83d6</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>utils.hpp</name>
+    <path>tatami/stats/</path>
+    <filename>stats_2utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>void</type>
+      <name>parallelize</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a29ce7a2219ea60d45de1aa3d4de66063</anchor>
+      <arglist>(Function_ fun, size_t tasks, size_t threads)</arglist>
+    </member>
+    <member kind="function">
+      <type>auto</type>
+      <name>consecutive_extractor</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -1386,6 +1405,14 @@
     <filename>structtatami_1_1DelayedAbsHelper.html</filename>
   </compound>
   <compound kind="struct">
+    <name>tatami::DelayedAcosHelper</name>
+    <filename>structtatami_1_1DelayedAcosHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedAcoshHelper</name>
+    <filename>structtatami_1_1DelayedAcoshHelper.html</filename>
+  </compound>
+  <compound kind="struct">
     <name>tatami::DelayedArithScalarHelper</name>
     <filename>structtatami_1_1DelayedArithScalarHelper.html</filename>
     <templarg>DelayedArithOp op_</templarg>
@@ -1413,6 +1440,22 @@
       <anchor>a83a921d90c37170f8a9507be4921cfb8</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedAsinHelper</name>
+    <filename>structtatami_1_1DelayedAsinHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedAsinhHelper</name>
+    <filename>structtatami_1_1DelayedAsinhHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedAtanHelper</name>
+    <filename>structtatami_1_1DelayedAtanHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedAtanhHelper</name>
+    <filename>structtatami_1_1DelayedAtanhHelper.html</filename>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedBinaryArithHelper</name>
@@ -1912,6 +1955,10 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>tatami::DelayedCeilingHelper</name>
+    <filename>structtatami_1_1DelayedCeilingHelper.html</filename>
+  </compound>
+  <compound kind="struct">
     <name>tatami::DelayedCompareScalarHelper</name>
     <filename>structtatami_1_1DelayedCompareScalarHelper.html</filename>
     <templarg>DelayedCompareOp op_</templarg>
@@ -1939,8 +1986,32 @@
     </member>
   </compound>
   <compound kind="struct">
+    <name>tatami::DelayedCosHelper</name>
+    <filename>structtatami_1_1DelayedCosHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedCoshHelper</name>
+    <filename>structtatami_1_1DelayedCoshHelper.html</filename>
+  </compound>
+  <compound kind="struct">
     <name>tatami::DelayedExpHelper</name>
     <filename>structtatami_1_1DelayedExpHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedExpm1Helper</name>
+    <filename>structtatami_1_1DelayedExpm1Helper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedFloorHelper</name>
+    <filename>structtatami_1_1DelayedFloorHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedGammaHelper</name>
+    <filename>structtatami_1_1DelayedGammaHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedLgammaHelper</name>
+    <filename>structtatami_1_1DelayedLgammaHelper.html</filename>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedLog1pHelper</name>
@@ -1983,6 +2054,18 @@
   <compound kind="struct">
     <name>tatami::DelayedRoundHelper</name>
     <filename>structtatami_1_1DelayedRoundHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedSignHelper</name>
+    <filename>structtatami_1_1DelayedSignHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedSinHelper</name>
+    <filename>structtatami_1_1DelayedSinHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedSinhHelper</name>
+    <filename>structtatami_1_1DelayedSinhHelper.html</filename>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedSqrtHelper</name>
@@ -2732,6 +2815,14 @@
       <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;options) const</arglist>
     </member>
   </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedTanHelper</name>
+    <filename>structtatami_1_1DelayedTanHelper.html</filename>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedTanhHelper</name>
+    <filename>structtatami_1_1DelayedTanhHelper.html</filename>
+  </compound>
   <compound kind="class">
     <name>tatami::DelayedTranspose</name>
     <filename>classtatami_1_1DelayedTranspose.html</filename>
@@ -2878,6 +2969,10 @@
       <anchor>aaa45e99399c24068984dc2159d1be726</anchor>
       <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
     </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::DelayedTruncHelper</name>
+    <filename>structtatami_1_1DelayedTruncHelper.html</filename>
   </compound>
   <compound kind="class">
     <name>tatami::DelayedUnaryIsometricOp</name>
@@ -4427,8 +4522,14 @@
     <class kind="class">tatami::CompressedSparseMatrix</class>
     <class kind="struct">tatami::ConsecutiveOracle</class>
     <class kind="struct">tatami::DelayedAbsHelper</class>
+    <class kind="struct">tatami::DelayedAcosHelper</class>
+    <class kind="struct">tatami::DelayedAcoshHelper</class>
     <class kind="struct">tatami::DelayedArithScalarHelper</class>
     <class kind="struct">tatami::DelayedArithVectorHelper</class>
+    <class kind="struct">tatami::DelayedAsinHelper</class>
+    <class kind="struct">tatami::DelayedAsinhHelper</class>
+    <class kind="struct">tatami::DelayedAtanHelper</class>
+    <class kind="struct">tatami::DelayedAtanhHelper</class>
     <class kind="struct">tatami::DelayedBinaryArithHelper</class>
     <class kind="struct">tatami::DelayedBinaryBooleanHelper</class>
     <class kind="struct">tatami::DelayedBinaryCompareHelper</class>
@@ -4438,19 +4539,32 @@
     <class kind="struct">tatami::DelayedBooleanScalarHelper</class>
     <class kind="struct">tatami::DelayedBooleanVectorHelper</class>
     <class kind="class">tatami::DelayedCast</class>
+    <class kind="struct">tatami::DelayedCeilingHelper</class>
     <class kind="struct">tatami::DelayedCompareScalarHelper</class>
     <class kind="struct">tatami::DelayedCompareVectorHelper</class>
+    <class kind="struct">tatami::DelayedCosHelper</class>
+    <class kind="struct">tatami::DelayedCoshHelper</class>
     <class kind="struct">tatami::DelayedExpHelper</class>
+    <class kind="struct">tatami::DelayedExpm1Helper</class>
+    <class kind="struct">tatami::DelayedFloorHelper</class>
+    <class kind="struct">tatami::DelayedGammaHelper</class>
+    <class kind="struct">tatami::DelayedLgammaHelper</class>
     <class kind="struct">tatami::DelayedLog1pHelper</class>
     <class kind="struct">tatami::DelayedLogHelper</class>
     <class kind="struct">tatami::DelayedRoundHelper</class>
+    <class kind="struct">tatami::DelayedSignHelper</class>
+    <class kind="struct">tatami::DelayedSinHelper</class>
+    <class kind="struct">tatami::DelayedSinhHelper</class>
     <class kind="struct">tatami::DelayedSqrtHelper</class>
     <class kind="class">tatami::DelayedSubset</class>
     <class kind="class">tatami::DelayedSubsetBlock</class>
     <class kind="class">tatami::DelayedSubsetSorted</class>
     <class kind="class">tatami::DelayedSubsetSortedUnique</class>
     <class kind="class">tatami::DelayedSubsetUnique</class>
+    <class kind="struct">tatami::DelayedTanHelper</class>
+    <class kind="struct">tatami::DelayedTanhHelper</class>
     <class kind="class">tatami::DelayedTranspose</class>
+    <class kind="struct">tatami::DelayedTruncHelper</class>
     <class kind="class">tatami::DelayedUnaryIsometricOp</class>
     <class kind="class">tatami::DenseExtractor</class>
     <class kind="class">tatami::DenseMatrix</class>

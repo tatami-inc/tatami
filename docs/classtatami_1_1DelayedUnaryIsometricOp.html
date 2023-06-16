@@ -236,19 +236,15 @@ class tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</div><
 <ul>
 <li><code>void dense&lt;row_&gt;(Index_ i, Index_ start, Index_ length, Value_* buffer) const</code>: This method should apply the operation to all values in <code>buffer</code>, which contains a contiguous block of elements from row <code>i</code> (when <code>row_ = true</code>). This block spans columns from <code>[start, start + length)</code>. If <code>row_ = false</code>, <code>i</code> is instead a column and the block contains rows.</li>
 <li><code>void dense&lt;row_&gt;(Index_ i, const Index_* indices, Index_ length, Value_* buffer) const</code>: This method should apply the operation to all values in <code>buffer</code>, which contains to a subset of elements from row <code>i</code> (when <code>row_ = true</code>). Column indices of the elements in the subset are defined by <code>indices</code>, which is a sorted and unique array of length <code>length</code>w. If <code>row_ = false</code>, <code>i</code> is instead a column and <code>indices</code> contains rows.</li>
+<li><code>void sparse&lt;row_&gt;(Index_ i, Index_ number, Value_* buffer, const Index_* indices) const</code>: This method should apply the operation to all values in <code>buffer</code>, which contains <code>number</code> elements from row <code>i</code> (when <code>row_ = true</code>). The column indices of all elements is contained in <code>indices</code> - unless <code>needs_column = false</code>, in which case <code>indices</code> may be <code>NULL</code>. If <code>row_ = false</code>, <code>i</code> is instead a column and <code>indices</code> contains row indices (or is <code>NULL</code>, if <code>needs_row = false</code>).</li>
 </ul>
 <p>If neither of <code>always_dense</code> or <code>always_sparse</code> is <code>true</code>, the class should also implement:</p>
 <ul>
 <li><code>bool actual_sparse() const</code>: whether this particular instance of the operation yields a sparse result when applied on sparse data. For example, an addition operation remains sparse if the added value is zero.</li>
 </ul>
-<p>If <code>always_sparse = false</code>, the class should implement:</p>
+<p>If <code>always_sparse</code> is not <code>true</code>, the class should also implement:</p>
 <ul>
-<li><code>void expanded&lt;row_&gt;(Index_ i, Index_ start, Index_ length, Value_* buffer) const</code>: same as the corresponding <code>dense()</code> method, but with opportunities for optimization where it is known that many input values in <code>buffer</code> are zero.</li>
-<li><code>void expanded&lt;row_&gt;(Index_ i, const Index_* indices, Index_ length, Value_* buffer) const</code>: same as the corresponding <code>dense()</code> method, but with opportunities for optimization where it is known that many input values in <code>buffer</code> are zero.</li>
-</ul>
-<p>If <code>always_dense = false</code>, the class should implement:</p>
-<ul>
-<li><code>void sparse&lt;row_&gt;(Index_ i, Index_ number, Value_* buffer, const Index_* indices) const</code>: This method should apply the operation to all values in <code>buffer</code>, which contains <code>number</code> elements from row <code>i</code> (when <code>row_ = true</code>). The column indices of all elements is contained in <code>indices</code> - unless <code>needs_column = false</code>, in which case <code>indices</code> may be <code>NULL</code>. If <code>row_ = false</code>, <code>i</code> is instead a column and <code>indices</code> contains row indices (or is <code>NULL</code>, if <code>needs_row = false</code>).</li>
+<li><code>Value_ zero&lt;row_, Value_&gt;(Index_ i) const</code>: This method should return the result of applying the operation on a zero input for row <code>i</code> (when <code>row_ = true</code>) or column <code>i</code> (otherwise).</li>
 </ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
