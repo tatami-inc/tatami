@@ -94,9 +94,11 @@ public:
         delayed_compare_run_simple<op_>(scalar, number, buffer);
     }
 
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        delayed_compare_run_simple<op_>(scalar, length, buffer);
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        Value_ output = 0;
+        delayed_compare_run<op_>(output, scalar);
+        return output;
     }
     /**
      * @endcond
@@ -185,9 +187,11 @@ public:
         }
     }
 
-    template<bool accrow_, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_ idx, ExtractType_&& start, Index_ length, Value_* buffer) const {
-        dense<accrow_>(idx, std::forward<ExtractType_>(start), length, buffer);
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_ idx) const {
+        Value_ output = 0;
+        delayed_compare_run<op_>(output, vec[idx]);
+        return output;
     }
     /**
      * @endcond

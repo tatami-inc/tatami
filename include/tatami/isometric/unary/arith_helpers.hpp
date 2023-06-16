@@ -88,9 +88,11 @@ public:
         delayed_arith_run_simple<op_, right_>(scalar, number, buffer);
     }
 
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_, ExtractType_, Index_ length, Value_* buffer) const {
-        delayed_arith_run_simple<op_, right_>(scalar, length, buffer);
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_) const {
+        Value_ output = 0;
+        delayed_arith_run<op_, right_>(output, scalar); // deal with divide-by-zero for us.
+        return output;
     }
     /**
      * @endcond
@@ -181,9 +183,11 @@ public:
         }
     }
 
-    template<bool accrow_, typename Value_, typename Index_, typename ExtractType_>
-    void expanded(Index_ idx, ExtractType_&& start, Index_ length, Value_* buffer) const {
-        dense<accrow_>(idx, std::forward<ExtractType_>(start), length, buffer);
+    template<bool, typename Value_, typename Index_>
+    Value_ zero(Index_ idx) const {
+        Value_ output = 0;
+        delayed_arith_run<op_, right_>(output, vec[idx]); // deal with divide-by-zero for us.
+        return output;
     }
     /**
      * @endcond

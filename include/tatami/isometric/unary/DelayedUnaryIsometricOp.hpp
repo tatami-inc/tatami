@@ -40,26 +40,21 @@ namespace tatami {
  *   This method should apply the operation to all values in `buffer`, which contains to a subset of elements from row `i` (when `row_ = true`).
  *   Column indices of the elements in the subset are defined by `indices`, which is a sorted and unique array of length `length`w.
  *   If `row_ = false`, `i` is instead a column and `indices` contains rows.
+ * - `void sparse<row_>(Index_ i, Index_ number, Value_* buffer, const Index_* indices) const`:
+ *   This method should apply the operation to all values in `buffer`, which contains `number` elements from row `i` (when `row_ = true`).
+ *   The column indices of all elements is contained in `indices` - unless `needs_column = false`, in which case `indices` may be `NULL`.
+ *   If `row_ = false`, `i` is instead a column and `indices` contains row indices (or is `NULL`, if `needs_row = false`).
  * 
  * If neither of `always_dense` or `always_sparse` is `true`, the class should also implement:
  *
  * - `bool actual_sparse() const`: whether this particular instance of the operation yields a sparse result when applied on sparse data.
  *   For example, an addition operation remains sparse if the added value is zero.
+ *
+ * If `always_sparse` is not `true`, the class should also implement:
+ *
+ * - `Value_ zero<row_, Value_>(Index_ i) const`:
+ *   This method should return the result of applying the operation on a zero input for row `i` (when `row_ = true`) or column `i` (otherwise).
  * 
- * If `always_sparse = false`, the class should implement:
- *
- * - `void expanded<row_>(Index_ i, Index_ start, Index_ length, Value_* buffer) const`: 
- *   same as the corresponding `dense()` method, but with opportunities for optimization where it is known that many input values in `buffer` are zero.
- * - `void expanded<row_>(Index_ i, const Index_* indices, Index_ length, Value_* buffer) const`: 
- *   same as the corresponding `dense()` method, but with opportunities for optimization where it is known that many input values in `buffer` are zero.
- *
- * If `always_dense = false`, the class should implement:
- *
- * - `void sparse<row_>(Index_ i, Index_ number, Value_* buffer, const Index_* indices) const`:
- *   This method should apply the operation to all values in `buffer`, which contains `number` elements from row `i` (when `row_ = true`).
- *   The column indices of all elements is contained in `indices` - unless `needs_column = false`, in which case `indices` may be `NULL`.
- *   If `row_ = false`, `i` is instead a column and `indices` contains row indices (or is `NULL`, if `needs_row = false`).
- *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
  * @tparam Operation_ Class implementing the operation.
@@ -134,7 +129,7 @@ public:
     using Matrix<Value_, Index_>::sparse_column;
 
 private:
-    template<DimensionSelectionType selection_, bool sparse_, bool inner_sparse_ = sparse_>
+    template<DimensionSelectionType selection_, bool sparse_, bool inner_sparse_>
     struct IsometricExtractorBase : public Extractor<selection_, sparse_, Value_, Index_> {
         IsometricExtractorBase(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, inner_sparse_, Value_, Index_> > i) : parent(p), internal(std::move(i)) {
             if constexpr(selection_ == DimensionSelectionType::FULL) {
@@ -169,10 +164,21 @@ private:
      ********** Dense extraction **********
      **************************************/
 private:
+    /**
+     * Used if:
+     *
+     * - the underlying matrix is dense.
+     *
+     * OR
+     *
+     * - the underlying matrix is sparse
+     * - the operation discards sparsity in a variable manner.
+     */
     template<bool accrow_, DimensionSelectionType selection_> 
-    struct DenseIsometricExtractor : public IsometricExtractorBase<selection_, false> {
-        DenseIsometricExtractor(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i) : 
-            IsometricExtractorBase<selection_, false, false>(p, std::move(i)) {}
+    struct DenseIsometricExtractor_Basic : public IsometricExtractorBase<selection_, false, false> {
+        template<typename ... Args_>
+        DenseIsometricExtractor_Basic(const DelayedUnaryIsometricOp* p, const Options& opt, Args_&& ... args) :
+            IsometricExtractorBase<selection_, false, false>(p, new_extractor<accrow_, false>(p->mat.get(), std::forward<Args_>(args)..., opt)) {}
 
         const Value_* fetch(Index_ i, Value_* buffer) {
             this->internal->fetch_copy(i, buffer);
@@ -189,18 +195,171 @@ private:
         }
     };
 
+    template<bool accrow_,class Extractor_>
+    void populate_index_mapping(Extractor_& ext, std::vector<Index_>& index_mapping) const {
+        auto isize = ext->index_length;
+        if (isize) {
+            auto istart = ext->index_start();
+            index_mapping.resize(accrow_ ? mat->ncol() : mat->nrow());
+            for (Index_ i = 0; i < isize; ++i) {
+                index_mapping[istart[i]] = i;
+            }
+        }
+    }
+
+    /**
+     * Used if:
+     *
+     * - the underlying matrix is sparse
+     * - the operation preserves sparsity
+     * 
+     * OR
+     *
+     * - the underlying matrix is sparse
+     * - the operation discards sparsity in a constant manner.
+     */
+    template<bool accrow_, DimensionSelectionType selection_> 
+    struct DenseIsometricExtractor_FromSparse : public IsometricExtractorBase<selection_, false, true> {
+        template<typename ... Args_>
+        DenseIsometricExtractor_FromSparse(const DelayedUnaryIsometricOp* p, Options opt, Args_&& ... args) :
+            IsometricExtractorBase<selection_, false, true>(p, [&]{
+                auto copy = opt;
+                copy.sparse_extract_value = true;
+                copy.sparse_extract_index = true;
+                return new_extractor<accrow_, true>(p->mat.get(), std::forward<Args_>(args)..., copy);
+            }()) 
+        {
+            auto n = extracted_length<selection_, Index_>(*(this->internal));
+            internal_vbuffer.resize(n);
+            internal_ibuffer.resize(n);
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                p->template populate_index_mapping<accrow_>(this->internal, index_mapping);
+            }
+        }
+
+        const Value_* fetch(Index_ i, Value_* buffer) {
+            auto vbuffer = internal_vbuffer.data();
+            auto range = this->internal->fetch(i, vbuffer, internal_ibuffer.data());
+            if (range.value != vbuffer) {
+                // Don't use fetch_copy as we don't want to copy the indices.
+                std::copy(range.value, range.value + range.number, vbuffer);
+            }
+            this->parent->operation.template sparse<accrow_>(i, range.number, vbuffer, range.index);
+
+            auto full_length = extracted_length<selection_, Index_>(*(this->internal));
+            if (range.number < full_length) { // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
+                std::fill(buffer, buffer + full_length, [&]{
+                    if constexpr(Operation_::always_sparse) {
+                        return static_cast<Value_>(0);
+                    } else if constexpr(Operation_::always_dense) {
+                        return this->parent->operation.template zero<accrow_, Value_>(i);
+                    } else if (this->parent->operation.actual_sparse()) {
+                        return static_cast<Value_>(0);
+                    } else {
+                        return this->parent->operation.template zero<accrow_, Value_>(i);
+                    }
+                }());
+            }
+
+            if constexpr(selection_ == DimensionSelectionType::FULL) {
+                for (Index_ i = 0; i < range.number; ++i) {
+                    buffer[range.index[i]] = vbuffer[i];
+                }
+            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                auto shift = this->internal->block_start;
+                for (Index_ i = 0; i < range.number; ++i) {
+                    buffer[range.index[i] - shift] = vbuffer[i];
+                }
+            } else {
+                for (Index_ i = 0; i < range.number; ++i) {
+                    buffer[index_mapping[range.index[i]]] = vbuffer[i];
+                }
+            }
+
+            return buffer;
+        }
+
+    private:
+        std::vector<Value_> internal_vbuffer;
+        std::vector<Index_> internal_ibuffer;
+        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type index_mapping;
+    };
+
     /***************************************
      ********** Sparse extraction **********
      ***************************************/
 private:
-    // This extractor doesn't actually require the indices on the extraction
-    // dimension e.g., because the operator doesn't rely on position. So we
-    // don't have to guarantee the extraction of the indices if the user didn't
-    // provide space in the 'ibuffer'.
+    template<DimensionSelectionType selection_, class Extractor_>
+    static void fill_dense_indices(const Extractor_& ext, Index_* ibuffer) {
+        if constexpr(selection_ == DimensionSelectionType::FULL) {
+            std::iota(ibuffer, ibuffer + ext->full_length, 0);
+        } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+            std::iota(ibuffer, ibuffer + ext->block_length, ext->block_start);
+        } else {
+            auto xptr = ext->index_start();
+            std::copy(xptr, xptr + ext->index_length, ibuffer);
+        }
+    }
+
+    /**
+     * Used if:
+     *
+     * - the underlying matrix is dense
+     *
+     * OR 
+     *
+     * - the underlying matrix is sparse
+     * - the operation discards sparsity in a variable manner
+     */
     template<bool accrow_, DimensionSelectionType selection_> 
-    struct SimpleSparseIsometricExtractor : public IsometricExtractorBase<selection_, true> {
-        SimpleSparseIsometricExtractor(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i) : 
-            IsometricExtractorBase<selection_, true, true>(p, std::move(i)) {}
+    struct SparseIsometricExtractor_FromDense : public IsometricExtractorBase<selection_, true, false> {
+        template<typename ... Args_>
+        SparseIsometricExtractor_FromDense(const DelayedUnaryIsometricOp* p, const Options& opt, Args_&& ... args) :
+            IsometricExtractorBase<selection_, true, false>(p, new_extractor<accrow_, false>(p->mat.get(), std::forward<Args_>(args)..., opt)),
+            needs_value(opt.sparse_extract_value),
+            needs_index(opt.sparse_extract_index)
+        {}
+
+        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+            SparseRange<Value_, Index_> output(extracted_length<selection_, Index_>(*(this->internal)), NULL, NULL);
+
+            if (needs_value) {
+                this->internal->fetch_copy(i, vbuffer);
+                if constexpr(selection_ == DimensionSelectionType::FULL) {
+                    this->parent->operation.template dense<accrow_>(i, 0, this->full_length, vbuffer);
+                } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                    this->parent->operation.template dense<accrow_>(i, this->block_start, this->block_length, vbuffer);
+                } else {
+                    this->parent->operation.template dense<accrow_>(i, this->internal->index_start(), this->index_length, vbuffer);
+                }
+                output.value = vbuffer;
+            }
+
+            if (needs_index) {
+                fill_dense_indices<selection_>(this->internal, ibuffer);
+                output.index = ibuffer;
+            }
+
+            return output;
+        }
+
+    private:
+        bool needs_value;
+        bool needs_index;
+    };
+
+    /**
+     * Used if:
+     *
+     * - the underlying matrix is sparse
+     * - the operation preserves sparsity
+     * - indices are not necessary to perform the operation 
+     */
+    template<bool accrow_, DimensionSelectionType selection_> 
+    struct SparseIsometricExtractor_Simple : public IsometricExtractorBase<selection_, true, true> {
+        template<typename ... Args_>
+        SparseIsometricExtractor_Simple(const DelayedUnaryIsometricOp* p, const Options& opt, Args_&& ... args) :
+            IsometricExtractorBase<selection_, true, true>(p, new_extractor<accrow_, true>(p->mat.get(), std::forward<Args_>(args)..., opt)) {}
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
             auto raw = this->internal->fetch(i, vbuffer, ibuffer);
@@ -211,9 +370,7 @@ private:
                     std::copy(raw.value, raw.value + raw.number, vbuffer);
                 }
 
-                if constexpr(!Operation_::always_dense) { // avoid the need for operations to define sparse if they're always dense.
-                    this->parent->operation.template sparse<accrow_>(i, raw.number, vbuffer, raw.index);
-                }
+                this->parent->operation.template sparse<accrow_>(i, raw.number, vbuffer, raw.index);
                 raw.value = vbuffer;
             }
 
@@ -221,12 +378,30 @@ private:
         }
     };
 
+    /**
+     * Used if:
+     *
+     * - the underlying matrix is sparse
+     * - the operation preserves sparsity
+     * - indices are necessary to perform the operation 
+     */
     template<bool accrow_, DimensionSelectionType selection_> 
-    struct RegularSparseIsometricExtractor : public IsometricExtractorBase<selection_, true> {
-        RegularSparseIsometricExtractor(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i, bool ri, bool report_value) : 
-            IsometricExtractorBase<selection_, true, true>(p, std::move(i)), report_index(ri)
+    struct SparseIsometricExtractor_NeedsIndices : public IsometricExtractorBase<selection_, true, true> {
+        template<typename ... Args_>
+        SparseIsometricExtractor_NeedsIndices(const DelayedUnaryIsometricOp* p, const Options& opt, Args_&& ... args) :
+            IsometricExtractorBase<selection_, true, true>(p, [&]{
+                // The index is only necessary to (i) compute the operation on the values 
+                // and then (ii) insert those values into the dense buffer. So, there's 
+                // no need to extract the index if we don't even want the values.
+                auto copy = opt;
+                if (opt.sparse_extract_value) {
+                    copy.sparse_extract_index = true;
+                }
+                return new_extractor<accrow_, true>(p->mat.get(), std::forward<Args_>(args)..., copy);
+            }()),
+            report_index(opt.sparse_extract_index)
         {
-            if (!report_index && report_value) {
+            if (!opt.sparse_extract_index && opt.sparse_extract_value) {
                 // We only need an internal ibuffer if the user wants the
                 // values but didn't provide enough space to store the indices
                 // (which we need to pass to the operation's functor).
@@ -248,9 +423,7 @@ private:
                     std::copy(raw.value, raw.value + raw.number, vbuffer);
                 }
 
-                if constexpr(!Operation_::always_dense) { // avoid the need for operations to define sparse if they're always dense.
-                    this->parent->operation.template sparse<accrow_>(i, raw.number, vbuffer, raw.index);
-                }
+                this->parent->operation.template sparse<accrow_>(i, raw.number, vbuffer, raw.index);
                 raw.value = vbuffer;
             }
 
@@ -266,35 +439,78 @@ private:
         bool report_index = false;
     };
 
-    /*******************************************
-     ********** Un-sparsed extraction **********
-     *******************************************/
-private:
-    // Technically, we could avoid constructing the internal extractor if
-    // we don't want the values, but that's a pretty niche optimization,
-    // so we won't bother doing that.
-    template<bool accrow_, DimensionSelectionType selection_>
-    struct DensifiedSparseIsometricExtractor : public IsometricExtractorBase<selection_, true, false> {
-        DensifiedSparseIsometricExtractor(const DelayedUnaryIsometricOp* p, std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i, bool ri, bool rv) :
-            IsometricExtractorBase<selection_, true, false>(p, std::move(i)), report_index(ri), report_value(rv)
-        {}
+    /**
+     * Used if:
+     *
+     * - the underlying matrix is sparse
+     * - the operation discards sparsity in a constant manner
+     */
+    template<bool accrow_, DimensionSelectionType selection_> 
+    struct SparseIsometricExtractor_ForcedDense : public IsometricExtractorBase<selection_, true, true> {
+        template<typename ... Args_>
+        SparseIsometricExtractor_ForcedDense(const DelayedUnaryIsometricOp* p, Options opt, Args_&& ... args) :
+            IsometricExtractorBase<selection_, true, true>(p, [&]{
+                // Same logic as in SparseIsometricExtractor_NeedsIndices.
+                auto copy = opt;
+                if (opt.sparse_extract_value) {
+                    copy.sparse_extract_index = true;
+                }
+                return new_extractor<accrow_, true>(p->mat.get(), std::forward<Args_>(args)..., copy);
+            }()),
+            report_index(opt.sparse_extract_index)
+        {
+            if (opt.sparse_extract_value) {
+                auto n = extracted_length<selection_, Index_>(*(this->internal));
+                internal_vbuffer.resize(n);
+                if (!opt.sparse_extract_index) {
+                    // Same logic as in SparseIsometricExtractor_NeedsIndices.
+                    internal_ibuffer.resize(n);
+                }
+
+                if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                    p->template populate_index_mapping<accrow_>(this->internal, index_mapping);
+                }
+            }
+        }
 
         SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+            // Same logic as in SparseIsometricExtractor_NeedsIndices.
+            Index_* iin = (internal_ibuffer.empty() ? ibuffer : internal_ibuffer.data());
+
+            auto tmp_vbuffer = internal_vbuffer.data();
+            auto range = this->internal->fetch(i, tmp_vbuffer, iin);
             SparseRange<Value_, Index_> output(extracted_length<selection_, Index_>(*this), NULL, NULL);
 
-            if (report_value) {
-                this->internal->fetch_copy(i, vbuffer);
+            if (range.value) { 
+                if (range.value != tmp_vbuffer) {
+                    // Don't use fetch_copy as we don't want to copy the indices.
+                    std::copy(range.value, range.value + range.number, tmp_vbuffer);
+                }
+                this->parent->operation.template sparse<accrow_>(i, range.number, tmp_vbuffer, range.index);
 
-                // 'expanded' is a special case of 'dense' where we assume that most elements are zero.
-                // This provides some opportunities to precompute the zero transform, if such a value exists.
-                // However, if always_sparse is true, operations can omit the definition of expanded. 
-                if constexpr(!Operation_::always_sparse) {
-                    if constexpr(selection_ == DimensionSelectionType::FULL) {
-                        this->parent->operation.template expanded<accrow_>(i, 0, this->full_length, vbuffer);
-                    } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                        this->parent->operation.template expanded<accrow_>(i, this->block_start, this->block_length, vbuffer);
-                    } else {
-                        this->parent->operation.template expanded<accrow_>(i, this->internal->index_start(), this->index_length, vbuffer);
+                auto N = extracted_length<selection_, Index_>(*(this->internal));
+                if (range.number < N) { // only invoking 'zero()' if we really need to, as this could throw various zero-related errors.
+                    std::fill(vbuffer, vbuffer + N, [&]{
+                        if constexpr(Operation_::always_sparse) {
+                            return 0; // this never actually gets called, we just want to protect the zero() from a compile-time requirement.
+                        } else {
+                            return this->parent->operation.template zero<accrow_, Value_>(i);
+                        }
+                    }());
+                }
+
+                if constexpr(selection_ == DimensionSelectionType::FULL) {
+                    for (Index_ i = 0; i < range.number; ++i) {
+                        vbuffer[range.index[i]] = tmp_vbuffer[i];
+                    }
+                } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                    auto shift = this->internal->block_start;
+                    for (Index_ i = 0; i < range.number; ++i) {
+                        vbuffer[range.index[i] - shift] = tmp_vbuffer[i];
+                    }
+                } else {
+                    for (Index_ i = 0; i < range.number; ++i) {
+                        vbuffer[index_mapping[range.index[i]]] = tmp_vbuffer[i];
                     }
                 }
 
@@ -302,59 +518,31 @@ private:
             }
 
             if (report_index) {
-                if constexpr(selection_ == DimensionSelectionType::FULL) {
-                    std::iota(ibuffer, ibuffer + this->full_length, 0);
-                } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                    std::iota(ibuffer, ibuffer + this->block_length, this->block_start);
-                } else {
-                    auto xptr = this->internal->index_start();
-                    std::copy(xptr, xptr + this->index_length, ibuffer);
-                }
-
+                fill_dense_indices<selection_>(this->internal, ibuffer);
                 output.index = ibuffer;
             }
 
             return output;
         }
 
-    protected:
+    private:
+        std::vector<Value_> internal_vbuffer;
+        std::vector<Index_> internal_ibuffer;
+        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type index_mapping;
         bool report_index = false;
-        bool report_value = false;
     };
 
     /**********************************************
      ********** Public extractor methods **********
      **********************************************/
 private:
-    template<bool accrow_, DimensionSelectionType selection_, typename ... Args_>
-    void fill_densified(std::unique_ptr<Extractor<selection_, true, Value_, Index_> >& output, const Options& opt, Args_&& ... args) const {
-        bool report_value = opt.sparse_extract_value;
-        bool report_index = opt.sparse_extract_index;
-        auto inner = new_extractor<accrow_, false>(mat.get(), std::forward<Args_>(args)..., opt);
-        output.reset(new DensifiedSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
-    }
-
-    template<bool accrow_, DimensionSelectionType selection_, typename ... Args_>
-    void fill_sparse(std::unique_ptr<Extractor<selection_, true, Value_, Index_> >& output, const Options& opt, Args_&& ... args) const {
-        if constexpr((accrow_ && !Operation_::needs_column) || (!accrow_ && !Operation_::needs_row)) { // i.e., extraction indices aren't required for the operation.
-            auto inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., opt);
-            output.reset(new SimpleSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
-
-        } else {
-            bool report_value = opt.sparse_extract_value;
-            bool report_index = opt.sparse_extract_index;
-
-            std::unique_ptr<Extractor<selection_, true, Value_, Index_> > inner;
-            if (report_value && !report_index) {
-                auto optcopy = opt;
-                optcopy.sparse_extract_index = true; // if we get to this clause, we need the indices; otherwise we'd have constructed a SimpleSparseIsometricExtractor.
-                inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., optcopy);
-            } else {
-                inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., opt);
-            }
-
-            output.reset(new RegularSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
+    bool preserves_sparsity() const {
+        if constexpr(Operation_::always_sparse) {
+            return true;
+        } else if constexpr(!Operation_::always_dense) {
+            return operation.actual_sparse();
         }
+        return false;
     }
 
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
@@ -362,16 +550,48 @@ private:
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(!sparse_) {
-            auto inner = new_extractor<accrow_, false>(mat.get(), std::forward<Args_>(args)..., opt);
-            output.reset(new DenseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
-        } else if constexpr(Operation_::always_sparse) {
-            fill_sparse<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
-        } else if constexpr(Operation_::always_dense) {
-            fill_densified<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
-        } else if (operation.actual_sparse()) {
-            fill_sparse<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
+            if (!(mat->sparse())) {
+                output.reset(new DenseIsometricExtractor_Basic<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+
+            } else {
+                if (preserves_sparsity()) {
+                    output.reset(new DenseIsometricExtractor_FromSparse<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+
+                } else {
+                    if constexpr(accrow_ && !Operation_::needs_column) {      // constant sparsity breaking
+                        output.reset(new DenseIsometricExtractor_FromSparse<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else if constexpr(!accrow_ && !Operation_::needs_row) { // constant sparsity breaking
+                        output.reset(new DenseIsometricExtractor_FromSparse<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else {                                                  // variable sparsity breaking
+                        output.reset(new DenseIsometricExtractor_Basic<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    }
+                }
+            }
+
         } else {
-            fill_densified<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
+            if (!(mat->sparse())) {
+                output.reset(new SparseIsometricExtractor_FromDense<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+
+            } else {
+                if (preserves_sparsity()) {
+                    if constexpr(accrow_ && !Operation_::needs_column) {      // no need for column indices
+                        output.reset(new SparseIsometricExtractor_Simple<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else if constexpr(!accrow_ && !Operation_::needs_row) { // no need for row indices
+                        output.reset(new SparseIsometricExtractor_Simple<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else {                                                  // guess we need indices
+                        output.reset(new SparseIsometricExtractor_NeedsIndices<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    }
+
+                } else {
+                    if constexpr(accrow_ && !Operation_::needs_column) {      // constant sparsity breaking
+                        output.reset(new SparseIsometricExtractor_ForcedDense<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else if constexpr(!accrow_ && !Operation_::needs_row) { // constant sparsity breaking
+                        output.reset(new SparseIsometricExtractor_ForcedDense<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else {                                                  // variable sparsity breaking
+                        output.reset(new SparseIsometricExtractor_FromDense<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    }
+                }
+            }
         }
 
         return output;
