@@ -282,7 +282,7 @@ private:
      ***************************************/
 private:
     template<typename selection_, class Extractor_>
-    static void fill_dense_ibuffer(Extractor_& ext, Index_* ibuffer) {
+    static void fill_dense_indices(Extractor_& ext, Index_* ibuffer) {
         if constexpr(selection_ == DimensionSelectionType::FULL) {
             std::iota(ibuffer, ibuffer + ext->full_length, 0);
         } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
@@ -514,35 +514,13 @@ private:
      ********** Public extractor methods **********
      **********************************************/
 private:
-    template<bool accrow_, DimensionSelectionType selection_, typename ... Args_>
-    void fill_densified(std::unique_ptr<Extractor<selection_, true, Value_, Index_> >& output, const Options& opt, Args_&& ... args) const {
-        bool report_value = opt.sparse_extract_value;
-        bool report_index = opt.sparse_extract_index;
-        auto inner = new_extractor<accrow_, false>(mat.get(), std::forward<Args_>(args)..., opt);
-        output.reset(new DensifiedSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
-    }
-
-    template<bool accrow_, DimensionSelectionType selection_, typename ... Args_>
-    void fill_sparse(std::unique_ptr<Extractor<selection_, true, Value_, Index_> >& output, const Options& opt, Args_&& ... args) const {
-        if constexpr((accrow_ && !Operation_::needs_column) || (!accrow_ && !Operation_::needs_row)) { // i.e., extraction indices aren't required for the operation.
-            auto inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., opt);
-            output.reset(new SimpleSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
-
-        } else {
-            bool report_value = opt.sparse_extract_value;
-            bool report_index = opt.sparse_extract_index;
-
-            std::unique_ptr<Extractor<selection_, true, Value_, Index_> > inner;
-            if (report_value && !report_index) {
-                auto optcopy = opt;
-                optcopy.sparse_extract_index = true; // if we get to this clause, we need the indices; otherwise we'd have constructed a SimpleSparseIsometricExtractor.
-                inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., optcopy);
-            } else {
-                inner = new_extractor<accrow_, true>(mat.get(), std::forward<Args_>(args)..., opt);
-            }
-
-            output.reset(new RegularSparseIsometricExtractor<accrow_, selection_>(this, std::move(inner), report_index, report_value));
+    bool preserves_sparsity() const {
+        if constexpr(Operation_::always_sparse) {
+            return true;
+        } else if constexpr(!Operation::_always_dense) {
+            return operation->actual_sparse();
         }
+        return false;
     }
 
     template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
@@ -550,16 +528,48 @@ private:
         std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
 
         if constexpr(!sparse_) {
-            auto inner = new_extractor<accrow_, false>(mat.get(), std::forward<Args_>(args)..., opt);
-            output.reset(new DenseIsometricExtractor<accrow_, selection_>(this, std::move(inner)));
-        } else if constexpr(Operation_::always_sparse) {
-            fill_sparse<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
-        } else if constexpr(Operation_::always_dense) {
-            fill_densified<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
-        } else if (operation.actual_sparse()) {
-            fill_sparse<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
+            if (mat->dense()) {
+                output.reset(new DenseIsometricExtractor_Basic<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+
+            } else {
+                if (preserves_sparsity()) {
+                    output.reset(new DenseIsometricExtractor_FromSparse<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+
+                } else {
+                    if constexpr(accrow_ && !Operation_::needs_column) {      // constant sparsity breaking
+                        output.reset(new DenseIsometricExtractor_FromSparse<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else if constexpr(!accrow_ && !Operation_::needs_row) { // constant sparsity breaking
+                        output.reset(new DenseIsometricExtractor_FromSparse<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else {                                                  // variable sparsity breaking
+                        output.reset(new DenseIsometricExtractor_Basic<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    }
+                }
+            }
+
         } else {
-            fill_densified<accrow_, selection_>(output, opt, std::forward<Args_>(args)...);
+            if (mat->dense()) {
+                output.reset(new SparseIsometricExtractor_FromDense<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+
+            } else {
+                if (preserves_sparsity()) {
+                    if constexpr(accrow_ && !Operation_::needs_column) {      // no need for column indices
+                        output.reset(new SparseIsometricExtractor_Simple<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else if constexpr(!accrow_ && !Operation_::needs_row) { // no need for row indices
+                        output.reset(new SparseIsometricExtractor_Simple<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else {                                                  // guess we need indices
+                        output.reset(new SparseIsometricExtractor_NeedsIndices<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    }
+
+                } else {
+                    if constexpr(accrow_ && !Operation_::needs_column) {      // constant sparsity breaking
+                        output.reset(new SparseIsometricExtractor_ForcedDense<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else if constexpr(!accrow_ && !Operation_::needs_row) { // constant sparsity breaking
+                        output.reset(new SparseIsometricExtractor_ForcedDense<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    } else {                                                  // variable sparsity breaking
+                        output.reset(new SparseIsometricExtractor_FromDense<accrow_, selection_>(this, opt, std::forward<Args_>(args)...));
+                    }
+                }
+            }
         }
 
         return output;
