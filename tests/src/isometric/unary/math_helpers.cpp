@@ -16,7 +16,7 @@ protected:
     std::vector<double> simulated;
 protected:
     void SetUp() {
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -10, /* upper = */ 10);
+        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
         return;
@@ -80,7 +80,6 @@ TEST_F(MathTest, SignByColumn) {
 }
 
 TEST_F(MathTest, SqrtByColumn) {
-    // Testing on abs(x) to avoid domain errors.
     tatami::DelayedAbsHelper op0;
     auto dense_mod0 = tatami::make_DelayedUnaryIsometricOp(dense, op0);
     auto sparse_mod0 = tatami::make_DelayedUnaryIsometricOp(sparse, op0);
@@ -112,11 +111,11 @@ TEST_F(MathTest, SqrtByColumn) {
 }
 
 TEST_F(MathTest, LogByColumn) {
-    // Test log(abs(x) + 5) to avoid domain/pole errors.
     tatami::DelayedAbsHelper op0;
     auto dense_mod0 = tatami::make_DelayedUnaryIsometricOp(dense, op0);
     auto sparse_mod0 = tatami::make_DelayedUnaryIsometricOp(sparse, op0);
 
+    // Test log(abs(x) + 5).
     double CONSTANT = 5;
     auto op1 = tatami::make_DelayedAddScalarHelper<double>(CONSTANT);
     auto dense_mod1 = tatami::make_DelayedUnaryIsometricOp(dense_mod0, op1);
@@ -180,7 +179,6 @@ TEST_F(MathTest, LogByColumn) {
 }
 
 TEST_F(MathTest, Log1pByColumn) {
-    // Test on abs(x) to avoid domain/pole errors.
     tatami::DelayedAbsHelper op0;
     auto dense_mod0 = tatami::make_DelayedUnaryIsometricOp(dense, op0);
     auto sparse_mod0 = tatami::make_DelayedUnaryIsometricOp(sparse, op0);
