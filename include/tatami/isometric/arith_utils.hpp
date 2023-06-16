@@ -38,14 +38,14 @@ void delayed_arith_run(Value_& val, Scalar_ scalar) {
         }
     } else {
         if constexpr(right_) {
-            if constexpr(std::numeric_limits<Value_>::is_iec559) {
+            if constexpr(!std::numeric_limits<Value_>::is_iec559) {
                 if (scalar == 0) {
                     throw std::runtime_error("IEEE division by zero is not supported");
                 }
             }
             val /= scalar;
         } else {
-            if constexpr(std::numeric_limits<Value_>::is_iec559) {
+            if constexpr(!std::numeric_limits<Value_>::is_iec559) {
                 if (val == 0) {
                     throw std::runtime_error("IEEE division by zero is not supported");
                 }
