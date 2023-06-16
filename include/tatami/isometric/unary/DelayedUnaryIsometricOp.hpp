@@ -47,12 +47,12 @@ namespace tatami {
  * 
  * If neither of `always_dense` or `always_sparse` is `true`, the class should also implement:
  *
- * - `bool actual_sparse() const`: whether this particular instance of the operation yields a sparse result when applied on sparse data.
+ * - `bool actual_sparse() const`: whether this particular instance of the operation yields a sparse result when applied on sparse data of type `Value_`.
  *   For example, an addition operation remains sparse if the added value is zero.
  *
  * If `always_sparse` is not `true`, the class should also implement:
  *
- * - `Value_ zero<row_, Value_>(Index_ i) const`:
+ * - `Value_ zero<row_>(Index_ i) const`:
  *   This method should return the result of applying the operation on a zero input for row `i` (when `row_ = true`) or column `i` (otherwise).
  * 
  * @tparam Value_ Type of matrix value.
@@ -252,11 +252,11 @@ private:
                     if constexpr(Operation_::always_sparse) {
                         return static_cast<Value_>(0);
                     } else if constexpr(Operation_::always_dense) {
-                        return this->parent->operation.template zero<accrow_, Value_>(i);
+                        return this->parent->operation.template zero<accrow_>(i);
                     } else if (this->parent->operation.actual_sparse()) {
                         return static_cast<Value_>(0);
                     } else {
-                        return this->parent->operation.template zero<accrow_, Value_>(i);
+                        return this->parent->operation.template zero<accrow_>(i);
                     }
                 }());
             }
@@ -494,7 +494,7 @@ private:
                         if constexpr(Operation_::always_sparse) {
                             return 0; // this never actually gets called, we just want to protect the zero() from a compile-time requirement.
                         } else {
-                            return this->parent->operation.template zero<accrow_, Value_>(i);
+                            return this->parent->operation.template zero<accrow_>(i);
                         }
                     }());
                 }
