@@ -35,7 +35,11 @@ void delayed_arith_run(Value_& val, Scalar_ scalar) {
             val = scalar - val;
         }
     } else {
-        // Assume IEEE behavior if divisor is zero.
+        // Assume that either Value_ is an IEEE-754 float, or that division by
+        // zero is impossible in this context. We don't apply manual checks
+        // here to avoid performance degradation; we also don't check that the
+        // other operations yield a value that doesn't overflow/underflow, so
+        // it would be odd to make an exception for div-by-zero errors.
         if constexpr(right_) {
             val /= scalar;
         } else {
