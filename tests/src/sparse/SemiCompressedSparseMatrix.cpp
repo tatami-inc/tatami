@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/sparse/SemiCompressedSparseMatrix.hpp"
 
 #include "tatami_test/tatami_test.hpp"

@@ -7,7 +7,7 @@
 #include <vector>
 
 #include "../../sparse/CompressedSparseMatrix.hpp"
-#include "../../base/other/DelayedBind.hpp"
+#include "../../other/DelayedBind.hpp"
 #include "../../utils/compress_sparse_triplets.hpp"
 
 #include "simple.hpp"

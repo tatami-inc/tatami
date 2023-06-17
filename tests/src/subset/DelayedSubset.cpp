@@ -6,8 +6,8 @@
 #include <tuple>
 #include <random>
 
-#include "tatami/base/dense/DenseMatrix.hpp"
-#include "tatami/base/subset/make_DelayedSubset.hpp"
+#include "tatami/dense/DenseMatrix.hpp"
+#include "tatami/subset/make_DelayedSubset.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"

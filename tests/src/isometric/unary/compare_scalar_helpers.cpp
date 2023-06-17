@@ -4,7 +4,7 @@
 #include <memory>
 #include <tuple>
 
-#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 

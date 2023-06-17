@@ -1,7 +1,7 @@
 #ifndef TATAMI_TATAMI_HPP
 #define TATAMI_TATAMI_HPP
 
-#include "base/dense/DenseMatrix.hpp"
+#include "dense/DenseMatrix.hpp"
 
 #include "sparse/CompressedSparseMatrix.hpp"
 #include "sparse/SemiCompressedSparseMatrix.hpp"
@@ -10,12 +10,12 @@
 #include "isometric/unary/DelayedUnaryIsometricOp.hpp"
 #include "isometric/binary/DelayedBinaryIsometricOp.hpp"
 
-#include "base/other/DelayedBind.hpp"
-#include "base/other/DelayedCast.hpp"
-#include "base/other/DelayedTranspose.hpp"
+#include "other/DelayedBind.hpp"
+#include "other/DelayedCast.hpp"
+#include "other/DelayedTranspose.hpp"
 
-#include "base/subset/DelayedSubsetBlock.hpp"
-#include "base/subset/make_DelayedSubset.hpp"
+#include "subset/DelayedSubsetBlock.hpp"
+#include "subset/make_DelayedSubset.hpp"
 
 #include "utils/compress_sparse_triplets.hpp"
 #include "utils/convert_to_sparse.hpp"

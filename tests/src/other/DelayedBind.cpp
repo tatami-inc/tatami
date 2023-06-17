@@ -3,8 +3,8 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/base/dense/DenseMatrix.hpp"
-#include "tatami/base/other/DelayedBind.hpp"
+#include "tatami/dense/DenseMatrix.hpp"
+#include "tatami/other/DelayedBind.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"

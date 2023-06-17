@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/sparse/CompressedSparseMatrix.hpp"
 #include "tatami/ext/layered.hpp"
 

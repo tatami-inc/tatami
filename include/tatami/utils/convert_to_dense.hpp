@@ -3,7 +3,7 @@
 
 #include "../base/utils.hpp"
 #include "../stats/utils.hpp"
-#include "../base/dense/DenseMatrix.hpp"
+#include "../dense/DenseMatrix.hpp"
 
 #include <memory>
 #include <vector>

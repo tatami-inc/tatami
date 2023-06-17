@@ -6,7 +6,7 @@
 #include <numeric>
 
 #include "../../base/Matrix.hpp"
-#include "../../base/other/DelayedBind.hpp"
+#include "../../other/DelayedBind.hpp"
 #include "../../sparse/CompressedSparseMatrix.hpp"
 
 namespace tatami {

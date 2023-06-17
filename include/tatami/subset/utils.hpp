@@ -1,8 +1,8 @@
 #ifndef TATAMI_DELAYED_SUBSET_UTILS_HPP
 #define TATAMI_DELAYED_SUBSET_UTILS_HPP
 
-#include "../Matrix.hpp"
-#include "../utils.hpp"
+#include "../base/Matrix.hpp"
+#include "../base/utils.hpp"
 
 #include <vector>
 #include <algorithm>

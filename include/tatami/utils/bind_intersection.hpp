@@ -5,8 +5,8 @@
 #include <unordered_map>
 #include <vector>
 #include <memory>
-#include "../base/subset/make_DelayedSubset.hpp"
-#include "../base/other/DelayedBind.hpp"
+#include "../subset/make_DelayedSubset.hpp"
+#include "../other/DelayedBind.hpp"
 
 /**
  * @file bind_intersection.hpp

@@ -2,7 +2,7 @@
 #define TATAMI_DENSE_MATRIX_H
 
 #include "VirtualDenseMatrix.hpp"
-#include "../utils.hpp"
+#include "../base/utils.hpp"
 
 #include <vector>
 #include <algorithm>

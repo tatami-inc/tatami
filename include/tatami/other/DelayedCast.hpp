@@ -1,8 +1,8 @@
 #ifndef TATAMI_DELAYED_CAST_HPP
 #define TATAMI_DELAYED_CAST_HPP
 
-#include "../Matrix.hpp"
-#include "../utils.hpp"
+#include "../base/Matrix.hpp"
+#include "../base/utils.hpp"
 #include <memory>
 #include <type_traits>
 

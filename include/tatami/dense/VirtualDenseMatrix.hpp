@@ -1,11 +1,8 @@
 #ifndef TATAMI_VIRTUAL_DENSE_MATRIX_H
 #define TATAMI_VIRTUAL_DENSE_MATRIX_H
 
-#include "../Extractor.hpp"
-#include "../SparseRange.hpp"
-#include "../Options.hpp"
-#include "../Matrix.hpp"
-#include "../utils.hpp"
+#include "../base/Matrix.hpp"
+#include "../base/utils.hpp"
 #include <algorithm>
 #include <numeric>
 

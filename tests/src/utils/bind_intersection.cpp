@@ -4,7 +4,7 @@
 #include <memory>
 
 #include "tatami/utils/bind_intersection.hpp"
-#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/dense/DenseMatrix.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 

@@ -3,7 +3,7 @@
 #include <vector>
 #include <memory>
 
-#include "tatami/base/dense/DenseMatrix.hpp"
+#include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/binary/DelayedBinaryIsometricOp.hpp"
 #include "tatami/utils/convert_to_sparse.hpp"
 

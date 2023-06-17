@@ -1,7 +1,7 @@
 #ifndef TATAMI_DELAYED_TRANSPOSE
 #define TATAMI_DELAYED_TRANSPOSE
 
-#include "../Matrix.hpp"
+#include "../base/Matrix.hpp"
 #include <memory>
 
 /**

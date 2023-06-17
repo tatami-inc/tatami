@@ -6,7 +6,7 @@
 #include <memory>
 
 #include "../tatami/base/Matrix.hpp"
-#include "../tatami/base/dense/DenseMatrix.hpp"
+#include "../tatami/dense/DenseMatrix.hpp"
 
 namespace tatami_test {
 

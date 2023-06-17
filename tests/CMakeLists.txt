@@ -14,12 +14,14 @@ enable_testing()
 add_executable(
     libtest 
 
-    src/base/DenseMatrix.cpp
-    src/base/DelayedBind.cpp
-    src/base/DelayedSubset.cpp
-    src/base/DelayedSubsetBlock.cpp
-    src/base/DelayedTranspose.cpp
-    src/base/DelayedCast.cpp
+    src/dense/DenseMatrix.cpp
+
+    src/other/DelayedBind.cpp
+    src/other/DelayedTranspose.cpp
+    src/other/DelayedCast.cpp
+
+    src/subset/DelayedSubset.cpp
+    src/subset/DelayedSubsetBlock.cpp
 
     src/isometric/unary/arith_vector_helpers.cpp
     src/isometric/unary/arith_scalar_helpers.cpp
