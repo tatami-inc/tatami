@@ -25,10 +25,62 @@ void delayed_arith_run_simple(Scalar_ scalar, Index_ length, Value_* buffer) {
 }
 
 template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
+constexpr bool delayed_arith_unsupported_division_by_zero() {
+    return !std::numeric_limits<Value_>::is_iec559 && op_ == DelayedArithOp::DIVIDE && !right_;
+}
+
+template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
 bool delayed_arith_actual_sparse(Scalar_ scalar) {
-    Value_ output = 0;
-    delayed_arith_run<op_, right_>(output, scalar); // takes care of IEEE nonsense.
-    return output == 0;
+    if constexpr(delayed_arith_unsupported_division_by_zero<op_, right_, Value_, Scalar_>()) {
+        // If we didn't catch this case, the else() condition would be dividing
+        // by zero in a Value_ that doesn't support it, and that would be visible
+        // at compile time - possibly resulting in compiler warnings. So we
+        // declare that this is always non-sparse, and hope that the equivalent
+        // zero() method doesn't get called.
+        return false;
+    } else {
+        // Empirically testing this, to accommodate special values (e.g., NaN, Inf) for scalars.
+        Value_ output = 0;
+        delayed_arith_run<op_, right_>(output, scalar);
+        return output == 0;
+    }
+}
+
+template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
+Value_ delayed_arith_zero(Scalar_ scalar) {
+    if constexpr(delayed_arith_unsupported_division_by_zero<op_, right_, Value_, Scalar_>()) {
+        // Avoid potential problems with division by zero that can be detected
+        // at compile time (e.g., resulting in unnecessary compiler warnings).
+        throw std::runtime_error("division by zero is not supported with IEEE-754 floats");
+    } else {
+        Value_ output = 0;
+        delayed_arith_run<op_, right_>(output, scalar);
+        return output;
+    }
+}
+
+template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
+constexpr bool delayed_arith_always_dense() {
+    // If we're dividing the scalar by the matrix, values of zero in the matrix will yield non-zero results.
+    if constexpr(op_ == DelayedArithOp::DIVIDE && !right_) {
+        return true;
+    }
+
+    return false;    
+}
+
+template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
+constexpr bool delayed_arith_always_sparse() {
+    // Multiplication is always sparse if the Scalar_ type cannot have special values.
+    if constexpr(op_ == DelayedArithOp::MULTIPLY && 
+        !std::numeric_limits<Scalar_>::has_infinity &&
+        !std::numeric_limits<Scalar_>::has_quiet_NaN && 
+        !std::numeric_limits<Scalar_>::has_signaling_NaN)
+    {
+        return true;
+    }
+
+    return false;
 }
 /**
  * @endcond
@@ -45,7 +97,7 @@ bool delayed_arith_actual_sparse(Scalar_ scalar) {
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar value.
  */
-template<DelayedArithOp op_, bool right_, typename Value_ = double, typename Scalar_ = double>
+template<DelayedArithOp op_, bool right_, typename Value_ = double, typename Scalar_ = Value_>
 struct DelayedArithScalarHelper {
     /**
      * @param s Scalar value to be added.
@@ -66,9 +118,9 @@ public:
 
     static constexpr bool needs_column = false;
 
-    static constexpr bool always_dense = (op_ == DelayedArithOp::DIVIDE && !right_);
+    static constexpr bool always_dense = delayed_arith_always_dense<op_, right_, Value_, Scalar_>();
 
-    static constexpr bool always_sparse = false;
+    static constexpr bool always_sparse = delayed_arith_always_sparse<op_, right_, Value_, Scalar_>();
 
     bool actual_sparse() const {
         return still_sparse;
@@ -93,9 +145,7 @@ public:
 
     template<bool, typename Index_>
     Value_ zero(Index_) const {
-        Value_ output = 0;
-        delayed_arith_run<op_, right_>(output, scalar); // deal with divide-by-zero for us.
-        return output;
+        return delayed_arith_zero<op_, right_, Value_>(scalar);
     }
     /**
      * @endcond
@@ -143,9 +193,11 @@ public:
 
     static constexpr bool needs_column = (margin_ == 1);
 
-    static constexpr bool always_dense = (op_ == DelayedArithOp::DIVIDE && !right_);
+    typedef typename std::remove_reference<decltype(std::declval<Vector_>()[0])>::type Scalar_;
 
-    static constexpr bool always_sparse = (op_ == DelayedArithOp::MULTIPLY);
+    static constexpr bool always_dense = delayed_arith_always_dense<op_, right_, Value_, Scalar_>();
+
+    static constexpr bool always_sparse = delayed_arith_always_sparse<op_, right_, Value_, Scalar_>();
 
     bool actual_sparse() const {
         return still_sparse;
@@ -189,9 +241,7 @@ public:
 
     template<bool, typename Index_>
     Value_ zero(Index_ idx) const {
-        Value_ output = 0;
-        delayed_arith_run<op_, right_>(output, vec[idx]); // deal with divide-by-zero for us.
-        return output;
+        return delayed_arith_zero<op_, right_, Value_>(vec[idx]);
     }
     /**
      * @endcond

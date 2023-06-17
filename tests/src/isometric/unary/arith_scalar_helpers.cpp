@@ -199,3 +199,34 @@ INSTANTIATE_TEST_CASE_P(
         ::testing::Values(true, false)
     )
 );
+
+/**********************************
+ ********* SPECIAL VALUES *********
+ **********************************/
+
+TEST(ArithScalarTest, NonIeee754Multiply) {
+    int scalar = 5;
+    auto op = tatami::make_DelayedMultiplyScalarHelper(scalar);
+    EXPECT_TRUE(decltype(op)::always_sparse);
+    EXPECT_TRUE(op.actual_sparse());
+}
+
+TEST(ArithScalarTest, NonFiniteMultiply) {
+    double scalar = std::numeric_limits<double>::infinity();
+    auto op = tatami::make_DelayedMultiplyScalarHelper(scalar);
+    EXPECT_FALSE(decltype(op)::always_sparse);
+    EXPECT_FALSE(op.actual_sparse());
+}
+
+TEST(ArithScalarTest, NonIeee754Divide) {
+    auto op = tatami::make_DelayedDivideScalarHelper<false, int>(5.0);
+
+    bool failed = false;
+    try {
+        op.zero<true>(5);
+    } catch(std::exception& e) {
+        EXPECT_FALSE(std::string(e.what()).find("IEEE-754") == std::string::npos);
+        failed = true;
+    }
+    EXPECT_TRUE(failed);
+}
