@@ -1,7 +1,4 @@
 <map id="tatami/base" name="tatami/base">
-<area shape="rect" id="node2" href="dir_6a82516a3e4d7c80718eca740eee3d63.html" title="dense" alt="" coords="197,63,254,89"/>
-<area shape="rect" id="node3" href="dir_b4e45599c654d430979edeb990af6330.html" title="other" alt="" coords="123,63,173,89"/>
-<area shape="rect" id="node4" href="dir_5e59b27bd34387d275d9669e61d4a5a2.html" title="subset" alt="" coords="38,63,98,89"/>
-<area shape="rect" id="clust2" href="dir_1431006efcc686dc889083f70f9f4d8a.html" alt="" coords="27,52,339,99"/>
-<area shape="rect" id="clust1" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html" title="tatami" alt="" coords="16,16,349,110"/>
+<area shape="rect" id="node1" href="dir_1431006efcc686dc889083f70f9f4d8a.html" title="base" alt="" coords="27,52,77,78"/>
+<area shape="rect" id="clust1" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html" title="tatami" alt="" coords="16,16,88,89"/>
 </map>

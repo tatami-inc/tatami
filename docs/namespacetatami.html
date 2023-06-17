@@ -302,12 +302,6 @@ Classes</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:ac47a769e00660eb7e9b5fcd543bcf2d3"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </td></tr>
-<tr class="memitem:ac47a769e00660eb7e9b5fcd543bcf2d3"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac47a769e00660eb7e9b5fcd543bcf2d3">DenseColumnMatrix</a> = <a class="el" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt; false, Value_, Index_, Storage_ &gt;</td></tr>
-<tr class="separator:ac47a769e00660eb7e9b5fcd543bcf2d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51122d20490b377cd3f4609cc044f314"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </td></tr>
-<tr class="memitem:a51122d20490b377cd3f4609cc044f314"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a51122d20490b377cd3f4609cc044f314">DenseRowMatrix</a> = <a class="el" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt; true, Value_, Index_, Storage_ &gt;</td></tr>
-<tr class="separator:a51122d20490b377cd3f4609cc044f314"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a85ed61a4f772a2f7be4a12f739554e6e"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespacetatami.html#a0a2ecaf58e2b69bb4a808e814aeb16a1">DimensionSelectionType</a> selection_, typename Index_ &gt; </td></tr>
 <tr class="memitem:a85ed61a4f772a2f7be4a12f739554e6e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a85ed61a4f772a2f7be4a12f739554e6e">ConditionalSelectionExtractor</a> = typename std::conditional&lt; selection_==DimensionSelectionType::FULL, <a class="el" href="structtatami_1_1FullExtractor.html">FullExtractor</a>&lt; Index_ &gt;, typename std::conditional&lt; selection_==DimensionSelectionType::BLOCK, <a class="el" href="structtatami_1_1BlockExtractor.html">BlockExtractor</a>&lt; Index_ &gt;, <a class="el" href="structtatami_1_1IndexExtractor.html">IndexExtractor</a>&lt; Index_ &gt; &gt;::type &gt;::type</td></tr>
 <tr class="separator:a85ed61a4f772a2f7be4a12f739554e6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -334,6 +328,12 @@ Typedefs</h2></td></tr>
 <tr class="separator:a4b67b4d1b6c00cd0bd449703432a5f7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a35c670894994f1d620abb55953f98441"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a35c670894994f1d620abb55953f98441">NumericMatrix</a> = <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; double, int &gt;</td></tr>
 <tr class="separator:a35c670894994f1d620abb55953f98441"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac47a769e00660eb7e9b5fcd543bcf2d3"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </td></tr>
+<tr class="memitem:ac47a769e00660eb7e9b5fcd543bcf2d3"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac47a769e00660eb7e9b5fcd543bcf2d3">DenseColumnMatrix</a> = <a class="el" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt; false, Value_, Index_, Storage_ &gt;</td></tr>
+<tr class="separator:ac47a769e00660eb7e9b5fcd543bcf2d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a51122d20490b377cd3f4609cc044f314"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </td></tr>
+<tr class="memitem:a51122d20490b377cd3f4609cc044f314"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a51122d20490b377cd3f4609cc044f314">DenseRowMatrix</a> = <a class="el" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt; true, Value_, Index_, Storage_ &gt;</td></tr>
+<tr class="separator:a51122d20490b377cd3f4609cc044f314"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a18cee3a5d9734f0092b03d023cfe4b6a"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class ValueStorage_  = std::vector&lt;Value_&gt;, class IndexStorage_  = std::vector&lt;Index_&gt;, class PointerStorage_  = std::vector&lt;size_t&gt;&gt; </td></tr>
 <tr class="memitem:a18cee3a5d9734f0092b03d023cfe4b6a"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a18cee3a5d9734f0092b03d023cfe4b6a">CompressedSparseColumnMatrix</a> = <a class="el" href="classtatami_1_1CompressedSparseMatrix.html">CompressedSparseMatrix</a>&lt; false, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</td></tr>
 <tr class="separator:a18cee3a5d9734f0092b03d023cfe4b6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -393,21 +393,6 @@ Functions</h2></td></tr>
 <tr class="memitem:af9d13ceaa112d2c091265510d741488d"><td class="memTemplParams" colspan="2">template&lt;<a class="el" href="namespacetatami.html#a0a2ecaf58e2b69bb4a808e814aeb16a1">DimensionSelectionType</a> selection_, typename Index_ &gt; </td></tr>
 <tr class="memitem:af9d13ceaa112d2c091265510d741488d"><td class="memTemplItemLeft" align="right" valign="top">Index_&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#af9d13ceaa112d2c091265510d741488d">extracted_length</a> (const <a class="el" href="namespacetatami.html#a85ed61a4f772a2f7be4a12f739554e6e">ConditionalSelectionExtractor</a>&lt; selection_, Index_ &gt; &amp;ex)</td></tr>
 <tr class="separator:af9d13ceaa112d2c091265510d741488d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5f8e0f69139575707aa9314174b415b3"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Value_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:a5f8e0f69139575707aa9314174b415b3"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a5f8e0f69139575707aa9314174b415b3">make_DelayedBind</a> (std::vector&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; &gt; ps)</td></tr>
-<tr class="separator:a5f8e0f69139575707aa9314174b415b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aca62c3bf751cdd06a08e8e503b0b591a"><td class="memTemplParams" colspan="2">template&lt;typename Value_out_ , typename Index_out_ , typename Value_in_ , typename Index_in_ &gt; </td></tr>
-<tr class="memitem:aca62c3bf751cdd06a08e8e503b0b591a"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_out_, Index_out_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aca62c3bf751cdd06a08e8e503b0b591a">make_DelayedCast</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_in_, Index_in_ &gt; &gt; p)</td></tr>
-<tr class="separator:aca62c3bf751cdd06a08e8e503b0b591a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afa35d8e9fe286967f327ec0eb6bd5005"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:afa35d8e9fe286967f327ec0eb6bd5005"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#afa35d8e9fe286967f327ec0eb6bd5005">make_DelayedTranspose</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p)</td></tr>
-<tr class="separator:afa35d8e9fe286967f327ec0eb6bd5005"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8f4aafc0a1fbdc0c31bc122d24122a63"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Value_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:a8f4aafc0a1fbdc0c31bc122d24122a63"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8f4aafc0a1fbdc0c31bc122d24122a63">make_DelayedSubsetBlock</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, Index_ f, Index_ l)</td></tr>
-<tr class="separator:a8f4aafc0a1fbdc0c31bc122d24122a63"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abfc63177b00e6e3e2fa47754b8d87704"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Value_ , typename Index_ , class IndexStorage_ &gt; </td></tr>
-<tr class="memitem:abfc63177b00e6e3e2fa47754b8d87704"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#abfc63177b00e6e3e2fa47754b8d87704">make_DelayedSubset</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, IndexStorage_ idx)</td></tr>
-<tr class="separator:abfc63177b00e6e3e2fa47754b8d87704"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95b6638dceda82d82a7579dc88a45709"><td class="memTemplParams" colspan="2">template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
 <tr class="memitem:a95b6638dceda82d82a7579dc88a45709"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a95b6638dceda82d82a7579dc88a45709">new_extractor</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *ptr, Args_ &amp;&amp;... args)</td></tr>
 <tr class="separator:a95b6638dceda82d82a7579dc88a45709"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -532,6 +517,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a07b072944c766d85dc4ce4dc734e0b75"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class Operation_ &gt; </td></tr>
 <tr class="memitem:a07b072944c766d85dc4ce4dc734e0b75"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a07b072944c766d85dc4ce4dc734e0b75">make_DelayedUnaryIsometricOp</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</td></tr>
 <tr class="separator:a07b072944c766d85dc4ce4dc734e0b75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5f8e0f69139575707aa9314174b415b3"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a5f8e0f69139575707aa9314174b415b3"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a5f8e0f69139575707aa9314174b415b3">make_DelayedBind</a> (std::vector&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; &gt; ps)</td></tr>
+<tr class="separator:a5f8e0f69139575707aa9314174b415b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca62c3bf751cdd06a08e8e503b0b591a"><td class="memTemplParams" colspan="2">template&lt;typename Value_out_ , typename Index_out_ , typename Value_in_ , typename Index_in_ &gt; </td></tr>
+<tr class="memitem:aca62c3bf751cdd06a08e8e503b0b591a"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_out_, Index_out_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aca62c3bf751cdd06a08e8e503b0b591a">make_DelayedCast</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_in_, Index_in_ &gt; &gt; p)</td></tr>
+<tr class="separator:aca62c3bf751cdd06a08e8e503b0b591a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa35d8e9fe286967f327ec0eb6bd5005"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:afa35d8e9fe286967f327ec0eb6bd5005"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#afa35d8e9fe286967f327ec0eb6bd5005">make_DelayedTranspose</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p)</td></tr>
+<tr class="separator:afa35d8e9fe286967f327ec0eb6bd5005"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a44202790861791b1ed9df6d480c69f6a"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
 <tr class="memitem:a44202790861791b1ed9df6d480c69f6a"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a44202790861791b1ed9df6d480c69f6a">column_medians</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
 <tr class="separator:a44202790861791b1ed9df6d480c69f6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -574,6 +568,12 @@ Functions</h2></td></tr>
 <tr class="memitem:ab806279616e19f6150376a7c07d5b64b"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
 <tr class="memitem:ab806279616e19f6150376a7c07d5b64b"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ab806279616e19f6150376a7c07d5b64b">row_variances</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
 <tr class="separator:ab806279616e19f6150376a7c07d5b64b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f4aafc0a1fbdc0c31bc122d24122a63"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Value_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:a8f4aafc0a1fbdc0c31bc122d24122a63"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8f4aafc0a1fbdc0c31bc122d24122a63">make_DelayedSubsetBlock</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, Index_ f, Index_ l)</td></tr>
+<tr class="separator:a8f4aafc0a1fbdc0c31bc122d24122a63"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abfc63177b00e6e3e2fa47754b8d87704"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Value_ , typename Index_ , class IndexStorage_ &gt; </td></tr>
+<tr class="memitem:abfc63177b00e6e3e2fa47754b8d87704"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#abfc63177b00e6e3e2fa47754b8d87704">make_DelayedSubset</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, IndexStorage_ idx)</td></tr>
+<tr class="separator:abfc63177b00e6e3e2fa47754b8d87704"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a87c52cf8a974ad0025550b002d391d39"><td class="memTemplParams" colspan="2">template&lt;int margin, class <a class="el" href="classtatami_1_1Matrix.html">Matrix</a> , typename Id &gt; </td></tr>
 <tr class="memitem:a87c52cf8a974ad0025550b002d391d39"><td class="memTemplItemLeft" align="right" valign="top">std::pair&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &gt;, std::vector&lt; size_t &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a87c52cf8a974ad0025550b002d391d39">bind_intersection</a> (const std::vector&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a> &gt; &gt; &amp;inputs, const std::vector&lt; const Id * &gt; &amp;ids)</td></tr>
 <tr class="separator:a87c52cf8a974ad0025550b002d391d39"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -605,40 +605,6 @@ Functions</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Flexible representations for matrix data. </p>
 </div><h2 class="groupheader">Typedef Documentation</h2>
-<a id="ac47a769e00660eb7e9b5fcd543bcf2d3" name="ac47a769e00660eb7e9b5fcd543bcf2d3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac47a769e00660eb7e9b5fcd543bcf2d3">&#9670;&#160;</a></span>DenseColumnMatrix</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespacetatami.html#ac47a769e00660eb7e9b5fcd543bcf2d3">tatami::DenseColumnMatrix</a> = typedef <a class="el" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt;false, Value_, Index_, Storage_&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Column-major matrix. See <code><a class="el" href="classtatami_1_1DenseMatrix.html" title="Dense matrix representation.">tatami::DenseMatrix</a></code> for details on the template parameters. </p>
-
-</div>
-</div>
-<a id="a51122d20490b377cd3f4609cc044f314" name="a51122d20490b377cd3f4609cc044f314"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51122d20490b377cd3f4609cc044f314">&#9670;&#160;</a></span>DenseRowMatrix</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespacetatami.html#a51122d20490b377cd3f4609cc044f314">tatami::DenseRowMatrix</a> = typedef <a class="el" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt;true, Value_, Index_, Storage_&gt;</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Row-major matrix. See <code><a class="el" href="classtatami_1_1DenseMatrix.html" title="Dense matrix representation.">tatami::DenseMatrix</a></code> for details on the template parameters. </p>
-
-</div>
-</div>
 <a id="a85ed61a4f772a2f7be4a12f739554e6e" name="a85ed61a4f772a2f7be4a12f739554e6e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a85ed61a4f772a2f7be4a12f739554e6e">&#9670;&#160;</a></span>ConditionalSelectionExtractor</h2>
 
@@ -803,6 +769,40 @@ template&lt;typename Value_ , typename Index_ &gt; </div>
       </table>
 </div><div class="memdoc">
 <p>A convenient shorthand for the most common use case of double-precision matrices. </p>
+
+</div>
+</div>
+<a id="ac47a769e00660eb7e9b5fcd543bcf2d3" name="ac47a769e00660eb7e9b5fcd543bcf2d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac47a769e00660eb7e9b5fcd543bcf2d3">&#9670;&#160;</a></span>DenseColumnMatrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacetatami.html#ac47a769e00660eb7e9b5fcd543bcf2d3">tatami::DenseColumnMatrix</a> = typedef <a class="el" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt;false, Value_, Index_, Storage_&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Column-major matrix. See <code><a class="el" href="classtatami_1_1DenseMatrix.html" title="Dense matrix representation.">tatami::DenseMatrix</a></code> for details on the template parameters. </p>
+
+</div>
+</div>
+<a id="a51122d20490b377cd3f4609cc044f314" name="a51122d20490b377cd3f4609cc044f314"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a51122d20490b377cd3f4609cc044f314">&#9670;&#160;</a></span>DenseRowMatrix</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_  = int, class Storage_  = std::vector&lt;Value_&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacetatami.html#a51122d20490b377cd3f4609cc044f314">tatami::DenseRowMatrix</a> = typedef <a class="el" href="classtatami_1_1DenseMatrix.html">DenseMatrix</a>&lt;true, Value_, Index_, Storage_&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Row-major matrix. See <code><a class="el" href="classtatami_1_1DenseMatrix.html" title="Dense matrix representation.">tatami::DenseMatrix</a></code> for details on the template parameters. </p>
 
 </div>
 </div>
@@ -1038,232 +1038,6 @@ template&lt;<a class="el" href="namespacetatami.html#a0a2ecaf58e2b69bb4a808e814a
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Number of elements extracted from the extraction dimension, conditional on the selection type in <code>selection_</code>. </dd></dl>
-
-</div>
-</div>
-<a id="a5f8e0f69139575707aa9314174b415b3" name="a5f8e0f69139575707aa9314174b415b3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5f8e0f69139575707aa9314174b415b3">&#9670;&#160;</a></span>make_DelayedBind()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int margin_, typename Value_ , typename Index_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedBind </td>
-          <td>(</td>
-          <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; &gt;&#160;</td>
-          <td class="paramname"><em>ps</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">margin_</td><td>Dimension along which the combining is to occur. If 0, matrices are combined along the rows; if 1, matrices are combined to the columns. </td></tr>
-    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Type of index value.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ps</td><td>Pointers to <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> objects.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code> instance.</dd></dl>
-<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">margin_</td><td>Dimension along which the combining is to occur. If 0, matrices are combined along the rows; if 1, matrices are combined to the columns. </td></tr>
-    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Type of index value.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">ps</td><td>Pointers to <code>const</code> <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> objects.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code> instance. </dd></dl>
-
-</div>
-</div>
-<a id="aca62c3bf751cdd06a08e8e503b0b591a" name="aca62c3bf751cdd06a08e8e503b0b591a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aca62c3bf751cdd06a08e8e503b0b591a">&#9670;&#160;</a></span>make_DelayedCast()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_out_ , typename Index_out_ , typename Value_in_ , typename Index_in_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_out_, Index_out_ &gt; &gt; tatami::make_DelayedCast </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_in_, Index_in_ &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>Recast a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> to a different interface type.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Value_out_</td><td>Data type to cast to. </td></tr>
-    <tr><td class="paramname">Index_out_</td><td>Index type to cast to. </td></tr>
-    <tr><td class="paramname">Value_in_</td><td>Data type to cast from. </td></tr>
-    <tr><td class="paramname">Index_in_</td><td>Index type to cast from.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the (possbly <code>const</code>) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance to cast from. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance of the desired interface type. </dd></dl>
-
-</div>
-</div>
-<a id="afa35d8e9fe286967f327ec0eb6bd5005" name="afa35d8e9fe286967f327ec0eb6bd5005"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#afa35d8e9fe286967f327ec0eb6bd5005">&#9670;&#160;</a></span>make_DelayedTranspose()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;typename Value_ , typename Index_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedTranspose </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Type of index value.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a (possibly <code>const</code>) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix.">DelayedTranspose</a></code> instance. </dd></dl>
-
-</div>
-</div>
-<a id="a8f4aafc0a1fbdc0c31bc122d24122a63" name="a8f4aafc0a1fbdc0c31bc122d24122a63"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8f4aafc0a1fbdc0c31bc122d24122a63">&#9670;&#160;</a></span>make_DelayedSubsetBlock()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int margin_, typename Value_ , typename Index_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedSubsetBlock </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Index_&#160;</td>
-          <td class="paramname"><em>f</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">Index_&#160;</td>
-          <td class="paramname"><em>l</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">margin_</td><td>Dimension along which the addition is to occur. If 0, the subset is applied to the rows; if 1, the subset is applied to the columns. </td></tr>
-    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the underlying (pre-subset) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">f</td><td>Index of the start of the block. This should be a row index if <code>margin_ = 0</code> and a column index otherwise. </td></tr>
-    <tr><td class="paramname">l</td><td>Index of the one-past-the-end of the block.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block.">DelayedSubsetBlock</a></code> instance. </dd></dl>
-
-</div>
-</div>
-<a id="abfc63177b00e6e3e2fa47754b8d87704" name="abfc63177b00e6e3e2fa47754b8d87704"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abfc63177b00e6e3e2fa47754b8d87704">&#9670;&#160;</a></span>make_DelayedSubset()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<div class="memtemplate">
-template&lt;int margin_, typename Value_ , typename Index_ , class IndexStorage_ &gt; </div>
-      <table class="memname">
-        <tr>
-          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedSubset </td>
-          <td>(</td>
-          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td>
-          <td class="paramname"><em>p</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">IndexStorage_&#160;</td>
-          <td class="paramname"><em>idx</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types. This will automatically dispatch to <code><a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html" title="Delayed subsetting of a matrix with sorted, unique indices.">DelayedSubsetSortedUnique</a></code>, <code><a class="el" href="classtatami_1_1DelayedSubsetUnique.html" title="Delayed subsetting of a matrix with unique indices.">DelayedSubsetUnique</a></code>, <code><a class="el" href="classtatami_1_1DelayedSubsetSorted.html" title="Delayed subsetting of a matrix with sorted indices.">DelayedSubsetSorted</a></code> or <code><a class="el" href="classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices.">DelayedSubset</a></code>, depending on the values in <code>idx</code>.</p>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">margin_</td><td>Dimension along which the subsetting is to occur. If 0, the subset is applied to the rows; if 1, the subset is applied to the columns. </td></tr>
-    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
-    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices. </td></tr>
-    <tr><td class="paramname">IndexStorage_</td><td>Vector containing the subset indices, to be automatically deduced.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to a (possibly <code>const</code>) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code>. </td></tr>
-    <tr><td class="paramname">idx</td><td>Instance of the index vector.</td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices.">DelayedSubset</a></code> instance. </dd></dl>
 
 </div>
 </div>
@@ -2772,6 +2546,130 @@ template&lt;typename Value_ , typename Index_ , class Operation_ &gt; </div>
 
 </div>
 </div>
+<a id="a5f8e0f69139575707aa9314174b415b3" name="a5f8e0f69139575707aa9314174b415b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5f8e0f69139575707aa9314174b415b3">&#9670;&#160;</a></span>make_DelayedBind()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int margin_, typename Value_ , typename Index_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedBind </td>
+          <td>(</td>
+          <td class="paramtype">std::vector&lt; std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; &gt;&#160;</td>
+          <td class="paramname"><em>ps</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">margin_</td><td>Dimension along which the combining is to occur. If 0, matrices are combined along the rows; if 1, matrices are combined to the columns. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of index value.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ps</td><td>Pointers to <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> objects.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code> instance.</dd></dl>
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">margin_</td><td>Dimension along which the combining is to occur. If 0, matrices are combined along the rows; if 1, matrices are combined to the columns. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of index value.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ps</td><td>Pointers to <code>const</code> <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> objects.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code> instance. </dd></dl>
+
+</div>
+</div>
+<a id="aca62c3bf751cdd06a08e8e503b0b591a" name="aca62c3bf751cdd06a08e8e503b0b591a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aca62c3bf751cdd06a08e8e503b0b591a">&#9670;&#160;</a></span>make_DelayedCast()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_out_ , typename Index_out_ , typename Value_in_ , typename Index_in_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_out_, Index_out_ &gt; &gt; tatami::make_DelayedCast </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_in_, Index_in_ &gt; &gt;&#160;</td>
+          <td class="paramname"><em>p</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Recast a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> to a different interface type.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Value_out_</td><td>Data type to cast to. </td></tr>
+    <tr><td class="paramname">Index_out_</td><td>Index type to cast to. </td></tr>
+    <tr><td class="paramname">Value_in_</td><td>Data type to cast from. </td></tr>
+    <tr><td class="paramname">Index_in_</td><td>Index type to cast from.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Pointer to the (possbly <code>const</code>) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance to cast from. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance of the desired interface type. </dd></dl>
+
+</div>
+</div>
+<a id="afa35d8e9fe286967f327ec0eb6bd5005" name="afa35d8e9fe286967f327ec0eb6bd5005"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa35d8e9fe286967f327ec0eb6bd5005">&#9670;&#160;</a></span>make_DelayedTranspose()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Value_ , typename Index_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedTranspose </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td>
+          <td class="paramname"><em>p</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Type of index value.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Pointer to a (possibly <code>const</code>) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix.">DelayedTranspose</a></code> instance. </dd></dl>
+
+</div>
+</div>
 <a id="a44202790861791b1ed9df6d480c69f6a" name="a44202790861791b1ed9df6d480c69f6a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a44202790861791b1ed9df6d480c69f6a">&#9670;&#160;</a></span>column_medians()</h2>
 
@@ -3459,6 +3357,108 @@ template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; <
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>A vector of length equal to the number of rows, containing the row variances. </dd></dl>
+
+</div>
+</div>
+<a id="a8f4aafc0a1fbdc0c31bc122d24122a63" name="a8f4aafc0a1fbdc0c31bc122d24122a63"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8f4aafc0a1fbdc0c31bc122d24122a63">&#9670;&#160;</a></span>make_DelayedSubsetBlock()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int margin_, typename Value_ , typename Index_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedSubsetBlock </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td>
+          <td class="paramname"><em>p</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Index_&#160;</td>
+          <td class="paramname"><em>f</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Index_&#160;</td>
+          <td class="paramname"><em>l</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">margin_</td><td>Dimension along which the addition is to occur. If 0, the subset is applied to the rows; if 1, the subset is applied to the columns. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Pointer to the underlying (pre-subset) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">f</td><td>Index of the start of the block. This should be a row index if <code>margin_ = 0</code> and a column index otherwise. </td></tr>
+    <tr><td class="paramname">l</td><td>Index of the one-past-the-end of the block.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedSubsetBlock.html" title="Delayed subsetting to a contiguous block.">DelayedSubsetBlock</a></code> instance. </dd></dl>
+
+</div>
+</div>
+<a id="abfc63177b00e6e3e2fa47754b8d87704" name="abfc63177b00e6e3e2fa47754b8d87704"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abfc63177b00e6e3e2fa47754b8d87704">&#9670;&#160;</a></span>make_DelayedSubset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;int margin_, typename Value_ , typename Index_ , class IndexStorage_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; tatami::make_DelayedSubset </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt;&#160;</td>
+          <td class="paramname"><em>p</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IndexStorage_&#160;</td>
+          <td class="paramname"><em>idx</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types. This will automatically dispatch to <code><a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html" title="Delayed subsetting of a matrix with sorted, unique indices.">DelayedSubsetSortedUnique</a></code>, <code><a class="el" href="classtatami_1_1DelayedSubsetUnique.html" title="Delayed subsetting of a matrix with unique indices.">DelayedSubsetUnique</a></code>, <code><a class="el" href="classtatami_1_1DelayedSubsetSorted.html" title="Delayed subsetting of a matrix with sorted indices.">DelayedSubsetSorted</a></code> or <code><a class="el" href="classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices.">DelayedSubset</a></code>, depending on the values in <code>idx</code>.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">margin_</td><td>Dimension along which the subsetting is to occur. If 0, the subset is applied to the rows; if 1, the subset is applied to the columns. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices. </td></tr>
+    <tr><td class="paramname">IndexStorage_</td><td>Vector containing the subset indices, to be automatically deduced.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">p</td><td>Pointer to a (possibly <code>const</code>) <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">idx</td><td>Instance of the index vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A pointer to a <code><a class="el" href="classtatami_1_1DelayedSubset.html" title="Delayed subsetting of a matrix with general indices.">DelayedSubset</a></code> instance. </dd></dl>
 
 </div>
 </div>

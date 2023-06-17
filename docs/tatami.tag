@@ -1,34 +1,6 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
 <tagfile doxygen_version="1.9.7">
   <compound kind="file">
-    <name>DenseMatrix.hpp</name>
-    <path>tatami/base/dense/</path>
-    <filename>DenseMatrix_8hpp.html</filename>
-    <class kind="class">tatami::DenseMatrix</class>
-    <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>DenseMatrix&lt; false, Value_, Index_, Storage_ &gt;</type>
-      <name>DenseColumnMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac47a769e00660eb7e9b5fcd543bcf2d3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>DenseMatrix&lt; true, Value_, Index_, Storage_ &gt;</type>
-      <name>DenseRowMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a51122d20490b377cd3f4609cc044f314</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>VirtualDenseMatrix.hpp</name>
-    <path>tatami/base/dense/</path>
-    <filename>VirtualDenseMatrix_8hpp.html</filename>
-    <class kind="class">tatami::VirtualDenseMatrix</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
     <name>Extractor.hpp</name>
     <path>tatami/base/</path>
     <filename>Extractor_8hpp.html</filename>
@@ -136,109 +108,12 @@
     </member>
   </compound>
   <compound kind="file">
-    <name>DelayedBind.hpp</name>
-    <path>tatami/base/other/</path>
-    <filename>DelayedBind_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBind</class>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedBind</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5f8e0f69139575707aa9314174b415b3</anchor>
-      <arglist>(std::vector&lt; std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; &gt; ps)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>DelayedCast.hpp</name>
-    <path>tatami/base/other/</path>
-    <filename>DelayedCast_8hpp.html</filename>
-    <class kind="class">tatami::DelayedCast</class>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_out_, Index_out_ &gt; &gt;</type>
-      <name>make_DelayedCast</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aca62c3bf751cdd06a08e8e503b0b591a</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_in_, Index_in_ &gt; &gt; p)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>DelayedTranspose.hpp</name>
-    <path>tatami/base/other/</path>
-    <filename>DelayedTranspose_8hpp.html</filename>
-    <class kind="class">tatami::DelayedTranspose</class>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedTranspose</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>afa35d8e9fe286967f327ec0eb6bd5005</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
     <name>SparseRange.hpp</name>
     <path>tatami/base/</path>
     <filename>SparseRange_8hpp.html</filename>
     <class kind="struct">tatami::SparseRange</class>
     <class kind="struct">tatami::SparseRangeCopy</class>
     <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>DelayedSubset.hpp</name>
-    <path>tatami/base/subset/</path>
-    <filename>DelayedSubset_8hpp.html</filename>
-    <class kind="class">tatami::DelayedSubset</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>DelayedSubsetBlock.hpp</name>
-    <path>tatami/base/subset/</path>
-    <filename>DelayedSubsetBlock_8hpp.html</filename>
-    <class kind="class">tatami::DelayedSubsetBlock</class>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedSubsetBlock</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8f4aafc0a1fbdc0c31bc122d24122a63</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Index_ f, Index_ l)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>DelayedSubsetSorted.hpp</name>
-    <path>tatami/base/subset/</path>
-    <filename>DelayedSubsetSorted_8hpp.html</filename>
-    <class kind="class">tatami::DelayedSubsetSorted</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>DelayedSubsetSortedUnique.hpp</name>
-    <path>tatami/base/subset/</path>
-    <filename>DelayedSubsetSortedUnique_8hpp.html</filename>
-    <class kind="class">tatami::DelayedSubsetSortedUnique</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>DelayedSubsetUnique.hpp</name>
-    <path>tatami/base/subset/</path>
-    <filename>DelayedSubsetUnique_8hpp.html</filename>
-    <class kind="class">tatami::DelayedSubsetUnique</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>make_DelayedSubset.hpp</name>
-    <path>tatami/base/subset/</path>
-    <filename>make__DelayedSubset_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedSubset</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abfc63177b00e6e3e2fa47754b8d87704</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, IndexStorage_ idx)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>LruChunkCache.hpp</name>
@@ -252,6 +127,34 @@
     <path>tatami/chunked/</path>
     <filename>OracleChunkCache_8hpp.html</filename>
     <class kind="class">tatami::OracleChunkCache</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>DenseMatrix.hpp</name>
+    <path>tatami/dense/</path>
+    <filename>DenseMatrix_8hpp.html</filename>
+    <class kind="class">tatami::DenseMatrix</class>
+    <namespace>tatami</namespace>
+    <member kind="typedef">
+      <type>DenseMatrix&lt; false, Value_, Index_, Storage_ &gt;</type>
+      <name>DenseColumnMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac47a769e00660eb7e9b5fcd543bcf2d3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DenseMatrix&lt; true, Value_, Index_, Storage_ &gt;</type>
+      <name>DenseRowMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a51122d20490b377cd3f4609cc044f314</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>VirtualDenseMatrix.hpp</name>
+    <path>tatami/dense/</path>
+    <filename>VirtualDenseMatrix_8hpp.html</filename>
+    <class kind="class">tatami::VirtualDenseMatrix</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -801,6 +704,48 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>DelayedBind.hpp</name>
+    <path>tatami/other/</path>
+    <filename>DelayedBind_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBind</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedBind</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5f8e0f69139575707aa9314174b415b3</anchor>
+      <arglist>(std::vector&lt; std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; &gt; ps)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>DelayedCast.hpp</name>
+    <path>tatami/other/</path>
+    <filename>DelayedCast_8hpp.html</filename>
+    <class kind="class">tatami::DelayedCast</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_out_, Index_out_ &gt; &gt;</type>
+      <name>make_DelayedCast</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aca62c3bf751cdd06a08e8e503b0b591a</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_in_, Index_in_ &gt; &gt; p)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>DelayedTranspose.hpp</name>
+    <path>tatami/other/</path>
+    <filename>DelayedTranspose_8hpp.html</filename>
+    <class kind="class">tatami::DelayedTranspose</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedTranspose</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>afa35d8e9fe286967f327ec0eb6bd5005</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>CompressedSparseMatrix.hpp</name>
     <path>tatami/sparse/</path>
     <filename>CompressedSparseMatrix_8hpp.html</filename>
@@ -1031,6 +976,61 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab806279616e19f6150376a7c07d5b64b</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>DelayedSubset.hpp</name>
+    <path>tatami/subset/</path>
+    <filename>DelayedSubset_8hpp.html</filename>
+    <class kind="class">tatami::DelayedSubset</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>DelayedSubsetBlock.hpp</name>
+    <path>tatami/subset/</path>
+    <filename>DelayedSubsetBlock_8hpp.html</filename>
+    <class kind="class">tatami::DelayedSubsetBlock</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedSubsetBlock</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8f4aafc0a1fbdc0c31bc122d24122a63</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Index_ f, Index_ l)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>DelayedSubsetSorted.hpp</name>
+    <path>tatami/subset/</path>
+    <filename>DelayedSubsetSorted_8hpp.html</filename>
+    <class kind="class">tatami::DelayedSubsetSorted</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>DelayedSubsetSortedUnique.hpp</name>
+    <path>tatami/subset/</path>
+    <filename>DelayedSubsetSortedUnique_8hpp.html</filename>
+    <class kind="class">tatami::DelayedSubsetSortedUnique</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>DelayedSubsetUnique.hpp</name>
+    <path>tatami/subset/</path>
+    <filename>DelayedSubsetUnique_8hpp.html</filename>
+    <class kind="class">tatami::DelayedSubsetUnique</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>make_DelayedSubset.hpp</name>
+    <path>tatami/subset/</path>
+    <filename>make__DelayedSubset_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedSubset</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abfc63177b00e6e3e2fa47754b8d87704</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, IndexStorage_ idx)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -4619,20 +4619,6 @@
     <class kind="struct">tatami::SparseRangeCopy</class>
     <class kind="class">tatami::VirtualDenseMatrix</class>
     <member kind="typedef">
-      <type>DenseMatrix&lt; false, Value_, Index_, Storage_ &gt;</type>
-      <name>DenseColumnMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac47a769e00660eb7e9b5fcd543bcf2d3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>DenseMatrix&lt; true, Value_, Index_, Storage_ &gt;</type>
-      <name>DenseRowMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a51122d20490b377cd3f4609cc044f314</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
       <type>typename std::conditional&lt; selection_==DimensionSelectionType::FULL, FullExtractor&lt; Index_ &gt;, typename std::conditional&lt; selection_==DimensionSelectionType::BLOCK, BlockExtractor&lt; Index_ &gt;, IndexExtractor&lt; Index_ &gt; &gt;::type &gt;::type</type>
       <name>ConditionalSelectionExtractor</name>
       <anchorfile>namespacetatami.html</anchorfile>
@@ -4693,6 +4679,20 @@
       <name>NumericMatrix</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a35c670894994f1d620abb55953f98441</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DenseMatrix&lt; false, Value_, Index_, Storage_ &gt;</type>
+      <name>DenseColumnMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac47a769e00660eb7e9b5fcd543bcf2d3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>DenseMatrix&lt; true, Value_, Index_, Storage_ &gt;</type>
+      <name>DenseRowMatrix</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a51122d20490b377cd3f4609cc044f314</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
@@ -4788,41 +4788,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>af9d13ceaa112d2c091265510d741488d</anchor>
       <arglist>(const ConditionalSelectionExtractor&lt; selection_, Index_ &gt; &amp;ex)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedBind</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5f8e0f69139575707aa9314174b415b3</anchor>
-      <arglist>(std::vector&lt; std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; &gt; ps)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_out_, Index_out_ &gt; &gt;</type>
-      <name>make_DelayedCast</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aca62c3bf751cdd06a08e8e503b0b591a</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_in_, Index_in_ &gt; &gt; p)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedTranspose</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>afa35d8e9fe286967f327ec0eb6bd5005</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedSubsetBlock</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8f4aafc0a1fbdc0c31bc122d24122a63</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Index_ f, Index_ l)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedSubset</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abfc63177b00e6e3e2fa47754b8d87704</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, IndexStorage_ idx)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
@@ -5147,6 +5112,27 @@
       <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</arglist>
     </member>
     <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedBind</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5f8e0f69139575707aa9314174b415b3</anchor>
+      <arglist>(std::vector&lt; std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; &gt; ps)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_out_, Index_out_ &gt; &gt;</type>
+      <name>make_DelayedCast</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aca62c3bf751cdd06a08e8e503b0b591a</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_in_, Index_in_ &gt; &gt; p)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedTranspose</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>afa35d8e9fe286967f327ec0eb6bd5005</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_medians</name>
       <anchorfile>namespacetatami.html</anchorfile>
@@ -5243,6 +5229,20 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab806279616e19f6150376a7c07d5b64b</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedSubsetBlock</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8f4aafc0a1fbdc0c31bc122d24122a63</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Index_ f, Index_ l)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedSubset</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abfc63177b00e6e3e2fa47754b8d87704</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, IndexStorage_ idx)</arglist>
     </member>
     <member kind="function">
       <type>std::pair&lt; std::shared_ptr&lt; Matrix &gt;, std::vector&lt; size_t &gt; &gt;</type>
