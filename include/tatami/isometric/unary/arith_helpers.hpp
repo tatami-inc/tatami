@@ -3,6 +3,7 @@
 
 #include "../arith_utils.hpp"
 #include <vector>
+#include <limits>
 
 /**
  * @file arith_helpers.hpp
