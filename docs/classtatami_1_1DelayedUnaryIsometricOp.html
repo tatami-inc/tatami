@@ -240,11 +240,11 @@ class tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</div><
 </ul>
 <p>If neither of <code>always_dense</code> or <code>always_sparse</code> is <code>true</code>, the class should also implement:</p>
 <ul>
-<li><code>bool actual_sparse() const</code>: whether this particular instance of the operation yields a sparse result when applied on sparse data. For example, an addition operation remains sparse if the added value is zero.</li>
+<li><code>bool actual_sparse() const</code>: whether this particular instance of the operation yields a sparse result when applied on sparse data of type <code>Value_</code>. For example, an addition operation remains sparse if the added value is zero.</li>
 </ul>
 <p>If <code>always_sparse</code> is not <code>true</code>, the class should also implement:</p>
 <ul>
-<li><code>Value_ zero&lt;row_, Value_&gt;(Index_ i) const</code>: This method should return the result of applying the operation on a zero input for row <code>i</code> (when <code>row_ = true</code>) or column <code>i</code> (otherwise).</li>
+<li><code>Value_ zero&lt;row_&gt;(Index_ i) const</code>: This method should return the result of applying the operation on a zero input for row <code>i</code> (when <code>row_ = true</code>) or column <code>i</code> (otherwise).</li>
 </ul>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">

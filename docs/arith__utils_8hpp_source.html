@@ -103,17 +103,21 @@ $(function() {
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>            val = scalar - val;</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>        }</div>
 <div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="comment">// Assume IEEE behavior if divisor is zero.</span></div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(right_) {</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            val /= scalar;</div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>            val = scalar / val;</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        }</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>    }</div>
-<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>}</div>
+<div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span>        <span class="comment">// Assume that either Value_ is an IEEE-754 float, or that division by</span></div>
+<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>        <span class="comment">// zero is impossible in this context. We don&#39;t apply manual checks</span></div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>        <span class="comment">// here to avoid performance degradation; we also don&#39;t check that the</span></div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>        <span class="comment">// other operations yield a value that doesn&#39;t overflow/underflow, so</span></div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="comment">// it would be odd to make an exception for div-by-zero errors.</span></div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(right_) {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>            val /= scalar;</div>
+<div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>            val = scalar / val;</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        }</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>    }</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>}</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span> </div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>}</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span> </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> DenseMatrix.hpp:19</div></div>
 <div class="ttc" id="anamespacetatami_html_aab44a37b3762de0c5b1ffbfceb25fa0f"><div class="ttname"><a href="namespacetatami.html#aab44a37b3762de0c5b1ffbfceb25fa0f">tatami::DelayedArithOp</a></div><div class="ttdeci">DelayedArithOp</div><div class="ttdef"><b>Definition</b> arith_utils.hpp:15</div></div>
 </div><!-- fragment --></div><!-- contents -->

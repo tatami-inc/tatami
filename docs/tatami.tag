@@ -401,59 +401,59 @@
     <class kind="struct">tatami::DelayedArithVectorHelper</class>
     <namespace>tatami</namespace>
     <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::ADD, true, Scalar_ &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::ADD, true, Value_, Scalar_ &gt;</type>
       <name>make_DelayedAddScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac0d637bdfb7f4126ded39f6e06b04d3a</anchor>
+      <anchor>a33b2b9798f2a43b62821131ba3a3f6bd</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::SUBTRACT, right_, Scalar_ &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::SUBTRACT, right_, Value_, Scalar_ &gt;</type>
       <name>make_DelayedSubtractScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a54f42d3fa38192c46b1fbd89ffbc96ef</anchor>
+      <anchor>a9bdfe26c0f1426b611e91ee7569045de</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MULTIPLY, true, Scalar_ &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MULTIPLY, true, Value_, Scalar_ &gt;</type>
       <name>make_DelayedMultiplyScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab2ae6b934c10ef1ba28be1bc0f3316db</anchor>
+      <anchor>aa653b51960498cc467ea69c18ea0c097</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::DIVIDE, right_, Scalar_ &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::DIVIDE, right_, Value_, Scalar_ &gt;</type>
       <name>make_DelayedDivideScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a37bafee11663e77fd079b7df8c542b41</anchor>
+      <anchor>a60076096ee4296c0e187a226be5ca4b5</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::ADD, true, margin_, Vector_ &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::ADD, true, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedAddVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a18d82c78f9847f7f3d7b1924736dc08a</anchor>
+      <anchor>a628c631be4424b37c1c1e68e28c5e982</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::SUBTRACT, right_, margin_, Vector_ &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::SUBTRACT, right_, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedSubtractVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae10ad8ba2f67e03997a70bcf344cd0b5</anchor>
+      <anchor>a800b92854282015d96308fb283aeb508</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MULTIPLY, true, margin_, Vector_ &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedMultiplyVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab5028a7b69c08ecec87064d7b3d83b41</anchor>
+      <anchor>ab929acdeb634187cd08d1100bbbf1b29</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::DIVIDE, right_, margin_, Vector_ &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedDivideVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a214dedde7eb472684ce66ec4ba26e77c</anchor>
+      <anchor>a1a4629f17aa4f3a4be06f3479bb6f68f</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
   </compound>
@@ -501,66 +501,66 @@
     <class kind="struct">tatami::DelayedBooleanVectorHelper</class>
     <namespace>tatami</namespace>
     <member kind="function">
-      <type>DelayedBooleanNotHelper</type>
+      <type>DelayedBooleanNotHelper&lt; Value_ &gt;</type>
       <name>make_DelayedBooleanNotHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac1eab4687167d073231e35c032f61275</anchor>
+      <anchor>ac812e757b55c2145bc3d4cd113c712fd</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::AND &gt;</type>
+      <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::AND, Value_ &gt;</type>
       <name>make_DelayedBooleanAndScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3f2492704a466130db315a980f3cdd47</anchor>
+      <anchor>ae460e24124cef43d8a5d3b82e8f02325</anchor>
       <arglist>(bool s)</arglist>
     </member>
     <member kind="function">
       <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::OR &gt;</type>
       <name>make_DelayedBooleanOrScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a90c9fc77d5cdbf54dfac07da1e3bfd38</anchor>
+      <anchor>ac7dbc64e6b0a0c8c48b1423b4b6748f1</anchor>
       <arglist>(bool s)</arglist>
     </member>
     <member kind="function">
       <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::XOR &gt;</type>
       <name>make_DelayedBooleanXorScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad53fbda6886dc05059a1517d6932da7f</anchor>
+      <anchor>a29f6f1b1d28c670f38fda651fe2aa03a</anchor>
       <arglist>(bool s)</arglist>
     </member>
     <member kind="function">
       <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::EQUAL &gt;</type>
       <name>make_DelayedBooleanEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abf1862b291e7f537a0e7745666fa8303</anchor>
+      <anchor>a6bc5d47e0c391c17c85bddf19cc5620a</anchor>
       <arglist>(bool s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::AND, margin_, Vector_ &gt;</type>
+      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::AND, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedBooleanAndVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5df2f96c32ef81f513f571c4bb24dbab</anchor>
+      <anchor>a1fd06669afab8565747e08bbce4b041f</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::OR, margin_, Vector_ &gt;</type>
+      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::OR, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedBooleanOrVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae774f806fbfb728cde3f3d23c9da36de</anchor>
+      <anchor>a503f23fe3e5a2c5f5bc6c0db01a7f64d</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::XOR, margin_, Vector_ &gt;</type>
+      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::XOR, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedBooleanXorVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aca166576eae6f35fc987340bbef9310c</anchor>
+      <anchor>a4bcdace63565fc670b0393675e33bb11</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedBooleanEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a94a1f4e7fec3b8b57aed9b02f06bbab5</anchor>
+      <anchor>a8b07dc8b7a71776bcc222d7c437e2ca3</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
   </compound>
@@ -621,87 +621,87 @@
     <class kind="struct">tatami::DelayedCompareVectorHelper</class>
     <namespace>tatami</namespace>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::EQUAL, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::EQUAL, Value_, Scalar_ &gt;</type>
       <name>make_DelayedEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac33adddd59d925a091b66c75b22b8eca</anchor>
+      <anchor>a11bfea31e4524927274dc1d80c32fd96</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN, Value_, Scalar_ &gt;</type>
       <name>make_DelayedGreaterThanScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6f548d89e93cbeaf155df8307a08fc00</anchor>
+      <anchor>a1961ba2a59d705adf7b8627523a62b3a</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN, Value_, Scalar_ &gt;</type>
       <name>make_DelayedLessThanScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a16b7349067d32a27deff236ca230be92</anchor>
+      <anchor>a7d2d381ec9c0d87f5d561b4dd9d5a58e</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
       <name>make_DelayedGreaterThanOrEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a83dd57b5347e89cf434582059254e09e</anchor>
+      <anchor>ac3df12ccdf4692c0f660f1634a79b857</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
       <name>make_DelayedLessThanOrEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a92d6a0a320c318c4c3cf4874965562ce</anchor>
+      <anchor>af5e67b02534cbe1813be5e2d690af88b</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::NOT_EQUAL, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::NOT_EQUAL, Value_, Scalar_ &gt;</type>
       <name>make_DelayedNotEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a27b9934b71e5f6d28b8c7f87a8216972</anchor>
+      <anchor>ac5d5cef56d2119e73e3f670d49de6b48</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a258d8a40e2107e890ed9729d8134702a</anchor>
+      <anchor>aa40c54d5c5cc1109d42a150f5cd7ed2f</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedGreaterThanVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8830d636d91bd512aca9c5afb8a10226</anchor>
+      <anchor>aaf1951e22415be4714495556f701a7fd</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedLessThanVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a0e0dac7e0b22aa6d2d5cf1291d57ca5c</anchor>
+      <anchor>a6dca8b9072813f6e9e52aa0536817b82</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedGreaterThanOrEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4342079e4437b82cfdb80e9ad6aba34e</anchor>
+      <anchor>a70a3e0489fdaccc80c7cc0125e9cf906</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedLessThanOrEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8a3e3ef7cd498ae62b383f8c34b0b43b</anchor>
+      <anchor>a83999d2ac877c5b15f6fd5a0f33a894a</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::NOT_EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::NOT_EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedNotEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab6cdc6ca323706821899c20f00e42c52</anchor>
+      <anchor>a6c84e8b757cf5ba6479a6ea3e6e530e3</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
   </compound>
@@ -1403,26 +1403,30 @@
   <compound kind="struct">
     <name>tatami::DelayedAbsHelper</name>
     <filename>structtatami_1_1DelayedAbsHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedAcosHelper</name>
     <filename>structtatami_1_1DelayedAcosHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedAcoshHelper</name>
     <filename>structtatami_1_1DelayedAcoshHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedArithScalarHelper</name>
     <filename>structtatami_1_1DelayedArithScalarHelper.html</filename>
     <templarg>DelayedArithOp op_</templarg>
     <templarg>bool right_</templarg>
+    <templarg>typename Value_</templarg>
     <templarg>typename Scalar_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedArithScalarHelper</name>
       <anchorfile>structtatami_1_1DelayedArithScalarHelper.html</anchorfile>
-      <anchor>a47fb79f9445e4003799256162701470c</anchor>
+      <anchor>ad49bfd018e4e05434b52bc3eca1563b1</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
   </compound>
@@ -1432,30 +1436,35 @@
     <templarg>DelayedArithOp op_</templarg>
     <templarg>bool right_</templarg>
     <templarg>int margin_</templarg>
+    <templarg>typename Value_</templarg>
     <templarg>typename Vector_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedArithVectorHelper</name>
       <anchorfile>structtatami_1_1DelayedArithVectorHelper.html</anchorfile>
-      <anchor>a83a921d90c37170f8a9507be4921cfb8</anchor>
+      <anchor>af5554f1c599eeabfa01f630da1e7004e</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedAsinHelper</name>
     <filename>structtatami_1_1DelayedAsinHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedAsinhHelper</name>
     <filename>structtatami_1_1DelayedAsinhHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedAtanHelper</name>
     <filename>structtatami_1_1DelayedAtanHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedAtanhHelper</name>
     <filename>structtatami_1_1DelayedAtanhHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedBinaryArithHelper</name>
@@ -1778,16 +1787,18 @@
   <compound kind="struct">
     <name>tatami::DelayedBooleanNotHelper</name>
     <filename>structtatami_1_1DelayedBooleanNotHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedBooleanScalarHelper</name>
     <filename>structtatami_1_1DelayedBooleanScalarHelper.html</filename>
     <templarg>DelayedBooleanOp op_</templarg>
+    <templarg>typename Value_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedBooleanScalarHelper</name>
       <anchorfile>structtatami_1_1DelayedBooleanScalarHelper.html</anchorfile>
-      <anchor>a1673c0a7649547372765de7cd8c3c21e</anchor>
+      <anchor>af70a6159d971454fef9eaa22c6ad6c2e</anchor>
       <arglist>(bool s)</arglist>
     </member>
   </compound>
@@ -1796,12 +1807,13 @@
     <filename>structtatami_1_1DelayedBooleanVectorHelper.html</filename>
     <templarg>DelayedBooleanOp op_</templarg>
     <templarg>int margin_</templarg>
+    <templarg>typename Value_</templarg>
     <templarg>typename Vector_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedBooleanVectorHelper</name>
       <anchorfile>structtatami_1_1DelayedBooleanVectorHelper.html</anchorfile>
-      <anchor>a08063459042d46c0108c2141da085c07</anchor>
+      <anchor>a8eae5e50b3c4fafa9c5f92a3c8b7c18b</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
   </compound>
@@ -1957,17 +1969,19 @@
   <compound kind="struct">
     <name>tatami::DelayedCeilingHelper</name>
     <filename>structtatami_1_1DelayedCeilingHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedCompareScalarHelper</name>
     <filename>structtatami_1_1DelayedCompareScalarHelper.html</filename>
     <templarg>DelayedCompareOp op_</templarg>
+    <templarg>typename Value_</templarg>
     <templarg>typename Scalar_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedCompareScalarHelper</name>
       <anchorfile>structtatami_1_1DelayedCompareScalarHelper.html</anchorfile>
-      <anchor>a4d4c8c5e94564296c3a03dced6849469</anchor>
+      <anchor>a5b9e28a56fc093e389749a34c50e959c</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
   </compound>
@@ -1976,100 +1990,115 @@
     <filename>structtatami_1_1DelayedCompareVectorHelper.html</filename>
     <templarg>DelayedCompareOp op_</templarg>
     <templarg>int margin_</templarg>
+    <templarg>typename Value_</templarg>
     <templarg>typename Vector_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedCompareVectorHelper</name>
       <anchorfile>structtatami_1_1DelayedCompareVectorHelper.html</anchorfile>
-      <anchor>a9081c0cd0c8c6c1517af84389d669281</anchor>
+      <anchor>a907bed566e1c9cf7be5e917a491cc9f0</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedCosHelper</name>
     <filename>structtatami_1_1DelayedCosHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedCoshHelper</name>
     <filename>structtatami_1_1DelayedCoshHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedExpHelper</name>
     <filename>structtatami_1_1DelayedExpHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedExpm1Helper</name>
     <filename>structtatami_1_1DelayedExpm1Helper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedFloorHelper</name>
     <filename>structtatami_1_1DelayedFloorHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedGammaHelper</name>
     <filename>structtatami_1_1DelayedGammaHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedLgammaHelper</name>
     <filename>structtatami_1_1DelayedLgammaHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedLog1pHelper</name>
     <filename>structtatami_1_1DelayedLog1pHelper.html</filename>
+    <templarg>typename Value_</templarg>
     <templarg>typename Base_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedLog1pHelper</name>
       <anchorfile>structtatami_1_1DelayedLog1pHelper.html</anchorfile>
-      <anchor>a5847fceee1574397d169678782c6cec1</anchor>
+      <anchor>a72f0a36b37285d7db294261af4e97f9f</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>DelayedLog1pHelper</name>
       <anchorfile>structtatami_1_1DelayedLog1pHelper.html</anchorfile>
-      <anchor>a3d91050db9bb5efca08772f240c04565</anchor>
+      <anchor>a2b0dbc27f431eda6d26a40872aa31a8a</anchor>
       <arglist>(Base_ base)</arglist>
     </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedLogHelper</name>
     <filename>structtatami_1_1DelayedLogHelper.html</filename>
+    <templarg>typename Value_</templarg>
     <templarg>typename Base_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedLogHelper</name>
       <anchorfile>structtatami_1_1DelayedLogHelper.html</anchorfile>
-      <anchor>a38d8847a33d046f36f21fb88d754efcd</anchor>
+      <anchor>a4f43ca158fd03c86d913c36deac643af</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>DelayedLogHelper</name>
       <anchorfile>structtatami_1_1DelayedLogHelper.html</anchorfile>
-      <anchor>af283f9908c037efa24fe9afa0a33a7ad</anchor>
+      <anchor>a8f4ac06070ccc7c92b201b70d7a1f785</anchor>
       <arglist>(Base_ base)</arglist>
     </member>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedRoundHelper</name>
     <filename>structtatami_1_1DelayedRoundHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedSignHelper</name>
     <filename>structtatami_1_1DelayedSignHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedSinHelper</name>
     <filename>structtatami_1_1DelayedSinHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedSinhHelper</name>
     <filename>structtatami_1_1DelayedSinhHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedSqrtHelper</name>
     <filename>structtatami_1_1DelayedSqrtHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="class">
     <name>tatami::DelayedSubset</name>
@@ -2818,10 +2847,12 @@
   <compound kind="struct">
     <name>tatami::DelayedTanHelper</name>
     <filename>structtatami_1_1DelayedTanHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="struct">
     <name>tatami::DelayedTanhHelper</name>
     <filename>structtatami_1_1DelayedTanhHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="class">
     <name>tatami::DelayedTranspose</name>
@@ -2973,6 +3004,7 @@
   <compound kind="struct">
     <name>tatami::DelayedTruncHelper</name>
     <filename>structtatami_1_1DelayedTruncHelper.html</filename>
+    <templarg>typename Value_</templarg>
   </compound>
   <compound kind="class">
     <name>tatami::DelayedUnaryIsometricOp</name>
@@ -4905,206 +4937,206 @@
       <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; right, Operation_ op)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::ADD, true, Scalar_ &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::ADD, true, Value_, Scalar_ &gt;</type>
       <name>make_DelayedAddScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac0d637bdfb7f4126ded39f6e06b04d3a</anchor>
+      <anchor>a33b2b9798f2a43b62821131ba3a3f6bd</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::SUBTRACT, right_, Scalar_ &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::SUBTRACT, right_, Value_, Scalar_ &gt;</type>
       <name>make_DelayedSubtractScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a54f42d3fa38192c46b1fbd89ffbc96ef</anchor>
+      <anchor>a9bdfe26c0f1426b611e91ee7569045de</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MULTIPLY, true, Scalar_ &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MULTIPLY, true, Value_, Scalar_ &gt;</type>
       <name>make_DelayedMultiplyScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab2ae6b934c10ef1ba28be1bc0f3316db</anchor>
+      <anchor>aa653b51960498cc467ea69c18ea0c097</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::DIVIDE, right_, Scalar_ &gt;</type>
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::DIVIDE, right_, Value_, Scalar_ &gt;</type>
       <name>make_DelayedDivideScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a37bafee11663e77fd079b7df8c542b41</anchor>
+      <anchor>a60076096ee4296c0e187a226be5ca4b5</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::ADD, true, margin_, Vector_ &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::ADD, true, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedAddVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a18d82c78f9847f7f3d7b1924736dc08a</anchor>
+      <anchor>a628c631be4424b37c1c1e68e28c5e982</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::SUBTRACT, right_, margin_, Vector_ &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::SUBTRACT, right_, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedSubtractVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae10ad8ba2f67e03997a70bcf344cd0b5</anchor>
+      <anchor>a800b92854282015d96308fb283aeb508</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MULTIPLY, true, margin_, Vector_ &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedMultiplyVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab5028a7b69c08ecec87064d7b3d83b41</anchor>
+      <anchor>ab929acdeb634187cd08d1100bbbf1b29</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::DIVIDE, right_, margin_, Vector_ &gt;</type>
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedDivideVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a214dedde7eb472684ce66ec4ba26e77c</anchor>
+      <anchor>a1a4629f17aa4f3a4be06f3479bb6f68f</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanNotHelper</type>
+      <type>DelayedBooleanNotHelper&lt; Value_ &gt;</type>
       <name>make_DelayedBooleanNotHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac1eab4687167d073231e35c032f61275</anchor>
+      <anchor>ac812e757b55c2145bc3d4cd113c712fd</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::AND &gt;</type>
+      <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::AND, Value_ &gt;</type>
       <name>make_DelayedBooleanAndScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3f2492704a466130db315a980f3cdd47</anchor>
+      <anchor>ae460e24124cef43d8a5d3b82e8f02325</anchor>
       <arglist>(bool s)</arglist>
     </member>
     <member kind="function">
       <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::OR &gt;</type>
       <name>make_DelayedBooleanOrScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a90c9fc77d5cdbf54dfac07da1e3bfd38</anchor>
+      <anchor>ac7dbc64e6b0a0c8c48b1423b4b6748f1</anchor>
       <arglist>(bool s)</arglist>
     </member>
     <member kind="function">
       <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::XOR &gt;</type>
       <name>make_DelayedBooleanXorScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad53fbda6886dc05059a1517d6932da7f</anchor>
+      <anchor>a29f6f1b1d28c670f38fda651fe2aa03a</anchor>
       <arglist>(bool s)</arglist>
     </member>
     <member kind="function">
       <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::EQUAL &gt;</type>
       <name>make_DelayedBooleanEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abf1862b291e7f537a0e7745666fa8303</anchor>
+      <anchor>a6bc5d47e0c391c17c85bddf19cc5620a</anchor>
       <arglist>(bool s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::AND, margin_, Vector_ &gt;</type>
+      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::AND, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedBooleanAndVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5df2f96c32ef81f513f571c4bb24dbab</anchor>
+      <anchor>a1fd06669afab8565747e08bbce4b041f</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::OR, margin_, Vector_ &gt;</type>
+      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::OR, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedBooleanOrVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae774f806fbfb728cde3f3d23c9da36de</anchor>
+      <anchor>a503f23fe3e5a2c5f5bc6c0db01a7f64d</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::XOR, margin_, Vector_ &gt;</type>
+      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::XOR, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedBooleanXorVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aca166576eae6f35fc987340bbef9310c</anchor>
+      <anchor>a4bcdace63565fc670b0393675e33bb11</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedBooleanEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a94a1f4e7fec3b8b57aed9b02f06bbab5</anchor>
+      <anchor>a8b07dc8b7a71776bcc222d7c437e2ca3</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::EQUAL, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::EQUAL, Value_, Scalar_ &gt;</type>
       <name>make_DelayedEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac33adddd59d925a091b66c75b22b8eca</anchor>
+      <anchor>a11bfea31e4524927274dc1d80c32fd96</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN, Value_, Scalar_ &gt;</type>
       <name>make_DelayedGreaterThanScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6f548d89e93cbeaf155df8307a08fc00</anchor>
+      <anchor>a1961ba2a59d705adf7b8627523a62b3a</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN, Value_, Scalar_ &gt;</type>
       <name>make_DelayedLessThanScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a16b7349067d32a27deff236ca230be92</anchor>
+      <anchor>a7d2d381ec9c0d87f5d561b4dd9d5a58e</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
       <name>make_DelayedGreaterThanOrEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a83dd57b5347e89cf434582059254e09e</anchor>
+      <anchor>ac3df12ccdf4692c0f660f1634a79b857</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
       <name>make_DelayedLessThanOrEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a92d6a0a320c318c4c3cf4874965562ce</anchor>
+      <anchor>af5e67b02534cbe1813be5e2d690af88b</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::NOT_EQUAL, Scalar_ &gt;</type>
+      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::NOT_EQUAL, Value_, Scalar_ &gt;</type>
       <name>make_DelayedNotEqualScalarHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a27b9934b71e5f6d28b8c7f87a8216972</anchor>
+      <anchor>ac5d5cef56d2119e73e3f670d49de6b48</anchor>
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a258d8a40e2107e890ed9729d8134702a</anchor>
+      <anchor>aa40c54d5c5cc1109d42a150f5cd7ed2f</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedGreaterThanVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8830d636d91bd512aca9c5afb8a10226</anchor>
+      <anchor>aaf1951e22415be4714495556f701a7fd</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedLessThanVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a0e0dac7e0b22aa6d2d5cf1291d57ca5c</anchor>
+      <anchor>a6dca8b9072813f6e9e52aa0536817b82</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedGreaterThanOrEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4342079e4437b82cfdb80e9ad6aba34e</anchor>
+      <anchor>a70a3e0489fdaccc80c7cc0125e9cf906</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedLessThanOrEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8a3e3ef7cd498ae62b383f8c34b0b43b</anchor>
+      <anchor>a83999d2ac877c5b15f6fd5a0f33a894a</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::NOT_EQUAL, margin_, Vector_ &gt;</type>
+      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::NOT_EQUAL, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedNotEqualVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab6cdc6ca323706821899c20f00e42c52</anchor>
+      <anchor>a6c84e8b757cf5ba6479a6ea3e6e530e3</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
