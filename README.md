@@ -304,7 +304,6 @@ target_link_libraries(mylib INTERFACE tatami)
 ```
 
 If you're not using CMake, the simple approach is to just copy the files - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
-If you want to read Matrix Market files, you'll also need to add the [**byteme**](https://github.com/clusterfork/byteme) header-only library to the compiler's search path.
 
 ## Links
 

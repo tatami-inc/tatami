@@ -41,12 +41,3 @@ jobs:
             ./${x}
             echo
         done
-
-    - name: Run the MatrixMarket reader
-      run: |
-        cd build/gallery
-        x=read_mm
-        echo "#### RUNNING ${x} ####"
-        echo
-        printf "%% MatrixMarket\n10 10 3\n1 1 1\n2 2 2\n3 3 4\n" > test.mtx
-        ./${x} test.mtx

@@ -83,11 +83,6 @@ target_link_libraries(
 # Test extensions
 add_executable(
     exttest 
-
-    src/ext/MatrixMarket/from_buffer.cpp
-    src/ext/MatrixMarket/from_text.cpp
-    src/ext/MatrixMarket/from_gzip.cpp
-
     src/ext/layered/convert_to_layered_sparse.cpp
 )
 
@@ -109,16 +104,6 @@ endif()
 
 target_compile_definitions(libtest PRIVATE DEBUG=1)
 target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
-
-find_package(ZLIB)
-target_link_libraries(exttest ZLIB::ZLIB)
-target_compile_definitions(exttest PRIVATE TATAMI_USE_ZLIB=1)
-
-include(CheckIncludeFiles)
-check_include_files(filesystem HAVE_CXX_FS)
-if (NOT HAVE_CXX_FS) 
-    target_link_libraries(exttest stdc++fs) 
-endif()
 
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

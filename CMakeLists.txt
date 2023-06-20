@@ -9,10 +9,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 add_library(tatami INTERFACE)
 
-add_subdirectory(extern)
-
-target_link_libraries(tatami INTERFACE byteme)
-
 # Switch between include directories depending on whether the downstream is
 # using the build directly or is using the installed package.
 target_include_directories(tatami 
