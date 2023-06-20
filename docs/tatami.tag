@@ -163,27 +163,6 @@
     <filename>layered_8hpp.html</filename>
   </compound>
   <compound kind="file">
-    <name>layered.hpp</name>
-    <path>tatami/ext/MatrixMarket/</path>
-    <filename>MatrixMarket_2layered_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <namespace>tatami::MatrixMarket</namespace>
-    <member kind="function">
-      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
-      <name>load_layered_sparse_matrix_from_file</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>a1957591502ac286ad6b1bcae78ee75f9</anchor>
-      <arglist>(const char *filepath, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-    <member kind="function">
-      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
-      <name>load_layered_sparse_matrix_from_buffer</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>af7655515516f20bf22da4311b7e8dcc5</anchor>
-      <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
     <name>convert_to_layered_sparse.hpp</name>
     <path>tatami/ext/layered/</path>
     <filename>convert__to__layered__sparse_8hpp.html</filename>
@@ -202,47 +181,6 @@
     <filename>LayeredMatrixData_8hpp.html</filename>
     <class kind="struct">tatami::LayeredMatrixData</class>
     <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>MatrixMarket.hpp</name>
-    <path>tatami/ext/</path>
-    <filename>MatrixMarket_8hpp.html</filename>
-  </compound>
-  <compound kind="file">
-    <name>simple.hpp</name>
-    <path>tatami/ext/MatrixMarket/</path>
-    <filename>simple_8hpp.html</filename>
-    <class kind="struct">tatami::MatrixMarket::HeaderDetails</class>
-    <namespace>tatami</namespace>
-    <namespace>tatami::MatrixMarket</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; tatami::Matrix&lt; T, IDX &gt; &gt;</type>
-      <name>load_sparse_matrix_from_file</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>acb8ab6a2dba7c9b9088245792d8dd4c5</anchor>
-      <arglist>(const char *filepath, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; tatami::Matrix&lt; T, IDX &gt; &gt;</type>
-      <name>load_sparse_matrix_from_buffer</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>abca83cf0a5a51b93f78991719c8bd772</anchor>
-      <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-    <member kind="function">
-      <type>HeaderDetails</type>
-      <name>extract_header_from_file</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>afc195d253d64d0a67216cfd6d52e8639</anchor>
-      <arglist>(const char *filepath, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-    <member kind="function">
-      <type>HeaderDetails</type>
-      <name>extract_header_from_buffer</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>ae0ced3181c20a3281a2ab4844b978313</anchor>
-      <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>arith_utils.hpp</name>
@@ -3492,31 +3430,6 @@
     </member>
   </compound>
   <compound kind="struct">
-    <name>tatami::MatrixMarket::HeaderDetails</name>
-    <filename>structtatami_1_1MatrixMarket_1_1HeaderDetails.html</filename>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>nrow</name>
-      <anchorfile>structtatami_1_1MatrixMarket_1_1HeaderDetails.html</anchorfile>
-      <anchor>a5cdfdb10078f2f25cae2f2aa22279007</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>ncol</name>
-      <anchorfile>structtatami_1_1MatrixMarket_1_1HeaderDetails.html</anchorfile>
-      <anchor>a35de5188ab362aaa52aa39d2cfd79188</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>size_t</type>
-      <name>nlines</name>
-      <anchorfile>structtatami_1_1MatrixMarket_1_1HeaderDetails.html</anchorfile>
-      <anchor>a63af108a27977c4e626181e58f28cb95</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
-  <compound kind="struct">
     <name>tatami::IndexExtractor</name>
     <filename>structtatami_1_1IndexExtractor.html</filename>
     <templarg>typename Index_</templarg>
@@ -4548,7 +4461,6 @@
   <compound kind="namespace">
     <name>tatami</name>
     <filename>namespacetatami.html</filename>
-    <namespace>tatami::MatrixMarket</namespace>
     <class kind="class">tatami::ArrayView</class>
     <class kind="struct">tatami::BlockExtractor</class>
     <class kind="class">tatami::CompressedSparseMatrix</class>
@@ -5306,53 +5218,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a7518f5e8e09a6f6d7d3955b8ea286689</anchor>
       <arglist>(const Matrix&lt; T, IDX &gt; *ptr)</arglist>
-    </member>
-  </compound>
-  <compound kind="namespace">
-    <name>tatami::MatrixMarket</name>
-    <filename>namespacetatami_1_1MatrixMarket.html</filename>
-    <class kind="struct">tatami::MatrixMarket::HeaderDetails</class>
-    <member kind="function">
-      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
-      <name>load_layered_sparse_matrix_from_file</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>a1957591502ac286ad6b1bcae78ee75f9</anchor>
-      <arglist>(const char *filepath, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-    <member kind="function">
-      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
-      <name>load_layered_sparse_matrix_from_buffer</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>af7655515516f20bf22da4311b7e8dcc5</anchor>
-      <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; tatami::Matrix&lt; T, IDX &gt; &gt;</type>
-      <name>load_sparse_matrix_from_file</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>acb8ab6a2dba7c9b9088245792d8dd4c5</anchor>
-      <arglist>(const char *filepath, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; tatami::Matrix&lt; T, IDX &gt; &gt;</type>
-      <name>load_sparse_matrix_from_buffer</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>abca83cf0a5a51b93f78991719c8bd772</anchor>
-      <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-    <member kind="function">
-      <type>HeaderDetails</type>
-      <name>extract_header_from_file</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>afc195d253d64d0a67216cfd6d52e8639</anchor>
-      <arglist>(const char *filepath, int compression=0, size_t bufsize=65536)</arglist>
-    </member>
-    <member kind="function">
-      <type>HeaderDetails</type>
-      <name>extract_header_from_buffer</name>
-      <anchorfile>namespacetatami_1_1MatrixMarket.html</anchorfile>
-      <anchor>ae0ced3181c20a3281a2ab4844b978313</anchor>
-      <arglist>(const unsigned char *buffer, size_t n, int compression=0, size_t bufsize=65536)</arglist>
     </member>
   </compound>
   <compound kind="page">

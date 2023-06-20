@@ -1,8 +1,5 @@
 var searchData=
 [
-  ['semicompressedsparsematrix_0',['SemiCompressedSparseMatrix',['../classtatami_1_1SemiCompressedSparseMatrix.html',1,'tatami']]],
-  ['somenumericarray_1',['SomeNumericArray',['../structtatami_1_1SomeNumericArray.html',1,'tatami']]],
-  ['sparseextractor_2',['SparseExtractor',['../classtatami_1_1SparseExtractor.html',1,'tatami']]],
-  ['sparserange_3',['SparseRange',['../structtatami_1_1SparseRange.html',1,'tatami']]],
-  ['sparserangecopy_4',['SparseRangeCopy',['../structtatami_1_1SparseRangeCopy.html',1,'tatami']]]
+  ['virtualdensematrix_0',['VirtualDenseMatrix',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]],
+  ['virtualdensematrix_3c_20value_5f_2c_20int_20_3e_1',['VirtualDenseMatrix&lt; Value_, int &gt;',['../classtatami_1_1VirtualDenseMatrix.html',1,'tatami']]]
 ];

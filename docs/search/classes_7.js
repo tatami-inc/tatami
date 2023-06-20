@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['indexextractor_0',['IndexExtractor',['../structtatami_1_1IndexExtractor.html',1,'tatami']]],
-  ['iterator_1',['Iterator',['../structtatami_1_1SomeNumericArray_1_1Iterator.html',1,'tatami::SomeNumericArray']]]
+  ['layeredmatrixdata_0',['LayeredMatrixData',['../structtatami_1_1LayeredMatrixData.html',1,'tatami']]],
+  ['lruchunkcache_1',['LruChunkCache',['../classtatami_1_1LruChunkCache.html',1,'tatami']]]
 ];

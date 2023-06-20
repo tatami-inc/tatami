@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['options_0',['Options',['../structtatami_1_1Options.html',1,'tatami']]],
-  ['oracle_1',['Oracle',['../structtatami_1_1Oracle.html',1,'tatami']]],
-  ['oracle_3c_20index_5fin_5f_20_3e_2',['Oracle&lt; Index_in_ &gt;',['../structtatami_1_1Oracle.html',1,'tatami']]],
-  ['oraclechunkcache_3',['OracleChunkCache',['../classtatami_1_1OracleChunkCache.html',1,'tatami']]],
-  ['oraclestream_4',['OracleStream',['../structtatami_1_1OracleStream.html',1,'tatami']]]
+  ['semicompressedsparsematrix_0',['SemiCompressedSparseMatrix',['../classtatami_1_1SemiCompressedSparseMatrix.html',1,'tatami']]],
+  ['somenumericarray_1',['SomeNumericArray',['../structtatami_1_1SomeNumericArray.html',1,'tatami']]],
+  ['sparseextractor_2',['SparseExtractor',['../classtatami_1_1SparseExtractor.html',1,'tatami']]],
+  ['sparserange_3',['SparseRange',['../structtatami_1_1SparseRange.html',1,'tatami']]],
+  ['sparserangecopy_4',['SparseRangeCopy',['../structtatami_1_1SparseRangeCopy.html',1,'tatami']]]
 ];
