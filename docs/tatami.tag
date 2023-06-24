@@ -200,6 +200,56 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>DelayedBinaryIsometricOp.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>DelayedBinaryIsometricOp_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricOp</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>make_DelayedBinaryIsometricOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af39c0767d23c6bdc5f4267f062ef2e17</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; right, Operation_ op)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>boolean_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>boolean__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="enumeration">
+      <type></type>
+      <name>DelayedBooleanOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a2104862d4068933ea4cc805c92f82d07</anchor>
+      <arglist></arglist>
+      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a558ffc8f5770d8e4f95f51d822685532">AND</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a1d00e7dce692e8dc3f6877f035e3a616">OR</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a97675eb3f268048604dc5155511a2a4d">XOR</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>compare_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>compare__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="enumeration">
+      <type></type>
+      <name>DelayedCompareOp</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ac4fc175a57ace709941b5ca7ddb19708</anchor>
+      <arglist></arglist>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a1625ef4fe09f68fa20d3ff6e02cd5c8e">GREATER_THAN</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa327176a0a845c117bdfadec134a95e9">LESS_THAN</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa6eac69202c3dc2978176801a84e4d1d">GREATER_THAN_OR_EQUAL</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a8397780541b6289d2a0b991d1c28c432">LESS_THAN_OR_EQUAL</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a4ea2d378cdec20f59330f113297bc1ce">NOT_EQUAL</enumvalue>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>arith_helpers.hpp</name>
     <path>tatami/isometric/binary/</path>
     <filename>binary_2arith__helpers_8hpp.html</filename>
@@ -547,56 +597,6 @@
     </member>
   </compound>
   <compound kind="file">
-    <name>DelayedBinaryIsometricOp.hpp</name>
-    <path>tatami/isometric/binary/</path>
-    <filename>DelayedBinaryIsometricOp_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBinaryIsometricOp</class>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedBinaryIsometricOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af39c0767d23c6bdc5f4267f062ef2e17</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; right, Operation_ op)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>boolean_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>boolean__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>DelayedBooleanOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2104862d4068933ea4cc805c92f82d07</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a558ffc8f5770d8e4f95f51d822685532">AND</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a1d00e7dce692e8dc3f6877f035e3a616">OR</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a97675eb3f268048604dc5155511a2a4d">XOR</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>compare_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>compare__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>DelayedCompareOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac4fc175a57ace709941b5ca7ddb19708</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a1625ef4fe09f68fa20d3ff6e02cd5c8e">GREATER_THAN</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa327176a0a845c117bdfadec134a95e9">LESS_THAN</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa6eac69202c3dc2978176801a84e4d1d">GREATER_THAN_OR_EQUAL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a8397780541b6289d2a0b991d1c28c432">LESS_THAN_OR_EQUAL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a4ea2d378cdec20f59330f113297bc1ce">NOT_EQUAL</enumvalue>
-    </member>
-  </compound>
-  <compound kind="file">
     <name>DelayedUnaryIsometricOp.hpp</name>
     <path>tatami/isometric/unary/</path>
     <filename>DelayedUnaryIsometricOp_8hpp.html</filename>
@@ -843,8 +843,8 @@
       <type>void</type>
       <name>parallelize</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a29ce7a2219ea60d45de1aa3d4de66063</anchor>
-      <arglist>(Function_ fun, size_t tasks, size_t threads)</arglist>
+      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
+      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
@@ -5118,8 +5118,8 @@
       <type>void</type>
       <name>parallelize</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a29ce7a2219ea60d45de1aa3d4de66063</anchor>
-      <arglist>(Function_ fun, size_t tasks, size_t threads)</arglist>
+      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
+      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
