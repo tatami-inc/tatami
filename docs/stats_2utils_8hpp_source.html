@@ -102,7 +102,7 @@ $(function() {
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>            <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> t = 0; t &lt; threads; ++t) {</div>
 <div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                Index_ start = worker_size * t;</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>                <span class="keywordflow">if</span> (start &lt; tasks) {</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                    Index_ remaining = task - start;</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                    Index_ remaining = tasks - start;</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                    fun(t, start, std::min(remaining, worker_size)); <span class="comment">// Slightly roundabout way to avoid integer overflow on Index_.</span></div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                }</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            }</div>
