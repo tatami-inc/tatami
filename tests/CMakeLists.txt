@@ -46,6 +46,7 @@ add_executable(
     src/stats/variances.cpp
     src/stats/medians.cpp
     src/stats/ranges.cpp
+    src/stats/parallelize.cpp
 
     src/utils/wrap_shared_ptr.cpp
     src/utils/SomeNumericArray.cpp
@@ -72,6 +73,7 @@ add_executable(
     src/stats/variances.cpp
     src/stats/medians.cpp
     src/stats/ranges.cpp
+    src/stats/parallelize.cpp
 )
 
 target_link_libraries(

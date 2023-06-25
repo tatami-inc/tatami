@@ -43,15 +43,14 @@ void parallelize(Function_ fun, Index_ tasks, size_t threads) {
 
         if (threads > 1) {
 #ifndef TATAMI_CUSTOM_PARALLEL
-            Index_ worker_size = std::ceil(static_cast<double>(tasks) / static_cast<double>(threads));
+            Index_ worker_size = (tasks / threads) + (tasks % threads > 0); // Ceiling of an integer division.
+            threads = (tasks / worker_size) + (tasks % worker_size > 0); // Set the actual number of required threads.
 
             #pragma omp parallel for num_threads(threads)
             for (size_t t = 0; t < threads; ++t) {
-                Index_ start = worker_size * t;
-                if (start < tasks) {
-                    Index_ remaining = tasks - start;
-                    fun(t, start, std::min(remaining, worker_size)); // Slightly roundabout way to avoid integer overflow on Index_.
-                }
+                Index_ start = worker_size * t; // Will not overflow due to the above recomputation of 'threads'.
+                Index_ remaining = tasks - start; // Must be positive, as otherwise 'tasks % worker_size = 0' and the iteration wouldn't even get here.
+                fun(t, start, std::min(remaining, worker_size)); // Use 'remaining' to avoid potential overflow from computing 'end = start + worker_size'.
             }
 #else
             TATAMI_CUSTOM_PARALLEL(std::move(fun), tasks, threads);
