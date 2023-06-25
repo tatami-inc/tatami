@@ -246,3 +246,74 @@ INSTANTIATE_TEST_CASE_P(
         )
     )
 );
+
+/*************************************
+ *************************************/
+
+TEST(DenseMatrix, TypeOverflow) {
+    // Check for correct pointer arithmetic when indices are supplied in a smaller integer type;
+    // the class should convert them into size_t before doing any work.
+    std::vector<double> contents(20000);
+    double counter = -105;
+    for (auto& i : contents) { i = counter++; }
+
+    tatami::DenseColumnMatrix<double> ref(100, 200, contents);
+    tatami::DenseColumnMatrix<double, unsigned char> limited(100, 200, contents);
+
+    EXPECT_EQ(limited.nrow(), 100);
+    EXPECT_EQ(limited.ncol(), 200);
+
+    {
+        auto rwrk = ref.dense_column();
+        auto lwrk = limited.dense_column();
+        for (int i = 0; i < ref.ncol(); ++i) {
+            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+        }
+    }
+
+    {
+        auto rwrk = ref.dense_row();
+        auto lwrk = limited.dense_row();
+        for (int i = 0; i < ref.nrow(); ++i) {
+            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+        }
+    }
+
+    {
+        auto rwrk = ref.dense_column(59, 189);
+        auto lwrk = limited.dense_column(59, 189);
+        for (int i = 0; i < ref.ncol(); ++i) {
+            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+        }
+    }
+
+    {
+        auto rwrk = ref.dense_row(59, 89);
+        auto lwrk = limited.dense_row(59, 89);
+        for (int i = 0; i < ref.nrow(); ++i) {
+            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+        }
+    }
+
+    {
+        std::vector<int> indices{ 11, 33, 55, 99, 111, 122, 155, 177, 199 };
+        std::vector<unsigned char> uindices(indices.begin(), indices.end());
+
+        auto rwrk = ref.dense_column(std::move(indices));
+        auto lwrk = limited.dense_column(std::move(uindices));
+        for (int i = 0; i < ref.ncol(); ++i) {
+            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+        }
+    }
+
+    {
+        std::vector<int> indices{ 10, 20, 40, 60, 80, 99 };
+        std::vector<unsigned char> uindices(indices.begin(), indices.end());
+
+        auto rwrk = ref.dense_row(std::move(indices));
+        auto lwrk = limited.dense_row(std::move(uindices));
+        for (int i = 0; i < ref.nrow(); ++i) {
+            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+        }
+    }
+}
