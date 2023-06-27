@@ -191,6 +191,51 @@ TEST_P(ArithNonCommutativeScalarTest, Division) {
     }
 }
 
+TEST_P(ArithNonCommutativeScalarTest, Power) {
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
+
+    tatami::DelayedAbsHelper op0;
+    dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op0);
+    sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op0);
+
+    auto my_param = GetParam();
+    double val = std::abs(std::get<0>(my_param));
+    bool on_right = std::get<1>(my_param);
+    if (on_right) {
+        auto op = tatami::make_DelayedPowerScalarHelper<true>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_mod, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_mod, op);
+    } else {
+        auto op = tatami::make_DelayedPowerScalarHelper<false>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_mod, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_mod, op);
+    }
+
+    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_EQ(dense->nrow(), nrow);
+    EXPECT_EQ(dense->ncol(), ncol);
+
+    if (on_right && val) {
+        EXPECT_TRUE(sparse_mod->sparse());
+    } else {
+        EXPECT_FALSE(sparse_mod->sparse());
+    }
+
+    // Again, doing some light tests.
+    auto refvec = simulated;
+    for (auto& r : refvec) {
+        if (on_right) {
+            r = std::pow(std::abs(r), val);
+        } else {
+            r = std::pow(val, std::abs(r));
+        }
+    }
+    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+
+    quick_test_all(dense_mod.get(), &ref);
+    quick_test_all(sparse_mod.get(), &ref);
+}
+
 INSTANTIATE_TEST_CASE_P(
     ArithScalar,
     ArithNonCommutativeScalarTest,

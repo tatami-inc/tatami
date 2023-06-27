@@ -63,7 +63,7 @@ Value_ delayed_arith_zero(Scalar_ scalar) {
 template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
 constexpr bool delayed_arith_always_dense() {
     // If we're dividing the scalar by the matrix, values of zero in the matrix will yield non-zero results.
-    if constexpr(op_ == DelayedArithOp::DIVIDE && !right_) {
+    if constexpr((op_ == DelayedArithOp::DIVIDE || op_ == DelayedArithOp::POWER) && !right_) {
         return true;
     }
 
@@ -296,6 +296,18 @@ DelayedArithScalarHelper<DelayedArithOp::DIVIDE, right_, Value_, Scalar_> make_D
 }
 
 /**
+ * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
+ * @tparam Value_ Type of the data value.
+ * @tparam Scalar_ Type of the scalar.
+ * @param s Scalar value to be power transformed.
+ * @return A helper class for delayed scalar power transformation.
+ */
+template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
+DelayedArithScalarHelper<DelayedArithOp::POWER, right_, Value_, Scalar_> make_DelayedPowerScalarHelper(Scalar_ s) {
+    return DelayedArithScalarHelper<DelayedArithOp::POWER, right_, Value_, Scalar_>(std::move(s));
+}
+
+/**
  * @tparam margin_ Matrix dimension along which the addition is to occur, see `DelayedArithVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
@@ -347,6 +359,20 @@ DelayedArithVectorHelper<DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_> make_DelayedDivideVectorHelper(Vector_ v) {
     return DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_>(std::move(v));
+}
+
+/**
+ * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
+ * @tparam margin_ Matrix dimension along which the power transformation is to occur, see `DelayedArithVectorHelper`.
+ * @tparam Value_ Type of the data value.
+ * @tparam Vector_ Type of the vector.
+ *
+ * @param v Vector to use in the power transformation of the rows/columns.
+ * @return A helper class for delayed vector power transformation.
+ */
+template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
+DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_> make_DelayedPowerVectorHelper(Vector_ v) {
+    return DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_>(std::move(v));
 }
 
 }

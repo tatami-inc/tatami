@@ -16,7 +16,8 @@ enum class DelayedArithOp : char {
     ADD, 
     SUBTRACT,
     MULTIPLY,
-    DIVIDE
+    DIVIDE,
+    POWER
 };
 
 /**
@@ -34,7 +35,7 @@ void delayed_arith_run(Value_& val, Scalar_ scalar) {
         } else {
             val = scalar - val;
         }
-    } else {
+    } else if constexpr(op_ == DelayedArithOp::DIVIDE) {
         // Assume that either Value_ is an IEEE-754 float, or that division by
         // zero is impossible in this context. We don't apply manual checks
         // here to avoid performance degradation; we also don't check that the
@@ -44,6 +45,12 @@ void delayed_arith_run(Value_& val, Scalar_ scalar) {
             val /= scalar;
         } else {
             val = scalar / val;
+        }
+    } else if constexpr(op_ == DelayedArithOp::POWER) {
+        if constexpr(right_) {
+            val = std::pow(val, scalar);
+        } else {
+            val = std::pow(scalar, val);
         }
     }
 }

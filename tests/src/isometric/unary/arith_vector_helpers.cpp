@@ -676,6 +676,181 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
+/****************************
+ ********** POWER ***********
+ ****************************/
+
+template<class PARAM>
+class ArithVectorPowerTest : public ::testing::TestWithParam<PARAM>, public ArithVectorUtils {
+protected:
+    void SetUp() {
+        assemble();
+    }
+
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
+    std::vector<double> vec;
+
+    void extra_assemble(bool row, bool right) {
+        vec = this->create_vector(row ? this->nrow : this->ncol, 0.01, 2.11);
+
+        tatami::DelayedAbsHelper op0;
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense, op0);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse, op0);
+        if (row) {
+            if (right) {
+                auto op = tatami::make_DelayedPowerVectorHelper<true, 0>(vec);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense_mod, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse_mod, op);
+            } else {
+                auto op = tatami::make_DelayedPowerVectorHelper<false, 0>(vec);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense_mod, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse_mod, op);
+            }
+        } else {
+            if (right) {
+                auto op = tatami::make_DelayedPowerVectorHelper<true, 1>(vec);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense_mod, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse_mod, op);
+            } else {
+                auto op = tatami::make_DelayedPowerVectorHelper<false, 1>(vec);
+                dense_mod = tatami::make_DelayedUnaryIsometricOp(this->dense_mod, op);
+                sparse_mod = tatami::make_DelayedUnaryIsometricOp(this->sparse_mod, op);
+            }
+        }
+
+        auto refvec = this->simulated;
+        for (size_t r = 0; r < this->nrow; ++r) {
+            for (size_t c = 0; c < this->ncol; ++c) {
+                auto& x = refvec[r * this->ncol + c];
+                auto val = vec[row ? r : c];
+                if (right) {
+                    x = std::pow(std::abs(x), val);
+                } else {
+                    x = std::pow(val, std::abs(x));
+                }
+            }
+        }
+        ref.reset(new tatami::DenseRowMatrix<double>(this->nrow, this->ncol, std::move(refvec)));
+    }
+};
+
+using ArithVectorPowerFullTest = ArithVectorPowerTest<std::tuple<bool, bool, bool, size_t> >;
+
+TEST_P(ArithVectorPowerFullTest, Basic) {
+    auto param = GetParam();
+    auto RIGHT = std::get<1>(param);
+    extra_assemble(std::get<0>(param), RIGHT);
+    bool FORWARD = std::get<2>(param);
+    int JUMP = std::get<3>(param);
+
+    EXPECT_FALSE(dense_mod->sparse());
+    if (RIGHT) {
+        EXPECT_TRUE(sparse_mod->sparse());
+    } else {
+        EXPECT_FALSE(sparse_mod->sparse());
+    }
+    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
+    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+
+    EXPECT_TRUE(dense_mod->prefer_rows());
+    EXPECT_FALSE(sparse_mod->prefer_rows());
+
+    tatami_test::test_simple_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+
+    tatami_test::test_simple_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorPowerFullTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // by row or by column
+        ::testing::Values(true, false), // on the right or left
+        ::testing::Values(true, false), // iterate forward or back
+        ::testing::Values(1, 3) // jump, to test the workspace's memory.
+    )
+);
+
+using ArithVectorPowerBlockTest = ArithVectorPowerTest<std::tuple<bool, bool, bool, size_t, std::vector<double> > >;
+
+TEST_P(ArithVectorPowerBlockTest, Basic) {
+    auto param = GetParam();
+    extra_assemble(std::get<0>(param), std::get<1>(param));
+
+    bool FORWARD = std::get<2>(param);
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+
+    {
+        size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
+        tatami_test::test_sliced_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
+
+    {
+        size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
+        tatami_test::test_sliced_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorPowerBlockTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // add by row, or add by column.
+        ::testing::Values(true, false), // on the right or left
+        ::testing::Values(true, false), // iterate forward or back
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<double>({ 0, 0.541 }),
+            std::vector<double>({ 0.111, 0.999 }),
+            std::vector<double>({ 0.42, 1 })
+        )
+    )
+);
+
+using ArithVectorPowerIndexTest = ArithVectorPowerTest<std::tuple<bool, bool, bool, size_t, std::vector<double> > >;
+
+TEST_P(ArithVectorPowerIndexTest, Basic) {
+    auto param = GetParam();
+    extra_assemble(std::get<0>(param), std::get<1>(param));
+
+    bool FORWARD = std::get<2>(param);
+    size_t JUMP = std::get<3>(param);
+    auto interval_info = std::get<4>(param);
+
+    {
+        size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
+        tatami_test::test_indexed_column_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
+
+    {
+        size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
+        tatami_test::test_indexed_row_access(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    ArithVector,
+    ArithVectorPowerIndexTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // add by row, or add by column.
+        ::testing::Values(true, false), // on the right or left
+        ::testing::Values(true, false), // iterate forward or back
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<double>({ 0, 0.077 }),
+            std::vector<double>({ 0.21, 0.09 }),
+            std::vector<double>({ 0.56, 0.01 })
+        )
+    )
+);
+
 /**************************
  ********* ORACLE *********
  **************************/

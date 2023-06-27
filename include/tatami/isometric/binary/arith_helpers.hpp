@@ -27,7 +27,9 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_sparse = (op_ != DelayedArithOp::DIVIDE);
+    static constexpr bool always_sparse = (op_ == DelayedArithOp::ADD ||
+                                           op_ == DelayedArithOp::SUBTRACT ||
+                                           op_ == DelayedArithOp::MULTIPLY);
     /**
      * @endcond
      */
@@ -87,6 +89,13 @@ inline DelayedBinaryArithHelper<DelayedArithOp::MULTIPLY> make_DelayedBinaryMult
  */
 inline DelayedBinaryArithHelper<DelayedArithOp::DIVIDE> make_DelayedBinaryDivideHelper() {
     return DelayedBinaryArithHelper<DelayedArithOp::DIVIDE>();
+}
+
+/**
+ * @return A helper class for delayed binary power.
+ */
+inline DelayedBinaryArithHelper<DelayedArithOp::POWER> make_DelayedBinaryPowerHelper() {
+    return DelayedBinaryArithHelper<DelayedArithOp::POWER>();
 }
 
 }
