@@ -685,6 +685,135 @@ INSTANTIATE_TEST_CASE_P(
     )
 );
 
+/****************************
+ ********** MODULO **********
+ ****************************/
+
+template<class PARAM>
+class BinaryArithModuloTest : public ::testing::TestWithParam<PARAM>, public BinaryArithUtils {
+protected:
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, mixed_mod, ref;
+
+    void SetUp() {
+        assemble();
+
+        auto op = tatami::make_DelayedBinaryModuloHelper();
+        dense_mod = tatami::make_DelayedBinaryIsometricOp(this->dense_left, this->dense_right, op);
+        sparse_mod = tatami::make_DelayedBinaryIsometricOp(this->sparse_left, this->sparse_right, op);
+        mixed_mod = tatami::make_DelayedBinaryIsometricOp(this->sparse_left, this->dense_right, op);
+
+        auto refvec = this->simulated_left;
+        for (size_t i = 0; i < refvec.size(); ++i) {
+            refvec[i] = std::modf(refvec[i], &this->simulated_right[i]);
+        }
+        ref.reset(new tatami::DenseRowMatrix<double>(this->nrow, this->ncol, std::move(refvec)));
+    }
+};
+
+using BinaryArithModuloFullTest = BinaryArithModuloTest<std::tuple<bool, size_t> >;
+
+TEST_P(BinaryArithModuloFullTest, Basic) {
+    auto param = GetParam();
+    bool FORWARD = std::get<0>(param);
+    int JUMP = std::get<1>(param);
+
+    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_TRUE(dense_mod->prefer_rows());
+    EXPECT_FALSE(sparse_mod->prefer_rows());
+
+    tatami_test::test_simple_column_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_column_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP);
+
+    tatami_test::test_simple_row_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP);
+    tatami_test::test_simple_row_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP);
+}
+
+INSTANTIATE_TEST_CASE_P(
+    BinaryArith,
+    BinaryArithModuloFullTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // iterate forward or back
+        ::testing::Values(1, 3) // jump, to test the workspace's memory.
+    )
+);
+
+using BinaryArithModuloBlockTest = BinaryArithModuloTest<std::tuple<bool, size_t, std::vector<double> > >;
+
+TEST_P(BinaryArithModuloBlockTest, Basic) {
+    auto param = GetParam();
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+
+    {
+        size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
+        tatami_test::test_sliced_column_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_column_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
+
+    {
+        size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
+        tatami_test::test_sliced_row_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+        tatami_test::test_sliced_row_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    BinaryArith,
+    BinaryArithModuloBlockTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // iterate forward or back
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<double>({ 0, 0.541 }),
+            std::vector<double>({ 0.111, 0.999 }),
+            std::vector<double>({ 0.42, 1 })
+        )
+    )
+);
+
+using BinaryArithModuloIndexTest = BinaryArithModuloTest<std::tuple<bool, size_t, std::vector<double> > >;
+
+TEST_P(BinaryArithModuloIndexTest, Basic) {
+    auto param = GetParam();
+    bool FORWARD = std::get<0>(param);
+    size_t JUMP = std::get<1>(param);
+    auto interval_info = std::get<2>(param);
+
+    {
+        size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1];
+        tatami_test::test_indexed_column_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_column_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
+
+    {
+        size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1];
+        tatami_test::test_indexed_row_access<true>(dense_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+        tatami_test::test_indexed_row_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    }
+}
+
+INSTANTIATE_TEST_CASE_P(
+    BinaryArith,
+    BinaryArithModuloIndexTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // iterate forward or back
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<double>({ 0, 7 }),
+            std::vector<double>({ 0.21, 9 }),
+            std::vector<double>({ 0.56, 10 })
+        )
+    )
+);
+
 /**************************
  ********* ORACLE *********
  **************************/

@@ -17,7 +17,8 @@ enum class DelayedArithOp : char {
     SUBTRACT,
     MULTIPLY,
     DIVIDE,
-    POWER
+    POWER,
+    MODULO
 };
 
 /**
@@ -51,6 +52,12 @@ void delayed_arith_run(Value_& val, Scalar_ scalar) {
             val = std::pow(val, scalar);
         } else {
             val = std::pow(scalar, val);
+        }
+    } else if constexpr(op_ == DelayedArithOp::MODULO) {
+        if constexpr(right_) {
+            val = std::modf(val, &scalar);
+        } else {
+            val = std::modf(scalar, &val);
         }
     }
 }

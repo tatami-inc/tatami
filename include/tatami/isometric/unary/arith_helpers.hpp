@@ -39,6 +39,8 @@ bool delayed_arith_actual_sparse(Scalar_ scalar) {
         // declare that this is always non-sparse, and hope that the equivalent
         // zero() method doesn't get called.
         return false;
+    } else if (op_ == DelayedArithOp::MODULO && (!right_ || (scalar == 0))) {
+        return false;
     } else {
         // Empirically testing this, to accommodate special values (e.g., NaN, Inf) for scalars.
         Value_ output = 0;
@@ -63,7 +65,7 @@ Value_ delayed_arith_zero(Scalar_ scalar) {
 template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
 constexpr bool delayed_arith_always_dense() {
     // If we're dividing the scalar by the matrix, values of zero in the matrix will yield non-zero results.
-    if constexpr((op_ == DelayedArithOp::DIVIDE || op_ == DelayedArithOp::POWER) && !right_) {
+    if constexpr((op_ == DelayedArithOp::DIVIDE || op_ == DelayedArithOp::POWER || op_ == DelayedArithOp::MODULO) && !right_) {
         return true;
     }
 
@@ -308,6 +310,18 @@ DelayedArithScalarHelper<DelayedArithOp::POWER, right_, Value_, Scalar_> make_De
 }
 
 /**
+ * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
+ * @tparam Value_ Type of the data value.
+ * @tparam Scalar_ Type of the scalar.
+ * @param s Scalar value to be modulo transformed.
+ * @return A helper class for delayed scalar modulus.
+ */
+template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
+DelayedArithScalarHelper<DelayedArithOp::MODULO, right_, Value_, Scalar_> make_DelayedModuloScalarHelper(Scalar_ s) {
+    return DelayedArithScalarHelper<DelayedArithOp::MODULO, right_, Value_, Scalar_>(std::move(s));
+}
+
+/**
  * @tparam margin_ Matrix dimension along which the addition is to occur, see `DelayedArithVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
@@ -373,6 +387,20 @@ DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_> make_DelayedPowerVectorHelper(Vector_ v) {
     return DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_>(std::move(v));
+}
+
+/**
+ * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
+ * @tparam margin_ Matrix dimension along which the modulus is to occur, see `DelayedArithVectorHelper`.
+ * @tparam Value_ Type of the data value.
+ * @tparam Vector_ Type of the vector.
+ *
+ * @param v Vector to use in the modulus of the rows/columns.
+ * @return A helper class for delayed vector modulus.
+ */
+template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
+DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_> make_DelayedModuloVectorHelper(Vector_ v) {
+    return DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_>(std::move(v));
 }
 
 }

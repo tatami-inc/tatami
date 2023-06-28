@@ -236,6 +236,46 @@ TEST_P(ArithNonCommutativeScalarTest, Power) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
+TEST_P(ArithNonCommutativeScalarTest, Modulo) {
+    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
+
+    auto my_param = GetParam();
+    double val = std::get<0>(my_param);
+    bool on_right = std::get<1>(my_param);
+    if (on_right) {
+        auto op = tatami::make_DelayedModuloScalarHelper<true>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    } else {
+        auto op = tatami::make_DelayedModuloScalarHelper<false>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    }
+
+    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
+    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+
+    if (on_right && val) {
+        EXPECT_TRUE(sparse_mod->sparse());
+    } else {
+        EXPECT_FALSE(sparse_mod->sparse());
+    }
+
+    auto refvec = simulated;
+    for (auto& r : refvec) {
+        if (on_right) {
+            r = std::modf(r, &val);
+        } else {
+            r = std::modf(val, &r);
+        }
+    }
+    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+
+    quick_test_all(dense_mod.get(), &ref);
+    quick_test_all(sparse_mod.get(), &ref);
+}
+
 INSTANTIATE_TEST_CASE_P(
     ArithScalar,
     ArithNonCommutativeScalarTest,

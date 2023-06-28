@@ -98,6 +98,13 @@ inline DelayedBinaryArithHelper<DelayedArithOp::POWER> make_DelayedBinaryPowerHe
     return DelayedBinaryArithHelper<DelayedArithOp::POWER>();
 }
 
+/**
+ * @return A helper class for delayed binary modulo.
+ */
+inline DelayedBinaryArithHelper<DelayedArithOp::MODULO> make_DelayedBinaryModuloHelper() {
+    return DelayedBinaryArithHelper<DelayedArithOp::MODULO>();
+}
+
 }
 
 #endif
