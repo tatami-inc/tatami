@@ -65,9 +65,9 @@ void delayed_arith_run(Value_& val, Scalar_ scalar) {
     } else if constexpr(op_ == DelayedArithOp::INTEGER_DIVIDE) {
         // x == (x %% y) + y * (x %/% y)
         if constexpr(right_) {
-            val = (val - std::fmod(val, scalar)) / scalar;
+            val = std::floor(val / scalar);
         } else {
-            val = (scalar - std::fmod(scalar, val)) / val;
+            val = std::floor(scalar / val);
         }
     }
 }

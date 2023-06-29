@@ -1070,9 +1070,9 @@ protected:
                 auto val = vec[row ? r : c];
                 // x == (x %% y) + y * (x %/% y)
                 if (right) {
-                    x = careful_division(x - std::fmod(x, val), val);
+                    x = std::floor(careful_division(x, val));
                 } else {
-                    x = careful_division(val - std::fmod(val, x), x);
+                    x = std::floor(careful_division(val, x));
                 }
             }
         }
@@ -1547,11 +1547,11 @@ TEST_P(ArithVectorZeroedTest, IntegerDivision) {
     std::vector<double> zeroed(GetParam() ? nrow : ncol);
 
     if (GetParam()) {
-        auto op = tatami::make_DelayedModuloVectorHelper<true, 0>(std::move(zeroed));
+        auto op = tatami::make_DelayedIntegerDivideVectorHelper<true, 0>(std::move(zeroed));
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     } else {
-        auto op = tatami::make_DelayedModuloVectorHelper<true, 1>(std::move(zeroed));
+        auto op = tatami::make_DelayedIntegerDivideVectorHelper<true, 1>(std::move(zeroed));
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
@@ -1559,7 +1559,7 @@ TEST_P(ArithVectorZeroedTest, IntegerDivision) {
     auto copy = simulated;
     for (auto& x : copy) {
         // x == (x %% y) + y * (x %/% y)
-        x = careful_division(x - std::fmod(x, 0.0), 0.0);
+        x = std::floor(careful_division(x, 0.0));
     }
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
 

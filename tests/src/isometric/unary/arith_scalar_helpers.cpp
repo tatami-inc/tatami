@@ -311,9 +311,9 @@ TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
     for (auto& r : refvec) {
         // x == (x %% y) + y * (x %/% y)
         if (on_right) {
-            r = careful_division(r - std::fmod(r, val), val);
+            r = std::floor(careful_division(r, val));
         } else {
-            r = careful_division(val - std::fmod(val, r), r);
+            r = std::floor(careful_division(val, r));
         }
     }
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));

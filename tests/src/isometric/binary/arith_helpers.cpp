@@ -835,7 +835,7 @@ protected:
         auto refvec = this->simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
             // x == (x %% y) + y * (x %/% y)
-            refvec[i] = (refvec[i] - std::fmod(refvec[i], this->simulated_right[i])) / this->simulated_right[i];
+            refvec[i] = std::floor(refvec[i] / this->simulated_right[i]);
         }
         ref.reset(new tatami::DenseRowMatrix<double>(this->nrow, this->ncol, std::move(refvec)));
     }
