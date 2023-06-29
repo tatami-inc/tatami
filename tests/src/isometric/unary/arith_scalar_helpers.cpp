@@ -1,8 +1,9 @@
 #include <gtest/gtest.h>
 
-#include <vector>
+#include <cmath>
 #include <memory>
 #include <tuple>
+#include <vector>
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"

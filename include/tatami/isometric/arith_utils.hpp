@@ -1,6 +1,8 @@
 #ifndef TATAMI_ARITH_UTILS_HPP
 #define TATAMI_ARITH_UTILS_HPP
 
+#include <cmath>
+
 /**
  * @file arith_utils.hpp
  *

@@ -1,7 +1,8 @@
 #include <gtest/gtest.h>
 
-#include <vector>
+#include <cmath>
 #include <memory>
+#include <vector>
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/binary/DelayedBinaryIsometricOp.hpp"
