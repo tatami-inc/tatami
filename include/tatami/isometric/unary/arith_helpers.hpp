@@ -65,7 +65,8 @@ Value_ delayed_arith_zero(Scalar_ scalar) {
 template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
 constexpr bool delayed_arith_always_dense() {
     // If we're dividing the scalar by the matrix, values of zero in the matrix will yield non-zero results.
-    if constexpr((op_ == DelayedArithOp::DIVIDE || op_ == DelayedArithOp::POWER || op_ == DelayedArithOp::MODULO) && !right_) {
+    if constexpr((op_ == DelayedArithOp::DIVIDE || op_ == DelayedArithOp::POWER ||
+                  op_ == DelayedArithOp::MODULO || op_ == DelayedArithOp::INTEGER_DIVIDE) && !right_) {
         return true;
     }
 
@@ -322,6 +323,18 @@ DelayedArithScalarHelper<DelayedArithOp::MODULO, right_, Value_, Scalar_> make_D
 }
 
 /**
+ * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
+ * @tparam Value_ Type of the data value.
+ * @tparam Scalar_ Type of the scalar.
+ * @param s Scalar value to be integer divided.
+ * @return A helper class for delayed scalar integer division.
+ */
+template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
+DelayedArithScalarHelper<DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_> make_DelayedIntegerDivideScalarHelper(Scalar_ s) {
+    return DelayedArithScalarHelper<DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_>(std::move(s));
+}
+
+/**
  * @tparam margin_ Matrix dimension along which the addition is to occur, see `DelayedArithVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
@@ -401,6 +414,20 @@ DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_> make_DelayedModuloVectorHelper(Vector_ v) {
     return DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_>(std::move(v));
+}
+
+/**
+ * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
+ * @tparam margin_ Matrix dimension along which the integer division is to occur, see `DelayedArithVectorHelper`.
+ * @tparam Value_ Type of the data value.
+ * @tparam Vector_ Type of the vector.
+ *
+ * @param v Vector to integer divide (or be integer divided by) the rows/columns.
+ * @return A helper class for delayed vector division.
+ */
+template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
+DelayedArithVectorHelper<DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_> make_DelayedIntegerDivideVectorHelper(Vector_ v) {
+    return DelayedArithVectorHelper<DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_>(std::move(v));
 }
 
 }

@@ -18,7 +18,8 @@ enum class DelayedArithOp : char {
     MULTIPLY,
     DIVIDE,
     POWER,
-    MODULO
+    MODULO,
+    INTEGER_DIVIDE
 };
 
 /**
@@ -55,9 +56,16 @@ void delayed_arith_run(Value_& val, Scalar_ scalar) {
         }
     } else if constexpr(op_ == DelayedArithOp::MODULO) {
         if constexpr(right_) {
-            val = std::modf(val, &scalar);
+            val = std::fmod(val, scalar);
         } else {
-            val = std::modf(scalar, &val);
+            val = std::fmod(scalar, val);
+        }
+    } else if constexpr(op_ == DelayedArithOp::INTEGER_DIVIDE) {
+        // x == (x %% y) + y * (x %/% y)
+        if constexpr(right_) {
+            val = (val - std::fmod(val, scalar)) / scalar;
+        } else {
+            val = (scalar - std::fmod(scalar, val)) / val;
         }
     }
 }

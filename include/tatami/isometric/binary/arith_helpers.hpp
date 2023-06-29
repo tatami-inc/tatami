@@ -105,6 +105,13 @@ inline DelayedBinaryArithHelper<DelayedArithOp::MODULO> make_DelayedBinaryModulo
     return DelayedBinaryArithHelper<DelayedArithOp::MODULO>();
 }
 
+/**
+ * @return A helper class for delayed binary integer division.
+ */
+inline DelayedBinaryArithHelper<DelayedArithOp::INTEGER_DIVIDE> make_DelayedBinaryIntegerDivideHelper() {
+    return DelayedBinaryArithHelper<DelayedArithOp::INTEGER_DIVIDE>();
+}
+
 }
 
 #endif
