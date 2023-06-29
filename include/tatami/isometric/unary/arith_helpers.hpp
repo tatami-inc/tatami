@@ -62,10 +62,17 @@ Value_ delayed_arith_zero(Scalar_ scalar) {
 
 template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
 constexpr bool delayed_arith_always_dense() {
-    // If we're dividing the scalar by the matrix, values of zero in the matrix will yield non-zero results.
-    if constexpr((op_ == DelayedArithOp::DIVIDE || op_ == DelayedArithOp::POWER ||
-                  op_ == DelayedArithOp::MODULO || op_ == DelayedArithOp::INTEGER_DIVIDE) && !right_) {
-        return true;
+    // If the scalar is operated on by the matrix, return true if zeros in the matrix yield non-zero results.
+    if constexpr(!right_) {
+        if constexpr(op_ == DelayedArithOp::DIVIDE) {
+            return true;
+        } else if constexpr(op_ == DelayedArithOp::POWER) {
+            return true;
+        } else if constexpr(op_ == DelayedArithOp::MODULO) {
+            return true;
+        } else if constexpr(op_ == DelayedArithOp::INTEGER_DIVIDE) {
+            return true;
+        }
     }
 
     return false;    
