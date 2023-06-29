@@ -39,8 +39,6 @@ bool delayed_arith_actual_sparse(Scalar_ scalar) {
         // declare that this is always non-sparse, and hope that the equivalent
         // zero() method doesn't get called.
         return false;
-    } else if (op_ == DelayedArithOp::MODULO && (!right_ || (scalar == 0))) {
-        return false;
     } else {
         // Empirically testing this, to accommodate special values (e.g., NaN, Inf) for scalars.
         Value_ output = 0;
