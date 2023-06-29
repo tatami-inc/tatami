@@ -357,10 +357,16 @@ Enumerations</h2></td></tr>
 , <b>INDEX</b>
  }</td></tr>
 <tr class="separator:a0a2ecaf58e2b69bb4a808e814aeb16a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aab44a37b3762de0c5b1ffbfceb25fa0f"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aab44a37b3762de0c5b1ffbfceb25fa0f">DelayedArithOp</a> : char { <b>ADD</b>
+<tr class="memitem:aab44a37b3762de0c5b1ffbfceb25fa0f"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aab44a37b3762de0c5b1ffbfceb25fa0f">DelayedArithOp</a> : char { <br />
+&#160;&#160;<b>ADD</b>
 , <b>SUBTRACT</b>
 , <b>MULTIPLY</b>
 , <b>DIVIDE</b>
+, <br />
+&#160;&#160;<b>POWER</b>
+, <b>MODULO</b>
+, <b>INTEGER_DIVIDE</b>
+<br />
  }</td></tr>
 <tr class="separator:aab44a37b3762de0c5b1ffbfceb25fa0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2104862d4068933ea4cc805c92f82d07"><td class="memItemLeft" align="right" valign="top">enum class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a2104862d4068933ea4cc805c92f82d07">DelayedBooleanOp</a> : char { <b>AND</b>
@@ -397,6 +403,12 @@ Functions</h2></td></tr>
 <tr class="separator:a2569c540083a24f92af8140358e1e9c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb4cf766f850766b966f7121728a6af8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::DIVIDE &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aeb4cf766f850766b966f7121728a6af8">make_DelayedBinaryDivideHelper</a> ()</td></tr>
 <tr class="separator:aeb4cf766f850766b966f7121728a6af8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6c73c04e7b08130ed7b46d93c4dfd11"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::POWER &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ab6c73c04e7b08130ed7b46d93c4dfd11">make_DelayedBinaryPowerHelper</a> ()</td></tr>
+<tr class="separator:ab6c73c04e7b08130ed7b46d93c4dfd11"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04293eb1e8eefb7024cc192d75ac093e"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::MODULO &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a04293eb1e8eefb7024cc192d75ac093e">make_DelayedBinaryModuloHelper</a> ()</td></tr>
+<tr class="separator:a04293eb1e8eefb7024cc192d75ac093e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa8f54741424bef6a21225935a45e9d53"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::INTEGER_DIVIDE &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aa8f54741424bef6a21225935a45e9d53">make_DelayedBinaryIntegerDivideHelper</a> ()</td></tr>
+<tr class="separator:aa8f54741424bef6a21225935a45e9d53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1063aea86897ef76e17b1772320b8f7d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::EQUAL &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a1063aea86897ef76e17b1772320b8f7d">make_DelayedBinaryBooleanEqualHelper</a> ()</td></tr>
 <tr class="separator:a1063aea86897ef76e17b1772320b8f7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a31625dbb50d420fe1b0da406f19ef33d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBinaryBooleanHelper.html">DelayedBinaryBooleanHelper</a>&lt; DelayedBooleanOp::AND &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a31625dbb50d420fe1b0da406f19ef33d">make_DelayedBinaryBooleanAndHelper</a> ()</td></tr>
@@ -432,6 +444,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a60076096ee4296c0e187a226be5ca4b5"><td class="memTemplParams" colspan="2">template&lt;bool right_, typename Value_  = double, typename Scalar_  = Value_&gt; </td></tr>
 <tr class="memitem:a60076096ee4296c0e187a226be5ca4b5"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithScalarHelper.html">DelayedArithScalarHelper</a>&lt; DelayedArithOp::DIVIDE, right_, Value_, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a60076096ee4296c0e187a226be5ca4b5">make_DelayedDivideScalarHelper</a> (Scalar_ s)</td></tr>
 <tr class="separator:a60076096ee4296c0e187a226be5ca4b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c478145f87c37a9fe6d4e8490fbf05c"><td class="memTemplParams" colspan="2">template&lt;bool right_, typename Value_  = double, typename Scalar_  = Value_&gt; </td></tr>
+<tr class="memitem:a8c478145f87c37a9fe6d4e8490fbf05c"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithScalarHelper.html">DelayedArithScalarHelper</a>&lt; DelayedArithOp::POWER, right_, Value_, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a8c478145f87c37a9fe6d4e8490fbf05c">make_DelayedPowerScalarHelper</a> (Scalar_ s)</td></tr>
+<tr class="separator:a8c478145f87c37a9fe6d4e8490fbf05c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5504f584d6db28c05d78f1917c40810d"><td class="memTemplParams" colspan="2">template&lt;bool right_, typename Value_  = double, typename Scalar_  = Value_&gt; </td></tr>
+<tr class="memitem:a5504f584d6db28c05d78f1917c40810d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithScalarHelper.html">DelayedArithScalarHelper</a>&lt; DelayedArithOp::MODULO, right_, Value_, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a5504f584d6db28c05d78f1917c40810d">make_DelayedModuloScalarHelper</a> (Scalar_ s)</td></tr>
+<tr class="separator:a5504f584d6db28c05d78f1917c40810d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ec92ba88a0f5e9d7bf52021ed28e859"><td class="memTemplParams" colspan="2">template&lt;bool right_, typename Value_  = double, typename Scalar_  = Value_&gt; </td></tr>
+<tr class="memitem:a5ec92ba88a0f5e9d7bf52021ed28e859"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithScalarHelper.html">DelayedArithScalarHelper</a>&lt; DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a5ec92ba88a0f5e9d7bf52021ed28e859">make_DelayedIntegerDivideScalarHelper</a> (Scalar_ s)</td></tr>
+<tr class="separator:a5ec92ba88a0f5e9d7bf52021ed28e859"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a628c631be4424b37c1c1e68e28c5e982"><td class="memTemplParams" colspan="2">template&lt;int margin_, typename Value_  = double, typename Vector_  = std::vector&lt;double&gt;&gt; </td></tr>
 <tr class="memitem:a628c631be4424b37c1c1e68e28c5e982"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a>&lt; DelayedArithOp::ADD, true, margin_, Value_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a628c631be4424b37c1c1e68e28c5e982">make_DelayedAddVectorHelper</a> (Vector_ v)</td></tr>
 <tr class="separator:a628c631be4424b37c1c1e68e28c5e982"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -444,6 +465,15 @@ Functions</h2></td></tr>
 <tr class="memitem:a1a4629f17aa4f3a4be06f3479bb6f68f"><td class="memTemplParams" colspan="2">template&lt;bool right_, int margin_, typename Value_  = double, typename Vector_  = std::vector&lt;double&gt;&gt; </td></tr>
 <tr class="memitem:a1a4629f17aa4f3a4be06f3479bb6f68f"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a>&lt; DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a1a4629f17aa4f3a4be06f3479bb6f68f">make_DelayedDivideVectorHelper</a> (Vector_ v)</td></tr>
 <tr class="separator:a1a4629f17aa4f3a4be06f3479bb6f68f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aafe489bd754c040491ebc753a4e5656e"><td class="memTemplParams" colspan="2">template&lt;bool right_, int margin_, typename Value_  = double, typename Vector_  = std::vector&lt;double&gt;&gt; </td></tr>
+<tr class="memitem:aafe489bd754c040491ebc753a4e5656e"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a>&lt; DelayedArithOp::POWER, right_, margin_, Value_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aafe489bd754c040491ebc753a4e5656e">make_DelayedPowerVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:aafe489bd754c040491ebc753a4e5656e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4220ce5709e46ebce77b240b572d97d9"><td class="memTemplParams" colspan="2">template&lt;bool right_, int margin_, typename Value_  = double, typename Vector_  = std::vector&lt;double&gt;&gt; </td></tr>
+<tr class="memitem:a4220ce5709e46ebce77b240b572d97d9"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a>&lt; DelayedArithOp::MODULO, right_, margin_, Value_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a4220ce5709e46ebce77b240b572d97d9">make_DelayedModuloVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:a4220ce5709e46ebce77b240b572d97d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a857fc6c11ec69895ac85991ac83c395d"><td class="memTemplParams" colspan="2">template&lt;bool right_, int margin_, typename Value_  = double, typename Vector_  = std::vector&lt;double&gt;&gt; </td></tr>
+<tr class="memitem:a857fc6c11ec69895ac85991ac83c395d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a>&lt; DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a857fc6c11ec69895ac85991ac83c395d">make_DelayedIntegerDivideVectorHelper</a> (Vector_ v)</td></tr>
+<tr class="separator:a857fc6c11ec69895ac85991ac83c395d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac812e757b55c2145bc3d4cd113c712fd"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double&gt; </td></tr>
 <tr class="memitem:ac812e757b55c2145bc3d4cd113c712fd"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structtatami_1_1DelayedBooleanNotHelper.html">DelayedBooleanNotHelper</a>&lt; Value_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ac812e757b55c2145bc3d4cd113c712fd">make_DelayedBooleanNotHelper</a> ()</td></tr>
 <tr class="separator:ac812e757b55c2145bc3d4cd113c712fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1186,6 +1216,84 @@ template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typenam
 
 </div>
 </div>
+<a id="ab6c73c04e7b08130ed7b46d93c4dfd11" name="ab6c73c04e7b08130ed7b46d93c4dfd11"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab6c73c04e7b08130ed7b46d93c4dfd11">&#9670;&#160;</a></span>make_DelayedBinaryPowerHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::POWER &gt; tatami::make_DelayedBinaryPowerHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed binary power. </dd></dl>
+
+</div>
+</div>
+<a id="a04293eb1e8eefb7024cc192d75ac093e" name="a04293eb1e8eefb7024cc192d75ac093e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a04293eb1e8eefb7024cc192d75ac093e">&#9670;&#160;</a></span>make_DelayedBinaryModuloHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::MODULO &gt; tatami::make_DelayedBinaryModuloHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed binary modulo. </dd></dl>
+
+</div>
+</div>
+<a id="aa8f54741424bef6a21225935a45e9d53" name="aa8f54741424bef6a21225935a45e9d53"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa8f54741424bef6a21225935a45e9d53">&#9670;&#160;</a></span>make_DelayedBinaryIntegerDivideHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedBinaryArithHelper.html">DelayedBinaryArithHelper</a>&lt; DelayedArithOp::INTEGER_DIVIDE &gt; tatami::make_DelayedBinaryIntegerDivideHelper </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed binary integer division. </dd></dl>
+
+</div>
+</div>
 <a id="a1063aea86897ef76e17b1772320b8f7d" name="a1063aea86897ef76e17b1772320b8f7d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1063aea86897ef76e17b1772320b8f7d">&#9670;&#160;</a></span>make_DelayedBinaryBooleanEqualHelper()</h2>
 
@@ -1638,6 +1746,111 @@ template&lt;bool right_, typename Value_  = double, typename Scalar_  = Value_&g
 
 </div>
 </div>
+<a id="a8c478145f87c37a9fe6d4e8490fbf05c" name="a8c478145f87c37a9fe6d4e8490fbf05c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8c478145f87c37a9fe6d4e8490fbf05c">&#9670;&#160;</a></span>make_DelayedPowerScalarHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool right_, typename Value_  = double, typename Scalar_  = Value_&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedArithScalarHelper.html">DelayedArithScalarHelper</a>&lt; DelayedArithOp::POWER, right_, Value_, Scalar_ &gt; tatami::make_DelayedPowerScalarHelper </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">right_</td><td>Whether the scalar should be on the right hand side of the power transformation. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the data value. </td></tr>
+    <tr><td class="paramname">Scalar_</td><td>Type of the scalar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Scalar value to be power transformed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed scalar power transformation. </dd></dl>
+
+</div>
+</div>
+<a id="a5504f584d6db28c05d78f1917c40810d" name="a5504f584d6db28c05d78f1917c40810d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5504f584d6db28c05d78f1917c40810d">&#9670;&#160;</a></span>make_DelayedModuloScalarHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool right_, typename Value_  = double, typename Scalar_  = Value_&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedArithScalarHelper.html">DelayedArithScalarHelper</a>&lt; DelayedArithOp::MODULO, right_, Value_, Scalar_ &gt; tatami::make_DelayedModuloScalarHelper </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">right_</td><td>Whether the scalar should be on the right hand side of the modulus. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the data value. </td></tr>
+    <tr><td class="paramname">Scalar_</td><td>Type of the scalar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Scalar value to be modulo transformed. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed scalar modulus. </dd></dl>
+
+</div>
+</div>
+<a id="a5ec92ba88a0f5e9d7bf52021ed28e859" name="a5ec92ba88a0f5e9d7bf52021ed28e859"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ec92ba88a0f5e9d7bf52021ed28e859">&#9670;&#160;</a></span>make_DelayedIntegerDivideScalarHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool right_, typename Value_  = double, typename Scalar_  = Value_&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedArithScalarHelper.html">DelayedArithScalarHelper</a>&lt; DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_ &gt; tatami::make_DelayedIntegerDivideScalarHelper </td>
+          <td>(</td>
+          <td class="paramtype">Scalar_&#160;</td>
+          <td class="paramname"><em>s</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">right_</td><td>Whether the scalar should be on the right hand side of the integer division. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the data value. </td></tr>
+    <tr><td class="paramname">Scalar_</td><td>Type of the scalar. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">s</td><td>Scalar value to be integer divided. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed scalar integer division. </dd></dl>
+
+</div>
+</div>
 <a id="a628c631be4424b37c1c1e68e28c5e982" name="a628c631be4424b37c1c1e68e28c5e982"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a628c631be4424b37c1c1e68e28c5e982">&#9670;&#160;</a></span>make_DelayedAddVectorHelper()</h2>
 
@@ -1773,6 +1986,114 @@ template&lt;bool right_, int margin_, typename Value_  = double, typename Vector
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">v</td><td>Vector to divide (or be divided by) the rows/columns. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed vector division. </dd></dl>
+
+</div>
+</div>
+<a id="aafe489bd754c040491ebc753a4e5656e" name="aafe489bd754c040491ebc753a4e5656e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aafe489bd754c040491ebc753a4e5656e">&#9670;&#160;</a></span>make_DelayedPowerVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool right_, int margin_, typename Value_  = double, typename Vector_  = std::vector&lt;double&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a>&lt; DelayedArithOp::POWER, right_, margin_, Value_, Vector_ &gt; tatami::make_DelayedPowerVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">right_</td><td>Whether the scalar should be on the right hand side of the power transformation. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the power transformation is to occur, see <code><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html" title="Delayed vector arithmetic.">DelayedArithVectorHelper</a></code>. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the data value. </td></tr>
+    <tr><td class="paramname">Vector_</td><td>Type of the vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>Vector to use in the power transformation of the rows/columns. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed vector power transformation. </dd></dl>
+
+</div>
+</div>
+<a id="a4220ce5709e46ebce77b240b572d97d9" name="a4220ce5709e46ebce77b240b572d97d9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4220ce5709e46ebce77b240b572d97d9">&#9670;&#160;</a></span>make_DelayedModuloVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool right_, int margin_, typename Value_  = double, typename Vector_  = std::vector&lt;double&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a>&lt; DelayedArithOp::MODULO, right_, margin_, Value_, Vector_ &gt; tatami::make_DelayedModuloVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">right_</td><td>Whether the scalar should be on the right hand side of the modulus. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the modulus is to occur, see <code><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html" title="Delayed vector arithmetic.">DelayedArithVectorHelper</a></code>. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the data value. </td></tr>
+    <tr><td class="paramname">Vector_</td><td>Type of the vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>Vector to use in the modulus of the rows/columns. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A helper class for delayed vector modulus. </dd></dl>
+
+</div>
+</div>
+<a id="a857fc6c11ec69895ac85991ac83c395d" name="a857fc6c11ec69895ac85991ac83c395d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a857fc6c11ec69895ac85991ac83c395d">&#9670;&#160;</a></span>make_DelayedIntegerDivideVectorHelper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;bool right_, int margin_, typename Value_  = double, typename Vector_  = std::vector&lt;double&gt;&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html">DelayedArithVectorHelper</a>&lt; DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_ &gt; tatami::make_DelayedIntegerDivideVectorHelper </td>
+          <td>(</td>
+          <td class="paramtype">Vector_&#160;</td>
+          <td class="paramname"><em>v</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">right_</td><td>Whether the scalar should be on the right hand side of the integer division. </td></tr>
+    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a> dimension along which the integer division is to occur, see <code><a class="el" href="structtatami_1_1DelayedArithVectorHelper.html" title="Delayed vector arithmetic.">DelayedArithVectorHelper</a></code>. </td></tr>
+    <tr><td class="paramname">Value_</td><td>Type of the data value. </td></tr>
+    <tr><td class="paramname">Vector_</td><td>Type of the vector.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">v</td><td>Vector to integer divide (or be integer divided by) the rows/columns. </td></tr>
   </table>
   </dd>
 </dl>

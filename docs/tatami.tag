@@ -197,6 +197,9 @@
       <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa23ebcc4776b613af25dfbe7c8ce4813e">SUBTRACT</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa080aaf8d817ada96fca7096b7b55bd30">MULTIPLY</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa210c66d794cec40488f3f8f634d6c33b">DIVIDE</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fac9c9c146c630ca5ef9197c73c032f4a6">POWER</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa928ab45d616dde447dbbbd0270db87ad">MODULO</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa051460a4a75d4d251a41a7c04bf49412">INTEGER_DIVIDE</enumvalue>
     </member>
   </compound>
   <compound kind="file">
@@ -283,6 +286,27 @@
       <anchor>aeb4cf766f850766b966f7121728a6af8</anchor>
       <arglist>()</arglist>
     </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::POWER &gt;</type>
+      <name>make_DelayedBinaryPowerHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ab6c73c04e7b08130ed7b46d93c4dfd11</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::MODULO &gt;</type>
+      <name>make_DelayedBinaryModuloHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a04293eb1e8eefb7024cc192d75ac093e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::INTEGER_DIVIDE &gt;</type>
+      <name>make_DelayedBinaryIntegerDivideHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aa8f54741424bef6a21225935a45e9d53</anchor>
+      <arglist>()</arglist>
+    </member>
   </compound>
   <compound kind="file">
     <name>arith_helpers.hpp</name>
@@ -320,6 +344,27 @@
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::POWER, right_, Value_, Scalar_ &gt;</type>
+      <name>make_DelayedPowerScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8c478145f87c37a9fe6d4e8490fbf05c</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MODULO, right_, Value_, Scalar_ &gt;</type>
+      <name>make_DelayedModuloScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5504f584d6db28c05d78f1917c40810d</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_ &gt;</type>
+      <name>make_DelayedIntegerDivideScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5ec92ba88a0f5e9d7bf52021ed28e859</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
       <type>DelayedArithVectorHelper&lt; DelayedArithOp::ADD, true, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedAddVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
@@ -345,6 +390,27 @@
       <name>make_DelayedDivideVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a1a4629f17aa4f3a4be06f3479bb6f68f</anchor>
+      <arglist>(Vector_ v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::POWER, right_, margin_, Value_, Vector_ &gt;</type>
+      <name>make_DelayedPowerVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aafe489bd754c040491ebc753a4e5656e</anchor>
+      <arglist>(Vector_ v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MODULO, right_, margin_, Value_, Vector_ &gt;</type>
+      <name>make_DelayedModuloVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a4220ce5709e46ebce77b240b572d97d9</anchor>
+      <arglist>(Vector_ v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_ &gt;</type>
+      <name>make_DelayedIntegerDivideVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a857fc6c11ec69895ac85991ac83c395d</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
   </compound>
@@ -747,6 +813,26 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>utils.hpp</name>
+    <path>tatami/stats/</path>
+    <filename>stats_2utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>void</type>
+      <name>parallelize</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
+      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
+    </member>
+    <member kind="function">
+      <type>auto</type>
+      <name>consecutive_extractor</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>medians.hpp</name>
     <path>tatami/stats/</path>
     <filename>medians_8hpp.html</filename>
@@ -832,26 +918,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a53a658059404691856bef57fb85d83d6</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>utils.hpp</name>
-    <path>tatami/stats/</path>
-    <filename>stats_2utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>parallelize</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
-      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
-    </member>
-    <member kind="function">
-      <type>auto</type>
-      <name>consecutive_extractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -4669,6 +4735,9 @@
       <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa23ebcc4776b613af25dfbe7c8ce4813e">SUBTRACT</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa080aaf8d817ada96fca7096b7b55bd30">MULTIPLY</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa210c66d794cec40488f3f8f634d6c33b">DIVIDE</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fac9c9c146c630ca5ef9197c73c032f4a6">POWER</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa928ab45d616dde447dbbbd0270db87ad">MODULO</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa051460a4a75d4d251a41a7c04bf49412">INTEGER_DIVIDE</enumvalue>
     </member>
     <member kind="enumeration">
       <type></type>
@@ -4734,6 +4803,27 @@
       <name>make_DelayedBinaryDivideHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>aeb4cf766f850766b966f7121728a6af8</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::POWER &gt;</type>
+      <name>make_DelayedBinaryPowerHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ab6c73c04e7b08130ed7b46d93c4dfd11</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::MODULO &gt;</type>
+      <name>make_DelayedBinaryModuloHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a04293eb1e8eefb7024cc192d75ac093e</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::INTEGER_DIVIDE &gt;</type>
+      <name>make_DelayedBinaryIntegerDivideHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aa8f54741424bef6a21225935a45e9d53</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
@@ -4842,6 +4932,27 @@
       <arglist>(Scalar_ s)</arglist>
     </member>
     <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::POWER, right_, Value_, Scalar_ &gt;</type>
+      <name>make_DelayedPowerScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a8c478145f87c37a9fe6d4e8490fbf05c</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MODULO, right_, Value_, Scalar_ &gt;</type>
+      <name>make_DelayedModuloScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5504f584d6db28c05d78f1917c40810d</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithScalarHelper&lt; DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_ &gt;</type>
+      <name>make_DelayedIntegerDivideScalarHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5ec92ba88a0f5e9d7bf52021ed28e859</anchor>
+      <arglist>(Scalar_ s)</arglist>
+    </member>
+    <member kind="function">
       <type>DelayedArithVectorHelper&lt; DelayedArithOp::ADD, true, margin_, Value_, Vector_ &gt;</type>
       <name>make_DelayedAddVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
@@ -4867,6 +4978,27 @@
       <name>make_DelayedDivideVectorHelper</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a1a4629f17aa4f3a4be06f3479bb6f68f</anchor>
+      <arglist>(Vector_ v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::POWER, right_, margin_, Value_, Vector_ &gt;</type>
+      <name>make_DelayedPowerVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aafe489bd754c040491ebc753a4e5656e</anchor>
+      <arglist>(Vector_ v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MODULO, right_, margin_, Value_, Vector_ &gt;</type>
+      <name>make_DelayedModuloVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a4220ce5709e46ebce77b240b572d97d9</anchor>
+      <arglist>(Vector_ v)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedArithVectorHelper&lt; DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_ &gt;</type>
+      <name>make_DelayedIntegerDivideVectorHelper</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a857fc6c11ec69895ac85991ac83c395d</anchor>
       <arglist>(Vector_ v)</arglist>
     </member>
     <member kind="function">
