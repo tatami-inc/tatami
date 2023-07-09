@@ -41,6 +41,7 @@ add_executable(
 
     src/chunked/LruChunkCache.cpp
     src/chunked/OracleChunkCache.cpp
+    src/chunked/CustomChunkManager.cpp
 
     src/stats/sums.cpp
     src/stats/variances.cpp
