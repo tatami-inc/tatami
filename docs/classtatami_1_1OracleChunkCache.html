@@ -106,7 +106,7 @@ class tatami::OracleChunkCache&lt; Id_, Index_, ChunkContents_ &gt;</div><p>Orac
   </table>
   </dd>
 </dl>
-<p>Implement an oracle-aware cache for chunks. This is typically used for <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> representations where the data is costly to load (e.g., from file) and an oracle is provided to predict future accesses. In such cases, the appropriate chunks of data can be loaded and cached such that all future requests will just fetch the cached data. </p>
+<p>Implement an <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests.">Oracle</a></code>-aware cache for chunks. This is typically used for <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> representations where the data is costly to load (e.g., from file) and an <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests.">Oracle</a></code> is provided to predict future accesses. In such cases, the appropriate chunks of data can be loaded and cached once, such that all future requests will just fetch the cached data. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a0bd9bfcb80bcaa3c92ccde442c6c15a9" name="a0bd9bfcb80bcaa3c92ccde442c6c15a9"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0bd9bfcb80bcaa3c92ccde442c6c15a9">&#9670;&#160;</a></span>OracleChunkCache()</h2>
@@ -233,15 +233,10 @@ template&lt;class Ifunction_ , class Sfunction_ , class Rfunction_ , class Afunc
     <tr><td class="paramname">swap</td><td>Function that accepts two <code>ChunkContents_&amp;</code> and swaps their contents. </td></tr>
     <tr><td class="paramname">ready</td><td>Function that accepts a <code>const ChunkContents_&amp;</code> and returns a boolean indicating whether it has already been allocated. This should return <code>true</code> for objects that have been used in <code>allocate()</code>, and <code>false</code> otherwise. </td></tr>
     <tr><td class="paramname">allocate</td><td>Function that accepts a single default-initialized <code>ChunkContents_</code> object, and allocates sufficient memory to it in order to hold a chunk's contents when used in <code>populate()</code>. </td></tr>
-    <tr><td class="paramname">populate</td><td>Function that accepts:</td></tr>
+    <tr><td class="paramname">populate</td><td>Function that accepts two arguments, <code>chunks_in_need</code> and <code>chunk_data</code>. (1) <code>chunks_in_need</code> is a <code>const std::vector&lt;std::pair&lt;Id_, Index_&gt; &gt;&amp;</code> specifying the chunks to be populated. The first <code>Id_</code> element of each pair contains the chunk identifier, i.e., the first element returned by the <code>identify</code> function. The second <code>Index_</code> element specifies the index of the <code>ChunkContents_</code> in <code>chunk_data</code> in which to store the contents of each chunk. (2) <code>chunk_data</code> is a <code>std::vector&lt;ChunkContents_&gt;&amp;</code> containing the cached chunk contents to be populated. This function should iterate over the <code>chunks_in_need</code> and populate the corresponding entries in <code>chunk_data</code>.</td></tr>
   </table>
   </dd>
 </dl>
-<ul>
-<li><code>chunks_in_needs</code>, a <code>const std::vector&lt;std::pair&lt;Id_, Index_&gt; &gt;&amp;</code> specifying the identity of the chunks to be filled in the first <code>Id_</code> element of each pair. The second <code>Index_</code> element specifies the index of the <code>ChunkContents_</code> in <code>chunk_data</code> in which to store the contents of each chunk.</li>
-<li><code>chunk_data</code>, a <code>std::vector&lt;ChunkContents&gt;&amp;</code> containing the cached chunk contents.</li>
-</ul>
-<p>This function should iterate over the <code>chunks_in_need</code> and populates the corresponding entries in <code>chunk_data</code>.</p>
 <dl class="section return"><dt>Returns</dt><dd>Pair containing (1) a pointer to a chunk's contents and (2) the index of the next predicted row/column inside the retrieved chunk. </dd></dl>
 <p>Doing a linear scan across chunks to find the allocated but unused cache elements. This is the simplest and safest approach; trying to keep track of the unused caches would require a scan to fill a map/set anyway, and deleting an iterator from cache_exists only works if cache_exists actually contains all cache elements, which it might not be if we reached max_predictions without filling up the cache.</p>
 <p>In any case, a linear scan should be pretty good for consecutive access; the first cache elements would be the oldest, so there wouldn't be any wasted iterations to find available cache elements.</p>

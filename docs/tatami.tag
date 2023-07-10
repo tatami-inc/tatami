@@ -813,26 +813,6 @@
     </member>
   </compound>
   <compound kind="file">
-    <name>utils.hpp</name>
-    <path>tatami/stats/</path>
-    <filename>stats_2utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>parallelize</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
-      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
-    </member>
-    <member kind="function">
-      <type>auto</type>
-      <name>consecutive_extractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
     <name>medians.hpp</name>
     <path>tatami/stats/</path>
     <filename>medians_8hpp.html</filename>
@@ -918,6 +898,26 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a53a658059404691856bef57fb85d83d6</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>utils.hpp</name>
+    <path>tatami/stats/</path>
+    <filename>stats_2utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>void</type>
+      <name>parallelize</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
+      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
+    </member>
+    <member kind="function">
+      <type>auto</type>
+      <name>consecutive_extractor</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
     </member>
   </compound>
   <compound kind="file">
