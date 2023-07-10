@@ -9,6 +9,11 @@ namespace tatami {
 template<typename Chunk_>
 class CustomChunkManager {
 public:
+    CustomChunkManager() = default;
+
+    CustomChunkManager(std::vector<Chunk_> c) : chunks(std::move(c)) {}
+
+public:
     std::vector<Chunk_> chunks;
     size_t chunk_nrow;
     size_t chunk_ncol;
