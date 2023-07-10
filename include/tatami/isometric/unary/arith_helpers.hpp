@@ -62,9 +62,17 @@ Value_ delayed_arith_zero(Scalar_ scalar) {
 
 template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
 constexpr bool delayed_arith_always_dense() {
-    // If we're dividing the scalar by the matrix, values of zero in the matrix will yield non-zero results.
-    if constexpr(op_ == DelayedArithOp::DIVIDE && !right_) {
-        return true;
+    // If the scalar is operated on by the matrix, return true if zeros in the matrix yield non-zero results.
+    if constexpr(!right_) {
+        if constexpr(op_ == DelayedArithOp::DIVIDE) {
+            return true;
+        } else if constexpr(op_ == DelayedArithOp::POWER) {
+            return true;
+        } else if constexpr(op_ == DelayedArithOp::MODULO) {
+            return true;
+        } else if constexpr(op_ == DelayedArithOp::INTEGER_DIVIDE) {
+            return true;
+        }
     }
 
     return false;    
@@ -296,6 +304,42 @@ DelayedArithScalarHelper<DelayedArithOp::DIVIDE, right_, Value_, Scalar_> make_D
 }
 
 /**
+ * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
+ * @tparam Value_ Type of the data value.
+ * @tparam Scalar_ Type of the scalar.
+ * @param s Scalar value to be power transformed.
+ * @return A helper class for delayed scalar power transformation.
+ */
+template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
+DelayedArithScalarHelper<DelayedArithOp::POWER, right_, Value_, Scalar_> make_DelayedPowerScalarHelper(Scalar_ s) {
+    return DelayedArithScalarHelper<DelayedArithOp::POWER, right_, Value_, Scalar_>(std::move(s));
+}
+
+/**
+ * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
+ * @tparam Value_ Type of the data value.
+ * @tparam Scalar_ Type of the scalar.
+ * @param s Scalar value to be modulo transformed.
+ * @return A helper class for delayed scalar modulus.
+ */
+template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
+DelayedArithScalarHelper<DelayedArithOp::MODULO, right_, Value_, Scalar_> make_DelayedModuloScalarHelper(Scalar_ s) {
+    return DelayedArithScalarHelper<DelayedArithOp::MODULO, right_, Value_, Scalar_>(std::move(s));
+}
+
+/**
+ * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
+ * @tparam Value_ Type of the data value.
+ * @tparam Scalar_ Type of the scalar.
+ * @param s Scalar value to be integer divided.
+ * @return A helper class for delayed scalar integer division.
+ */
+template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
+DelayedArithScalarHelper<DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_> make_DelayedIntegerDivideScalarHelper(Scalar_ s) {
+    return DelayedArithScalarHelper<DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_>(std::move(s));
+}
+
+/**
  * @tparam margin_ Matrix dimension along which the addition is to occur, see `DelayedArithVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
@@ -347,6 +391,48 @@ DelayedArithVectorHelper<DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_> make_DelayedDivideVectorHelper(Vector_ v) {
     return DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_>(std::move(v));
+}
+
+/**
+ * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
+ * @tparam margin_ Matrix dimension along which the power transformation is to occur, see `DelayedArithVectorHelper`.
+ * @tparam Value_ Type of the data value.
+ * @tparam Vector_ Type of the vector.
+ *
+ * @param v Vector to use in the power transformation of the rows/columns.
+ * @return A helper class for delayed vector power transformation.
+ */
+template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
+DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_> make_DelayedPowerVectorHelper(Vector_ v) {
+    return DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_>(std::move(v));
+}
+
+/**
+ * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
+ * @tparam margin_ Matrix dimension along which the modulus is to occur, see `DelayedArithVectorHelper`.
+ * @tparam Value_ Type of the data value.
+ * @tparam Vector_ Type of the vector.
+ *
+ * @param v Vector to use in the modulus of the rows/columns.
+ * @return A helper class for delayed vector modulus.
+ */
+template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
+DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_> make_DelayedModuloVectorHelper(Vector_ v) {
+    return DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_>(std::move(v));
+}
+
+/**
+ * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
+ * @tparam margin_ Matrix dimension along which the integer division is to occur, see `DelayedArithVectorHelper`.
+ * @tparam Value_ Type of the data value.
+ * @tparam Vector_ Type of the vector.
+ *
+ * @param v Vector to integer divide (or be integer divided by) the rows/columns.
+ * @return A helper class for delayed vector division.
+ */
+template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
+DelayedArithVectorHelper<DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_> make_DelayedIntegerDivideVectorHelper(Vector_ v) {
+    return DelayedArithVectorHelper<DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_>(std::move(v));
 }
 
 }
