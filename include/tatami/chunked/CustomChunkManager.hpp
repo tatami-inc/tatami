@@ -84,6 +84,15 @@ public:
         std::vector<size_t> buffer_indptrs;
         std::vector<Chunkdex> buffer_indices;
         std::vector<typename Chunk_::value_type> buffer_values;
+
+        void clear() {
+            for (auto& x : cache_indices) {
+                x.clear();
+            }
+            for (auto& x : cache_values) {
+                x.clear();
+            }
+        }
     };
 
     struct DenseCache {
@@ -129,6 +138,10 @@ public:
         size_t dense_cache_offset = 0;
         size_t secondary_start_pos = start_chunk_index * secondary_chunkdim;
 
+        if constexpr(sparse_chunk) {
+            cache.clear();
+        }
+
         for (size_t c = start_chunk_index; c < end_chunk_index; ++c) {
             const auto& chunk = chunks[offset];
             size_t from = (c == start_chunk_index ? start - secondary_start_pos : 0);
@@ -139,7 +152,7 @@ public:
                 Chunkdex secondary_offset = secondary_start_pos;
 
                 if (chunk.row_major == accrow_) {
-                    auto refine_start_and_end = [&](size_t start, size_t end) -> void {
+                    auto refine_start_and_end = [&](size_t& start, size_t& end) -> void {
                         if (from) {
                             auto it = cache.buffer_indices.begin();
                             start = std::lower_bound(it + start, it + end, static_cast<Chunkdex>(from)) - it;
@@ -273,6 +286,10 @@ public:
 
         size_t dense_cache_offset = 0;
         size_t secondary_start_pos = start_chunk_index * secondary_chunkdim;
+
+        if constexpr(sparse_chunk) {
+            cache.clear();
+        }
 
         for (size_t c = start_chunk_index; c < primary_num_chunks && iIt != indices.end(); ++c) {
             Index_ secondary_end_pos = secondary_start_pos + secondary_chunkdim;
