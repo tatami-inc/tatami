@@ -19,9 +19,9 @@ namespace tatami {
  * @tparam Index_ Type of row/column index produced by the `Oracle`.
  * @tparam ChunkContents_ Class that contains the contents of a single chunk.
  *
- * Implement an oracle-aware cache for chunks.
- * This is typically used for `Matrix` representations where the data is costly to load (e.g., from file) and an oracle is provided to predict future accesses.
- * In such cases, the appropriate chunks of data can be loaded and cached such that all future requests will just fetch the cached data.
+ * Implement an `Oracle`-aware cache for chunks.
+ * This is typically used for `Matrix` representations where the data is costly to load (e.g., from file) and an `Oracle` is provided to predict future accesses.
+ * In such cases, the appropriate chunks of data can be loaded and cached once, such that all future requests will just fetch the cached data.
  */
 template<typename Id_, typename Index_, class ChunkContents_> 
 class OracleChunkCache {
@@ -77,13 +77,12 @@ public:
      * This should return `true` for objects that have been used in `allocate()`, and `false` otherwise.
      * @param allocate Function that accepts a single default-initialized `ChunkContents_` object,
      * and allocates sufficient memory to it in order to hold a chunk's contents when used in `populate()`.
-     * @param populate Function that accepts:
-     *
-     * - `chunks_in_needs`, a `const std::vector<std::pair<Id_, Index_> >&` specifying the identity of the chunks to be filled in the first `Id_` element of each pair.
-     *   The second `Index_` element specifies the index of the `ChunkContents_` in `chunk_data` in which to store the contents of each chunk.
-     * - `chunk_data`, a `std::vector<ChunkContents>&` containing the cached chunk contents.
-     *
-     * This function should iterate over the `chunks_in_need` and populates the corresponding entries in `chunk_data`.
+     * @param populate Function that accepts two arguments, `chunks_in_need` and `chunk_data`.
+     * (1) `chunks_in_need` is a `const std::vector<std::pair<Id_, Index_> >&` specifying the chunks to be populated.
+     * The first `Id_` element of each pair contains the chunk identifier, i.e., the first element returned by the `identify` function.
+     * The second `Index_` element specifies the index of the `ChunkContents_` in `chunk_data` in which to store the contents of each chunk.
+     * (2) `chunk_data` is a `std::vector<ChunkContents_>&` containing the cached chunk contents to be populated.
+     * This function should iterate over the `chunks_in_need` and populate the corresponding entries in `chunk_data`.
      *
      * @return Pair containing (1) a pointer to a chunk's contents and (2) the index of the next predicted row/column inside the retrieved chunk.
      */
@@ -155,9 +154,15 @@ public:
                     swap(next_cache_data[c.second], cache_data[search]);
                     ++search;
                 } else {
-                    // This should be called no more than 'max_chunks' times across the lifetime of this Cache object. 
-                    // At any given point in time, allocated chunks will be interspersed between 'cache_data' and 'next_cache_data', 
-                    // so either 'next_cache_data[c.second]' is already ready, or we'll find a ready chunk from the linear scan through 'cache_data'.
+                    /*
+                     * This should be called no more than 'max_chunks' times
+                     * across the lifetime of this Cache object. At any given
+                     * point in time, allocated chunks will be interspersed
+                     * between 'cache_data' and 'next_cache_data', so either
+                     * 'next_cache_data[c.second]' is already ready, or we'll
+                     * find a ready chunk from the linear scan through
+                     * 'cache_data'.
+                     */
                     allocate(next_cache_data[c.second]);
                 }
             }
