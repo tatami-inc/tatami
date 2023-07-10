@@ -79,8 +79,10 @@ TEST_P(CustomDenseChunkManagerFullTest, Row) {
     auto param = GetParam();
     assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
 
-    auto cache = manager.create_chunk_cache<true, false>(ref->ncol());
-    auto ecache = manager.create_chunk_cache<true, true>(ref->ncol());
+    auto slab = manager.create_slab<true, false>(ref->ncol());
+    auto eslab = manager.create_slab<true, true>(ref->ncol());
+    auto work = manager.create_workspace();
+
     std::vector<double> tmp1(ref->ncol()), tmp2(ref->ncol());
     auto ref_ext = ref->dense_row();
     int lastr = -1;
@@ -89,9 +91,9 @@ TEST_P(CustomDenseChunkManagerFullTest, Row) {
     for (int r = 0; r < ref->nrow(); ++r) {
         int requiredr = r / manager.chunk_nrow;
         if (requiredr != lastr) {
-            manager.extract<true, false>(requiredr, r % manager.chunk_nrow, ref->nrow(), 0, ref->ncol(), cache);
+            manager.extract<true, false>(requiredr, r % manager.chunk_nrow, ref->nrow(), 0, ref->ncol(), slab, work);
             lastr = requiredr;
-            ccptr = cache.cache.data();
+            ccptr = slab.values.data();
         }
 
         ref_ext->fetch_copy(r, tmp1.data());
@@ -100,8 +102,8 @@ TEST_P(CustomDenseChunkManagerFullTest, Row) {
         ccptr += ref->ncol();
 
         // Testing with exact.
-        manager.extract<true, true>(requiredr, r % manager.chunk_nrow, ref->nrow(), 0, ref->ncol(), ecache);
-        EXPECT_EQ(tmp1, ecache.cache);
+        manager.extract<true, true>(requiredr, r % manager.chunk_nrow, ref->nrow(), 0, ref->ncol(), eslab, work);
+        EXPECT_EQ(tmp1, eslab.values);
     }
 }
 
@@ -109,8 +111,10 @@ TEST_P(CustomDenseChunkManagerFullTest, Column) {
     auto param = GetParam();
     assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
 
-    auto cache = manager.create_chunk_cache<false, false>(ref->nrow());
-    auto ecache = manager.create_chunk_cache<false, true>(ref->nrow());
+    auto slab = manager.create_slab<false, false>(ref->nrow());
+    auto eslab = manager.create_slab<false, true>(ref->nrow());
+    auto work = manager.create_workspace();
+
     std::vector<double> tmp1(ref->nrow()), tmp2(ref->nrow());
     auto ref_ext = ref->dense_column();
     int lastc = -1;
@@ -119,9 +123,9 @@ TEST_P(CustomDenseChunkManagerFullTest, Column) {
     for (int c = 0; c < ref->ncol(); ++c) {
         int requiredc = c / manager.chunk_ncol;
         if (requiredc != lastc) {
-            manager.extract<false, false>(requiredc, c % manager.chunk_ncol, ref->ncol(), 0, ref->nrow(), cache);
+            manager.extract<false, false>(requiredc, c % manager.chunk_ncol, ref->ncol(), 0, ref->nrow(), slab, work);
             lastc = requiredc;
-            ccptr = cache.cache.data();
+            ccptr = slab.values.data();
         }
 
         ref_ext->fetch_copy(c, tmp1.data());
@@ -130,8 +134,8 @@ TEST_P(CustomDenseChunkManagerFullTest, Column) {
         ccptr += ref->nrow();
 
         // Testing with exact.
-        manager.extract<false, true>(requiredc, c % manager.chunk_ncol, ref->ncol(), 0, ref->nrow(), ecache);
-        EXPECT_EQ(tmp1, ecache.cache);
+        manager.extract<false, true>(requiredc, c % manager.chunk_ncol, ref->ncol(), 0, ref->nrow(), eslab, work);
+        EXPECT_EQ(tmp1, eslab.values);
     }
 }
 
@@ -170,8 +174,10 @@ TEST_P(CustomDenseChunkManagerBlockTest, Row) {
     int start = bounds.first * ref->ncol();
     int len = bounds.second * ref->ncol() - start;
 
-    auto cache = manager.create_chunk_cache<true, false>(len);
-    auto ecache = manager.create_chunk_cache<true, true>(len);
+    auto slab = manager.create_slab<true, false>(len);
+    auto eslab = manager.create_slab<true, true>(len);
+    auto work = manager.create_workspace();
+
     std::vector<double> tmp1(len), tmp2(len);
     auto ref_ext = ref->dense_row(start, len);
     int lastr = -1;
@@ -180,9 +186,9 @@ TEST_P(CustomDenseChunkManagerBlockTest, Row) {
     for (int r = 0; r < ref->nrow(); ++r) {
         int requiredr = r / manager.chunk_nrow;
         if (requiredr != lastr) {
-            manager.extract<true, false>(requiredr, r % manager.chunk_nrow, ref->nrow(), start, len, cache);
+            manager.extract<true, false>(requiredr, r % manager.chunk_nrow, ref->nrow(), start, len, slab, work);
             lastr = requiredr;
-            ccptr = cache.cache.data();
+            ccptr = slab.values.data();
         }
 
         ref_ext->fetch_copy(r, tmp1.data());
@@ -191,8 +197,8 @@ TEST_P(CustomDenseChunkManagerBlockTest, Row) {
         ccptr += len;
 
         // Testing with exact.
-        manager.extract<true, true>(requiredr, r % manager.chunk_nrow, ref->nrow(), start, len, ecache);
-        EXPECT_EQ(tmp1, ecache.cache);
+        manager.extract<true, true>(requiredr, r % manager.chunk_nrow, ref->nrow(), start, len, eslab, work);
+        EXPECT_EQ(tmp1, eslab.values);
     }
 }
 
@@ -204,8 +210,10 @@ TEST_P(CustomDenseChunkManagerBlockTest, Column) {
     int start = bounds.first * ref->nrow();
     int len = bounds.second * ref->nrow() - start;
 
-    auto cache = manager.create_chunk_cache<false, false>(len);
-    auto ecache = manager.create_chunk_cache<false, true>(len);
+    auto slab = manager.create_slab<false, false>(len);
+    auto eslab = manager.create_slab<false, true>(len);
+    auto work = manager.create_workspace();
+
     std::vector<double> tmp1(len), tmp2(len);
     auto ref_ext = ref->dense_column(start, len);
     int lastc = -1;
@@ -214,9 +222,9 @@ TEST_P(CustomDenseChunkManagerBlockTest, Column) {
     for (int c = 0; c < ref->ncol(); ++c) {
         int requiredc = c / manager.chunk_ncol;
         if (requiredc != lastc) {
-            manager.extract<false, false>(requiredc, c % manager.chunk_ncol, ref->ncol(), start, len, cache);
+            manager.extract<false, false>(requiredc, c % manager.chunk_ncol, ref->ncol(), start, len, slab, work);
             lastc = requiredc;
-            ccptr = cache.cache.data();
+            ccptr = slab.values.data();
         }
 
         ref_ext->fetch_copy(c, tmp1.data());
@@ -225,8 +233,8 @@ TEST_P(CustomDenseChunkManagerBlockTest, Column) {
         ccptr += len;
 
         // Testing with exact.
-        manager.extract<false, true>(requiredc, c % manager.chunk_ncol, ref->ncol(), start, len, ecache);
-        EXPECT_EQ(tmp1, ecache.cache);
+        manager.extract<false, true>(requiredc, c % manager.chunk_ncol, ref->ncol(), start, len, eslab, work);
+        EXPECT_EQ(tmp1, eslab.values);
     }
 }
 
@@ -278,8 +286,10 @@ TEST_P(CustomDenseChunkManagerIndexTest, Row) {
     assemble(std::get<0>(param), std::get<1>(param), std::get<3>(param), std::get<4>(param));
     auto indices = get_indices(std::get<2>(param), ref->ncol());
 
-    auto cache = manager.create_chunk_cache<true, false>(indices.size());
-    auto ecache = manager.create_chunk_cache<true, true>(indices.size());
+    auto slab = manager.create_slab<true, false>(indices.size());
+    auto eslab = manager.create_slab<true, true>(indices.size());
+    auto work = manager.create_workspace();
+
     std::vector<double> tmp1(indices.size()), tmp2(indices.size());
     auto ref_ext = ref->dense_row(indices);
     int lastr = -1;
@@ -288,9 +298,9 @@ TEST_P(CustomDenseChunkManagerIndexTest, Row) {
     for (int r = 0; r < ref->nrow(); ++r) {
         int requiredr = r / manager.chunk_nrow;
         if (requiredr != lastr) {
-            manager.extract<true, false>(requiredr, r % manager.chunk_nrow, ref->nrow(), indices, cache);
+            manager.extract<true, false>(requiredr, r % manager.chunk_nrow, ref->nrow(), indices, slab, work);
             lastr = requiredr;
-            ccptr = cache.cache.data();
+            ccptr = slab.values.data();
         }
 
         ref_ext->fetch_copy(r, tmp1.data());
@@ -299,8 +309,8 @@ TEST_P(CustomDenseChunkManagerIndexTest, Row) {
         ccptr += indices.size();
 
         // Testing with exact.
-        manager.extract<true, true>(requiredr, r % manager.chunk_nrow, ref->nrow(), indices, ecache);
-        EXPECT_EQ(tmp1, ecache.cache);
+        manager.extract<true, true>(requiredr, r % manager.chunk_nrow, ref->nrow(), indices, eslab, work);
+        EXPECT_EQ(tmp1, eslab.values);
     }
 }
 
@@ -309,8 +319,10 @@ TEST_P(CustomDenseChunkManagerIndexTest, Column) {
     assemble(std::get<0>(param), std::get<1>(param), std::get<3>(param), std::get<4>(param));
     auto indices = get_indices(std::get<2>(param), ref->nrow());
 
-    auto cache = manager.create_chunk_cache<false, false>(indices.size());
-    auto ecache = manager.create_chunk_cache<false, true>(indices.size());
+    auto slab = manager.create_slab<false, false>(indices.size());
+    auto eslab = manager.create_slab<false, true>(indices.size());
+    auto work = manager.create_workspace();
+
     std::vector<double> tmp1(indices.size()), tmp2(indices.size());
     auto ref_ext = ref->dense_column(indices);
     int lastc = -1;
@@ -319,9 +331,9 @@ TEST_P(CustomDenseChunkManagerIndexTest, Column) {
     for (int c = 0; c < ref->ncol(); ++c) {
         int requiredc = c / manager.chunk_ncol;
         if (requiredc != lastc) {
-            manager.extract<false, false>(requiredc, c % manager.chunk_ncol, ref->ncol(), indices, cache);
+            manager.extract<false, false>(requiredc, c % manager.chunk_ncol, ref->ncol(), indices, slab, work);
             lastc = requiredc;
-            ccptr = cache.cache.data();
+            ccptr = slab.values.data();
         }
 
         ref_ext->fetch_copy(c, tmp1.data());
@@ -330,8 +342,8 @@ TEST_P(CustomDenseChunkManagerIndexTest, Column) {
         ccptr += indices.size();
 
         // Testing with exact.
-        manager.extract<false, true>(requiredc, c % manager.chunk_ncol, ref->ncol(), indices, ecache);
-        EXPECT_EQ(tmp1, ecache.cache);
+        manager.extract<false, true>(requiredc, c % manager.chunk_ncol, ref->ncol(), indices, eslab, work);
+        EXPECT_EQ(tmp1, eslab.values);
     }
 }
 
@@ -455,8 +467,10 @@ TEST_P(CustomSparseChunkManagerFullTest, Row) {
     auto param = GetParam();
     assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
 
-    auto cache = manager.create_chunk_cache<true, false>(ref->ncol());
-    auto ecache = manager.create_chunk_cache<true, true>(ref->ncol());
+    auto slab = manager.create_slab<true, false>(ref->ncol());
+    auto eslab = manager.create_slab<true, true>(ref->ncol());
+    auto work = manager.create_workspace();
+
     auto ref_ext = ref->sparse_row();
     int lastr = -1;
 
@@ -464,18 +478,18 @@ TEST_P(CustomSparseChunkManagerFullTest, Row) {
         int requiredr = r / manager.chunk_nrow;
         int offsetr = r % manager.chunk_nrow;
         if (requiredr != lastr) {
-            manager.extract<true, false>(requiredr, offsetr, ref->nrow(), 0, ref->ncol(), cache);
+            manager.extract<true, false>(requiredr, offsetr, ref->nrow(), 0, ref->ncol(), slab, work);
             lastr = requiredr;
         }
 
         auto ref_range = ref_ext->fetch(r);
-        EXPECT_EQ(ref_range.value, cache.cache_values[offsetr]);
-        EXPECT_EQ(ref_range.index, cache.cache_indices[offsetr]);
+        EXPECT_EQ(ref_range.value, slab.values[offsetr]);
+        EXPECT_EQ(ref_range.index, slab.indices[offsetr]);
 
         // Testing with exact.
-        manager.extract<true, true>(requiredr, offsetr, ref->nrow(), 0, ref->ncol(), ecache);
-        EXPECT_EQ(ref_range.value, ecache.cache_values[0]);
-        EXPECT_EQ(ref_range.index, ecache.cache_indices[0]);
+        manager.extract<true, true>(requiredr, offsetr, ref->nrow(), 0, ref->ncol(), eslab, work);
+        EXPECT_EQ(ref_range.value, eslab.values[0]);
+        EXPECT_EQ(ref_range.index, eslab.indices[0]);
     }
 }
 
@@ -483,8 +497,10 @@ TEST_P(CustomSparseChunkManagerFullTest, Column) {
     auto param = GetParam();
     assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
 
-    auto cache = manager.create_chunk_cache<false, false>(ref->nrow());
-    auto ecache = manager.create_chunk_cache<false, true>(ref->nrow());
+    auto slab = manager.create_slab<false, false>(ref->nrow());
+    auto eslab = manager.create_slab<false, true>(ref->nrow());
+    auto work = manager.create_workspace();
+
     auto ref_ext = ref->sparse_column();
     int lastc = -1;
 
@@ -492,18 +508,18 @@ TEST_P(CustomSparseChunkManagerFullTest, Column) {
         int requiredc = c / manager.chunk_ncol;
         int offsetc = c % manager.chunk_ncol;
         if (requiredc != lastc) {
-            manager.extract<false, false>(requiredc, offsetc, ref->ncol(), 0, ref->nrow(), cache);
+            manager.extract<false, false>(requiredc, offsetc, ref->ncol(), 0, ref->nrow(), slab, work);
             lastc = requiredc;
         }
 
         auto ref_range = ref_ext->fetch(c);
-        EXPECT_EQ(ref_range.value, cache.cache_values[offsetc]);
-        EXPECT_EQ(ref_range.index, cache.cache_indices[offsetc]);
+        EXPECT_EQ(ref_range.value, slab.values[offsetc]);
+        EXPECT_EQ(ref_range.index, slab.indices[offsetc]);
 
         // Testing with exact.
-        manager.extract<false, true>(requiredc, offsetc, ref->ncol(), 0, ref->nrow(), ecache);
-        EXPECT_EQ(ref_range.value, ecache.cache_values[0]);
-        EXPECT_EQ(ref_range.index, ecache.cache_indices[0]);
+        manager.extract<false, true>(requiredc, offsetc, ref->ncol(), 0, ref->nrow(), eslab, work);
+        EXPECT_EQ(ref_range.value, eslab.values[0]);
+        EXPECT_EQ(ref_range.index, eslab.indices[0]);
     }
 }
 
@@ -542,8 +558,10 @@ TEST_P(CustomSparseChunkManagerBlockTest, Row) {
     int start = bounds.first * ref->ncol();
     int len = bounds.second * ref->ncol() - start;
 
-    auto cache = manager.create_chunk_cache<true, false>(len);
-    auto ecache = manager.create_chunk_cache<true, true>(len);
+    auto slab = manager.create_slab<true, false>(len);
+    auto eslab = manager.create_slab<true, true>(len);
+    auto work = manager.create_workspace();
+
     auto ref_ext = ref->sparse_row(start, len);
     int lastr = -1;
 
@@ -551,18 +569,18 @@ TEST_P(CustomSparseChunkManagerBlockTest, Row) {
         int requiredr = r / manager.chunk_nrow;
         int offsetr = r % manager.chunk_nrow;
         if (requiredr != lastr) {
-            manager.extract<true, false>(requiredr, offsetr, ref->nrow(), start, len, cache);
+            manager.extract<true, false>(requiredr, offsetr, ref->nrow(), start, len, slab, work);
             lastr = requiredr;
         }
 
         auto ref_range = ref_ext->fetch(r);
-        EXPECT_EQ(ref_range.value, cache.cache_values[offsetr]);
-        EXPECT_EQ(ref_range.index, cache.cache_indices[offsetr]);
+        EXPECT_EQ(ref_range.value, slab.values[offsetr]);
+        EXPECT_EQ(ref_range.index, slab.indices[offsetr]);
 
         // Testing with exact.
-        manager.extract<true, true>(requiredr, offsetr, ref->nrow(), start, len, ecache);
-        EXPECT_EQ(ref_range.value, ecache.cache_values[0]);
-        EXPECT_EQ(ref_range.index, ecache.cache_indices[0]);
+        manager.extract<true, true>(requiredr, offsetr, ref->nrow(), start, len, eslab, work);
+        EXPECT_EQ(ref_range.value, eslab.values[0]);
+        EXPECT_EQ(ref_range.index, eslab.indices[0]);
     }
 }
 
@@ -574,8 +592,10 @@ TEST_P(CustomSparseChunkManagerBlockTest, Column) {
     int start = bounds.first * ref->nrow();
     int len = bounds.second * ref->nrow() - start;
 
-    auto cache = manager.create_chunk_cache<false, false>(len);
-    auto ecache = manager.create_chunk_cache<false, true>(len);
+    auto slab = manager.create_slab<false, false>(len);
+    auto eslab = manager.create_slab<false, true>(len);
+    auto work = manager.create_workspace();
+
     auto ref_ext = ref->sparse_column(start, len);
     int lastc = -1;
 
@@ -583,18 +603,18 @@ TEST_P(CustomSparseChunkManagerBlockTest, Column) {
         int requiredc = c / manager.chunk_ncol;
         int offsetc = c % manager.chunk_ncol;
         if (requiredc != lastc) {
-            manager.extract<false, false>(requiredc, offsetc, ref->ncol(), start, len, cache);
+            manager.extract<false, false>(requiredc, offsetc, ref->ncol(), start, len, slab, work);
             lastc = requiredc;
         }
 
         auto ref_range = ref_ext->fetch(c);
-        EXPECT_EQ(ref_range.value, cache.cache_values[offsetc]);
-        EXPECT_EQ(ref_range.index, cache.cache_indices[offsetc]);
+        EXPECT_EQ(ref_range.value, slab.values[offsetc]);
+        EXPECT_EQ(ref_range.index, slab.indices[offsetc]);
 
         // Testing with exact.
-        manager.extract<false, true>(requiredc, offsetc, ref->ncol(), start, len, ecache);
-        EXPECT_EQ(ref_range.value, ecache.cache_values[0]);
-        EXPECT_EQ(ref_range.index, ecache.cache_indices[0]);
+        manager.extract<false, true>(requiredc, offsetc, ref->ncol(), start, len, eslab, work);
+        EXPECT_EQ(ref_range.value, eslab.values[0]);
+        EXPECT_EQ(ref_range.index, eslab.indices[0]);
     }
 }
 
@@ -646,8 +666,10 @@ TEST_P(CustomSparseChunkManagerIndexTest, Row) {
     assemble(std::get<0>(param), std::get<1>(param), std::get<3>(param), std::get<4>(param));
     auto indices = get_indices(std::get<2>(param), ref->ncol());
 
-    auto cache = manager.create_chunk_cache<true, false>(indices.size());
-    auto ecache = manager.create_chunk_cache<true, true>(indices.size());
+    auto slab = manager.create_slab<true, false>(indices.size());
+    auto eslab = manager.create_slab<true, true>(indices.size());
+    auto work = manager.create_workspace();
+
     auto ref_ext = ref->sparse_row(indices);
     int lastr = -1;
 
@@ -655,18 +677,18 @@ TEST_P(CustomSparseChunkManagerIndexTest, Row) {
         int requiredr = r / manager.chunk_nrow;
         int offsetr = r % manager.chunk_nrow;
         if (requiredr != lastr) {
-            manager.extract<true, false>(requiredr, offsetr, ref->nrow(), indices, cache);
+            manager.extract<true, false>(requiredr, offsetr, ref->nrow(), indices, slab, work);
             lastr = requiredr;
         }
 
         auto ref_range = ref_ext->fetch(r);
-        EXPECT_EQ(ref_range.value, cache.cache_values[offsetr]);
-        EXPECT_EQ(ref_range.index, cache.cache_indices[offsetr]);
+        EXPECT_EQ(ref_range.value, slab.values[offsetr]);
+        EXPECT_EQ(ref_range.index, slab.indices[offsetr]);
 
         // Testing with exact.
-        manager.extract<true, true>(requiredr, offsetr, ref->nrow(), indices, ecache);
-        EXPECT_EQ(ref_range.value, ecache.cache_values[0]);
-        EXPECT_EQ(ref_range.index, ecache.cache_indices[0]);
+        manager.extract<true, true>(requiredr, offsetr, ref->nrow(), indices, eslab, work);
+        EXPECT_EQ(ref_range.value, eslab.values[0]);
+        EXPECT_EQ(ref_range.index, eslab.indices[0]);
     }
 }
 
@@ -675,8 +697,10 @@ TEST_P(CustomSparseChunkManagerIndexTest, Column) {
     assemble(std::get<0>(param), std::get<1>(param), std::get<3>(param), std::get<4>(param));
     auto indices = get_indices(std::get<2>(param), ref->nrow());
 
-    auto cache = manager.create_chunk_cache<false, false>(indices.size());
-    auto ecache = manager.create_chunk_cache<false, true>(indices.size());
+    auto slab = manager.create_slab<false, false>(indices.size());
+    auto eslab = manager.create_slab<false, true>(indices.size());
+    auto work = manager.create_workspace();
+
     std::vector<double> tmp1(indices.size()), tmp2(indices.size());
     auto ref_ext = ref->sparse_column(indices);
     int lastc = -1;
@@ -685,18 +709,18 @@ TEST_P(CustomSparseChunkManagerIndexTest, Column) {
         int requiredc = c / manager.chunk_ncol;
         int offsetc = c % manager.chunk_ncol;
         if (requiredc != lastc) {
-            manager.extract<false, false>(requiredc, offsetc, ref->ncol(), indices, cache);
+            manager.extract<false, false>(requiredc, offsetc, ref->ncol(), indices, slab, work);
             lastc = requiredc;
         }
 
         auto ref_range = ref_ext->fetch(c);
-        EXPECT_EQ(ref_range.value, cache.cache_values[offsetc]);
-        EXPECT_EQ(ref_range.index, cache.cache_indices[offsetc]);
+        EXPECT_EQ(ref_range.value, slab.values[offsetc]);
+        EXPECT_EQ(ref_range.index, slab.indices[offsetc]);
 
         // Testing with exact.
-        manager.extract<false, true>(requiredc, offsetc, ref->ncol(), indices, ecache);
-        EXPECT_EQ(ref_range.value, ecache.cache_values[0]);
-        EXPECT_EQ(ref_range.index, ecache.cache_indices[0]);
+        manager.extract<false, true>(requiredc, offsetc, ref->ncol(), indices, eslab, work);
+        EXPECT_EQ(ref_range.value, eslab.values[0]);
+        EXPECT_EQ(ref_range.index, eslab.indices[0]);
     }
 }
 

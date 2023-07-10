@@ -78,50 +78,62 @@ private:
 
 public:
     static constexpr bool sparse_chunk = Chunk_::sparse;
+    typedef typename Chunk_::value_type Chunkval;
     typedef typename Chunk_::index_type Chunkdex;
 
-    struct SparseCache {
-        SparseCache(size_t primary_dim) : cache_indices(primary_dim), cache_values(primary_dim) {}
+    struct SparseWorkspace {
+        std::vector<Chunkval> values;
+        std::vector<Chunkdex> indices;
+        std::vector<size_t> indptrs;
+    };
 
-        std::vector<std::vector<Chunkdex> > cache_indices;
-        std::vector<std::vector<typename Chunk_::value_type> > cache_values;
-
-        std::vector<size_t> buffer_indptrs;
-        std::vector<Chunkdex> buffer_indices;
-        std::vector<typename Chunk_::value_type> buffer_values;
-
+    struct SparseSlab {
+        SparseSlab(size_t primary_dim) : indices(primary_dim), values(primary_dim) {}
+        std::vector<std::vector<Chunkval> > values;
+        std::vector<std::vector<Chunkdex> > indices;
         void clear() {
-            for (auto& x : cache_indices) {
+            for (auto& x : indices) {
                 x.clear();
             }
-            for (auto& x : cache_values) {
+            for (auto& x : values) {
                 x.clear();
             }
         }
     };
 
-    struct DenseCache {
-        DenseCache(size_t length, size_t primary_dim) : cache(length * primary_dim) {}
-
-        std::vector<typename Chunk_::value_type> cache;
-
-        std::vector<typename Chunk_::value_type> buffer;
+    struct DenseWorkspace {
+        std::vector<typename Chunk_::value_type> values;
     };
 
-    typedef typename std::conditional<sparse_chunk, SparseCache, DenseCache>::type Cache;
+    struct DenseSlab {
+        DenseSlab(size_t length, size_t primary_dim) : values(length * primary_dim) {}
+        std::vector<Chunkval> values;
+    };
+
+    typedef typename std::conditional<sparse_chunk, SparseWorkspace, DenseWorkspace>::type Workspace;
+
+    Workspace create_workspace() const {
+        if constexpr(sparse_chunk) {
+            return SparseWorkspace();
+        } else {
+            return DenseWorkspace();
+        }
+    }
+
+    typedef typename std::conditional<sparse_chunk, SparseSlab, DenseSlab>::type Slab;
 
     template<bool accrow_, bool exact_>
-    Cache create_chunk_cache(size_t length) const {
+    Slab create_slab(size_t length) const {
         if constexpr(sparse_chunk) {
-            return SparseCache(exact_ ? 1 : get_primary_chunkdim<accrow_>());
+            return SparseSlab(exact_ ? 1 : get_primary_chunkdim<accrow_>());
         } else {
-            return DenseCache(length, exact_ ? 1 : get_primary_chunkdim<accrow_>());
+            return DenseSlab(length, exact_ ? 1 : get_primary_chunkdim<accrow_>());
         }
     }
 
 public:
     template<bool accrow_, bool exact_>
-    void extract(size_t primary_chunk_index, size_t primary_chunk_offset, size_t primary_maxdim, size_t start, size_t length, Cache& cache) const {
+    void extract(size_t primary_chunk_index, size_t primary_chunk_offset, size_t primary_maxdim, size_t start, size_t length, Slab& slab, Workspace& work) const {
         if (!length) {
             return;
         }
@@ -144,7 +156,7 @@ public:
         size_t secondary_start_pos = start_chunk_index * secondary_chunkdim;
 
         if constexpr(sparse_chunk) {
-            cache.clear();
+            slab.clear();
         }
 
         for (size_t c = start_chunk_index; c < end_chunk_index; ++c) {
@@ -153,39 +165,39 @@ public:
             size_t to = (c + 1 == end_chunk_index ? start + length - secondary_start_pos : secondary_chunkdim);
 
             if constexpr(sparse_chunk) {
-                chunk.inflate(cache.buffer_values, cache.buffer_indices, cache.buffer_indptrs);
+                chunk.inflate(work.values, work.indices, work.indptrs);
                 Chunkdex secondary_offset = secondary_start_pos;
 
                 if (chunk.row_major == accrow_) {
                     auto refine_start_and_end = [&](size_t& start, size_t& end) -> void {
                         if (from) {
-                            auto it = cache.buffer_indices.begin();
+                            auto it = work.indices.begin();
                             start = std::lower_bound(it + start, it + end, static_cast<Chunkdex>(from)) - it;
                         }
                         if (to != secondary_chunkdim) {
-                            auto it = cache.buffer_indices.begin();
+                            auto it = work.indices.begin();
                             end = std::lower_bound(it + start, it + end, static_cast<Chunkdex>(to)) - it;
                         }
                     };
 
                     if constexpr(exact_) {
-                        auto start = cache.buffer_indptrs[primary_chunk_offset], end = cache.buffer_indptrs[primary_chunk_offset + 1];
+                        auto start = work.indptrs[primary_chunk_offset], end = work.indptrs[primary_chunk_offset + 1];
                         if (start < end) {
                             refine_start_and_end(start, end);
-                            cache.cache_values[0].insert(cache.cache_values[0].end(), cache.buffer_values.begin() + start, cache.buffer_values.begin() + end);
+                            slab.values[0].insert(slab.values[0].end(), work.values.begin() + start, work.values.begin() + end);
                             for (size_t i = start; i < end; ++i) {
-                                cache.cache_indices[0].push_back(cache.buffer_indices[i] + secondary_offset);
+                                slab.indices[0].push_back(work.indices[i] + secondary_offset);
                             }
                         }
 
                     } else {
                         for (size_t p = 0; p < primary_end_pos; ++p) {
-                            auto start = cache.buffer_indptrs[p], end = cache.buffer_indptrs[p + 1];
+                            auto start = work.indptrs[p], end = work.indptrs[p + 1];
                             if (start < end) {
                                 refine_start_and_end(start, end);
-                                cache.cache_values[p].insert(cache.cache_values[p].end(), cache.buffer_values.begin() + start, cache.buffer_values.begin() + end);
+                                slab.values[p].insert(slab.values[p].end(), work.values.begin() + start, work.values.begin() + end);
                                 for (size_t i = start; i < end; ++i) {
-                                    cache.cache_indices[p].push_back(cache.buffer_indices[i] + secondary_offset);
+                                    slab.indices[p].push_back(work.indices[i] + secondary_offset);
                                 }
                             }
                         }
@@ -195,31 +207,31 @@ public:
                     if constexpr(exact_) {
                         Chunkdex target = primary_chunk_offset;
                         for (size_t s = from; s < to; ++s) {
-                            auto start = cache.buffer_indptrs[s], end = cache.buffer_indptrs[s + 1];
-                            auto it = cache.buffer_indices.begin();
+                            auto start = work.indptrs[s], end = work.indptrs[s + 1];
+                            auto it = work.indices.begin();
                             start = std::lower_bound(it + start, it + end, target) - it;
-                            if (start != end && cache.buffer_indices[start] == target) {
-                                cache.cache_values[0].push_back(cache.buffer_values[start]);
-                                cache.cache_indices[0].push_back(s + secondary_offset);
+                            if (start != end && work.indices[start] == target) {
+                                slab.values[0].push_back(work.values[start]);
+                                slab.indices[0].push_back(s + secondary_offset);
                             }
                         }
 
                     } else {
                         for (size_t s = from; s < to; ++s) {
-                            auto start = cache.buffer_indptrs[s], end = cache.buffer_indptrs[s + 1];
+                            auto start = work.indptrs[s], end = work.indptrs[s + 1];
                             for (size_t i = start; i < end; ++i) {
-                                auto p = cache.buffer_indices[i];
-                                cache.cache_values[p].push_back(cache.buffer_values[i]);
-                                cache.cache_indices[p].push_back(s + secondary_offset);
+                                auto p = work.indices[i];
+                                slab.values[p].push_back(work.values[i]);
+                                slab.indices[p].push_back(s + secondary_offset);
                             }
                         }
                     }
                 }
 
             } else {
-                chunk.inflate(cache.buffer);
-                auto bptr = cache.buffer.data();
-                auto cptr = cache.cache.data() + dense_cache_offset;
+                chunk.inflate(work.values);
+                auto bptr = work.values.data();
+                auto cptr = slab.values.data() + dense_cache_offset;
 
                 if (chunk.row_major == accrow_) {
                     if constexpr(exact_) {
@@ -269,7 +281,7 @@ public:
 
 public:
     template<bool accrow_, bool exact_, typename Index_>
-    void extract(size_t primary_chunk_index, size_t primary_chunk_offset, size_t primary_maxdim, const std::vector<Index_>& indices, Cache& cache) const {
+    void extract(size_t primary_chunk_index, size_t primary_chunk_offset, size_t primary_maxdim, const std::vector<Index_>& indices, Slab& slab, Workspace& work) const {
         if (indices.empty()) {
             return;
         }
@@ -293,7 +305,7 @@ public:
         size_t secondary_start_pos = start_chunk_index * secondary_chunkdim;
 
         if constexpr(sparse_chunk) {
-            cache.clear();
+            slab.clear();
         }
 
         for (size_t c = start_chunk_index; c < primary_num_chunks && iIt != indices.end(); ++c) {
@@ -308,18 +320,18 @@ public:
                 const auto& chunk = chunks[offset];
 
                 if constexpr(sparse_chunk) {
-                    chunk.inflate(cache.buffer_values, cache.buffer_indices, cache.buffer_indptrs);
+                    chunk.inflate(work.values, work.indices, work.indptrs);
                     Chunkdex secondary_offset = secondary_start_pos;
 
                     auto collect_sparse = [&](size_t start, size_t end, size_t pout) -> void {
                         if (collected.front()) {
-                            auto it = cache.buffer_indices.begin();
+                            auto it = work.indices.begin();
                             start = std::lower_bound(it + start, it + end, static_cast<Chunkdex>(collected.front())) - it;
                         }
 
                         auto cIt = collected.begin();
                         for (size_t i = start; i < end; ++i) {
-                            Index_ target = cache.buffer_indices[i];
+                            Index_ target = work.indices[i];
                             while (cIt != collected.end() && *cIt < target) {
                                 ++cIt;
                             }
@@ -327,8 +339,8 @@ public:
                                 break;
                             }
                             if (*cIt == target) {
-                                cache.cache_values[pout].push_back(cache.buffer_values[i]);
-                                cache.cache_indices[pout].push_back(cache.buffer_indices[i] + secondary_offset);
+                                slab.values[pout].push_back(work.values[i]);
+                                slab.indices[pout].push_back(work.indices[i] + secondary_offset);
                                 ++cIt;
                             }
                         }
@@ -336,14 +348,14 @@ public:
 
                     if (chunk.row_major == accrow_) {
                         if constexpr(exact_) {
-                            auto start = cache.buffer_indptrs[primary_chunk_offset], end = cache.buffer_indptrs[primary_chunk_offset + 1];
+                            auto start = work.indptrs[primary_chunk_offset], end = work.indptrs[primary_chunk_offset + 1];
                             if (start < end) {
                                 collect_sparse(start, end, 0);
                             }
 
                         } else {
                             for (size_t p = 0; p < primary_end_pos; ++p) {
-                                auto start = cache.buffer_indptrs[p], end = cache.buffer_indptrs[p + 1];
+                                auto start = work.indptrs[p], end = work.indptrs[p + 1];
                                 if (start < end) {
                                     collect_sparse(start, end, p);
                                 }
@@ -354,31 +366,31 @@ public:
                         if constexpr(exact_) {
                             Chunkdex target = primary_chunk_offset;
                             for (auto s : collected) {
-                                auto start = cache.buffer_indptrs[s], end = cache.buffer_indptrs[s + 1];
-                                auto it = cache.buffer_indices.begin();
+                                auto start = work.indptrs[s], end = work.indptrs[s + 1];
+                                auto it = work.indices.begin();
                                 start = std::lower_bound(it + start, it + end, target) - it;
-                                if (start != end && cache.buffer_indices[start] == target) {
-                                    cache.cache_values[0].push_back(cache.buffer_values[start]);
-                                    cache.cache_indices[0].push_back(s + secondary_offset);
+                                if (start != end && work.indices[start] == target) {
+                                    slab.values[0].push_back(work.values[start]);
+                                    slab.indices[0].push_back(s + secondary_offset);
                                 }
                             }
 
                         } else {
                             for (auto s : collected) {
-                                auto start = cache.buffer_indptrs[s], end = cache.buffer_indptrs[s + 1];
+                                auto start = work.indptrs[s], end = work.indptrs[s + 1];
                                 for (size_t i = start; i < end; ++i) {
-                                    auto p = cache.buffer_indices[i];
-                                    cache.cache_values[p].push_back(cache.buffer_values[i]);
-                                    cache.cache_indices[p].push_back(s + secondary_offset);
+                                    auto p = work.indices[i];
+                                    slab.values[p].push_back(work.values[i]);
+                                    slab.indices[p].push_back(s + secondary_offset);
                                 }
                             }
                         }
                     }
 
                 } else {
-                    chunk.inflate(cache.buffer);
-                    auto bptr = cache.buffer.data();
-                    auto cptr = cache.cache.data() + dense_cache_offset;
+                    chunk.inflate(work.values);
+                    auto bptr = work.values.data();
+                    auto cptr = slab.values.data() + dense_cache_offset;
 
                     if (chunk.row_major == accrow_) {
                         if constexpr(exact_) {
