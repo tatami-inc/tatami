@@ -88,6 +88,7 @@ public:
     };
 
     struct SparseSlab {
+        SparseSlab() = default;
         SparseSlab(size_t primary_dim) : indices(primary_dim), values(primary_dim) {}
         std::vector<std::vector<Chunkval> > values;
         std::vector<std::vector<Chunkdex> > indices;
@@ -106,6 +107,7 @@ public:
     };
 
     struct DenseSlab {
+        DenseSlab() = default;
         DenseSlab(size_t length, size_t primary_dim) : values(length * primary_dim) {}
         std::vector<Chunkval> values;
     };

@@ -35,7 +35,6 @@ struct TypicalChunkCacheOptions {
     bool require_minimum_cache = true;
 };
 
-
 /**
  * @brief Workspace for typical chunk extraction.
  *
@@ -46,7 +45,7 @@ struct TypicalChunkCacheOptions {
  * @tparam Index_ Integer type for the row/column indices.
  * @tparam ChunkSet_ Class that contains a single chunk set.
  */
-template<typename Index_, typename ChunkSet_>
+template<typename Index_, class ChunkSet_>
 struct TypicalChunkCacheWorkspace {
     /**
      * Default constructor.
@@ -64,15 +63,15 @@ struct TypicalChunkCacheWorkspace {
      * @param require_minimum_cache Whether to enforce a minimum size of the cache for efficient extraction, see `TypicalChunkCacheOptions` for details.
      */
     TypicalChunkCacheWorkspace(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache) {
-        chunk_set_size_in_elements = static_cast<size_t>(primary_chunk set_dim) * static_cast<size_t>(secondary_length);
+        chunk_set_size_in_elements = static_cast<size_t>(primary_length) * static_cast<size_t>(secondary_length);
         num_chunk_sets_in_cache = static_cast<double>(cache_size_in_elements) / chunk_set_size_in_elements;
 
-        if (num_chunk sets_in_cache == 0 && require_minimum_cache) {
+        if (num_chunk_sets_in_cache == 0 && require_minimum_cache) {
             num_chunk_sets_in_cache = 1;
         }
 
-        if (num_chunk sets_in_cache) {
-            lru_cache.reset(new LruChunkCache<Index_, Chunk_>(num_chunk_sets_in_cache));
+        if (num_chunk_sets_in_cache) {
+            lru_cache.reset(new LruChunkCache<Index_, ChunkSet_>(num_chunk_sets_in_cache));
         }
     }
 
@@ -94,15 +93,15 @@ public:
 
     /**
      * Cache of least recently used chunk sets.
-     * This is only allocated if `num_chunk sets_in_cache` is positive and `oracle_cache` is NULL.
+     * This is only allocated if `num_chunk_sets_in_cache` is positive and `oracle_cache` is NULL.
      */
-    std::unique_ptr<LruChunkCache<Index_, Chunk_> > lru_cache;
+    std::unique_ptr<LruChunkCache<Index_, ChunkSet_> > lru_cache;
 
     /**
      * Cache of to-be-used chunk sets, based on an `Oracle`'s predictions.
      * This may be NULL, see `set_oracle()` for more details.
      */
-    std::unique_ptr<OracleChunkCache<Index_, Index_, Chunk_> > oracle_cache; 
+    std::unique_ptr<OracleChunkCache<Index_, Index_, ChunkSet_> > oracle_cache; 
 
 public:
     /**
@@ -110,16 +109,16 @@ public:
      * This will only have an effect if the number of chunk sets in the cache is greater than 1,
      * otherwise the predictions have no effect on the choice of chunk set to retain.
      * Callers should check for a non-NULL `oracle_cache` before attempting to use it,
-     * otherwise they should use the `lru_cache` (provided `num_chunk sets_in_cache > 0`).
+     * otherwise they should use the `lru_cache` (provided `num_chunk_sets_in_cache > 0`).
      *
      * @param o Oracle to provide predictions for subsequent accesses on the primary dimension.
      */
     void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
         // The oracle won't have any effect if fewer than one chunk set can be cached.
         if (num_chunk_sets_in_cache > 1) {
-            size_t max_predictions = static_cast<size_t>(num_chunk sets_in_cache) * primary_length * 2; // double the cache size, basically.
-            base.oracle_cache.reset(new OracleCache<Index_, Index_, Chunk_>(std::move(o), max_predictions, num_chunk_sets_in_cache));
-            base.lru_cache.reset();
+            size_t max_predictions = static_cast<size_t>(num_chunk_sets_in_cache) * primary_length * 2; // double the cache size, basically.
+            oracle_cache.reset(new OracleChunkCache<Index_, Index_, ChunkSet_>(std::move(o), max_predictions, num_chunk_sets_in_cache));
+            lru_cache.reset();
         }
     }
 };
