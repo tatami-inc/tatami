@@ -33,17 +33,15 @@ namespace tatami {
 template<class Chunk_>
 struct SimpleDenseChunkWrapper {
     /**
-     * Workspace for chunk extraction.
+     * Type of the value stored in this chunk.
      */
-    typedef std::vector<typename Chunk_::value_type> Workspace;
+    typedef typename Chunk_::value_type value_type;
 
     /**
-     * @return Workspace for chunk extraction.
+     * Workspace for chunk extraction.
      * This can be used in multiple `fetch()` calls, possibly across different chunks.
      */
-    static Workspace workspace() {
-        return Workspace();
-    }
+    typedef std::vector<value_type> Workspace;
 
 public:
     /**
@@ -209,27 +207,31 @@ public:
 template<class Chunk_>
 struct SimpleSparseChunkWrapper {
     /**
-     * Workspace for chunk extraction.
+     * Type of the value stored in this chunk.
+     */
+    typedef typename Chunk_::value_type value_type;
+
+    /**
+     * Type of the index stored in this chunk.
+     */
+    typedef typename Chunk_::index_type index_type;
+
+    /**
+     * @brief Workspace for chunk extraction.
+     *
+     * This can be used in multiple `fetch()` calls, possibly across different chunks.
      */
     struct Workspace {
         /**
          * @cond
          */
-        std::vector<typename Chunk_::value_type> values;
-        std::vector<typename Chunk_::index_type> indices;
+        std::vector<value_type> values;
+        std::vector<index_type> indices;
         std::vector<size_t> indptrs;
         /**
          * @endcond
          */
     };
-
-    /**
-     * @return Workspace for chunk extraction.
-     * This can be used in multiple `fetch()` calls, possibly across different chunks.
-     */
-    static Workspace workspace() {
-        return Workspace();
-    }
 
 public:
     /**
@@ -501,7 +503,7 @@ struct TypicalChunkCacheWorkspace {
      */
     TypicalChunkCacheWorkspace(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache) {
         chunk_set_size_in_elements = static_cast<size_t>(primary_length) * static_cast<size_t>(secondary_length);
-        num_chunk_sets_in_cache = static_cast<double>(cache_size_in_elements) / chunk_set_size_in_elements;
+        num_chunk_sets_in_cache = (chunk_set_size_in_elements ? cache_size_in_elements / chunk_set_size_in_elements : 1);
 
         if (num_chunk_sets_in_cache == 0 && require_minimum_cache) {
             num_chunk_sets_in_cache = 1;

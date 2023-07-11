@@ -55,7 +55,7 @@ class SimpleChunkWrapperFullTest : public ::testing::TestWithParam<std::tuple<st
 protected:
     template<bool sparse_, typename Chunk_>
     void run_tests(const Chunk_& chunk, const std::pair<int, int>& dim, const std::pair<double, double>& bounds) const {
-        auto work = chunk.workspace();
+        typename Chunk_::Workspace work;
         int r_first = bounds.first * dim.first, r_last = bounds.second * dim.first, r_len = r_last - r_first;
         int c_first = bounds.first * dim.second, c_last = bounds.second * dim.second, c_len = c_last - c_first;
 
@@ -173,7 +173,7 @@ protected:
         int r2_first = block.first * dim.first,  r2_last = block.second * dim.first,  r2_len = r2_last - r2_first;
         int c2_first = block.first * dim.second, c2_last = block.second * dim.second, c2_len = c2_last - c2_first;
 
-        auto work = chunk.workspace();
+        typename Chunk_::Workspace work;
 
         // Row-major row extraction.
         if (r_len && c2_len) {
@@ -307,7 +307,7 @@ protected:
             c2_start += c2_step;
         } 
 
-        auto work = chunk.workspace();
+        typename Chunk_::Workspace work;
 
         // Row-major row extraction.
         if (r_len && c2_indices.size()) {

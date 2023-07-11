@@ -12,34 +12,101 @@ namespace tatami {
  */
 struct CustomChunkedOptions : public TypicalChunkCacheOptions {};
 
-template<typename Value_, typename Index_, typename Chunk_>
-class CustomChunkedDenseMatrix : public VirtualDenseMatrix<Value_, Index_> {
-public:
-    CustomChunkedDenseMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, Index_ nrow_in_chunks, Index_ ncol_in_chunks, std::vector<Chunk_> chunks, bool row_major, const CustomChunkedOptions& opt) : 
-        manager(std::move(chunks)), 
-        nrows(mat_nrow), 
-        ncols(mat_ncol), 
-        cache_size_in_elements(opt.maximum_cache_size / sizeof(typename Chunk_::value_type)),
-        require_minimum_cache(opt.require_minimum_cache)
-    {
-        manager.chunk_nrow = chunk_nrow;
-        manager.chunk_ncol = chunk_ncol;
-        manager.num_chunks_per_column = nrow_in_chunks;
-        manager.num_chunks_per_row = ncol_in_chunks;
-        manager.row_major = row_major;
+/**
+ * @cond
+ */
+template<typename Index_>
+class CustomChunkedMatrixMethods {
+protected:
+    CustomChunkedMatrixMethods(Index_ chunk_nr, Index_ chunk_nc, Index_ nr_in_chunks, Index_ nc_in_chunks, bool rm) :
+        chunk_nrow(chunk_nr), 
+        chunk_ncol(chunk_nc),
+        num_chunks_per_row(nc_in_chunks),
+        num_chunks_per_column(nr_in_chunks),
+        row_major(rm)
+    {}
+
+protected:
+    Index_ chunk_nrow, chunk_ncol;
+    Index_ num_chunks_per_row, num_chunks_per_column;
+    bool row_major;
+
+protected:
+    template<bool accrow_>
+    Index_ get_primary_chunkdim() const {
+        if constexpr(accrow_) {
+            return chunk_nrow;
+        } else {
+            return chunk_ncol;
+        }
     }
 
+    template<bool accrow_>
+    Index_ get_secondary_chunkdim() const {
+        if constexpr(accrow_) {
+            return chunk_ncol;
+        } else {
+            return chunk_nrow;
+        }
+    }
+
+    template<bool accrow_>
+    Index_ get_primary_num_chunks() const {
+        if constexpr(accrow_) {
+            return num_chunks_per_row;
+        } else {
+            return num_chunks_per_column;
+        }
+    }
+
+    template<bool accrow_>
+    std::pair<size_t, size_t> get_chunk_offset_and_stride(size_t primary_chunk_index) const {
+        size_t offset, increment;
+        if (row_major) {
+            if constexpr(accrow_) {
+                offset = primary_chunk_index * num_chunks_per_row;
+                increment = 1;
+            } else {
+                offset = primary_chunk_index;
+                increment = num_chunks_per_row;
+            }
+        } else {
+            if constexpr(accrow_) {
+                offset = primary_chunk_index;
+                increment = num_chunks_per_column;
+            } else {
+                offset = primary_chunk_index * num_chunks_per_column;
+                increment = 1;
+            }
+        }
+        return std::make_pair(offset, increment);
+    }
+};
+/**
+ * @endcond
+ */
+
+template<typename Value_, typename Index_, typename Chunk_>
+class CustomChunkedDenseMatrix : public VirtualDenseMatrix<Value_, Index_>, public CustomChunkedMatrixMethods<Index_> {
+public:
+    CustomChunkedDenseMatrix(Index_ mat_nrow, Index_ mat_ncol, Index_ chunk_nrow, Index_ chunk_ncol, Index_ nrow_in_chunks, Index_ ncol_in_chunks, std::vector<Chunk_> chunks, bool row_major, const CustomChunkedOptions& opt) : 
+        chunk_array(std::move(chunks)), 
+        nrows(mat_nrow), 
+        ncols(mat_ncol), 
+        CustomChunkedMatrixMethods<Index_>(chunk_nrow, chunk_ncol, nrow_in_chunks, ncol_in_chunks, row_major),
+        cache_size_in_elements(opt.maximum_cache_size / sizeof(typename Chunk_::value_type)),
+        require_minimum_cache(opt.require_minimum_cache)
+    {}
+
 private:
-    CustomChunkManager<Chunk_> manager;
+    std::vector<Chunk_> chunk_array;
     Index_ nrows, ncols;
     size_t cache_size_in_elements;
     bool require_minimum_cache;
 
-    static_assert(!Chunk_::sparse); // Should be dense, obviously.
-
     bool prefer_rows_internal() const {
         // Prefer rows if we have to extract fewer chunks per row.
-        return manager.num_chunks_per_column > manager.num_chunks_per_row; 
+        return this->num_chunks_per_column > this->num_chunks_per_row; 
     }
 
 public:
@@ -96,24 +163,25 @@ private:
     private:
         const CustomChunkedDenseMatrix* parent;
         typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
+        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type chunk_indices;
 
-        typedef typename CustomChunkManager<Chunk_>::Slab Slab;
-        typename CustomChunkManager<Chunk_>::Workspace buffer;
-        TypicalChunkCacheWorkspace<Index_, Slab> workspace;
-        std::unique_ptr<Slab> solo;
+        typename Chunk_::Workspace chunk_workspace;
+        typedef std::vector<typename Chunk_::value_type> Slab;
+        TypicalChunkCacheWorkspace<Index_, Slab> cache_workspace;
+        Slab solo;
 
         void initialize_cache() {
             auto len = extracted_length<selection_, Index_>(*this);
 
-            workspace = TypicalChunkCacheWorkspace<Index_, Slab>(
-                accrow_ ? parent->manager.chunk_nrow : parent->manager.chunk_ncol,
-                parent->cache_size_in_elements,
+            cache_workspace = TypicalChunkCacheWorkspace<Index_, Slab>(
+                accrow_ ? parent->chunk_nrow : parent->chunk_ncol,
                 len,
+                parent->cache_size_in_elements,
                 parent->require_minimum_cache
             );
 
-            if (workspace.num_chunk_sets_in_cache == 0) {
-                solo.reset(new Slab(parent->manager.template create_slab<accrow_, true>(len)));
+            if (cache_workspace.num_chunk_sets_in_cache == 0) {
+                solo.resize(len);
             }
         }
 
@@ -127,56 +195,110 @@ private:
         }
 
         void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            workspace.set_oracle(std::move(o));
+            cache_workspace.set_oracle(std::move(o));
             return;
         }
 
     private:
-        Index_ get_primary_dim() const {
-            if constexpr(accrow_) {
-                return parent->nrows;
-            } else {
-                return parent->ncols;
-            }
-        }
-
-        Index_ get_primary_chunkdim() const {
-            if constexpr(accrow_) {
-                return parent->manager.chunk_nrow;
-            } else {
-                return parent->manager.chunk_ncol;
-            }
-        }
-
         template<bool exact_>
         void extract(Index_ chunk_id, Index_ chunk_offset, Slab& slab) {
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                parent->manager.template extract<accrow_, exact_>(chunk_id, chunk_offset, get_primary_dim(), static_cast<Index_>(0), this->full_length, slab, buffer);
-            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                parent->manager.template extract<accrow_, exact_>(chunk_id, chunk_offset, get_primary_dim(), this->block_start, this->block_length, slab, buffer);
+            auto primary_num_chunks = parent->template get_primary_num_chunks<accrow_>();
+            auto primary_chunkdim = parent->template get_primary_chunkdim<accrow_>();
+            auto secondary_chunkdim = parent->template get_secondary_chunkdim<accrow_>();
+
+            auto chunk_stride = parent->template get_chunk_offset_and_stride<accrow_>(chunk_id);
+            auto offset = chunk_stride.first;
+            auto increment = chunk_stride.second;
+
+            Index_ primary_dim = (accrow_ ? parent->nrows : parent->ncols);
+            Index_ secondary_dim = (accrow_ ? parent->ncols : parent->nrows);
+
+            Index_ primary_start_pos, primary_len;
+            if constexpr(exact_) {
+                primary_start_pos = chunk_offset;
+                primary_len = 1;
             } else {
-                parent->manager.template extract<accrow_, exact_>(chunk_id, chunk_offset, get_primary_dim(), indices, slab, buffer);
+                primary_start_pos = 0;
+                primary_len = std::min(primary_chunkdim, primary_dim - chunk_id * primary_chunkdim); // avoid running off the end.
+            }
+
+            if constexpr(selection_ == DimensionSelectionType::INDEX) {
+                Index_ start_chunk_index = indices.front() / secondary_chunkdim;
+                auto iIt = indices.begin();
+                offset += static_cast<size_t>(start_chunk_index) * increment; // use size_t to avoid integer overflow.
+
+                auto slab_ptr = slab.data();
+                Index_ secondary_start_pos = start_chunk_index * secondary_chunkdim;
+
+                for (Index_ c = start_chunk_index; c < primary_num_chunks; ++c) {
+                    const auto& chunk = parent->chunk_array[offset];
+
+                    Index_ secondary_end_pos = std::min(secondary_dim - secondary_start_pos, secondary_chunkdim);
+                    chunk_indices.clear();
+                    while (iIt != indices.end() && *iIt < secondary_end_pos) {
+                        chunk_indices.push_back(*iIt - secondary_start_pos);
+                        ++iIt;
+                    }
+
+                    if (!chunk_indices.empty()) {
+                        chunk.template extract<accrow_>(primary_start_pos, primary_len, chunk_indices, chunk_workspace, slab_ptr, indices.size());
+                        offset += increment;
+                        slab_ptr += chunk_indices.size();
+                    }
+                }
+
+            } else {
+                Index_ start, len;
+                if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+                    start = this->block_start;
+                    len = this->block_length;
+                } else {
+                    start = 0;
+                    len = this->full_length;
+                }
+                Index_ end = start + len;
+
+                Index_ start_chunk_index = start / secondary_chunkdim;
+                Index_ secondary_start_pos = start_chunk_index * secondary_chunkdim;
+                Index_ end_chunk_index = end / secondary_chunkdim + (end % secondary_chunkdim > 0); // i.e., ceiling of the integer division.
+                offset += increment * static_cast<size_t>(start_chunk_index); // size_t to avoid integer overflow.
+
+                auto slab_ptr = slab.data();
+                std::cout << exact_ << "??"  << chunk_offset << "\t" << primary_start_pos << "\t" << primary_len << "\t" << offset << std::endl;
+
+                for (Index_ c = start_chunk_index; c < end_chunk_index; ++c) {
+                    const auto& chunk = parent->chunk_array[offset];
+                    Index_ from = (c == start_chunk_index ? start - secondary_start_pos : 0);
+                    Index_ to = (c + 1 == end_chunk_index ? end - secondary_start_pos : secondary_chunkdim);
+
+                    // No need to protect against a zero length, as it should be impossible
+                    // here (otherwise, start_chunk_index == end_chunk_index and we'd never iterate).
+                    chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, chunk_workspace, slab_ptr, len);
+                    offset += increment;
+                    slab_ptr += (to - from);
+                }
             }
         }
 
     public:
         const Value_* fetch(Index_ i, Value_* buffer) {
             const typename Chunk_::value_type* ptr;
-            size_t len = extracted_length<selection_, Index_>(*this);
+            size_t len = extracted_length<selection_, Index_>(*this); // size_t to avoid integer overflow.
+            Index_ primary_chunkdim = parent->template get_primary_chunkdim<accrow_>();
 
-            if (workspace.oracle_cache) {
-                auto predicted = workspace.oracle_cache->next_chunk(
+            if (cache_workspace.oracle_cache) {
+                auto predicted = cache_workspace.oracle_cache->next_chunk(
                     /* identify = */ [&](Index_ i) -> std::pair<Index_, Index_> {
-                        return std::make_pair(i / get_primary_chunkdim(), i % get_primary_chunkdim());
+                        return std::make_pair(i / primary_chunkdim, i % primary_chunkdim);
                     },
                     /* swap = */ [&](Slab& left, Slab& right) -> void {
-                        std::swap(left, right); // replace with swap method for the slabs?
+                        left.swap(right);
                     },
                     /* ready = */ [&](const Slab& slab) -> bool {
-                        return !slab.values.empty();
+                        return !slab.empty();
                     },
                     /* allocate = */ [&](Slab& slab) -> void {
-                        slab.values.resize(len * get_primary_chunkdim());
+                        slab.resize(len * primary_chunkdim);
                     },
                     /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& chunks_in_need, std::vector<Slab>& chunk_data) -> void {
                         for (const auto& p : chunks_in_need) {
@@ -184,27 +306,27 @@ private:
                         }
                     }
                 );
-                ptr = predicted.first->values.data() + len * predicted.second;
+                ptr = predicted.first->data() + len * predicted.second;
 
             } else {
-                auto chunk_id = i / get_primary_chunkdim();
-                auto chunk_offset = i % get_primary_chunkdim();
+                auto chunk_id = i / primary_chunkdim;
+                auto chunk_offset = i % primary_chunkdim;
 
-                if (workspace.num_chunk_sets_in_cache == 0) {
-                    extract<true>(chunk_id, chunk_offset, *solo);
-                    ptr = solo->values.data();
+                if (cache_workspace.num_chunk_sets_in_cache == 0) {
+                    extract<true>(chunk_id, chunk_offset, solo);
+                    ptr = solo.data();
 
                 } else {
-                    auto& cache = workspace.lru_cache->find_chunk(
+                    auto& cache = cache_workspace.lru_cache->find_chunk(
                         chunk_id,
                         /* create = */ [&]() -> Slab {
-                            return Slab(len, get_primary_chunkdim()); 
+                            return Slab(len * primary_chunkdim); 
                         },
                         /* populate = */ [&](Index_ id, Slab& slab) -> void {
                             extract<false>(id, chunk_offset, slab);
                         }
                     );
-                    ptr = cache.values.data() + len * chunk_offset;
+                    ptr = cache.data() + len * chunk_offset;
                 }
             }
 

@@ -4,23 +4,13 @@
 #include "tatami/chunked/CustomChunkedMatrix.hpp"
 #include "tatami_test/tatami_test.hpp"
 
+#include "mock_chunk.h"
+
 class DenseCustomChunkedMatrixMethods {
 protected:
-    struct Chunk {
-        static constexpr bool sparse = false;
-        typedef int index_type;
-        typedef double value_type;
-
-        bool row_major;
-        std::vector<double> contents;
-
-        void inflate(std::vector<double>& buffer) const {
-            buffer.resize(contents.size());
-            std::copy(contents.begin(), contents.end(), buffer.begin());
-        }
-    };
-
     std::unique_ptr<tatami::Matrix<double, int> > ref, mat;
+
+    typedef tatami::SimpleDenseChunkWrapper<MockDenseChunk<true> > Chunk;
 
     void assemble(std::pair<int, int> matdim, std::pair<int, int> chunkdim, bool rowmajor, int cache_size) {
         auto full = tatami_test::simulate_dense_vector<double>(matdim.first * matdim.second, -10, 10, 
@@ -43,16 +33,15 @@ protected:
                 auto rend = std::min(rstart + chunk_nrow, static_cast<int>(matdim.first));
                 auto rlen = rend - rstart;
 
-                auto& current = chunks[rowmajor ? r * num_chunks_per_row + c : c * num_chunks_per_column + r];
-                current.row_major = true;
-                current.contents.resize(chunkdim.first * chunkdim.second);
-
+                std::vector<double> contents(chunkdim.first * chunkdim.second);
+                auto ccptr = contents.data();
                 auto ext = ref->dense_row(cstart, clen);
-                auto ccptr = current.contents.data();
                 for (int r2 = 0; r2 < rlen; ++r2) {
                     ext->fetch_copy(r2 + rstart, ccptr);
                     ccptr += chunkdim.second;
                 }
+
+                chunks[rowmajor ? r * num_chunks_per_row + c : c * num_chunks_per_column + r] = Chunk(MockDenseChunk<true>(chunkdim.first, chunkdim.second, std::move(contents)));
             }
         }
 
