@@ -264,7 +264,6 @@ private:
                 offset += increment * static_cast<size_t>(start_chunk_index); // size_t to avoid integer overflow.
 
                 auto slab_ptr = slab.data();
-                std::cout << exact_ << "??"  << chunk_offset << "\t" << primary_start_pos << "\t" << primary_len << "\t" << offset << std::endl;
 
                 for (Index_ c = start_chunk_index; c < end_chunk_index; ++c) {
                     const auto& chunk = parent->chunk_array[offset];
@@ -274,6 +273,8 @@ private:
                     // No need to protect against a zero length, as it should be impossible
                     // here (otherwise, start_chunk_index == end_chunk_index and we'd never iterate).
                     chunk.template extract<accrow_>(primary_start_pos, primary_len, from, to - from, chunk_workspace, slab_ptr, len);
+
+                    secondary_start_pos += secondary_chunkdim;
                     offset += increment;
                     slab_ptr += (to - from);
                 }

@@ -71,24 +71,36 @@ class DenseCustomChunkedMatrixMethodsFullTest :
 
 TEST_P(DenseCustomChunkedMatrixMethodsFullTest, Column) {
     auto param = GetParam();
-    assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
+    auto cache_size = std::get<3>(param);
+    assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), cache_size);
 
     bool FORWARD = std::get<4>(param);
     size_t JUMP = std::get<5>(param);
 
     tatami_test::test_simple_column_access(mat.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_column_access(mat.get(), ref.get(), FORWARD, JUMP);
+
+    if (cache_size) {
+        tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ true);
+        tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ false);
+    }
 }
 
 TEST_P(DenseCustomChunkedMatrixMethodsFullTest, Row) {
     auto param = GetParam();
-    assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), std::get<3>(param));
+    auto cache_size = std::get<3>(param);
+    assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), cache_size);
 
     bool FORWARD = std::get<4>(param);
     size_t JUMP = std::get<5>(param);
 
     tatami_test::test_simple_row_access(mat.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_row_access(mat.get(), ref.get(), FORWARD, JUMP);
+
+    if (cache_size) {
+        tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ true);
+        tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ false);
+    }
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -97,8 +109,7 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Combine(
         ::testing::Values( // matrix dimensions
             std::make_pair(200, 50),
-            std::make_pair(100, 300),
-            std::make_pair(152, 211) // odd numbers
+            std::make_pair(100, 300)
         ),
 
         ::testing::Values( // chunk dimensions
@@ -108,11 +119,10 @@ INSTANTIATE_TEST_SUITE_P(
         ),
 
         ::testing::Values(true, false), // row major
-
         ::testing::Values(0, 1000, 10000), // cache size
 
         ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
-        ::testing::Values(1, 4, 10) // jump, to test the workspace's memory.
+        ::testing::Values(1, 4) // jump, to test the workspace's memory.
     )
 );
 

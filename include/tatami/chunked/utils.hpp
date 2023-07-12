@@ -501,7 +501,7 @@ struct TypicalChunkCacheWorkspace {
      * This is usually derived from `TypicalChunkCacheOptions::maximum_cache_size` and the size of each element.
      * @param require_minimum_cache Whether to enforce a minimum size of the cache for efficient extraction, see `TypicalChunkCacheOptions` for details.
      */
-    TypicalChunkCacheWorkspace(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache) {
+    TypicalChunkCacheWorkspace(Index_ primary_length, Index_ secondary_length, size_t cache_size_in_elements, bool require_minimum_cache) : primary_length(primary_length) {
         chunk_set_size_in_elements = static_cast<size_t>(primary_length) * static_cast<size_t>(secondary_length);
         num_chunk_sets_in_cache = (chunk_set_size_in_elements ? cache_size_in_elements / chunk_set_size_in_elements : 1);
 
