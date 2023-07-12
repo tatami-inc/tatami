@@ -19,7 +19,7 @@ namespace tatami {
  * Each chunk should hold a 2-dimensional array of numeric values.
  * This wrapper is considered to be "simple", as extraction of any data involves inflation of the entire chunk.
  *
- * The `Chunk_` class should provide the following:
+ * The `SimpleChunk_` class should provide the following:
  *
  * - A `static constexpr bool row_major`, specifying whether the array is row-major.
  * - A `typedef value_type`, specifying the type of the value in the array.
@@ -28,14 +28,14 @@ namespace tatami {
  * - A `void inflate(std::vector<value_type>& buffer) const` method that fills `buffer` with the contents of the array.
  *   This should be filled in row-major format if `row_major = true` and in column-major format otherwise.
  *
- * @tparam Chunk_ Class to represent the chunk.
+ * @tparam SimpleChunk_ Class to represent the chunk.
  */
-template<class Chunk_>
+template<class SimpleChunk_>
 struct SimpleDenseChunkWrapper {
     /**
      * Type of the value stored in this chunk.
      */
-    typedef typename Chunk_::value_type value_type;
+    typedef typename SimpleChunk_::value_type value_type;
 
     /**
      * Workspace for chunk extraction.
@@ -52,10 +52,10 @@ public:
     /**
      * @param c Chunk to be wrapped.
      */
-    SimpleDenseChunkWrapper(Chunk_ c) : chunk(std::move(c)) {}
+    SimpleDenseChunkWrapper(SimpleChunk_ c) : chunk(std::move(c)) {}
 
 private:
-    Chunk_ chunk;
+    SimpleChunk_ chunk;
 
     template<bool accrow_>
     auto get_primary_chunkdim() const {
@@ -106,7 +106,7 @@ public:
         size_t primary_chunkdim = get_primary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
         size_t secondary_chunkdim = get_secondary_chunkdim<accrow_>();
 
-        if constexpr(Chunk_::row_major == accrow_) {
+        if constexpr(SimpleChunk_::row_major == accrow_) {
             auto srcptr = work.data() + primary_start * secondary_chunkdim + secondary_start;
             for (size_t p = 0; p < primary_length; ++p) {
                 std::copy(srcptr, srcptr + secondary_length, output);
@@ -142,7 +142,7 @@ public:
      * This is guaranteed to be positive.
      * @param secondary_indices Indices of the elements on the secondary dimension to be extracted.
      * If `accrow_ = true`, these are column indices, otherwise these are row indices.
-     * This is guaranteed to be non-empty.
+     * This is guaranteed to be non-empty with unique and sorted indices.
      * @param work Re-usable workspace for extraction from one or more chunks.
      * @param[out] output Pointer to an output array of length no less than `primary_length * stride`.
      * @param stride Stride separating corresponding values from consecutive elements on the primary dimension.
@@ -158,7 +158,7 @@ public:
         size_t primary_chunkdim = get_primary_chunkdim<accrow_>(); // use size_t to avoid integer overflow with Index_.
         size_t secondary_chunkdim = get_secondary_chunkdim<accrow_>(); 
 
-        if constexpr(Chunk_::row_major == accrow_) {
+        if constexpr(SimpleChunk_::row_major == accrow_) {
             auto srcptr = work.data() + primary_start * secondary_chunkdim;
             for (size_t p = 0; p < primary_length; ++p) {
                 auto copy_output = output;
@@ -192,7 +192,7 @@ public:
  * Each chunk should hold a 2-dimensional compressed sparse submatrix of numeric values.
  * This wrapper is considered to be "simple", as extraction of any data involves inflation of the entire chunk.
  *
- * The `Chunk_` class should provide the following:
+ * The `SimpleChunk_` class should provide the following:
  *
  * - A `static constexpr bool row_major`, specifying whether the submatrix is in the compressed sparse row layout.
  * - A `typedef value_type`, specifying the type of the value in the submatrix.
@@ -202,19 +202,19 @@ public:
  * - A `void inflate(std::vector<value_type>& values, std::vector<index_type>& indices, std::vector<size_t>& pointers) const` method that fills `values`, `indices` and `pointers` with the standard compressed sparse data.
  *   This should be a CSR matrix if `row_major = true` and a CSC matrix otherwise.
  *
- * @tparam Chunk_ Class to represent the chunk.
+ * @tparam SimpleChunk_ Class to represent the chunk.
  */
-template<class Chunk_>
+template<class SimpleChunk_>
 struct SimpleSparseChunkWrapper {
     /**
      * Type of the value stored in this chunk.
      */
-    typedef typename Chunk_::value_type value_type;
+    typedef typename SimpleChunk_::value_type value_type;
 
     /**
      * Type of the index stored in this chunk.
      */
-    typedef typename Chunk_::index_type index_type;
+    typedef typename SimpleChunk_::index_type index_type;
 
     /**
      * @brief Workspace for chunk extraction.
@@ -242,10 +242,10 @@ public:
     /**
      * @param c Chunk to be wrapped.
      */
-    SimpleSparseChunkWrapper(Chunk_ c) : chunk(std::move(c)) {}
+    SimpleSparseChunkWrapper(SimpleChunk_ c) : chunk(std::move(c)) {}
 
 private:
-    Chunk_ chunk;
+    SimpleChunk_ chunk;
 
     template<bool accrow_>
     size_t get_primary_chunkdim() const {
@@ -266,10 +266,10 @@ private:
     }
 
     template<typename Index_>
-    static void refine_start_and_end(size_t& start, size_t& end, Index_ desired_start, Index_ desired_end, Index_ max_end, const std::vector<typename Chunk_::index_type>& indices) {
+    static void refine_start_and_end(size_t& start, size_t& end, Index_ desired_start, Index_ desired_end, Index_ max_end, const std::vector<typename SimpleChunk_::index_type>& indices) {
         if (desired_start) {
             auto it = indices.begin();
-            start = std::lower_bound(it + start, it + end, static_cast<typename Chunk_::index_type>(desired_start)) - it;
+            start = std::lower_bound(it + start, it + end, static_cast<typename SimpleChunk_::index_type>(desired_start)) - it;
         }
 
         if (desired_end != max_end) {
@@ -281,7 +281,7 @@ private:
                 }
             } else {
                 auto it = indices.begin();
-                end = std::lower_bound(it + start, it + end, static_cast<typename Chunk_::index_type>(desired_end)) - it;
+                end = std::lower_bound(it + start, it + end, static_cast<typename SimpleChunk_::index_type>(desired_end)) - it;
             }
         }
     }
@@ -333,7 +333,7 @@ public:
         Index_ primary_end = primary_start + primary_length;
         Index_ secondary_end = secondary_start + secondary_length;
 
-        if constexpr(Chunk_::row_major == accrow_) {
+        if constexpr(SimpleChunk_::row_major == accrow_) {
             for (Index_ p = primary_start; p < primary_end; ++p) {
                 auto start = work.indptrs[p], end = work.indptrs[p + 1];
 
@@ -377,7 +377,7 @@ public:
      * This is guaranteed to be positive.
      * @param secondary_indices Indices of the elements on the secondary dimension to be extracted.
      * If `accrow_ = true`, these are column indices, otherwise these are row indices.
-     * This is guaranteed to be non-empty.
+     * This is guaranteed to be non-empty with unique and sorted indices.
      * @param work Re-usable workspace for extraction from one or more chunks.
      * @param[out] output_values Vector of vectors in which to store the output values.
      * The outer vector is of length no less than `primary_length`; each inner vector corresponds to an element of the primary dimension, starting at `primary_start`.
@@ -405,14 +405,14 @@ public:
         Index_ primary_chunkdim = get_primary_chunkdim<accrow_>();
         Index_ primary_end = primary_start + primary_length;
 
-        if constexpr(Chunk_::row_major == accrow_) {
+        if constexpr(SimpleChunk_::row_major == accrow_) {
             for (Index_ p = primary_start; p < primary_end; ++p) {
                 auto start = work.indptrs[p], end = work.indptrs[p + 1];
 
                 if (start < end) {
                     if (secondary_indices.front()) {
                         auto it = work.indices.begin();
-                        start = std::lower_bound(it + start, it + end, static_cast<typename Chunk_::index_type>(secondary_indices.front())) - it;
+                        start = std::lower_bound(it + start, it + end, static_cast<typename SimpleChunk_::index_type>(secondary_indices.front())) - it;
                     }
 
                     auto sIt = secondary_indices.begin();
