@@ -3,7 +3,7 @@ var searchData=
   ['operator_21_3d_0',['operator!=',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#acab7e46b690f81ad367780bd6cb33ebd',1,'tatami::SomeNumericArray::Iterator']]],
   ['operator_2a_1',['operator*',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#adadc4fec22839e1d7f826594eb605fc1',1,'tatami::SomeNumericArray::Iterator']]],
   ['operator_2b_2',['operator+',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#af692b5785cec55d153341dfabe197bc3',1,'tatami::SomeNumericArray::Iterator::operator+(size_t n) const'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#af891cdee3c447bfccb98be31584ab4a8',1,'tatami::SomeNumericArray::Iterator::operator+']]],
-  ['operator_2b_2b_3',['operator++',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#ad7fcc6f55aa2b723c4f9b6b3505f27a9',1,'tatami::SomeNumericArray::Iterator::operator++()'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a28163076266a7b4987d8ff0fbfbaf4c2',1,'tatami::SomeNumericArray::Iterator::operator++(int)']]],
+  ['operator_2b_2b_3',['operator++',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a28163076266a7b4987d8ff0fbfbaf4c2',1,'tatami::SomeNumericArray::Iterator::operator++(int)'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#ad7fcc6f55aa2b723c4f9b6b3505f27a9',1,'tatami::SomeNumericArray::Iterator::operator++()']]],
   ['operator_2b_3d_4',['operator+=',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a631fc3c3234a2229f01944127ec58988',1,'tatami::SomeNumericArray::Iterator']]],
   ['operator_2d_5',['operator-',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a87e797f6c5fc8e7433ba17eb89c6d18b',1,'tatami::SomeNumericArray::Iterator::operator-(const Iterator &amp;right) const'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#acfb66b80475de1ad9aa1233ccf224691',1,'tatami::SomeNumericArray::Iterator::operator-(size_t n) const']]],
   ['operator_2d_2d_6',['operator--',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a41dbc8abc6e9a4c5bc2493d549ee862c',1,'tatami::SomeNumericArray::Iterator::operator--(int)'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a259cf6cdfcfb7c89cf6a64262ae3af4c',1,'tatami::SomeNumericArray::Iterator::operator--()']]],
@@ -18,8 +18,6 @@ var searchData=
   ['options_2ehpp_15',['Options.hpp',['../Options_8hpp.html',1,'']]],
   ['oracle_16',['Oracle',['../structtatami_1_1Oracle.html',1,'tatami']]],
   ['oracle_3c_20index_5fin_5f_20_3e_17',['Oracle&lt; Index_in_ &gt;',['../structtatami_1_1Oracle.html',1,'tatami']]],
-  ['oraclechunkcache_18',['OracleChunkCache',['../classtatami_1_1OracleChunkCache.html#a0bd9bfcb80bcaa3c92ccde442c6c15a9',1,'tatami::OracleChunkCache::OracleChunkCache()'],['../classtatami_1_1OracleChunkCache.html',1,'tatami::OracleChunkCache&lt; Id_, Index_, ChunkContents_ &gt;']]],
-  ['oraclechunkcache_2ehpp_19',['OracleChunkCache.hpp',['../OracleChunkCache_8hpp.html',1,'']]],
-  ['oracles_2ehpp_20',['Oracles.hpp',['../Oracles_8hpp.html',1,'']]],
-  ['oraclestream_21',['OracleStream',['../structtatami_1_1OracleStream.html#a293c82567a7c94b9dc86e39110b30688',1,'tatami::OracleStream::OracleStream()=default'],['../structtatami_1_1OracleStream.html#abac31a84479939fec89f7037a5dd8f06',1,'tatami::OracleStream::OracleStream(std::unique_ptr&lt; Oracle&lt; Index_ &gt; &gt; o)'],['../structtatami_1_1OracleStream.html',1,'tatami::OracleStream&lt; Index_ &gt;']]]
+  ['oracles_2ehpp_18',['Oracles.hpp',['../Oracles_8hpp.html',1,'']]],
+  ['oraclestream_19',['OracleStream',['../structtatami_1_1OracleStream.html#a293c82567a7c94b9dc86e39110b30688',1,'tatami::OracleStream::OracleStream()=default'],['../structtatami_1_1OracleStream.html#abac31a84479939fec89f7037a5dd8f06',1,'tatami::OracleStream::OracleStream(std::unique_ptr&lt; Oracle&lt; Index_ &gt; &gt; o)'],['../structtatami_1_1OracleStream.html',1,'tatami::OracleStream&lt; Index_ &gt;']]]
 ];
