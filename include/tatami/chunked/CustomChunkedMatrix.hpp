@@ -233,7 +233,7 @@ private:
                 for (Index_ c = start_chunk_index; c < primary_num_chunks; ++c) {
                     const auto& chunk = parent->chunk_array[offset];
 
-                    Index_ secondary_end_pos = std::min(secondary_dim - secondary_start_pos, secondary_chunkdim);
+                    Index_ secondary_end_pos = std::min(secondary_dim - secondary_start_pos, secondary_chunkdim) + secondary_start_pos; // avoid overflow.
                     chunk_indices.clear();
                     while (iIt != indices.end() && *iIt < secondary_end_pos) {
                         chunk_indices.push_back(*iIt - secondary_start_pos);
@@ -242,9 +242,11 @@ private:
 
                     if (!chunk_indices.empty()) {
                         chunk.template extract<accrow_>(primary_start_pos, primary_len, chunk_indices, chunk_workspace, slab_ptr, indices.size());
-                        offset += increment;
-                        slab_ptr += chunk_indices.size();
                     }
+
+                    secondary_start_pos += secondary_chunkdim; 
+                    offset += increment;
+                    slab_ptr += chunk_indices.size();
                 }
 
             } else {
@@ -303,7 +305,7 @@ private:
                     },
                     /* populate =*/ [&](const std::vector<std::pair<Index_, Index_> >& chunks_in_need, std::vector<Slab>& chunk_data) -> void {
                         for (const auto& p : chunks_in_need) {
-                            extract<false>(p.first, 0, chunk_data[p.second]);
+                            extract<false>(p.first, /* no-op */ 0, chunk_data[p.second]);
                         }
                     }
                 );
@@ -324,7 +326,7 @@ private:
                             return Slab(len * primary_chunkdim); 
                         },
                         /* populate = */ [&](Index_ id, Slab& slab) -> void {
-                            extract<false>(id, chunk_offset, slab);
+                            extract<false>(id, /* no-op */ 0, slab);
                         }
                     );
                     ptr = cache.data() + len * chunk_offset;

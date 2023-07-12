@@ -65,11 +65,11 @@ protected:
 
 /*******************************************************/
 
-class DenseCustomChunkedMatrixMethodsFullTest :
+class DenseCustomChunkedMatrixFullTest :
     public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<int, int>, bool, int, bool, int> >, 
     public DenseCustomChunkedMatrixMethods {};
 
-TEST_P(DenseCustomChunkedMatrixMethodsFullTest, Column) {
+TEST_P(DenseCustomChunkedMatrixFullTest, Column) {
     auto param = GetParam();
     auto cache_size = std::get<3>(param);
     assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), cache_size);
@@ -80,13 +80,13 @@ TEST_P(DenseCustomChunkedMatrixMethodsFullTest, Column) {
     tatami_test::test_simple_column_access(mat.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_column_access(mat.get(), ref.get(), FORWARD, JUMP);
 
-    if (cache_size) {
+    if (cache_size && FORWARD && JUMP == 1) {
         tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ true);
         tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ false);
     }
 }
 
-TEST_P(DenseCustomChunkedMatrixMethodsFullTest, Row) {
+TEST_P(DenseCustomChunkedMatrixFullTest, Row) {
     auto param = GetParam();
     auto cache_size = std::get<3>(param);
     assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), cache_size);
@@ -97,7 +97,7 @@ TEST_P(DenseCustomChunkedMatrixMethodsFullTest, Row) {
     tatami_test::test_simple_row_access(mat.get(), ref.get(), FORWARD, JUMP);
     tatami_test::test_simple_row_access(mat.get(), ref.get(), FORWARD, JUMP);
 
-    if (cache_size) {
+    if (cache_size && FORWARD && JUMP == 1) {
         tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ true);
         tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ false);
     }
@@ -105,7 +105,7 @@ TEST_P(DenseCustomChunkedMatrixMethodsFullTest, Row) {
 
 INSTANTIATE_TEST_SUITE_P(
     CustomChunkedMatrix,
-    DenseCustomChunkedMatrixMethodsFullTest,
+    DenseCustomChunkedMatrixFullTest,
     ::testing::Combine(
         ::testing::Values( // matrix dimensions
             std::make_pair(200, 50),
@@ -126,219 +126,171 @@ INSTANTIATE_TEST_SUITE_P(
     )
 );
 
-///*******************************************************/
-//
-//class CustomDenseChunkManagerBlockTest : 
-//    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<int, int>, std::pair<double, double>, bool, bool> >, 
-//    public CustomDenseChunkManagerMethods {};
-//
-//TEST_P(CustomDenseChunkManagerBlockTest, Row) {
-//    auto param = GetParam();
-//    assemble(std::get<0>(param), std::get<1>(param), std::get<3>(param), std::get<4>(param));
-//
-//    auto bounds = std::get<2>(param);
-//    int start = bounds.first * ref->ncol();
-//    int len = bounds.second * ref->ncol() - start;
-//
-//    auto slab = manager.create_slab<true, false>(len);
-//    auto eslab = manager.create_slab<true, true>(len);
-//    auto work = manager.create_workspace();
-//
-//    std::vector<double> tmp1(len), tmp2(len);
-//    auto ref_ext = ref->dense_row(start, len);
-//    int lastr = -1;
-//    const double* ccptr = NULL;
-//
-//    for (int r = 0; r < ref->nrow(); ++r) {
-//        int requiredr = r / manager.chunk_nrow;
-//        if (requiredr != lastr) {
-//            manager.extract<true, false>(requiredr, r % manager.chunk_nrow, ref->nrow(), start, len, slab, work);
-//            lastr = requiredr;
-//            ccptr = slab.values.data();
-//        }
-//
-//        ref_ext->fetch_copy(r, tmp1.data());
-//        std::copy(ccptr, ccptr + tmp2.size(), tmp2.data());
-//        EXPECT_EQ(tmp1, tmp2);
-//        ccptr += len;
-//
-//        // Testing with exact.
-//        manager.extract<true, true>(requiredr, r % manager.chunk_nrow, ref->nrow(), start, len, eslab, work);
-//        EXPECT_EQ(tmp1, eslab.values);
-//    }
-//}
-//
-//TEST_P(CustomDenseChunkManagerBlockTest, Column) {
-//    auto param = GetParam();
-//    assemble(std::get<0>(param), std::get<1>(param), std::get<3>(param), std::get<4>(param));
-//
-//    auto bounds = std::get<2>(param);
-//    int start = bounds.first * ref->nrow();
-//    int len = bounds.second * ref->nrow() - start;
-//
-//    auto slab = manager.create_slab<false, false>(len);
-//    auto eslab = manager.create_slab<false, true>(len);
-//    auto work = manager.create_workspace();
-//
-//    std::vector<double> tmp1(len), tmp2(len);
-//    auto ref_ext = ref->dense_column(start, len);
-//    int lastc = -1;
-//    const double* ccptr = NULL;
-//
-//    for (int c = 0; c < ref->ncol(); ++c) {
-//        int requiredc = c / manager.chunk_ncol;
-//        if (requiredc != lastc) {
-//            manager.extract<false, false>(requiredc, c % manager.chunk_ncol, ref->ncol(), start, len, slab, work);
-//            lastc = requiredc;
-//            ccptr = slab.values.data();
-//        }
-//
-//        ref_ext->fetch_copy(c, tmp1.data());
-//        std::copy(ccptr, ccptr + tmp2.size(), tmp2.data());
-//        EXPECT_EQ(tmp1, tmp2);
-//        ccptr += len;
-//
-//        // Testing with exact.
-//        manager.extract<false, true>(requiredc, c % manager.chunk_ncol, ref->ncol(), start, len, eslab, work);
-//        EXPECT_EQ(tmp1, eslab.values);
-//    }
-//}
-//
-//INSTANTIATE_TEST_SUITE_P(
-//    CustomChunkManager,
-//    CustomDenseChunkManagerBlockTest,
-//    ::testing::Combine(
-//        ::testing::Values( // matrix dimensions
-//            std::make_pair(200, 50),
-//            std::make_pair(100, 300),
-//            std::make_pair(152, 211)
-//        ),
-//        ::testing::Values( // chunk dimensions
-//            std::make_pair(1, 20),
-//            std::make_pair(20, 1),
-//            std::make_pair(10, 10)
-//        ),
-//        ::testing::Values( // block boundaries
-//            std::make_pair(0.0, 0.35),
-//            std::make_pair(0.15, 0.87),
-//            std::make_pair(0.38, 1.0)
-//        ),
-//        ::testing::Values(true, false), // row major
-//        ::testing::Values(true, false) // chunk is row major
-//    )
-//);
-//
-///*******************************************************/
-//
-//class CustomDenseChunkManagerIndexTest : 
-//    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<int, int>, std::pair<double, double>, bool, bool> >, 
-//    public CustomDenseChunkManagerMethods 
-//{
-//protected:
-//    static std::vector<int> get_indices(std::pair<double, double> bounds, int range) {
-//        int start = bounds.first * range;
-//        int jump = bounds.second;
-//        std::vector<int> indices;
-//        while (start < range) {
-//            indices.push_back(start);
-//            start += jump;
-//        }
-//        return indices;
-//    }
-//};
-//
-//TEST_P(CustomDenseChunkManagerIndexTest, Row) {
-//    auto param = GetParam();
-//    assemble(std::get<0>(param), std::get<1>(param), std::get<3>(param), std::get<4>(param));
-//    auto indices = get_indices(std::get<2>(param), ref->ncol());
-//
-//    auto slab = manager.create_slab<true, false>(indices.size());
-//    auto eslab = manager.create_slab<true, true>(indices.size());
-//    auto work = manager.create_workspace();
-//
-//    std::vector<double> tmp1(indices.size()), tmp2(indices.size());
-//    auto ref_ext = ref->dense_row(indices);
-//    int lastr = -1;
-//    const double* ccptr = NULL;
-//
-//    for (int r = 0; r < ref->nrow(); ++r) {
-//        int requiredr = r / manager.chunk_nrow;
-//        if (requiredr != lastr) {
-//            manager.extract<true, false>(requiredr, r % manager.chunk_nrow, ref->nrow(), indices, slab, work);
-//            lastr = requiredr;
-//            ccptr = slab.values.data();
-//        }
-//
-//        ref_ext->fetch_copy(r, tmp1.data());
-//        std::copy(ccptr, ccptr + tmp2.size(), tmp2.data());
-//        EXPECT_EQ(tmp1, tmp2);
-//        ccptr += indices.size();
-//
-//        // Testing with exact.
-//        manager.extract<true, true>(requiredr, r % manager.chunk_nrow, ref->nrow(), indices, eslab, work);
-//        EXPECT_EQ(tmp1, eslab.values);
-//    }
-//}
-//
-//TEST_P(CustomDenseChunkManagerIndexTest, Column) {
-//    auto param = GetParam();
-//    assemble(std::get<0>(param), std::get<1>(param), std::get<3>(param), std::get<4>(param));
-//    auto indices = get_indices(std::get<2>(param), ref->nrow());
-//
-//    auto slab = manager.create_slab<false, false>(indices.size());
-//    auto eslab = manager.create_slab<false, true>(indices.size());
-//    auto work = manager.create_workspace();
-//
-//    std::vector<double> tmp1(indices.size()), tmp2(indices.size());
-//    auto ref_ext = ref->dense_column(indices);
-//    int lastc = -1;
-//    const double* ccptr = NULL;
-//
-//    for (int c = 0; c < ref->ncol(); ++c) {
-//        int requiredc = c / manager.chunk_ncol;
-//        if (requiredc != lastc) {
-//            manager.extract<false, false>(requiredc, c % manager.chunk_ncol, ref->ncol(), indices, slab, work);
-//            lastc = requiredc;
-//            ccptr = slab.values.data();
-//        }
-//
-//        ref_ext->fetch_copy(c, tmp1.data());
-//        std::copy(ccptr, ccptr + tmp2.size(), tmp2.data());
-//        EXPECT_EQ(tmp1, tmp2);
-//        ccptr += indices.size();
-//
-//        // Testing with exact.
-//        manager.extract<false, true>(requiredc, c % manager.chunk_ncol, ref->ncol(), indices, eslab, work);
-//        EXPECT_EQ(tmp1, eslab.values);
-//    }
-//}
-//
-//INSTANTIATE_TEST_SUITE_P(
-//    CustomChunkManager,
-//    CustomDenseChunkManagerIndexTest,
-//    ::testing::Combine(
-//        ::testing::Values( // matrix dimensions
-//            std::make_pair(200, 50),
-//            std::make_pair(100, 300),
-//            std::make_pair(152, 211)
-//        ),
-//        ::testing::Values( // chunk dimensions
-//            std::make_pair(1, 20),
-//            std::make_pair(20, 1),
-//            std::make_pair(10, 10)
-//        ),
-//        ::testing::Values( // index information.
-//            std::make_pair(0.0, 10),
-//            std::make_pair(0.2, 5),
-//            std::make_pair(0.7, 3)
-//        ),
-//        ::testing::Values(true, false), // row major
-//        ::testing::Values(true, false) // chunk is row major
-//    )
-//);
-//
-///*******************************************************/
-//
+/*******************************************************/
+
+class DenseCustomChunkedMatrixBlockTest :
+    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<int, int>, bool, int, std::pair<double, double> > >, 
+    public DenseCustomChunkedMatrixMethods {};
+
+TEST_P(DenseCustomChunkedMatrixBlockTest, Row) {
+    auto param = GetParam();
+    auto cache_size = std::get<3>(param);
+    assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), cache_size);
+
+    bool FORWARD = true;
+    size_t JUMP = 1;
+    auto bounds = std::get<4>(param);
+    int FIRST = bounds.first * ref->ncol();
+    int LAST = bounds.second * ref->ncol();
+
+    tatami_test::test_sliced_row_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_row_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+
+    if (cache_size) {
+        tatami_test::test_oracle_row_access(mat.get(), ref.get(), /* random = */ true, FIRST, LAST - FIRST);
+        tatami_test::test_oracle_row_access(mat.get(), ref.get(), /* random = */ false, FIRST, LAST - FIRST);
+    }
+}
+
+TEST_P(DenseCustomChunkedMatrixBlockTest, Column) {
+    auto param = GetParam();
+    auto cache_size = std::get<3>(param);
+    assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), cache_size);
+
+    bool FORWARD = true;
+    size_t JUMP = 1;
+    auto bounds = std::get<4>(param);
+    int FIRST = bounds.first * ref->nrow();
+    int LAST = bounds.second * ref->nrow();
+
+    tatami_test::test_sliced_column_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_sliced_column_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
+
+    if (cache_size) {
+        tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ true, FIRST, LAST - FIRST);
+        tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ false, FIRST, LAST - FIRST);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    CustomChunkedMatrix,
+    DenseCustomChunkedMatrixBlockTest,
+    ::testing::Combine(
+        ::testing::Values( // matrix dimensions
+            std::make_pair(201, 67),
+            std::make_pair(123, 372)
+        ),
+
+        ::testing::Values( // chunk dimensions
+            std::make_pair(1, 20),
+            std::make_pair(20, 1),
+            std::make_pair(10, 10)
+        ),
+
+        ::testing::Values(true, false), // row major
+        ::testing::Values(0, 1000, 10000), // cache size
+
+        ::testing::Values( // block boundaries
+            std::make_pair(0.0, 0.35),
+            std::make_pair(0.15, 0.87),
+            std::make_pair(0.38, 1.0)
+        )
+    )
+);
+
+/*******************************************************/
+
+class DenseCustomChunkedMatrixIndexTest :
+    public ::testing::TestWithParam<std::tuple<std::pair<int, int>, std::pair<int, int>, bool, int, std::pair<double, double> > >, 
+    public DenseCustomChunkedMatrixMethods {};
+
+TEST_P(DenseCustomChunkedMatrixIndexTest, Row) {
+    auto param = GetParam();
+    auto cache_size = std::get<3>(param);
+    assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), cache_size);
+
+    bool FORWARD = true;
+    size_t JUMP = 1;
+    auto bounds = std::get<4>(param);
+    int FIRST = bounds.first * ref->ncol(), STEP = bounds.second;
+
+    tatami_test::test_indexed_row_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_row_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+
+    if (cache_size) {
+        int NC = ref->ncol();
+        std::vector<int> indices;
+        {
+            int counter = FIRST;
+            while (counter < NC) {
+                indices.push_back(counter);
+                counter += STEP;
+            }
+        }
+
+        tatami_test::test_oracle_row_access(mat.get(), ref.get(), /* random = */ true, indices);
+        tatami_test::test_oracle_row_access(mat.get(), ref.get(), /* random = */ false, indices);
+    }
+}
+
+TEST_P(DenseCustomChunkedMatrixIndexTest, Column) {
+    auto param = GetParam();
+    auto cache_size = std::get<3>(param);
+    assemble(std::get<0>(param), std::get<1>(param), std::get<2>(param), cache_size);
+
+    bool FORWARD = true;
+    size_t JUMP = 1;
+    auto bounds = std::get<4>(param);
+    int FIRST = bounds.first * ref->nrow(), STEP = bounds.second;
+
+    tatami_test::test_indexed_column_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_column_access(mat.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
+
+    if (cache_size) {
+        int NR = ref->nrow();
+        std::vector<int> indices;
+        {
+            int counter = FIRST;
+            while (counter < NR) {
+                indices.push_back(counter);
+                counter += STEP;
+            }
+        }
+
+        tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ true, indices);
+        tatami_test::test_oracle_column_access(mat.get(), ref.get(), /* random = */ false, indices);
+    }
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    CustomChunkedMatrix,
+    DenseCustomChunkedMatrixIndexTest,
+    ::testing::Combine(
+        ::testing::Values( // matrix dimensions
+            std::make_pair(198, 67),
+            std::make_pair(187, 300),
+            std::make_pair(152, 211)
+        ),
+
+        ::testing::Values( // chunk dimensions
+            std::make_pair(1, 20),
+            std::make_pair(20, 1),
+            std::make_pair(10, 10)
+        ),
+
+        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
+        ::testing::Values(1, 4), // jump, to test the workspace's memory.
+
+        ::testing::Values( // index information.
+            std::make_pair(0.0, 10),
+            std::make_pair(0.2, 5),
+            std::make_pair(0.7, 3)
+        )
+    )
+);
+
+/*******************************************************/
+
 //class CustomSparseChunkManagerMethods {
 //protected:
 //    struct Chunk {
