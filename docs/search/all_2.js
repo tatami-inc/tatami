@@ -22,8 +22,6 @@ var searchData=
   ['consecutiveoracle_19',['ConsecutiveOracle',['../structtatami_1_1ConsecutiveOracle.html#a4e896a9ad264a7a88e28fd1c4bce76c3',1,'tatami::ConsecutiveOracle::ConsecutiveOracle()'],['../structtatami_1_1ConsecutiveOracle.html',1,'tatami::ConsecutiveOracle&lt; Index_ &gt;']]],
   ['convert_5fto_5fdense_20',['convert_to_dense',['../namespacetatami.html#afaccb18d22f35a4ed6b6a7091342da06',1,'tatami::convert_to_dense(const Matrix_ *incoming, StoredValue_ *store, int threads=1)'],['../namespacetatami.html#af80143ac537339fe8dafd892632e96de',1,'tatami::convert_to_dense(const Matrix_ *incoming, int threads=1)'],['../namespacetatami.html#a64e8745f8aaaa5ad93c6ce65a0a6591e',1,'tatami::convert_to_dense(const Matrix_ *incoming, int order, int threads=1)']]],
   ['convert_5fto_5fdense_2ehpp_21',['convert_to_dense.hpp',['../convert__to__dense_8hpp.html',1,'']]],
-  ['convert_5fto_5flayered_5fsparse_22',['convert_to_layered_sparse',['../convert__to__layered__sparse_8hpp.html#a8a10c9d0fdbf5076e8583d1068a7f6d6',1,'convert_to_layered_sparse.hpp']]],
-  ['convert_5fto_5flayered_5fsparse_2ehpp_23',['convert_to_layered_sparse.hpp',['../convert__to__layered__sparse_8hpp.html',1,'']]],
-  ['convert_5fto_5fsparse_24',['convert_to_sparse',['../namespacetatami.html#a220c47e470b3ade64ede7303e50ca92d',1,'tatami::convert_to_sparse(const InputMatrix_ *incoming, int threads=1)'],['../namespacetatami.html#a5847f3cd78ce89170ca43262d7f5f8e3',1,'tatami::convert_to_sparse(const InputMatrix_ *incoming, int order, int threads=1)']]],
-  ['convert_5fto_5fsparse_2ehpp_25',['convert_to_sparse.hpp',['../convert__to__sparse_8hpp.html',1,'']]]
+  ['convert_5fto_5fsparse_22',['convert_to_sparse',['../namespacetatami.html#a220c47e470b3ade64ede7303e50ca92d',1,'tatami::convert_to_sparse(const InputMatrix_ *incoming, int threads=1)'],['../namespacetatami.html#a5847f3cd78ce89170ca43262d7f5f8e3',1,'tatami::convert_to_sparse(const InputMatrix_ *incoming, int order, int threads=1)']]],
+  ['convert_5fto_5fsparse_2ehpp_23',['convert_to_sparse.hpp',['../convert__to__sparse_8hpp.html',1,'']]]
 ];

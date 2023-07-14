@@ -1,5 +1,4 @@
 <map id="tatami::IndexExtractor&lt; Index_ &gt;" name="tatami::IndexExtractor&lt; Index_ &gt;">
-<area shape="rect" id="Node000001" title="Virtual base class for indexed access." alt="" coords="5,94,151,135"/>
-<area shape="rect" id="Node000002" href="$structtatami_1_1ExtractorBase.html" title="Virtual base extractor class." alt="" coords="6,5,150,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="81,61,81,94,75,94,75,61"/>
+<area shape="rect" id="node1" title="Virtual base class for indexed access." alt="" coords="5,93,152,133"/>
+<area shape="rect" id="node2" href="$structtatami_1_1ExtractorBase.html" title="Virtual base extractor class." alt="" coords="6,5,151,45"/>
 </map>

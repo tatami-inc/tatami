@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile doxygen_version="1.9.7">
+<tagfile doxygen_version="1.9.5">
   <compound kind="file">
     <name>Extractor.hpp</name>
-    <path>tatami/base/</path>
+    <path>/github/workspace/include/tatami/base/</path>
     <filename>Extractor_8hpp.html</filename>
     <class kind="struct">tatami::ExtractorBase</class>
     <class kind="struct">tatami::FullExtractor</class>
@@ -77,7 +77,7 @@
   </compound>
   <compound kind="file">
     <name>Matrix.hpp</name>
-    <path>tatami/base/</path>
+    <path>/github/workspace/include/tatami/base/</path>
     <filename>Matrix_8hpp.html</filename>
     <class kind="class">tatami::Matrix</class>
     <namespace>tatami</namespace>
@@ -91,7 +91,7 @@
   </compound>
   <compound kind="file">
     <name>Options.hpp</name>
-    <path>tatami/base/</path>
+    <path>/github/workspace/include/tatami/base/</path>
     <filename>Options_8hpp.html</filename>
     <class kind="struct">tatami::Options</class>
     <class kind="struct">tatami::Oracle</class>
@@ -109,7 +109,7 @@
   </compound>
   <compound kind="file">
     <name>SparseRange.hpp</name>
-    <path>tatami/base/</path>
+    <path>/github/workspace/include/tatami/base/</path>
     <filename>SparseRange_8hpp.html</filename>
     <class kind="struct">tatami::SparseRange</class>
     <class kind="struct">tatami::SparseRangeCopy</class>
@@ -117,7 +117,7 @@
   </compound>
   <compound kind="file">
     <name>DenseMatrix.hpp</name>
-    <path>tatami/dense/</path>
+    <path>/github/workspace/include/tatami/dense/</path>
     <filename>DenseMatrix_8hpp.html</filename>
     <class kind="class">tatami::DenseMatrix</class>
     <namespace>tatami</namespace>
@@ -138,39 +138,14 @@
   </compound>
   <compound kind="file">
     <name>VirtualDenseMatrix.hpp</name>
-    <path>tatami/dense/</path>
+    <path>/github/workspace/include/tatami/dense/</path>
     <filename>VirtualDenseMatrix_8hpp.html</filename>
     <class kind="class">tatami::VirtualDenseMatrix</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>layered.hpp</name>
-    <path>tatami/ext/</path>
-    <filename>layered_8hpp.html</filename>
-  </compound>
-  <compound kind="file">
-    <name>convert_to_layered_sparse.hpp</name>
-    <path>tatami/ext/layered/</path>
-    <filename>convert__to__layered__sparse_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>LayeredMatrixData&lt; T, IDX &gt;</type>
-      <name>convert_to_layered_sparse</name>
-      <anchorfile>convert__to__layered__sparse_8hpp.html</anchorfile>
-      <anchor>a8a10c9d0fdbf5076e8583d1068a7f6d6</anchor>
-      <arglist>(const Matrix *incoming)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>LayeredMatrixData.hpp</name>
-    <path>tatami/ext/layered/</path>
-    <filename>LayeredMatrixData_8hpp.html</filename>
-    <class kind="struct">tatami::LayeredMatrixData</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
     <name>arith_utils.hpp</name>
-    <path>tatami/isometric/</path>
+    <path>/github/workspace/include/tatami/isometric/</path>
     <filename>arith__utils_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="enumeration">
@@ -190,7 +165,7 @@
   </compound>
   <compound kind="file">
     <name>DelayedBinaryIsometricOp.hpp</name>
-    <path>tatami/isometric/binary/</path>
+    <path>/github/workspace/include/tatami/isometric/binary/</path>
     <filename>DelayedBinaryIsometricOp_8hpp.html</filename>
     <class kind="class">tatami::DelayedBinaryIsometricOp</class>
     <namespace>tatami</namespace>
@@ -204,7 +179,7 @@
   </compound>
   <compound kind="file">
     <name>boolean_utils.hpp</name>
-    <path>tatami/isometric/</path>
+    <path>/github/workspace/include/tatami/isometric/</path>
     <filename>boolean__utils_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="enumeration">
@@ -221,7 +196,7 @@
   </compound>
   <compound kind="file">
     <name>compare_utils.hpp</name>
-    <path>tatami/isometric/</path>
+    <path>/github/workspace/include/tatami/isometric/</path>
     <filename>compare__utils_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="enumeration">
@@ -240,7 +215,7 @@
   </compound>
   <compound kind="file">
     <name>arith_helpers.hpp</name>
-    <path>tatami/isometric/binary/</path>
+    <path>/github/workspace/include/tatami/isometric/binary/</path>
     <filename>binary_2arith__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedBinaryArithHelper</class>
     <namespace>tatami</namespace>
@@ -296,7 +271,7 @@
   </compound>
   <compound kind="file">
     <name>arith_helpers.hpp</name>
-    <path>tatami/isometric/unary/</path>
+    <path>/github/workspace/include/tatami/isometric/unary/</path>
     <filename>unary_2arith__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedArithScalarHelper</class>
     <class kind="struct">tatami::DelayedArithVectorHelper</class>
@@ -402,7 +377,7 @@
   </compound>
   <compound kind="file">
     <name>boolean_helpers.hpp</name>
-    <path>tatami/isometric/binary/</path>
+    <path>/github/workspace/include/tatami/isometric/binary/</path>
     <filename>binary_2boolean__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedBinaryBooleanHelper</class>
     <namespace>tatami</namespace>
@@ -437,7 +412,7 @@
   </compound>
   <compound kind="file">
     <name>boolean_helpers.hpp</name>
-    <path>tatami/isometric/unary/</path>
+    <path>/github/workspace/include/tatami/isometric/unary/</path>
     <filename>unary_2boolean__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedBooleanScalarHelper</class>
     <class kind="struct">tatami::DelayedBooleanNotHelper</class>
@@ -509,7 +484,7 @@
   </compound>
   <compound kind="file">
     <name>compare_helpers.hpp</name>
-    <path>tatami/isometric/binary/</path>
+    <path>/github/workspace/include/tatami/isometric/binary/</path>
     <filename>binary_2compare__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedBinaryCompareHelper</class>
     <namespace>tatami</namespace>
@@ -558,7 +533,7 @@
   </compound>
   <compound kind="file">
     <name>compare_helpers.hpp</name>
-    <path>tatami/isometric/unary/</path>
+    <path>/github/workspace/include/tatami/isometric/unary/</path>
     <filename>unary_2compare__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedCompareScalarHelper</class>
     <class kind="struct">tatami::DelayedCompareVectorHelper</class>
@@ -650,7 +625,7 @@
   </compound>
   <compound kind="file">
     <name>DelayedUnaryIsometricOp.hpp</name>
-    <path>tatami/isometric/unary/</path>
+    <path>/github/workspace/include/tatami/isometric/unary/</path>
     <filename>DelayedUnaryIsometricOp_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricOp</class>
     <namespace>tatami</namespace>
@@ -664,7 +639,7 @@
   </compound>
   <compound kind="file">
     <name>math_helpers.hpp</name>
-    <path>tatami/isometric/unary/</path>
+    <path>/github/workspace/include/tatami/isometric/unary/</path>
     <filename>math__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedAbsHelper</class>
     <class kind="struct">tatami::DelayedSignHelper</class>
@@ -695,7 +670,7 @@
   </compound>
   <compound kind="file">
     <name>DelayedBind.hpp</name>
-    <path>tatami/other/</path>
+    <path>/github/workspace/include/tatami/other/</path>
     <filename>DelayedBind_8hpp.html</filename>
     <class kind="class">tatami::DelayedBind</class>
     <namespace>tatami</namespace>
@@ -709,7 +684,7 @@
   </compound>
   <compound kind="file">
     <name>DelayedCast.hpp</name>
-    <path>tatami/other/</path>
+    <path>/github/workspace/include/tatami/other/</path>
     <filename>DelayedCast_8hpp.html</filename>
     <class kind="class">tatami::DelayedCast</class>
     <namespace>tatami</namespace>
@@ -723,7 +698,7 @@
   </compound>
   <compound kind="file">
     <name>DelayedTranspose.hpp</name>
-    <path>tatami/other/</path>
+    <path>/github/workspace/include/tatami/other/</path>
     <filename>DelayedTranspose_8hpp.html</filename>
     <class kind="class">tatami::DelayedTranspose</class>
     <namespace>tatami</namespace>
@@ -737,7 +712,7 @@
   </compound>
   <compound kind="file">
     <name>CompressedSparseMatrix.hpp</name>
-    <path>tatami/sparse/</path>
+    <path>/github/workspace/include/tatami/sparse/</path>
     <filename>CompressedSparseMatrix_8hpp.html</filename>
     <class kind="class">tatami::CompressedSparseMatrix</class>
     <namespace>tatami</namespace>
@@ -758,7 +733,7 @@
   </compound>
   <compound kind="file">
     <name>FragmentedSparseMatrix.hpp</name>
-    <path>tatami/sparse/</path>
+    <path>/github/workspace/include/tatami/sparse/</path>
     <filename>FragmentedSparseMatrix_8hpp.html</filename>
     <class kind="class">tatami::FragmentedSparseMatrix</class>
     <namespace>tatami</namespace>
@@ -779,7 +754,7 @@
   </compound>
   <compound kind="file">
     <name>SemiCompressedSparseMatrix.hpp</name>
-    <path>tatami/sparse/</path>
+    <path>/github/workspace/include/tatami/sparse/</path>
     <filename>SemiCompressedSparseMatrix_8hpp.html</filename>
     <class kind="class">tatami::SemiCompressedSparseMatrix</class>
     <namespace>tatami</namespace>
@@ -800,7 +775,7 @@
   </compound>
   <compound kind="file">
     <name>medians.hpp</name>
-    <path>tatami/stats/</path>
+    <path>/github/workspace/include/tatami/stats/</path>
     <filename>medians_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -820,7 +795,7 @@
   </compound>
   <compound kind="file">
     <name>ranges.hpp</name>
-    <path>tatami/stats/</path>
+    <path>/github/workspace/include/tatami/stats/</path>
     <filename>ranges_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -868,7 +843,7 @@
   </compound>
   <compound kind="file">
     <name>sums.hpp</name>
-    <path>tatami/stats/</path>
+    <path>/github/workspace/include/tatami/stats/</path>
     <filename>sums_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -888,7 +863,7 @@
   </compound>
   <compound kind="file">
     <name>utils.hpp</name>
-    <path>tatami/stats/</path>
+    <path>/github/workspace/include/tatami/stats/</path>
     <filename>stats_2utils_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -908,7 +883,7 @@
   </compound>
   <compound kind="file">
     <name>variances.hpp</name>
-    <path>tatami/stats/</path>
+    <path>/github/workspace/include/tatami/stats/</path>
     <filename>variances_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -970,14 +945,14 @@
   </compound>
   <compound kind="file">
     <name>DelayedSubset.hpp</name>
-    <path>tatami/subset/</path>
+    <path>/github/workspace/include/tatami/subset/</path>
     <filename>DelayedSubset_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubset</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>DelayedSubsetBlock.hpp</name>
-    <path>tatami/subset/</path>
+    <path>/github/workspace/include/tatami/subset/</path>
     <filename>DelayedSubsetBlock_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubsetBlock</class>
     <namespace>tatami</namespace>
@@ -991,28 +966,28 @@
   </compound>
   <compound kind="file">
     <name>DelayedSubsetSorted.hpp</name>
-    <path>tatami/subset/</path>
+    <path>/github/workspace/include/tatami/subset/</path>
     <filename>DelayedSubsetSorted_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubsetSorted</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>DelayedSubsetSortedUnique.hpp</name>
-    <path>tatami/subset/</path>
+    <path>/github/workspace/include/tatami/subset/</path>
     <filename>DelayedSubsetSortedUnique_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubsetSortedUnique</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>DelayedSubsetUnique.hpp</name>
-    <path>tatami/subset/</path>
+    <path>/github/workspace/include/tatami/subset/</path>
     <filename>DelayedSubsetUnique_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubsetUnique</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>make_DelayedSubset.hpp</name>
-    <path>tatami/subset/</path>
+    <path>/github/workspace/include/tatami/subset/</path>
     <filename>make__DelayedSubset_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -1025,20 +1000,20 @@
   </compound>
   <compound kind="file">
     <name>tatami.hpp</name>
-    <path>tatami/</path>
+    <path>/github/workspace/include/tatami/</path>
     <filename>tatami_8hpp.html</filename>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>ArrayView.hpp</name>
-    <path>tatami/utils/</path>
+    <path>/github/workspace/include/tatami/utils/</path>
     <filename>ArrayView_8hpp.html</filename>
     <class kind="class">tatami::ArrayView</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>bind_intersection.hpp</name>
-    <path>tatami/utils/</path>
+    <path>/github/workspace/include/tatami/utils/</path>
     <filename>bind__intersection_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -1051,7 +1026,7 @@
   </compound>
   <compound kind="file">
     <name>compress_sparse_triplets.hpp</name>
-    <path>tatami/utils/</path>
+    <path>/github/workspace/include/tatami/utils/</path>
     <filename>compress__sparse__triplets_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -1064,7 +1039,7 @@
   </compound>
   <compound kind="file">
     <name>convert_to_dense.hpp</name>
-    <path>tatami/utils/</path>
+    <path>/github/workspace/include/tatami/utils/</path>
     <filename>convert__to__dense_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -1091,7 +1066,7 @@
   </compound>
   <compound kind="file">
     <name>convert_to_sparse.hpp</name>
-    <path>tatami/utils/</path>
+    <path>/github/workspace/include/tatami/utils/</path>
     <filename>convert__to__sparse_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -1111,7 +1086,7 @@
   </compound>
   <compound kind="file">
     <name>Oracles.hpp</name>
-    <path>tatami/utils/</path>
+    <path>/github/workspace/include/tatami/utils/</path>
     <filename>Oracles_8hpp.html</filename>
     <class kind="struct">tatami::FixedOracle</class>
     <class kind="struct">tatami::ConsecutiveOracle</class>
@@ -1120,7 +1095,7 @@
   </compound>
   <compound kind="file">
     <name>process_consecutive_indices.hpp</name>
-    <path>tatami/utils/</path>
+    <path>/github/workspace/include/tatami/utils/</path>
     <filename>process__consecutive__indices_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -1133,7 +1108,7 @@
   </compound>
   <compound kind="file">
     <name>SomeNumericArray.hpp</name>
-    <path>tatami/utils/</path>
+    <path>/github/workspace/include/tatami/utils/</path>
     <filename>SomeNumericArray_8hpp.html</filename>
     <class kind="struct">tatami::SomeNumericArray</class>
     <class kind="struct">tatami::SomeNumericArray::Iterator</class>
@@ -1141,7 +1116,7 @@
   </compound>
   <compound kind="file">
     <name>wrap_shared_ptr.hpp</name>
-    <path>tatami/utils/</path>
+    <path>/github/workspace/include/tatami/utils/</path>
     <filename>wrap__shared__ptr_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
@@ -3680,26 +3655,6 @@
       <arglist>(size_t n, const Iterator &amp;it)</arglist>
     </member>
   </compound>
-  <compound kind="struct">
-    <name>tatami::LayeredMatrixData</name>
-    <filename>structtatami_1_1LayeredMatrixData.html</filename>
-    <templarg>typename T</templarg>
-    <templarg>typename IDX</templarg>
-    <member kind="variable">
-      <type>std::shared_ptr&lt; Matrix&lt; T, IDX &gt; &gt;</type>
-      <name>matrix</name>
-      <anchorfile>structtatami_1_1LayeredMatrixData.html</anchorfile>
-      <anchor>a117e250097c0219902fad9160e5d389c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>std::vector&lt; size_t &gt;</type>
-      <name>permutation</name>
-      <anchorfile>structtatami_1_1LayeredMatrixData.html</anchorfile>
-      <anchor>ae9c9cfb331519d5c7e18f4e51fc2898c</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
   <compound kind="class">
     <name>tatami::Matrix</name>
     <filename>classtatami_1_1Matrix.html</filename>
@@ -4528,7 +4483,6 @@
     <class kind="class">tatami::FragmentedSparseMatrix</class>
     <class kind="struct">tatami::FullExtractor</class>
     <class kind="struct">tatami::IndexExtractor</class>
-    <class kind="struct">tatami::LayeredMatrixData</class>
     <class kind="class">tatami::Matrix</class>
     <class kind="struct">tatami::Options</class>
     <class kind="struct">tatami::Oracle</class>
@@ -5299,6 +5253,6 @@
     <name>index</name>
     <title>A C++ API for all sorts of matrices</title>
     <filename>index.html</filename>
-    <docanchor file="index.html" title="A C++ API for all sorts of matrices">md__2github_2workspace_2README</docanchor>
+    <docanchor file="index.html">md__github_workspace_README</docanchor>
   </compound>
 </tagfile>

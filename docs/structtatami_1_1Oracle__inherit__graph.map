@@ -1,7 +1,5 @@
 <map id="tatami::Oracle&lt; Index_ &gt;" name="tatami::Oracle&lt; Index_ &gt;">
-<area shape="rect" id="Node000001" title="Predict future access requests." alt="" coords="99,5,261,31"/>
-<area shape="rect" id="Node000002" href="$structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses of a consecutive sequence." alt="" coords="5,79,179,120"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="158,43,115,81,112,77,154,39"/>
-<area shape="rect" id="Node000003" href="$structtatami_1_1FixedOracle.html" title="Predict future accesses from a known sequence." alt="" coords="203,79,336,120"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="206,39,249,77,246,81,203,43"/>
+<area shape="rect" id="node1" title="Predict future access requests." alt="" coords="101,5,263,31"/>
+<area shape="rect" id="node2" href="$structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses of a consecutive sequence." alt="" coords="5,79,180,119"/>
+<area shape="rect" id="node3" href="$structtatami_1_1FixedOracle.html" title="Predict future accesses from a known sequence." alt="" coords="205,79,338,119"/>
 </map>

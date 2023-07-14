@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['permutation_0',['permutation',['../structtatami_1_1LayeredMatrixData.html#ae9c9cfb331519d5c7e18f4e51fc2898c',1,'tatami::LayeredMatrixData']]]
+  ['value_0',['value',['../structtatami_1_1SparseRange.html#a6bd0dcad11850847dd8dd336e1932732',1,'tatami::SparseRange::value()'],['../structtatami_1_1SparseRangeCopy.html#a6f924c14d5830aedf2d175b850099b45',1,'tatami::SparseRangeCopy::value()']]]
 ];

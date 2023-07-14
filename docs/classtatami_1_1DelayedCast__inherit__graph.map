@@ -1,5 +1,4 @@
 <map id="tatami::DelayedCast&lt; Value_out_, Index_out_, Value_in_, Index_in_ &gt;" name="tatami::DelayedCast&lt; Value_out_, Index_out_, Value_in_, Index_in_ &gt;">
-<area shape="rect" id="Node000001" title="Recast a Matrix to a different interface type." alt="" coords="5,94,196,150"/>
-<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="29,5,172,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,61,103,93,98,93,98,61"/>
+<area shape="rect" id="node1" title="Recast a Matrix to a different interface type." alt="" coords="5,93,196,148"/>
+<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="29,5,172,45"/>
 </map>
