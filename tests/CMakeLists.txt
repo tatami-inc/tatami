@@ -79,25 +79,12 @@ target_link_libraries(
     tatami
 )
 
-# Test extensions
-add_executable(
-    exttest 
-    src/ext/layered/convert_to_layered_sparse.cpp
-)
-
-target_link_libraries(
-    exttest
-    gtest_main
-    tatami
-)
-
 # Checking whether to add OpenMP support. This is turned off
 # by default to make it easier to debug test failures.
 set(USE_OPENMP OFF CACHE BOOL "Compile with OpenMP support")
 if (USE_OPENMP)
     find_package(OpenMP)
     target_link_libraries(libtest OpenMP::OpenMP_CXX)
-    target_link_libraries(exttest OpenMP::OpenMP_CXX)
     target_link_libraries(cuspartest OpenMP::OpenMP_CXX)
 endif()
 
@@ -107,13 +94,10 @@ target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(libtest PRIVATE -O0 -g --coverage)
-    target_compile_options(exttest PRIVATE -O0 -g --coverage)
     target_link_options(libtest PRIVATE --coverage)
-    target_link_options(exttest PRIVATE --coverage)
 endif()
 
 # Making the tests discoverable.
 include(GoogleTest)
 gtest_discover_tests(libtest)
-gtest_discover_tests(exttest)
 gtest_discover_tests(cuspartest)
