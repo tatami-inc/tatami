@@ -66,8 +66,8 @@ private:
             }
         }
 
-        void set_oracle(std::unique_ptr<Oracle<Index_> >) {
-            return;
+        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
+            internal->set_oracle(std::move(o));
         }
 
     public:
