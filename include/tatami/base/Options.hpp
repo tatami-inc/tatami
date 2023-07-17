@@ -76,6 +76,7 @@ struct Oracle {
      *
      * @return Number of indices that were predicted.
      * This is guaranteed to be no greater than `number`.
+     * If no more predictions are available, this method should return zero.
      */
     virtual size_t predict(Index_* predicted, size_t number) = 0;
 };

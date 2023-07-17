@@ -126,11 +126,12 @@ struct OracleStream {
         if (used == predictions.size()) {
             predictions.resize(100); // take up to 100 predictions at a time.
             used = 0;
+
             auto filled = oracle->predict(predictions.data(), predictions.size());
+            predictions.resize(filled);
             if (filled == 0) {
                 return false;
             }
-            predictions.resize(filled);
         }
 
         prediction = predictions[used];
