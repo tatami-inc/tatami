@@ -45,7 +45,7 @@ auto get_upper_limit(const IndexStorage_& indices, const PointerStorage_& indptr
 template<class PointerStorage_, typename Index_>
 auto get_lower_limit(const PointerStorage_& indptrs, Index_ primary) {
     if constexpr(is_fragmented<PointerStorage_>()) {
-        return 0;
+        return static_cast<size_t>(0);
     } else {
         return indptrs[primary];
     }

@@ -148,7 +148,7 @@ TEST_P(SemiSparseFullAccessTest, Row) {
     tatami_test::test_simple_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SemiCompressedSparseMatrix,
     SemiSparseFullAccessTest,
     ::testing::Combine(
@@ -190,7 +190,7 @@ TEST_P(SemiSparseSlicedAccessTest, Row) {
     tatami_test::test_sliced_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SemiCompressedSparseMatrix,
     SemiSparseSlicedAccessTest,
     ::testing::Combine(
@@ -239,7 +239,7 @@ TEST_P(SemiSparseIndexedAccessTest, Row) {
     tatami_test::test_indexed_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     SemiCompressedSparseMatrix,
     SemiSparseIndexedAccessTest,
     ::testing::Combine(

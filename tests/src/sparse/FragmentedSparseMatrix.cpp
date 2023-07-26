@@ -173,7 +173,7 @@ TEST_P(FragmentedSparseFullAccessTest, Row) {
     tatami_test::test_simple_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     FragmentedSparseMatrix,
     FragmentedSparseFullAccessTest,
     ::testing::Combine(
@@ -215,7 +215,7 @@ TEST_P(FragmentedSparseSlicedAccessTest, Row) {
     tatami_test::test_sliced_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     FragmentedSparseMatrix,
     FragmentedSparseSlicedAccessTest,
     ::testing::Combine(
@@ -264,7 +264,7 @@ TEST_P(FragmentedSparseIndexedAccessTest, Row) {
     tatami_test::test_indexed_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     FragmentedSparseMatrix,
     FragmentedSparseIndexedAccessTest,
     ::testing::Combine(

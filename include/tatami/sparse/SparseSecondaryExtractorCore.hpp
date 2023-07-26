@@ -47,7 +47,7 @@ private:
 public:
     SparseSecondaryExtractorCore() = default;
 
-    SparseSecondaryExtractorCore(StoredIndex_ mi, Index_ length) : max_index(mi), current_indices(length), current_indptrs(length) {}
+    SparseSecondaryExtractorCore(StoredIndex_ mi, Index_ length) : current_indptrs(length), current_indices(length), max_index(mi) {}
 
 private:
     template<class IndexStorage_, class PointerStorage_>
@@ -59,7 +59,7 @@ private:
         auto raw_ptr = CustomPointerModifier_::get(curptr);
 
         auto& curdex = current_indices[index_primary];
-        if (raw_ptr != limit) {
+        if (static_cast<decltype(limit)>(raw_ptr) != limit) {
             curdex = indices[raw_ptr];
         } else {
             curdex = max_index;
@@ -103,7 +103,7 @@ private:
         // case for consecutive or near-consecutive accesses.
         CustomPointerModifier_::increment(curptr, indices, limit);
         auto raw_ptr = CustomPointerModifier_::get(curptr);
-        if (raw_ptr == limit) {
+        if (static_cast<decltype(limit)>(raw_ptr) == limit) {
             curdex = max_index;
             skip(primary);
             return;
@@ -125,7 +125,7 @@ private:
         // need to pay the cost of using increment() here, as the lower
         // bound search is going to be faster than any increment.
         ++raw_ptr;
-        auto next_ptr = std::lower_bound(indices.begin() + raw_ptr, indices.begin() + limit, secondary) - indices.begin();
+        decltype(limit) next_ptr = std::lower_bound(indices.begin() + raw_ptr, indices.begin() + limit, secondary) - indices.begin();
         CustomPointerModifier_::set(curptr, next_ptr);
 
         if (next_ptr == limit) {
@@ -206,7 +206,7 @@ private:
         // Can't decrement anymore, in which case we quit. 
         auto lower_limit = sparse_utils::get_lower_limit(indptrs, primary);
         auto raw_ptr = CustomPointerModifier_::get(curptr);
-        if (raw_ptr == lower_limit) {
+        if (static_cast<decltype(lower_limit)>(raw_ptr) == lower_limit) {
             skip(primary);
             return;
         }
@@ -226,7 +226,7 @@ private:
 
         if (candidate == secondary) {
             CustomPointerModifier_::decrement(curptr, indices, lower_limit);
-            if (raw_ptr != lower_limit) {
+            if (static_cast<decltype(lower_limit)>(raw_ptr) != lower_limit) {
                 curdex = indices[raw_ptr - 1]; // cheap decrement to inspect the next-lowest element.
             }
             store(primary, curptr);
@@ -237,7 +237,7 @@ private:
         // increment to get back to the current position, as it is still possible
         // that the next position is at 'raw_ptr - 1'.
         ++raw_ptr;
-        auto next_ptr = std::lower_bound(indices.begin() + lower_limit, indices.begin() + raw_ptr, secondary) - indices.begin();
+        decltype(raw_ptr) next_ptr = std::lower_bound(indices.begin() + lower_limit, indices.begin() + raw_ptr, secondary) - indices.begin();
         CustomPointerModifier_::set(curptr, next_ptr);
         if (next_ptr == raw_ptr) {
             skip(primary);
@@ -245,14 +245,14 @@ private:
         }
 
         if (indices[next_ptr] == secondary) {
-            if (next_ptr != lower_limit) {
+            if (static_cast<decltype(lower_limit)>(next_ptr) != lower_limit) {
                 curdex = indices[next_ptr - 1]; // cheap decrement to inspect the next-lowest element.
             }
             store(primary, curptr);
             return;
         }
 
-        if (next_ptr != lower_limit) {
+        if (static_cast<decltype(lower_limit)>(next_ptr) != lower_limit) {
             curdex = indices[next_ptr - 1]; // cheap decrement to inspect the next-lowest element.
         }
         skip(primary);

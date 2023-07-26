@@ -37,8 +37,13 @@ namespace tatami {
  * @param threads Number of threads.
  */
 template<bool parallel_ = true, class Function_, typename Index_>
-void parallelize(Function_ fun, Index_ tasks, size_t threads) {
+void parallelize(Function_ fun, Index_ tasks, size_t
 #if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
+    threads // wrap here to avoid used variable warnings (which are in turn converted to errors).
+#endif
+) {
+#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
+
     if constexpr(parallel_) {
 
         if (threads > 1) {

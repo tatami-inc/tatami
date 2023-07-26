@@ -92,7 +92,7 @@ struct SparseRangeCopy {
     /**
      * @param n Number of structural non-zeros.
      */
-    SparseRangeCopy(Index n) : number(n), index(n), value(n) {}
+    SparseRangeCopy(Index n) : number(n), value(n), index(n) {}
 };
 
 }

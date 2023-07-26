@@ -144,7 +144,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMat
     // Concatenating everything together.
     size_t total_size = 0;
     std::vector<size_t> indptrs(primary + 1);
-    for (size_t p = 0; p < primary; ++p) {
+    for (Index_ p = 0; p < primary; ++p) {
         total_size += store_v[p].size();
         indptrs[p + 1] = total_size;
     }
@@ -154,7 +154,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMat
     std::vector<StoredIndex_> output_i;
     output_i.reserve(total_size);
 
-    for (size_t p = 0; p < primary; ++p) {
+    for (Index_ p = 0; p < primary; ++p) {
         output_v.insert(output_v.end(), store_v[p].begin(), store_v[p].end());
         output_i.insert(output_i.end(), store_i[p].begin(), store_i[p].end());
     }
