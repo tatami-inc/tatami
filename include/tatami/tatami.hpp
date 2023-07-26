@@ -6,6 +6,7 @@
 #include "sparse/CompressedSparseMatrix.hpp"
 #include "sparse/SemiCompressedSparseMatrix.hpp"
 #include "sparse/FragmentedSparseMatrix.hpp"
+#include "sparse/convert_to_sparse.hpp"
 
 #include "isometric/unary/DelayedUnaryIsometricOp.hpp"
 #include "isometric/binary/DelayedBinaryIsometricOp.hpp"
@@ -18,7 +19,6 @@
 #include "subset/make_DelayedSubset.hpp"
 
 #include "utils/compress_sparse_triplets.hpp"
-#include "utils/convert_to_sparse.hpp"
 #include "utils/convert_to_dense.hpp"
 #include "utils/wrap_shared_ptr.hpp"
 #include "utils/ArrayView.hpp"
