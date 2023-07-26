@@ -95,7 +95,7 @@ TEST_P(SubsetBlockFullAccessTest, Column) {
     tatami_test::test_simple_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedSubsetBlock,
     SubsetBlockFullAccessTest,
     ::testing::Combine(
@@ -141,7 +141,7 @@ TEST_P(SubsetBlockSlicedAccessTest, Column) {
     tatami_test::test_sliced_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedSubsetBlock,
     SubsetBlockSlicedAccessTest,
     ::testing::Combine(
@@ -192,7 +192,7 @@ TEST_P(SubsetBlockIndexedAccessTest, Column) {
     tatami_test::test_indexed_column_access(sparse_block.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedSubsetBlock,
     SubsetBlockIndexedAccessTest,
     ::testing::Combine(
@@ -230,7 +230,6 @@ protected:
         double full =  (std::get<0>(param) ? NR : NC);
         int first = full * std::get<1>(param).first;
         int last = full * std::get<1>(param).second;
-        auto block_length = last - first;
 
         if (std::get<0>(param)) {
             dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, last);
@@ -261,7 +260,7 @@ TEST_P(SubsetBlockOracleTest, Validate) {
     tatami_test::test_oracle_row_access(wrapped_sparse_block.get(), sparse_block.get(), random);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedSubsetBlock,
     SubsetBlockOracleTest,
     ::testing::Combine(

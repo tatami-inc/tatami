@@ -495,11 +495,11 @@ private:
         size_t last_segment = 0;
 
     private:
-        static size_t choose_segment_raw(size_t i, const std::vector<Index_>& cumulative) {
+        static size_t choose_segment_raw(Index_ i, const std::vector<Index_>& cumulative) {
             return std::upper_bound(cumulative.begin(), cumulative.end(), i) - cumulative.begin() - 1;
         }
 
-        static void choose_segment(size_t i, size_t& last_segment, const std::vector<Index_>& cumulative) {
+        static void choose_segment(Index_ i, size_t& last_segment, const std::vector<Index_>& cumulative) {
             if (cumulative[last_segment] > i) {
                 if (last_segment && cumulative[last_segment - 1] <= i) {
                     --last_segment;
@@ -517,7 +517,7 @@ private:
         }
 
     protected:
-        size_t choose_segment(size_t i) {
+        size_t choose_segment(Index_ i) {
             choose_segment(i, last_segment, parent->cumulative);
             return last_segment;
         }

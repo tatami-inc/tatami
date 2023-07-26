@@ -91,6 +91,9 @@ endif()
 target_compile_definitions(libtest PRIVATE DEBUG=1)
 target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
 
+target_compile_options(libtest PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_compile_options(cuspartest PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(libtest PRIVATE -O0 -g --coverage)

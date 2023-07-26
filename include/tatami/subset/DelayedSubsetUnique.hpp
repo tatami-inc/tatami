@@ -28,10 +28,8 @@ namespace tatami {
 template<int margin_, typename Value_, typename Index_, class IndexStorage_>
 class DelayedSubsetUnique : public Matrix<Value_, Index_> {
 private:
-    typedef typename std::remove_const<typename std::remove_reference<decltype(std::declval<IndexStorage_>()[0])>::type>::type storage_type;
-
     static void finish_assembly(
-        const std::vector<std::pair<storage_type, Index_> >& collected,
+        const std::vector<std::pair<Index_, Index_> >& collected,
         const IndexStorage_& indices, 
         std::vector<Index_>& reverse_mapping,
         std::vector<Index_>& sorted,
@@ -61,7 +59,7 @@ public:
      * @param check Whether to check `idx` for unique values.
      */
     DelayedSubsetUnique(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx, bool check = true) : mat(std::move(p)), indices(std::move(idx)) {
-        std::vector<std::pair<storage_type, Index_> > collected;
+        std::vector<std::pair<Index_, Index_> > collected;
         collected.reserve(indices.size());
         for (Index_ i = 0, end = indices.size(); i < end; ++i) {
             collected.emplace_back(indices[i], i);
@@ -92,7 +90,7 @@ public:
     /**
      * @cond
      */
-    DelayedSubsetUnique(std::shared_ptr<const Matrix<Value_, Index_> > p, const std::vector<std::pair<storage_type, Index_> >& collected, IndexStorage_ idx) : 
+    DelayedSubsetUnique(std::shared_ptr<const Matrix<Value_, Index_> > p, const std::vector<std::pair<Index_, Index_> >& collected, IndexStorage_ idx) : 
         mat(std::move(p)), indices(std::move(idx)) 
     {
         finish_assembly(

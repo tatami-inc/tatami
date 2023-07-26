@@ -97,7 +97,7 @@ TEST_P(ArithVectorAdditionFullTest, Basic) {
     tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorAdditionFullTest,
     ::testing::Combine(
@@ -130,7 +130,7 @@ TEST_P(ArithVectorAdditionBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorAdditionBlockTest,
     ::testing::Combine(
@@ -169,7 +169,7 @@ TEST_P(ArithVectorAdditionIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorAdditionIndexTest,
     ::testing::Combine(
@@ -261,7 +261,7 @@ TEST_P(ArithVectorSubtractionFullTest, Basic) {
     tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorSubtractionFullTest,
     ::testing::Combine(
@@ -295,7 +295,7 @@ TEST_P(ArithVectorSubtractionBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorSubtractionBlockTest,
     ::testing::Combine(
@@ -334,7 +334,7 @@ TEST_P(ArithVectorSubtractionIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorSubtractionIndexTest,
     ::testing::Combine(
@@ -412,7 +412,7 @@ TEST_P(ArithVectorMultiplicationFullTest, Basic) {
     tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorMultiplicationFullTest,
     ::testing::Combine(
@@ -445,7 +445,7 @@ TEST_P(ArithVectorMultiplicationBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorMultiplicationBlockTest,
     ::testing::Combine(
@@ -484,7 +484,7 @@ TEST_P(ArithVectorMultiplicationIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorMultiplicationIndexTest,
     ::testing::Combine(
@@ -588,7 +588,7 @@ TEST_P(ArithVectorDivisionFullTest, Basic) {
     tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorDivisionFullTest,
     ::testing::Combine(
@@ -622,7 +622,7 @@ TEST_P(ArithVectorDivisionBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorDivisionBlockTest,
     ::testing::Combine(
@@ -661,7 +661,7 @@ TEST_P(ArithVectorDivisionIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorDivisionIndexTest,
     ::testing::Combine(
@@ -763,7 +763,7 @@ TEST_P(ArithVectorPowerFullTest, Basic) {
     tatami_test::test_simple_row_access(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorPowerFullTest,
     ::testing::Combine(
@@ -797,7 +797,7 @@ TEST_P(ArithVectorPowerBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorPowerBlockTest,
     ::testing::Combine(
@@ -836,7 +836,7 @@ TEST_P(ArithVectorPowerIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorPowerIndexTest,
     ::testing::Combine(
@@ -935,7 +935,7 @@ TEST_P(ArithVectorModuloFullTest, Basic) {
     tatami_test::test_simple_row_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorModuloFullTest,
     ::testing::Combine(
@@ -969,7 +969,7 @@ TEST_P(ArithVectorModuloBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorModuloBlockTest,
     ::testing::Combine(
@@ -1008,7 +1008,7 @@ TEST_P(ArithVectorModuloIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorModuloIndexTest,
     ::testing::Combine(
@@ -1108,7 +1108,7 @@ TEST_P(ArithVectorIntegerDivisionFullTest, Basic) {
     tatami_test::test_simple_row_access<true>(sparse_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorIntegerDivisionFullTest,
     ::testing::Combine(
@@ -1142,7 +1142,7 @@ TEST_P(ArithVectorIntegerDivisionBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorIntegerDivisionBlockTest,
     ::testing::Combine(
@@ -1181,7 +1181,7 @@ TEST_P(ArithVectorIntegerDivisionIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorIntegerDivisionIndexTest,
     ::testing::Combine(
@@ -1242,7 +1242,7 @@ TEST_P(ArithVectorOracleTest, Validate) {
     tatami_test::test_oracle_row_access(wrapped_sparse_mod.get(), sparse_mod.get(), std::get<1>(param));
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorOracleTest,
     ::testing::Combine(
@@ -1420,7 +1420,7 @@ TEST_P(ArithVectorZeroedTest, DivisionOneZero) {
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-        for (int c = 0; c < ncol; ++c) {
+        for (size_t c = 0; c < ncol; ++c) {
             copy[c] = careful_division(copy[c], 0.0);
         }
     } else {
@@ -1428,7 +1428,7 @@ TEST_P(ArithVectorZeroedTest, DivisionOneZero) {
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-        for (int r = 0; r < nrow; ++r) {
+        for (size_t r = 0; r < nrow; ++r) {
             copy[r * ncol] = careful_division(copy[r * ncol], 0.0);
         }
     }
@@ -1487,7 +1487,7 @@ TEST_P(ArithVectorZeroedTest, PowerOneZero) {
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-        for (int c = 0; c < ncol; ++c) {
+        for (size_t c = 0; c < ncol; ++c) {
             copy[c] = std::pow(copy[c], 0.0);
         }
     } else {
@@ -1495,7 +1495,7 @@ TEST_P(ArithVectorZeroedTest, PowerOneZero) {
         dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-        for (int r = 0; r < nrow; ++r) {
+        for (size_t r = 0; r < nrow; ++r) {
             copy[r * ncol] = std::pow(copy[r * ncol], 0.0);
         }
     }
@@ -1574,7 +1574,7 @@ TEST_P(ArithVectorZeroedTest, IntegerDivision) {
     tatami_test::test_simple_row_access<true>(sparse_mod.get(), &ref, true, 1);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithVector,
     ArithVectorZeroedTest,
     ::testing::Values(true, false) // add by row, or by column

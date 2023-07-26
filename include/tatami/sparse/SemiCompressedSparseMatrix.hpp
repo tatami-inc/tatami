@@ -236,7 +236,7 @@ private:
             bool do_cache = !cached.empty();
             if (do_cache) {
                 auto val = cached[i];
-                if (val != -1) {
+                if (val != static_cast<size_t>(-1)) {
                     return val;
                 }
             }
@@ -267,7 +267,7 @@ private:
             if (subset[0]) { // Only jumping ahead if the start is non-zero.
                 bool do_cache = !cached.empty();
                 if (do_cache) {
-                    if (cached[i] != -1) { // retrieving the jump from cache, if we came here before.
+                    if (cached[i] != static_cast<size_t>(-1)) { // retrieving the jump from cache, if we came here before.
                         iIt += cached[i];
                     } else {
                         auto iIt2 = std::lower_bound(iIt, eIt, subset[0]);

@@ -24,7 +24,7 @@ TEST(DenseMatrix, Basic) {
 
     {
         auto wrk = mat.dense_column();
-        for (size_t i = 0; i < mat.ncol(); ++i) {
+        for (size_t i = 0, end = mat.ncol(); i < end; ++i) {
             auto start = contents.begin() + i * mat.nrow();
             std::vector<double> expected(start, start + mat.nrow());
             EXPECT_EQ(wrk->fetch(i), expected);
@@ -33,9 +33,9 @@ TEST(DenseMatrix, Basic) {
 
     {
         auto wrk = mat.dense_row();
-        for (size_t i = 0; i < mat.nrow(); ++i) {
+        for (size_t i = 0, end = mat.nrow(); i < end; ++i) {
             std::vector<double> expected(mat.ncol());
-            for (size_t j = 0; j < mat.ncol(); ++j) {
+            for (size_t j = 0, jend = mat.ncol(); j < jend; ++j) {
                 expected[j] = contents[j * mat.nrow() + i];
             }
             EXPECT_EQ(wrk->fetch(i), expected);
@@ -140,7 +140,7 @@ TEST_P(DenseFullAccessTest, Row) {
     tatami_test::test_simple_row_access(dense_column.get(), dense_row.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseFullAccessTest,
     ::testing::Combine(
@@ -184,7 +184,7 @@ TEST_P(DenseSlicedAccessTest, Row) {
     tatami_test::test_sliced_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseSlicedAccessTest,
     ::testing::Combine(
@@ -233,7 +233,7 @@ TEST_P(DenseIndexedAccessTest, Row) {
     tatami_test::test_indexed_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseIndexedAccessTest,
     ::testing::Combine(

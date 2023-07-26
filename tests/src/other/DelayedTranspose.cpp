@@ -66,7 +66,7 @@ TEST_P(TransposeFullTest, Column) {
     tatami_test::test_simple_column_access(tsparse.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     TransposeTest,
     TransposeFullTest,
     ::testing::Combine(
@@ -99,7 +99,7 @@ TEST_P(TransposeBlockTest, Column) {
     tatami_test::test_sliced_column_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     TransposeTest,
     TransposeBlockTest,
     ::testing::Combine(
@@ -139,7 +139,7 @@ TEST_P(TransposeIndexTest, Row) {
     tatami_test::test_indexed_row_access(tsparse.get(), ref.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     TransposeTest,
     TransposeIndexTest,
     ::testing::Combine(
@@ -182,7 +182,7 @@ TEST_P(TransposeOracleTest, Validate) {
     tatami_test::test_oracle_row_access(wrapped_sparse.get(), tsparse.get(), random);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     TransposeTest,
     TransposeOracleTest,
     ::testing::Values(true, false)  // use random or consecutive oracle.

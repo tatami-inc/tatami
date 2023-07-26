@@ -45,11 +45,10 @@ public:
     }
 
     template<bool, bool needs_value, bool needs_index, typename Value_, typename Index_>
-    Index_ sparse(Index_ idx, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
+    Index_ sparse(Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
         // None of the operations will return zero if one entry is zero and the other entry is non-zero...
         // except for equality, but then, the sparse() method would never even be used.
         return delayed_binary_isometric_sparse_operation<false, needs_value, needs_index>(
-            idx, 
             left, 
             right, 
             value_buffer, 

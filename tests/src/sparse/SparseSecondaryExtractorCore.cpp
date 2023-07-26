@@ -459,7 +459,7 @@ protected:
             tatami::SparseSecondaryExtractorCore<int, int, size_t, SimpleModifier<int, size_t> >(max_index, idx.size())
         {
             auto length = idx.size();
-            for (int i = 0; i < length; ++i) {
+            for (size_t i = 0; i < length; ++i) {
                 this->current_indices[i] = (idx[i].empty() ? 0 : idx[i].front());
             }
             this->closest_current_index = (length ? *std::min_element(this->current_indices.begin(), this->current_indices.end()) : max_index);
@@ -533,4 +533,3 @@ TEST_F(FragmentedSparseSecondaryExtractorCoreTest, Basic) {
         EXPECT_EQ(results, expected(5, -1, -1));
     }
 }
-

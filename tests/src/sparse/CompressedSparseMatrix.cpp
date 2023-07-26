@@ -70,6 +70,14 @@ TEST(CompressedSparseMatrix, ConstructionFail) {
     tatami_test::throws_error([&]() { tatami::CompressedSparseRowMatrix<double, int> mat(20, 10, values, indices, indptr); }, "strictly increasing");
 }
 
+TEST(CompressedSparseMatrix, OddTypes) {
+    // Checking for compilation warnings here when the interface and storage types are different.
+    std::vector<uint8_t> values;
+    std::vector<uint16_t> indices;
+    std::vector<uint64_t> indptr(11);
+    tatami::CompressedSparseRowMatrix<double, int, decltype(values), decltype(indices), decltype(indptr)> rmat(10, 20, values, indices, indptr);
+}
+
 /*************************************
  *************************************/
 
@@ -146,7 +154,7 @@ TEST_P(SparseFullAccessTest, Row) {
     tatami_test::test_simple_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     CompressedSparseMatrix,
     SparseFullAccessTest,
     ::testing::Combine(
@@ -188,7 +196,7 @@ TEST_P(SparseSlicedAccessTest, Row) {
     tatami_test::test_sliced_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     CompressedSparseMatrix,
     SparseSlicedAccessTest,
     ::testing::Combine(
@@ -237,7 +245,7 @@ TEST_P(SparseIndexedAccessTest, Row) {
     tatami_test::test_indexed_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     CompressedSparseMatrix,
     SparseIndexedAccessTest,
     ::testing::Combine(

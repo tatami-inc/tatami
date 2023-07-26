@@ -215,7 +215,7 @@ TEST_P(CompareScalarTest, NotEqual) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     CompareScalar,
     CompareScalarTest,
     ::testing::Values(0, -1, 1)

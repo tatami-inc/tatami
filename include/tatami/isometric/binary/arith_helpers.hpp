@@ -46,11 +46,10 @@ public:
     }
 
     template<bool, bool needs_value, bool needs_index, typename Value_, typename Index_>
-    Index_ sparse(Index_ idx, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
+    Index_ sparse(Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
         // Don't bother storing an explicit zero for MULTIPLY operations when either entry is zero.
         constexpr bool must_have_both = (op_ == DelayedArithOp::MULTIPLY);
         return delayed_binary_isometric_sparse_operation<must_have_both, needs_value, needs_index>(
-            idx, 
             left, 
             right, 
             value_buffer, 

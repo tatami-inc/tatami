@@ -86,7 +86,7 @@ TEST_P(ArithCommutativeScalarTest, Multiplication) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithScalar,
     ArithCommutativeScalarTest,
     ::testing::Values(5, 0.1, -0.7, 0)
@@ -326,7 +326,7 @@ TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
     tatami_test::test_simple_row_access<true>(sparse_mod.get(), &ref, true, 1);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ArithScalar,
     ArithNonCommutativeScalarTest,
     ::testing::Combine(

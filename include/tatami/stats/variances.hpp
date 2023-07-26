@@ -94,7 +94,7 @@ std::pair<Output_, Output_> compute_direct(const SparseRange<Value_, Index_>& ra
 
     Output_ mean = std::accumulate(range.value, range.value + range.number, static_cast<Output_>(0))/n;
     Output_ var = 0;
-    for (size_t j = 0; j < range.number; ++j) {
+    for (Index_ j = 0; j < range.number; ++j) {
         var += (range.value[j] - mean) * (range.value[j] - mean);
     }
     var += mean * mean * (n - range.number);
@@ -154,7 +154,7 @@ void compute_running(const Value_* ptr, size_t n, Output_* means, Output_* vars,
 template<typename Value_, typename Index_, typename Output_, typename Nonzero_>
 void compute_running(const SparseRange<Value_, Index_>& range, Output_* means, Output_* vars, Nonzero_* nonzeros, int& count, bool skip_zeros = true, Index_ subtract = 0) {
     ++count;
-    for (size_t j = 0; j < range.number; ++j) {
+    for (Index_ j = 0; j < range.number; ++j) {
         if (!skip_zeros || range.value[j]) { 
             auto ri = range.index[j] - subtract;
             auto& curM = means[ri];

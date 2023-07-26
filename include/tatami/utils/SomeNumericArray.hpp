@@ -138,9 +138,6 @@ struct SomeNumericArray {
     SomeNumericArray(const double* x, size_t n) : f64(x), len(n), type(F64) {}
 
 private:
-    Type type;
-    size_t len;
-
     const int8_t* i8 = NULL;
     const uint8_t* u8 = NULL;
     const int16_t* i16 = NULL;
@@ -151,6 +148,10 @@ private:
     const uint64_t* u64 = NULL;
     const float* f32 = NULL;
     const double* f64 = NULL;
+
+    size_t len;
+    Type type;
+
 public:
     /**
      * @param i Positional index on the array.
@@ -179,6 +180,7 @@ public:
             case F64:
                 return f64[i];
         }
+        return 0; // shouldn't reach here, but whatever.
     }
 
     /**

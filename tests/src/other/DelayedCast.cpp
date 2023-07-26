@@ -113,7 +113,7 @@ TEST_P(DelayedCastFullAccess, Sparse) {
     tatami_test::test_simple_column_access(cast_sparse_index.get(), sparse.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastFullAccess,
     ::testing::Combine(
@@ -125,13 +125,12 @@ INSTANTIATE_TEST_CASE_P(
 /****************************************************
  ****************************************************/
 
-class DelayedCastBlockAccess : public CastTest<std::tuple<bool, size_t, std::vector<double> > > {};
+class DelayedCastBlockAccess : public CastTest<std::tuple<size_t, std::vector<double> > > {};
 
 TEST_P(DelayedCastBlockAccess, Dense) {
     auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    auto interval_info = std::get<2>(param);
+    size_t JUMP = std::get<0>(param);
+    auto interval_info = std::get<1>(param);
     size_t RFIRST = interval_info[0] * nrow, RLAST = interval_info[1] * nrow;
     size_t CFIRST = interval_info[0] * ncol, CLAST = interval_info[1] * ncol;
 
@@ -146,9 +145,8 @@ TEST_P(DelayedCastBlockAccess, Dense) {
 
 TEST_P(DelayedCastBlockAccess, Sparse) {
     auto param = GetParam();
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    auto interval_info = std::get<2>(param);
+    size_t JUMP = std::get<0>(param);
+    auto interval_info = std::get<1>(param);
     size_t RFIRST = interval_info[0] * nrow, RLAST = interval_info[1] * nrow;
     size_t CFIRST = interval_info[0] * ncol, CLAST = interval_info[1] * ncol;
 
@@ -169,11 +167,10 @@ TEST_P(DelayedCastBlockAccess, Sparse) {
     tatami_test::test_sliced_column_access(cast_sparse_index.get(), sparse.get(), true, JUMP, RFIRST, RLAST);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastBlockAccess,
     ::testing::Combine(
-        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
         ::testing::Values(1, 3), // jump, to check the workspace memory
         ::testing::Values(
             std::vector<double>({ 0, 0.6 }), 
@@ -186,13 +183,12 @@ INSTANTIATE_TEST_CASE_P(
 /****************************************************
  ****************************************************/
 
-class DelayedCastIndexAccess : public CastTest<std::tuple<bool, size_t, std::vector<double> > > {};
+class DelayedCastIndexAccess : public CastTest<std::tuple<size_t, std::vector<double> > > {};
 
 TEST_P(DelayedCastIndexAccess, Dense) {
     auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    auto interval_info = std::get<2>(param);
+    size_t JUMP = std::get<0>(param);
+    auto interval_info = std::get<1>(param);
     size_t RFIRST = interval_info[0] * nrow, RSTEP = interval_info[1] * nrow;
     size_t CFIRST = interval_info[0] * ncol, CSTEP = interval_info[1] * ncol;
 
@@ -207,9 +203,8 @@ TEST_P(DelayedCastIndexAccess, Dense) {
 
 TEST_P(DelayedCastIndexAccess, Sparse) {
     auto param = GetParam();
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    auto interval_info = std::get<2>(param);
+    size_t JUMP = std::get<0>(param);
+    auto interval_info = std::get<1>(param);
     size_t RFIRST = interval_info[0] * nrow, RSTEP = interval_info[1] * nrow;
     size_t CFIRST = interval_info[0] * ncol, CSTEP = interval_info[1] * ncol;
 
@@ -230,11 +225,10 @@ TEST_P(DelayedCastIndexAccess, Sparse) {
     tatami_test::test_indexed_column_access(cast_sparse_index.get(), sparse.get(), true, JUMP, RFIRST, RSTEP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastIndexAccess,
     ::testing::Combine(
-        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
         ::testing::Values(1, 3), // jump, to check the workspace memory
         ::testing::Values(
             std::vector<double>({ 0, 0.015 }), 
@@ -280,7 +274,7 @@ TEST_P(DelayedCastOracleTest, Validate) {
     tatami_test::test_oracle_row_access(wrapped_cast_sparse.get(), cast_sparse.get(), random);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastOracleTest,
     ::testing::Values(true, false)  // use random or consecutive oracle.

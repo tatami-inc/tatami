@@ -30,10 +30,8 @@ namespace tatami {
 template<int margin_, typename Value_, typename Index_, class IndexStorage_>
 class DelayedSubset : public Matrix<Value_, Index_> {
 private:
-    typedef typename std::remove_const<typename std::remove_reference<decltype(std::declval<IndexStorage_>()[0])>::type>::type storage_type;
-
     static void finish_assembly(
-        const std::vector<std::pair<storage_type, Index_> >& collected,
+        const std::vector<std::pair<Index_, Index_> >& collected,
         const IndexStorage_& indices, 
         std::vector<Index_>& reverse_mapping,
         std::vector<Index_>& unique_and_sorted,
@@ -68,7 +66,7 @@ public:
      * These may be duplicated and/or unsorted.
      */
     DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx) : mat(std::move(p)), indices(std::move(idx)) {
-        std::vector<std::pair<storage_type, Index_> > collected;
+        std::vector<std::pair<Index_, Index_> > collected;
         collected.reserve(indices.size());
         for (Index_ i = 0, end = indices.size(); i < end; ++i) {
             collected.emplace_back(indices[i], i);
@@ -91,7 +89,7 @@ public:
     /**
      * @cond
      */
-    DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > p, const std::vector<std::pair<storage_type, Index_> >& collected, IndexStorage_ idx) : 
+    DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > p, const std::vector<std::pair<Index_, Index_> >& collected, IndexStorage_ idx) : 
         mat(std::move(p)), indices(std::move(idx)) 
     {
         finish_assembly(
@@ -388,7 +386,7 @@ private:
 private:
     void transplant_indices(
         std::vector<Index_>& local, 
-        std::vector<std::pair<storage_type, Index_> >& collected, 
+        std::vector<std::pair<Index_, Index_> >& collected, 
         std::vector<Index_>& reverse_mapping) 
     const {
         std::sort(collected.begin(), collected.end());
@@ -406,7 +404,7 @@ private:
 
     void transplant_indices(
         std::vector<Index_>& local,
-        std::vector<std::pair<storage_type, Index_> >& collected, 
+        std::vector<std::pair<Index_, Index_> >& collected, 
         std::vector<std::pair<Index_, Index_> >& dups,
         std::vector<Index_>& pool) 
     const {
@@ -436,7 +434,7 @@ private:
             this->block_length = bl;
 
             const auto& parent_indices = parent->indices;
-            std::vector<std::pair<storage_type, Index_> > collected;
+            std::vector<std::pair<Index_, Index_> > collected;
             collected.reserve(bl);
 
             auto block_end = bs + bl;
@@ -503,7 +501,7 @@ private:
             indices = std::move(idx);
 
             const auto& parent_indices = parent->indices;
-            std::vector<std::pair<storage_type, Index_> > collected;
+            std::vector<std::pair<Index_, Index_> > collected;
             collected.reserve(il);
             for (Index_ i = 0; i < il; ++i) {
                 if constexpr(sparse_) {

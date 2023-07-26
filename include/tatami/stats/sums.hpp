@@ -43,8 +43,9 @@ std::vector<Output_> dimension_sums(const Matrix<Value_, Index_>* p, int threads
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, l);
                 auto len = ext->block_length;
-                std::vector<Value_> vbuffer(ext->block_length);
-                std::vector<Index_> ibuffer(ext->block_length);
+                std::vector<Value_> vbuffer(len);
+                std::vector<Index_> ibuffer(len);
+
                 for (Index_ i = 0; i < otherdim; ++i) {
                     auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
                     for (Index_ j = 0; j < out.number; ++j) {

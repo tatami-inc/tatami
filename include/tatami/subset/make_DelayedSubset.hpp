@@ -36,7 +36,6 @@ namespace tatami {
 template<int margin_, typename Value_, typename Index_, class IndexStorage_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx) {
     typedef typename std::remove_reference<IndexStorage_>::type PureIndexStorage_;
-    typedef typename std::remove_const<typename std::remove_reference<decltype(std::declval<IndexStorage_>()[0])>::type>::type storage_type;
 
     bool is_unsorted = false;
     for (Index_ i = 0, end = idx.size(); i < end; ++i) {
@@ -70,7 +69,7 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
         }
     }
 
-    std::vector<std::pair<storage_type, Index_> > collected;
+    std::vector<std::pair<Index_, Index_> > collected;
     collected.reserve(idx.size());
     for (Index_ i = 0, end = idx.size(); i < end; ++i) {
         collected.emplace_back(idx[i], i);

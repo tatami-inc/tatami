@@ -124,7 +124,7 @@ std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V&
         // us to work with classes U and V that may not have well-defined copy
         // constructors (e.g., if they refer to external memory).
         for (size_t i = 0; i < indices.size(); ++i) {
-            if (indices[i] == -1) {
+            if (indices[i] == static_cast<size_t>(-1)) {
                 continue;
             }
 

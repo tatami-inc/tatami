@@ -153,7 +153,7 @@ TEST_P(MedianTriangularTest, Mixed) {
     EXPECT_EQ(ref, tatami::column_medians(sparse_column.get()));
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ComputingDimMedians,
     MedianTriangularTest,
     ::testing::Values(13, 22, 51, 80) // mix of even and odd numbers
