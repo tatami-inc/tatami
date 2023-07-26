@@ -45,15 +45,15 @@ add_executable(
     src/stats/ranges.cpp
     src/stats/parallelize.cpp
 
-    src/utils/wrap_shared_ptr.cpp
-    src/utils/SomeNumericArray.cpp
-    src/utils/ArrayView.cpp
-    src/utils/convert_to_dense.cpp
-    src/utils/convert_to_sparse.cpp
-    src/utils/bind_intersection.cpp
-    src/utils/compress_sparse_triplets.cpp
-    src/utils/Oracles.cpp
-    src/utils/process_consecutive_indices.cpp
+    # src/utils/wrap_shared_ptr.cpp
+    # src/utils/SomeNumericArray.cpp
+    # src/utils/ArrayView.cpp
+    # src/utils/convert_to_dense.cpp
+    # src/utils/convert_to_sparse.cpp
+    # src/utils/bind_intersection.cpp
+    # src/utils/compress_sparse_triplets.cpp
+    # src/utils/Oracles.cpp
+    # src/utils/process_consecutive_indices.cpp
 )
 
 target_link_libraries(
@@ -90,6 +90,9 @@ endif()
 
 target_compile_definitions(libtest PRIVATE DEBUG=1)
 target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
+
+target_compile_options(libtest PRIVATE -Wall -Wextra -Wpedantic -Werror)
+target_compile_options(cuspartest PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")

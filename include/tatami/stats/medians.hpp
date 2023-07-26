@@ -54,7 +54,7 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
         opt.sparse_extract_index = false;
         opt.sparse_ordered_index = false; // we'll be sorting by value anyway.
 
-        parallelize([&](int t, Index_ s, Index_ l) -> void {
+        parallelize([&](int, Index_ s, Index_ l) -> void {
             auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
 
             std::vector<Value_> buffer(otherdim);
@@ -106,7 +106,7 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
         }, dim, threads);
 
     } else {
-        parallelize([&](int t, Index_ s, Index_ l) -> void {
+        parallelize([&](int, Index_ s, Index_ l) -> void {
             std::vector<Value_> buffer(otherdim);
             auto ext = consecutive_extractor<row_, false>(p, s, l);
             for (Index_ i = s, e = s + l; i < e; ++i) {

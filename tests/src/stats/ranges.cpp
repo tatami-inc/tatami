@@ -185,7 +185,7 @@ TEST_P(ComputingDimExtremesTest, ColumnRanges) {
 
 /********************************************/
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ComputingDimExtremes,
     ComputingDimExtremesTest,
     ::testing::Values(

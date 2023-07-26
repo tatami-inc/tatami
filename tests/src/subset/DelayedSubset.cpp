@@ -151,7 +151,7 @@ TEST_P(SubsetFullAccessTest, OnColumn) {
     tatami_test::test_simple_column_access(sparse_subbed2.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedSubset,
     SubsetFullAccessTest,
     ::testing::Combine(
@@ -214,7 +214,7 @@ TEST_P(SubsetSlicedAccessTest, OnColumn) {
     tatami_test::test_sliced_column_access(sparse_subbed2.get(), ref.get(), true, JUMP, RFIRST, RLAST);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedSubset,
     SubsetSlicedAccessTest,
     ::testing::Combine(
@@ -276,7 +276,7 @@ TEST_P(SubsetIndexedAccessTest, OnColumn) {
     tatami_test::test_indexed_column_access(sparse_subbed.get(), ref.get(), true, JUMP, RFIRST, STEP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedSubset,
     SubsetIndexedAccessTest,
     ::testing::Combine(
@@ -404,7 +404,7 @@ TEST_P(SubsetConstructorTest, Any) {
     tatami_test::test_simple_column_access(&manual, ref.get(), true, 1);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedSubset,
     SubsetConstructorTest,
     ::testing::Combine(
@@ -460,7 +460,7 @@ TEST_P(SubsetOracleTest, ByColumn) {
     tatami_test::test_oracle_row_access(wrapped_sparse_subbed.get(), sparse_subbed.get(), random);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedSubset,
     SubsetOracleTest,
     ::testing::Combine(

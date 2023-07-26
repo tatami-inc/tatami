@@ -204,7 +204,7 @@ TEST_P(BooleanVectorTest, EQUAL) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BooleanVector,
     BooleanVectorTest,
     ::testing::Combine(

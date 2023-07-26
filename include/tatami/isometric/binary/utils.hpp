@@ -4,7 +4,7 @@
 namespace tatami {
 
 template<bool must_have_both, bool needs_value, bool needs_index, typename Value_, typename Index_, class Function_>
-Index_ delayed_binary_isometric_sparse_operation(Index_ idx, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, Function_ fun) {
+Index_ delayed_binary_isometric_sparse_operation(const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, Function_ fun) {
     Index_ lcount = 0, rcount = 0, output = 0;
 
     auto advance_left = [&]() -> void {

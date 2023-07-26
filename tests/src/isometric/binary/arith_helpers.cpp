@@ -89,7 +89,7 @@ TEST_P(BinaryArithAdditionFullTest, Basic) {
     tatami_test::test_simple_column_access(mixed_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithAdditionFullTest,
     ::testing::Combine(
@@ -122,7 +122,7 @@ TEST_P(BinaryArithAdditionBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithAdditionBlockTest,
     ::testing::Combine(
@@ -161,7 +161,7 @@ TEST_P(BinaryArithAdditionIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithAdditionIndexTest,
     ::testing::Combine(
@@ -220,7 +220,7 @@ TEST_P(BinaryArithSubtractionFullTest, Basic) {
     tatami_test::test_simple_row_access(mixed_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithSubtractionFullTest,
     ::testing::Combine(
@@ -252,7 +252,7 @@ TEST_P(BinaryArithSubtractionBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithSubtractionBlockTest,
     ::testing::Combine(
@@ -289,7 +289,7 @@ TEST_P(BinaryArithSubtractionIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithSubtractionIndexTest,
     ::testing::Combine(
@@ -347,7 +347,7 @@ TEST_P(BinaryArithMultiplicationFullTest, Basic) {
     tatami_test::test_simple_row_access(mixed_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithMultiplicationFullTest,
     ::testing::Combine(
@@ -377,7 +377,7 @@ TEST_P(BinaryArithMultiplicationBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithMultiplicationBlockTest,
     ::testing::Combine(
@@ -413,7 +413,7 @@ TEST_P(BinaryArithMultiplicationIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithMultiplicationIndexTest,
     ::testing::Combine(
@@ -473,7 +473,7 @@ TEST_P(BinaryArithDivisionFullTest, Basic) {
     tatami_test::test_simple_row_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithDivisionFullTest,
     ::testing::Combine(
@@ -505,7 +505,7 @@ TEST_P(BinaryArithDivisionBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithDivisionBlockTest,
     ::testing::Combine(
@@ -542,7 +542,7 @@ TEST_P(BinaryArithDivisionIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithDivisionIndexTest,
     ::testing::Combine(
@@ -607,7 +607,7 @@ TEST_P(BinaryArithPowerFullTest, Basic) {
     tatami_test::test_simple_row_access(mixed_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithPowerFullTest,
     ::testing::Combine(
@@ -637,7 +637,7 @@ TEST_P(BinaryArithPowerBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithPowerBlockTest,
     ::testing::Combine(
@@ -672,7 +672,7 @@ TEST_P(BinaryArithPowerIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithPowerIndexTest,
     ::testing::Combine(
@@ -732,7 +732,7 @@ TEST_P(BinaryArithModuloFullTest, Basic) {
     tatami_test::test_simple_row_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithModuloFullTest,
     ::testing::Combine(
@@ -764,7 +764,7 @@ TEST_P(BinaryArithModuloBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithModuloBlockTest,
     ::testing::Combine(
@@ -801,7 +801,7 @@ TEST_P(BinaryArithModuloIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithModuloIndexTest,
     ::testing::Combine(
@@ -862,7 +862,7 @@ TEST_P(BinaryArithIntegerDivisionFullTest, Basic) {
     tatami_test::test_simple_row_access<true>(mixed_mod.get(), ref.get(), FORWARD, JUMP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithIntegerDivisionFullTest,
     ::testing::Combine(
@@ -894,7 +894,7 @@ TEST_P(BinaryArithIntegerDivisionBlockTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithIntegerDivisionBlockTest,
     ::testing::Combine(
@@ -931,7 +931,7 @@ TEST_P(BinaryArithIntegerDivisionIndexTest, Basic) {
     }
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithIntegerDivisionIndexTest,
     ::testing::Combine(
@@ -988,7 +988,7 @@ TEST_P(BinaryArithOracleTest, Validate) {
     tatami_test::test_oracle_row_access(wrapped_right.get(), ref.get(), randomized);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     BinaryArith,
     BinaryArithOracleTest,
     ::testing::Values(true, false)  // use random or consecutive oracle.

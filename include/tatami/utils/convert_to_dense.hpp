@@ -32,10 +32,10 @@ void convert_to_dense(const Matrix_* incoming, StoredValue_* store, int threads 
     typedef typename Matrix_::index_type Index_;
     typedef typename Matrix_::value_type Value_;
 
-    size_t NR = incoming->nrow();
-    size_t NC = incoming->ncol();
-    size_t primary = (row_ ? NR : NC);
-    size_t secondary = (row_ ? NC : NR);
+    Index_ NR = incoming->nrow();
+    Index_ NC = incoming->ncol();
+    Index_ primary = (row_ ? NR : NC);
+    Index_ secondary = (row_ ? NC : NR);
 
     if (row_ == incoming->prefer_rows()) {
         constexpr bool same_type = std::is_same<Value_, StoredValue_>::value;
@@ -69,7 +69,7 @@ void convert_to_dense(const Matrix_* incoming, StoredValue_* store, int threads 
             for (Index_ s = 0; s < secondary; ++s, ++store_copy) {
                 auto ptr = wrk->fetch(s, temp.data());
                 auto bptr = store_copy;
-                for (size_t p = 0; p < len; ++p, bptr += secondary) {
+                for (Index_ p = 0; p < len; ++p, bptr += secondary) {
                     *bptr = ptr[p]; 
                 }
             }

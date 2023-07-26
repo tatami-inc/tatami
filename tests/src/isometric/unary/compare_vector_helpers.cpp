@@ -331,7 +331,7 @@ TEST_P(CompareVectorTest, NotEqual) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     CompareVector,
     CompareVectorTest,
     ::testing::Combine(

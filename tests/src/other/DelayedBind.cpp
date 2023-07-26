@@ -167,7 +167,7 @@ static auto spawn_bind_scenarios () {
     );
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
     DelayedBindFullAccessTest,
     ::testing::Combine(
@@ -200,7 +200,7 @@ TEST_P(DelayedBindSlicedAccessTest, Basic) {
     tatami_test::test_sliced_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
     DelayedBindSlicedAccessTest,
     ::testing::Combine(
@@ -239,7 +239,7 @@ TEST_P(DelayedBindIndexedAccessTest, Basic) {
     tatami_test::test_indexed_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
     DelayedBindIndexedAccessTest,
     ::testing::Combine(
@@ -336,7 +336,7 @@ TEST_P(DelayedBindOracleTest, LastOracular) {
     tatami_test::test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
 }
 
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
     DelayedBindOracleTest,
     ::testing::Combine(

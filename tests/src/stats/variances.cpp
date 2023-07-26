@@ -125,7 +125,7 @@ TEST(RunningVariances, SensibleZeros) {
             auto range = wrk->fetch_copy(c, vbuffer.data(), ibuffer.data());
             vbuffer[0] = 0; 
             tatami::stats::variances::compute_running(range, running_means.data(), running_vars.data(), running_nzeros.data(), c);
-            for (size_t r = 1; r < range.number; ++r) {
+            for (int r = 1; r < range.number; ++r) {
                 ref_nzeros[range.index[r]] += (range.value[r] != 0);
             }
         }
@@ -148,7 +148,7 @@ TEST(RunningVariances, SensibleZeros) {
             auto range = wrk->fetch_copy(c, vbuffer.data(), ibuffer.data());
             vbuffer[0] = 0; 
             tatami::stats::variances::compute_running(range, running_means2.data(), running_vars2.data(), running_nzeros2.data(), c, false);
-            for (size_t r = 0; r < range.number; ++r) {
+            for (int r = 0; r < range.number; ++r) {
                 ++ref_nzeros[range.index[r]];
             }
         }
