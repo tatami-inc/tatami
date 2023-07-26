@@ -71,7 +71,7 @@ TEST(CompressedSparseMatrix, ConstructionFail) {
 }
 
 TEST(CompressedSparseMatrix, OddTypes) {
-    // Checking for compilation warnings here.
+    // Checking for compilation warnings here when the interface and storage types are different.
     std::vector<uint8_t> values;
     std::vector<uint16_t> indices;
     std::vector<uint64_t> indptr(11);
