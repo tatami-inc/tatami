@@ -180,6 +180,7 @@ public:
             case F64:
                 return f64[i];
         }
+        return 0; // shouldn't reach here, but whatever.
     }
 
     /**
