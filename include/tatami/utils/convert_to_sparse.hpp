@@ -44,7 +44,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMat
     Index_ secondary = (row_ ? NC : NR);
 
     std::vector<std::vector<StoredValue_> > store_v(primary);
-    std::vector<std::vector<StoredValue_> > store_i(primary);
+    std::vector<std::vector<StoredIndex_> > store_i(primary);
 
     if (threads == 0) {
         threads = 1; // for back-compatibility with calls using the old 'reserve' argument.
