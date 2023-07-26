@@ -1,168 +1,20 @@
-#ifndef TATAMI_CONVERT_TO_SPARSE_H
-#define TATAMI_CONVERT_TO_SPARSE_H
+#ifndef TATAMI_CONVERT_TO_COMPRESSED_SPARSE_H
+#define TATAMI_CONVERT_TO_COMPRESSED_SPARSE_H
 
-#include "../sparse/CompressedSparseMatrix.hpp"
-#include "../sparse/FragmentedSparseMatrix.hpp"
+#include "CompressedSparseMatrix.hpp"
+#include "convert_to_fragmented_sparse.hpp"
 #include "../stats/utils.hpp"
 
 #include <memory>
 #include <vector>
-#include <deque>
 
 /**
- * @file convert_to_sparse.hpp
+ * @file convert_to_compressed_sparse.hpp
  *
  * @brief Convert a matrix into a compressed sparse format.
  */
 
 namespace tatami {
-
-/**
- * @brief Fragmented sparse contents.
- *
- * @tparam Value_ Type of value in the matrix.
- * @tparam Index_ Type of row/column index.
- *
- * Check out `FragmentedSparseMatrix` for more details.
- */
-template<typename Value_, typename Index_>
-struct FragmentedSparseContents {
-    /**
-     * @cond
-     */
-    FragmentedSparseContents(size_t n) : value(n), index(n) {}
-    /**
-     * @endcond
-     */
-
-    /**
-     * Vector of vectors containing the values for the structural non-zero elements.
-     * Each inner vector corresponds to an element of the primary dimension and contains all values for that element.
-     */
-    std::vector<std::vector<Value_> > value;
-
-    /**
-     * Vector of vectors containing the secondary dimension indices for the structural non-zero elements.
-     * Each inner vector corresponds to an element of the primary dimension and contains all indices for that element.
-     * Each inner vector is of length equal to the corresponding entry of `values` and is guaranteed to be strictly increasing.
-     */
-    std::vector<std::vector<Index_> > index;
-};
-
-/**
- * @tparam row_ Whether to retrieve contents by row.
- * @tparam Value_ Type of data values in the output interface.
- * @tparam Index_ Integer type for the indices in the output interface.
- * @tparam StoredValue_ Type of data values to be stored in the output.
- * @tparam StoredIndex_ Integer type for storing the indices in the output. 
- * @tparam InputValue_ Type of data values in the input interface.
- * @tparam InputIndex_ Integer type for indices in the input interface.
- *
- * @param incoming Pointer to a `tatami::Matrix`. 
- * @param threads Number of threads to use.
- *
- * @return Contents of the sparse matrix in fragmented form, see `FragmentedSparseContents`.
- */
-template <bool row_, typename Value_, typename Index_, typename InputValue_, typename InputIndex_>
-FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_contents(const Matrix<InputValue_, InputIndex_>* incoming, int threads = 1) {
-    Index_ NR = incoming->nrow();
-    Index_ NC = incoming->ncol();
-    Index_ primary = (row_ ? NR : NC);
-    Index_ secondary = (row_ ? NC : NR);
-
-    FragmentedSparseContents<StoredValue_, StoredIndex_> output(primary);
-    auto& store_v = output.value;
-    auto& store_i = output.index;
-
-    if (row_ == incoming->prefer_rows()) {
-        if (incoming->sparse()) {
-            parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                std::vector<InputData_> buffer_v(secondary);
-                std::vector<InputIndex_> buffer_i(secondary);
-                auto wrk = consecutive_extractor<row_, true>(incoming, start, length);
-
-                for (Index_ p = start, e = start + length; p < e; ++p) {
-                    auto range = wrk->fetch(p, buffer_v.data(), buffer_i.data());
-                    auto& sv = store_v[p];
-                    auto& si = store_i[p];
-                    sv.reserve(range.number);
-                    si.reserve(range.number);
-
-                    for (InputIndex_ i = 0; i < range.number; ++i, ++range.value, ++range.index) {
-                        if (*range.value) {
-                            sv.push_back(*range.value);
-                            si.push_back(*range.index);
-                        }
-                    }
-                }
-            }, primary, threads);
-
-        } else {
-            parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                std::vector<InputData_> buffer_v(secondary);
-                auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
-
-                // Special conversion from dense to save ourselves from having to make
-                // indices that we aren't really interested in.
-                for (Index_ p = start, e = start + length; p < e; ++p) {
-                    auto ptr = wrk->fetch(p, buffer_v.data());
-                    auto& sv = store_v[p];
-                    auto& si = store_i[p];
-
-                    for (Index_ s = 0; s < secondary; ++s, ++ptr) {
-                        if (*ptr) {
-                            sv.push_back(*ptr);
-                            si.push_back(s);
-                        }
-                    }
-                }
-            }, primary, threads);
-        }
-
-    } else {
-        // We iterate on the incoming matrix's preferred dimension, under the
-        // assumption that it may be arbitrarily costly to extract in the
-        // non-preferred dim; it is thus cheaper to do cache-unfriendly inserts
-        // into the output buffers. 
-
-        if (incoming->sparse()) {
-            parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                std::vector<InputData_> buffer_v(primary);
-                std::vector<InputIndex_> buffer_i(primary);
-                auto wrk = consecutive_extractor<!row_, true>(incoming, 0, secondary, start, length);
-
-                for (Index_ s = 0; s < secondary; ++s) {
-                    auto range = wrk->fetch(s, buffer_v.data(), buffer_i.data());
-                    for (InputIndex_ i = 0; i < range.number; ++i, ++range.value, ++range.index) {
-                        if (*range.value) {
-                            store_v[*range.index].push_back(*range.value);
-                            store_i[*range.index].push_back(s);
-                        }
-                    }
-                }
-            }, primary, threads);
-
-        } else {
-            parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                auto wrk = consecutive_extractor<!row_, false>(incoming, 0, secondary, start, length);
-                auto len = wrk->block_length;
-                std::vector<InputData_> buffer_v(len);
-
-                for (Index_ s = 0; s < secondary; ++s) {
-                    auto ptr = wrk->fetch(s, buffer_v.data());
-                    for (InputIndex_ p = 0; p < len; ++p, ++ptr) {
-                        if (*ptr) {
-                            store_v[p + start].push_back(*ptr);
-                            store_i[p + start].push_back(s);
-                        }
-                    }
-                }
-            }, primary, threads);
-        }
-    }
-
-    return output;
-}
 
 /**
  * @brief Compressed sparse contents.
@@ -205,8 +57,8 @@ struct CompressedSparseContents {
  * @return Contents of the sparse matrix in compressed form, see `FragmentedSparseContents`.
  */
 template <bool row_, typename Value_, typename Index_, typename InputValue_, typename InputIndex_>
-CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* incoming, bool two_pass, int threads = 1) {
-    CompressedSparseContents<StoredValue_, StoredIndex_> output;
+CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* incoming, bool two_pass, int threads = 1) {
+    CompressedSparseContents<Value_, Index_> output;
     auto& output_v = output.value;
     auto& output_i = output.index;
 
@@ -237,15 +89,15 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
     } else if (row_ == incoming->prefer_rows()) {
         // First pass to figure out how many non-zeros there are.
         auto& offsets = output.pointers;
-        offsets.resize(primary + 1);
+        offsets.resize(static_cast<size_t>(primary) + 1);
 
         if (incoming->sparse()) {
             Options opt;
-            opt.extract_sparse_value = false;
-            opt.extract_sparse_index = false;
+            opt.sparse_extract_value = false;
+            opt.sparse_extract_index = false;
             opt.sparse_ordered_index = false;
 
-            parallelize([&](size_t t, Index_ start, Index_ length) -> void {
+            parallelize([&](size_t, Index_ start, Index_ length) -> void {
                 auto wrk = consecutive_extractor<row_, true>(incoming, start, length, opt);
                 for (Index_ p = start, e = start + length; p < e; ++p) {
                     auto range = wrk->fetch(p, NULL, NULL);
@@ -255,7 +107,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
 
         } else {
             parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                std::vector<InputData_> buffer_v(secondary);
+                std::vector<InputValue_> buffer_v(secondary);
                 auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
                 for (Index_ p = start, e = start + length; p < e; ++p) {
                     auto ptr = wrk->fetch(p, buffer_v.data());
@@ -279,8 +131,8 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
             Options opt;
             opt.sparse_ordered_index = false;
 
-            parallelize([&](size_t t, Index_ start, Index_ length) -> void {
-                std::vector<InputData_> buffer_v(secondary);
+            parallelize([&](size_t, Index_ start, Index_ length) -> void {
+                std::vector<InputValue_> buffer_v(secondary);
                 std::vector<InputIndex_> buffer_i(secondary);
                 auto wrk = consecutive_extractor<row_, true>(incoming, start, length, opt);
 
@@ -289,14 +141,14 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
                     // store_v, as implementations may assume that they
                     // have the entire 'secondary' length to play with.
                     auto range = wrk->fetch(p, buffer_v.data(), buffer_i.data());
-                    std::copy(range.value, range.value + range.number, store_v.data() + offsets[p]);
-                    std::copy(range.index, range.index + range.number, store_i.data() + offsets[p]);
+                    std::copy(range.value, range.value + range.number, output_v.data() + offsets[p]);
+                    std::copy(range.index, range.index + range.number, output_i.data() + offsets[p]);
                 }
             }, primary, threads);
 
         } else {
             parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                std::vector<InputData_> buffer_v(secondary);
+                std::vector<InputValue_> buffer_v(secondary);
                 auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
 
                 for (Index_ p = start, e = start + length; p < e; ++p) {
@@ -305,8 +157,8 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
 
                     for (Index_ s = 0; s < secondary; ++s, ++ptr) {
                         if (*ptr != 0) {
-                            store_v[offset] = *ptr;
-                            store_i[offset] = s;
+                            output_v[offset] = *ptr;
+                            output_i[offset] = s;
                             ++offset;
                         }
                     }
@@ -316,20 +168,21 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
 
     } else {
         // First pass to figure out how many non-zeros there are.
-        std::vector<std::vector<size_t> > nz_counts(nthreads);
+        std::vector<std::vector<size_t> > nz_counts(threads);
         for (auto& x : nz_counts) {
-            x.resize(static_cast<size_t>(primary));
+            x.resize(static_cast<size_t>(primary) + 1);
         }
 
         if (incoming->sparse()) {
             Options opt;
-            opt.extract_sparse_value = false;
+            opt.sparse_extract_value = false;
             opt.sparse_ordered_index = false;
 
             parallelize([&](size_t t, Index_ start, Index_ length) -> void {
                 std::vector<InputIndex_> buffer_i(length);
                 auto wrk = consecutive_extractor<!row_, true>(incoming, start, length, opt);
                 auto& my_counts = nz_counts[t];
+
                 for (Index_ s = start, end = start + length; s < end; ++s) {
                     auto range = wrk->fetch(s, NULL, buffer_i.data());
                     for (InputIndex_ i = 0; i < range.number; ++i, ++range.index) {
@@ -339,14 +192,14 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
             }, secondary, threads);
 
         } else {
-            parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                auto len = wrk->block_length;
-                std::vector<InputData_> buffer_v(len);
+            parallelize([&](size_t t, Index_ start, Index_ length) -> void {
                 auto wrk = consecutive_extractor<!row_, false>(incoming, start, length);
+                std::vector<InputValue_> buffer_v(length);
                 auto& my_counts = nz_counts[t];
+
                 for (Index_ s = start, end = start + length; s < end; ++s) {
                     auto ptr = wrk->fetch(s, buffer_v.data());
-                    for (InputIndex_ p = 0; p < len; ++p, ++ptr) {
+                    for (InputIndex_ p = 0; p < primary; ++p, ++ptr) {
                         if (*ptr) {
                             ++my_counts[p + start + 1];
                         }
@@ -377,13 +230,13 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
             Options opt;
             opt.sparse_ordered_index = false;
 
-            parallelize([&](size_t t, Index_ start, Index_ length) -> void {
-                std::vector<InputData_> buffer_v(secondary);
-                std::vector<InputIndex_> buffer_i(secondary);
+            parallelize([&](size_t, Index_ start, Index_ length) -> void {
+                std::vector<InputValue_> buffer_v(length);
+                std::vector<InputIndex_> buffer_i(length);
                 auto wrk = consecutive_extractor<!row_, true>(incoming, 0, secondary, start, length, opt);
                 std::vector<size_t> offset_copy(offsets.begin() + start, offsets.begin() + start + length);
 
-                for (size_t s = 0; s < secondary; ++p) {
+                for (Index_ s = 0; s < secondary; ++s) {
                     auto range = wrk->fetch(s, buffer_v.data(), buffer_i.data());
                     for (InputIndex_ i = 0; i < range.number; ++i, ++range.value, ++range.index) {
                         auto& pos = offset_copy[*(range.index) - start];
@@ -396,19 +249,17 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
 
         } else {
             parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                std::vector<InputData_> buffer_v(secondary);
+                std::vector<InputValue_> buffer_v(length);
                 auto wrk = consecutive_extractor<!row_, false>(incoming, 0, secondary, start, length);
                 std::vector<size_t> offset_copy(offsets.begin() + start, offsets.begin() + start + length);
 
-                for (size_t s = 0; s < secondary; ++p) {
-                    auto ptr = wrk->fetch(p, buffer_v.data());
-                    size_t offset = offsets[p];
-
+                for (Index_ s = 0; s < secondary; ++s) {
+                    auto ptr = wrk->fetch(s, buffer_v.data());
                     for (Index_ p = 0; p < length; ++p, ++ptr) {
                         if (*ptr != 0) {
                             auto& pos = offset_copy[p];
-                            store_v[pos] = *ptr;
-                            store_i[pos] = p + start;
+                            output_v[pos] = *ptr;
+                            output_i[pos] = p + start;
                             ++pos;
                         }
                     }
@@ -429,6 +280,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
  * @tparam InputMatrix_ Input matrix class, most typically a `tatami::Matrix`.
  *
  * @param incoming Pointer to a `tatami::Matrix`, possibly containing delayed operations.
+ * @param two_pass Whether to use a two-pass strategy that reduces peak memory usage at the cost of speed.
  * @param threads Number of threads to use.
  *
  * @return A pointer to a new `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
@@ -442,29 +294,24 @@ template <bool row_,
     typename InputValue_,
     typename InputIndex_
 >
-inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const Matrix<InputValue_, InputIndex_>* incoming, int threads = 1) {
-    if (threads == 0) {
-        threads = 1; // for back-compatibility with calls using the old 'reserve' argument.
-    }
-
-        auto comp = retrieve_compressed_sparse_contents(incoming, threads);
-        return std::shared_ptr<Matrix<Value_, Index_> >(
-            new CompressedSparseMatrix<
-                row_, 
-                Value_, 
-                Index_,
-                decltype(output_v),
-                decltype(output_i),
-                decltype(indptrs)
-            >(
-                NR, 
-                NC, 
-                std::move(output_v), 
-                std::move(output_i), 
-                std::move(indptrs)
-            )
-        );
-    }
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>* incoming, bool two_pass, int threads = 1) {
+    auto comp = retrieve_compressed_sparse_contents<row_, StoredValue_, StoredIndex_>(incoming, two_pass, threads);
+    return std::shared_ptr<Matrix<Value_, Index_> >(
+        new CompressedSparseMatrix<
+            row_, 
+            Value_, 
+            Index_,
+            std::vector<StoredValue_>,
+            std::vector<StoredIndex_>,
+            std::vector<size_t>
+        >(
+            incoming->nrow(), 
+            incoming->ncol(), 
+            std::move(comp.value), 
+            std::move(comp.index), 
+            std::move(comp.pointers)
+        )
+    );
 }
 
 /**
@@ -479,6 +326,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const Matrix<I
  * @param incoming Pointer to a `tatami::Matrix`.
  * @param order Ordering of values in the output matrix - compressed sparse row (0) or column (1).
  * If set to -1, the ordering is chosen based on `tatami::Matrix::prefer_rows()`. 
+ * @param two_pass Whether to use a two-pass strategy that reduces peak memory usage at the cost of speed.
  * @param threads Number of threads to use.
  *
  * @return A pointer to a new `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `incoming`.
@@ -490,14 +338,14 @@ template <
     typename StoredIndex_ = Index_,
     class InputMatrix_
 >
-std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMatrix_* incoming, int order, int threads = 1) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMatrix_* incoming, int order, bool two_pass, int threads = 1) {
     if (order < 0) {
         order = static_cast<int>(!incoming->prefer_rows());
     }
     if (order == 0) {
-        return convert_to_sparse<true, Value_, Index_, StoredValue_, StoredIndex_, InputMatrix_>(incoming, threads);
+        return convert_to_compressed_sparse<true, Value_, Index_, StoredValue_, StoredIndex_, InputMatrix_>(incoming, two_pass, threads);
     } else {
-        return convert_to_sparse<false, Value_, Index_, StoredValue_, StoredIndex_, InputMatrix_>(incoming, threads);
+        return convert_to_compressed_sparse<false, Value_, Index_, StoredValue_, StoredIndex_, InputMatrix_>(incoming, two_pass, threads);
     }
 }
 

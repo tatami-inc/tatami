@@ -27,6 +27,8 @@
 #include "utils/Oracles.hpp"
 #include "utils/process_consecutive_indices.hpp"
 
+#include "utils/convert_to_sparse.hpp"
+
 #include "stats/sums.hpp"
 #include "stats/variances.hpp"
 #include "stats/medians.hpp"
