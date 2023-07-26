@@ -73,6 +73,7 @@ public:
             }
 
             if constexpr(row_) {
+                std::cout << indptrs.size() << "\t" << nrows << std::endl;
                 if (indptrs.size() != static_cast<size_t>(nrows) + 1){
                     throw std::runtime_error("length of 'indptrs' should be equal to 'nrows + 1'");
                 }

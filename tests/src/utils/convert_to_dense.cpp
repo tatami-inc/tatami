@@ -184,8 +184,7 @@ TEST_P(ConvertToDenseTest, FromSparse) {
     }
 }
 
-
-INSTANTIATE_TEST_CASE_P(
+INSTANTIATE_TEST_SUITE_P(
     ConvertToDense,
     ConvertToDenseTest,
     ::testing::Combine(

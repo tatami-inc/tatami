@@ -61,7 +61,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMat
                 std::vector<InputIndex_> buffer_i(secondary);
                 auto wrk = consecutive_extractor<row_, true, InputData_, InputIndex_>(incoming, 0, primary);
 
-                for (InputIndex_ p = start, e = start + length; p < e; ++p) {
+                for (Index_ p = start, e = start + length; p < e; ++p) {
                     auto range = wrk->fetch(p, buffer_v.data(), buffer_i.data());
                     auto& sv = store_v[p];
                     auto& si = store_i[p];
@@ -84,12 +84,12 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMat
 
                 // Special conversion from dense to save ourselves from having to make
                 // indices that we aren't really interested in.
-                for (InputIndex_ p = start, e = start + length; p < e; ++p) {
+                for (Index_ p = start, e = start + length; p < e; ++p) {
                     auto ptr = wrk->fetch(p, buffer_v.data());
                     auto& sv = store_v[p];
                     auto& si = store_i[p];
 
-                    for (InputIndex_ s = 0; s < secondary; ++s, ++ptr) {
+                    for (Index_ s = 0; s < secondary; ++s, ++ptr) {
                         if (*ptr) {
                             sv.push_back(*ptr);
                             si.push_back(s);
@@ -111,7 +111,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMat
                 std::vector<InputIndex_> buffer_i(primary);
                 auto wrk = consecutive_extractor<!row_, true, InputData_, InputIndex_>(incoming, 0, secondary, start, length);
 
-                for (InputIndex_ s = 0; s < secondary; ++s) {
+                for (Index_ s = 0; s < secondary; ++s) {
                     auto range = wrk->fetch(s, buffer_v.data(), buffer_i.data());
                     for (InputIndex_ i = 0; i < range.number; ++i, ++range.value, ++range.index) {
                         if (*range.value) {
@@ -128,7 +128,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const InputMat
                 auto len = wrk->block_length;
                 std::vector<InputData_> buffer_v(len);
 
-                for (InputIndex_ s = 0; s < secondary; ++s) {
+                for (Index_ s = 0; s < secondary; ++s) {
                     auto ptr = wrk->fetch(s, buffer_v.data());
                     for (InputIndex_ p = 0; p < len; ++p, ++ptr) {
                         if (*ptr) {

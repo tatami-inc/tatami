@@ -57,7 +57,7 @@ std::pair<std::shared_ptr<Matrix>, std::vector<size_t> > bind_intersection(const
     auto first_ids = ids[0];
     std::unordered_set<int> in_use(first_ids, first_ids + otherlen(first_ptr));
 
-    for (int i = 1; i < n; ++i) {
+    for (size_t i = 1; i < n; ++i) {
         std::vector<int> intersection;
         intersection.reserve(in_use.size());
 
@@ -77,7 +77,7 @@ std::pair<std::shared_ptr<Matrix>, std::vector<size_t> > bind_intersection(const
     std::unordered_map<int, int> mapping;
     std::vector<int> as_vec(in_use.begin(), in_use.end());
     std::sort(as_vec.begin(), as_vec.end());
-    for (int s = 0; s < as_vec.size(); ++s) {
+    for (size_t s = 0, send = as_vec.size(); s < send; ++s) {
         mapping[as_vec[s]] = s;
     }
 
@@ -86,7 +86,7 @@ std::pair<std::shared_ptr<Matrix>, std::vector<size_t> > bind_intersection(const
     collected.reserve(inputs.size());
     std::vector<size_t> indices;
 
-    for (int i = 0; i < n; ++i) {
+    for (size_t i = 0; i < n; ++i) {
         const auto& current = inputs[i];
         size_t current_other = otherlen(current);
         auto current_ids = ids[i];

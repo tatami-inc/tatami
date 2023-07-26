@@ -74,7 +74,7 @@ TEST(CompressedSparseMatrix, OddTypes) {
     // Checking for compilation warnings here.
     std::vector<uint8_t> values;
     std::vector<uint16_t> indices;
-    std::vector<uint64_t> indptr(21);
+    std::vector<uint64_t> indptr(11);
     tatami::CompressedSparseRowMatrix<double, int, decltype(values), decltype(indices), decltype(indptr)> rmat(10, 20, values, indices, indptr);
 }
 
