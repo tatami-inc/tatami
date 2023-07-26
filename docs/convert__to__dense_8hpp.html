@@ -95,15 +95,15 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:afaccb18d22f35a4ed6b6a7091342da06"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename StoredValue_ , class Matrix_ &gt; </td></tr>
-<tr class="memitem:afaccb18d22f35a4ed6b6a7091342da06"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#afaccb18d22f35a4ed6b6a7091342da06">tatami::convert_to_dense</a> (const Matrix_ *incoming, StoredValue_ *store, int threads=1)</td></tr>
-<tr class="separator:afaccb18d22f35a4ed6b6a7091342da06"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af80143ac537339fe8dafd892632e96de"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename Value_  = double, typename Index  = int, typename StoredValue_  = Value_, class Matrix_ &gt; </td></tr>
-<tr class="memitem:af80143ac537339fe8dafd892632e96de"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; Value_, Index &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#af80143ac537339fe8dafd892632e96de">tatami::convert_to_dense</a> (const Matrix_ *incoming, int threads=1)</td></tr>
-<tr class="separator:af80143ac537339fe8dafd892632e96de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a64e8745f8aaaa5ad93c6ce65a0a6591e"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, class Matrix_ &gt; </td></tr>
-<tr class="memitem:a64e8745f8aaaa5ad93c6ce65a0a6591e"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a64e8745f8aaaa5ad93c6ce65a0a6591e">tatami::convert_to_dense</a> (const Matrix_ *incoming, int order, int threads=1)</td></tr>
-<tr class="separator:a64e8745f8aaaa5ad93c6ce65a0a6591e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d709db6be55e94d987d38c4c07c71c0"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename StoredValue_ , typename InputValue_ , typename InputIndex_ &gt; </td></tr>
+<tr class="memitem:a3d709db6be55e94d987d38c4c07c71c0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3d709db6be55e94d987d38c4c07c71c0">tatami::convert_to_dense</a> (const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, StoredValue_ *store, int threads=1)</td></tr>
+<tr class="separator:a3d709db6be55e94d987d38c4c07c71c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3a0e048d06c98ea3706466139c4c97dc"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename Value_  = double, typename Index  = int, typename StoredValue_  = Value_, typename InputValue_ , typename InputIndex_ &gt; </td></tr>
+<tr class="memitem:a3a0e048d06c98ea3706466139c4c97dc"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; Value_, Index &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a3a0e048d06c98ea3706466139c4c97dc">tatami::convert_to_dense</a> (const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</td></tr>
+<tr class="separator:a3a0e048d06c98ea3706466139c4c97dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa74ad14ba410177396121d272371dffd"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename InputValue_ , typename InputIndex_ &gt; </td></tr>
+<tr class="memitem:aa74ad14ba410177396121d272371dffd"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#aa74ad14ba410177396121d272371dffd">tatami::convert_to_dense</a> (const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</td></tr>
+<tr class="separator:aa74ad14ba410177396121d272371dffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Convert a matrix into a dense format. </p>

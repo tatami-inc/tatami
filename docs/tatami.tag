@@ -1046,22 +1046,22 @@
       <type>void</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>afaccb18d22f35a4ed6b6a7091342da06</anchor>
-      <arglist>(const Matrix_ *incoming, StoredValue_ *store, int threads=1)</arglist>
+      <anchor>a3d709db6be55e94d987d38c4c07c71c0</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, StoredValue_ *store, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index &gt; &gt;</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af80143ac537339fe8dafd892632e96de</anchor>
-      <arglist>(const Matrix_ *incoming, int threads=1)</arglist>
+      <anchor>a3a0e048d06c98ea3706466139c4c97dc</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a64e8745f8aaaa5ad93c6ce65a0a6591e</anchor>
-      <arglist>(const Matrix_ *incoming, int order, int threads=1)</arglist>
+      <anchor>aa74ad14ba410177396121d272371dffd</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -5203,22 +5203,22 @@
       <type>void</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>afaccb18d22f35a4ed6b6a7091342da06</anchor>
-      <arglist>(const Matrix_ *incoming, StoredValue_ *store, int threads=1)</arglist>
+      <anchor>a3d709db6be55e94d987d38c4c07c71c0</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, StoredValue_ *store, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index &gt; &gt;</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af80143ac537339fe8dafd892632e96de</anchor>
-      <arglist>(const Matrix_ *incoming, int threads=1)</arglist>
+      <anchor>a3a0e048d06c98ea3706466139c4c97dc</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a64e8745f8aaaa5ad93c6ce65a0a6591e</anchor>
-      <arglist>(const Matrix_ *incoming, int order, int threads=1)</arglist>
+      <anchor>aa74ad14ba410177396121d272371dffd</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
