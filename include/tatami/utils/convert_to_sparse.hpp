@@ -18,4 +18,16 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const Matrix<InputVal
     return convert_to_compressed_sparse<row_, Value_, Index_, StoredValue_, StoredIndex_>(incoming, false, threads);
 }
 
+template <
+    typename Value_ = double,
+    typename Index_ = int,
+    typename StoredValue_ = Value_,
+    typename StoredIndex_ = Index_,
+    typename InputValue_,
+    typename InputIndex_
+>
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_sparse(const Matrix<InputValue_, InputIndex_>* incoming, int order, int threads = 1) {
+    return convert_to_compressed_sparse<Value_, Index_, StoredValue_, StoredIndex_>(incoming, order, threads);
+}
+
 }

@@ -61,10 +61,10 @@ struct FragmentedSparseContents {
  */
 template <bool row_, typename Value_, typename Index_, typename InputValue_, typename InputIndex_>
 FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(const Matrix<InputValue_, InputIndex_>* incoming, int threads = 1) {
-    Index_ NR = incoming->nrow();
-    Index_ NC = incoming->ncol();
-    Index_ primary = (row_ ? NR : NC);
-    Index_ secondary = (row_ ? NC : NR);
+    InputIndex_ NR = incoming->nrow();
+    InputIndex_ NC = incoming->ncol();
+    InputIndex_ primary = (row_ ? NR : NC);
+    InputIndex_ secondary = (row_ ? NC : NR);
 
     FragmentedSparseContents<Value_, Index_> output(primary);
     auto& store_v = output.value;
@@ -72,12 +72,12 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
 
     if (row_ == incoming->prefer_rows()) {
         if (incoming->sparse()) {
-            parallelize([&](size_t, Index_ start, Index_ length) -> void {
+            parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
                 std::vector<InputIndex_> buffer_i(secondary);
                 auto wrk = consecutive_extractor<row_, true>(incoming, start, length);
 
-                for (Index_ p = start, e = start + length; p < e; ++p) {
+                for (InputIndex_ p = start, e = start + length; p < e; ++p) {
                     auto range = wrk->fetch(p, buffer_v.data(), buffer_i.data());
                     auto& sv = store_v[p];
                     auto& si = store_i[p];
@@ -94,18 +94,18 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
             }, primary, threads);
 
         } else {
-            parallelize([&](size_t, Index_ start, Index_ length) -> void {
+            parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
                 auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
 
                 // Special conversion from dense to save ourselves from having to make
                 // indices that we aren't really interested in.
-                for (Index_ p = start, e = start + length; p < e; ++p) {
+                for (InputIndex_ p = start, e = start + length; p < e; ++p) {
                     auto ptr = wrk->fetch(p, buffer_v.data());
                     auto& sv = store_v[p];
                     auto& si = store_i[p];
 
-                    for (Index_ s = 0; s < secondary; ++s, ++ptr) {
+                    for (InputIndex_ s = 0; s < secondary; ++s, ++ptr) {
                         if (*ptr) {
                             sv.push_back(*ptr);
                             si.push_back(s);
@@ -122,12 +122,12 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
         // into the output buffers. 
 
         if (incoming->sparse()) {
-            parallelize([&](size_t, Index_ start, Index_ length) -> void {
+            parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(primary);
                 std::vector<InputIndex_> buffer_i(primary);
-                auto wrk = consecutive_extractor<!row_, true>(incoming, 0, secondary, start, length);
+                auto wrk = consecutive_extractor<!row_, true>(incoming, static_cast<Index_>(0), secondary, start, length);
 
-                for (Index_ s = 0; s < secondary; ++s) {
+                for (InputIndex_ s = 0; s < secondary; ++s) {
                     auto range = wrk->fetch(s, buffer_v.data(), buffer_i.data());
                     for (InputIndex_ i = 0; i < range.number; ++i, ++range.value, ++range.index) {
                         if (*range.value) {
@@ -140,11 +140,11 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
 
         } else {
             parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                auto wrk = consecutive_extractor<!row_, false>(incoming, 0, secondary, start, length);
+                auto wrk = consecutive_extractor<!row_, false>(incoming, static_cast<Index_>(0), secondary, start, length);
                 auto len = wrk->block_length;
                 std::vector<InputValue_> buffer_v(len);
 
-                for (Index_ s = 0; s < secondary; ++s) {
+                for (InputIndex_ s = 0; s < secondary; ++s) {
                     auto ptr = wrk->fetch(s, buffer_v.data());
                     for (InputIndex_ p = 0; p < len; ++p, ++ptr) {
                         if (*ptr) {
@@ -166,7 +166,8 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
  * @tparam Index_ Integer type for the indices in the output interface.
  * @tparam StoredValue_ Type of data values to be stored in the output.
  * @tparam StoredIndex_ Integer type for storing the indices in the output. 
- * @tparam InputMatrix_ Input matrix class, most typically a `tatami::Matrix`.
+ * @tparam InputValue_ Type of data values in the input interface.
+ * @tparam InputIndex_ Integer type for indices in the input interface.
  *
  * @param incoming Pointer to a `tatami::Matrix`, possibly containing delayed operations.
  * @param threads Number of threads to use.
@@ -207,7 +208,8 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matr
  * @tparam Index_ Integer type for the indices in the output interface.
  * @tparam StoredValue_ Type of data values to be stored in the output.
  * @tparam StoredIndex_ Integer type for storing the indices in the output. 
- * @tparam InputMatrix_ Input matrix class, most typically a `tatami::Matrix`.
+ * @tparam InputValue_ Type of data values in the input interface.
+ * @tparam InputIndex_ Integer type for indices in the input interface.
  *
  * @param incoming Pointer to a `tatami::Matrix`.
  * @param order Ordering of values in the output matrix - fragmented sparse row (0) or column (1).
@@ -221,16 +223,17 @@ template <
     typename Index_ = int,
     typename StoredValue_ = Value_,
     typename StoredIndex_ = Index_,
-    class InputMatrix_
+    typename InputValue_,
+    typename InputIndex_
 >
-std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const InputMatrix_* incoming, int order, int threads = 1) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matrix<InputValue_, InputIndex_>* incoming, int order, int threads = 1) {
     if (order < 0) {
         order = static_cast<int>(!incoming->prefer_rows());
     }
     if (order == 0) {
-        return convert_to_fragmented_sparse<true, Value_, Index_, StoredValue_, StoredIndex_, InputMatrix_>(incoming, threads);
+        return convert_to_fragmented_sparse<true, Value_, Index_, StoredValue_, StoredIndex_, InputValue_, InputIndex_>(incoming, threads);
     } else {
-        return convert_to_fragmented_sparse<false, Value_, Index_, StoredValue_, StoredIndex_, InputMatrix_>(incoming, threads);
+        return convert_to_fragmented_sparse<false, Value_, Index_, StoredValue_, StoredIndex_, InputValue_, InputIndex_>(incoming, threads);
     }
 }
 
