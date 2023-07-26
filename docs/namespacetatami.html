@@ -570,9 +570,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a53a658059404691856bef57fb85d83d6"><td class="memTemplParams" colspan="2">template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; </td></tr>
 <tr class="memitem:a53a658059404691856bef57fb85d83d6"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Output_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a53a658059404691856bef57fb85d83d6">row_sums</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *p, int threads=1)</td></tr>
 <tr class="separator:a53a658059404691856bef57fb85d83d6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a41e252422f9959a123ba390a941ae76f"><td class="memTemplParams" colspan="2">template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:a41e252422f9959a123ba390a941ae76f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">parallelize</a> (Function_ fun, Index_ tasks, size_t threads)</td></tr>
-<tr class="separator:a41e252422f9959a123ba390a941ae76f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2eddeaad50bdad0bc1e5c8f2f8549e0"><td class="memTemplParams" colspan="2">template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:ad2eddeaad50bdad0bc1e5c8f2f8549e0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">parallelize</a> (Function_ fun, Index_ tasks, size_t #if defined(_OPENMP)||defined(TATAMI_CUSTOM_PARALLEL) threads #endif)</td></tr>
+<tr class="separator:ad2eddeaad50bdad0bc1e5c8f2f8549e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memTemplParams" colspan="2">template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
 <tr class="memitem:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a36c6ecf33bcb87e1ed33c0a7d744dd82">consecutive_extractor</a> (const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</td></tr>
 <tr class="separator:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -3451,8 +3451,8 @@ template&lt;typename Output_  = double, typename Value_ , typename Index_ &gt; <
 
 </div>
 </div>
-<a id="a41e252422f9959a123ba390a941ae76f" name="a41e252422f9959a123ba390a941ae76f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a41e252422f9959a123ba390a941ae76f">&#9670;&#160;</a></span>parallelize()</h2>
+<a id="ad2eddeaad50bdad0bc1e5c8f2f8549e0" name="ad2eddeaad50bdad0bc1e5c8f2f8549e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad2eddeaad50bdad0bc1e5c8f2f8549e0">&#9670;&#160;</a></span>parallelize()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -3474,8 +3474,8 @@ template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>threads</em>&#160;</td>
+          <td class="paramtype">size_t #if defined(_OPENMP)||defined(TATAMI_CUSTOM_PARALLEL) threads #&#160;</td>
+          <td class="paramname"><em>endif</em>&#160;</td>
         </tr>
         <tr>
           <td></td>

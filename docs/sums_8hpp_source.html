@@ -101,7 +101,7 @@ $(function() {
 <div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span>        <span class="keywordflow">if</span> (direct) {</div>
 <div class="line"><a id="l00031" name="l00031"></a><span class="lineno">   31</span>            Options opt;</div>
 <div class="line"><a id="l00032" name="l00032"></a><span class="lineno">   32</span>            opt.sparse_extract_index = <span class="keyword">false</span>;</div>
-<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            <a class="code hl_function" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
+<div class="line"><a id="l00033" name="l00033"></a><span class="lineno">   33</span>            <a class="code hl_function" href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, true&gt;(p, s, l, opt);</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span>                std::vector&lt;Value_&gt; vbuffer(otherdim);</div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span>                <span class="keywordflow">for</span> (Index_ i = s, e = s + l; i &lt; e; ++i) {</div>
@@ -111,68 +111,69 @@ $(function() {
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span>            }, dim, threads);</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            <a class="code hl_function" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
+<div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>            <a class="code hl_function" href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;!row_, true&gt;(p, 0, otherdim, s, l);</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>                <span class="keyword">auto</span> len = ext-&gt;block_length;</div>
-<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                std::vector&lt;Value_&gt; vbuffer(ext-&gt;block_length);</div>
-<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                std::vector&lt;Index_&gt; ibuffer(ext-&gt;block_length);</div>
-<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>                <span class="keywordflow">for</span> (Index_ i = 0; i &lt; otherdim; ++i) {</div>
-<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                    <span class="keyword">auto</span> out = ext-&gt;fetch(i, vbuffer.data(), ibuffer.data());</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; out.number; ++j) {</div>
-<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>                        output[out.index[j]] += out.value[j];</div>
-<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                    }</div>
-<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                }</div>
-<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>            }, dim, threads);</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        }</div>
-<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>        <span class="keywordflow">if</span> (direct) {</div>
-<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>            <a class="code hl_function" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, false&gt;(p, s, l);</div>
-<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>                std::vector&lt;Value_&gt; buffer(otherdim);</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>                <span class="keywordflow">for</span> (Index_ i = s, e = s + l; i &lt; e; ++i) {</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>                    <span class="keyword">auto</span> out = ext-&gt;fetch(i, buffer.data());</div>
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                    output[i] = std::accumulate(out, out + otherdim, <span class="keyword">static_cast&lt;</span>Output_<span class="keyword">&gt;</span>(0));</div>
-<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                }</div>
-<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            }, dim, threads);</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span> </div>
-<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>            <a class="code hl_function" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
-<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;!row_, false&gt;(p, 0, otherdim, s, l);</div>
-<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                std::vector&lt;Value_&gt; buffer(ext-&gt;block_length);</div>
-<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                <span class="keyword">auto</span> len = ext-&gt;block_length;</div>
-<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                <span class="keywordflow">for</span> (Index_ i = 0; i &lt; otherdim; ++i) {</div>
-<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                    <span class="keyword">auto</span> out = ext-&gt;fetch(i, buffer.data());</div>
-<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; len; ++j) {</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                        output[s + j] += out[j];</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                    }</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                }</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>            }, dim, threads);</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>        }</div>
-<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>    }</div>
-<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span> </div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>}</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>}</div>
-<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span> </div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Output_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_&gt;</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno"><a class="line" href="namespacetatami.html#a3aab6733d637b66abdf45f7300d2e1ba">  102</a></span>std::vector&lt;Output_&gt; <a class="code hl_function" href="namespacetatami.html#a3aab6733d637b66abdf45f7300d2e1ba">column_sums</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;Value_, Index_&gt;</a>* p, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keywordflow">return</span> stats::dimension_sums&lt;Output_, false&gt;(p, threads);</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>}</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Output_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_&gt;</div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno"><a class="line" href="namespacetatami.html#a53a658059404691856bef57fb85d83d6">  117</a></span>std::vector&lt;Output_&gt; <a class="code hl_function" href="namespacetatami.html#a53a658059404691856bef57fb85d83d6">row_sums</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;Value_, Index_&gt;</a>* p, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>    <span class="keywordflow">return</span> stats::dimension_sums&lt;Output_, true&gt;(p, threads);</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>}</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span> </div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>}</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>                std::vector&lt;Value_&gt; vbuffer(len);</div>
+<div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>                std::vector&lt;Index_&gt; ibuffer(len);</div>
+<div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span> </div>
+<div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>                <span class="keywordflow">for</span> (Index_ i = 0; i &lt; otherdim; ++i) {</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>                    <span class="keyword">auto</span> out = ext-&gt;fetch(i, vbuffer.data(), ibuffer.data());</div>
+<div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; out.number; ++j) {</div>
+<div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>                        output[out.index[j]] += out.value[j];</div>
+<div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>                    }</div>
+<div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>                }</div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>            }, dim, threads);</div>
+<div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>        }</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span> </div>
+<div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>        <span class="keywordflow">if</span> (direct) {</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>            <a class="code hl_function" href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
+<div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, false&gt;(p, s, l);</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>                std::vector&lt;Value_&gt; buffer(otherdim);</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>                <span class="keywordflow">for</span> (Index_ i = s, e = s + l; i &lt; e; ++i) {</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>                    <span class="keyword">auto</span> out = ext-&gt;fetch(i, buffer.data());</div>
+<div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                    output[i] = std::accumulate(out, out + otherdim, <span class="keyword">static_cast&lt;</span>Output_<span class="keyword">&gt;</span>(0));</div>
+<div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>                }</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            }, dim, threads);</div>
+<div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span> </div>
+<div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>            <a class="code hl_function" href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">parallelize</a>([&amp;](<span class="keywordtype">size_t</span>, Index_ s, Index_ l) {</div>
+<div class="line"><a id="l00071" name="l00071"></a><span class="lineno">   71</span>                <span class="keyword">auto</span> ext = consecutive_extractor&lt;!row_, false&gt;(p, 0, otherdim, s, l);</div>
+<div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span>                std::vector&lt;Value_&gt; buffer(ext-&gt;block_length);</div>
+<div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>                <span class="keyword">auto</span> len = ext-&gt;block_length;</div>
+<div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>                <span class="keywordflow">for</span> (Index_ i = 0; i &lt; otherdim; ++i) {</div>
+<div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>                    <span class="keyword">auto</span> out = ext-&gt;fetch(i, buffer.data());</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>                    <span class="keywordflow">for</span> (Index_ j = 0; j &lt; len; ++j) {</div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>                        output[s + j] += out[j];</div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>                    }</div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>                }</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>            }, dim, threads);</div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        }</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    }</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>}</div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>}</div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span> </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Output_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_&gt;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno"><a class="line" href="namespacetatami.html#a3aab6733d637b66abdf45f7300d2e1ba">  103</a></span>std::vector&lt;Output_&gt; <a class="code hl_function" href="namespacetatami.html#a3aab6733d637b66abdf45f7300d2e1ba">column_sums</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;Value_, Index_&gt;</a>* p, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">return</span> stats::dimension_sums&lt;Output_, false&gt;(p, threads);</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>}</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Output_ = <span class="keywordtype">double</span>, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_&gt;</div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno"><a class="line" href="namespacetatami.html#a53a658059404691856bef57fb85d83d6">  118</a></span>std::vector&lt;Output_&gt; <a class="code hl_function" href="namespacetatami.html#a53a658059404691856bef57fb85d83d6">row_sums</a>(<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;Value_, Index_&gt;</a>* p, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>    <span class="keywordflow">return</span> stats::dimension_sums&lt;Output_, true&gt;(p, threads);</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>}</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span> </div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>}</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="classtatami_1_1Matrix.html">tatami::Matrix</a></div><div class="ttdoc">Virtual class for a matrix with a defined type.</div><div class="ttdef"><b>Definition:</b> Matrix.hpp:25</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> Extractor.hpp:20</div></div>
-<div class="ttc" id="anamespacetatami_html_a3aab6733d637b66abdf45f7300d2e1ba"><div class="ttname"><a href="namespacetatami.html#a3aab6733d637b66abdf45f7300d2e1ba">tatami::column_sums</a></div><div class="ttdeci">std::vector&lt; Output_ &gt; column_sums(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</div><div class="ttdef"><b>Definition:</b> sums.hpp:102</div></div>
-<div class="ttc" id="anamespacetatami_html_a41e252422f9959a123ba390a941ae76f"><div class="ttname"><a href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, size_t threads)</div><div class="ttdef"><b>Definition:</b> utils.hpp:40</div></div>
-<div class="ttc" id="anamespacetatami_html_a53a658059404691856bef57fb85d83d6"><div class="ttname"><a href="namespacetatami.html#a53a658059404691856bef57fb85d83d6">tatami::row_sums</a></div><div class="ttdeci">std::vector&lt; Output_ &gt; row_sums(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</div><div class="ttdef"><b>Definition:</b> sums.hpp:117</div></div>
+<div class="ttc" id="anamespacetatami_html_a3aab6733d637b66abdf45f7300d2e1ba"><div class="ttname"><a href="namespacetatami.html#a3aab6733d637b66abdf45f7300d2e1ba">tatami::column_sums</a></div><div class="ttdeci">std::vector&lt; Output_ &gt; column_sums(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</div><div class="ttdef"><b>Definition:</b> sums.hpp:103</div></div>
+<div class="ttc" id="anamespacetatami_html_a53a658059404691856bef57fb85d83d6"><div class="ttname"><a href="namespacetatami.html#a53a658059404691856bef57fb85d83d6">tatami::row_sums</a></div><div class="ttdeci">std::vector&lt; Output_ &gt; row_sums(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</div><div class="ttdef"><b>Definition:</b> sums.hpp:118</div></div>
+<div class="ttc" id="anamespacetatami_html_ad2eddeaad50bdad0bc1e5c8f2f8549e0"><div class="ttname"><a href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, size_t #if defined(_OPENMP)||defined(TATAMI_CUSTOM_PARALLEL) threads #endif)</div><div class="ttdef"><b>Definition:</b> utils.hpp:40</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

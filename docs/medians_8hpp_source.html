@@ -125,7 +125,7 @@ $(function() {
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>        opt.sparse_extract_index = <span class="keyword">false</span>;</div>
 <div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>        opt.sparse_ordered_index = <span class="keyword">false</span>; <span class="comment">// we&#39;ll be sorting by value anyway.</span></div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span> </div>
-<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <a class="code hl_function" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">parallelize</a>([&amp;](<span class="keywordtype">int</span> t, Index_ s, Index_ l) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>        <a class="code hl_function" href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">parallelize</a>([&amp;](<span class="keywordtype">int</span>, Index_ s, Index_ l) -&gt; <span class="keywordtype">void</span> {</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, true&gt;(p, s, l, opt);</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>            std::vector&lt;Value_&gt; buffer(otherdim);</div>
@@ -177,7 +177,7 @@ $(function() {
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        }, dim, threads);</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span> </div>
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <a class="code hl_function" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">parallelize</a>([&amp;](<span class="keywordtype">int</span> t, Index_ s, Index_ l) -&gt; <span class="keywordtype">void</span> {</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <a class="code hl_function" href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">parallelize</a>([&amp;](<span class="keywordtype">int</span>, Index_ s, Index_ l) -&gt; <span class="keywordtype">void</span> {</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>            std::vector&lt;Value_&gt; buffer(otherdim);</div>
 <div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>            <span class="keyword">auto</span> ext = consecutive_extractor&lt;row_, false&gt;(p, s, l);</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>            <span class="keywordflow">for</span> (Index_ i = s, e = s + l; i &lt; e; ++i) {</div>
@@ -206,9 +206,9 @@ $(function() {
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="classtatami_1_1Matrix.html">tatami::Matrix</a></div><div class="ttdoc">Virtual class for a matrix with a defined type.</div><div class="ttdef"><b>Definition:</b> Matrix.hpp:25</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition:</b> Extractor.hpp:20</div></div>
-<div class="ttc" id="anamespacetatami_html_a41e252422f9959a123ba390a941ae76f"><div class="ttname"><a href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, size_t threads)</div><div class="ttdef"><b>Definition:</b> utils.hpp:40</div></div>
 <div class="ttc" id="anamespacetatami_html_a44202790861791b1ed9df6d480c69f6a"><div class="ttname"><a href="namespacetatami.html#a44202790861791b1ed9df6d480c69f6a">tatami::column_medians</a></div><div class="ttdeci">std::vector&lt; Output_ &gt; column_medians(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</div><div class="ttdef"><b>Definition:</b> medians.hpp:138</div></div>
 <div class="ttc" id="anamespacetatami_html_ab877f67694b3fa500f59469f044b1c01"><div class="ttname"><a href="namespacetatami.html#ab877f67694b3fa500f59469f044b1c01">tatami::row_medians</a></div><div class="ttdeci">std::vector&lt; Output_ &gt; row_medians(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</div><div class="ttdef"><b>Definition:</b> medians.hpp:153</div></div>
+<div class="ttc" id="anamespacetatami_html_ad2eddeaad50bdad0bc1e5c8f2f8549e0"><div class="ttname"><a href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, size_t #if defined(_OPENMP)||defined(TATAMI_CUSTOM_PARALLEL) threads #endif)</div><div class="ttdef"><b>Definition:</b> utils.hpp:40</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

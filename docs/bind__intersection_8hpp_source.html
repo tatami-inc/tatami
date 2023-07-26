@@ -113,7 +113,7 @@ $(function() {
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>    <span class="keyword">auto</span> first_ids = ids[0];</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>    std::unordered_set&lt;int&gt; in_use(first_ids, first_ids + otherlen(first_ptr));</div>
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span> </div>
-<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 1; i &lt; n; ++i) {</div>
+<div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 1; i &lt; n; ++i) {</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span>        std::vector&lt;int&gt; intersection;</div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>        intersection.reserve(in_use.size());</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span> </div>
@@ -133,7 +133,7 @@ $(function() {
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>    std::unordered_map&lt;int, int&gt; mapping;</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    std::vector&lt;int&gt; as_vec(in_use.begin(), in_use.end());</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>    std::sort(as_vec.begin(), as_vec.end());</div>
-<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> s = 0; s &lt; as_vec.size(); ++s) {</div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> s = 0, send = as_vec.size(); s &lt; send; ++s) {</div>
 <div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span>        mapping[as_vec[s]] = s;</div>
 <div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span>    }</div>
 <div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span> </div>
@@ -142,7 +142,7 @@ $(function() {
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    collected.reserve(inputs.size());</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    std::vector&lt;size_t&gt; indices;</div>
 <div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span> </div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordflow">for</span> (<span class="keywordtype">int</span> i = 0; i &lt; n; ++i) {</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>    <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; n; ++i) {</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; current = inputs[i];</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        <span class="keywordtype">size_t</span> current_other = otherlen(current);</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>        <span class="keyword">auto</span> current_ids = ids[i];</div>

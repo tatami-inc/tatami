@@ -95,9 +95,9 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a41e252422f9959a123ba390a941ae76f"><td class="memTemplParams" colspan="2">template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </td></tr>
-<tr class="memitem:a41e252422f9959a123ba390a941ae76f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a> (Function_ fun, Index_ tasks, size_t threads)</td></tr>
-<tr class="separator:a41e252422f9959a123ba390a941ae76f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad2eddeaad50bdad0bc1e5c8f2f8549e0"><td class="memTemplParams" colspan="2">template&lt;bool parallel_ = true, class Function_ , typename Index_ &gt; </td></tr>
+<tr class="memitem:ad2eddeaad50bdad0bc1e5c8f2f8549e0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0">tatami::parallelize</a> (Function_ fun, Index_ tasks, size_t #if defined(_OPENMP)||defined(TATAMI_CUSTOM_PARALLEL) threads #endif)</td></tr>
+<tr class="separator:ad2eddeaad50bdad0bc1e5c8f2f8549e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memTemplParams" colspan="2">template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
 <tr class="memitem:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a36c6ecf33bcb87e1ed33c0a7d744dd82">tatami::consecutive_extractor</a> (const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</td></tr>
 <tr class="separator:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memSeparator" colspan="2">&#160;</td></tr>

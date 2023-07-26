@@ -870,8 +870,8 @@
       <type>void</type>
       <name>parallelize</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
-      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
+      <anchor>ad2eddeaad50bdad0bc1e5c8f2f8549e0</anchor>
+      <arglist>(Function_ fun, Index_ tasks, size_t #if defined(_OPENMP)||defined(TATAMI_CUSTOM_PARALLEL) threads #endif)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
@@ -3222,43 +3222,43 @@
       <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense_row</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>afcb586f220c1df06c464def9c6c4f004</anchor>
-      <arglist>(const Options &amp;opt) const</arglist>
+      <anchor>a5e757df46d08e67de4cfc5eb8ad82617</anchor>
+      <arglist>(const Options &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense_row</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>ae94aa68c8f754dbd45bad996a4d4af9d</anchor>
-      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+      <anchor>a0d32ec294715928d00e31d9cf08727d4</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense_row</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>ae9fe012376d25e7357d4590f200606fd</anchor>
-      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+      <anchor>a20787448e2d340dbaa8a432dcf42a400</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; FullDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense_column</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>a8ace942278f3ba1638401d5fd864d28a</anchor>
-      <arglist>(const Options &amp;opt) const</arglist>
+      <anchor>a79a6302ec5b15d513216fbe36667d430</anchor>
+      <arglist>(const Options &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; BlockDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense_column</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>a08ca9bd8c2cd11fc553110486e7f7f22</anchor>
-      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+      <anchor>a817a447dba85286831ba9dfdd99b4831</anchor>
+      <arglist>(Index_ block_start, Index_ block_length, const Options &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; IndexDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense_column</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>a94146a6703b5315b87257acc5115b153</anchor>
-      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;opt) const</arglist>
+      <anchor>a8abfcfd6aaf5ba60071cb0445adf5fd3</anchor>
+      <arglist>(std::vector&lt; Index_ &gt; indices, const Options &amp;) const</arglist>
     </member>
   </compound>
   <compound kind="struct">
@@ -5147,8 +5147,8 @@
       <type>void</type>
       <name>parallelize</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
-      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
+      <anchor>ad2eddeaad50bdad0bc1e5c8f2f8549e0</anchor>
+      <arglist>(Function_ fun, Index_ tasks, size_t #if defined(_OPENMP)||defined(TATAMI_CUSTOM_PARALLEL) threads #endif)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
