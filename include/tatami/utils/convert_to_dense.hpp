@@ -20,31 +20,29 @@ namespace tatami {
 /**
  * @tparam row_ Whether to return a row-major matrix.
  * @tparam StoredValue_ Type of data values to be stored in the output.
- * @tparam Matrix_ Input matrix class, most typically a `tatami::Matrix`.
+ * @tparam InputValue_ Type of data values in the input.
+ * @tparam InputIndex_ Integer type for the indices in the input.
  *
  * @param incoming Pointer to a `tatami::Matrix`.
  * @param[out] store Pointer to an array of length equal to the product of the dimensions of `incoming`.
  * On output, this is filled with values from `incoming` in row- or column-major format depending on `row_`.
  * @param threads Number of threads to use.
  */
-template <bool row_, typename StoredValue_, class Matrix_>
-void convert_to_dense(const Matrix_* incoming, StoredValue_* store, int threads = 1) {
-    typedef typename Matrix_::index_type Index_;
-    typedef typename Matrix_::value_type Value_;
-
-    Index_ NR = incoming->nrow();
-    Index_ NC = incoming->ncol();
-    Index_ primary = (row_ ? NR : NC);
-    Index_ secondary = (row_ ? NC : NR);
+template <bool row_, typename StoredValue_, typename InputValue_, typename InputIndex_>
+void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredValue_* store, int threads = 1) {
+    InputIndex_ NR = incoming->nrow();
+    InputIndex_ NC = incoming->ncol();
+    InputIndex_ primary = (row_ ? NR : NC);
+    InputIndex_ secondary = (row_ ? NC : NR);
 
     if (row_ == incoming->prefer_rows()) {
-        constexpr bool same_type = std::is_same<Value_, StoredValue_>::value;
-        parallelize([&](size_t, Index_ start, Index_ length) -> void {
-            std::vector<Value_> temp(same_type ? 0 : secondary);
+        constexpr bool same_type = std::is_same<InputValue_, StoredValue_>::value;
+        parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
+            std::vector<InputValue_> temp(same_type ? 0 : secondary);
             auto store_copy = store + start * secondary;
-            auto wrk = consecutive_extractor<row_, false, Value_, Index_>(incoming, start, length);
+            auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
 
-            for (Index_ p = start, e = start + length; p < e; ++p, store_copy += secondary) {
+            for (InputIndex_ p = start, e = start + length; p < e; ++p, store_copy += secondary) {
                 if constexpr(same_type) {
                     wrk->fetch_copy(p, store_copy);
                 } else {
@@ -60,16 +58,16 @@ void convert_to_dense(const Matrix_* incoming, StoredValue_* store, int threads 
         // non-preferred dim; it is thus cheaper to do cache-unfriendly inserts
         // into the output buffers. 
 
-        parallelize([&](size_t, Index_ start, Index_ length) -> void {
-            auto wrk = consecutive_extractor<!row_, false, Value_, Index_>(incoming, 0, secondary, start, length);
+        parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
+            auto wrk = consecutive_extractor<!row_, false>(incoming, 0, secondary, start, length);
             auto len = wrk->block_length;
-            std::vector<Value_> temp(len);
+            std::vector<InputValue_> temp(len);
             auto store_copy = store + start * secondary;
 
-            for (Index_ s = 0; s < secondary; ++s, ++store_copy) {
+            for (InputIndex_ s = 0; s < secondary; ++s, ++store_copy) {
                 auto ptr = wrk->fetch(s, temp.data());
                 auto bptr = store_copy;
-                for (Index_ p = 0; p < len; ++p, bptr += secondary) {
+                for (InputIndex_ p = 0; p < len; ++p, bptr += secondary) {
                     *bptr = ptr[p]; 
                 }
             }
@@ -84,7 +82,8 @@ void convert_to_dense(const Matrix_* incoming, StoredValue_* store, int threads 
  * @tparam Value_ Type of data values in the output interface.
  * @tparam Index Integer type for the indices in the output interface.
  * @tparam StoredValue_ Type of data values to be stored in the output.
- * @tparam Matrix_ Input matrix class, most typically a `tatami::Matrix`.
+ * @tparam InputValue_ Type of data values in the input.
+ * @tparam InputIndex_ Integer type for the indices in the input.
  *
  * @param incoming Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
@@ -97,9 +96,10 @@ template <
     typename Value_ = double, 
     typename Index = int, 
     typename StoredValue_ = Value_, 
-    class Matrix_
+    typename InputValue_,
+    typename InputIndex_
 >
-inline std::shared_ptr<Matrix<Value_, Index> > convert_to_dense(const Matrix_* incoming, int threads = 1) {
+inline std::shared_ptr<Matrix<Value_, Index> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, int threads = 1) {
     size_t NR = incoming->nrow();
     size_t NC = incoming->ncol();
     std::vector<StoredValue_> buffer(NR * NC);
@@ -126,16 +126,17 @@ template <
     typename Value_ = double,
     typename Index_ = int,
     typename StoredValue_ = Value_,
-    class Matrix_
+    typename InputValue_,
+    typename InputIndex_
 >
-std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix_* incoming, int order, int threads = 1) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, int order, int threads = 1) {
     if (order < 0) {
         order = static_cast<int>(!incoming->prefer_rows()); 
     }
     if (order == 0) {
-        return convert_to_dense<true, Value_, Index_, StoredValue_, Matrix_>(incoming, threads);
+        return convert_to_dense<true, Value_, Index_, StoredValue_>(incoming, threads);
     } else {
-        return convert_to_dense<false, Value_, Index_, StoredValue_, Matrix_>(incoming, threads);
+        return convert_to_dense<false, Value_, Index_, StoredValue_>(incoming, threads);
     }
 }
 
