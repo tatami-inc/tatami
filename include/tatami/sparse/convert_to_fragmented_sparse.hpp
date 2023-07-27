@@ -125,7 +125,7 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(primary);
                 std::vector<InputIndex_> buffer_i(primary);
-                auto wrk = consecutive_extractor<!row_, true>(incoming, static_cast<Index_>(0), secondary, start, length);
+                auto wrk = consecutive_extractor<!row_, true>(incoming, static_cast<InputIndex_>(0), secondary, start, length);
 
                 for (InputIndex_ s = 0; s < secondary; ++s) {
                     auto range = wrk->fetch(s, buffer_v.data(), buffer_i.data());
@@ -140,7 +140,7 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
 
         } else {
             parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                auto wrk = consecutive_extractor<!row_, false>(incoming, static_cast<Index_>(0), secondary, start, length);
+                auto wrk = consecutive_extractor<!row_, false>(incoming, static_cast<InputIndex_>(0), secondary, start, length);
                 auto len = wrk->block_length;
                 std::vector<InputValue_> buffer_v(len);
 

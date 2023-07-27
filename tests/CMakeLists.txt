@@ -39,6 +39,7 @@ add_executable(
     src/sparse/SemiCompressedSparseMatrix.cpp
     src/sparse/SparseSecondaryExtractorCore.cpp
     src/sparse/convert_to_compressed_sparse.cpp
+    src/sparse/convert_to_fragmented_sparse.cpp
 
     src/stats/sums.cpp
     src/stats/variances.cpp
