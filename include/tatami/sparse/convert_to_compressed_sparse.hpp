@@ -178,7 +178,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
             opt.sparse_ordered_index = false;
 
             parallelize([&](size_t t, InputIndex_ start, InputIndex_ length) -> void {
-                std::vector<InputIndex_> buffer_i(length);
+                std::vector<InputIndex_> buffer_i(primary);
                 auto wrk = consecutive_extractor<!row_, true>(incoming, start, length, opt);
                 auto& my_counts = nz_counts[t];
 
@@ -193,7 +193,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
         } else {
             parallelize([&](size_t t, InputIndex_ start, InputIndex_ length) -> void {
                 auto wrk = consecutive_extractor<!row_, false>(incoming, start, length);
-                std::vector<InputValue_> buffer_v(length);
+                std::vector<InputValue_> buffer_v(primary);
                 auto& my_counts = nz_counts[t];
 
                 for (InputIndex_ s = start, end = start + length; s < end; ++s) {
