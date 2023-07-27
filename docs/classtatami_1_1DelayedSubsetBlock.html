@@ -107,8 +107,8 @@ Collaboration diagram for tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:abeaa6e9309f85b80dcb32f68c30e44c7"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubsetBlock.html#abeaa6e9309f85b80dcb32f68c30e44c7">DelayedSubsetBlock</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, Index_ f, Index_ l)</td></tr>
-<tr class="separator:abeaa6e9309f85b80dcb32f68c30e44c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f7dfa2450c9f1f8faf3e2da147fcdc5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a6f7dfa2450c9f1f8faf3e2da147fcdc5">DelayedSubsetBlock</a> (std::shared_ptr&lt; const <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; Value_, Index_ &gt; &gt; p, Index_ s, Index_ l)</td></tr>
+<tr class="separator:a6f7dfa2450c9f1f8faf3e2da147fcdc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad464fba67568e017244f1a5378262b1f"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ad464fba67568e017244f1a5378262b1f">nrow</a> () const</td></tr>
 <tr class="separator:ad464fba67568e017244f1a5378262b1f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aeb6512ab3d6b70fa3ead75fd47995a60"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedSubsetBlock.html#aeb6512ab3d6b70fa3ead75fd47995a60">ncol</a> () const</td></tr>
@@ -232,8 +232,8 @@ class tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</div><p >Delay
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="abeaa6e9309f85b80dcb32f68c30e44c7" name="abeaa6e9309f85b80dcb32f68c30e44c7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#abeaa6e9309f85b80dcb32f68c30e44c7">&#9670;&#160;</a></span>DelayedSubsetBlock()</h2>
+<a id="a6f7dfa2450c9f1f8faf3e2da147fcdc5" name="a6f7dfa2450c9f1f8faf3e2da147fcdc5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6f7dfa2450c9f1f8faf3e2da147fcdc5">&#9670;&#160;</a></span>DelayedSubsetBlock()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -253,7 +253,7 @@ template&lt;int margin_, typename Value_ , typename Index_ &gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">Index_&#160;</td>
-          <td class="paramname"><em>f</em>, </td>
+          <td class="paramname"><em>s</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
@@ -276,8 +276,8 @@ template&lt;int margin_, typename Value_ , typename Index_ &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">p</td><td>Pointer to the underlying (pre-subset) matrix. </td></tr>
-    <tr><td class="paramname">f</td><td>Index of the start of the block. This should be a row index if <code>margin_ = 0</code> and a column index otherwise. </td></tr>
-    <tr><td class="paramname">l</td><td>Index of the one-past-the-end of the block. </td></tr>
+    <tr><td class="paramname">s</td><td>Index of the start of the block. This should be a row index if <code>margin_ = 0</code> and a column index otherwise. </td></tr>
+    <tr><td class="paramname">l</td><td>Length of the block, in terms of the number of rows (if <code>margin_ = 0</code>) or columns (otherwise). </td></tr>
   </table>
   </dd>
 </dl>

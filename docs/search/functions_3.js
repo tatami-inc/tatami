@@ -13,7 +13,7 @@ var searchData=
   ['delayedlog1phelper_10',['DelayedLog1pHelper',['../structtatami_1_1DelayedLog1pHelper.html#a72f0a36b37285d7db294261af4e97f9f',1,'tatami::DelayedLog1pHelper::DelayedLog1pHelper()'],['../structtatami_1_1DelayedLog1pHelper.html#a2b0dbc27f431eda6d26a40872aa31a8a',1,'tatami::DelayedLog1pHelper::DelayedLog1pHelper(Base_ base)']]],
   ['delayedloghelper_11',['DelayedLogHelper',['../structtatami_1_1DelayedLogHelper.html#a4f43ca158fd03c86d913c36deac643af',1,'tatami::DelayedLogHelper::DelayedLogHelper()'],['../structtatami_1_1DelayedLogHelper.html#a8f4ac06070ccc7c92b201b70d7a1f785',1,'tatami::DelayedLogHelper::DelayedLogHelper(Base_ base)']]],
   ['delayedsubset_12',['DelayedSubset',['../classtatami_1_1DelayedSubset.html#a6b832655afd6ded8c5e5198dd576d604',1,'tatami::DelayedSubset']]],
-  ['delayedsubsetblock_13',['DelayedSubsetBlock',['../classtatami_1_1DelayedSubsetBlock.html#abeaa6e9309f85b80dcb32f68c30e44c7',1,'tatami::DelayedSubsetBlock']]],
+  ['delayedsubsetblock_13',['DelayedSubsetBlock',['../classtatami_1_1DelayedSubsetBlock.html#a6f7dfa2450c9f1f8faf3e2da147fcdc5',1,'tatami::DelayedSubsetBlock']]],
   ['delayedsubsetsorted_14',['DelayedSubsetSorted',['../classtatami_1_1DelayedSubsetSorted.html#acb54e427b4b971040fff8b0b327337bf',1,'tatami::DelayedSubsetSorted']]],
   ['delayedsubsetsortedunique_15',['DelayedSubsetSortedUnique',['../classtatami_1_1DelayedSubsetSortedUnique.html#a4a56857aecad86ffbf3345bef61f99e6',1,'tatami::DelayedSubsetSortedUnique']]],
   ['delayedsubsetunique_16',['DelayedSubsetUnique',['../classtatami_1_1DelayedSubsetUnique.html#a6137eae868d3ca1c7116d3440278dbef',1,'tatami::DelayedSubsetUnique']]],

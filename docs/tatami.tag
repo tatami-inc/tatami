@@ -2288,8 +2288,8 @@
       <type></type>
       <name>DelayedSubsetBlock</name>
       <anchorfile>classtatami_1_1DelayedSubsetBlock.html</anchorfile>
-      <anchor>abeaa6e9309f85b80dcb32f68c30e44c7</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Index_ f, Index_ l)</arglist>
+      <anchor>a6f7dfa2450c9f1f8faf3e2da147fcdc5</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Index_ s, Index_ l)</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>

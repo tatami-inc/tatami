@@ -44,7 +44,7 @@ var searchData=
   ['delayedsqrthelper_41',['DelayedSqrtHelper',['../structtatami_1_1DelayedSqrtHelper.html',1,'tatami']]],
   ['delayedsubset_42',['DelayedSubset',['../classtatami_1_1DelayedSubset.html#a6b832655afd6ded8c5e5198dd576d604',1,'tatami::DelayedSubset::DelayedSubset()'],['../classtatami_1_1DelayedSubset.html',1,'tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;']]],
   ['delayedsubset_2ehpp_43',['DelayedSubset.hpp',['../DelayedSubset_8hpp.html',1,'']]],
-  ['delayedsubsetblock_44',['DelayedSubsetBlock',['../classtatami_1_1DelayedSubsetBlock.html#abeaa6e9309f85b80dcb32f68c30e44c7',1,'tatami::DelayedSubsetBlock::DelayedSubsetBlock()'],['../classtatami_1_1DelayedSubsetBlock.html',1,'tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;']]],
+  ['delayedsubsetblock_44',['DelayedSubsetBlock',['../classtatami_1_1DelayedSubsetBlock.html#a6f7dfa2450c9f1f8faf3e2da147fcdc5',1,'tatami::DelayedSubsetBlock::DelayedSubsetBlock()'],['../classtatami_1_1DelayedSubsetBlock.html',1,'tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;']]],
   ['delayedsubsetblock_2ehpp_45',['DelayedSubsetBlock.hpp',['../DelayedSubsetBlock_8hpp.html',1,'']]],
   ['delayedsubsetsorted_46',['DelayedSubsetSorted',['../classtatami_1_1DelayedSubsetSorted.html#acb54e427b4b971040fff8b0b327337bf',1,'tatami::DelayedSubsetSorted::DelayedSubsetSorted()'],['../classtatami_1_1DelayedSubsetSorted.html',1,'tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;']]],
   ['delayedsubsetsorted_2ehpp_47',['DelayedSubsetSorted.hpp',['../DelayedSubsetSorted_8hpp.html',1,'']]],
