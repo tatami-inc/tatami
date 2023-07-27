@@ -38,6 +38,7 @@ add_executable(
     src/sparse/FragmentedSparseMatrix.cpp
     src/sparse/SemiCompressedSparseMatrix.cpp
     src/sparse/SparseSecondaryExtractorCore.cpp
+    src/sparse/convert_to_compressed_sparse.cpp
 
     src/stats/sums.cpp
     src/stats/variances.cpp
@@ -49,7 +50,6 @@ add_executable(
     src/utils/SomeNumericArray.cpp
     src/utils/ArrayView.cpp
     src/utils/convert_to_dense.cpp
-    src/utils/convert_to_sparse.cpp
     src/utils/bind_intersection.cpp
     src/utils/compress_sparse_triplets.cpp
     src/utils/Oracles.cpp
