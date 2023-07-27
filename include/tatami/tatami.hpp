@@ -6,7 +6,8 @@
 #include "sparse/CompressedSparseMatrix.hpp"
 #include "sparse/SemiCompressedSparseMatrix.hpp"
 #include "sparse/FragmentedSparseMatrix.hpp"
-#include "sparse/convert_to_sparse.hpp"
+#include "sparse/convert_to_compressed_sparse.hpp"
+#include "sparse/convert_to_fragmented_sparse.hpp"
 
 #include "isometric/unary/DelayedUnaryIsometricOp.hpp"
 #include "isometric/binary/DelayedBinaryIsometricOp.hpp"

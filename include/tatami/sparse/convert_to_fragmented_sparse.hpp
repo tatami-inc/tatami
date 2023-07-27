@@ -196,7 +196,8 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matr
             incoming->nrow(), 
             incoming->ncol(), 
             std::move(frag.value), 
-            std::move(frag.index)
+            std::move(frag.index),
+            false // no need for checks, as we guarantee correctness.
         )
     );
 }
