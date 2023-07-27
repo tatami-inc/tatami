@@ -210,7 +210,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
         output_p.swap(nz_counts.front()); // There better be at least 1 thread!
         for (int i = 1; i < threads; ++i) {
             auto& y = nz_counts[i];
-            for (InputIndex_ p = 0; p < primary; ++p) {
+            for (InputIndex_ p = 0; p <= primary; ++p) {
                 output_p[p] += y[p];
             }
             y.clear();
@@ -257,7 +257,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
                         if (*ptr != 0) {
                             auto& pos = offset_copy[p];
                             output_v[pos] = *ptr;
-                            output_i[pos] = p + start;
+                            output_i[pos] = s;
                             ++pos;
                         }
                     }
@@ -293,7 +293,7 @@ template <bool row_,
     typename InputValue_,
     typename InputIndex_
 >
-std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>* incoming, bool two_pass, int threads = 1) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>* incoming, bool two_pass = false, int threads = 1) {
     auto comp = retrieve_compressed_sparse_contents<row_, StoredValue_, StoredIndex_>(incoming, two_pass, threads);
     return std::shared_ptr<Matrix<Value_, Index_> >(
         new CompressedSparseMatrix<
@@ -340,7 +340,7 @@ template <
     typename InputValue_,
     typename InputIndex_
 >
-std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>* incoming, int order, bool two_pass, int threads = 1) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>* incoming, int order, bool two_pass = false, int threads = 1) {
     if (order < 0) {
         order = static_cast<int>(!incoming->prefer_rows());
     }
