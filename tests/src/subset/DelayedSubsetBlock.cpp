@@ -34,8 +34,8 @@ protected:
         if (std::get<0>(param)) {
             std::vector<double> sub(simulated.data() + first * NC, simulated.data() + last * NC);
             ref.reset(new tatami::DenseRowMatrix<double>(block_length, NC, std::move(sub)));
-            dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, last);
-            sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, first, last);
+            dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, block_length);
+            sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, first, block_length);
         } else {
             std::vector<double> sub;
             sub.reserve(NR * block_length);
@@ -44,8 +44,8 @@ protected:
                 sub.insert(sub.end(), row + first, row + last);
             }
             ref.reset(new tatami::DenseRowMatrix<double>(NR, block_length, std::move(sub)));
-            dense_block = tatami::make_DelayedSubsetBlock<1>(dense, first, last);
-            sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, first, last);
+            dense_block = tatami::make_DelayedSubsetBlock<1>(dense, first, block_length);
+            sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, first, block_length);
         }
     }
 };
@@ -230,17 +230,18 @@ protected:
         double full =  (std::get<0>(param) ? NR : NC);
         int first = full * std::get<1>(param).first;
         int last = full * std::get<1>(param).second;
+        auto len = last - first;
 
         if (std::get<0>(param)) {
-            dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, last);
-            sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, first, last);
-            wrapped_dense_block = tatami::make_DelayedSubsetBlock<0>(tatami_test::make_CrankyMatrix(dense), first, last);
-            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<0>(tatami_test::make_CrankyMatrix(sparse), first, last);
+            dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, len);
+            sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, first, len);
+            wrapped_dense_block = tatami::make_DelayedSubsetBlock<0>(tatami_test::make_CrankyMatrix(dense), first, len);
+            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<0>(tatami_test::make_CrankyMatrix(sparse), first, len);
         } else {
-            dense_block = tatami::make_DelayedSubsetBlock<1>(dense, first, last);
-            sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, first, last);
-            wrapped_dense_block = tatami::make_DelayedSubsetBlock<1>(tatami_test::make_CrankyMatrix(dense), first, last);
-            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<1>(tatami_test::make_CrankyMatrix(sparse), first, last);
+            dense_block = tatami::make_DelayedSubsetBlock<1>(dense, first, len);
+            sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, first, len);
+            wrapped_dense_block = tatami::make_DelayedSubsetBlock<1>(tatami_test::make_CrankyMatrix(dense), first, len);
+            wrapped_sparse_block = tatami::make_DelayedSubsetBlock<1>(tatami_test::make_CrankyMatrix(sparse), first, len);
         }
     }
 };
@@ -280,7 +281,7 @@ INSTANTIATE_TEST_SUITE_P(
 TEST(DelayedSubsetBlock, ConstOverload) {
     int NR = 9, NC = 7;
     auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
-    auto sub = tatami::make_DelayedSubsetBlock<1>(dense, static_cast<int>(5), static_cast<int>(8));
+    auto sub = tatami::make_DelayedSubsetBlock<1>(dense, static_cast<int>(5), static_cast<int>(3));
     EXPECT_EQ(sub->ncol(), 3);
     EXPECT_EQ(sub->nrow(), NR);
 }

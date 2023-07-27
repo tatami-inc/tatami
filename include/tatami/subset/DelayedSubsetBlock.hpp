@@ -33,10 +33,10 @@ class DelayedSubsetBlock : public Matrix<Value_, Index_> {
 public:
     /**
      * @param p Pointer to the underlying (pre-subset) matrix.
-     * @param f Index of the start of the block. This should be a row index if `margin_ = 0` and a column index otherwise.
-     * @param l Index of the one-past-the-end of the block.
+     * @param s Index of the start of the block. This should be a row index if `margin_ = 0` and a column index otherwise.
+     * @param l Length of the block, in terms of the number of rows (if `margin_ = 0`) or columns (otherwise).
      */
-    DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > p, Index_ f, Index_ l) : mat(std::move(p)), block_start(f), block_length(l - f) {}
+    DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > p, Index_ s, Index_ l) : mat(std::move(p)), block_start(s), block_length(l) {}
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > mat;
