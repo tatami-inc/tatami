@@ -6,29 +6,31 @@
 
 #include "tatami_test/tatami_test.hpp"
 
-class ConvertToDenseTest : public ::testing::TestWithParam<std::tuple<int, int> > {
+class ConvertToDenseTest : public ::testing::TestWithParam<std::tuple<int, int, int> > {
 protected:
     size_t NR, NC;
+    int threads;
 
     template<class Param>
     void assemble(const Param& param) {
         NR = std::get<0>(param);
         NC = std::get<1>(param);
+        threads = std::get<2>(param);
     }
 };
 
 TEST_P(ConvertToDenseTest, RowToRow) {
     assemble(GetParam());
     auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
-    tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
+    auto mat = std::make_shared<tatami::DenseMatrix<true, double, int> >(NR, NC, vec);
 
-    auto converted = tatami::convert_to_dense<true>(&mat);
+    auto converted = tatami::convert_to_dense<true>(mat.get(), threads);
     EXPECT_TRUE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    tatami_test::test_simple_row_access(converted.get(), &mat, true, 1);
-    tatami_test::test_simple_column_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(converted.get(), mat.get(), true, 1);
+    tatami_test::test_simple_column_access(converted.get(), mat.get(), true, 1);
 
-    auto converted2 = tatami::convert_to_dense<true, int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_dense<true, int, size_t>(mat.get(), threads); // works for a different type.
     EXPECT_TRUE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
@@ -39,24 +41,25 @@ TEST_P(ConvertToDenseTest, RowToRow) {
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 
-    // Works in parallel.
-    auto convertedP = tatami::convert_to_dense<true>(&mat, 3);
-    tatami_test::test_simple_row_access(convertedP.get(), &mat, true, 1);
-    tatami_test::test_simple_column_access(convertedP.get(), &mat, true, 1);
+    // Works in cranky mode.
+    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
+    auto convertedC = tatami::convert_to_dense<true>(cranky.get(), threads);
+    tatami_test::test_simple_row_access(convertedC.get(), mat.get(), true, 1);
+    tatami_test::test_simple_column_access(convertedC.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToDenseTest, ColumnToColumn) {
     assemble(GetParam());
     auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
-    tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
+    auto mat = std::make_shared<tatami::DenseMatrix<false, double, int> >(NR, NC, vec);
 
-    auto converted = tatami::convert_to_dense<false>(&mat);
+    auto converted = tatami::convert_to_dense<false>(mat.get(), threads);
     EXPECT_FALSE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    tatami_test::test_simple_row_access(converted.get(), &mat, true, 1);
-    tatami_test::test_simple_column_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(converted.get(), mat.get(), true, 1);
+    tatami_test::test_simple_column_access(converted.get(), mat.get(), true, 1);
 
-    auto converted2 = tatami::convert_to_dense<false, int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_dense<false, int, size_t>(mat.get(), threads); // works for a different type.
     EXPECT_FALSE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
@@ -66,20 +69,26 @@ TEST_P(ConvertToDenseTest, ColumnToColumn) {
         std::vector<int> expected2(start, start + NR);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
+
+    // Works in cranky mode.
+    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
+    auto convertedC = tatami::convert_to_dense<false>(cranky.get(), threads);
+    tatami_test::test_simple_row_access(convertedC.get(), mat.get(), true, 1);
+    tatami_test::test_simple_column_access(convertedC.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToDenseTest, RowToColumn) {
     assemble(GetParam());
     auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
-    tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
+    auto mat = std::make_shared<tatami::DenseMatrix<true, double, int> >(NR, NC, vec);
 
-    auto converted = tatami::convert_to_dense<false>(&mat);
+    auto converted = tatami::convert_to_dense<false>(mat.get(), threads);
     EXPECT_FALSE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    tatami_test::test_simple_row_access(converted.get(), &mat, true, 1);
-    tatami_test::test_simple_column_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(converted.get(), mat.get(), true, 1);
+    tatami_test::test_simple_column_access(converted.get(), mat.get(), true, 1);
 
-    auto converted2 = tatami::convert_to_dense<false, int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_dense<false, int, size_t>(mat.get(), threads); // works for a different type.
     EXPECT_FALSE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
@@ -90,24 +99,25 @@ TEST_P(ConvertToDenseTest, RowToColumn) {
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
 
-    // Works in parallel.
-    auto convertedP = tatami::convert_to_dense<false>(&mat, 3);
-    tatami_test::test_simple_row_access(convertedP.get(), &mat, true, 1);
-    tatami_test::test_simple_column_access(convertedP.get(), &mat, true, 1);
+    // Works in cranky mode.
+    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
+    auto convertedC = tatami::convert_to_dense<false>(cranky.get(), threads);
+    tatami_test::test_simple_row_access(convertedC.get(), mat.get(), true, 1);
+    tatami_test::test_simple_column_access(convertedC.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToDenseTest, ColumnToRow) {
     assemble(GetParam());
     auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
-    tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
+    auto mat = std::make_shared<tatami::DenseMatrix<false, double, int> >(NR, NC, vec);
 
-    auto converted = tatami::convert_to_dense<true>(&mat);
+    auto converted = tatami::convert_to_dense<true>(mat.get(), threads);
     EXPECT_TRUE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-    tatami_test::test_simple_row_access(converted.get(), &mat, true, 1);
-    tatami_test::test_simple_column_access(converted.get(), &mat, true, 1);
+    tatami_test::test_simple_row_access(converted.get(), mat.get(), true, 1);
+    tatami_test::test_simple_column_access(converted.get(), mat.get(), true, 1);
 
-    auto converted2 = tatami::convert_to_dense<true, int, size_t>(&mat); // works for a different type.
+    auto converted2 = tatami::convert_to_dense<true, int, size_t>(mat.get(), threads); // works for a different type.
     EXPECT_TRUE(converted2->prefer_rows());
     EXPECT_FALSE(converted2->sparse());
 
@@ -117,6 +127,12 @@ TEST_P(ConvertToDenseTest, ColumnToRow) {
         std::vector<int> expected2(start, start + NR);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
+
+    // Works in cranky mode.
+    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
+    auto convertedC = tatami::convert_to_dense<true>(cranky.get(), threads);
+    tatami_test::test_simple_row_access(convertedC.get(), mat.get(), true, 1);
+    tatami_test::test_simple_column_access(convertedC.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToDenseTest, Automatic) {
@@ -125,13 +141,13 @@ TEST_P(ConvertToDenseTest, Automatic) {
 
     {
         tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
-        auto converted = tatami::convert_to_dense(&mat, -1);
+        auto converted = tatami::convert_to_dense(&mat, -1, threads);
         EXPECT_FALSE(converted->prefer_rows());
     }
 
     {
         tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
-        auto converted = tatami::convert_to_dense(&mat, -1);
+        auto converted = tatami::convert_to_dense(&mat, -1, threads);
         EXPECT_TRUE(converted->prefer_rows());
     }
 }
@@ -145,7 +161,7 @@ TEST_P(ConvertToDenseTest, FromSparse) {
         tatami::CompressedSparseRowMatrix<double, int> smat(NR, NC, std::move(vec.value), std::move(vec.index), std::move(vec.ptr));
 
         {
-            auto converted = tatami::convert_to_dense<true>(&smat);
+            auto converted = tatami::convert_to_dense<true>(&smat, threads);
             EXPECT_TRUE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
             tatami_test::test_simple_row_access(converted.get(), &smat, true, 1);
@@ -153,7 +169,7 @@ TEST_P(ConvertToDenseTest, FromSparse) {
         }
 
         {
-            auto converted = tatami::convert_to_dense<false>(&smat);
+            auto converted = tatami::convert_to_dense<false>(&smat, threads);
             EXPECT_FALSE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
             tatami_test::test_simple_row_access(converted.get(), &smat, true, 1);
@@ -167,7 +183,7 @@ TEST_P(ConvertToDenseTest, FromSparse) {
         tatami::CompressedSparseColumnMatrix<double, int> smat(NR, NC, std::move(vec.value), std::move(vec.index), std::move(vec.ptr));
 
         {
-            auto converted = tatami::convert_to_dense<true>(&smat);
+            auto converted = tatami::convert_to_dense<true>(&smat, threads);
             EXPECT_TRUE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
             tatami_test::test_simple_row_access(converted.get(), &smat, true, 1);
@@ -175,7 +191,7 @@ TEST_P(ConvertToDenseTest, FromSparse) {
         }
 
         {
-            auto converted = tatami::convert_to_dense<false>(&smat);
+            auto converted = tatami::convert_to_dense<false>(&smat, threads);
             EXPECT_FALSE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
             tatami_test::test_simple_row_access(converted.get(), &smat, true, 1);
@@ -189,6 +205,7 @@ INSTANTIATE_TEST_SUITE_P(
     ConvertToDenseTest,
     ::testing::Combine(
         ::testing::Values(10, 50, 100), // number of rows
-        ::testing::Values(10, 50, 100)  // number of columns
+        ::testing::Values(10, 50, 100), // number of columns
+        ::testing::Values(1, 3)         // number of threads
     )
 );

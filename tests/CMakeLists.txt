@@ -15,6 +15,7 @@ add_executable(
     libtest 
 
     src/dense/DenseMatrix.cpp
+    src/dense/convert_to_dense.cpp
 
     src/other/DelayedBind.cpp
     src/other/DelayedTranspose.cpp
@@ -50,7 +51,6 @@ add_executable(
     src/utils/wrap_shared_ptr.cpp
     src/utils/SomeNumericArray.cpp
     src/utils/ArrayView.cpp
-    src/utils/convert_to_dense.cpp
     src/utils/bind_intersection.cpp
     src/utils/compress_sparse_triplets.cpp
     src/utils/Oracles.cpp
