@@ -59,9 +59,24 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
         }
 
         if (!has_duplicates) {
-            return std::shared_ptr<Matrix<Value_, Index_> >(
-                new DelayedSubsetSortedUnique<margin_, Value_, Index_, PureIndexStorage_>(std::move(p), std::move(idx), false)
-            );
+            bool consecutive = true;
+            for (Index_ i = 0, end = idx.size(); i < end; ++i) {
+                if (idx[i] > idx[i-1] + 1) {
+                    consecutive = false;
+                    break;
+                }
+            }
+
+            if (consecutive) {
+                auto start = (idx.empty() ? 0 : idx[0]);
+                return std::shared_ptr<Matrix<Value_, Index_> >(
+                    new DelayedSubsetBlock<margin_, Value_, Index_>(std::move(p), start, idx.size())
+                );
+            } else {
+                return std::shared_ptr<Matrix<Value_, Index_> >(
+                    new DelayedSubsetSortedUnique<margin_, Value_, Index_, PureIndexStorage_>(std::move(p), std::move(idx), false)
+                );
+            }
         } else {
             return std::shared_ptr<Matrix<Value_, Index_> >(
                 new DelayedSubsetSorted<margin_, Value_, Index_, PureIndexStorage_>(std::move(p), std::move(idx), false)
