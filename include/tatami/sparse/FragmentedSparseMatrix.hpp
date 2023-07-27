@@ -5,6 +5,7 @@
 #include "../base/utils.hpp"
 #include "primary_extraction.hpp"
 #include "SparseSecondaryExtractorCore.hpp"
+#include "../utils/ElementType.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -82,7 +83,7 @@ public:
                 }
             }
 
-            Stored<Stored<IndexVectorStorage_> > max_index = (row_ ? ncols : nrows);
+            ElementType<ElementType<IndexVectorStorage_> > max_index = (row_ ? ncols : nrows);
             for (size_t i = 0, end = indices.size(); i < end; ++i) {
                 const auto& curv = values[i];
                 const auto& curi = indices[i];
@@ -288,7 +289,7 @@ private:
      *************************************/
 private:
     typedef typename std::remove_reference<decltype(std::declval<IndexVectorStorage_>()[0])>::type IndexStorage;
-    typedef Stored<IndexStorage> StoredIndex;
+    typedef ElementType<IndexStorage> StoredIndex;
 
     struct SecondaryModifier {
         static void increment(size_t& ptr, const IndexStorage&, size_t) { ++ptr; }

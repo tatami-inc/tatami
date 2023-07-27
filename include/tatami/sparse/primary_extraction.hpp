@@ -4,6 +4,7 @@
 #include "utils.hpp"
 #include <utility>
 #include <algorithm>
+#include "../utils/ElementType.hpp"
 
 namespace tatami {
 
@@ -36,11 +37,11 @@ std::pair<size_t, size_t> extract_primary_dimension(
     auto eIt = indices.begin() + sparse_utils::get_upper_limit(indices, indptrs, i);
 
     if (iIt != eIt) {
-        if (start > *iIt) {
+        if (start > static_cast<Index_>(*iIt)) {
             iIt = std::lower_bound(iIt, eIt, start);
         } 
 
-        auto last = start + length;
+        ElementType<IndexStorage_> last = start + length;
 
         // Comparing the one-past-the-last requested index with the last observed index at 'eIt'.
         // If the former is less than the latter, then we need to do a binary search.
@@ -143,7 +144,7 @@ void primary_dimension(
 
     Index_ counter = 0;
     while (counter < length) {
-        auto current = subset[counter];
+        ElementType<IndexStorage_> current = subset[counter];
 
         while (iIt != eIt && current > *iIt) {
             ++iIt;

@@ -9,9 +9,6 @@
 
 namespace tatami {
 
-template<class Storage_>
-using Stored = typename std::remove_reference<decltype(std::declval<Storage_>()[0])>::type;
-
 template<typename Index_, typename StoredIndex_, typename CustomPointer_, class CustomPointerModifier_> 
 struct SparseSecondaryExtractorCore {
 protected:
