@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.5"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami/utils/convert_to_sparse.hpp File Reference</title>
+<title>tatami: tatami/sparse/convert_to_compressed_sparse.hpp File Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -71,22 +71,29 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_d053d230eec548c17a4551a02c6d5eb8.html">utils</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_7c74ace1909d0ad6f313cc91d6fa66af.html">tatami</a></li><li class="navelem"><a class="el" href="dir_c0869e65bd76f51f58a796014da5892c.html">sparse</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
+<a href="#nested-classes">Classes</a> &#124;
 <a href="#namespaces">Namespaces</a> &#124;
 <a href="#func-members">Functions</a>  </div>
-  <div class="headertitle"><div class="title">convert_to_sparse.hpp File Reference</div></div>
+  <div class="headertitle"><div class="title">convert_to_compressed_sparse.hpp File Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
 <p>Convert a matrix into a compressed sparse format.  
 <a href="#details">More...</a></p>
 
-<p><a href="convert__to__sparse_8hpp_source.html">Go to the source code of this file.</a></p>
+<p><a href="convert__to__compressed__sparse_8hpp_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="nested-classes" name="nested-classes"></a>
+Classes</h2></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1CompressedSparseContents.html">tatami::CompressedSparseContents&lt; Value_, Index_ &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compressed sparse contents.  <a href="structtatami_1_1CompressedSparseContents.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="namespaces" name="namespaces"></a>
 Namespaces</h2></td></tr>
 <tr class="memitem:namespacetatami"><td class="memItemLeft" align="right" valign="top">namespace &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacetatami.html">tatami</a></td></tr>
@@ -95,12 +102,15 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="func-members" name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a220c47e470b3ade64ede7303e50ca92d"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename StoredIndex_  = Index_, class InputMatrix_ &gt; </td></tr>
-<tr class="memitem:a220c47e470b3ade64ede7303e50ca92d"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a220c47e470b3ade64ede7303e50ca92d">tatami::convert_to_sparse</a> (const InputMatrix_ *incoming, int threads=1)</td></tr>
-<tr class="separator:a220c47e470b3ade64ede7303e50ca92d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5847f3cd78ce89170ca43262d7f5f8e3"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename StoredIndex_  = Index_, class InputMatrix_ &gt; </td></tr>
-<tr class="memitem:a5847f3cd78ce89170ca43262d7f5f8e3"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a5847f3cd78ce89170ca43262d7f5f8e3">tatami::convert_to_sparse</a> (const InputMatrix_ *incoming, int order, int threads=1)</td></tr>
-<tr class="separator:a5847f3cd78ce89170ca43262d7f5f8e3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad1aee6313d02036d2f56703f372e1df6"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename Value_ , typename Index_ , typename InputValue_ , typename InputIndex_ &gt; </td></tr>
+<tr class="memitem:ad1aee6313d02036d2f56703f372e1df6"><td class="memTemplItemLeft" align="right" valign="top">CompressedSparseContents&lt; Value_, Index_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#ad1aee6313d02036d2f56703f372e1df6">tatami::retrieve_compressed_sparse_contents</a> (const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool two_pass, int threads=1)</td></tr>
+<tr class="separator:ad1aee6313d02036d2f56703f372e1df6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a48dab0e55d3b852afcfd9e93835190df"><td class="memTemplParams" colspan="2">template&lt;bool row_, typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename StoredIndex_  = Index_, typename InputValue_ , typename InputIndex_ &gt; </td></tr>
+<tr class="memitem:a48dab0e55d3b852afcfd9e93835190df"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a48dab0e55d3b852afcfd9e93835190df">tatami::convert_to_compressed_sparse</a> (const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool two_pass=false, int threads=1)</td></tr>
+<tr class="separator:a48dab0e55d3b852afcfd9e93835190df"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf7ca799fac9cff0c16a77bf98e32ff3"><td class="memTemplParams" colspan="2">template&lt;typename Value_  = double, typename Index_  = int, typename StoredValue_  = Value_, typename StoredIndex_  = Index_, typename InputValue_ , typename InputIndex_ &gt; </td></tr>
+<tr class="memitem:acf7ca799fac9cff0c16a77bf98e32ff3"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#acf7ca799fac9cff0c16a77bf98e32ff3">tatami::convert_to_compressed_sparse</a> (const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, bool two_pass=false, int threads=1)</td></tr>
+<tr class="separator:acf7ca799fac9cff0c16a77bf98e32ff3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Convert a matrix into a compressed sparse format. </p>

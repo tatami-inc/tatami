@@ -732,6 +732,62 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>convert_to_compressed_sparse.hpp</name>
+    <path>/github/workspace/include/tatami/sparse/</path>
+    <filename>convert__to__compressed__sparse_8hpp.html</filename>
+    <class kind="struct">tatami::CompressedSparseContents</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>CompressedSparseContents&lt; Value_, Index_ &gt;</type>
+      <name>retrieve_compressed_sparse_contents</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad1aee6313d02036d2f56703f372e1df6</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool two_pass, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>convert_to_compressed_sparse</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a48dab0e55d3b852afcfd9e93835190df</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool two_pass=false, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>convert_to_compressed_sparse</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>acf7ca799fac9cff0c16a77bf98e32ff3</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, bool two_pass=false, int threads=1)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
+    <name>convert_to_fragmented_sparse.hpp</name>
+    <path>/github/workspace/include/tatami/sparse/</path>
+    <filename>convert__to__fragmented__sparse_8hpp.html</filename>
+    <class kind="struct">tatami::FragmentedSparseContents</class>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>FragmentedSparseContents&lt; Value_, Index_ &gt;</type>
+      <name>retrieve_fragmented_sparse_contents</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a012194aba94c37703f15555247e02155</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>convert_to_fragmented_sparse</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a953ad06ecc9a36c8d2c1f3febe84a787</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>convert_to_fragmented_sparse</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ae46babb9d985cffcb54bcba89553a811</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>FragmentedSparseMatrix.hpp</name>
     <path>/github/workspace/include/tatami/sparse/</path>
     <filename>FragmentedSparseMatrix_8hpp.html</filename>
@@ -1065,26 +1121,6 @@
     </member>
   </compound>
   <compound kind="file">
-    <name>convert_to_sparse.hpp</name>
-    <path>/github/workspace/include/tatami/utils/</path>
-    <filename>convert__to__sparse_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>convert_to_sparse</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a220c47e470b3ade64ede7303e50ca92d</anchor>
-      <arglist>(const InputMatrix_ *incoming, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>convert_to_sparse</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5847f3cd78ce89170ca43262d7f5f8e3</anchor>
-      <arglist>(const InputMatrix_ *incoming, int order, int threads=1)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
     <name>Oracles.hpp</name>
     <path>/github/workspace/include/tatami/utils/</path>
     <filename>Oracles_8hpp.html</filename>
@@ -1191,6 +1227,33 @@
       <name>block_length</name>
       <anchorfile>structtatami_1_1BlockExtractor.html</anchorfile>
       <anchor>a2421eff5ead7d4b29306374de30ca8a2</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::CompressedSparseContents</name>
+    <filename>structtatami_1_1CompressedSparseContents.html</filename>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <member kind="variable">
+      <type>std::vector&lt; Value_ &gt;</type>
+      <name>value</name>
+      <anchorfile>structtatami_1_1CompressedSparseContents.html</anchorfile>
+      <anchor>a42f014b8d8da15e6c49511db087bebf7</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::vector&lt; Index_ &gt;</type>
+      <name>index</name>
+      <anchorfile>structtatami_1_1CompressedSparseContents.html</anchorfile>
+      <anchor>ad6aa16e860a82ebc6de6774e8b6905ea</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::vector&lt; size_t &gt;</type>
+      <name>pointers</name>
+      <anchorfile>structtatami_1_1CompressedSparseContents.html</anchorfile>
+      <anchor>ad56fc74d757e9dcd8ffbdc48d5adc692</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -3293,6 +3356,26 @@
       <arglist>(Index_ *predicted, size_t number)</arglist>
     </member>
   </compound>
+  <compound kind="struct">
+    <name>tatami::FragmentedSparseContents</name>
+    <filename>structtatami_1_1FragmentedSparseContents.html</filename>
+    <templarg>typename Value_</templarg>
+    <templarg>typename Index_</templarg>
+    <member kind="variable">
+      <type>std::vector&lt; std::vector&lt; Value_ &gt; &gt;</type>
+      <name>value</name>
+      <anchorfile>structtatami_1_1FragmentedSparseContents.html</anchorfile>
+      <anchor>a24193eb145792effdc67d3e1425f1cd2</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>std::vector&lt; std::vector&lt; Index_ &gt; &gt;</type>
+      <name>index</name>
+      <anchorfile>structtatami_1_1FragmentedSparseContents.html</anchorfile>
+      <anchor>a8c1a2bebb066b64451576dc356877091</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
   <compound kind="class">
     <name>tatami::FragmentedSparseMatrix</name>
     <filename>classtatami_1_1FragmentedSparseMatrix.html</filename>
@@ -4429,6 +4512,7 @@
     <filename>namespacetatami.html</filename>
     <class kind="class">tatami::ArrayView</class>
     <class kind="struct">tatami::BlockExtractor</class>
+    <class kind="struct">tatami::CompressedSparseContents</class>
     <class kind="class">tatami::CompressedSparseMatrix</class>
     <class kind="struct">tatami::ConsecutiveOracle</class>
     <class kind="struct">tatami::DelayedAbsHelper</class>
@@ -4480,6 +4564,7 @@
     <class kind="class">tatami::DenseMatrix</class>
     <class kind="struct">tatami::ExtractorBase</class>
     <class kind="struct">tatami::FixedOracle</class>
+    <class kind="struct">tatami::FragmentedSparseContents</class>
     <class kind="class">tatami::FragmentedSparseMatrix</class>
     <class kind="struct">tatami::FullExtractor</class>
     <class kind="struct">tatami::IndexExtractor</class>
@@ -5074,6 +5159,48 @@
       <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p)</arglist>
     </member>
     <member kind="function">
+      <type>CompressedSparseContents&lt; Value_, Index_ &gt;</type>
+      <name>retrieve_compressed_sparse_contents</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad1aee6313d02036d2f56703f372e1df6</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool two_pass, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>convert_to_compressed_sparse</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a48dab0e55d3b852afcfd9e93835190df</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool two_pass=false, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>convert_to_compressed_sparse</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>acf7ca799fac9cff0c16a77bf98e32ff3</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, bool two_pass=false, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>FragmentedSparseContents&lt; Value_, Index_ &gt;</type>
+      <name>retrieve_fragmented_sparse_contents</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a012194aba94c37703f15555247e02155</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>convert_to_fragmented_sparse</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a953ad06ecc9a36c8d2c1f3febe84a787</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <name>convert_to_fragmented_sparse</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ae46babb9d985cffcb54bcba89553a811</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_medians</name>
       <anchorfile>namespacetatami.html</anchorfile>
@@ -5219,20 +5346,6 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>aa74ad14ba410177396121d272371dffd</anchor>
       <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>convert_to_sparse</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a220c47e470b3ade64ede7303e50ca92d</anchor>
-      <arglist>(const InputMatrix_ *incoming, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>convert_to_sparse</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5847f3cd78ce89170ca43262d7f5f8e3</anchor>
-      <arglist>(const InputMatrix_ *incoming, int order, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
