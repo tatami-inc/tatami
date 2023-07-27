@@ -200,7 +200,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
                     auto ptr = wrk->fetch(s, buffer_v.data());
                     for (InputIndex_ p = 0; p < primary; ++p, ++ptr) {
                         if (*ptr) {
-                            ++my_counts[p + start + 1];
+                            ++my_counts[p + 1];
                         }
                     }
                 }
