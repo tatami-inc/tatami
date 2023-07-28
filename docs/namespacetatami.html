@@ -342,10 +342,9 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a412cb6ee12f3ee81d404d6eb0e494e4d"><td class="memTemplParams" colspan="2">template&lt;typename Value_ , typename Index_ , class IndexStorage_  = std::vector&lt;Index_&gt;, class PointerStorage_  = std::vector&lt;size_t&gt;&gt; </td></tr>
 <tr class="memitem:a412cb6ee12f3ee81d404d6eb0e494e4d"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a412cb6ee12f3ee81d404d6eb0e494e4d">SemiCompressedSparseRowMatrix</a> = <a class="el" href="classtatami_1_1SemiCompressedSparseMatrix.html">SemiCompressedSparseMatrix</a>&lt; true, Value_, Index_, IndexStorage_, PointerStorage_ &gt;</td></tr>
 <tr class="separator:a412cb6ee12f3ee81d404d6eb0e494e4d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2b84d6bc16ba8e78d7bebf95d78b6221"><td class="memTemplParams" colspan="2"><a id="a2b84d6bc16ba8e78d7bebf95d78b6221" name="a2b84d6bc16ba8e78d7bebf95d78b6221"></a>
-template&lt;class Storage_ &gt; </td></tr>
-<tr class="memitem:a2b84d6bc16ba8e78d7bebf95d78b6221"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>Stored</b> = typename std::remove_reference&lt; decltype(std::declval&lt; Storage_ &gt;()[0])&gt;::type</td></tr>
-<tr class="separator:a2b84d6bc16ba8e78d7bebf95d78b6221"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a58a028d23a7be58854b2e60dfae1b04b"><td class="memTemplParams" colspan="2">template&lt;class Array_ &gt; </td></tr>
+<tr class="memitem:a58a028d23a7be58854b2e60dfae1b04b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a58a028d23a7be58854b2e60dfae1b04b">ElementType</a> = typename std::remove_cv&lt; typename std::remove_reference&lt; decltype(std::declval&lt; Array_ &gt;()[0])&gt;::type &gt;::type</td></tr>
+<tr class="separator:a58a028d23a7be58854b2e60dfae1b04b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="enum-members" name="enum-members"></a>
 Enumerations</h2></td></tr>
@@ -945,6 +944,29 @@ template&lt;typename Value_ , typename Index_ , class IndexStorage_  = std::vect
       </table>
 </div><div class="memdoc">
 <p >Semi-compressed sparse row matrix. See <code><a class="el" href="classtatami_1_1SemiCompressedSparseMatrix.html" title="Semi-compressed sparse matrix representation.">tatami::SemiCompressedSparseMatrix</a></code> for details on the template parameters. </p>
+
+</div>
+</div>
+<a id="a58a028d23a7be58854b2e60dfae1b04b" name="a58a028d23a7be58854b2e60dfae1b04b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a58a028d23a7be58854b2e60dfae1b04b">&#9670;&#160;</a></span>ElementType</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Array_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacetatami.html#a58a028d23a7be58854b2e60dfae1b04b">tatami::ElementType</a> = typedef typename std::remove_cv&lt;typename std::remove_reference&lt;decltype(std::declval&lt;Array_&gt;()[0])&gt;::type&gt;::type</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Array_</td><td>Some array of values that are accessed with <code>[</code>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Extract the type of array elements, after stripping away references and <code>const</code>-ness. </p>
 
 </div>
 </div>

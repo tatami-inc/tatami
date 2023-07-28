@@ -1121,6 +1121,19 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>ElementType.hpp</name>
+    <path>/github/workspace/include/tatami/utils/</path>
+    <filename>ElementType_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="typedef">
+      <type>typename std::remove_cv&lt; typename std::remove_reference&lt; decltype(std::declval&lt; Array_ &gt;()[0])&gt;::type &gt;::type</type>
+      <name>ElementType</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a58a028d23a7be58854b2e60dfae1b04b</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>Oracles.hpp</name>
     <path>/github/workspace/include/tatami/utils/</path>
     <filename>Oracles_8hpp.html</filename>
@@ -4695,6 +4708,13 @@
       <name>SemiCompressedSparseRowMatrix</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a412cb6ee12f3ee81d404d6eb0e494e4d</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="typedef">
+      <type>typename std::remove_cv&lt; typename std::remove_reference&lt; decltype(std::declval&lt; Array_ &gt;()[0])&gt;::type &gt;::type</type>
+      <name>ElementType</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a58a028d23a7be58854b2e60dfae1b04b</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
