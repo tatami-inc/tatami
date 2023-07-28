@@ -72,10 +72,19 @@ TEST(CompressedSparseMatrix, ConstructionFail) {
 
 TEST(CompressedSparseMatrix, OddTypes) {
     // Checking for compilation warnings here when the interface and storage types are different.
-    std::vector<uint8_t> values;
-    std::vector<uint16_t> indices;
-    std::vector<uint64_t> indptr(11);
-    tatami::CompressedSparseRowMatrix<double, int, decltype(values), decltype(indices), decltype(indptr)> rmat(10, 20, values, indices, indptr);
+    {
+        std::vector<uint8_t> values;
+        std::vector<uint16_t> indices;
+        std::vector<uint64_t> indptr(11);
+        tatami::CompressedSparseRowMatrix<double, int, decltype(values), decltype(indices), decltype(indptr)> rmat(10, 20, values, indices, indptr);
+    }
+
+    {
+        std::vector<uint8_t> values;
+        std::vector<uint32_t> indices; // Check for signed/unsigned comparisons with the interface index type.
+        std::vector<uint64_t> indptr(11);
+        tatami::CompressedSparseRowMatrix<double, int32_t, decltype(values), decltype(indices), decltype(indptr)> rmat(10, 20, values, indices, indptr);
+    }
 }
 
 /*************************************

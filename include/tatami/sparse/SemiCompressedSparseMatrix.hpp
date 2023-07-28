@@ -5,6 +5,7 @@
 #include "../base/utils.hpp"
 #include "utils.hpp"
 #include "SparseSecondaryExtractorCore.hpp"
+#include "../utils/ElementType.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -111,8 +112,8 @@ private:
     IndexStorage_ indices;
     PointerStorage_ indptrs;
 
-    typedef Stored<IndexStorage_> StoredIndex;
-    typedef Stored<PointerStorage_> StoredPointer;
+    typedef ElementType<IndexStorage_> StoredIndex;
+    typedef ElementType<PointerStorage_> StoredPointer;
 
 public:
     Index_ nrow() const { return nrows; }

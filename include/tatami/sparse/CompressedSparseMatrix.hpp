@@ -5,6 +5,7 @@
 #include "../base/utils.hpp"
 #include "primary_extraction.hpp"
 #include "SparseSecondaryExtractorCore.hpp"
+#include "../utils/ElementType.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -91,7 +92,7 @@ public:
                 throw std::runtime_error("last element of 'indptrs' should be equal to length of 'indices'");
             }
 
-            Stored<IndexStorage_> max_index = (row_ ? ncols : nrows);
+            ElementType<IndexStorage_> max_index = (row_ ? ncols : nrows);
             for (size_t i = 1; i < indptrs.size(); ++i) {
                 auto start = indptrs[i- 1], end = indptrs[i];
                 if (end < start || end > last) {
@@ -299,8 +300,8 @@ private:
      ******* Secondary extraction ********
      *************************************/
 private:
-    typedef Stored<IndexStorage_> StoredIndex;
-    typedef Stored<PointerStorage_> StoredPointer;
+    typedef ElementType<IndexStorage_> StoredIndex;
+    typedef ElementType<PointerStorage_> StoredPointer;
 
     struct SecondaryModifier {
         static void increment(StoredPointer& ptr, const IndexStorage_&, StoredPointer) { ++ptr; }
