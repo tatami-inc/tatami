@@ -953,8 +953,8 @@
       <type>void</type>
       <name>parallelize</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad2eddeaad50bdad0bc1e5c8f2f8549e0</anchor>
-      <arglist>(Function_ fun, Index_ tasks, size_t #if defined(_OPENMP)||defined(TATAMI_CUSTOM_PARALLEL) threads #endif)</arglist>
+      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
+      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
@@ -5315,8 +5315,8 @@
       <type>void</type>
       <name>parallelize</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad2eddeaad50bdad0bc1e5c8f2f8549e0</anchor>
-      <arglist>(Function_ fun, Index_ tasks, size_t #if defined(_OPENMP)||defined(TATAMI_CUSTOM_PARALLEL) threads #endif)</arglist>
+      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
+      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>

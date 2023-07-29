@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['parallelize_0',['parallelize',['../namespacetatami.html#ad2eddeaad50bdad0bc1e5c8f2f8549e0',1,'tatami']]],
+  ['parallelize_0',['parallelize',['../namespacetatami.html#a41e252422f9959a123ba390a941ae76f',1,'tatami']]],
   ['pointer_1',['pointer',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#adfb70cf5c5bbfdfdebe7f20244fc5f30',1,'tatami::SomeNumericArray::Iterator']]],
   ['pointers_2',['pointers',['../structtatami_1_1CompressedSparseContents.html#ad56fc74d757e9dcd8ffbdc48d5adc692',1,'tatami::CompressedSparseContents']]],
   ['predict_3',['predict',['../structtatami_1_1Oracle.html#a32ab54d21fc982580f18bea802d89f48',1,'tatami::Oracle::predict()'],['../structtatami_1_1FixedOracle.html#a931ccde93f123c8c718f808e89cf8f36',1,'tatami::FixedOracle::predict()'],['../structtatami_1_1ConsecutiveOracle.html#a6ed7501a227b2ee9b96e78733f166f16',1,'tatami::ConsecutiveOracle::predict()']]],
