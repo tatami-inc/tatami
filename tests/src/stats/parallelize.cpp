@@ -17,7 +17,6 @@ TEST(ParallelizeTest, BasicCheck) {
         length[t] = l;
     }, 100, 3);
 
-#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
     EXPECT_EQ(start[0], 0);
     EXPECT_EQ(start[1], 34);
     EXPECT_EQ(start[2], 68);
@@ -25,15 +24,6 @@ TEST(ParallelizeTest, BasicCheck) {
     EXPECT_EQ(length[0], 34);
     EXPECT_EQ(length[1], 34);
     EXPECT_EQ(length[2], 32);
-#else 
-    EXPECT_EQ(start[0], 0);
-    EXPECT_EQ(start[1], -1);
-    EXPECT_EQ(start[2], -1);
-
-    EXPECT_EQ(length[0], 100);
-    EXPECT_EQ(length[1], -1);
-    EXPECT_EQ(length[2], -1);
-#endif
 }
 
 TEST(ParallelizeTest, TypeCheck1) {
@@ -45,19 +35,11 @@ TEST(ParallelizeTest, TypeCheck1) {
         length[t] = l;
     }, static_cast<unsigned char>(255), 2);
 
-#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
     EXPECT_EQ(start[0], 0);
     EXPECT_EQ(start[1], 128);
 
     EXPECT_EQ(length[0], 128);
     EXPECT_EQ(length[1], 127);
-#else
-    EXPECT_EQ(start[0], 0);
-    EXPECT_EQ(start[1], 255);
-
-    EXPECT_EQ(length[0], 255);
-    EXPECT_EQ(length[1], 255);
-#endif
 }
 
 TEST(ParallelizeTest, TypeCheck2) {
@@ -68,19 +50,11 @@ TEST(ParallelizeTest, TypeCheck2) {
         length[t] = l;
     }, static_cast<unsigned char>(2), 1000);
 
-#if defined(_OPENMP) || defined(TATAMI_CUSTOM_PARALLEL)
     EXPECT_EQ(start[0], 0);
     EXPECT_EQ(start[1], 1);
 
     EXPECT_EQ(length[0], 1);
     EXPECT_EQ(length[1], 1);
-#else
-    EXPECT_EQ(start[0], 0);
-    EXPECT_EQ(start[1], 255);
-
-    EXPECT_EQ(length[0], 2);
-    EXPECT_EQ(length[1], 255);
-#endif
 
     start[0] = -1;
     length[0] = -1;
@@ -89,3 +63,29 @@ TEST(ParallelizeTest, TypeCheck2) {
     EXPECT_EQ(start, std::vector<unsigned char>(1000, -1));
     EXPECT_EQ(length, std::vector<unsigned char>(1000, -1));
 }
+
+#ifndef CUSTOM_PARALLEL_TEST
+TEST(ParallelizeTest, ErrorChecks) {
+    EXPECT_ANY_THROW({
+        try {
+            tatami::parallelize([&](size_t, int, int) -> void {
+                throw std::runtime_error("WHEE");
+            }, 255, 2);
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("WHEE") != std::string::npos);
+            throw;
+        }
+    });
+
+    EXPECT_ANY_THROW({
+        try {
+            tatami::parallelize([&](size_t, int, int) -> void {
+                throw 123;
+            }, 255, 2);
+        } catch (std::exception& e) {
+            EXPECT_TRUE(std::string(e.what()).find("unknown error") != std::string::npos);
+            throw;
+        }
+    });
+}
+#endif
