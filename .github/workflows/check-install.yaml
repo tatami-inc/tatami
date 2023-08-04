@@ -23,7 +23,8 @@ jobs:
         mkdir _downstream
         touch _downstream/source.cpp
         cat << EOF > _downstream/CMakeLists.txt
-        cmake_minimum_required (VERSION 3.24)
+        cmake_minimum_required(VERSION 3.24)
+        project(test_install)
         add_executable(whee source.cpp)
         find_package(tatami_tatami)
         target_link_libraries(whee tatami::tatami)
