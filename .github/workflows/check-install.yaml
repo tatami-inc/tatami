@@ -3,8 +3,8 @@ on: [push, pull_request]
 name: Check CMake install
 
 jobs:
-  install:
-    runs-on: "Ubuntu latest"
+  build:
+    runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -22,9 +22,10 @@ jobs:
       run: |
         mkdir _downstream
         touch _downstream/source.cpp
-        echo "cmake_minimum_required(VERSION 3.24)" > _downstream/CMakeLists.txt
-        echo "project(test)" >> _downstream/CMakeLists.txt
-        echo "add_executable(whee source.cpp)" >> _downstream/CMakeLists.txt
-        echo "find_package(tatami_tatami)" >> _downstream/CMakeLists.txt
-        echo "target_link_libraries(whee tatami::tatami)" >> _downstream/CMakeLists.txt
+        cat << EOF > _downstream/CMakeLists.txt
+        cmake_minimum_required (VERSION 3.24)
+        add_executable(whee source.cpp)
+        find_package(tatami_tatami)
+        target_link_libraries(whee tatami::tatami)
+        EOF
         cd _downstream && cmake -S . -B build
