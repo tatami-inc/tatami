@@ -1,0 +1,31 @@
+on:
+  push:
+    branches:
+      - master
+
+name: Tag project version 
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Get current version
+      id: current
+      run: |
+        current=$(cat CMakeLists.txt | grep '  *VERSION' | sed 's/.*VERSION //g')
+        echo "Current version is ${current}"
+        echo "version=v${current}" >> $GITHUB_OUTPUT
+
+    - name: Get latest version
+      id: latest
+      uses: actions-ecosystem/action-get-latest-tag@v1
+      with:
+        semver_only: true
+     
+    - name: Tag version if new
+      if: ${{ steps.current.outputs.version != steps.latest.outputs.tag }}
+      uses: actions-ecosystem/action-push-tag@v1
+      with:
+        tag: ${{ steps.current.outputs.version }}
