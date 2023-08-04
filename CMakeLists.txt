@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_library(tatami INTERFACE)
 add_library(tatami::tatami ALIAS tatami)
 
+include(GNUInstallDirs)
 target_include_directories(tatami INTERFACE 
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/tatami>"
@@ -35,7 +36,6 @@ if(TATAMI_TESTS)
 endif()
 
 # Installing for find_package.
-include(GNUInstallDirs)
 include(CMakePackageConfigHelpers)
 
 install(DIRECTORY include/
