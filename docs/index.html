@@ -240,6 +240,7 @@ $(function() {
 </div><!-- fragment --><p ><b>tatami</b> is strictly intended for row/column access and does not directly support matrix algebra or decompositions. If these high-level operations are needed, applications should write their own code, e.g., by using <b>tatami</b>'s extractors to implement matrix multiplication. Alternatively, we can transfer data from <b>tatami</b> into other frameworks like <a href="https://eigen.tuxfamily.org/"><b>Eigen</b></a> for complex matrix operations, effectively trading the diversity of representations for a more comprehensive suite of operations. For example, we like to use <b>tatami</b> to load the input data, which is usually in a custom format to save memory for large datasets; process it into a much smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis; and then copy this cheaply into an <code>Eigen::MatrixXd</code> or <code>Eigen::SparseMatrix</code> for more computationally intensive work.</p>
 <p >It is not possible to modify the matrix contents via the <b>tatami</b> API. This is especially relevant for matrices with delayed operations or those referring to remote data stores, where reading the matrix data is trivial but writing is not guaranteed to work. Experience suggests that a matrix writer abstraction is less useful than the equivalent reader abstraction. This is because applications typically control the output format, so there is no need to accommodate a diversity of formats via an abstract interface.</p>
 <h1>Building projects</h1>
+<h2>CMake with <code>FetchContent</code></h2>
 <p >If you're using CMake, you just need to add something like this to your <code>CMakeLists.txt</code>:</p>
 <div class="fragment"><div class="line">include(FetchContent)</div>
 <div class="line"> </div>
@@ -256,7 +257,16 @@ $(function() {
 <div class="line"> </div>
 <div class="line"># For libaries</div>
 <div class="line">target_link_libraries(mylib INTERFACE tatami)</div>
-</div><!-- fragment --><p >If you're not using CMake, the simple approach is to just copy the files - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>.</p>
+</div><!-- fragment --><h2>CMake with <code>find_package()</code></h2>
+<p >You can install the library by cloning a suitable version of this repository and running the following commands:</p>
+<div class="fragment"><div class="line">mkdir build &amp;&amp; cd build</div>
+<div class="line">cmake .. -DTATAMI_TESTS=OFF</div>
+<div class="line">cmake --build . --target install</div>
+</div><!-- fragment --><p >Then you can use <code>find_package()</code> as usual:</p>
+<div class="fragment"><div class="line">find_package(tatami_tatami CONFIG REQUIRED)</div>
+<div class="line">target_link_libraries(mylib INTERFACE tatami::tatami)</div>
+</div><!-- fragment --><h2>Manual</h2>
+<p >If you're not using CMake, the simple approach is to just copy the files the <code>include/</code> subdirectory - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>.</p>
 <h1>Links</h1>
 <p >Check out the <a href="https://tatami-inc.github.io/tatami">reference documentation</a> for more details on each function and class.</p>
 <p >The <a href="gallery/">gallery</a> also contains worked examples for common operations based on row/column traversals.</p>
