@@ -1,9 +1,13 @@
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+  pull_request:
 
 name: Check CMake install
 
 jobs:
-  build:
+  install:
     runs-on: ubuntu-latest
 
     steps:
