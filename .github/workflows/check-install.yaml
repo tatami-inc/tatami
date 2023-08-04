@@ -16,7 +16,7 @@ jobs:
       run: cmake -S . -B build
 
     - name: Install the library
-      run: cmake --install build
+      run: sudo cmake --install build
 
     - name: Test downstream usage
       run: |
