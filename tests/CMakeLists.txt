@@ -68,47 +68,24 @@ target_link_libraries(
     tatami
 )
 
-# Test custom parallelization during apply.
-add_executable(
-    cuspartest 
-    src/stats/sums.cpp
-    src/stats/variances.cpp
-    src/stats/medians.cpp
-    src/stats/ranges.cpp
-    src/stats/parallelize.cpp
-)
-
-target_link_libraries(
-    cuspartest 
-    gtest_main
-    tatami
-)
-
 target_compile_definitions(libtest PRIVATE DEBUG=1)
-target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
-
 target_compile_options(libtest PRIVATE -Wall -Wextra -Wpedantic -Werror)
-target_compile_options(cuspartest PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
 set(DO_CODE_COVERAGE OFF)
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
     target_compile_options(libtest PRIVATE -O0 -g --coverage)
     target_link_options(libtest PRIVATE --coverage)
-    target_compile_options(cuspartest PRIVATE -O0 -g --coverage)
-    target_link_options(cuspartest PRIVATE --coverage)
     set(DO_CODE_COVERAGE ON)
 endif()
 
-# Making the tests discoverable.
 include(GoogleTest)
 gtest_discover_tests(libtest)
-gtest_discover_tests(cuspartest)
 
-find_package(OpenMP)
-if(OpenMP_FOUND)
+# Test parallelization during apply.
+macro(create_partest target)
     add_executable(
-        omptest 
+        ${target}
         src/stats/sums.cpp
         src/stats/variances.cpp
         src/stats/medians.cpp
@@ -117,17 +94,25 @@ if(OpenMP_FOUND)
     )
 
     target_link_libraries(
-        omptest 
+        ${target}
         gtest_main
         tatami
-        OpenMP::OpenMP_CXX
     )
 
-    target_compile_options(omptest PRIVATE -Wall -Wextra -Wpedantic -Werror)
-    if(DO_CODE_COVERAGE)
-        target_compile_options(omptest PRIVATE -O0 -g --coverage)
-        target_link_options(omptest PRIVATE --coverage)
+    target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
+    if(DO_COVERAGE)
+        target_compile_options(${target} PRIVATE -O0 -g --coverage)
+        target_link_options(${target} PRIVATE --coverage)
     endif()
 
-    gtest_discover_tests(omptest)
+    gtest_discover_tests(${target})
+endmacro()
+
+create_partest(cuspartest)
+
+find_package(OpenMP)
+if(OpenMP_FOUND)
+    create_partest(omptest)
+    target_link_libraries(omptest OpenMP::OpenMP_CXX)
 endif()
