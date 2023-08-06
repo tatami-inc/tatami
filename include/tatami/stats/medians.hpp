@@ -117,7 +117,7 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
     }
 
     return output;
-};
+}
 /**
  * @endcond
  */

@@ -158,7 +158,7 @@ std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V&
     std::partial_sum(output.begin(), output.end(), output.begin());
 
     return output;
-};
+}
 
 }
 
