@@ -13,7 +13,7 @@ add_library(tatami::tatami ALIAS tatami)
 include(GNUInstallDirs)
 target_include_directories(tatami INTERFACE 
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
-    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/tatami>"
+    "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/tatami_tatami>"
 )
 
 # Building the test-related machinery, if we are compiling this library directly.
@@ -39,7 +39,7 @@ endif()
 include(CMakePackageConfigHelpers)
 
 install(DIRECTORY include/
-    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/tatami)
+    DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/tatami_tatami)
 
 install(TARGETS tatami 
     EXPORT tatamiTargets)
