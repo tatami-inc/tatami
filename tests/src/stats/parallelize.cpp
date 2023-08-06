@@ -64,7 +64,6 @@ TEST(ParallelizeTest, TypeCheck2) {
     EXPECT_EQ(length, std::vector<unsigned char>(1000, -1));
 }
 
-#ifndef CUSTOM_PARALLEL_TEST
 TEST(ParallelizeTest, ErrorChecks) {
     EXPECT_ANY_THROW({
         try {
@@ -88,4 +87,3 @@ TEST(ParallelizeTest, ErrorChecks) {
         }
     });
 }
-#endif
