@@ -26,6 +26,7 @@ namespace tatami {
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
  * @tparam IndexStorage_ Vector containing the subset indices.
+ * Any class implementing `[`, `size()`, `begin()` and `end()` can be used here.
  */
 template<int margin_, typename Value_, typename Index_, class IndexStorage_>
 class DelayedSubsetSorted : public Matrix<Value_, Index_> {

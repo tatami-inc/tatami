@@ -28,7 +28,7 @@ namespace tatami {
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Integer type of the row/column indices.
  * @tparam IndexStorage_ Vector containing the subset indices, to be automatically deduced.
- * Any class supporting 
+ * Any class implementing `[`, `size()`, `begin()` and `end()` can be used here.
  *
  * @param p Pointer to a (possibly `const`) `Matrix`.
  * @param idx Instance of the index vector.
