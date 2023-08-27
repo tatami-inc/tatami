@@ -6,6 +6,7 @@
 #include "DelayedSubsetUnique.hpp"
 #include "DelayedSubset.hpp"
 #include "DelayedSubsetBlock.hpp"
+#include "../utils/ArrayView.hpp"
 
 #include <algorithm>
 #include <memory>
@@ -27,6 +28,7 @@ namespace tatami {
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Integer type of the row/column indices.
  * @tparam IndexStorage_ Vector containing the subset indices, to be automatically deduced.
+ * Any class implementing `[`, `size()`, `begin()` and `end()` can be used here.
  *
  * @param p Pointer to a (possibly `const`) `Matrix`.
  * @param idx Instance of the index vector.
@@ -68,7 +70,7 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
             }
 
             if (consecutive) {
-                auto start = (idx.empty() ? 0 : idx[0]);
+                auto start = (idx.size() ? idx[0] : 0);
                 return std::shared_ptr<Matrix<Value_, Index_> >(
                     new DelayedSubsetBlock<margin_, Value_, Index_>(std::move(p), start, idx.size())
                 );
