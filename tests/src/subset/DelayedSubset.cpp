@@ -483,3 +483,15 @@ TEST(DelayedSubset, ConstOverload) {
     EXPECT_EQ(sub->ncol(), NC);
     EXPECT_EQ(sub->nrow(), subset.size());
 }
+
+TEST(DelayedSubset, ArrayView) {
+    int NR = 9, NC = 7;
+    auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
+
+    std::vector<int> subset{ 1, 3, 5 };
+    tatami::ArrayView<int> aview(subset.data(), subset.size());
+
+    auto sub = tatami::make_DelayedSubset<0>(dense, subset);
+    EXPECT_EQ(sub->ncol(), NC);
+    EXPECT_EQ(sub->nrow(), subset.size());
+}
