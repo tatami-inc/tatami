@@ -99,7 +99,7 @@ macro(create_partest target)
         tatami
     )
 
-#    target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
     if(DO_COVERAGE)
         target_compile_options(${target} PRIVATE -O0 -g --coverage)
