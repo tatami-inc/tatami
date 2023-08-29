@@ -33,6 +33,8 @@
 #include "stats/sums.hpp"
 #include "stats/variances.hpp"
 #include "stats/medians.hpp"
+#include "stats/ranges.hpp"
+#include "stats/utils.hpp"
 
 #define TATAMI_VERSION_MAJOR 1
 #define TATAMI_VERSION_MINOR 0
