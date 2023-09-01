@@ -862,11 +862,25 @@
     <filename>medians_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
+      <type>void</type>
+      <name>column_medians</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>acacb9908f0da41539141c7a1e5dbd9d8</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_medians</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a44202790861791b1ed9df6d480c69f6a</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_medians</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a81883438d8c410229b3b5376901781ee</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -882,11 +896,25 @@
     <filename>ranges_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
+      <type>void</type>
+      <name>column_maxs</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad1ad5caa7b450d23c77d1e6802f2f889</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_maxs</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a8102a2423efab5e329543f4235ac2290</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_maxs</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ae90831216c20765388b8b3c22824cfa5</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -896,11 +924,25 @@
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>column_mins</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a17ac7430be0e54321d5c45e994fe8610</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_mins</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a60e44772f82183100c7c25c181479b56</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_mins</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a20c4a739dddec74b8bdfd26ced6ebbd0</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -910,11 +952,25 @@
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>column_ranges</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad4390679cdb6bdbf51dc4487ea53769d</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *min_output, Output_ *max_output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt;</type>
       <name>column_ranges</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab5eff79824930c458e730d23f640c1ab</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_ranges</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a09ddfe3ed583c39be72dd130c7a3bbd8</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *min_output, Output_ *max_output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt;</type>
@@ -930,11 +986,25 @@
     <filename>sums_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
+      <type>void</type>
+      <name>column_sums</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a723f7f3f2a0550b4416e104f966b0291</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_sums</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a3aab6733d637b66abdf45f7300d2e1ba</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_sums</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a336658acf30078e81ca709846bd1c480</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -1012,11 +1082,25 @@
       <arglist>(size_t n, Output_ *means, Output_ *vars, const Nonzero_ *nonzeros, int count)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>column_variances</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a51bb7270793ca7606dc721f06253355a</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_variances</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ac37af9a76d15f08a3634881696a27f65</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_variances</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a05d5c8c0d94e8b2a42183ca9b6d16a28</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -5242,11 +5326,25 @@
       <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>column_medians</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>acacb9908f0da41539141c7a1e5dbd9d8</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_medians</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a44202790861791b1ed9df6d480c69f6a</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_medians</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a81883438d8c410229b3b5376901781ee</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -5256,11 +5354,25 @@
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>column_maxs</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad1ad5caa7b450d23c77d1e6802f2f889</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_maxs</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a8102a2423efab5e329543f4235ac2290</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_maxs</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ae90831216c20765388b8b3c22824cfa5</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -5270,11 +5382,25 @@
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>column_mins</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a17ac7430be0e54321d5c45e994fe8610</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_mins</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a60e44772f82183100c7c25c181479b56</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_mins</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a20c4a739dddec74b8bdfd26ced6ebbd0</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -5284,11 +5410,25 @@
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>column_ranges</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ad4390679cdb6bdbf51dc4487ea53769d</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *min_output, Output_ *max_output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt;</type>
       <name>column_ranges</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab5eff79824930c458e730d23f640c1ab</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_ranges</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a09ddfe3ed583c39be72dd130c7a3bbd8</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *min_output, Output_ *max_output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt;</type>
@@ -5298,11 +5438,25 @@
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>column_sums</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a723f7f3f2a0550b4416e104f966b0291</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_sums</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a3aab6733d637b66abdf45f7300d2e1ba</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_sums</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a336658acf30078e81ca709846bd1c480</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -5326,11 +5480,25 @@
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>column_variances</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a51bb7270793ca7606dc721f06253355a</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
       <name>column_variances</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ac37af9a76d15f08a3634881696a27f65</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_variances</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a05d5c8c0d94e8b2a42183ca9b6d16a28</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>

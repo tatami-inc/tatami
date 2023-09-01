@@ -4,10 +4,10 @@ var searchData=
   ['reference_1',['reference',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#ab83a68ab47e92b1265fd043bc4351be9',1,'tatami::SomeNumericArray::Iterator']]],
   ['retrieve_5fcompressed_5fsparse_5fcontents_2',['retrieve_compressed_sparse_contents',['../namespacetatami.html#ad1aee6313d02036d2f56703f372e1df6',1,'tatami']]],
   ['retrieve_5ffragmented_5fsparse_5fcontents_3',['retrieve_fragmented_sparse_contents',['../namespacetatami.html#a012194aba94c37703f15555247e02155',1,'tatami']]],
-  ['row_5fmaxs_4',['row_maxs',['../namespacetatami.html#a47890bfd538f65971f9e5dba5e1ed785',1,'tatami']]],
-  ['row_5fmedians_5',['row_medians',['../namespacetatami.html#ab877f67694b3fa500f59469f044b1c01',1,'tatami']]],
-  ['row_5fmins_6',['row_mins',['../namespacetatami.html#a3bcdcb0499b36b5b844ebd88fc30eefe',1,'tatami']]],
-  ['row_5franges_7',['row_ranges',['../namespacetatami.html#a2b2475a166ad744b31b1275e26e562be',1,'tatami']]],
-  ['row_5fsums_8',['row_sums',['../namespacetatami.html#a53a658059404691856bef57fb85d83d6',1,'tatami']]],
-  ['row_5fvariances_9',['row_variances',['../namespacetatami.html#ab806279616e19f6150376a7c07d5b64b',1,'tatami']]]
+  ['row_5fmaxs_4',['row_maxs',['../namespacetatami.html#ae90831216c20765388b8b3c22824cfa5',1,'tatami::row_maxs(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#a47890bfd538f65971f9e5dba5e1ed785',1,'tatami::row_maxs(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['row_5fmedians_5',['row_medians',['../namespacetatami.html#a81883438d8c410229b3b5376901781ee',1,'tatami::row_medians(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#ab877f67694b3fa500f59469f044b1c01',1,'tatami::row_medians(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['row_5fmins_6',['row_mins',['../namespacetatami.html#a20c4a739dddec74b8bdfd26ced6ebbd0',1,'tatami::row_mins(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#a3bcdcb0499b36b5b844ebd88fc30eefe',1,'tatami::row_mins(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['row_5franges_7',['row_ranges',['../namespacetatami.html#a09ddfe3ed583c39be72dd130c7a3bbd8',1,'tatami::row_ranges(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *min_output, Output_ *max_output, int threads=1)'],['../namespacetatami.html#a2b2475a166ad744b31b1275e26e562be',1,'tatami::row_ranges(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['row_5fsums_8',['row_sums',['../namespacetatami.html#a336658acf30078e81ca709846bd1c480',1,'tatami::row_sums(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#a53a658059404691856bef57fb85d83d6',1,'tatami::row_sums(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['row_5fvariances_9',['row_variances',['../namespacetatami.html#a05d5c8c0d94e8b2a42183ca9b6d16a28',1,'tatami::row_variances(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#ab806279616e19f6150376a7c07d5b64b',1,'tatami::row_variances(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]]
 ];

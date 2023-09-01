@@ -1,11 +1,11 @@
 var searchData=
 [
-  ['column_5fmaxs_0',['column_maxs',['../namespacetatami.html#a8102a2423efab5e329543f4235ac2290',1,'tatami']]],
-  ['column_5fmedians_1',['column_medians',['../namespacetatami.html#a44202790861791b1ed9df6d480c69f6a',1,'tatami']]],
-  ['column_5fmins_2',['column_mins',['../namespacetatami.html#a60e44772f82183100c7c25c181479b56',1,'tatami']]],
-  ['column_5franges_3',['column_ranges',['../namespacetatami.html#ab5eff79824930c458e730d23f640c1ab',1,'tatami']]],
-  ['column_5fsums_4',['column_sums',['../namespacetatami.html#a3aab6733d637b66abdf45f7300d2e1ba',1,'tatami']]],
-  ['column_5fvariances_5',['column_variances',['../namespacetatami.html#ac37af9a76d15f08a3634881696a27f65',1,'tatami']]],
+  ['column_5fmaxs_0',['column_maxs',['../namespacetatami.html#ad1ad5caa7b450d23c77d1e6802f2f889',1,'tatami::column_maxs(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#a8102a2423efab5e329543f4235ac2290',1,'tatami::column_maxs(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['column_5fmedians_1',['column_medians',['../namespacetatami.html#acacb9908f0da41539141c7a1e5dbd9d8',1,'tatami::column_medians(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#a44202790861791b1ed9df6d480c69f6a',1,'tatami::column_medians(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['column_5fmins_2',['column_mins',['../namespacetatami.html#a17ac7430be0e54321d5c45e994fe8610',1,'tatami::column_mins(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#a60e44772f82183100c7c25c181479b56',1,'tatami::column_mins(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['column_5franges_3',['column_ranges',['../namespacetatami.html#ad4390679cdb6bdbf51dc4487ea53769d',1,'tatami::column_ranges(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *min_output, Output_ *max_output, int threads=1)'],['../namespacetatami.html#ab5eff79824930c458e730d23f640c1ab',1,'tatami::column_ranges(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['column_5fsums_4',['column_sums',['../namespacetatami.html#a723f7f3f2a0550b4416e104f966b0291',1,'tatami::column_sums(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#a3aab6733d637b66abdf45f7300d2e1ba',1,'tatami::column_sums(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
+  ['column_5fvariances_5',['column_variances',['../namespacetatami.html#a51bb7270793ca7606dc721f06253355a',1,'tatami::column_variances(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)'],['../namespacetatami.html#ac37af9a76d15f08a3634881696a27f65',1,'tatami::column_variances(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)']]],
   ['compress_5fsparse_5ftriplets_6',['compress_sparse_triplets',['../namespacetatami.html#ab17e92414b0bff60f7b7a6431ac8a330',1,'tatami']]],
   ['compressedsparsematrix_7',['CompressedSparseMatrix',['../classtatami_1_1CompressedSparseMatrix.html#a537979311be374af1b03e5770a1dde60',1,'tatami::CompressedSparseMatrix']]],
   ['compute_5fdirect_8',['compute_direct',['../variances_8hpp.html#a69156143bd931041e7a59f2ee469ff38',1,'tatami::stats::variances::compute_direct(const Value_ *ptr, size_t n)'],['../variances_8hpp.html#aa55280f08a8d90b49d37c8d1e87869c0',1,'tatami::stats::variances::compute_direct(const SparseRange&lt; Value_, Index_ &gt; &amp;range, size_t n)']]],
