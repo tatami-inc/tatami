@@ -22,15 +22,15 @@ namespace stats {
  */
 template<bool row_, typename Value_, typename Index_, typename Group_, typename Output_>
 void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* groups, const std::vector<Index_>& group_sizes, Output_* output, int threads) {
-    int dim = (row_ ? p->nrow() : p->ncol());
-    int otherdim = (row_ ? p->ncol() : p->nrow());
+    Index_ dim = (row_ ? p->nrow() : p->ncol());
+    Index_ otherdim = (row_ ? p->ncol() : p->nrow());
 
-    tatami::parallelize([&](int, int start, int len) -> void {
-        std::vector<double> xbuffer(otherdim);
+    tatami::parallelize([&](int, Index_ start, Index_ len) -> void {
+        std::vector<Value_> xbuffer(otherdim);
 
-        std::vector<std::vector<double> > workspace;
-        for (auto l : group_sizes) {
-            workspace.emplace_back(l);
+        std::vector<std::vector<double> > workspace(group_sizes.size());
+        for (size_t g = 0, gend = group_sizes.size(); g < gend; ++g) {
+            workspace[g].reserve(group_sizes[g]);
         }
 
         // Always convert to size_t when doing any pointer arithmetic.
@@ -41,11 +41,11 @@ void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* grou
             opt.sparse_ordered_index = false;
 
             auto ext = tatami::consecutive_extractor<row_, true>(p, start, len, opt);
-            std::vector<int> ibuffer(otherdim);
+            std::vector<Index_> ibuffer(otherdim);
 
-            for (int i = start, end = start + len; i < end; ++i) {
+            for (Index_ i = start, end = start + len; i < end; ++i) {
                 auto range = ext->fetch(i, xbuffer.data(), ibuffer.data());
-                for (int j = 0; j < range.number; ++j) {
+                for (Index_ j = 0; j < range.number; ++j) {
                     workspace[groups[range.index[j]]].push_back(range.value[j]);
                 }
 
@@ -59,9 +59,9 @@ void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* grou
 
         } else {
             auto ext = tatami::consecutive_extractor<row_, false>(p, start, len);
-            for (int i = start, end = start + len; i < end; ++i) {
+            for (Index_ i = start, end = start + len; i < end; ++i) {
                 auto ptr = ext->fetch(i, xbuffer.data());
-                for (int j = 0; j < otherdim; ++j) {
+                for (Index_ j = 0; j < otherdim; ++j) {
                     workspace[groups[j]].push_back(ptr[j]);
                 }
 
@@ -167,12 +167,12 @@ void column_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Grou
  */
 template<typename Output_ = double, typename Value_, typename Index_, typename Group_>
 std::vector<Output_> column_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Group_* group, int threads = 1) {
-    Index_ NC = p->ncol();
-    Index_ ngroups = (NC ? static_cast<Index_>(*std::max_element(group, group + NC)) + 1 : 0);
+    Index_ NR = p->nrow();
+    Index_ ngroups = (NR ? static_cast<Index_>(*std::max_element(group, group + NR)) + 1 : 0);
 
     std::vector<Index_> group_sizes(ngroups);
-    for (Index_ c = 0; c < NC; ++c) {
-        ++(group_sizes[group[c]]);
+    for (Index_ r = 0; r < NR; ++r) {
+        ++(group_sizes[group[r]]);
     }
 
     std::vector<Output_> output(static_cast<size_t>(ngroups) * static_cast<size_t>(p->ncol()));
