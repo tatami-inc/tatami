@@ -51,6 +51,7 @@ add_executable(
     src/stats/medians.cpp
     src/stats/ranges.cpp
     src/stats/parallelize.cpp
+    src/stats/grouped_medians.cpp
 
     src/utils/wrap_shared_ptr.cpp
     src/utils/SomeNumericArray.cpp
@@ -91,6 +92,7 @@ macro(create_partest target)
         src/stats/medians.cpp
         src/stats/ranges.cpp
         src/stats/parallelize.cpp
+        src/stats/grouped_medians.cpp
     )
 
     target_link_libraries(
