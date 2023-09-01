@@ -153,10 +153,10 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
                         }
                     } else {
                         if constexpr(store_min) {
-                            std::copy(ptr, ptr + len, min_out.data() + s);
+                            std::copy(ptr, ptr + len, min_out + s);
                         }
                         if constexpr(store_max) {
-                            std::copy(ptr, ptr + len, max_out.data() + s);
+                            std::copy(ptr, ptr + len, max_out + s);
                         }
                     }
                 }
@@ -178,6 +178,23 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
  * @tparam Index_ Type of the row/column indices.
  *
  * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of columns.
+ * On output, this contains the maximum value in each column.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void column_maxs(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    bool temp = false;
+    stats::dimension_extremes<false, Output_>(p, threads, temp, output);
+    return;
+}
+
+/**
+ * @tparam Output Type of the output value.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
  *
  * @return A vector of length equal to the number of columns, containing the maximum value in each column.
@@ -185,9 +202,25 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> column_maxs(const Matrix<Value_, Index_>* p, int threads = 1) {
     std::vector<Output_> output(p->ncol());
-    bool temp = false;
-    stats::dimension_extremes<false, Output_>(p, threads, temp, output);
+    column_maxs(p, output.data(), threads);
     return output;
+}
+
+/**
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output Type of the output value.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of rows.
+ * On output, this contains the maximum value in each row.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void row_maxs(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    bool temp = false;
+    stats::dimension_extremes<true, Output_>(p, threads, temp, output);
+    return;
 }
 
 /**
@@ -203,9 +236,25 @@ std::vector<Output_> column_maxs(const Matrix<Value_, Index_>* p, int threads = 
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> row_maxs(const Matrix<Value_, Index_>* p, int threads = 1) {
     std::vector<Output_> output(p->nrow());
-    bool temp = false;
-    stats::dimension_extremes<true, Output_>(p, threads, temp, output);
+    row_maxs(p, output.data(), threads);
     return output;
+}
+
+/**
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output Type of the output value.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of columns.
+ * On output, this contains the minimum value in each column.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void column_mins(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    bool temp = false;
+    stats::dimension_extremes<false, Output_>(p, threads, output, temp);
+    return; 
 }
 
 /**
@@ -221,9 +270,25 @@ std::vector<Output_> row_maxs(const Matrix<Value_, Index_>* p, int threads = 1) 
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> column_mins(const Matrix<Value_, Index_>* p, int threads = 1) {
     std::vector<Output_> output(p->ncol());
-    bool temp = false;
-    stats::dimension_extremes<false, Output_>(p, threads, output, temp);
+    column_mins(p, output.data(), threads);
     return output;
+}
+
+/**
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output Type of the output value.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of rows.
+ * On output, this is filled with the minimum value in each row.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void row_mins(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    bool temp = false;
+    stats::dimension_extremes<true, Output_>(p, threads, output, temp);
+    return;
 }
 
 /**
@@ -239,9 +304,26 @@ std::vector<Output_> column_mins(const Matrix<Value_, Index_>* p, int threads = 
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> row_mins(const Matrix<Value_, Index_>* p, int threads = 1) {
     std::vector<Output_> output(p->nrow());
-    bool temp = false;
-    stats::dimension_extremes<true, Output_>(p, threads, output, temp);
+    row_mins(p, output.data(), threads);
     return output;
+}
+
+/**
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output Type of the output value.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] min_output Pointer to an array of length equal to the number of rows.
+ * On output, this contains the minimum value per row.
+ * @param[out] max_output Pointer to an array of length equal to the number of rows.
+ * On output, this contains the maximum value per row.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void column_ranges(const Matrix<Value_, Index_>* p, Output_* min_output, Output_* max_output, int threads = 1) {
+    stats::dimension_extremes<false, Output_>(p, threads, min_output, max_output);
+    return;
 }
 
 /**
@@ -252,14 +334,32 @@ std::vector<Output_> row_mins(const Matrix<Value_, Index_>* p, int threads = 1) 
  * @param p Pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
  *
- * @return A pair of vectors, each of length equal to the number of rows.
- * The first and second vector contains the minimum and maximum value per row, respectively.
+ * @return A pair of vectors, each of length equal to the number of columns.
+ * The first and second vector contains the minimum and maximum value per column, respectively.
  */
 template<typename Output_ = double, typename Value_, typename Index_>
 std::pair<std::vector<Output_>, std::vector<Output_> > column_ranges(const Matrix<Value_, Index_>* p, int threads = 1) {
     std::vector<Output_> mins(p->ncol()), maxs(p->ncol());
-    stats::dimension_extremes<false, Output_>(p, threads, mins, maxs);
+    column_ranges(p, mins.data(), maxs.data(), threads);
     return std::make_pair(std::move(mins), std::move(maxs));
+}
+
+/**
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output Type of the output value.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] min_output Pointer to an array of length equal to the number of rows.
+ * On output, this contains the minimum value per row.
+ * @param[out] max_output Pointer to an array of length equal to the number of rows.
+ * On output, this contains the maximum value per row.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void row_ranges(const Matrix<Value_, Index_>* p, Output_* min_output, Output_* max_output, int threads = 1) {
+    stats::dimension_extremes<true, Output_>(p, threads, min_output, max_output);
+    return;
 }
 
 /**
@@ -276,7 +376,7 @@ std::pair<std::vector<Output_>, std::vector<Output_> > column_ranges(const Matri
 template<typename Output_ = double, typename Value_, typename Index_>
 std::pair<std::vector<Output_>, std::vector<Output_> > row_ranges(const Matrix<Value_, Index_>* p, int threads = 1) {
     std::vector<Output_> mins(p->nrow()), maxs(p->nrow());
-    stats::dimension_extremes<true, Output_>(p, threads, mins, maxs);
+    row_ranges(p, mins.data(), maxs.data(), threads);
     return std::make_pair(std::move(mins), std::move(maxs));
 }
 

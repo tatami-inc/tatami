@@ -19,10 +19,9 @@ namespace stats {
 /**
  * @cond
  */
-template<typename Output_, bool row_, typename Value_, typename Index_>
-std::vector<Output_> dimension_sums(const Matrix<Value_, Index_>* p, int threads) {
+template<bool row_, typename Value_, typename Index_, typename Output_>
+void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int threads) {
     auto dim = (row_ ? p->nrow() : p->ncol());
-    std::vector<Output_> output(dim);
     auto otherdim = (row_ ? p->ncol() : p->nrow());
     const bool direct = p->prefer_rows() == row_;
 
@@ -81,12 +80,28 @@ std::vector<Output_> dimension_sums(const Matrix<Value_, Index_>* p, int threads
         }
     }
 
-    return output;
+    return;
 }
 /**
  * @endcond
  */
 
+}
+
+/**
+ * @tparam Value_ Type of the matrix value, should be summable.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output_ Type of the output value.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of columns.
+ * On output, this will store the sum of values for each column.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void column_sums(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    stats::dimension_sums<false>(p, output, threads);
+    return;
 }
 
 /**
@@ -101,7 +116,25 @@ std::vector<Output_> dimension_sums(const Matrix<Value_, Index_>* p, int threads
  */
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> column_sums(const Matrix<Value_, Index_>* p, int threads = 1) {
-    return stats::dimension_sums<Output_, false>(p, threads);
+    std::vector<Output_> output(p->ncol());
+    column_sums(p, output.data(), threads);
+    return output;
+}
+
+/**
+ * @tparam Output_ Type of the output value.
+ * @tparam Value_ Type of the matrix value, should be summable.
+ * @tparam Index_ Type of the row/column indices.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of rows.
+ * On output, this will contain the row sums.
+ * @param threads Number of threads to use.
+ */
+template<typename Output_ = double, typename Value_, typename Index_>
+void row_sums(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    stats::dimension_sums<true>(p, output, threads);
+    return;
 }
 
 /**
@@ -116,7 +149,9 @@ std::vector<Output_> column_sums(const Matrix<Value_, Index_>* p, int threads = 
  */
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> row_sums(const Matrix<Value_, Index_>* p, int threads = 1) {
-    return stats::dimension_sums<Output_, true>(p, threads);
+    std::vector<Output_> output(p->nrow());
+    row_sums(p, output.data(), threads);
+    return output;
 }
 
 }
