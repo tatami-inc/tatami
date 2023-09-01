@@ -230,10 +230,9 @@ void finish_running(size_t n, Output_* means, Output_* vars, const Nonzero_* non
 /**
  * @cond
  */
-template<typename Output_, bool row_, typename Value_, typename Index_>
-std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int threads) {
+template<bool row_, typename Value_, typename Index_, typename Output_>
+void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int threads) {
     auto dim = (row_ ? p->nrow() : p->ncol());
-    std::vector<Output_> output(dim);
     auto otherdim = (row_ ? p->ncol() : p->nrow());
     const bool direct = p->prefer_rows() == row_;
 
@@ -259,7 +258,7 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
 
                 std::vector<Output_> running_means(len);
                 std::vector<Index_> running_nzeros(len);
-                auto running_vars = output.data() + s;
+                auto running_vars = output + s;
                 int counter = 0;
 
                 for (Index_ i = 0; i < otherdim; ++i) {
@@ -288,7 +287,7 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
                 std::vector<Value_> buffer(len);
 
                 std::vector<Output_> running_means(len);
-                auto running_vars = output.data() + s;
+                auto running_vars = output + s;
                 int counter = 0;
 
                 for (Index_ i = 0; i < otherdim; ++i) {
@@ -299,8 +298,6 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
             }, dim, threads);
         }
     }
-
-    return output;
 }
 /**
  * @endcond
@@ -309,10 +306,26 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
 }
 
 /**
+ * @tparam Value_ Type of the matrix value, should be numeric.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output_ Type of the output value.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of columns.
+ * On output, this will contain the column variances.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void column_variances(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    stats::dimension_variances<false>(p, output, threads);
+    return;
+}
+
+/**
  * This uses the usual algorithm for matrices where `tatami::Matrix::prefer_rows()` is false, otherwise it uses Welford's algorithm.
  * As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.
  *
- * @tparam Output Type of the output value.
+ * @tparam Output_ Type of the output value.
  * @tparam Value_ Type of the matrix value, should be numeric.
  * @tparam Index_ Type of the row/column indices.
  *
@@ -323,14 +336,32 @@ std::vector<Output_> dimension_variances(const Matrix<Value_, Index_>* p, int th
  */
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> column_variances(const Matrix<Value_, Index_>* p, int threads = 1) {
-    return stats::dimension_variances<Output_, false>(p, threads);
+    std::vector<Output_> output(p->ncol());
+    column_variances(p, output.data(), threads);
+    return output;
+}
+
+/**
+ * @tparam Value_ Type of the matrix value, should be numeric.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output_ Type of the output value.
+ *
+ * @param p Pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of rows.
+ * On output, this will be filled with the row variances.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void row_variances(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    stats::dimension_variances<true>(p, output, threads);
+    return;
 }
 
 /**
  * This uses the usual algorithm for matrices where `tatami::Matrix::prefer_rows()` is true, otherwise it uses Welford's algorithm.
  * As a result, the computed variances will be slightly different (within numerical precision) for row- and column-major matrices.
  *
- * @tparam Output Type of the output value.
+ * @tparam Output_ Type of the output value.
  * @tparam Value_ Type of the matrix value, should be numeric.
  * @tparam Index_ Type of the row/column indices.
  *
@@ -341,7 +372,9 @@ std::vector<Output_> column_variances(const Matrix<Value_, Index_>* p, int threa
  */
 template<typename Output_ = double, typename Value_, typename Index_>
 std::vector<Output_> row_variances(const Matrix<Value_, Index_>* p, int threads = 1) {
-    return stats::dimension_variances<Output_, true>(p, threads);
+    std::vector<Output_> output(p->nrow());
+    row_variances(p, output.data(), threads);
+    return output;
 }
 
 }

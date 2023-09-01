@@ -43,10 +43,9 @@ Output_ compute_median(Value_* buffer, size_t n) {
     }
 }
 
-template<typename Output_, bool row_, typename Value_, typename Index_>
-std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int threads) {
+template<bool row_, typename Value_, typename Index_, typename Output_>
+void dimension_medians(const Matrix<Value_, Index_>* p, Output_* output, int threads) {
     auto dim = (row_ ? p->nrow() : p->ncol());
-    std::vector<Output_> output(dim);
     auto otherdim = (row_ ? p->ncol() : p->nrow());
 
     if (p->sparse()) {
@@ -115,13 +114,26 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
             }
         }, dim, threads);
     }
-
-    return output;
 }
 /**
  * @endcond
  */
 
+}
+
+/**
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output_ Type of the output.
+ *
+ * @param p Shared pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of columns.
+ * On output, this will contain the column medians.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void column_medians(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    stats::dimension_medians<false>(p, output, threads);
 }
 
 /**
@@ -135,14 +147,31 @@ std::vector<Output_> dimension_medians(const Matrix<Value_, Index_>* p, int thre
  * @return A vector of length equal to the number of columns, containing the column medians.
  */
 template<typename Output_ = double, typename Value_, typename Index_>
-inline std::vector<Output_> column_medians(const Matrix<Value_, Index_>* p, int threads = 1) {
-     return stats::dimension_medians<Output_, false>(p, threads);
+std::vector<Output_> column_medians(const Matrix<Value_, Index_>* p, int threads = 1) {
+    std::vector<Output_> output(p->ncol());
+    column_medians(p, output.data(), threads);
+    return output;
 }
 
 /**
- * @tparam Output Type of the output.
- * @tparam T Type of the matrix value.
- * @tparam IDX Type of the row/column indices.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
+ * @tparam Output_ Type of the output.
+ *
+ * @param p Shared pointer to a `tatami::Matrix`.
+ * @param[out] output Pointer to an array of length equal to the number of rows.
+ * On output, this will contain the row medians.
+ * @param threads Number of threads to use.
+ */
+template<typename Value_, typename Index_, typename Output_>
+void row_medians(const Matrix<Value_, Index_>* p, Output_* output, int threads = 1) {
+    stats::dimension_medians<true>(p, output, threads);
+}
+
+/**
+ * @tparam Output_ Type of the output.
+ * @tparam Value_ Type of the matrix value.
+ * @tparam Index_ Type of the row/column indices.
  *
  * @param p Shared pointer to a `tatami::Matrix`.
  * @param threads Number of threads to use.
@@ -150,8 +179,10 @@ inline std::vector<Output_> column_medians(const Matrix<Value_, Index_>* p, int 
  * @return A vector of length equal to the number of rows, containing the row medians.
  */
 template<typename Output_ = double, typename Value_, typename Index_>
-inline std::vector<Output_> row_medians(const Matrix<Value_, Index_>* p, int threads = 1) {
-    return stats::dimension_medians<Output_, true>(p, threads);
+std::vector<Output_> row_medians(const Matrix<Value_, Index_>* p, int threads = 1) {
+    std::vector<Output_> output(p->nrow());
+    row_medians(p, output.data(), threads);
+    return output;
 }
 
 }
