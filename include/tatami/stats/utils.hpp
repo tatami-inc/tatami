@@ -6,6 +6,8 @@
 #include "../utils/Oracles.hpp"
 
 #include <cmath>
+#include <vector>
+#include <algorithm>
 
 #ifndef TATAMI_CUSTOM_PARALLEL
 #ifndef _OPENMP
@@ -13,7 +15,6 @@
 #endif
 #include <string>
 #include <stdexcept>
-#include <vector>
 #endif
 
 /**
@@ -141,6 +142,22 @@ auto consecutive_extractor(const Matrix<Value_, Index_>* mat, Index_ iter_start,
     }
     return ext;
 }
+
+/**
+ * @cond
+ */
+template<typename Group_, typename Index_>
+std::vector<Index_> tabulate_groups(const Group_* group, Index_ n) {
+    Index_ ngroups = (n ? static_cast<Index_>(*std::max_element(group, group + n)) + 1 : 0);
+    std::vector<Index_> group_sizes(ngroups);
+    for (Index_ r = 0; r < n; ++r) {
+        ++(group_sizes[group[r]]);
+    }
+    return group_sizes;
+}
+/**
+ * @endcond
+ */
 
 }
 
