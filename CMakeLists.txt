@@ -1,14 +1,14 @@
 cmake_minimum_required(VERSION 3.24)
 
 project(tatami
-    VERSION 2.0.3
+    VERSION 2.1.0
     DESCRIPTION "A C++ interface for assorted matrix representations"
     LANGUAGES CXX)
 
-set(CMAKE_CXX_STANDARD 17)
-
 add_library(tatami INTERFACE)
 add_library(tatami::tatami ALIAS tatami)
+
+target_compile_features(tatami INTERFACE cxx_std_17)
 
 include(GNUInstallDirs)
 target_include_directories(tatami INTERFACE 
