@@ -219,7 +219,7 @@ $(function() {
 <div class="line">        <span class="comment">// Do something in each thread.</span></div>
 <div class="line">    }</div>
 <div class="line">}, NR, nthreads);</div>
-<div class="ttc" id="anamespacetatami_html_a41e252422f9959a123ba390a941ae76f"><div class="ttname"><a href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, size_t threads)</div><div class="ttdef"><b>Definition:</b> utils.hpp:53</div></div>
+<div class="ttc" id="anamespacetatami_html_a41e252422f9959a123ba390a941ae76f"><div class="ttname"><a href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, size_t threads)</div><div class="ttdef"><b>Definition:</b> utils.hpp:54</div></div>
 </div><!-- fragment --><h2>Defining an oracle</h2>
 <p >Advanced users can provide each <code>Extractor</code> with an <code>Oracle</code> that specifies the rows/columns to be accessed by future calls to <code>fetch()</code>. Knowledge of the future access pattern enables optimizations in some <code>Matrix</code> implementations, e.g., file-backed matrices can reduce the number of disk reads by pre-fetching the right data for future accesses. The most obvious use case involves accessing consecutive rows/columns:</p>
 <div class="fragment"><div class="line"><span class="keyword">auto</span> wrk = mat-&gt;dense_row();</div>
