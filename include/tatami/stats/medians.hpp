@@ -43,6 +43,51 @@ Output_ compute_median(Value_* buffer, size_t n) {
     }
 }
 
+template<typename Output_ = double, typename Value_>
+Output_ compute_median(Value_* buffer, size_t nnz, size_t nall) {
+    if (nnz == nall) {
+        return compute_median<Output_>(buffer, nall);
+    }
+
+    if (nnz * 2 < nall) {
+        return 0; // zero is the median if there are too many zeroes.
+    } 
+    
+    size_t halfway = nall / 2;
+    bool is_even = (nall % 2 == 0);
+
+    auto vend = buffer + nnz;
+    std::sort(buffer, vend);
+    size_t zeropos = std::lower_bound(buffer, vend, 0) - buffer;
+    size_t nzero = nall - nnz;
+
+    if (!is_even) {
+        if (zeropos > halfway) {
+            return buffer[halfway];
+        } else if (halfway >= zeropos + nzero) {
+            return buffer[halfway - nzero];
+        } else {
+            return 0; // zero is the median.
+        }
+    }
+
+    double tmp = 0;
+    if (zeropos > halfway) {
+        tmp = buffer[halfway] + buffer[halfway - 1];
+    } else if (zeropos == halfway) {
+        // guaranteed to be at least 1 zero.
+        tmp += buffer[halfway - 1];
+    } else if (zeropos < halfway && zeropos + nzero > halfway) {
+        ; // zero is the median.
+    } else if (zeropos + nzero == halfway) {
+        // guaranteed to be at least 1 zero.
+        tmp += buffer[halfway - nzero];
+    } else {
+        tmp = buffer[halfway - nzero] + buffer[halfway - nzero - 1];
+    }
+    return tmp / 2;
+}
+
 template<bool row_, typename Value_, typename Index_, typename Output_>
 void dimension_medians(const Matrix<Value_, Index_>* p, Output_* output, int threads) {
     auto dim = (row_ ? p->nrow() : p->ncol());
@@ -60,47 +105,7 @@ void dimension_medians(const Matrix<Value_, Index_>* p, Output_* output, int thr
             auto vbuffer = buffer.data();
             for (Index_ i = s, e = s + l; i < e; ++i) {
                 auto range = ext->fetch_copy(i, vbuffer, NULL);
-                auto n = range.number;
-
-                if (n == otherdim) {
-                    output[i] = compute_median<Output_>(vbuffer, otherdim);
-                } else if (n * 2 < otherdim) {
-                    output[i] = 0; // zero is the median if there are too many zeroes.
-                } else {
-                    size_t halfway = otherdim / 2;
-                    bool is_even = (otherdim % 2 == 0);
-
-                    auto vend = vbuffer  + n;
-                    std::sort(vbuffer, vend);
-                    size_t zeropos = std::lower_bound(vbuffer, vend, 0) - vbuffer;
-                    size_t nzero = otherdim - n;
-
-                    if (!is_even) {
-                        if (zeropos > halfway) {
-                            output[i] = vbuffer[halfway];
-                        } else if (halfway >= zeropos + nzero) {
-                            output[i] = vbuffer[halfway - nzero];
-                        } else {
-                            output[i] = 0; // zero is the median.
-                        }
-                    } else {
-                        double tmp = 0;
-                        if (zeropos > halfway) {
-                            tmp = vbuffer[halfway] + vbuffer[halfway - 1];
-                        } else if (zeropos == halfway) {
-                            // guaranteed to be at least 1 zero.
-                            tmp += vbuffer[halfway - 1];
-                        } else if (zeropos < halfway && zeropos + nzero > halfway) {
-                            ; // zero is the median.
-                        } else if (zeropos + nzero == halfway) {
-                            // guaranteed to be at least 1 zero.
-                            tmp += vbuffer[halfway - nzero];
-                        } else {
-                            tmp = vbuffer[halfway - nzero] + vbuffer[halfway - nzero - 1];
-                        }
-                        output[i] = tmp / 2;
-                    }
-                }
+                output[i] = compute_median<Output_>(vbuffer, range.number, otherdim);
             }
         }, dim, threads);
 
