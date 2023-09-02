@@ -930,6 +930,20 @@
     <filename>medians_8hpp.html</filename>
     <namespace>tatami</namespace>
     <member kind="function">
+      <type>Output_</type>
+      <name>compute_median</name>
+      <anchorfile>medians_8hpp.html</anchorfile>
+      <anchor>a528296d883185475adcb3f298b5f4312</anchor>
+      <arglist>(Value_ *ptr, size_t n)</arglist>
+    </member>
+    <member kind="function">
+      <type>Output_</type>
+      <name>compute_median</name>
+      <anchorfile>medians_8hpp.html</anchorfile>
+      <anchor>abe4f9766330a2fc992338d4d5acf5ac2</anchor>
+      <arglist>(Value_ *ptr, size_t nnz, size_t nall)</arglist>
+    </member>
+    <member kind="function">
       <type>void</type>
       <name>column_medians</name>
       <anchorfile>namespacetatami.html</anchorfile>
