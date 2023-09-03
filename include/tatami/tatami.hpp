@@ -38,10 +38,6 @@
 #include "stats/grouped_medians.hpp"
 #include "stats/grouped_sums.hpp"
 
-#define TATAMI_VERSION_MAJOR 1
-#define TATAMI_VERSION_MINOR 0
-#define TATAMI_VERSION_PATCH 0
-
 /**
  * @file tatami.hpp
  * @brief Flexible representations of matrix data
