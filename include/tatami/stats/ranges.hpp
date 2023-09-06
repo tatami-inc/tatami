@@ -45,19 +45,27 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
                 for (Index_ i = s, e = s + l; i < e; ++i) {
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
 
-                    // If there's no non-zero values, we just leave the min/max as zero.
                     if (out.number) {
                         if constexpr(store_min) {
                             auto minned = *std::min_element(out.value, out.value + out.number);
-                            if (minned < 0 || out.number == otherdim) {
-                                min_out[i] = minned;
+                            if (minned > 0 && out.number != otherdim) {
+                                minned = 0;
                             }
+                            min_out[i] = minned;
                         }
                         if constexpr(store_max) {
                             auto maxed = *std::max_element(out.value, out.value + out.number);
-                            if (maxed > 0 || out.number == otherdim) {
-                                max_out[i] = maxed;
+                            if (maxed < 0 && out.number != otherdim) {
+                                maxed = 0;
                             }
+                            max_out[i] = maxed;
+                        }
+                    } else {
+                        if constexpr(store_min) {
+                            min_out[i] = 0;
+                        }
+                        if constexpr(store_max) {
+                            max_out[i] = 0;
                         }
                     }
                 }
@@ -75,26 +83,35 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
                     auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
                     for (Index_ j = 0; j < out.number; ++j) {
                         auto idx = out.index[j];
+                        auto& c = counter[idx - s];
                         auto val = static_cast<Output_>(out.value[j]);
                         if constexpr(store_min) {
                             auto& last = min_out[idx];
-                            if (i == 0 || last > val) {
+                            if (c == 0 || last > val) {
                                 last = val;
                             }
                         } 
                         if constexpr(store_max) {
                             auto& last = max_out[idx];
-                            if (i == 0 || last < val) {
+                            if (c == 0 || last < val) {
                                 last = val;
                             }
                         }
-                        ++counter[idx - s];
+                        ++c;
                     }
                 }
 
                 // Handling the zeros.
                 for (Index_ i = s, e = s + l; i < e; ++i) {
-                    if (counter[i - s] < otherdim) {
+                    auto& c = counter[i - s];
+                    if (c == 0) {
+                        if constexpr(store_min) {
+                            min_out[i] = 0;
+                        }
+                        if constexpr(store_max) {
+                            max_out[i] = 0;
+                        }
+                    } else if (counter[i - s] < otherdim) {
                         if constexpr(store_min) {
                             if (min_out[i] > 0) {
                                 min_out[i] = 0;

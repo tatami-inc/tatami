@@ -5,6 +5,7 @@
 #include "utils.hpp"
 #include <vector>
 #include <numeric>
+#include <algorithm>
 
 /**
  * @file sums.hpp
@@ -39,6 +40,8 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
             }, dim, threads);
 
         } else {
+            std::fill(output, output + dim, static_cast<Output_>(0));
+
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, l);
                 auto len = ext->block_length;
@@ -66,6 +69,8 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
             }, dim, threads);
 
         } else {
+            std::fill(output, output + dim, static_cast<Output_>(0));
+
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, l);
                 std::vector<Value_> buffer(ext->block_length);
