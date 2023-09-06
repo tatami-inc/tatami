@@ -25,7 +25,7 @@ void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* grou
     Index_ dim = (row_ ? p->nrow() : p->ncol());
     Index_ otherdim = (row_ ? p->ncol() : p->nrow());
 
-    tatami::parallelize([&](int, Index_ start, Index_ len) -> void {
+    parallelize([&](int, Index_ start, Index_ len) -> void {
         std::vector<Value_> xbuffer(otherdim);
 
         size_t ngroups = group_sizes.size();

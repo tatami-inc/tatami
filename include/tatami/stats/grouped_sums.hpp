@@ -25,29 +25,33 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
     Index_ dim = (row_ ? p->nrow() : p->ncol());
     Index_ otherdim = (row_ ? p->ncol() : p->nrow());
 
-    tatami::parallelize([&](int, Index_ start, Index_ len) -> void {
-        // Always convert to size_t when doing any pointer arithmetic.
-        auto curoutput = output + static_cast<size_t>(start) * num_groups;
-        std::fill(curoutput, curoutput + num_groups * static_cast<size_t>(len), 0.0);
+    if (p->sparse()) {
+        Options opt;
+        opt.sparse_ordered_index = false;
 
-        if (p->sparse()) {
-            Options opt;
-            opt.sparse_ordered_index = false;
-
-            if (p->prefer_rows() == row_) {
+        if (p->prefer_rows() == row_) {
+            parallelize([&](int, Index_ start, Index_ len) -> void {
+                // Always convert to size_t when doing any pointer arithmetic.
+                auto curoutput = output + static_cast<size_t>(start) * num_groups;
                 auto ext = tatami::consecutive_extractor<row_, true>(p, start, len, opt);
                 std::vector<Value_> xbuffer(otherdim);
                 std::vector<Index_> ibuffer(otherdim);
 
                 for (Index_ i = start, end = start + len; i < end; ++i) {
                     auto range = ext->fetch(i, xbuffer.data(), ibuffer.data());
+                    std::fill(curoutput, curoutput + num_groups, static_cast<Output_>(0));
                     for (int j = 0; j < range.number; ++j) {
                         curoutput[groups[range.index[j]]] += range.value[j];
                     }
                     curoutput += num_groups;
                 }
+            }, dim, threads);
 
-            } else {
+        } else {
+            std::fill(output, output + static_cast<size_t>(dim) * num_groups, static_cast<Output_>(0));
+
+            parallelize([&](int, Index_ start, Index_ len) -> void {
+                auto curoutput = output + static_cast<size_t>(start) * num_groups;
                 auto ext = tatami::consecutive_extractor<!row_, true>(p, 0, otherdim, start, len, opt);
                 std::vector<Value_> xbuffer(len);
                 std::vector<Index_> ibuffer(len);
@@ -59,22 +63,31 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
                         outcopy[static_cast<size_t>(range.index[j] - start) * num_groups] += range.value[j];
                     }
                 }
-            }
+            }, dim, threads);
+        }
 
-        } else {
-            if (p->prefer_rows() == row_) {
+    } else {
+        if (p->prefer_rows() == row_) {
+            parallelize([&](int, Index_ start, Index_ len) -> void {
+                auto curoutput = output + static_cast<size_t>(start) * num_groups;
                 std::vector<Value_> xbuffer(otherdim);
                 auto ext = tatami::consecutive_extractor<row_, false>(p, start, len);
 
                 for (Index_ i = start, end = start + len; i < end; ++i) {
+                    std::fill(curoutput, curoutput + num_groups, static_cast<Output_>(0));
                     auto ptr = ext->fetch(i, xbuffer.data());
                     for (Index_ j = 0; j < otherdim; ++j) {
                         curoutput[groups[j]] += ptr[j];
                     }
                     curoutput += num_groups;
                 }
+            }, dim, threads);
 
-            } else {
+        } else {
+            std::fill(output, output + static_cast<size_t>(dim) * num_groups, static_cast<Output_>(0));
+
+            parallelize([&](int, Index_ start, Index_ len) -> void {
+                auto curoutput = output + static_cast<size_t>(start) * num_groups;
                 std::vector<double> xbuffer(len);
                 auto ext = tatami::consecutive_extractor<!row_, false>(p, 0, otherdim, start, len);
 
@@ -86,9 +99,9 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
                         outcopy += num_groups;
                     }
                 }
-            }
+            }, dim, threads);
         }
-    }, dim, threads);
+    }
 }
 /**
  * @endcond
