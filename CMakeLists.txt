@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 
 project(tatami
-    VERSION 2.1.1
+    VERSION 2.1.2
     DESCRIPTION "A C++ interface for assorted matrix representations"
     LANGUAGES CXX)
 
@@ -23,7 +23,7 @@ else()
     option(TATAMI_TESTS "Build tatami's test suite." OFF)
 endif()
 
-option(BUILD_TATAMI_GALLERY "compiling the gallery" OFF)
+option(BUILD_TATAMI_GALLERY "Compiling the tatami gallery." OFF)
 if(TATAMI_TESTS)
     if (BUILD_TATAMI_GALLERY)
         add_subdirectory(gallery)
