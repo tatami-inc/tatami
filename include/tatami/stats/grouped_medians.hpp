@@ -20,21 +20,22 @@ namespace stats {
 /**
  * @cond
  */
-template<bool row_, typename Value_, typename Index_, typename Group_, typename Output_>
-void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* groups, const std::vector<Index_>& group_sizes, Output_* output, int threads) {
+template<bool row_, typename Value_, typename Index_, typename Group_, class GroupSizes_, typename Output_>
+void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* groups, const GroupSizes_& group_sizes, Output_* output, int threads) {
     Index_ dim = (row_ ? p->nrow() : p->ncol());
     Index_ otherdim = (row_ ? p->ncol() : p->nrow());
 
     tatami::parallelize([&](int, Index_ start, Index_ len) -> void {
         std::vector<Value_> xbuffer(otherdim);
 
-        std::vector<std::vector<double> > workspace(group_sizes.size());
-        for (size_t g = 0, gend = group_sizes.size(); g < gend; ++g) {
+        size_t ngroups = group_sizes.size();
+        std::vector<std::vector<double> > workspace(ngroups);
+        for (size_t g = 0; g < ngroups; ++g) {
             workspace[g].reserve(group_sizes[g]);
         }
 
         // Always convert to size_t when doing any pointer arithmetic.
-        auto curoutput = output + static_cast<size_t>(start) * group_sizes.size();
+        auto curoutput = output + static_cast<size_t>(start) * ngroups;
 
         if (p->sparse()) {
             tatami::Options opt;
@@ -49,11 +50,9 @@ void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* grou
                     workspace[groups[range.index[j]]].push_back(range.value[j]);
                 }
 
-                auto lIt = group_sizes.begin();
-                for (auto& w : workspace) {
-                    *curoutput = compute_median(w.data(), w.size(), *lIt);
-                    ++curoutput;
-                    ++lIt;
+                for (size_t g = 0; g < ngroups; ++g, ++curoutput) {
+                    auto& w = workspace[g];
+                    *curoutput = compute_median(w.data(), w.size(), group_sizes[g]);
                     w.clear();
                 }
             }
@@ -85,19 +84,21 @@ void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* grou
  * @tparam Value_ Type of the matrix value.
  * @tparam Index_ Type of the row/column indices.
  * @tparam Group_ Type of the group assignments for each column.
+ * @tparam GroupSizes_ Vector-like class that has `size()` and `[` methods.
  * @tparam Output_ Type of the output.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param[in] group Pointer to an array of length equal to the number of columns.
  * Each value should be an integer that specifies the group assignment.
  * Values should lie in `[0, N)` where `N` is the number of unique groups.
- * @param group_sizes Vector of length `N`, specifying the number of columns assigned to each group.
+ * @param group_sizes Vector-like object of length `N`, specifying the number of columns assigned to each group.
+ * This can be created by calling `stats::tabulate_groups()` on `group`.
  * @param[out] output Pointer to an array of length equal to the product of the number of rows and `N`.
  * On output, `output[g + N * r]` will contain the median for row `r` and group `g`.
  * @param threads Number of threads to use.
  */
-template<typename Value_, typename Index_, typename Group_, typename Output_>
-void row_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Group_* group, const std::vector<Index_>& group_sizes, Output_* output, int threads = 1) {
+template<typename Value_, typename Index_, typename Group_, typename GroupSizes_, typename Output_>
+void row_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Group_* group, const GroupSizes_& group_sizes, Output_* output, int threads = 1) {
     stats::grouped_medians<true>(p, group, group_sizes, output, threads);
 }
 
@@ -118,7 +119,7 @@ void row_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Group_*
  */
 template<typename Output_ = double, typename Value_, typename Index_, typename Group_>
 std::vector<Output_> row_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Group_* group, int threads = 1) {
-    auto group_sizes = tabulate_groups(group, p->ncol());
+    auto group_sizes = stats::tabulate_groups(group, p->ncol());
     std::vector<Output_> output(group_sizes.size() * static_cast<size_t>(p->nrow()));
     row_medians_by_group(p, group, group_sizes, output.data(), threads);
     return output;
@@ -128,19 +129,21 @@ std::vector<Output_> row_medians_by_group(const tatami::Matrix<Value_, Index_>* 
  * @tparam Value_ Type of the matrix value.
  * @tparam Index_ Type of the row/column indices.
  * @tparam Group_ Type of the group assignments for each column.
+ * @tparam GroupSizes_ Vector-like class that has `size()` and `[` methods.
  * @tparam Output_ Type of the output.
  *
  * @param p Pointer to a `tatami::Matrix`.
  * @param[in] group Pointer to an array of length equal to the number of rows.
  * Each value should be an integer that specifies the group assignment.
  * Values should lie in `[0, N)` where `N` is the number of unique groups.
- * @param group_sizes Vector of length `N`, specifying the number of columns assigned to each group.
+ * @param group_sizes Vector-like object of length `N`, specifying the number of columns assigned to each group.
+ * This can be created by calling `stats::tabulate_groups()` on `group`.
  * @param[out] output Pointer to an array of length equal to the product of the number of columns and `N`.
  * On output, `output[g + N * c]` will contain the median for column `c` and group `g`.
  * @param threads Number of threads to use.
  */
-template<typename Value_, typename Index_, typename Group_, typename Output_>
-void column_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Group_* group, const std::vector<Index_>& group_sizes, Output_* output, int threads = 1) {
+template<typename Value_, typename Index_, typename Group_, typename GroupSizes_, typename Output_>
+void column_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Group_* group, const GroupSizes_& group_sizes, Output_* output, int threads = 1) {
     stats::grouped_medians<false>(p, group, group_sizes, output, threads);
 }
 
@@ -161,7 +164,7 @@ void column_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Grou
  */
 template<typename Output_ = double, typename Value_, typename Index_, typename Group_>
 std::vector<Output_> column_medians_by_group(const tatami::Matrix<Value_, Index_>* p, const Group_* group, int threads = 1) {
-    auto group_sizes = tabulate_groups(group, p->nrow());
+    auto group_sizes = stats::tabulate_groups(group, p->nrow());
     std::vector<Output_> output(group_sizes.size() * static_cast<size_t>(p->ncol()));
     column_medians_by_group(p, group, group_sizes, output.data(), threads);
     return output;
