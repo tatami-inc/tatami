@@ -245,19 +245,40 @@ TEST(ComputingDimExtremes, Empty) {
 TEST(ComputingDimExtremes, CrankyOracle) {
     size_t NR = 199, NC = 252;
     auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
+
     auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_row = tatami_test::make_CrankyMatrix(raw_dense);
     auto dense_column = tatami_test::make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
 
+    auto raw_sparse = tatami::convert_to_sparse<true>(raw_dense.get());
+    auto sparse_row = tatami_test::make_CrankyMatrix(raw_sparse);
+    auto sparse_column = tatami_test::make_CrankyMatrix(tatami::convert_to_sparse<false>(raw_sparse.get()));
+
     {
         auto ref = tatami::column_mins(raw_dense.get());
         EXPECT_EQ(ref, tatami::column_mins(dense_row.get()));
-        EXPECT_EQ(ref, tatami::column_mins(dense_row.get(), 2)); // works correctly with parallelization.
+        EXPECT_EQ(ref, tatami::column_mins(dense_column.get()));
+        EXPECT_EQ(ref, tatami::column_mins(sparse_row.get()));
+        EXPECT_EQ(ref, tatami::column_mins(sparse_column.get()));
+
+        // works correctly with parallelization.
+        EXPECT_EQ(ref, tatami::column_mins(dense_row.get(), 2));
+        EXPECT_EQ(ref, tatami::column_mins(dense_column.get(), 2));
+        EXPECT_EQ(ref, tatami::column_mins(sparse_row.get(), 2));
+        EXPECT_EQ(ref, tatami::column_mins(sparse_column.get(), 2));
     }
 
     {
         auto ref = tatami::row_mins(raw_dense.get());
         EXPECT_EQ(ref, tatami::row_mins(dense_row.get()));
+        EXPECT_EQ(ref, tatami::row_mins(dense_column.get()));
+        EXPECT_EQ(ref, tatami::row_mins(sparse_row.get()));
+        EXPECT_EQ(ref, tatami::row_mins(sparse_column.get()));
+
+        // works correctly with parallelization.
         EXPECT_EQ(ref, tatami::row_mins(dense_row.get(), 2));
+        EXPECT_EQ(ref, tatami::row_mins(dense_column.get(), 2));
+        EXPECT_EQ(ref, tatami::row_mins(sparse_row.get(), 2));
+        EXPECT_EQ(ref, tatami::row_mins(sparse_column.get(), 2));
     }
 }

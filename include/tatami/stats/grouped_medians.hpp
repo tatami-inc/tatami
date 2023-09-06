@@ -53,6 +53,7 @@ void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* grou
                 for (auto& w : workspace) {
                     *curoutput = compute_median(w.data(), w.size(), *lIt);
                     ++curoutput;
+                    ++lIt;
                     w.clear();
                 }
             }

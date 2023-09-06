@@ -105,3 +105,56 @@ TEST(GroupedSums, EdgeCases) {
     EXPECT_TRUE(tatami::row_sums_by_group(&empty2, grouping.data()).empty());
     EXPECT_TRUE(tatami::column_sums_by_group(&empty1, grouping.data()).empty());
 }
+
+TEST(GroupedSums, CrankyOracle) {
+    size_t NR = 199, NC = 20;
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
+
+    auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
+    auto dense_row = tatami_test::make_CrankyMatrix(raw_dense);
+    auto dense_column = tatami_test::make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
+
+    auto raw_sparse = tatami::convert_to_sparse<true>(raw_dense.get());
+    auto sparse_row = tatami_test::make_CrankyMatrix(raw_sparse);
+    auto sparse_column = tatami_test::make_CrankyMatrix(tatami::convert_to_sparse<false>(raw_sparse.get()));
+
+    {
+        std::vector<int> grouping(NR);
+        for (size_t i = 0; i < NR; ++i) {
+            grouping[i] = i % 4;
+        }
+
+        auto ref = tatami::column_sums_by_group(raw_dense.get(), grouping.data());
+
+        EXPECT_EQ(ref, tatami::column_sums_by_group(dense_row.get(), grouping.data()));
+        EXPECT_EQ(ref, tatami::column_sums_by_group(dense_column.get(), grouping.data()));
+        EXPECT_EQ(ref, tatami::column_sums_by_group(sparse_row.get(), grouping.data()));
+        EXPECT_EQ(ref, tatami::column_sums_by_group(sparse_column.get(), grouping.data()));
+
+        // Works correctly when parallelized.
+        EXPECT_EQ(ref, tatami::column_sums_by_group(dense_row.get(), grouping.data(), 2)); 
+        EXPECT_EQ(ref, tatami::column_sums_by_group(dense_column.get(), grouping.data(), 2)); 
+        EXPECT_EQ(ref, tatami::column_sums_by_group(sparse_row.get(), grouping.data(), 2)); 
+        EXPECT_EQ(ref, tatami::column_sums_by_group(sparse_column.get(), grouping.data(), 2)); 
+    }
+
+    {
+        std::vector<int> grouping(NC);
+        for (size_t i = 0; i < NC; ++i) {
+            grouping[i] = i % 3;
+        }
+
+        auto ref = tatami::row_sums_by_group(raw_dense.get(), grouping.data());
+
+        EXPECT_EQ(ref, tatami::row_sums_by_group(dense_row.get(), grouping.data()));
+        EXPECT_EQ(ref, tatami::row_sums_by_group(dense_column.get(), grouping.data()));
+        EXPECT_EQ(ref, tatami::row_sums_by_group(sparse_row.get(), grouping.data()));
+        EXPECT_EQ(ref, tatami::row_sums_by_group(sparse_column.get(), grouping.data()));
+
+        // Works correctly when parallelized.
+        EXPECT_EQ(ref, tatami::row_sums_by_group(dense_row.get(), grouping.data(), 2)); 
+        EXPECT_EQ(ref, tatami::row_sums_by_group(dense_column.get(), grouping.data(), 2)); 
+        EXPECT_EQ(ref, tatami::row_sums_by_group(sparse_row.get(), grouping.data(), 2)); 
+        EXPECT_EQ(ref, tatami::row_sums_by_group(sparse_column.get(), grouping.data(), 2)); 
+    }
+}
