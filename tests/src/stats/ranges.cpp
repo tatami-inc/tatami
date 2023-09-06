@@ -200,18 +200,21 @@ INSTANTIATE_TEST_SUITE_P(
 TEST(ComputingDimExtremes, AllZeros) {
     // Testing for correct sparse behavior with all-zeros.
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(10, 20, std::vector<double>(200)));
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto cref = std::make_pair(std::vector<double>(20), std::vector<double>(20));
     EXPECT_EQ(cref, tatami::column_ranges(dense_row.get()));
+    EXPECT_EQ(cref, tatami::column_ranges(dense_column.get()));
     EXPECT_EQ(cref, tatami::column_ranges(sparse_row.get()));
     EXPECT_EQ(cref, tatami::column_ranges(sparse_column.get()));
 
     auto rref = std::make_pair(std::vector<double>(10), std::vector<double>(10));
     EXPECT_EQ(rref, tatami::row_ranges(dense_row.get()));
+    EXPECT_EQ(rref, tatami::row_ranges(dense_column.get()));
     EXPECT_EQ(rref, tatami::row_ranges(sparse_row.get()));
-    EXPECT_EQ(rref, tatami::row_ranges(sparse_row.get()));
+    EXPECT_EQ(rref, tatami::row_ranges(sparse_column.get()));
 }
 
 TEST(ComputingDimExtremes, NoZeros) {
@@ -222,16 +225,19 @@ TEST(ComputingDimExtremes, NoZeros) {
     }
 
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(10, 20, stuff));
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto cref = tatami::column_ranges(dense_row.get());
+    EXPECT_EQ(cref, tatami::column_ranges(dense_column.get()));
     EXPECT_EQ(cref, tatami::column_ranges(sparse_row.get()));
     EXPECT_EQ(cref, tatami::column_ranges(sparse_column.get()));
 
     auto rref = tatami::row_ranges(dense_row.get());
+    EXPECT_EQ(rref, tatami::row_ranges(dense_column.get()));
     EXPECT_EQ(rref, tatami::row_ranges(sparse_row.get()));
-    EXPECT_EQ(rref, tatami::row_ranges(sparse_row.get()));
+    EXPECT_EQ(rref, tatami::row_ranges(sparse_column.get()));
 }
 
 TEST(ComputingDimExtremes, Empty) {
