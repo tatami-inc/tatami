@@ -62,7 +62,12 @@ TEST(ComputeMedians, Sparse) {
 
 TEST(ComputingDimMedians, SparseMedians) {
     size_t NR = 111, NC = 222;
-    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.09)));
+
+    // We use a density of 0.5 so that we some of the median calculations will
+    // need to use the structural zeros.  We also put all non-zero values on
+    // one side of zero, otherwise the structural zeros will dominate the
+    // median; in this case, we choose all-positive values.
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, 1, 10)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
@@ -219,7 +224,7 @@ TEST(ComputingDimMedians, RowMediansNaN) {
 
 TEST(ComputingDimMedians, DirtyOutput) {
     size_t NR = 99, NC = 152;
-    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, 1, 10); // see comments above about why we use 0.5.
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
@@ -247,7 +252,7 @@ TEST(ComputingDimMedians, DirtyOutput) {
 
 TEST(ComputingDimMedians, CrankyOracle) {
     size_t NR = 199, NC = 252;
-    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, -5, -2); // see comments above about why we use 0.5.
 
     auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_row = tatami_test::make_CrankyMatrix(raw_dense);

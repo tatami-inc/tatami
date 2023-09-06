@@ -17,7 +17,12 @@
 
 TEST(GroupedMedians, ByRow) {
     size_t NR = 99, NC = 155;
-    auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5)));
+
+    // We use a density of 0.5 so that we some of the median calculations will
+    // need to use the structural zeros.  We also put all non-zero values on
+    // one side of zero, otherwise the structural zeros will dominate the
+    // median; in this case, we choose all-positive values.
+    auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, -10, -2)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
@@ -56,7 +61,9 @@ TEST(GroupedMedians, ByRow) {
 
 TEST(GroupedMedians, ByColumn) {
     size_t NR = 56, NC = 179;
-    auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5)));
+
+    // See above for why we use a density of 0.5.
+    auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, 0.1, 2)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
@@ -108,7 +115,9 @@ TEST(GroupedMedians, EdgeCases) {
 
 TEST(GroupedMedians, DirtyOutputs) {
     size_t NR = 56, NC = 179;
-    auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5)));
+
+    // See above for why we use a density of 0.5.
+    auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, -3, -0.5)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
@@ -140,7 +149,7 @@ TEST(GroupedMedians, DirtyOutputs) {
 
 TEST(GroupedMedians, CrankyOracle) {
     size_t NR = 199, NC = 20;
-    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5);
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, 10, 20); // see above for why we use a density of 0.5
 
     auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_row = tatami_test::make_CrankyMatrix(raw_dense);
