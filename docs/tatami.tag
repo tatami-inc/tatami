@@ -857,6 +857,68 @@
     </member>
   </compound>
   <compound kind="file">
+    <name>counts.hpp</name>
+    <path>/github/workspace/include/tatami/stats/</path>
+    <filename>counts_8hpp.html</filename>
+    <namespace>tatami</namespace>
+    <member kind="function">
+      <type>void</type>
+      <name>row_nan_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a9e4ce5273c29c7b13a5220fc9ccc24cc</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Output_ &gt;</type>
+      <name>row_nan_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a62e98dcbc10ed285f869bb1cac7a731d</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>column_nan_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a24ec1cee1d79b3632660173c387c5af2</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Output_ &gt;</type>
+      <name>column_nan_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5a9bf63d7329a44595956e33cdbd94dc</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_zero_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ae2a3f9c88e9b8db308896d3a812adbc6</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Output_ &gt;</type>
+      <name>row_zero_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a72bf8e3fa8a6928c6e069cb5204dd2a3</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>column_zero_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af4d0ac25470156e0c7c849b685d48aaa</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Output_ &gt;</type>
+      <name>column_zero_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>afe6c44a27827a2af224cc724b351d56b</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+  </compound>
+  <compound kind="file">
     <name>grouped_medians.hpp</name>
     <path>/github/workspace/include/tatami/stats/</path>
     <filename>grouped__medians_8hpp.html</filename>
@@ -5406,6 +5468,62 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ae46babb9d985cffcb54bcba89553a811</anchor>
       <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_nan_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a9e4ce5273c29c7b13a5220fc9ccc24cc</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Output_ &gt;</type>
+      <name>row_nan_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a62e98dcbc10ed285f869bb1cac7a731d</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>column_nan_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a24ec1cee1d79b3632660173c387c5af2</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Output_ &gt;</type>
+      <name>column_nan_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a5a9bf63d7329a44595956e33cdbd94dc</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>row_zero_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>ae2a3f9c88e9b8db308896d3a812adbc6</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Output_ &gt;</type>
+      <name>row_zero_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a72bf8e3fa8a6928c6e069cb5204dd2a3</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>column_zero_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>af4d0ac25470156e0c7c849b685d48aaa</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Output_ &gt;</type>
+      <name>column_zero_counts</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>afe6c44a27827a2af224cc724b351d56b</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>void</type>

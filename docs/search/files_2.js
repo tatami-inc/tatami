@@ -6,5 +6,6 @@ var searchData=
   ['compressedsparsematrix_2ehpp_3',['CompressedSparseMatrix.hpp',['../CompressedSparseMatrix_8hpp.html',1,'']]],
   ['convert_5fto_5fcompressed_5fsparse_2ehpp_4',['convert_to_compressed_sparse.hpp',['../convert__to__compressed__sparse_8hpp.html',1,'']]],
   ['convert_5fto_5fdense_2ehpp_5',['convert_to_dense.hpp',['../dense_2convert__to__dense_8hpp.html',1,'']]],
-  ['convert_5fto_5ffragmented_5fsparse_2ehpp_6',['convert_to_fragmented_sparse.hpp',['../convert__to__fragmented__sparse_8hpp.html',1,'']]]
+  ['convert_5fto_5ffragmented_5fsparse_2ehpp_6',['convert_to_fragmented_sparse.hpp',['../convert__to__fragmented__sparse_8hpp.html',1,'']]],
+  ['counts_2ehpp_7',['counts.hpp',['../counts_8hpp.html',1,'']]]
 ];
