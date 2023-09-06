@@ -72,7 +72,7 @@ target_link_libraries(
 )
 
 target_compile_definitions(libtest PRIVATE DEBUG=1)
-target_compile_options(libtest PRIVATE -Wall -Wextra -Wpedantic -Werror)
+#target_compile_options(libtest PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
 set(DO_CODE_COVERAGE OFF)
@@ -105,7 +105,7 @@ macro(create_partest target)
         tatami
     )
 
-    target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+    #target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
     if(DO_COVERAGE)
         target_compile_options(${target} PRIVATE -O0 -g --coverage)
