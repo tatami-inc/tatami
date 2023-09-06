@@ -34,6 +34,7 @@
 #include "stats/variances.hpp"
 #include "stats/medians.hpp"
 #include "stats/ranges.hpp"
+#include "stats/counts.hpp"
 #include "stats/utils.hpp"
 #include "stats/grouped_medians.hpp"
 #include "stats/grouped_sums.hpp"
