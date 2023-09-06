@@ -101,10 +101,109 @@ Functions</h2></td></tr>
 <tr class="memitem:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memTemplParams" colspan="2">template&lt;bool row_, bool sparse_, typename Value_ , typename Index_ , typename ... Args_&gt; </td></tr>
 <tr class="memitem:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespacetatami.html#a36c6ecf33bcb87e1ed33c0a7d744dd82">tatami::consecutive_extractor</a> (const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</td></tr>
 <tr class="separator:a36c6ecf33bcb87e1ed33c0a7d744dd82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a903ac09fc8772e51518447e4a5b7928f"><td class="memTemplParams" colspan="2">template&lt;typename Group_ , typename Size_ &gt; </td></tr>
+<tr class="memitem:a903ac09fc8772e51518447e4a5b7928f"><td class="memTemplItemLeft" align="right" valign="top">size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="stats_2utils_8hpp.html#a903ac09fc8772e51518447e4a5b7928f">tatami::stats::total_groups</a> (const Group_ *group, Size_ n)</td></tr>
+<tr class="separator:a903ac09fc8772e51518447e4a5b7928f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2efd3396ca4cea9a63f0cba309aa9809"><td class="memTemplParams" colspan="2">template&lt;typename Group_ , typename Size_ &gt; </td></tr>
+<tr class="memitem:a2efd3396ca4cea9a63f0cba309aa9809"><td class="memTemplItemLeft" align="right" valign="top">std::vector&lt; Size_ &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="stats_2utils_8hpp.html#a2efd3396ca4cea9a63f0cba309aa9809">tatami::stats::tabulate_groups</a> (const Group_ *group, Size_ n)</td></tr>
+<tr class="separator:a2efd3396ca4cea9a63f0cba309aa9809"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p >Utilities for computing matrix statistics. </p>
-</div></div><!-- contents -->
+</div><h2 class="groupheader">Function Documentation</h2>
+<a id="a903ac09fc8772e51518447e4a5b7928f" name="a903ac09fc8772e51518447e4a5b7928f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a903ac09fc8772e51518447e4a5b7928f">&#9670;&#160;</a></span>total_groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Group_ , typename Size_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">size_t tatami::stats::total_groups </td>
+          <td>(</td>
+          <td class="paramtype">const Group_ *&#160;</td>
+          <td class="paramname"><em>group</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Size_&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Count the total number of groups, typically for per-group memory allocations.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Group_</td><td>Integer type for the group assignments. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type for the number of observations.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">group</td><td>Pointer to an array of group assignments per observation. Each assignment should be an integer in <code>[0, G)</code> where <code>G</code> is the total number of groups. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Number of observations, i.e., the length of the array referenced by <code>group</code>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Total number of groups, i.e., <code>G</code>. Note that not all groups may actually have non-zero occurrences in <code>group</code>. </dd></dl>
+
+</div>
+</div>
+<a id="a2efd3396ca4cea9a63f0cba309aa9809" name="a2efd3396ca4cea9a63f0cba309aa9809"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2efd3396ca4cea9a63f0cba309aa9809">&#9670;&#160;</a></span>tabulate_groups()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Group_ , typename Size_ &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::vector&lt; Size_ &gt; tatami::stats::tabulate_groups </td>
+          <td>(</td>
+          <td class="paramtype">const Group_ *&#160;</td>
+          <td class="paramname"><em>group</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Size_&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p >Count the occurrences of each group.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Group_</td><td>Integer type for the group assignments. </td></tr>
+    <tr><td class="paramname">Index_</td><td>Integer type for the number of observations.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramdir">[in]</td><td class="paramname">group</td><td>Pointer to an array of group assignments per observation. Each assignment should be an integer in <code>[0, G)</code> where <code>G</code> is the total number of groups. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">n</td><td>Number of observations, i.e., the length of the array referenced by <code>group</code>.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Vector of length equal to <code>G</code>, containing the number of occurrences of each group. </dd></dl>
+
+</div>
+</div>
+</div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
 Generated by&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.5

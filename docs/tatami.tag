@@ -927,8 +927,8 @@
       <type>void</type>
       <name>row_medians_by_group</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae1ddff062c2c493badf1fba05a6f5ab0</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const std::vector&lt; Index_ &gt; &amp;group_sizes, Output_ *output, int threads=1)</arglist>
+      <anchor>af89fa24bcd521fc40327141077e5cf1d</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const GroupSizes_ &amp;group_sizes, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -941,8 +941,8 @@
       <type>void</type>
       <name>column_medians_by_group</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad81fc0ecc8cd96b04f8a3ba39fa6cfc0</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const std::vector&lt; Index_ &gt; &amp;group_sizes, Output_ *output, int threads=1)</arglist>
+      <anchor>a3ced2b32b7ce5cc0294f3951174d55dd</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const GroupSizes_ &amp;group_sizes, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -961,8 +961,8 @@
       <type>void</type>
       <name>row_sums_by_group</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aba8e7f4eee74ca8d843f71a25d5381a0</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const std::vector&lt; Index_ &gt; &amp;group_sizes, Output_ *output, int threads=1)</arglist>
+      <anchor>ab58c218ea855f3aa633149e08a310d8c</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, size_t num_groups, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -975,8 +975,8 @@
       <type>void</type>
       <name>column_sums_by_group</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a29844a5f851c9b22011bd25e22416206</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const std::vector&lt; Index_ &gt; &amp;group_sizes, Output_ *output, int threads=1)</arglist>
+      <anchor>adc95d5b424654f6ab15d9f6a0f587576</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, size_t num_groups, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -1176,6 +1176,20 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
       <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>total_groups</name>
+      <anchorfile>stats_2utils_8hpp.html</anchorfile>
+      <anchor>a903ac09fc8772e51518447e4a5b7928f</anchor>
+      <arglist>(const Group_ *group, Size_ n)</arglist>
+    </member>
+    <member kind="function">
+      <type>std::vector&lt; Size_ &gt;</type>
+      <name>tabulate_groups</name>
+      <anchorfile>stats_2utils_8hpp.html</anchorfile>
+      <anchor>a2efd3396ca4cea9a63f0cba309aa9809</anchor>
+      <arglist>(const Group_ *group, Size_ n)</arglist>
     </member>
   </compound>
   <compound kind="file">
@@ -5529,8 +5543,8 @@
       <type>void</type>
       <name>row_medians_by_group</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae1ddff062c2c493badf1fba05a6f5ab0</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const std::vector&lt; Index_ &gt; &amp;group_sizes, Output_ *output, int threads=1)</arglist>
+      <anchor>af89fa24bcd521fc40327141077e5cf1d</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const GroupSizes_ &amp;group_sizes, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -5543,8 +5557,8 @@
       <type>void</type>
       <name>column_medians_by_group</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad81fc0ecc8cd96b04f8a3ba39fa6cfc0</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const std::vector&lt; Index_ &gt; &amp;group_sizes, Output_ *output, int threads=1)</arglist>
+      <anchor>a3ced2b32b7ce5cc0294f3951174d55dd</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const GroupSizes_ &amp;group_sizes, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -5557,8 +5571,8 @@
       <type>void</type>
       <name>row_sums_by_group</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aba8e7f4eee74ca8d843f71a25d5381a0</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const std::vector&lt; Index_ &gt; &amp;group_sizes, Output_ *output, int threads=1)</arglist>
+      <anchor>ab58c218ea855f3aa633149e08a310d8c</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, size_t num_groups, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
@@ -5571,8 +5585,8 @@
       <type>void</type>
       <name>column_sums_by_group</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a29844a5f851c9b22011bd25e22416206</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const std::vector&lt; Index_ &gt; &amp;group_sizes, Output_ *output, int threads=1)</arglist>
+      <anchor>adc95d5b424654f6ab15d9f6a0f587576</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, size_t num_groups, Output_ *output, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; Output_ &gt;</type>
