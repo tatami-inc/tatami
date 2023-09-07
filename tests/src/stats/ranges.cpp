@@ -244,6 +244,12 @@ TEST(ComputingDimExtremes, Empty) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(10, 0, std::vector<double>()));
     EXPECT_EQ(tatami::column_mins(dense_row.get()).size(), 0);
     EXPECT_EQ(tatami::row_mins(dense_row.get()), std::vector<double>(10));
+
+    // Early return will still sanitize dirty output buffers.
+    std::vector<double> row_mins(10, -1), row_maxs(10, -1);
+    tatami::row_ranges(dense_row.get(), row_mins.data(), row_maxs.data());
+    EXPECT_EQ(row_mins, std::vector<double>(10));
+    EXPECT_EQ(row_maxs, std::vector<double>(10));
 }
 
 TEST(ComputingDimExtremes, DirtyOutput) {
