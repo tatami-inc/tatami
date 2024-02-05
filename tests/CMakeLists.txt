@@ -45,16 +45,16 @@ add_executable(
 #    src/sparse/SparseSecondaryExtractorCore.cpp
 #    src/sparse/convert_to_compressed_sparse.cpp
 #    src/sparse/convert_to_fragmented_sparse.cpp
-#
-#    src/stats/sums.cpp
-#    src/stats/variances.cpp
-#    src/stats/medians.cpp
-#    src/stats/ranges.cpp
-#    src/stats/counts.cpp
-#    src/stats/parallelize.cpp
-#    src/stats/grouped_medians.cpp
-#    src/stats/grouped_sums.cpp
-#
+
+    src/stats/sums.cpp
+    src/stats/variances.cpp
+    src/stats/medians.cpp
+    src/stats/ranges.cpp
+    src/stats/counts.cpp
+    src/stats/parallelize.cpp
+    src/stats/grouped_medians.cpp
+    src/stats/grouped_sums.cpp
+
 #    src/utils/wrap_shared_ptr.cpp
 #    src/utils/SomeNumericArray.cpp
 #    src/utils/ArrayView.cpp

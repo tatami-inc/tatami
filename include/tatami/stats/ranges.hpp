@@ -48,9 +48,9 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
                 auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
                 std::vector<Value_> vbuffer(otherdim);
 
-                for (Index_ i = s, e = s + l; i < e; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
-
                     if (out.number) {
                         if constexpr(store_min) {
                             auto minned = *std::min_element(out.value, out.value + out.number);
@@ -85,7 +85,8 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
                 std::vector<Index_> ibuffer(len);
                 std::vector<Index_> counter(len);
 
-                for (Index_ i = 0; i < otherdim; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
                     for (Index_ j = 0; j < out.number; ++j) {
                         auto idx = out.index[j];
@@ -138,7 +139,8 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<row_, false>(p, s, l);
                 std::vector<Value_> buffer(otherdim);
-                for (Index_ i = s, e = s + l; i < e; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto ptr = ext->fetch(i, buffer.data());
                     if constexpr(store_min) {
                         min_out[i] = *std::min_element(ptr, ptr + otherdim);
@@ -156,15 +158,19 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
                 std::vector<Value_> buffer(len);
 
                 // We already have a otherdim > 0 check above.
-                auto ptr = ext->fetch(0, buffer.data());
-                if constexpr(store_min) {
-                    std::copy(ptr, ptr + len, min_out + s);
-                }
-                if constexpr(store_max) {
-                    std::copy(ptr, ptr + len, max_out + s);
+                {
+                    Index_ i;
+                    auto ptr = ext->fetch(i, buffer.data());
+                    if constexpr(store_min) {
+                        std::copy(ptr, ptr + len, min_out + s);
+                    }
+                    if constexpr(store_max) {
+                        std::copy(ptr, ptr + len, max_out + s);
+                    }
                 }
 
-                for (Index_ i = 1; i < otherdim; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto ptr = ext->fetch(i, buffer.data());
                     for (Index_ d = 0; d < len; ++d) {
                         auto idx = d + s;

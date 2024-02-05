@@ -37,7 +37,8 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
                 std::vector<Value_> xbuffer(otherdim);
                 std::vector<Index_> ibuffer(otherdim);
 
-                for (Index_ i = start, end = start + len; i < end; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto range = ext->fetch(i, xbuffer.data(), ibuffer.data());
                     std::fill(curoutput, curoutput + num_groups, static_cast<Output_>(0));
                     for (int j = 0; j < range.number; ++j) {
@@ -73,9 +74,10 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
                 std::vector<Value_> xbuffer(otherdim);
                 auto ext = tatami::consecutive_extractor<row_, false>(p, start, len);
 
-                for (Index_ i = start, end = start + len; i < end; ++i) {
-                    std::fill(curoutput, curoutput + num_groups, static_cast<Output_>(0));
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto ptr = ext->fetch(i, xbuffer.data());
+                    std::fill(curoutput, curoutput + num_groups, static_cast<Output_>(0));
                     for (Index_ j = 0; j < otherdim; ++j) {
                         curoutput[groups[j]] += ptr[j];
                     }
@@ -91,7 +93,8 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
                 std::vector<double> xbuffer(len);
                 auto ext = tatami::consecutive_extractor<!row_, false>(p, 0, otherdim, start, len);
 
-                for (int i = 0; i < otherdim; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto ptr = ext->fetch(i, xbuffer.data());
                     auto outcopy = curoutput + groups[i];
                     for (int j = 0; j < len; ++j) {

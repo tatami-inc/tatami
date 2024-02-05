@@ -10,7 +10,7 @@
 
 namespace tatami_test {
 
-template<class Matrix, bool row_, typename ... Args_>
+template<bool row_, class Matrix, typename ... Args_>
 void test_oracle_access(const Matrix* ptr, const Matrix* ref, bool randomized, Args_... args) {
     int NR = ptr->nrow();
     int NC = ptr->ncol();
@@ -102,6 +102,16 @@ void test_oracle_access(const Matrix* ptr, const Matrix* ref, bool randomized, A
             EXPECT_EQ(sexpected.value, sobserved.value);
         }
     }
+}
+
+template<class Matrix, typename ... Args_>
+void test_oracle_row_access(const Matrix* ptr, const Matrix* ref, bool randomized, Args_... args) {
+    return test_oracle_access<true>(ptr, ref, randomized, std::forward<Args_>(args)...);
+}
+
+template<class Matrix, typename ... Args_>
+void test_oracle_column_access(const Matrix* ptr, const Matrix* ref, bool randomized, Args_... args) {
+    return test_oracle_access<false>(ptr, ref, randomized, std::forward<Args_>(args)...);
 }
 
 }

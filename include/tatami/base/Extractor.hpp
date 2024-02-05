@@ -521,7 +521,7 @@ public:
      * based on the setting of `Options::sparse_extract_mode` used to construct this object.
      * The identity of the predicted element is stored in `i`.
      */
-    SparseRange<Value_, Index_> fetch_copy(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch_copy(Index_& i, Value_* vbuffer, Index_* ibuffer) {
         auto output = fetch(i, vbuffer, ibuffer);
 
         if (vbuffer != NULL) {
@@ -555,7 +555,7 @@ public:
      * based on the setting of `Options::sparse_extract_mode` used to construct this object.
      * The identity of the predicted element is stored in `i`.
      */
-    SparseRangeCopy<Value_, Index_> fetch(Index_ i) {
+    SparseRangeCopy<Value_, Index_> fetch(Index_& i) {
         SparseRangeCopy<Value_, Index_> output(extracted_length<selection_, Index_>(*this));
         auto range = fetch_copy(i, output.value.data(), output.index.data());
         output.number = range.number;

@@ -43,8 +43,9 @@ void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* grou
 
             auto ext = tatami::consecutive_extractor<row_, true>(p, start, len, opt);
             std::vector<Index_> ibuffer(otherdim);
-
-            for (Index_ i = start, end = start + len; i < end; ++i) {
+            
+            while (ext->used_predictions < ext->total_predictions) {
+                Index_ i;
                 auto range = ext->fetch(i, xbuffer.data(), ibuffer.data());
                 for (Index_ j = 0; j < range.number; ++j) {
                     workspace[groups[range.index[j]]].push_back(range.value[j]);
@@ -59,7 +60,8 @@ void grouped_medians(const tatami::Matrix<Value_, Index_>* p, const Group_* grou
 
         } else {
             auto ext = tatami::consecutive_extractor<row_, false>(p, start, len);
-            for (Index_ i = start, end = start + len; i < end; ++i) {
+            while (ext->used_predictions < ext->total_predictions) {
+                Index_ i;
                 auto ptr = ext->fetch(i, xbuffer.data());
                 for (Index_ j = 0; j < otherdim; ++j) {
                     workspace[groups[j]].push_back(ptr[j]);

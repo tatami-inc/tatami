@@ -33,7 +33,8 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
                 std::vector<Value_> vbuffer(otherdim);
-                for (Index_ i = s, e = s + l; i < e; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
                     output[i] = std::accumulate(out.value, out.value + out.number, static_cast<Output_>(0));
                 }
@@ -47,8 +48,8 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
                 auto len = ext->block_length;
                 std::vector<Value_> vbuffer(len);
                 std::vector<Index_> ibuffer(len);
-
-                for (Index_ i = 0; i < otherdim; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
                     for (Index_ j = 0; j < out.number; ++j) {
                         output[out.index[j]] += out.value[j];
@@ -62,7 +63,8 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<row_, false>(p, s, l);
                 std::vector<Value_> buffer(otherdim);
-                for (Index_ i = s, e = s + l; i < e; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, buffer.data());
                     output[i] = std::accumulate(out, out + otherdim, static_cast<Output_>(0));
                 }
@@ -75,7 +77,8 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
                 auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, l);
                 std::vector<Value_> buffer(ext->block_length);
                 auto len = ext->block_length;
-                for (Index_ i = 0; i < otherdim; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, buffer.data());
                     for (Index_ j = 0; j < len; ++j) {
                         output[s + j] += out[j];

@@ -244,7 +244,8 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<row_, true>(p, s, l);
                 std::vector<Value_> vbuffer(otherdim);
-                for (Index_ i = s, e = s + l; i < e; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
                     output[i] = variances::compute_direct<Output_>(out, otherdim).second;
                 }
@@ -264,7 +265,8 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
                 auto running_vars = output + s;
                 int counter = 0;
 
-                for (Index_ i = 0; i < otherdim; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
                     variances::compute_running(out, running_means.data(), running_vars, running_nzeros.data(), counter, /* skip_zeros = */ true, /* subtract = */ s);
                 }
@@ -277,7 +279,8 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<row_, false>(p, s, l);
                 std::vector<Value_> buffer(otherdim);
-                for (Index_ i = s, e = s + l; i < e; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, buffer.data());
                     output[i] = variances::compute_direct<Output_>(out, otherdim).second;
                 }
@@ -295,7 +298,8 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
                 auto running_vars = output + s;
                 int counter = 0;
 
-                for (Index_ i = 0; i < otherdim; ++i) {
+                while (ext->used_predictions < ext->total_predictions) {
+                    Index_ i;
                     auto out = ext->fetch(i, buffer.data());
                     variances::compute_running(out, len, running_means.data(), running_vars, counter);
                 }

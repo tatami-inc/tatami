@@ -128,10 +128,10 @@ void dimension_medians(const Matrix<Value_, Index_>* p, Output_* output, int thr
 
         parallelize([&](int, Index_ s, Index_ l) -> void {
             auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
-
             std::vector<Value_> buffer(otherdim);
             auto vbuffer = buffer.data();
-            for (Index_ i = s, e = s + l; i < e; ++i) {
+            while (ext->used_predictions < ext->total_predictions) {
+                Index_ i;
                 auto range = ext->fetch_copy(i, vbuffer, NULL);
                 output[i] = compute_median<Output_>(vbuffer, range.number, otherdim);
             }
@@ -141,7 +141,8 @@ void dimension_medians(const Matrix<Value_, Index_>* p, Output_* output, int thr
         parallelize([&](int, Index_ s, Index_ l) -> void {
             std::vector<Value_> buffer(otherdim);
             auto ext = consecutive_extractor<row_, false>(p, s, l);
-            for (Index_ i = s, e = s + l; i < e; ++i) {
+            while (ext->used_predictions < ext->total_predictions) {
+                Index_ i;
                 ext->fetch_copy(i, buffer.data());
                 output[i] = compute_median<Output_>(buffer.data(), otherdim);
             }
