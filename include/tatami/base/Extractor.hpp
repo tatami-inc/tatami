@@ -520,7 +520,7 @@ public:
      * based on the setting of `Options::sparse_extract_mode` used to construct this object.
      * The identity of the predicted element is stored in `i`.
      */
-    virtual SparseRange<Value_, Index_> fetch_copy(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch_copy(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         auto output = fetch(i, vbuffer, ibuffer);
 
         if (vbuffer != NULL) {
@@ -624,6 +624,53 @@ using BlockSparseOracleAwareExtractor = OracleAwareExtractor<DimensionSelectionT
  */
 template<typename Value_, typename Index_>
 using IndexSparseOracleAwareExtractor = OracleAwareExtractor<DimensionSelectionType::INDEX, true, Value_, Index_>;
+
+/*********************************************************
+ *********************************************************/
+
+/**
+ * @cond
+ */
+template<DimensionSelectionType selection_, typename Value_, typename Index_> 
+struct DummyDenseOracleAwareExtractor : public DenseOracleAwareExtractor<selection_, Value_, Index_> {
+    DummyDenseOracleAwareExtractor(std::unique_ptr<DenseExtractor<selection_, Value_, Index_> > ex, std::shared_ptr<Oracle<Index_> > o) : 
+        extractor(std::move(ex)), oracle(std::move(o)) 
+    {
+        this->total_predictions = oracle->total();
+    }
+
+    const Value_* fetch(Index_& i, Value_* buffer) {
+        i = oracle->get(used_prediction);
+        ++used_prediction;
+        return extractor->fetch(i, buffer);
+    }
+
+private:
+    std::unique_ptr<DenseExtractor<selection_, Value_, Index_> > extractor;
+    std::shared_ptr<Oracle<Index_> > oracle;
+};
+
+template<DimensionSelectionType selection_, typename Value_, typename Index_> 
+struct DummySparseOracleAwareExtractor : public SparseOracleAwareExtractor<selection_, Value_, Index_> {
+    DummySparseOracleAwareExtractor(std::unique_ptr<SparseExtractor<selection_, Value_, Index_> > ex, std::shared_ptr<Oracle<Index_> > o) : 
+        extractor(std::move(ex)), oracle(std::move(o)) 
+    {
+        this->total_predictions = oracle->total();
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
+        i = oracle->get(used_prediction);
+        ++used_prediction;
+        return extractor->fetch(i, vbuffer, ibuffer);
+    }
+
+private:
+    std::unique_ptr<SparseExtractor<selection_, Value_, Index_> > extractor;
+    std::shared_ptr<Oracle<Index_> > oracle; 
+};
+/**
+ * @endcond
+ */
 
 }
 
