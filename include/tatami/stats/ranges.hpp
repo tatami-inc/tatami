@@ -29,6 +29,12 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
     constexpr bool store_max = !std::is_same<StoreMaximum_, bool>::value;
 
     if (!otherdim) {
+        if constexpr(store_min) {
+            std::fill(min_out, min_out + dim, 0);
+        }
+        if constexpr(store_max) {
+            std::fill(max_out, max_out + dim, 0);
+        }
         return;
     }
 
@@ -45,19 +51,27 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
                 for (Index_ i = s, e = s + l; i < e; ++i) {
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
 
-                    // If there's no non-zero values, we just leave the min/max as zero.
                     if (out.number) {
                         if constexpr(store_min) {
                             auto minned = *std::min_element(out.value, out.value + out.number);
-                            if (minned < 0 || out.number == otherdim) {
-                                min_out[i] = minned;
+                            if (minned > 0 && out.number != otherdim) {
+                                minned = 0;
                             }
+                            min_out[i] = minned;
                         }
                         if constexpr(store_max) {
                             auto maxed = *std::max_element(out.value, out.value + out.number);
-                            if (maxed > 0 || out.number == otherdim) {
-                                max_out[i] = maxed;
+                            if (maxed < 0 && out.number != otherdim) {
+                                maxed = 0;
                             }
+                            max_out[i] = maxed;
+                        }
+                    } else {
+                        if constexpr(store_min) {
+                            min_out[i] = 0;
+                        }
+                        if constexpr(store_max) {
+                            max_out[i] = 0;
                         }
                     }
                 }
@@ -75,26 +89,35 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
                     auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
                     for (Index_ j = 0; j < out.number; ++j) {
                         auto idx = out.index[j];
+                        auto& c = counter[idx - s];
                         auto val = static_cast<Output_>(out.value[j]);
                         if constexpr(store_min) {
                             auto& last = min_out[idx];
-                            if (i == 0 || last > val) {
+                            if (c == 0 || last > val) {
                                 last = val;
                             }
                         } 
                         if constexpr(store_max) {
                             auto& last = max_out[idx];
-                            if (i == 0 || last < val) {
+                            if (c == 0 || last < val) {
                                 last = val;
                             }
                         }
-                        ++counter[idx - s];
+                        ++c;
                     }
                 }
 
                 // Handling the zeros.
                 for (Index_ i = s, e = s + l; i < e; ++i) {
-                    if (counter[i - s] < otherdim) {
+                    auto c = counter[i - s];
+                    if (c == 0) {
+                        if constexpr(store_min) {
+                            min_out[i] = 0;
+                        }
+                        if constexpr(store_max) {
+                            max_out[i] = 0;
+                        }
+                    } else if (c < otherdim) {
                         if constexpr(store_min) {
                             if (min_out[i] > 0) {
                                 min_out[i] = 0;
@@ -132,31 +155,31 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
                 auto len = ext->block_length;
                 std::vector<Value_> buffer(len);
 
-                for (Index_ i = 0; i < otherdim; ++i) {
+                // We already have a otherdim > 0 check above.
+                auto ptr = ext->fetch(0, buffer.data());
+                if constexpr(store_min) {
+                    std::copy(ptr, ptr + len, min_out + s);
+                }
+                if constexpr(store_max) {
+                    std::copy(ptr, ptr + len, max_out + s);
+                }
+
+                for (Index_ i = 1; i < otherdim; ++i) {
                     auto ptr = ext->fetch(i, buffer.data());
-                    if (i) {
-                        for (Index_ d = 0; d < len; ++d) {
-                            auto idx = d + s;
-                            auto val = static_cast<Output_>(ptr[d]);
-                            if constexpr(store_min) {
-                                auto& last = min_out[idx];
-                                if (last > val) {
-                                    last = val;
-                                }
-                            }
-                            if constexpr(store_max) {
-                                auto& last = max_out[idx];
-                                if (last < val) {
-                                    last = val;
-                                }
-                            } 
-                        }
-                    } else {
+                    for (Index_ d = 0; d < len; ++d) {
+                        auto idx = d + s;
+                        auto val = static_cast<Output_>(ptr[d]);
                         if constexpr(store_min) {
-                            std::copy(ptr, ptr + len, min_out + s);
+                            auto& last = min_out[idx];
+                            if (last > val) {
+                                last = val;
+                            }
                         }
                         if constexpr(store_max) {
-                            std::copy(ptr, ptr + len, max_out + s);
+                            auto& last = max_out[idx];
+                            if (last < val) {
+                                last = val;
+                            }
                         }
                     }
                 }

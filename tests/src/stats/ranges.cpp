@@ -158,6 +158,32 @@ TEST_P(ComputingDimExtremesTest, RowRanges) {
     EXPECT_EQ(ref, tatami::row_ranges(dense_column.get(), 3));
     EXPECT_EQ(ref, tatami::row_ranges(sparse_row.get(), 3));
     EXPECT_EQ(ref, tatami::row_ranges(sparse_column.get(), 3));
+
+    // Checking correct behavior with dirty output buffers.
+    {
+        std::vector<double> row_mins(NR, -1), row_maxs(NR, -1);
+        tatami::row_ranges(dense_row.get(), row_mins.data(), row_maxs.data());
+        EXPECT_EQ(ref.first, row_mins);
+        EXPECT_EQ(ref.second, row_maxs);
+
+        std::fill(row_mins.begin(), row_mins.end(), -1);
+        std::fill(row_maxs.begin(), row_maxs.end(), -1);
+        tatami::row_ranges(dense_row.get(), row_mins.data(), row_maxs.data());
+        EXPECT_EQ(ref.first, row_mins);
+        EXPECT_EQ(ref.second, row_maxs);
+
+        std::fill(row_mins.begin(), row_mins.end(), -1);
+        std::fill(row_maxs.begin(), row_maxs.end(), -1);
+        tatami::row_ranges(sparse_row.get(), row_mins.data(), row_maxs.data());
+        EXPECT_EQ(ref.first, row_mins);
+        EXPECT_EQ(ref.second, row_maxs);
+
+        std::fill(row_mins.begin(), row_mins.end(), -1);
+        std::fill(row_maxs.begin(), row_maxs.end(), -1);
+        tatami::row_ranges(sparse_row.get(), row_mins.data(), row_maxs.data());
+        EXPECT_EQ(ref.first, row_mins);
+        EXPECT_EQ(ref.second, row_maxs);
+    }
 }
 
 TEST_P(ComputingDimExtremesTest, ColumnRanges) {
@@ -200,18 +226,47 @@ INSTANTIATE_TEST_SUITE_P(
 TEST(ComputingDimExtremes, AllZeros) {
     // Testing for correct sparse behavior with all-zeros.
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(10, 20, std::vector<double>(200)));
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto cref = std::make_pair(std::vector<double>(20), std::vector<double>(20));
     EXPECT_EQ(cref, tatami::column_ranges(dense_row.get()));
+    EXPECT_EQ(cref, tatami::column_ranges(dense_column.get()));
     EXPECT_EQ(cref, tatami::column_ranges(sparse_row.get()));
     EXPECT_EQ(cref, tatami::column_ranges(sparse_column.get()));
 
     auto rref = std::make_pair(std::vector<double>(10), std::vector<double>(10));
     EXPECT_EQ(rref, tatami::row_ranges(dense_row.get()));
+    EXPECT_EQ(rref, tatami::row_ranges(dense_column.get()));
     EXPECT_EQ(rref, tatami::row_ranges(sparse_row.get()));
-    EXPECT_EQ(rref, tatami::row_ranges(sparse_row.get()));
+    EXPECT_EQ(rref, tatami::row_ranges(sparse_column.get()));
+
+    // Checking correct behavior with dirty output buffers.
+    {
+        std::vector<double> column_mins(20, -1), column_maxs(20, -1);
+        tatami::column_ranges(dense_column.get(), column_mins.data(), column_maxs.data());
+        EXPECT_EQ(cref.first, column_mins);
+        EXPECT_EQ(cref.second, column_maxs);
+
+        std::fill(column_mins.begin(), column_mins.end(), -1);
+        std::fill(column_maxs.begin(), column_maxs.end(), -1);
+        tatami::column_ranges(dense_column.get(), column_mins.data(), column_maxs.data());
+        EXPECT_EQ(cref.first, column_mins);
+        EXPECT_EQ(cref.second, column_maxs);
+
+        std::fill(column_mins.begin(), column_mins.end(), -1);
+        std::fill(column_maxs.begin(), column_maxs.end(), -1);
+        tatami::column_ranges(sparse_column.get(), column_mins.data(), column_maxs.data());
+        EXPECT_EQ(cref.first, column_mins);
+        EXPECT_EQ(cref.second, column_maxs);
+
+        std::fill(column_mins.begin(), column_mins.end(), -1);
+        std::fill(column_maxs.begin(), column_maxs.end(), -1);
+        tatami::column_ranges(sparse_column.get(), column_mins.data(), column_maxs.data());
+        EXPECT_EQ(cref.first, column_mins);
+        EXPECT_EQ(cref.second, column_maxs);
+    }
 }
 
 TEST(ComputingDimExtremes, NoZeros) {
@@ -222,22 +277,33 @@ TEST(ComputingDimExtremes, NoZeros) {
     }
 
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(10, 20, stuff));
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
     auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
     auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
 
     auto cref = tatami::column_ranges(dense_row.get());
+    EXPECT_EQ(cref, tatami::column_ranges(dense_column.get()));
     EXPECT_EQ(cref, tatami::column_ranges(sparse_row.get()));
     EXPECT_EQ(cref, tatami::column_ranges(sparse_column.get()));
 
     auto rref = tatami::row_ranges(dense_row.get());
+    EXPECT_EQ(rref, tatami::row_ranges(dense_column.get()));
     EXPECT_EQ(rref, tatami::row_ranges(sparse_row.get()));
-    EXPECT_EQ(rref, tatami::row_ranges(sparse_row.get()));
+    EXPECT_EQ(rref, tatami::row_ranges(sparse_column.get()));
 }
 
 TEST(ComputingDimExtremes, Empty) {
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(10, 0, std::vector<double>()));
     EXPECT_EQ(tatami::column_mins(dense_row.get()).size(), 0);
     EXPECT_EQ(tatami::row_mins(dense_row.get()), std::vector<double>(10));
+
+    // Early return will still sanitize dirty output buffers.
+    {
+        std::vector<double> row_mins(10, -1), row_maxs(10, -1);
+        tatami::row_ranges(dense_row.get(), row_mins.data(), row_maxs.data());
+        EXPECT_EQ(row_mins, std::vector<double>(10));
+        EXPECT_EQ(row_maxs, std::vector<double>(10));
+    }
 }
 
 /********************************************/

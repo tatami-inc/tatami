@@ -106,6 +106,37 @@ TEST(GroupedSums, EdgeCases) {
     EXPECT_TRUE(tatami::column_sums_by_group(&empty1, grouping.data()).empty());
 }
 
+TEST(GroupedSums, DirtyOutputs) {
+    size_t NR = 56, NC = 179;
+    auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5)));
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+
+    int ngroup = 5; 
+    std::vector<int> grouping;
+    for (size_t r = 0; r < NR; ++r) {
+        grouping.push_back(r % ngroup);
+    }
+    auto ref = tatami::column_sums_by_group(dense_row.get(), grouping.data());
+
+    std::vector<double> dirty(ngroup * NC, -1);
+    tatami::column_sums_by_group(dense_row.get(), grouping.data(), ngroup, dirty.data());
+    EXPECT_EQ(ref, dirty);
+
+    std::fill(dirty.begin(), dirty.end(), -1);
+    tatami::column_sums_by_group(dense_column.get(), grouping.data(), ngroup, dirty.data());
+    EXPECT_EQ(ref, dirty);
+
+    std::fill(dirty.begin(), dirty.end(), -1);
+    tatami::column_sums_by_group(sparse_row.get(), grouping.data(), ngroup, dirty.data());
+    EXPECT_EQ(ref, dirty);
+
+    std::fill(dirty.begin(), dirty.end(), -1);
+    tatami::column_sums_by_group(sparse_column.get(), grouping.data(), ngroup, dirty.data());
+    EXPECT_EQ(ref, dirty);
+}
+
 TEST(GroupedSums, CrankyOracle) {
     size_t NR = 199, NC = 20;
     auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);

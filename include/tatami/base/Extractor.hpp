@@ -229,13 +229,13 @@ public:
      *
      * @param i Index of the desired element on the iteration dimension.
      * @param vbuffer Pointer to an array with enough space for at least `extracted_length()` values.
-     * Ignored if `ExtractionOptions::sparse_extract_value` was set to `false` during construction of this instance.
+     * Ignored if `Options::sparse_extract_value` was set to `false` during construction of this instance.
      * @param ibuffer Pointer to an array with enough space for at least `extracted_length()` indices.
-     * Ignored if `ExtractionOptions::sparse_extract_index` was set to `false` during construction of this instance.
+     * Ignored if `Options::sparse_extract_index` was set to `false` during construction of this instance.
      *
      * @return A `SparseRange` object describing the contents of the desired dimension element.
      * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, 
-     * based on the setting of `ExtractionOptions::sparse_extract_mode` used to construct this object.
+     * based on the setting of `Options::sparse_extract_mode` used to construct this object.
      */
     virtual SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) = 0;
 
@@ -244,17 +244,17 @@ public:
      * @param[out] vbuffer Pointer to an array with enough space for at least `extracted_length()` values.
      * On output, this is filled with the values of the structural non-zeros. 
      *
-     * Ignored if `ExtractionOptions::sparse_extract_value` was set to `false` during construction of this instance.
+     * Ignored if `Options::sparse_extract_value` was set to `false` during construction of this instance.
      * Also ignored if set to `NULL`, in which case the values are extracted but not copied to `vbuffer`.
      * @param[out] ibuffer Pointer to an array with enough space for at least `extracted_length()` indices.
      * On output, this is filled with the indices of the structural non-zeros. 
      *
-     * Ignored if `ExtractionOptions::sparse_extract_index` was set to `false` during construction of this instance.
+     * Ignored if `Options::sparse_extract_index` was set to `false` during construction of this instance.
      * Also ignored if set to `NULL`, in which case the indices are extracted but not copied to `ibuffer`.
      *
      * @return A `SparseRange` object describing the contents of the desired dimension element.
      * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, 
-     * based on the setting of `ExtractionOptions::sparse_extract_mode` used to construct this object.
+     * based on the setting of `Options::sparse_extract_mode` used to construct this object.
      */
     virtual SparseRange<Value_, Index_> fetch_copy(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         auto output = fetch(i, vbuffer, ibuffer);
@@ -284,7 +284,7 @@ public:
      * @param i Index of the desired element on the iteration dimension.
      * @return A `SparseRangeCopy` object containing the contents of the desired dimension element.
      * Either or both of `value` or `index` is empty if extraction of that field is skipped, 
-     * based on the setting of `ExtractionOptions::sparse_extract_mode` used to construct this object.
+     * based on the setting of `Options::sparse_extract_mode` used to construct this object.
      */
     SparseRangeCopy<Value_, Index_> fetch(Index_ i) {
         SparseRangeCopy<Value_, Index_> output(extracted_length<selection_, Index_>(*this));

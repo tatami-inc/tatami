@@ -8,6 +8,7 @@
 #include <cmath>
 #include <numeric>
 #include <limits>
+#include <algorithm>
 
 /**
  * @file variances.hpp
@@ -250,6 +251,8 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
             }, dim, threads);
 
         } else {
+            std::fill(output, output + dim, static_cast<Output_>(0));
+
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, l);
                 auto len = ext->block_length;
@@ -281,6 +284,8 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
             }, dim, threads);
 
         } else {
+            std::fill(output, output + dim, static_cast<Output_>(0));
+
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, l);
                 auto len = ext->block_length;

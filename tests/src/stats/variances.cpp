@@ -93,6 +93,34 @@ TEST(ComputingDimVariances, ColumnVariances) {
     compare_double_vectors(ref, tatami::column_variances(sparse_column.get(), 3));
 }
 
+TEST(ComputingDimVariances, DirtyOutput) {
+    size_t NR = 99, NC = 152;
+    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
+    auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
+    auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+
+    auto ref = tatami::row_variances(dense_row.get());
+
+    // Works when the input vector is a bit dirty.
+    std::vector<double> dirty(NR, -1);
+    tatami::row_variances(dense_row.get(), dirty.data());
+    compare_double_vectors(ref, dirty);
+
+    std::fill(dirty.begin(), dirty.end(), -1);
+    tatami::row_variances(dense_column.get(), dirty.data());
+    compare_double_vectors(ref, dirty);
+
+    std::fill(dirty.begin(), dirty.end(), -1);
+    tatami::row_variances(sparse_row.get(), dirty.data());
+    compare_double_vectors(ref, dirty);
+
+    std::fill(dirty.begin(), dirty.end(), -1);
+    tatami::row_variances(sparse_column.get(), dirty.data());
+    compare_double_vectors(ref, dirty);
+}
+
 TEST(ComputingDimVariances, RowVariancesNaN) {
     auto dense = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(111, 0, std::vector<double>()));
 
