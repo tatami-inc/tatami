@@ -1,5 +1,7 @@
 <map id="tatami::VirtualDenseMatrix&lt; Value_, Index_ &gt;" name="tatami::VirtualDenseMatrix&lt; Value_, Index_ &gt;">
-<area shape="rect" id="node1" title="Virtual class for a dense matrix with a defined type." alt="" coords="5,93,179,133"/>
-<area shape="rect" id="node3" href="$classtatami_1_1DenseMatrix.html" title="Dense matrix representation." alt="" coords="19,181,165,236"/>
-<area shape="rect" id="node2" href="$classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type." alt="" coords="21,5,163,45"/>
+<area shape="rect" id="Node000001" title="Virtual class for a dense matrix with a defined type." alt="" coords="5,94,178,135"/>
+<area shape="rect" id="Node000003" href="$classtatami_1_1DenseMatrix.html" title="Dense matrix representation." alt="" coords="19,183,164,238"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="94,150,94,182,89,182,89,150"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type." alt="" coords="20,5,163,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="94,62,94,94,89,94,89,62"/>
 </map>

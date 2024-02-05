@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile doxygen_version="1.9.5">
+<tagfile doxygen_version="1.9.8">
   <compound kind="file">
     <name>Extractor.hpp</name>
-    <path>/github/workspace/include/tatami/base/</path>
+    <path>tatami/base/</path>
     <filename>Extractor_8hpp.html</filename>
     <class kind="struct">tatami::ExtractorBase</class>
     <class kind="struct">tatami::FullExtractor</class>
@@ -11,662 +11,125 @@
     <class kind="class">tatami::DenseExtractor</class>
     <class kind="class">tatami::SparseExtractor</class>
     <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>typename std::conditional&lt; selection_==DimensionSelectionType::FULL, FullExtractor&lt; Index_ &gt;, typename std::conditional&lt; selection_==DimensionSelectionType::BLOCK, BlockExtractor&lt; Index_ &gt;, IndexExtractor&lt; Index_ &gt; &gt;::type &gt;::type</type>
-      <name>ConditionalSelectionExtractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a85ed61a4f772a2f7be4a12f739554e6e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>typename std::conditional&lt; sparse_, SparseExtractor&lt; selection_, Value_, Index_ &gt;, DenseExtractor&lt; selection_, Value_, Index_ &gt; &gt;::type</type>
-      <name>Extractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae9f8db5316521603085577d977a6955f</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>Extractor&lt; DimensionSelectionType::FULL, false, Value_, Index_ &gt;</type>
-      <name>FullDenseExtractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6008dbced6de41e5619156b5335f5762</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>Extractor&lt; DimensionSelectionType::BLOCK, false, Value_, Index_ &gt;</type>
-      <name>BlockDenseExtractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae75de1fc78b7d361ea8b59a5379ea4da</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>Extractor&lt; DimensionSelectionType::INDEX, false, Value_, Index_ &gt;</type>
-      <name>IndexDenseExtractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a47ce406c32c3914c2ecce187e21b6ced</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>Extractor&lt; DimensionSelectionType::FULL, true, Value_, Index_ &gt;</type>
-      <name>FullSparseExtractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a0fbb0624c8e1913a87e8fb5c975400e1</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>Extractor&lt; DimensionSelectionType::BLOCK, true, Value_, Index_ &gt;</type>
-      <name>BlockSparseExtractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac8d0024399a66ce61f6315f5f46ebb63</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>Extractor&lt; DimensionSelectionType::INDEX, true, Value_, Index_ &gt;</type>
-      <name>IndexSparseExtractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4b67b4d1b6c00cd0bd449703432a5f7b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="function">
-      <type>Index_</type>
-      <name>extracted_length</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af9d13ceaa112d2c091265510d741488d</anchor>
-      <arglist>(const ConditionalSelectionExtractor&lt; selection_, Index_ &gt; &amp;ex)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>Matrix.hpp</name>
-    <path>/github/workspace/include/tatami/base/</path>
+    <path>tatami/base/</path>
     <filename>Matrix_8hpp.html</filename>
     <class kind="class">tatami::Matrix</class>
     <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>Matrix&lt; double, int &gt;</type>
-      <name>NumericMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a35c670894994f1d620abb55953f98441</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>Options.hpp</name>
-    <path>/github/workspace/include/tatami/base/</path>
+    <path>tatami/base/</path>
     <filename>Options_8hpp.html</filename>
     <class kind="struct">tatami::Options</class>
     <class kind="struct">tatami::Oracle</class>
     <namespace>tatami</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>DimensionSelectionType</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a0a2ecaf58e2b69bb4a808e814aeb16a1</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacetatami.html" anchor="a0a2ecaf58e2b69bb4a808e814aeb16a1aba7de5bc6888294e5884b024a4c894f1">FULL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a0a2ecaf58e2b69bb4a808e814aeb16a1a4d34f53389ed7f28ca91fc31ea360a66">BLOCK</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a0a2ecaf58e2b69bb4a808e814aeb16a1acb4ae3b37047fb4b2c0d16f8bf84f076">INDEX</enumvalue>
-    </member>
   </compound>
   <compound kind="file">
     <name>SparseRange.hpp</name>
-    <path>/github/workspace/include/tatami/base/</path>
+    <path>tatami/base/</path>
     <filename>SparseRange_8hpp.html</filename>
     <class kind="struct">tatami::SparseRange</class>
     <class kind="struct">tatami::SparseRangeCopy</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>convert_to_dense.hpp</name>
-    <path>/github/workspace/include/tatami/dense/</path>
-    <filename>dense_2convert__to__dense_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>convert_to_dense</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3d709db6be55e94d987d38c4c07c71c0</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, StoredValue_ *store, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index &gt; &gt;</type>
-      <name>convert_to_dense</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3a0e048d06c98ea3706466139c4c97dc</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>convert_to_dense</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa74ad14ba410177396121d272371dffd</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
     <name>DenseMatrix.hpp</name>
-    <path>/github/workspace/include/tatami/dense/</path>
+    <path>tatami/dense/</path>
     <filename>DenseMatrix_8hpp.html</filename>
     <class kind="class">tatami::DenseMatrix</class>
     <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>DenseMatrix&lt; false, Value_, Index_, Storage_ &gt;</type>
-      <name>DenseColumnMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac47a769e00660eb7e9b5fcd543bcf2d3</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>DenseMatrix&lt; true, Value_, Index_, Storage_ &gt;</type>
-      <name>DenseRowMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a51122d20490b377cd3f4609cc044f314</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>VirtualDenseMatrix.hpp</name>
-    <path>/github/workspace/include/tatami/dense/</path>
+    <path>tatami/dense/</path>
     <filename>VirtualDenseMatrix_8hpp.html</filename>
     <class kind="class">tatami::VirtualDenseMatrix</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>arith_utils.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/</path>
+    <path>tatami/isometric/</path>
     <filename>arith__utils_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>DelayedArithOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aab44a37b3762de0c5b1ffbfceb25fa0f</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa9eeb52badb613229884838847294b90d">ADD</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa23ebcc4776b613af25dfbe7c8ce4813e">SUBTRACT</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa080aaf8d817ada96fca7096b7b55bd30">MULTIPLY</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa210c66d794cec40488f3f8f634d6c33b">DIVIDE</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fac9c9c146c630ca5ef9197c73c032f4a6">POWER</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa928ab45d616dde447dbbbd0270db87ad">MODULO</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="aab44a37b3762de0c5b1ffbfceb25fa0fa051460a4a75d4d251a41a7c04bf49412">INTEGER_DIVIDE</enumvalue>
-    </member>
+  </compound>
+  <compound kind="file">
+    <name>DelayedBinaryIsometricOp.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>DelayedBinaryIsometricOp_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricOp</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>boolean_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>boolean__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>compare_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>compare__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>arith_helpers.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/binary/</path>
+    <path>tatami/isometric/binary/</path>
     <filename>binary_2arith__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedBinaryArithHelper</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::ADD &gt;</type>
-      <name>make_DelayedBinaryAddHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a1d138b1e7f6a26f814c025363cc3db80</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::SUBTRACT &gt;</type>
-      <name>make_DelayedBinarySubtractHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac4c951d489cb0f2bb0e90f2cf4a25862</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::MULTIPLY &gt;</type>
-      <name>make_DelayedBinaryMultiplyHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2569c540083a24f92af8140358e1e9c4</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::DIVIDE &gt;</type>
-      <name>make_DelayedBinaryDivideHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aeb4cf766f850766b966f7121728a6af8</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::POWER &gt;</type>
-      <name>make_DelayedBinaryPowerHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab6c73c04e7b08130ed7b46d93c4dfd11</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::MODULO &gt;</type>
-      <name>make_DelayedBinaryModuloHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a04293eb1e8eefb7024cc192d75ac093e</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryArithHelper&lt; DelayedArithOp::INTEGER_DIVIDE &gt;</type>
-      <name>make_DelayedBinaryIntegerDivideHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa8f54741424bef6a21225935a45e9d53</anchor>
-      <arglist>()</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>arith_helpers.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/unary/</path>
+    <path>tatami/isometric/unary/</path>
     <filename>unary_2arith__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedArithScalarHelper</class>
     <class kind="struct">tatami::DelayedArithVectorHelper</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::ADD, true, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedAddScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a33b2b9798f2a43b62821131ba3a3f6bd</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::SUBTRACT, right_, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedSubtractScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9bdfe26c0f1426b611e91ee7569045de</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MULTIPLY, true, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedMultiplyScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa653b51960498cc467ea69c18ea0c097</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::DIVIDE, right_, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedDivideScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a60076096ee4296c0e187a226be5ca4b5</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::POWER, right_, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedPowerScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8c478145f87c37a9fe6d4e8490fbf05c</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::MODULO, right_, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedModuloScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5504f584d6db28c05d78f1917c40810d</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithScalarHelper&lt; DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedIntegerDivideScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5ec92ba88a0f5e9d7bf52021ed28e859</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::ADD, true, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedAddVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a628c631be4424b37c1c1e68e28c5e982</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::SUBTRACT, right_, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedSubtractVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a800b92854282015d96308fb283aeb508</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedMultiplyVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab929acdeb634187cd08d1100bbbf1b29</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedDivideVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a1a4629f17aa4f3a4be06f3479bb6f68f</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::POWER, right_, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedPowerVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aafe489bd754c040491ebc753a4e5656e</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::MODULO, right_, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedModuloVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4220ce5709e46ebce77b240b572d97d9</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedArithVectorHelper&lt; DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedIntegerDivideVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a857fc6c11ec69895ac85991ac83c395d</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>boolean_helpers.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/binary/</path>
+    <path>tatami/isometric/binary/</path>
     <filename>binary_2boolean__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedBinaryBooleanHelper</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::EQUAL &gt;</type>
-      <name>make_DelayedBinaryBooleanEqualHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a1063aea86897ef76e17b1772320b8f7d</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::AND &gt;</type>
-      <name>make_DelayedBinaryBooleanAndHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a31625dbb50d420fe1b0da406f19ef33d</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::OR &gt;</type>
-      <name>make_DelayedBinaryBooleanOrHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a65bad100b39d9372fbeb23d16dae6588</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryBooleanHelper&lt; DelayedBooleanOp::XOR &gt;</type>
-      <name>make_DelayedBinaryBooleanXorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aeb091953ab0f55406935a52b7ecb7350</anchor>
-      <arglist>()</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>boolean_helpers.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/unary/</path>
+    <path>tatami/isometric/unary/</path>
     <filename>unary_2boolean__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedBooleanScalarHelper</class>
     <class kind="struct">tatami::DelayedBooleanNotHelper</class>
     <class kind="struct">tatami::DelayedBooleanVectorHelper</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>DelayedBooleanNotHelper&lt; Value_ &gt;</type>
-      <name>make_DelayedBooleanNotHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac812e757b55c2145bc3d4cd113c712fd</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::AND, Value_ &gt;</type>
-      <name>make_DelayedBooleanAndScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae460e24124cef43d8a5d3b82e8f02325</anchor>
-      <arglist>(bool s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::OR &gt;</type>
-      <name>make_DelayedBooleanOrScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac7dbc64e6b0a0c8c48b1423b4b6748f1</anchor>
-      <arglist>(bool s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::XOR &gt;</type>
-      <name>make_DelayedBooleanXorScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a29f6f1b1d28c670f38fda651fe2aa03a</anchor>
-      <arglist>(bool s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBooleanScalarHelper&lt; DelayedBooleanOp::EQUAL &gt;</type>
-      <name>make_DelayedBooleanEqualScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6bc5d47e0c391c17c85bddf19cc5620a</anchor>
-      <arglist>(bool s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::AND, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedBooleanAndVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a1fd06669afab8565747e08bbce4b041f</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::OR, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedBooleanOrVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a503f23fe3e5a2c5f5bc6c0db01a7f64d</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::XOR, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedBooleanXorVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4bcdace63565fc670b0393675e33bb11</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBooleanVectorHelper&lt; DelayedBooleanOp::EQUAL, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedBooleanEqualVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8b07dc8b7a71776bcc222d7c437e2ca3</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>compare_helpers.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/binary/</path>
+    <path>tatami/isometric/binary/</path>
     <filename>binary_2compare__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedBinaryCompareHelper</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::EQUAL &gt;</type>
-      <name>make_DelayedBinaryEqualHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac3599db8f6d19fc9172da45a3b6244fc</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::GREATER_THAN &gt;</type>
-      <name>make_DelayedBinaryGreaterThanHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abe4fb79c5a2cddab2f5c9cf0bd9fe3d0</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::LESS_THAN &gt;</type>
-      <name>make_DelayedBinaryLessThanHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae6a24f5bf2c2c61382aef43f2c8d3362</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL &gt;</type>
-      <name>make_DelayedBinaryGreaterThanOrEqualHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad31cd299427d73538dc00dcbffa9cd2b</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL &gt;</type>
-      <name>make_DelayedBinaryLessThanOrEqualHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a38c7cc26409e5c995b7264164b148f4c</anchor>
-      <arglist>()</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedBinaryCompareHelper&lt; DelayedCompareOp::NOT_EQUAL &gt;</type>
-      <name>make_DelayedBinaryNotEqualHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3073c4e33dcf89416af292399ba55c29</anchor>
-      <arglist>()</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>compare_helpers.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/unary/</path>
+    <path>tatami/isometric/unary/</path>
     <filename>unary_2compare__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedCompareScalarHelper</class>
     <class kind="struct">tatami::DelayedCompareVectorHelper</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::EQUAL, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedEqualScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a11bfea31e4524927274dc1d80c32fd96</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedGreaterThanScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a1961ba2a59d705adf7b8627523a62b3a</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedLessThanScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a7d2d381ec9c0d87f5d561b4dd9d5a58e</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedGreaterThanOrEqualScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac3df12ccdf4692c0f660f1634a79b857</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedLessThanOrEqualScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af5e67b02534cbe1813be5e2d690af88b</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareScalarHelper&lt; DelayedCompareOp::NOT_EQUAL, Value_, Scalar_ &gt;</type>
-      <name>make_DelayedNotEqualScalarHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac5d5cef56d2119e73e3f670d49de6b48</anchor>
-      <arglist>(Scalar_ s)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::EQUAL, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedEqualVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aa40c54d5c5cc1109d42a150f5cd7ed2f</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedGreaterThanVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aaf1951e22415be4714495556f701a7fd</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedLessThanVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6dca8b9072813f6e9e52aa0536817b82</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedGreaterThanOrEqualVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a70a3e0489fdaccc80c7cc0125e9cf906</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedLessThanOrEqualVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a83999d2ac877c5b15f6fd5a0f33a894a</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-    <member kind="function">
-      <type>DelayedCompareVectorHelper&lt; DelayedCompareOp::NOT_EQUAL, margin_, Value_, Vector_ &gt;</type>
-      <name>make_DelayedNotEqualVectorHelper</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6c84e8b757cf5ba6479a6ea3e6e530e3</anchor>
-      <arglist>(Vector_ v)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>DelayedBinaryIsometricOp.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/binary/</path>
-    <filename>DelayedBinaryIsometricOp_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBinaryIsometricOp</class>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedBinaryIsometricOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af39c0767d23c6bdc5f4267f062ef2e17</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; right, Operation_ op)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>boolean_utils.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/</path>
-    <filename>boolean__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>DelayedBooleanOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2104862d4068933ea4cc805c92f82d07</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a558ffc8f5770d8e4f95f51d822685532">AND</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a1d00e7dce692e8dc3f6877f035e3a616">OR</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a97675eb3f268048604dc5155511a2a4d">XOR</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="a2104862d4068933ea4cc805c92f82d07a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>compare_utils.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/</path>
-    <filename>compare__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="enumeration">
-      <type></type>
-      <name>DelayedCompareOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac4fc175a57ace709941b5ca7ddb19708</anchor>
-      <arglist></arglist>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a969f331a87d8c958473c32b4d0e61a44">EQUAL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a1625ef4fe09f68fa20d3ff6e02cd5c8e">GREATER_THAN</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa327176a0a845c117bdfadec134a95e9">LESS_THAN</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa6eac69202c3dc2978176801a84e4d1d">GREATER_THAN_OR_EQUAL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a8397780541b6289d2a0b991d1c28c432">LESS_THAN_OR_EQUAL</enumvalue>
-      <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a4ea2d378cdec20f59330f113297bc1ce">NOT_EQUAL</enumvalue>
-    </member>
   </compound>
   <compound kind="file">
     <name>DelayedUnaryIsometricOp.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/unary/</path>
+    <path>tatami/isometric/unary/</path>
     <filename>DelayedUnaryIsometricOp_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricOp</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedUnaryIsometricOp</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a07b072944c766d85dc4ce4dc734e0b75</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Operation_ op)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>math_helpers.hpp</name>
-    <path>/github/workspace/include/tatami/isometric/unary/</path>
+    <path>tatami/isometric/unary/</path>
     <filename>math__helpers_8hpp.html</filename>
     <class kind="struct">tatami::DelayedAbsHelper</class>
     <class kind="struct">tatami::DelayedSignHelper</class>
@@ -697,687 +160,189 @@
   </compound>
   <compound kind="file">
     <name>DelayedBind.hpp</name>
-    <path>/github/workspace/include/tatami/other/</path>
+    <path>tatami/other/</path>
     <filename>DelayedBind_8hpp.html</filename>
     <class kind="class">tatami::DelayedBind</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedBind</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5f8e0f69139575707aa9314174b415b3</anchor>
-      <arglist>(std::vector&lt; std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; &gt; ps)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>DelayedCast.hpp</name>
-    <path>/github/workspace/include/tatami/other/</path>
+    <path>tatami/other/</path>
     <filename>DelayedCast_8hpp.html</filename>
     <class kind="class">tatami::DelayedCast</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_out_, Index_out_ &gt; &gt;</type>
-      <name>make_DelayedCast</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aca62c3bf751cdd06a08e8e503b0b591a</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_in_, Index_in_ &gt; &gt; p)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>DelayedTranspose.hpp</name>
-    <path>/github/workspace/include/tatami/other/</path>
+    <path>tatami/other/</path>
     <filename>DelayedTranspose_8hpp.html</filename>
     <class kind="class">tatami::DelayedTranspose</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedTranspose</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>afa35d8e9fe286967f327ec0eb6bd5005</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>CompressedSparseMatrix.hpp</name>
-    <path>/github/workspace/include/tatami/sparse/</path>
+    <path>tatami/sparse/</path>
     <filename>CompressedSparseMatrix_8hpp.html</filename>
     <class kind="class">tatami::CompressedSparseMatrix</class>
     <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>CompressedSparseMatrix&lt; false, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</type>
-      <name>CompressedSparseColumnMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a18cee3a5d9734f0092b03d023cfe4b6a</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>CompressedSparseMatrix&lt; true, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</type>
-      <name>CompressedSparseRowMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a0111adeeb583aeb7e24e9e1e25be4aa0</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>convert_to_compressed_sparse.hpp</name>
-    <path>/github/workspace/include/tatami/sparse/</path>
+    <path>tatami/sparse/</path>
     <filename>convert__to__compressed__sparse_8hpp.html</filename>
     <class kind="struct">tatami::CompressedSparseContents</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>CompressedSparseContents&lt; Value_, Index_ &gt;</type>
-      <name>retrieve_compressed_sparse_contents</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad1aee6313d02036d2f56703f372e1df6</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool two_pass, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>convert_to_compressed_sparse</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a48dab0e55d3b852afcfd9e93835190df</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool two_pass=false, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>convert_to_compressed_sparse</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>acf7ca799fac9cff0c16a77bf98e32ff3</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, bool two_pass=false, int threads=1)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>convert_to_fragmented_sparse.hpp</name>
-    <path>/github/workspace/include/tatami/sparse/</path>
+    <path>tatami/sparse/</path>
     <filename>convert__to__fragmented__sparse_8hpp.html</filename>
     <class kind="struct">tatami::FragmentedSparseContents</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>FragmentedSparseContents&lt; Value_, Index_ &gt;</type>
-      <name>retrieve_fragmented_sparse_contents</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a012194aba94c37703f15555247e02155</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>convert_to_fragmented_sparse</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a953ad06ecc9a36c8d2c1f3febe84a787</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>convert_to_fragmented_sparse</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae46babb9d985cffcb54bcba89553a811</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>FragmentedSparseMatrix.hpp</name>
-    <path>/github/workspace/include/tatami/sparse/</path>
+    <path>tatami/sparse/</path>
     <filename>FragmentedSparseMatrix_8hpp.html</filename>
     <class kind="class">tatami::FragmentedSparseMatrix</class>
     <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>FragmentedSparseMatrix&lt; false, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</type>
-      <name>FragmentedSparseColumnMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6b9735bdc6e0a2856cd4747efbbf9f3c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>FragmentedSparseMatrix&lt; true, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</type>
-      <name>FragmentedSparseRowMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3d97fc9bd75052a79bb643d0fb5a0b98</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>SemiCompressedSparseMatrix.hpp</name>
-    <path>/github/workspace/include/tatami/sparse/</path>
+    <path>tatami/sparse/</path>
     <filename>SemiCompressedSparseMatrix_8hpp.html</filename>
     <class kind="class">tatami::SemiCompressedSparseMatrix</class>
     <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>SemiCompressedSparseMatrix&lt; false, Value_, Index_, IndexStorage_, PointerStorage_ &gt;</type>
-      <name>SemiCompressedSparseColumnMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6f03d0d880bc056e09c2cbb80eb2c2ec</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="typedef">
-      <type>SemiCompressedSparseMatrix&lt; true, Value_, Index_, IndexStorage_, PointerStorage_ &gt;</type>
-      <name>SemiCompressedSparseRowMatrix</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a412cb6ee12f3ee81d404d6eb0e494e4d</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>counts.hpp</name>
-    <path>/github/workspace/include/tatami/stats/</path>
+    <path>tatami/stats/</path>
     <filename>counts_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>row_nan_counts</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9e4ce5273c29c7b13a5220fc9ccc24cc</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>row_nan_counts</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a62e98dcbc10ed285f869bb1cac7a731d</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>column_nan_counts</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a24ec1cee1d79b3632660173c387c5af2</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>column_nan_counts</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5a9bf63d7329a44595956e33cdbd94dc</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>row_zero_counts</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae2a3f9c88e9b8db308896d3a812adbc6</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>row_zero_counts</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a72bf8e3fa8a6928c6e069cb5204dd2a3</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>column_zero_counts</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af4d0ac25470156e0c7c849b685d48aaa</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>column_zero_counts</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>afe6c44a27827a2af224cc724b351d56b</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>grouped_medians.hpp</name>
-    <path>/github/workspace/include/tatami/stats/</path>
+    <path>tatami/stats/</path>
     <filename>grouped__medians_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>row_medians_by_group</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af89fa24bcd521fc40327141077e5cf1d</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const GroupSizes_ &amp;group_sizes, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>row_medians_by_group</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a50f7ba0152c1bde81a9117231fc5c164</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>column_medians_by_group</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3ced2b32b7ce5cc0294f3951174d55dd</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, const GroupSizes_ &amp;group_sizes, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>column_medians_by_group</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a1821faf695b4e1b06c3cd249b942afa2</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, int threads=1)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>grouped_sums.hpp</name>
-    <path>/github/workspace/include/tatami/stats/</path>
+    <path>tatami/stats/</path>
     <filename>grouped__sums_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>row_sums_by_group</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab58c218ea855f3aa633149e08a310d8c</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, size_t num_groups, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>row_sums_by_group</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9ea5940372df637157b3413796eb4ba3</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>column_sums_by_group</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>adc95d5b424654f6ab15d9f6a0f587576</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, size_t num_groups, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>column_sums_by_group</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad915f9643453ca9c58179adae3b0d980</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *p, const Group_ *group, int threads=1)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>medians.hpp</name>
-    <path>/github/workspace/include/tatami/stats/</path>
+    <path>tatami/stats/</path>
     <filename>medians_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>Output_</type>
-      <name>compute_median</name>
-      <anchorfile>medians_8hpp.html</anchorfile>
-      <anchor>a528296d883185475adcb3f298b5f4312</anchor>
-      <arglist>(Value_ *ptr, size_t n)</arglist>
-    </member>
-    <member kind="function">
-      <type>Output_</type>
-      <name>compute_median</name>
-      <anchorfile>medians_8hpp.html</anchorfile>
-      <anchor>abe4f9766330a2fc992338d4d5acf5ac2</anchor>
-      <arglist>(Value_ *ptr, size_t nnz, size_t nall)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>column_medians</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>acacb9908f0da41539141c7a1e5dbd9d8</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>column_medians</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a44202790861791b1ed9df6d480c69f6a</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>row_medians</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a81883438d8c410229b3b5376901781ee</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>row_medians</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab877f67694b3fa500f59469f044b1c01</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>ranges.hpp</name>
-    <path>/github/workspace/include/tatami/stats/</path>
+    <path>tatami/stats/</path>
     <filename>ranges_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>column_maxs</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad1ad5caa7b450d23c77d1e6802f2f889</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>column_maxs</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8102a2423efab5e329543f4235ac2290</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>row_maxs</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae90831216c20765388b8b3c22824cfa5</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>row_maxs</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a47890bfd538f65971f9e5dba5e1ed785</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>column_mins</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a17ac7430be0e54321d5c45e994fe8610</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>column_mins</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a60e44772f82183100c7c25c181479b56</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>row_mins</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a20c4a739dddec74b8bdfd26ced6ebbd0</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>row_mins</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3bcdcb0499b36b5b844ebd88fc30eefe</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>column_ranges</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad4390679cdb6bdbf51dc4487ea53769d</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *min_output, Output_ *max_output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt;</type>
-      <name>column_ranges</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab5eff79824930c458e730d23f640c1ab</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>row_ranges</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a09ddfe3ed583c39be72dd130c7a3bbd8</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *min_output, Output_ *max_output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::pair&lt; std::vector&lt; Output_ &gt;, std::vector&lt; Output_ &gt; &gt;</type>
-      <name>row_ranges</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2b2475a166ad744b31b1275e26e562be</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>sums.hpp</name>
-    <path>/github/workspace/include/tatami/stats/</path>
+    <path>tatami/stats/</path>
     <filename>sums_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>column_sums</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a723f7f3f2a0550b4416e104f966b0291</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>column_sums</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3aab6733d637b66abdf45f7300d2e1ba</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>row_sums</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a336658acf30078e81ca709846bd1c480</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>row_sums</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a53a658059404691856bef57fb85d83d6</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-  </compound>
-  <compound kind="file">
-    <name>utils.hpp</name>
-    <path>/github/workspace/include/tatami/stats/</path>
-    <filename>stats_2utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>parallelize</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
-      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
-    </member>
-    <member kind="function">
-      <type>auto</type>
-      <name>consecutive_extractor</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a36c6ecf33bcb87e1ed33c0a7d744dd82</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *mat, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</arglist>
-    </member>
-    <member kind="function">
-      <type>size_t</type>
-      <name>total_groups</name>
-      <anchorfile>stats_2utils_8hpp.html</anchorfile>
-      <anchor>a903ac09fc8772e51518447e4a5b7928f</anchor>
-      <arglist>(const Group_ *group, Size_ n)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Size_ &gt;</type>
-      <name>tabulate_groups</name>
-      <anchorfile>stats_2utils_8hpp.html</anchorfile>
-      <anchor>a2efd3396ca4cea9a63f0cba309aa9809</anchor>
-      <arglist>(const Group_ *group, Size_ n)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>variances.hpp</name>
-    <path>/github/workspace/include/tatami/stats/</path>
+    <path>tatami/stats/</path>
     <filename>variances_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::pair&lt; Output_, Output_ &gt;</type>
-      <name>compute_direct</name>
-      <anchorfile>variances_8hpp.html</anchorfile>
-      <anchor>a69156143bd931041e7a59f2ee469ff38</anchor>
-      <arglist>(const Value_ *ptr, size_t n)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::pair&lt; Output_, Output_ &gt;</type>
-      <name>compute_direct</name>
-      <anchorfile>variances_8hpp.html</anchorfile>
-      <anchor>aa55280f08a8d90b49d37c8d1e87869c0</anchor>
-      <arglist>(const SparseRange&lt; Value_, Index_ &gt; &amp;range, size_t n)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>compute_running</name>
-      <anchorfile>variances_8hpp.html</anchorfile>
-      <anchor>a8fee3fa83a665089963ff712e0dfb6bb</anchor>
-      <arglist>(const Value_ *ptr, size_t n, Output_ *means, Output_ *vars, int &amp;count)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>compute_running</name>
-      <anchorfile>variances_8hpp.html</anchorfile>
-      <anchor>a7441bd3d6a018a2ea941f778900dbd18</anchor>
-      <arglist>(const SparseRange&lt; Value_, Index_ &gt; &amp;range, Output_ *means, Output_ *vars, Nonzero_ *nonzeros, int &amp;count, bool skip_zeros=true, Index_ subtract=0)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>finish_running</name>
-      <anchorfile>variances_8hpp.html</anchorfile>
-      <anchor>a3437fa820311dc3f221048e5ded97ef3</anchor>
-      <arglist>(size_t n, Output_ *means, Output_ *vars, int count)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>finish_running</name>
-      <anchorfile>variances_8hpp.html</anchorfile>
-      <anchor>aaea56bd6999abb7c4979d07599c63824</anchor>
-      <arglist>(size_t n, Output_ *means, Output_ *vars, const Nonzero_ *nonzeros, int count)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>column_variances</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a51bb7270793ca7606dc721f06253355a</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>column_variances</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac37af9a76d15f08a3634881696a27f65</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>void</type>
-      <name>row_variances</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a05d5c8c0d94e8b2a42183ca9b6d16a28</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, Output_ *output, int threads=1)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::vector&lt; Output_ &gt;</type>
-      <name>row_variances</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab806279616e19f6150376a7c07d5b64b</anchor>
-      <arglist>(const Matrix&lt; Value_, Index_ &gt; *p, int threads=1)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>DelayedSubset.hpp</name>
-    <path>/github/workspace/include/tatami/subset/</path>
+    <path>tatami/subset/</path>
     <filename>DelayedSubset_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubset</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>DelayedSubsetBlock.hpp</name>
-    <path>/github/workspace/include/tatami/subset/</path>
+    <path>tatami/subset/</path>
     <filename>DelayedSubsetBlock_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubsetBlock</class>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedSubsetBlock</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8f4aafc0a1fbdc0c31bc122d24122a63</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, Index_ f, Index_ l)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>DelayedSubsetSorted.hpp</name>
-    <path>/github/workspace/include/tatami/subset/</path>
+    <path>tatami/subset/</path>
     <filename>DelayedSubsetSorted_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubsetSorted</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>DelayedSubsetSortedUnique.hpp</name>
-    <path>/github/workspace/include/tatami/subset/</path>
+    <path>tatami/subset/</path>
     <filename>DelayedSubsetSortedUnique_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubsetSortedUnique</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>DelayedSubsetUnique.hpp</name>
-    <path>/github/workspace/include/tatami/subset/</path>
+    <path>tatami/subset/</path>
     <filename>DelayedSubsetUnique_8hpp.html</filename>
     <class kind="class">tatami::DelayedSubsetUnique</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>make_DelayedSubset.hpp</name>
-    <path>/github/workspace/include/tatami/subset/</path>
+    <path>tatami/subset/</path>
     <filename>make__DelayedSubset_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedSubset</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abfc63177b00e6e3e2fa47754b8d87704</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; p, IndexStorage_ idx)</arglist>
-    </member>
+  </compound>
+  <compound kind="file">
+    <name>utils.hpp</name>
+    <path>tatami/stats/</path>
+    <filename>stats_2utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>tatami.hpp</name>
-    <path>/github/workspace/include/tatami/</path>
+    <path>tatami/</path>
     <filename>tatami_8hpp.html</filename>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>ArrayView.hpp</name>
-    <path>/github/workspace/include/tatami/utils/</path>
+    <path>tatami/utils/</path>
     <filename>ArrayView_8hpp.html</filename>
     <class kind="class">tatami::ArrayView</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>bind_intersection.hpp</name>
-    <path>/github/workspace/include/tatami/utils/</path>
+    <path>tatami/utils/</path>
     <filename>bind__intersection_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::pair&lt; std::shared_ptr&lt; Matrix &gt;, std::vector&lt; size_t &gt; &gt;</type>
-      <name>bind_intersection</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a87c52cf8a974ad0025550b002d391d39</anchor>
-      <arglist>(const std::vector&lt; std::shared_ptr&lt; Matrix &gt; &gt; &amp;inputs, const std::vector&lt; const Id * &gt; &amp;ids)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>compress_sparse_triplets.hpp</name>
-    <path>/github/workspace/include/tatami/utils/</path>
+    <path>tatami/utils/</path>
     <filename>compress__sparse__triplets_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::vector&lt; size_t &gt;</type>
-      <name>compress_sparse_triplets</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab17e92414b0bff60f7b7a6431ac8a330</anchor>
-      <arglist>(size_t nr, size_t nc, U &amp;values, V &amp;rows, W &amp;cols)</arglist>
-    </member>
+  </compound>
+  <compound kind="file">
+    <name>convert_to_dense.hpp</name>
+    <path>tatami/dense/</path>
+    <filename>dense_2convert__to__dense_8hpp.html</filename>
+    <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>ElementType.hpp</name>
-    <path>/github/workspace/include/tatami/utils/</path>
+    <path>tatami/utils/</path>
     <filename>ElementType_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="typedef">
-      <type>typename std::remove_cv&lt; typename std::remove_reference&lt; decltype(std::declval&lt; Array_ &gt;()[0])&gt;::type &gt;::type</type>
-      <name>ElementType</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a58a028d23a7be58854b2e60dfae1b04b</anchor>
-      <arglist></arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>Oracles.hpp</name>
-    <path>/github/workspace/include/tatami/utils/</path>
+    <path>tatami/utils/</path>
     <filename>Oracles_8hpp.html</filename>
     <class kind="struct">tatami::FixedOracle</class>
     <class kind="struct">tatami::ConsecutiveOracle</class>
@@ -1386,20 +351,13 @@
   </compound>
   <compound kind="file">
     <name>process_consecutive_indices.hpp</name>
-    <path>/github/workspace/include/tatami/utils/</path>
+    <path>tatami/utils/</path>
     <filename>process__consecutive__indices_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>void</type>
-      <name>process_consecutive_indices</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>af01c93a616eb99f6a17861a8b19f7ee0</anchor>
-      <arglist>(const Index_ *indices, Index_ length, Function_ fun)</arglist>
-    </member>
   </compound>
   <compound kind="file">
     <name>SomeNumericArray.hpp</name>
-    <path>/github/workspace/include/tatami/utils/</path>
+    <path>tatami/utils/</path>
     <filename>SomeNumericArray_8hpp.html</filename>
     <class kind="struct">tatami::SomeNumericArray</class>
     <class kind="struct">tatami::SomeNumericArray::Iterator</class>
@@ -1407,16 +365,9 @@
   </compound>
   <compound kind="file">
     <name>wrap_shared_ptr.hpp</name>
-    <path>/github/workspace/include/tatami/utils/</path>
+    <path>tatami/utils/</path>
     <filename>wrap__shared__ptr_8hpp.html</filename>
     <namespace>tatami</namespace>
-    <member kind="function">
-      <type>std::shared_ptr&lt; const Matrix&lt; T, IDX &gt; &gt;</type>
-      <name>wrap_shared_ptr</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a7518f5e8e09a6f6d7d3955b8ea286689</anchor>
-      <arglist>(const Matrix&lt; T, IDX &gt; *ptr)</arglist>
-    </member>
   </compound>
   <compound kind="class">
     <name>tatami::ArrayView</name>
@@ -5824,6 +4775,6 @@
     <name>index</name>
     <title>A C++ API for all sorts of matrices</title>
     <filename>index.html</filename>
-    <docanchor file="index.html">md__github_workspace_README</docanchor>
+    <docanchor file="index.html" title="A C++ API for all sorts of matrices">md__2github_2workspace_2README</docanchor>
   </compound>
 </tagfile>

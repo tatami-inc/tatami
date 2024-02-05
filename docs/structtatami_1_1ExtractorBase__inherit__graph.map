@@ -1,6 +1,9 @@
 <map id="tatami::ExtractorBase&lt; Index_ &gt;" name="tatami::ExtractorBase&lt; Index_ &gt;">
-<area shape="rect" id="node1" title="Virtual base extractor class." alt="" coords="5,69,151,109"/>
-<area shape="rect" id="node2" href="$structtatami_1_1BlockExtractor.html" title="Virtual base class for block access." alt="" coords="199,5,347,45"/>
-<area shape="rect" id="node3" href="$structtatami_1_1FullExtractor.html" title="Virtual base class for full access." alt="" coords="205,69,341,109"/>
-<area shape="rect" id="node4" href="$structtatami_1_1IndexExtractor.html" title="Virtual base class for indexed access." alt="" coords="199,133,346,173"/>
+<area shape="rect" id="Node000001" title="Virtual base extractor class." alt="" coords="5,71,150,111"/>
+<area shape="rect" id="Node000002" href="$structtatami_1_1BlockExtractor.html" title="Virtual base class for block access." alt="" coords="198,5,345,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="153,63,208,44,210,49,155,68"/>
+<area shape="rect" id="Node000003" href="$structtatami_1_1FullExtractor.html" title="Virtual base class for full access." alt="" coords="204,71,339,111"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="165,88,203,88,203,94,165,94"/>
+<area shape="rect" id="Node000004" href="$structtatami_1_1IndexExtractor.html" title="Virtual base class for indexed access." alt="" coords="199,136,344,177"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="155,114,210,133,208,138,153,119"/>
 </map>

@@ -61,10 +61,11 @@ var searchData=
   ['make_5fdelayedtranspose_58',['make_DelayedTranspose',['../namespacetatami.html#afa35d8e9fe286967f327ec0eb6bd5005',1,'tatami']]],
   ['make_5fdelayedunaryisometricop_59',['make_DelayedUnaryIsometricOp',['../namespacetatami.html#a07b072944c766d85dc4ce4dc734e0b75',1,'tatami']]],
   ['math_5fhelpers_2ehpp_60',['math_helpers.hpp',['../math__helpers_8hpp.html',1,'']]],
-  ['matrix_61',['Matrix',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrix_2ehpp_62',['Matrix.hpp',['../Matrix_8hpp.html',1,'']]],
-  ['matrix_3c_20value_5f_2c_20index_5f_20_3e_63',['Matrix&lt; Value_, Index_ &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrix_3c_20value_5f_2c_20int_20_3e_64',['Matrix&lt; Value_, int &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['matrix_3c_20value_5fout_5f_2c_20index_5fout_5f_20_3e_65',['Matrix&lt; Value_out_, Index_out_ &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
-  ['medians_2ehpp_66',['medians.hpp',['../medians_8hpp.html',1,'']]]
+  ['matrices_61',['A C++ API for all sorts of matrices',['../index.html',1,'']]],
+  ['matrix_62',['Matrix',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_2ehpp_63',['Matrix.hpp',['../Matrix_8hpp.html',1,'']]],
+  ['matrix_3c_20value_5f_2c_20index_5f_20_3e_64',['Matrix&lt; Value_, Index_ &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_3c_20value_5f_2c_20int_20_3e_65',['Matrix&lt; Value_, int &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['matrix_3c_20value_5fout_5f_2c_20index_5fout_5f_20_3e_66',['Matrix&lt; Value_out_, Index_out_ &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
+  ['medians_2ehpp_67',['medians.hpp',['../medians_8hpp.html',1,'']]]
 ];

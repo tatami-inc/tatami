@@ -9,7 +9,7 @@ var indexSectionsWithContent =
   6: "bcdefinprsv",
   7: "dt",
   8: "o",
-  9: "a"
+  9: "acfmos"
 };
 
 var indexSectionNames =
