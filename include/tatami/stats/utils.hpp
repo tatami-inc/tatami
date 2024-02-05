@@ -130,17 +130,16 @@ void parallelize(Function_ fun, Index_ tasks, size_t threads) {
  *
  * @return An `Extractor` object for iteration over consecutive rows/columns in `[iter_start, iter_start + iter_length)`.
  *
- * This function is equivalent to `new_extractor()` but additionally calls `Extractor::set_oracle()` with a `ConsecutiveOracle` instance.
+ * This function is equivalent to `new_extractor()` but creates an a `ConsecutiveOracle` instance.
  * `Matrix` implementations that are oracle-aware can then perform pre-fetching of future accesses for greater performance.
  * Of course, this assumes that the iteration over the target dimension does actually involve consecutive elements from `iter_start` to `iter_start + iter_length`.
  */
 template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>
 auto consecutive_extractor(const Matrix<Value_, Index_>* mat, Index_ iter_start, Index_ iter_length, Args_&&... args) {
-    auto ext = new_extractor<row_, sparse_>(mat, std::forward<Args_>(args)...);
-    if (mat->uses_oracle(row_)) {
-        ext->set_oracle(std::make_unique<ConsecutiveOracle<Index_> >(iter_start, iter_length));
-    }
-    return ext;
+    return new_extractor<row_, sparse_>(mat, 
+        std::make_shared<ConsecutiveOracle<Index_> >(iter_start, iter_length),
+        std::forward<Args_>(args)...
+    );
 }
 
 namespace stats {

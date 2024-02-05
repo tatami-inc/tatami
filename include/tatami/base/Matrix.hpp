@@ -329,8 +329,8 @@ public:
      * @return A `FullDenseOracleAwareExtractor` object for dense access to full rows.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<FullDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummyDenseOracleAwareExtractor(this->dense_row(opt), std::move(oracle));
+    virtual std::unique_ptr<FullDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::FULL, false, Value_, Index_> >(this->dense_row(opt), std::move(oracle));
     }
 
     /**
@@ -341,8 +341,8 @@ public:
      * @return A `BlockDenseOracleAwareExtractor` object for dense access to a block of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<BlockDenseOracleAwareExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummyDenseOracleAwareExtractor(this->dense_row(block_start, block_length, opt), std::move(oracle));
+    virtual std::unique_ptr<BlockDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::BLOCK, false, Value_, Index_> >(this->dense_row(block_start, block_length, opt), std::move(oracle));
     }
 
     /**
@@ -352,8 +352,8 @@ public:
      * @return A `IndexDenseOracleAwareExtractor` object for dense access to a indexed subset of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<IndexDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummyDenseOracleAwareExtractor(this->dense_row(std::move(indices), opt), std::move(oracle));
+    virtual std::unique_ptr<IndexDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::INDEX, false, Value_, Index_> >(this->dense_row(std::move(indices), opt), std::move(oracle));
     }
 
     /**
@@ -362,8 +362,8 @@ public:
      * @return A `FullDenseOracleAwareExtractor` object for dense access to full columns.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<FullDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle> oracle, const Options& opt) const = 0;
-        return DummyDenseOracleAwareExtractor(this->dense_column(opt), std::move(oracle));
+    virtual std::unique_ptr<FullDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::FULL, false, Value_, Index_> >(this->dense_column(opt), std::move(oracle));
     }
 
     /**
@@ -374,8 +374,8 @@ public:
      * @return A `BlockDenseOracleAwareExtractor` object for dense access to a block of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<BlockDenseOracleAwareExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummyDenseOracleAwareExtractor(this->dense_column(block_start, block_length, opt), std::move(oracle));
+    virtual std::unique_ptr<BlockDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::BLOCK, false, Value_, Index_> >(this->dense_column(block_start, block_length, opt), std::move(oracle));
     }
 
     /**
@@ -385,8 +385,8 @@ public:
      * @return A `IndexDenseOracleAwareExtractor` object for dense access to a indexed subset of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<IndexDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummyDenseOracleAwareExtractor(this->dense_column(std::move(indices), opt), std::move(oracle));
+    virtual std::unique_ptr<IndexDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::INDEX, false, Value_, Index_> >(this->dense_column(std::move(indices), opt), std::move(oracle));
     }
 
     /***************************************
@@ -399,8 +399,8 @@ public:
      * @return A `FullSparseOracleAwareExtractor` object for sparse access to full rows.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<FullSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummySparseOracleAwareExtractor(this->sparse_row(opt), std::move(oracle));
+    virtual std::unique_ptr<FullSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::FULL, true, Value_, Index_> >(this->sparse_row(opt), std::move(oracle));
     }
 
     /**
@@ -411,8 +411,8 @@ public:
      * @return A `BlockSparseOracleAwareExtractor` object for sparse access to a block of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<BlockSparseOracleAwareExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummySparseOracleAwareExtractor(this->sparse_row(block_start, block_length, opt), std::move(oracle));
+    virtual std::unique_ptr<BlockSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::BLOCK, true, Value_, Index_> >(this->sparse_row(block_start, block_length, opt), std::move(oracle));
     }
 
     /**
@@ -422,8 +422,8 @@ public:
      * @return A `IndexSparseOracleAwareExtractor` object for sparse access to a indexed subset of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<IndexSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummySparseOracleAwareExtractor(this->sparse_row(std::move(indices), opt), std::move(oracle));
+    virtual std::unique_ptr<IndexSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::INDEX, true, Value_, Index_> >(this->sparse_row(std::move(indices), opt), std::move(oracle));
     }
 
     /**
@@ -432,8 +432,8 @@ public:
      * @return A `FullSparseOracleAwareExtractor` object for sparse access to full columns.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<FullSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummySparseOracleAwareExtractor(this->sparse_column(opt), std::move(oracle));
+    virtual std::unique_ptr<FullSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::FULL, true, Value_, Index_> >(this->sparse_column(opt), std::move(oracle));
     }
 
     /**
@@ -444,8 +444,8 @@ public:
      * @return A `BlockSparseOracleAwareExtractor` object for sparse access to a block of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<BlockSparseOracleAwareExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummySparseOracleAwareExtractor(this->sparse_column(block_start, block_length, opt), std::move(oracle));
+    virtual std::unique_ptr<BlockSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::BLOCK, true, Value_, Index_> >(this->sparse_column(block_start, block_length, opt), std::move(oracle));
     }
 
     /**
@@ -455,8 +455,8 @@ public:
      * @return A `IndexSparseOracleAwareExtractor` object for sparse access to a indexed subset of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<IndexSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, std::shared_ptr<Oracle> oracle, const Options& opt) const {
-        return DummySparseOracleAwareExtractor(this->sparse_column(std::move(indices), opt), std::move(oracle));
+    virtual std::unique_ptr<IndexSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        return std::make_unique<DummyOracleAwareExtractor<DimensionSelectionType::INDEX, true, Value_, Index_> >(this->sparse_column(std::move(indices), opt), std::move(oracle));
     }
 
     /****************************************************
@@ -468,7 +468,7 @@ public:
      * @return A `FullDenseOracleAwareExtractor` object for dense access to full rows, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<FullDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle> oracle) const {
+    std::unique_ptr<FullDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle) const {
         return dense_row(std::move(oracle), Options());
     }
 
@@ -479,8 +479,8 @@ public:
      * @return A `BlockDenseOracleAwareExtractor` object for dense access to a block of each row, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<BlockDenseOracleAwareExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, std::shared_ptr<Oracle> oracle) const {
-        return dense_row(block_start, block_length, std::move(oracle), Options());
+    std::unique_ptr<BlockDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
+        return dense_row(std::move(oracle), block_start, block_length, Options());
     }
 
     /**
@@ -489,8 +489,8 @@ public:
      * @return A `IndexDenseOracleAwareExtractor` object for dense access to a indexed subset of each row, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<IndexDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, std::shared_ptr<Oracle> oracle) const {
-        return dense_row(std::move(indices), std::move(oracle), Options());
+    std::unique_ptr<IndexDenseOracleAwareExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
+        return dense_row(std::move(oracle), std::move(indices), Options());
     }
 
     /**
@@ -498,7 +498,7 @@ public:
      * @return A `FullDenseOracleAwareExtractor` object for dense access to full columns, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<FullDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle> oracle) const {
+    std::unique_ptr<FullDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle) const {
         return dense_column(std::move(oracle), Options());
     }
 
@@ -509,8 +509,8 @@ public:
      * @return A `BlockDenseOracleAwareExtractor` object for dense access to a block of each column, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<BlockDenseOracleAwareExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, std::shared_ptr<Oracle> oracle) const {
-        return dense_column(block_start, block_length, std::move(oracle), Options());
+    std::unique_ptr<BlockDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
+        return dense_column(std::move(oracle), block_start, block_length, Options());
     }
 
     /**
@@ -519,8 +519,8 @@ public:
      * @return A `IndexDenseOracleAwareExtractor` object for dense access to a indexed subset of each column, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<IndexDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, std::shared_ptr<Oracle> oracle) const {
-        return dense_column(std::move(indices), std::move(oracle), Options()); 
+    std::unique_ptr<IndexDenseOracleAwareExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
+        return dense_column(std::move(oracle), std::move(indices), Options()); 
     }
 
     /*****************************************
@@ -532,7 +532,7 @@ public:
      * @return A `FullSparseOracleAwareExtractor` object for sparse access to full rows, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<FullSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle> oracle) const {
+    std::unique_ptr<FullSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle) const {
         return sparse_row(std::move(oracle), Options());
     }
 
@@ -543,8 +543,8 @@ public:
      * @return A `BlockSparseOracleAwareExtractor` object for sparse access to a block of each row, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<BlockSparseOracleAwareExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, std::shared_ptr<Oracle> oracle) const {
-        return sparse_row(block_start, block_length, std::move(oracle), Options());
+    std::unique_ptr<BlockSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
+        return sparse_row(std::move(oracle), block_start, block_length, Options());
     }
 
     /**
@@ -553,8 +553,8 @@ public:
      * @return A `IndexSparseOracleAwareExtractor` object for sparse access to a indexed subset of each row, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<IndexSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, std::shared_ptr<Oracle> oracle) const {
-        return sparse_row(std::move(indices), std::move(oracle), Options());
+    std::unique_ptr<IndexSparseOracleAwareExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
+        return sparse_row(std::move(oracle), std::move(indices), Options());
     }
 
     /**
@@ -562,7 +562,7 @@ public:
      * @return A `FullSparseOracleAwareExtractor` object for sparse access to full columns, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<FullSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle> oracle) const {
+    std::unique_ptr<FullSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle) const {
         return sparse_column(std::move(oracle), Options());
     }
 
@@ -573,8 +573,8 @@ public:
      * @return A `BlockSparseOracleAwareExtractor` object for sparse access to a block of each column, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<BlockSparseOracleAwareExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, std::shared_ptr<Oracle> oracle) const {
-        return sparse_column(block_start, block_length, std::move(oracle), Options());
+    std::unique_ptr<BlockSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
+        return sparse_column(std::move(oracle), block_start, block_length, Options());
     }
 
     /**
@@ -583,8 +583,8 @@ public:
      * @return A `IndexSparseOracleAwareExtractor` object for sparse access to a indexed subset of each column, using default options.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<IndexSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, std::shared_ptr<Oracle> oracle) const {
-        return sparse_column(std::move(indices), std::move(oracle), Options());
+    std::unique_ptr<IndexSparseOracleAwareExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
+        return sparse_column(std::move(oracle), std::move(indices), Options());
     }
 };
 

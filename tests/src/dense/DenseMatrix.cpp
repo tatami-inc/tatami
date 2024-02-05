@@ -43,10 +43,6 @@ TEST(DenseMatrix, Basic) {
     }
 
     EXPECT_FALSE(mat.uses_oracle(true));
-    {
-        auto wrk = mat.dense_row();
-        wrk->set_oracle(nullptr); // no-op.
-    }
 }
 
 TEST(DenseMatrix, OddsAndEnds) {

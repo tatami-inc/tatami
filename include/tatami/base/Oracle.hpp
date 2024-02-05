@@ -29,13 +29,13 @@ struct Oracle {
     /**
      * @return Total number of predictions.
      */
-    virtual size_t total() = 0;
+    virtual size_t total() const = 0;
 
     /**
      * @param i Which prediction to return.
      * @return The index of the `i`-th prediction.
      */
-    virtual Index_ get(size_t i) = 0; 
+    virtual Index_ get(size_t i) const = 0; 
 };
 
 }

@@ -40,12 +40,6 @@ TEST_P(ConvertToDenseTest, RowToRow) {
         std::vector<int> expected2(start, start + NC);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
-
-    // Works in cranky mode.
-    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
-    auto convertedC = tatami::convert_to_dense<true>(cranky.get(), threads);
-    tatami_test::test_simple_row_access(convertedC.get(), mat.get(), true, 1);
-    tatami_test::test_simple_column_access(convertedC.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToDenseTest, ColumnToColumn) {
@@ -69,12 +63,6 @@ TEST_P(ConvertToDenseTest, ColumnToColumn) {
         std::vector<int> expected2(start, start + NR);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
-
-    // Works in cranky mode.
-    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
-    auto convertedC = tatami::convert_to_dense<false>(cranky.get(), threads);
-    tatami_test::test_simple_row_access(convertedC.get(), mat.get(), true, 1);
-    tatami_test::test_simple_column_access(convertedC.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToDenseTest, RowToColumn) {
@@ -98,12 +86,6 @@ TEST_P(ConvertToDenseTest, RowToColumn) {
         std::vector<int> expected2(start, start + NC);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
-
-    // Works in cranky mode.
-    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
-    auto convertedC = tatami::convert_to_dense<false>(cranky.get(), threads);
-    tatami_test::test_simple_row_access(convertedC.get(), mat.get(), true, 1);
-    tatami_test::test_simple_column_access(convertedC.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToDenseTest, ColumnToRow) {
@@ -127,12 +109,6 @@ TEST_P(ConvertToDenseTest, ColumnToRow) {
         std::vector<int> expected2(start, start + NR);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
-
-    // Works in cranky mode.
-    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
-    auto convertedC = tatami::convert_to_dense<true>(cranky.get(), threads);
-    tatami_test::test_simple_row_access(convertedC.get(), mat.get(), true, 1);
-    tatami_test::test_simple_column_access(convertedC.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToDenseTest, Automatic) {
