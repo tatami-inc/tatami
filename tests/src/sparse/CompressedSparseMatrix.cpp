@@ -130,10 +130,6 @@ TEST_F(SparseUtilsTest, Basic) {
     EXPECT_EQ(sparse_column->prefer_rows_proportion(), 0);
 
     EXPECT_FALSE(sparse_row->uses_oracle(true));
-    {
-        auto wrk = sparse_row->sparse_column();
-        wrk->set_oracle(nullptr); // no-op.
-    }
 }
 
 /*************************************

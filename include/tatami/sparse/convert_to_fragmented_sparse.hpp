@@ -77,7 +77,8 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
                 std::vector<InputIndex_> buffer_i(secondary);
                 auto wrk = consecutive_extractor<row_, true>(incoming, start, length);
 
-                for (InputIndex_ p = start, e = start + length; p < e; ++p) {
+                while (wrk->used_predictions < wrk->total_predictions) {
+                    InputIndex_ p;
                     auto range = wrk->fetch(p, buffer_v.data(), buffer_i.data());
                     auto& sv = store_v[p];
                     auto& si = store_i[p];
@@ -100,7 +101,8 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
 
                 // Special conversion from dense to save ourselves from having to make
                 // indices that we aren't really interested in.
-                for (InputIndex_ p = start, e = start + length; p < e; ++p) {
+                while (wrk->used_predictions < wrk->total_predictions) {
+                    InputIndex_ p;
                     auto ptr = wrk->fetch(p, buffer_v.data());
                     auto& sv = store_v[p];
                     auto& si = store_i[p];
@@ -127,7 +129,8 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
                 std::vector<InputIndex_> buffer_i(primary);
                 auto wrk = consecutive_extractor<!row_, true>(incoming, static_cast<InputIndex_>(0), secondary, start, length);
 
-                for (InputIndex_ s = 0; s < secondary; ++s) {
+                while (wrk->used_predictions < wrk->total_predictions) {
+                    InputIndex_ s;
                     auto range = wrk->fetch(s, buffer_v.data(), buffer_i.data());
                     for (InputIndex_ i = 0; i < range.number; ++i, ++range.value, ++range.index) {
                         if (*range.value) {
@@ -144,7 +147,8 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
                 auto len = wrk->block_length;
                 std::vector<InputValue_> buffer_v(len);
 
-                for (InputIndex_ s = 0; s < secondary; ++s) {
+                while (wrk->used_predictions < wrk->total_predictions) {
+                    InputIndex_ s;
                     auto ptr = wrk->fetch(s, buffer_v.data());
                     for (InputIndex_ p = 0; p < len; ++p, ++ptr) {
                         if (*ptr) {

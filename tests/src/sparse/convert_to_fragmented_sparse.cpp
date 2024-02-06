@@ -31,12 +31,6 @@ TEST_P(ConvertToFragmentedSparseTest, RowToRow) {
         std::vector<int> expected2(start, start + NC);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
-
-    // Cranky, check correct oracle specification
-    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
-    auto convertedP = tatami::convert_to_fragmented_sparse<true>(cranky.get(), nthreads);
-    tatami_test::test_simple_row_access(convertedP.get(), mat.get(), true, 1);
-    tatami_test::test_simple_column_access(convertedP.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToFragmentedSparseTest, ColumnToColumn) {
@@ -63,12 +57,6 @@ TEST_P(ConvertToFragmentedSparseTest, ColumnToColumn) {
         std::vector<int> expected2(expected.begin(), expected.end());
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
-
-    // Cranky, check correct oracle specification
-    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
-    auto convertedP = tatami::convert_to_fragmented_sparse<true>(cranky.get(), nthreads);
-    tatami_test::test_simple_row_access(convertedP.get(), mat.get(), true, 1);
-    tatami_test::test_simple_column_access(convertedP.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToFragmentedSparseTest, RowToColumn) {
@@ -94,12 +82,6 @@ TEST_P(ConvertToFragmentedSparseTest, RowToColumn) {
         std::vector<int> expected2(start, start + NC);
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
-
-    // Cranky, check correct oracle specification
-    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
-    auto convertedP = tatami::convert_to_fragmented_sparse<true>(cranky.get(), nthreads);
-    tatami_test::test_simple_row_access(convertedP.get(), mat.get(), true, 1);
-    tatami_test::test_simple_column_access(convertedP.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToFragmentedSparseTest, ColumnToRow) {
@@ -126,12 +108,6 @@ TEST_P(ConvertToFragmentedSparseTest, ColumnToRow) {
         std::vector<int> expected2(expected.begin(), expected.end());
         EXPECT_EQ(wrk2->fetch(i), expected2);
     }
-
-    // Cranky, check correct oracle specification
-    auto cranky = tatami_test::make_CrankyMatrix<double, int>(mat);
-    auto convertedP = tatami::convert_to_fragmented_sparse<true>(cranky.get(), nthreads);
-    tatami_test::test_simple_row_access(convertedP.get(), mat.get(), true, 1);
-    tatami_test::test_simple_column_access(convertedP.get(), mat.get(), true, 1);
 }
 
 TEST_P(ConvertToFragmentedSparseTest, Automatic) {
