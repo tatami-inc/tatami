@@ -388,6 +388,11 @@ public:
      */
     size_t total_predictions = 0;
 
+    /**
+     * @return Pointer to the underlying `Oracle`.
+     */
+    virtual const Oracle<Index_>* oracle() const = 0;
+
 public:
     /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
@@ -477,6 +482,11 @@ public:
      * Total number of predictions from the oracle.
      */
     size_t total_predictions = 0;
+
+    /**
+     * @return Pointer to the underlying `Oracle`.
+     */
+    virtual const Oracle<Index_>* oracle() const = 0;
 
 public:
     /**
@@ -626,6 +636,22 @@ using BlockSparseOracleAwareExtractor = OracleAwareExtractor<DimensionSelectionT
 template<typename Value_, typename Index_>
 using IndexSparseOracleAwareExtractor = OracleAwareExtractor<DimensionSelectionType::INDEX, true, Value_, Index_>;
 
+/**
+ * @tparam oracle_ Whether to use an oracle.
+ * @tparam selection_ Type of selection on the extraction dimension.
+ * @tparam sparse_ Whether to perform sparse retrieval.
+ * @tparam Value_ Data value type, should be numeric.
+ * @tparam Index_ Row/column index type, should be integer.
+ *
+ * Conditional interface for a possibly oracle-aware extractor.
+ */
+template<bool oracle_, DimensionSelectionType selection_, bool sparse_, typename Value_, typename Index_> 
+using GeneralizedExtractor = typename std::conditional<
+        oracle_, 
+        OracleAwareExtractor<selection_, sparse_, Value_, Index_>, 
+        Extractor<selection_, sparse_, Value_, Index_> 
+    >::type;
+
 /*********************************************************
  *********************************************************/
 
@@ -635,38 +661,42 @@ using IndexSparseOracleAwareExtractor = OracleAwareExtractor<DimensionSelectionT
 template<DimensionSelectionType selection_, bool sparse_, typename Value_, typename Index_> 
 struct DummyOracleAwareExtractor : public OracleAwareExtractor<selection_, sparse_, Value_, Index_> {
     DummyOracleAwareExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > ex, std::shared_ptr<Oracle<Index_> > o) : 
-        internal(std::move(ex)), oracle(std::move(o)) 
+        internal_extractor(std::move(ex)), internal_oracle(std::move(o)) 
     {
-        this->total_predictions = oracle->total();
+        this->total_predictions = internal_oracle->total();
         if constexpr(selection_ == tatami::DimensionSelectionType::FULL) {
-            this->full_length = internal->full_length;
+            this->full_length = internal_extractor->full_length;
         } else if constexpr(selection_ == tatami::DimensionSelectionType::BLOCK) {
-            this->block_start = internal->block_start;
-            this->block_length = internal->block_length;
+            this->block_start = internal_extractor->block_start;
+            this->block_length = internal_extractor->block_length;
         } else {
-            this->index_length = internal->index_length;
+            this->index_length = internal_extractor->index_length;
         }
     }
 
     const Value_* fetch(Index_& i, Value_* buffer) {
-        i = oracle->get(this->used_predictions);
+        i = internal_oracle->get(this->used_predictions);
         ++(this->used_predictions);
-        return internal->fetch(i, buffer);
+        return internal_extractor->fetch(i, buffer);
     }
 
     SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
-        i = oracle->get(this->used_predictions);
+        i = internal_oracle->get(this->used_predictions);
         ++(this->used_predictions);
-        return internal->fetch(i, vbuffer, ibuffer);
+        return internal_extractor->fetch(i, vbuffer, ibuffer);
     }
 
     const Index_* index_start() const {
-        return internal->index_start();
+        return internal_extractor->index_start();
+    }
+
+    const Oracle<Index_>* oracle() const {
+        return internal_oracle.get();
     }
 
 private:
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal;
-    std::shared_ptr<Oracle<Index_> > oracle;
+    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal_extractor;
+    std::shared_ptr<Oracle<Index_> > internal_oracle;
 };
 /**
  * @endcond
