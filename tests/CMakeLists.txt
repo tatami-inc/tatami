@@ -28,7 +28,7 @@ add_executable(
 #    src/subset/DelayedSubset.cpp
 #    src/subset/DelayedSubsetBlock.cpp
 #
-    src/isometric/unary/arith_vector_helpers.cpp
+#    src/isometric/unary/arith_vector_helpers.cpp
 #    src/isometric/unary/arith_scalar_helpers.cpp
 #    src/isometric/unary/math_helpers.cpp
 #    src/isometric/unary/compare_scalar_helpers.cpp
@@ -39,12 +39,12 @@ add_executable(
 #    src/isometric/binary/compare_helpers.cpp
 #    src/isometric/binary/boolean_helpers.cpp
 
-    src/sparse/CompressedSparseMatrix.cpp
-    src/sparse/FragmentedSparseMatrix.cpp
-    src/sparse/SemiCompressedSparseMatrix.cpp
-    src/sparse/SparseSecondaryExtractorCore.cpp
-    src/sparse/convert_to_compressed_sparse.cpp
-    src/sparse/convert_to_fragmented_sparse.cpp
+#    src/sparse/CompressedSparseMatrix.cpp
+#    src/sparse/FragmentedSparseMatrix.cpp
+#    src/sparse/SemiCompressedSparseMatrix.cpp
+#    src/sparse/SparseSecondaryExtractorCore.cpp
+#    src/sparse/convert_to_compressed_sparse.cpp
+#    src/sparse/convert_to_fragmented_sparse.cpp
 
     src/stats/sums.cpp
     src/stats/variances.cpp

@@ -45,12 +45,14 @@ bool is_increasing(const std::vector<IDX>& indices) {
     return true;
 }
 
-template<bool sanitize, typename T>
-void sanitize_nan(std::vector<T>& values, T replacement = 1234567890) {
-    if constexpr(sanitize) {
-        for (auto& x : values) {
-            if (std::isnan(x)) {
-                x = replacement;
+template<typename T>
+void sanitize_nan(std::vector<T>& values, bool has_nan, T replacement = 1234567890) {
+    if constexpr(std::numeric_limit<T>::has_quiet_NaN<T>()) {
+        if (has_nan) {
+            for (auto& x : values) {
+                if (std::isnan(x)) {
+                    x = replacement;
+                }
             }
         }
     }
