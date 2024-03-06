@@ -4,7 +4,8 @@
 #include "utils.hpp"
 #include <type_traits>
 #include "../tatami/base/utils.hpp"
-#include "../tatami/utils/Oracles.hpp"
+#include "../tatami/utils/ConsecutiveOracle.hpp"
+#include "../tatami/utils/FixedOracle.hpp"
 
 namespace tatami_test {
 
@@ -70,7 +71,7 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
         if (params.jump == 1 && params.order == FORWARD) {
             oracle.reset(new tatami::ConsecutiveOracle<Index_>(0, limit));
         } else {
-            oracle.reset(new tatami::FixedOracle<Index_>(sequence.data(), sequence.size()));
+            oracle.reset(new tatami::FixedViewOracle<Index_>(sequence.data(), sequence.size()));
         }
     }
 

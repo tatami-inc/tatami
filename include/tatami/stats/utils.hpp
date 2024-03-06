@@ -3,7 +3,7 @@
 
 #include "../base/Matrix.hpp"
 #include "../base/utils.hpp"
-#include "../utils/Oracles.hpp"
+#include "../utils/ConsecutiveOracle.hpp"
 
 #include <cmath>
 #include <vector>

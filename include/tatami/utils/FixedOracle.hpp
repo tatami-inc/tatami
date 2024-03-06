@@ -1,13 +1,13 @@
-#ifndef TATAMI_ORACLES_HPP
-#define TATAMI_ORACLES_HPP
+#ifndef TATAMI_FIXED_ORACLE_HPP
+#define TATAMI_FIXED_ORACLE_HPP
 
-#include "../base/Options.hpp"
+#include "../base/Oracle.hpp"
 #include <numeric>
 
 /**
- * @file Oracles.hpp
+ * @file FixedOracle.hpp
  *
- * @brief Predict future accesses during iteration.
+ * @brief Iterate across a fixed sequence of elements in a dimension.
  */
 
 namespace tatami {
@@ -15,16 +15,16 @@ namespace tatami {
 /**
  * @tparam Index_ Integer type of the row/column indices.
  *
- * @brief Predict future accesses from a known sequence.
+ * @brief Predict future accesses from a view on a fixed sequence.
  */
 template<typename Index_>
-struct FixedOracle : public Oracle<Index_> {
+struct FixedViewOracle : public Oracle<Index_> {
     /**
      * @param r Pointer to a constant array of indices.
      * The underlying array should be valid for the lifetime of this `FixedOracle` instance.
      * @param n Length of the array at `r`.
      */
-    FixedOracle(const Index_* r, size_t n) : reference(r), length(n) {}
+    FixedViewOracle(const Index_* r, size_t n) : reference(r), length(n) {}
 
     size_t total() const {
         return length;
@@ -42,26 +42,25 @@ private:
 /**
  * @tparam Index_ Integer type of the row/column indices.
  *
- * @brief Predict future accesses of a consecutive sequence.
+ * @brief Predict future accesses from a fixed sequence in a vector.
  */
 template<typename Index_>
-struct ConsecutiveOracle : public Oracle<Index_> {
+struct FixedVectorOracle : public Oracle<Index_> {
     /**
-     * @param s Start index of the consecutive sequence.
-     * @param l Length of the sequence.
+     * @param v Vector containing a fixed sequence of indices.
      */
-    ConsecutiveOracle(Index_ s, Index_ l) : offset(s), length(l) {}
+    FixedVectorOracle(std::vector<Index_> v) : sequence(std::move(v)) {}
 
     size_t total() const {
-        return length;
+        return sequence.size();
     }
 
     Index_ get(size_t i) const {
-        return offset + i;
+        return sequence[i];
     }
 
 private:
-    Index_ offset, length;
+    std::vector<Index_> sequence;
 };
 
 }
