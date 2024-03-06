@@ -125,7 +125,7 @@ TEST_P(DenseFullAccessTest, Full) {
 
     tatami_test::TestAccessParameters params;
     params.use_row = std::get<0>(tparam);
-    params.use_oracle = std::get<0>(tparam);
+    params.use_oracle = std::get<1>(tparam);
     params.order = std::get<2>(tparam);
     params.jump = std::get<3>(tparam);
 
