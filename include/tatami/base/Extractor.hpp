@@ -652,56 +652,6 @@ using GeneralizedExtractor = typename std::conditional<
         Extractor<selection_, sparse_, Value_, Index_> 
     >::type;
 
-/*********************************************************
- *********************************************************/
-
-/**
- * @cond
- */
-template<DimensionSelectionType selection_, bool sparse_, typename Value_, typename Index_> 
-struct DummyOracleAwareExtractor : public OracleAwareExtractor<selection_, sparse_, Value_, Index_> {
-    DummyOracleAwareExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > ex, std::shared_ptr<Oracle<Index_> > o) : 
-        internal_extractor(std::move(ex)), internal_oracle(std::move(o)) 
-    {
-        this->total_predictions = internal_oracle->total();
-        if constexpr(selection_ == tatami::DimensionSelectionType::FULL) {
-            this->full_length = internal_extractor->full_length;
-        } else if constexpr(selection_ == tatami::DimensionSelectionType::BLOCK) {
-            this->block_start = internal_extractor->block_start;
-            this->block_length = internal_extractor->block_length;
-        } else {
-            this->index_length = internal_extractor->index_length;
-        }
-    }
-
-    const Value_* fetch(Index_& i, Value_* buffer) {
-        i = internal_oracle->get(this->used_predictions);
-        ++(this->used_predictions);
-        return internal_extractor->fetch(i, buffer);
-    }
-
-    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
-        i = internal_oracle->get(this->used_predictions);
-        ++(this->used_predictions);
-        return internal_extractor->fetch(i, vbuffer, ibuffer);
-    }
-
-    const Index_* index_start() const {
-        return internal_extractor->index_start();
-    }
-
-    const Oracle<Index_>* oracle() const {
-        return internal_oracle.get();
-    }
-
-private:
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal_extractor;
-    std::shared_ptr<Oracle<Index_> > internal_oracle;
-};
-/**
- * @endcond
- */
-
 }
 
 #endif

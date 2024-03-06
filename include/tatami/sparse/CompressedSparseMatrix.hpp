@@ -6,6 +6,7 @@
 #include "primary_extraction.hpp"
 #include "SparseSecondaryExtractorCore.hpp"
 #include "../utils/ElementType.hpp"
+#include "../utils/OracleUnawareMatrix.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -49,7 +50,7 @@ template<
     class IndexStorage_ = std::vector<Index_>, 
     class PointerStorage_ = std::vector<size_t> 
 >
-class CompressedSparseMatrix : public Matrix<Value_, Index_> {
+class CompressedSparseMatrix : public OracleUnawareMatrix<Value_, Index_> {
 public:
     /**
      * @param nr Number of rows.
@@ -184,10 +185,6 @@ private:
             } else {
                 return NULL;
             }
-        }
-
-        void set_oracle(std::unique_ptr<Oracle<Index_> >) {
-            return;
         }
 
     protected:

@@ -3,6 +3,8 @@
 
 #include "../base/Matrix.hpp"
 #include "../base/utils.hpp"
+#include "../utils/OracleUnawareMatrix.hpp"
+
 #include <algorithm>
 #include <numeric>
 
@@ -23,8 +25,8 @@ namespace tatami {
  * This virtual class provides default methods for sparse extraction that just wrap the dense methods.
  * By inheriting from this class, implementers of dense matrices can skip the implementation of irrelevant methods for `Matrix::sparse_row()`, `Matrix::sparse_column()`, etc.,
  */
-template <typename Value_, typename Index_ = int>
-class VirtualDenseMatrix : public Matrix<Value_, Index_> {
+template <typename Value_, typename Index_ = int, bool use_oracle_ = false>
+class VirtualDenseMatrix : public std::conditional<use_oracle_, Matrix<Value_, Index_>, OracleUnawareMatrix<Value_, Index_> >::type {
 protected:
     VirtualDenseMatrix() = default;
 
@@ -64,10 +66,6 @@ private:
             } else {
                 return NULL;
             }
-        }
-
-        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            internal->set_oracle(std::move(o));
         }
 
     public:

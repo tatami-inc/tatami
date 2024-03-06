@@ -2,6 +2,7 @@
 #define TATAMI_DENSE_MATRIX_H
 
 #include "VirtualDenseMatrix.hpp"
+#include "../utils/OracleUnawareMatrix.hpp"
 #include "../base/utils.hpp"
 
 #include <vector>
@@ -31,7 +32,7 @@ namespace tatami {
  * If a method is available for `data()` that returns a `const Value_*`, it will also be used.
  */
 template<bool row_, typename Value_, typename Index_ = int, class Storage_ = std::vector<Value_> >
-class DenseMatrix : public VirtualDenseMatrix<Value_, Index_> {
+class DenseMatrix : public VirtualDenseMatrix<Value_, Index_, false> {
 public: 
     /**
      * @param nr Number of rows.
@@ -112,10 +113,6 @@ private:
             } else {
                 return NULL;
             }
-        }
-
-        void set_oracle(std::unique_ptr<Oracle<Index_> >) {
-            return;
         }
 
     public:
