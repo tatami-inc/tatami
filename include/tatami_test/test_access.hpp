@@ -11,18 +11,32 @@ namespace tatami_test {
 enum TestAccessOrder { FORWARD, REVERSE, RANDOM };
 
 struct TestAccessParameters {
+    // Whether to use an oracle.
+    bool use_oracle = false;
+
+    // Whether to test access across rows.
+    bool use_row = true;
+
     // Whether to expect NaNs (and sanitize them in the comparison).
-    bool has_nan;
+    bool has_nan = false;
 
     // Whether the input matrix is actually sparse and should have fewer values from the sparse extractors. 
-    bool less_sparse; 
+    bool less_sparse = false; 
 
     // Ordering of rows/columns to test.
-    TestAccessOrder order;
+    TestAccessOrder order = FORWARD;
 
     // Minimum jump between rows/columns.
-    int jump;
+    int jump = 1;
 };
+
+/********************************************************
+ ********************************************************/
+
+// All functions in this namespace will ignore 'params.use_oracle' and
+// 'params.use_row', as these are handled by template arguments for brevity.
+
+namespace base {
 
 template<bool use_row_, bool use_oracle_, class TestMatrix_, class RefMatrix_, class DenseExtract_, class SparseExpand_, class PropCheck_, typename ...Args_>
 void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr, const RefMatrix_* ref, DenseExtract_ expector, SparseExpand_ sparse_expand, PropCheck_ check_properties, Args_... args) {
@@ -51,7 +65,7 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
                 if (params.order == RANDOM) {
                     uint64_t seed = static_cast<uint64_t>(NR) * NC + limit * static_cast<uint64_t>(params.order);
                     std::mt19937_64 rng(seed);
-                    std::random_shuffle(sequence.begin(), sequence.end(), rng);
+                    std::shuffle(sequence.begin(), sequence.end(), rng);
                 }
             }
             oracle.reset(new tatami::FixedOracle<Index_>(sequence.data(), sequence.size()));
@@ -238,7 +252,7 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
 }
 
 template<bool use_row_, bool use_oracle_, class Matrix_, class Matrix2_>
-void test_simple_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref) {
+void test_full_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref) {
     int nsecondary = (use_row_ ? ref->ncol() : ref->nrow());
     auto refwork = [&]() { 
         if constexpr(use_row_) {
@@ -267,7 +281,7 @@ void test_simple_access(const TestAccessParameters& params, const Matrix_* ptr, 
 }
 
 template<bool use_row_, bool use_oracle_, class Matrix_, class Matrix2_>
-void test_sliced_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref, int start, int end) {
+void test_block_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref, int start, int end) {
     int nsecondary = (use_row_ ? ref->ncol() : ref->nrow());
     auto refwork = [&]() { 
         if constexpr(use_row_) {
@@ -298,7 +312,7 @@ void test_sliced_access(const TestAccessParameters& params, const Matrix_* ptr, 
 }
 
 template<bool use_row_, bool use_oracle_, class Matrix_, class Matrix2_>
-void test_indexed_column_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref, int start, int step) {
+void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref, int start, int step) {
     int nsecondary = (use_row_ ? ref->ncol() : ref->nrow());
     auto refwork = [&]() { 
         if constexpr(use_row_) {
@@ -344,6 +358,64 @@ void test_indexed_column_access(const TestAccessParameters& params, const Matrix
         },
         indices
     );
+}
+
+}
+
+/********************************************************
+ ********************************************************/
+
+// Finally, some user-visible functions that convert compile-time parameters to run-time
+// parameters, to make it easier to define parametrized tests across oracle/row status.
+template<class Matrix_, class Matrix2_>
+void test_full_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref) {
+    if (params.use_row) {
+        if (params.use_oracle) {
+            base::test_full_access<true, true>(params, ptr, ref);
+        } else {
+            base::test_full_access<true, false>(params, ptr, ref);
+        }
+    } else {
+        if (params.use_oracle) {
+            base::test_full_access<false, true>(params, ptr, ref);
+        } else {
+            base::test_full_access<false, false>(params, ptr, ref);
+        } 
+    }
+}
+
+template<class Matrix_, class Matrix2_>
+void test_block_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref, int start, int end) {
+    if (params.use_row) {
+        if (params.use_oracle) {
+            base::test_block_access<true, true>(params, ptr, ref, start, end);
+        } else {
+            base::test_block_access<true, false>(params, ptr, ref, start, end);
+        }
+    } else {
+        if (params.use_oracle) {
+            base::test_block_access<false, true>(params, ptr, ref, start, end);
+        } else {
+            base::test_block_access<false, false>(params, ptr, ref, start, end);
+        } 
+    }
+}
+
+template<class Matrix_, class Matrix2_>
+void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref, int start, int step) {
+    if (params.use_row) {
+        if (params.use_oracle) {
+            base::test_indexed_access<true, true>(params, ptr, ref, start, step);
+        } else {
+            base::test_indexed_access<true, false>(params, ptr, ref, start, step);
+        }
+    } else {
+        if (params.use_oracle) {
+            base::test_indexed_access<false, true>(params, ptr, ref, start, step);
+        } else {
+            base::test_indexed_access<false, false>(params, ptr, ref, start, step);
+        } 
+    }
 }
 
 }
