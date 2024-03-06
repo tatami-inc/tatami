@@ -46,28 +46,30 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
     ASSERT_EQ(NC, ref->ncol());
     int limit = (use_row_ ? NR : NC);
 
-    // Setting up the sequence over which to iterate.
+    // Setting up the sequence of observations.
     typedef typename TestMatrix_::index_type Index_;
-    std::shared_ptr<tatami::Oracle<Index_> > oracle;
     std::vector<Index_> sequence;
+    if (params.order == REVERSE) {
+        for (int i = limit; i > 0; i -= params.jump) {
+            sequence.push_back(i - 1);
+        }
+    } else {
+        for (int i = 0; i < limit; i += params.jump) {
+            sequence.push_back(i);
+        }
+        if (params.order == RANDOM) {
+            uint64_t seed = static_cast<uint64_t>(NR) * NC + limit * static_cast<uint64_t>(params.order);
+            std::mt19937_64 rng(seed);
+            std::shuffle(sequence.begin(), sequence.end(), rng);
+        }
+    }
+
+    // Setting up the oracle.
+    std::shared_ptr<tatami::Oracle<Index_> > oracle;
     if constexpr(use_oracle_) {
         if (params.jump == 1 && params.order == FORWARD) {
             oracle.reset(new tatami::ConsecutiveOracle<Index_>(0, limit));
         } else {
-            if (params.order == REVERSE) {
-                for (int i = limit; i > 0; i -= params.jump) {
-                    sequence.push_back(i - 1);
-                }
-            } else {
-                for (int i = 0; i < limit; i += params.jump) {
-                    sequence.push_back(i);
-                }
-                if (params.order == RANDOM) {
-                    uint64_t seed = static_cast<uint64_t>(NR) * NC + limit * static_cast<uint64_t>(params.order);
-                    std::mt19937_64 rng(seed);
-                    std::shuffle(sequence.begin(), sequence.end(), rng);
-                }
-            }
             oracle.reset(new tatami::FixedOracle<Index_>(sequence.data(), sequence.size()));
         }
     }
@@ -130,18 +132,7 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
     // Looping over rows/columns and checking extraction against the reference.
     size_t sparse_extracted = 0, dense_extracted = 0;
 
-    auto get_index = [&](int i0) -> Index_ {
-        Index_ i;
-        switch (params.order) {
-            case FORWARD: i = i0; break;
-            case REVERSE: i = limit - i0 - 1; break;
-            case RANDOM: i = sequence[i0/params.jump]; break;
-        }
-        return i;
-    };
-
-    for (int i0 = 0; i0 < limit; i0 += params.jump) {
-        auto i = get_index(i0);
+    for (auto i : sequence) {
         auto expected = expector(i);
         sanitize_nan(expected, params.has_nan);
         dense_extracted += expected.size();
