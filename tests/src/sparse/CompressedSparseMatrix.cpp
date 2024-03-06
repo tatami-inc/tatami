@@ -22,8 +22,8 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
 
     // Comparing access for an empty matrix.
     tatami::DenseColumnMatrix<double, int> dense(10, 20, std::vector<double>(200));
-    tatami_test::test_simple_column_access(&mat, &dense, true, 1);
-    tatami_test::test_simple_row_access(&mat, &dense, true, 1);
+    tatami_test::test_simple_row_access(&mat, &dense);
+    tatami_test::test_simple_column_access(&mat, &dense);
 
     // Same for row-major.
     indptr.resize(11);
@@ -31,8 +31,8 @@ TEST(CompressedSparseMatrix, ConstructionEmpty) {
     EXPECT_TRUE(rmat.sparse());
     EXPECT_EQ(rmat.nrow(), 10);
     EXPECT_EQ(rmat.ncol(), 20);
-    tatami_test::test_simple_column_access(&rmat, &dense, true, 1);
-    tatami_test::test_simple_row_access(&rmat, &dense, true, 1);
+    tatami_test::test_simple_row_access(&rmat, &dense);
+    tatami_test::test_simple_column_access(&rmat, &dense);
 }
 
 TEST(CompressedSparseMatrix, ConstructionFail) {
@@ -135,7 +135,7 @@ TEST_F(SparseUtilsTest, Basic) {
 /*************************************
  *************************************/
 
-class SparseFullAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t> >, public SparseTestMethods {
+class SparseFullAccessTest : public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t> >, public SparseTestMethods {
 protected:
     void SetUp() {
         assemble();
@@ -143,27 +143,26 @@ protected:
     }
 };
 
-TEST_P(SparseFullAccessTest, Column) {
-    auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    tatami_test::test_simple_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
-}
+TEST_P(SparseFullAccessTest, Full) {
+    auto tparam = GetParam(); 
 
-TEST_P(SparseFullAccessTest, Row) {
-    auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    tatami_test::test_simple_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP);
+    tatami_test::TestAccessParameters param;
+    param.use_row = std::get<0>(tparam);
+    param.use_oracle = std::get<1>(tparam);
+    param.order = std::get<2>(tparam);
+    param.jump = std::get<3>(tparam);
+
+    tatami_test::test_full_access(param, sparse_column.get(), dense.get());
+    tatami_test::test_full_access(param, sparse_row.get(), dense.get());
 }
 
 INSTANTIATE_TEST_SUITE_P(
     CompressedSparseMatrix,
     SparseFullAccessTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
+        ::testing::Values(true, false), // row extraction.
+        ::testing::Values(true, false), // an oracle.
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 4, 10, 20) // jump, to test the workspace's memory.
     )
 );
@@ -171,7 +170,7 @@ INSTANTIATE_TEST_SUITE_P(
 /*************************************
  *************************************/
 
-class SparseSlicedAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<double> > >, public SparseTestMethods {
+class SparseSlicedAccessTest : public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t, std::vector<double> > >, public SparseTestMethods {
 protected:
     void SetUp() {
         assemble();
@@ -179,33 +178,30 @@ protected:
     }
 };
 
-TEST_P(SparseSlicedAccessTest, Column) {
-    auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    auto interval_info = std::get<2>(param);
-    size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
+TEST_P(SparseSlicedAccessTest, Sliced) {
+    auto tparam = GetParam(); 
 
-    tatami_test::test_sliced_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
-}
+    tatami_test::TestAccessParameters param;
+    param.use_row = std::get<0>(tparam);
+    param.use_oracle = std::get<1>(tparam);
+    param.order = std::get<2>(tparam);
+    param.jump = std::get<3>(tparam);
 
-TEST_P(SparseSlicedAccessTest, Row) {
-    auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    auto interval_info = std::get<2>(param);
-    size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
+    auto interval_info = std::get<4>(tparam);
+    auto len = (param.use_row ? ncol : nrow);
+    size_t FIRST = interval_info[0] * len, LAST = interval_info[1] * len;
 
-    tatami_test::test_sliced_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
-    tatami_test::test_sliced_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, LAST);
+    tatami_test::test_block_access(param, sparse_column.get(), dense.get(), FIRST, LAST);
+    tatami_test::test_block_access(param, sparse_row.get(), dense.get(), FIRST, LAST);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     CompressedSparseMatrix,
     SparseSlicedAccessTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
+        ::testing::Values(true, false), // row extraction.
+        ::testing::Values(true, false), // an oracle.
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 3), // jump, to test the workspace's memory.
         ::testing::Values(
             std::vector<double>({ 0, 0.51 }),
@@ -218,7 +214,7 @@ INSTANTIATE_TEST_SUITE_P(
 /*************************************
  *************************************/
 
-class SparseIndexedAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<double> > >, public SparseTestMethods {
+class SparseIndexedAccessTest : public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t, std::vector<double> > >, public SparseTestMethods {
 protected:
     void SetUp() {
         assemble();
@@ -226,35 +222,30 @@ protected:
     }
 };
 
-TEST_P(SparseIndexedAccessTest, Column) {
-    auto param = GetParam(); 
+TEST_P(SparseIndexedAccessTest, Indexed) {
+    auto tparam = GetParam(); 
 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    auto interval_info = std::get<2>(param);
-    size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
+    tatami_test::TestAccessParameters param;
+    param.use_row = std::get<0>(tparam);
+    param.use_oracle = std::get<1>(tparam);
+    param.order = std::get<2>(tparam);
+    param.jump = std::get<3>(tparam);
 
-    tatami_test::test_indexed_column_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_column_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
-}
+    auto interval_info = std::get<4>(tparam);
+    auto len = (param.use_row ? ncol : nrow);
+    size_t FIRST = interval_info[0] * len, STEP = interval_info[1] * len;
 
-TEST_P(SparseIndexedAccessTest, Row) {
-    auto param = GetParam(); 
-
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
-    auto interval_info = std::get<2>(param);
-    size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
-
-    tatami_test::test_indexed_row_access(sparse_column.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
-    tatami_test::test_indexed_row_access(sparse_row.get(), dense.get(), FORWARD, JUMP, FIRST, STEP);
+    tatami_test::test_indexed_access(param, sparse_column.get(), dense.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(param, sparse_row.get(), dense.get(), FIRST, STEP);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     CompressedSparseMatrix,
     SparseIndexedAccessTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
+        ::testing::Values(true, false), // row extraction.
+        ::testing::Values(true, false), // an oracle.
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 3), // jump, to test the workspace's memory.
         ::testing::Values(
             std::vector<double>({ 0, 0.05 }),
@@ -300,6 +291,10 @@ TEST(CompressedSparseMatrix, SecondarySkip) {
     // Make a column-sparse compressed matrix, so that we can check
     // that secondary extraction correctly skips the all-zero rows.
     auto sparse_column = tatami::convert_to_sparse<false>(&dense);
-    tatami_test::test_simple_row_access(sparse_column.get(), &dense, true, 1); // forward
-    tatami_test::test_simple_row_access(sparse_column.get(), &dense, false, 1); // backward
+    tatami_test::TestAccessParameters param;
+    param.use_row = true;
+    param.order = tatami_test::FORWARD;
+    tatami_test::test_full_access(param, sparse_column.get(), &dense);
+    param.order = tatami_test::REVERSE;
+    tatami_test::test_full_access(param, sparse_column.get(), &dense);
 }

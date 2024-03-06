@@ -409,6 +409,24 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
     }
 }
 
+/********************************************************
+ ********************************************************/
+
+// A couple of very simple helpers for just iterating through the matrix.
+template<class Matrix_, class Matrix2_>
+void test_simple_column_access(const Matrix_* ptr, const Matrix2_* ref) {
+    TestAccessParameters params;
+    params.use_row = false;
+    test_full_access(params, ptr, ref);
+}
+
+template<class Matrix_, class Matrix2_>
+void test_simple_row_access(const Matrix_* ptr, const Matrix2_* ref) {
+    TestAccessParameters params;
+    params.use_row = true;
+    test_full_access(params, ptr, ref);
+}
+
 }
 
 #endif

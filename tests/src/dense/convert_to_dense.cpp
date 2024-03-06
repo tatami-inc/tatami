@@ -28,11 +28,8 @@ TEST_P(ConvertToDenseTest, RowToRow) {
     EXPECT_TRUE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
 
-    tatami_test::TestAccessParameters params;
-    params.use_row = true;
-    tatami_test::test_full_access(params, converted.get(), mat.get());
-    params.use_row = false;
-    tatami_test::test_full_access(params, converted.get(), mat.get());
+    tatami_test::test_simple_row_access(converted.get(), mat.get());
+    tatami_test::test_simple_column_access(converted.get(), mat.get());
 
     auto converted2 = tatami::convert_to_dense<true, int, size_t>(mat.get(), threads); // works for a different type.
     EXPECT_TRUE(converted2->prefer_rows());
@@ -55,11 +52,8 @@ TEST_P(ConvertToDenseTest, ColumnToColumn) {
     EXPECT_FALSE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
 
-    tatami_test::TestAccessParameters params;
-    params.use_row = true;
-    tatami_test::test_full_access(params, converted.get(), mat.get());
-    params.use_row = false;
-    tatami_test::test_full_access(params, converted.get(), mat.get());
+    tatami_test::test_simple_row_access(converted.get(), mat.get());
+    tatami_test::test_simple_column_access(converted.get(), mat.get());
 
     auto converted2 = tatami::convert_to_dense<false, int, size_t>(mat.get(), threads); // works for a different type.
     EXPECT_FALSE(converted2->prefer_rows());
@@ -82,11 +76,8 @@ TEST_P(ConvertToDenseTest, RowToColumn) {
     EXPECT_FALSE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
 
-    tatami_test::TestAccessParameters params;
-    params.use_row = true;
-    tatami_test::test_full_access(params, converted.get(), mat.get());
-    params.use_row = false;
-    tatami_test::test_full_access(params, converted.get(), mat.get());
+    tatami_test::test_simple_row_access(converted.get(), mat.get());
+    tatami_test::test_simple_column_access(converted.get(), mat.get());
 
     auto converted2 = tatami::convert_to_dense<false, int, size_t>(mat.get(), threads); // works for a different type.
     EXPECT_FALSE(converted2->prefer_rows());
@@ -108,12 +99,8 @@ TEST_P(ConvertToDenseTest, ColumnToRow) {
     auto converted = tatami::convert_to_dense<true>(mat.get(), threads);
     EXPECT_TRUE(converted->prefer_rows());
     EXPECT_FALSE(converted->sparse());
-
-    tatami_test::TestAccessParameters params;
-    params.use_row = true;
-    tatami_test::test_full_access(params, converted.get(), mat.get());
-    params.use_row = false;
-    tatami_test::test_full_access(params, converted.get(), mat.get());
+    tatami_test::test_simple_row_access(converted.get(), mat.get());
+    tatami_test::test_simple_column_access(converted.get(), mat.get());
 
     auto converted2 = tatami::convert_to_dense<true, int, size_t>(mat.get(), threads); // works for a different type.
     EXPECT_TRUE(converted2->prefer_rows());
@@ -156,24 +143,16 @@ TEST_P(ConvertToDenseTest, FromSparse) {
             auto converted = tatami::convert_to_dense<true>(&smat, threads);
             EXPECT_TRUE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-
-            tatami_test::TestAccessParameters params;
-            params.use_row = true;
-            tatami_test::test_full_access(params, converted.get(), &smat);
-            params.use_row = false;
-            tatami_test::test_full_access(params, converted.get(), &smat);
+            tatami_test::test_simple_row_access(converted.get(), &smat);
+            tatami_test::test_simple_column_access(converted.get(), &smat);
         }
 
         {
             auto converted = tatami::convert_to_dense<false>(&smat, threads);
             EXPECT_FALSE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-
-            tatami_test::TestAccessParameters params;
-            params.use_row = true;
-            tatami_test::test_full_access(params, converted.get(), &smat);
-            params.use_row = false;
-            tatami_test::test_full_access(params, converted.get(), &smat);
+            tatami_test::test_simple_row_access(converted.get(), &smat);
+            tatami_test::test_simple_column_access(converted.get(), &smat);
         }
     }
 
@@ -186,24 +165,16 @@ TEST_P(ConvertToDenseTest, FromSparse) {
             auto converted = tatami::convert_to_dense<true>(&smat, threads);
             EXPECT_TRUE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-
-            tatami_test::TestAccessParameters params;
-            params.use_row = true;
-            tatami_test::test_full_access(params, converted.get(), &smat);
-            params.use_row = false;
-            tatami_test::test_full_access(params, converted.get(), &smat);
+            tatami_test::test_simple_row_access(converted.get(), &smat);
+            tatami_test::test_simple_column_access(converted.get(), &smat);
         }
 
         {
             auto converted = tatami::convert_to_dense<false>(&smat, threads);
             EXPECT_FALSE(converted->prefer_rows());
             EXPECT_FALSE(converted->sparse());
-
-            tatami_test::TestAccessParameters params;
-            params.use_row = true;
-            tatami_test::test_full_access(params, converted.get(), &smat);
-            params.use_row = false;
-            tatami_test::test_full_access(params, converted.get(), &smat);
+            tatami_test::test_simple_row_access(converted.get(), &smat);
+            tatami_test::test_simple_column_access(converted.get(), &smat);
         }
     }
 }

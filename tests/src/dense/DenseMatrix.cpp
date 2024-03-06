@@ -144,103 +144,93 @@ INSTANTIATE_TEST_SUITE_P(
     )
 );
 
-///*************************************
-// *************************************/
-//
-//class DenseSlicedAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<double> > >, public DenseTestMethods {
-//protected:
-//    void SetUp() {
-//        assemble();
-//        return;
-//    }
-//};
-//
-//TEST_P(DenseSlicedAccessTest, Column) {
-//    auto param = GetParam(); 
-//
-//    bool FORWARD = std::get<0>(param);
-//    size_t JUMP = std::get<1>(param);
-//    auto interval_info = std::get<2>(param);
-//    size_t FIRST = interval_info[0] * nrow, LAST = interval_info[1] * nrow;
-//
-//    tatami_test::test_sliced_column_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, LAST);
-//    tatami_test::test_sliced_column_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, LAST);
-//}
-//
-//TEST_P(DenseSlicedAccessTest, Row) {
-//    auto param = GetParam(); 
-//
-//    bool FORWARD = std::get<0>(param);
-//    size_t JUMP = std::get<1>(param);
-//    auto interval_info = std::get<2>(param);
-//    size_t FIRST = interval_info[0] * ncol, LAST = interval_info[1] * ncol;
-//
-//    tatami_test::test_sliced_row_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, LAST);
-//    tatami_test::test_sliced_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, LAST);
-//}
-//
-//INSTANTIATE_TEST_SUITE_P(
-//    DenseMatrix,
-//    DenseSlicedAccessTest,
-//    ::testing::Combine(
-//        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
-//        ::testing::Values(1, 3), // jump, to test the workspace's memory.
-//        ::testing::Values(
-//            std::vector<double>({ 0, 0.45 }),
-//            std::vector<double>({ 0.2, 0.8 }), 
-//            std::vector<double>({ 0.7, 1 })
-//        )
-//    )
-//);
-//
-///*************************************
-// *************************************/
-//
-//class DenseIndexedAccessTest : public ::testing::TestWithParam<std::tuple<bool, size_t, std::vector<double> > >, public DenseTestMethods {
-//protected:
-//    void SetUp() {
-//        assemble();
-//        return;
-//    }
-//};
-//
-//TEST_P(DenseIndexedAccessTest, Column) {
-//    auto param = GetParam(); 
-//
-//    bool FORWARD = std::get<0>(param);
-//    size_t JUMP = std::get<1>(param);
-//    auto interval_info = std::get<2>(param);
-//    size_t FIRST = interval_info[0] * nrow, STEP = interval_info[1] * nrow;
-//
-//    tatami_test::test_indexed_column_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, STEP);
-//    tatami_test::test_indexed_column_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, STEP);
-//}
-//
-//TEST_P(DenseIndexedAccessTest, Row) {
-//    auto param = GetParam(); 
-//
-//    bool FORWARD = std::get<0>(param);
-//    size_t JUMP = std::get<1>(param);
-//    auto interval_info = std::get<2>(param);
-//    size_t FIRST = interval_info[0] * ncol, STEP = interval_info[1] * ncol;
-//
-//    tatami_test::test_indexed_row_access(dense_column.get(), dense_row.get(), FORWARD, JUMP, FIRST, STEP);
-//    tatami_test::test_indexed_row_access(dense_row.get(), dense_column.get(), FORWARD, JUMP, FIRST, STEP);
-//}
-//
-//INSTANTIATE_TEST_SUITE_P(
-//    DenseMatrix,
-//    DenseIndexedAccessTest,
-//    ::testing::Combine(
-//        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
-//        ::testing::Values(1, 3), // jump, to test the workspace's memory.
-//        ::testing::Values(
-//            std::vector<double>({ 0, 0.05 }),
-//            std::vector<double>({ 0.2, 0.1 }), 
-//            std::vector<double>({ 0.7, 0.03 })
-//        )
-//    )
-//);
+/*************************************
+ *************************************/
+
+class DenseSlicedAccessTest : public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t, std::vector<double> > >, public DenseTestMethods {
+protected:
+    void SetUp() {
+        assemble();
+        return;
+    }
+};
+
+TEST_P(DenseSlicedAccessTest, Sliced) {
+    auto tparam = GetParam(); 
+
+    tatami_test::TestAccessParameters param;
+    param.use_row = std::get<0>(tparam);
+    param.use_oracle = std::get<1>(tparam);
+    param.order = std::get<2>(tparam);
+    param.jump = std::get<3>(tparam);
+
+    auto interval_info = std::get<4>(tparam);
+    auto len = (param.use_row ? ncol : nrow);
+    size_t FIRST = interval_info[0] * len, LAST = interval_info[1] * len;
+
+    tatami_test::test_block_access(param, dense_column.get(), dense_row.get(), FIRST, LAST);
+    tatami_test::test_block_access(param, dense_row.get(), dense_column.get(), FIRST, LAST);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DenseMatrix,
+    DenseSlicedAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // row extraction.
+        ::testing::Values(true, false), // an oracle.
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<double>({ 0, 0.45 }),
+            std::vector<double>({ 0.2, 0.8 }), 
+            std::vector<double>({ 0.7, 1 })
+        )
+    )
+);
+
+/*************************************
+ *************************************/
+
+class DenseIndexedAccessTest : public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t, std::vector<double> > >, public DenseTestMethods {
+protected:
+    void SetUp() {
+        assemble();
+        return;
+    }
+};
+
+TEST_P(DenseIndexedAccessTest, Indexed) {
+    auto tparam = GetParam(); 
+
+    tatami_test::TestAccessParameters param;
+    param.use_row = std::get<0>(tparam);
+    param.use_oracle = std::get<1>(tparam);
+    param.order = std::get<2>(tparam);
+    param.jump = std::get<3>(tparam);
+
+    auto interval_info = std::get<4>(tparam);
+    auto len = (param.use_row ? ncol : nrow);
+    size_t FIRST = interval_info[0] * len, STEP = interval_info[1] * len;
+
+    tatami_test::test_indexed_access(param, dense_column.get(), dense_row.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(param, dense_row.get(), dense_column.get(), FIRST, STEP);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DenseMatrix,
+    DenseIndexedAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // row extraction.
+        ::testing::Values(true, false), // an oracle.
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
+        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        ::testing::Values(
+            std::vector<double>({ 0, 0.05 }),
+            std::vector<double>({ 0.2, 0.1 }), 
+            std::vector<double>({ 0.7, 0.03 })
+        )
+    )
+);
 
 /*************************************
  *************************************/
