@@ -91,6 +91,13 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
         }
     }();
 
+    if constexpr(use_oracle_) {
+        EXPECT_EQ(pwork->used_predictions, 0);
+        EXPECT_EQ(swork->used_predictions, 0);
+        EXPECT_EQ(pwork->total_predictions, sequence.size());
+        EXPECT_EQ(swork->total_predictions, sequence.size());
+    }
+
     tatami::Options opt;
     opt.sparse_ordered_index = false;
     auto swork_uns = [&]() {
@@ -132,11 +139,13 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
 
     // Looping over rows/columns and checking extraction against the reference.
     size_t sparse_extracted = 0, dense_extracted = 0;
+    int counter = 0;
 
     for (auto i : sequence) {
         auto expected = expector(i);
         sanitize_nan(expected, params.has_nan);
         dense_extracted += expected.size();
+        ++counter;
 
         // Checking dense retrieval first.
         {
@@ -145,6 +154,7 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
                     Index_ j = limit;
                     auto output = pwork->fetch(j);
                     EXPECT_EQ(i, j);
+                    EXPECT_EQ(counter, pwork->used_predictions);
                     return output;
                 } else {
                     return pwork->fetch(i);
@@ -161,6 +171,7 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
                     Index_ j = limit;
                     auto output = swork->fetch(j);
                     EXPECT_EQ(i, j);
+                    EXPECT_EQ(counter, swork->used_predictions);
                     return output;
                 } else {
                     return swork->fetch(i);
