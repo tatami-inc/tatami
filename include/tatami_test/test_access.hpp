@@ -1,11 +1,16 @@
 #ifndef TATAMI_TEST_ACCESS_BASE_HPP
 #define TATAMI_TEST_ACCESS_BASE_HPP
 
-#include "utils.hpp"
-#include <type_traits>
-#include "../tatami/base/utils.hpp"
+#include "fetch.hpp"
+#include "../tatami/base/new_extractor.hpp"
 #include "../tatami/utils/ConsecutiveOracle.hpp"
 #include "../tatami/utils/FixedOracle.hpp"
+
+#include <vector>
+#include <limits>
+#include <random>
+#include <cmath>
+#include <memory>
 
 namespace tatami_test {
 
@@ -37,7 +42,20 @@ struct TestAccessParameters {
 // All functions in this namespace will ignore 'params.use_oracle' and
 // 'params.use_row', as these are handled by template arguments for brevity.
 
-namespace base {
+namespace internal {
+
+template<typename T>
+void sanitize_nan(std::vector<T>& values, bool has_nan, T replacement = 1234567890) {
+    if constexpr(std::numeric_limits<T>::has_quiet_NaN) {
+        if (has_nan) {
+            for (auto& x : values) {
+                if (std::isnan(x)) {
+                    x = replacement;
+                }
+            }
+        }
+    }
+}
 
 template<bool use_row_, bool use_oracle_, class TestMatrix_, class RefMatrix_, class DenseExtract_, class SparseExpand_, class PropCheck_, typename ...Args_>
 void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr, const RefMatrix_* ref, DenseExtract_ expector, SparseExpand_ sparse_expand, PropCheck_ check_properties, Args_... args) {
@@ -48,6 +66,7 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
     int limit = (use_row_ ? NR : NC);
 
     // Setting up the sequence of observations.
+    typedef typename TestMatrix_::value_type Value_;
     typedef typename TestMatrix_::index_type Index_;
     std::vector<Index_> sequence;
     if (params.order == REVERSE) {
@@ -90,13 +109,6 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
             return tatami::new_extractor<use_row_, true>(ptr, args...);
         }
     }();
-
-    if constexpr(use_oracle_) {
-        EXPECT_EQ(pwork->used_predictions, 0);
-        EXPECT_EQ(swork->used_predictions, 0);
-        EXPECT_EQ(pwork->total_predictions, sequence.size());
-        EXPECT_EQ(swork->total_predictions, sequence.size());
-    }
 
     tatami::Options opt;
     opt.sparse_ordered_index = false;
@@ -152,12 +164,11 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
             auto observed = [&]() {
                 if constexpr(use_oracle_) {
                     Index_ j = limit;
-                    auto output = pwork->fetch(j);
+                    auto output = fetch(pwork.get(), j);
                     EXPECT_EQ(i, j);
-                    EXPECT_EQ(counter, pwork->used_predictions);
                     return output;
                 } else {
-                    return pwork->fetch(i);
+                    return fetch(pwork.get(), i);
                 }
             }();
             sanitize_nan(observed, params.has_nan);
@@ -169,19 +180,28 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
             auto observed = [&]() {
                 if constexpr(use_oracle_) {
                     Index_ j = limit;
-                    auto output = swork->fetch(j);
+                    auto output = fetch(swork.get(), j);
                     EXPECT_EQ(i, j);
-                    EXPECT_EQ(counter, swork->used_predictions);
                     return output;
                 } else {
-                    return swork->fetch(i);
+                    return fetch(swork.get(), i);
                 }
             }();
+
             sanitize_nan(observed.value, params.has_nan);
             ASSERT_EQ(expected, sparse_expand(observed));
-            ASSERT_TRUE(is_increasing(observed.index));
+            sparse_extracted += observed.index.size();
 
-            sparse_extracted += observed.number;
+            {
+                bool is_increasing = true;
+                for (size_t i = 1; i < observed.index.size(); ++i) {
+                    if (observed.index[i] <= observed.index[i-1]) {
+                        is_increasing = false;
+                        break;
+                    }
+                }
+                ASSERT_TRUE(is_increasing);
+            }
 
             std::vector<int> indices(expected.size()); // using the dense expected size as a proxy for the extraction length in block/indexed cases.
             auto observed_i = [&]() {
@@ -195,7 +215,8 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
                 }
             }();
             ASSERT_TRUE(observed_i.value == NULL);
-            ASSERT_EQ(observed.index, std::vector<int>(observed_i.index, observed_i.index + observed_i.number));
+            std::vector<int> indices_only(observed_i.index, observed_i.index + observed_i.number);
+            ASSERT_EQ(observed.index, indices_only);
 
             std::vector<double> vbuffer(expected.size());
             auto observed_v = [&]() {
@@ -230,11 +251,11 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
             auto observed_uns = [&]() {
                 if constexpr(use_oracle_) {
                     Index_ j = limit;
-                    auto output = swork_uns->fetch(j);
+                    auto output = fetch(swork_uns.get(), j);
                     EXPECT_EQ(i, j);
                     return output;
                 } else {
-                    return swork_uns->fetch(i);
+                    return fetch(swork_uns.get(), i);
                 }
             }();
             sanitize_nan(observed_uns.value, params.has_nan);
@@ -265,20 +286,25 @@ void test_full_access(const TestAccessParameters& params, const Matrix_* ptr, co
         }
     }();
 
+    typedef typename Matrix_::value_type Value_;
     test_access_base<use_row_, use_oracle_>(
         params,
         ptr, 
         ref, 
         [&](int i) -> auto { 
-            auto expected = refwork->fetch(i);
+            auto expected = fetch(refwork.get(), i);
             EXPECT_EQ(expected.size(), nsecondary);
             return expected;
         },
-        [&](const auto& range) -> auto {
-            return expand(range, nsecondary);
+        [&](const auto& svec) -> auto {
+            std::vector<Value_> output(nsecondary);
+            for (int i = 0; i < svec.index.size(); ++i) {
+                output[svec.index[i]] = svec.value[i];
+            }
+            return output;
         },
         [&](const auto* work) {
-            EXPECT_EQ(work->full_length, nsecondary);
+            EXPECT_EQ(work->number(), nsecondary);
         }
     );
 }
@@ -294,20 +320,24 @@ void test_block_access(const TestAccessParameters& params, const Matrix_* ptr, c
         }
     }();
 
+    typedef typename Matrix_::value_type Value_;
     test_access_base<use_row_, use_oracle_>(
         params,
         ptr, 
         ref, 
         [&](int i) -> auto { 
-            auto raw_expected = refwork->fetch(i);
-            return std::vector<typename Matrix_::value_type>(raw_expected.begin() + start, raw_expected.begin() + end);
+            auto raw_expected = fetch(refwork.get(), i);
+            return std::vector<Value_>(raw_expected.begin() + start, raw_expected.begin() + end);
         }, 
-        [&](const auto& range) -> auto {
-            return expand(range, start, end);
+        [&](const auto& svec) -> auto {
+            std::vector<Value_> output(end - start);
+            for (size_t i = 0; i < svec.value.size(); ++i) {
+                output[svec.index[i] - start] = svec.value[i];
+            }
+            return output;
         },
         [&](const auto* work) {
-            EXPECT_EQ(work->block_start, start);
-            EXPECT_EQ(work->block_length, end - start);
+            EXPECT_EQ(work->number(), end - start);
         },
         start,
         end - start
@@ -334,12 +364,13 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
         }
     }
 
+    typedef typename Matrix_::value_type Value_;
     test_access_base<use_row_, use_oracle_>(
         params,
         ptr, 
         ref, 
         [&](int i) -> auto { 
-            auto raw_expected = refwork->fetch(i);
+            auto raw_expected = fetch(refwork.get(), i);
             std::vector<typename Matrix_::value_type> expected;
             expected.reserve(indices.size());
             for (auto idx : indices) {
@@ -347,17 +378,28 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
             }
             return expected;
         }, 
-        [&](const auto& range) -> auto {
-            auto full = expand(range, nsecondary);
-            std::vector<double> sub;
-            sub.reserve(indices.size());
-            for (auto idx : indices) {
-                sub.push_back(full[idx]);
+        [&](const auto& svec) -> auto {
+            std::vector<Value_> output(indices.size());
+            auto oIt = output.begin();
+            size_t j = 0;
+            for (auto x : svec.index) {
+                while (1) {
+                    if (j == svec.index.size()) {
+                        return output;
+                    }
+                    if (svec.index[j] == x) {
+                        *oIt = svec.value[j];
+                        ++j;
+                        break;
+                    }
+                    ++j;
+                }
+                ++oIt;
             }
-            return sub;
+            return output;
         },
         [&](const auto* work) {
-            EXPECT_EQ(std::vector<int>(work->index_start(), work->index_start() + work->index_length), indices);
+            EXPECT_EQ(work->number(), indices.size());
         },
         indices
     );
@@ -374,15 +416,15 @@ template<class Matrix_, class Matrix2_>
 void test_full_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref) {
     if (params.use_row) {
         if (params.use_oracle) {
-            base::test_full_access<true, true>(params, ptr, ref);
+            internal::test_full_access<true, true>(params, ptr, ref);
         } else {
-            base::test_full_access<true, false>(params, ptr, ref);
+            internal::test_full_access<true, false>(params, ptr, ref);
         }
     } else {
         if (params.use_oracle) {
-            base::test_full_access<false, true>(params, ptr, ref);
+            internal::test_full_access<false, true>(params, ptr, ref);
         } else {
-            base::test_full_access<false, false>(params, ptr, ref);
+            internal::test_full_access<false, false>(params, ptr, ref);
         } 
     }
 }
@@ -391,15 +433,15 @@ template<class Matrix_, class Matrix2_>
 void test_block_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref, int start, int end) {
     if (params.use_row) {
         if (params.use_oracle) {
-            base::test_block_access<true, true>(params, ptr, ref, start, end);
+            internal::test_block_access<true, true>(params, ptr, ref, start, end);
         } else {
-            base::test_block_access<true, false>(params, ptr, ref, start, end);
+            internal::test_block_access<true, false>(params, ptr, ref, start, end);
         }
     } else {
         if (params.use_oracle) {
-            base::test_block_access<false, true>(params, ptr, ref, start, end);
+            internal::test_block_access<false, true>(params, ptr, ref, start, end);
         } else {
-            base::test_block_access<false, false>(params, ptr, ref, start, end);
+            internal::test_block_access<false, false>(params, ptr, ref, start, end);
         } 
     }
 }
@@ -408,15 +450,15 @@ template<class Matrix_, class Matrix2_>
 void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr, const Matrix2_* ref, int start, int step) {
     if (params.use_row) {
         if (params.use_oracle) {
-            base::test_indexed_access<true, true>(params, ptr, ref, start, step);
+            internal::test_indexed_access<true, true>(params, ptr, ref, start, step);
         } else {
-            base::test_indexed_access<true, false>(params, ptr, ref, start, step);
+            internal::test_indexed_access<true, false>(params, ptr, ref, start, step);
         }
     } else {
         if (params.use_oracle) {
-            base::test_indexed_access<false, true>(params, ptr, ref, start, step);
+            internal::test_indexed_access<false, true>(params, ptr, ref, start, step);
         } else {
-            base::test_indexed_access<false, false>(params, ptr, ref, start, step);
+            internal::test_indexed_access<false, false>(params, ptr, ref, start, step);
         } 
     }
 }

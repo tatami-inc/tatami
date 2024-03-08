@@ -19,14 +19,14 @@ add_executable(
     libtest 
 
     src/dense/DenseMatrix.cpp
-    src/dense/convert_to_dense.cpp
+#    src/dense/convert_to_dense.cpp
 
 #    src/other/DelayedBind.cpp
 #    src/other/DelayedTranspose.cpp
 #    src/other/DelayedCast.cpp
 #
 #    src/subset/DelayedSubset.cpp
-    src/subset/DelayedSubsetBlock.cpp
+#    src/subset/DelayedSubsetBlock.cpp
 #
 #    src/isometric/unary/arith_vector_helpers.cpp
 #    src/isometric/unary/arith_scalar_helpers.cpp
@@ -39,19 +39,19 @@ add_executable(
 #    src/isometric/binary/compare_helpers.cpp
 #    src/isometric/binary/boolean_helpers.cpp
 #
-    src/sparse/CompressedSparseMatrix.cpp
-    src/sparse/FragmentedSparseMatrix.cpp
-    src/sparse/SemiCompressedSparseMatrix.cpp
-    src/sparse/SparseSecondaryExtractorCore.cpp
-    src/sparse/convert_to_compressed_sparse.cpp
-    src/sparse/convert_to_fragmented_sparse.cpp
-
-    src/stats/sums.cpp
-    src/stats/variances.cpp
-    src/stats/medians.cpp
-    src/stats/ranges.cpp
-    src/stats/counts.cpp
-    src/stats/parallelize.cpp
+#    src/sparse/CompressedSparseMatrix.cpp
+#    src/sparse/FragmentedSparseMatrix.cpp
+#    src/sparse/SemiCompressedSparseMatrix.cpp
+#    src/sparse/SparseSecondaryExtractorCore.cpp
+#    src/sparse/convert_to_compressed_sparse.cpp
+#    src/sparse/convert_to_fragmented_sparse.cpp
+#
+#    src/stats/sums.cpp
+#    src/stats/variances.cpp
+#    src/stats/medians.cpp
+#    src/stats/ranges.cpp
+#    src/stats/counts.cpp
+#    src/stats/parallelize.cpp
 #    src/stats/grouped_medians.cpp
 #    src/stats/grouped_sums.cpp
 

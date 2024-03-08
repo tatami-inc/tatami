@@ -1,29 +1,9 @@
-#ifndef TATAMI_BASE_UTILS_HPP
-#define TATAMI_BASE_UTILS_HPP
+#ifndef TATAMI_NEW_EXTRACTOR_HPP
+#define TATAMI_NEW_EXTRACTOR_HPP
 
 #include "Matrix.hpp"
-#include "Options.hpp"
-#include <memory>
 
 namespace tatami {
-
-/**
- * @cond
- */
-// Default to false.
-template<typename T, class V, typename = int>
-struct has_data {
-    static const bool value = false;
-};
-
-// Specialization is only run if it _has_ a data method.
-template<typename T, class V>
-struct has_data<T, V, decltype((void) V().data(), 0)> { 
-    static const bool value = std::is_same<T*, decltype(V().data())>::value;
-};
-/**
- * @endcond
- */
 
 /**
  * @tparam row_ Whether to iterate over rows.
@@ -35,7 +15,9 @@ struct has_data<T, V, decltype((void) V().data(), 0)> {
  * @param[in] ptr Pointer to a `Matrix` object to iterate over.
  * @param args Zero or more additional arguments to pass to methods like `Matrix::dense_row()`.
  *
- * @return A `Extractor` object to access the requested dimension of `ptr`.
+ * @return An extractor to access the requested dimension of `ptr`.
+ * This may be any of `MyopicDenseExtractor`, `MyopicSparseExtractor`, `OracularDenseEextractor` or `OracularSparseExtractor`,
+ * depending on `sparse_` and whether an `Oracle` is supplied in `args`.
  */
 template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>
 auto new_extractor(const Matrix<Value_, Index_>* ptr, Args_&&... args) {

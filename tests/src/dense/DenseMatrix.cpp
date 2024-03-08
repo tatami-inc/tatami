@@ -27,7 +27,8 @@ TEST(DenseMatrix, Basic) {
         for (size_t i = 0, end = mat.ncol(); i < end; ++i) {
             auto start = contents.begin() + i * mat.nrow();
             std::vector<double> expected(start, start + mat.nrow());
-            EXPECT_EQ(wrk->fetch(i), expected);
+            auto observed = tatami_test::fetch<double, int>(wrk.get(), i);
+            EXPECT_EQ(observed, expected);
         }
     }
 
@@ -38,7 +39,8 @@ TEST(DenseMatrix, Basic) {
             for (size_t j = 0, jend = mat.ncol(); j < jend; ++j) {
                 expected[j] = contents[j * mat.nrow() + i];
             }
-            EXPECT_EQ(wrk->fetch(i), expected);
+            auto observed = tatami_test::fetch<double, int>(wrk.get(), i);
+            EXPECT_EQ(observed, expected);
         }
     }
 
@@ -252,7 +254,9 @@ TEST(DenseMatrix, TypeOverflow) {
         auto rwrk = ref.dense_column();
         auto lwrk = limited.dense_column();
         for (int i = 0; i < ref.ncol(); ++i) {
-            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i);
+            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i);
+            EXPECT_EQ(expected, observed);
         }
     }
 
@@ -260,7 +264,9 @@ TEST(DenseMatrix, TypeOverflow) {
         auto rwrk = ref.dense_row();
         auto lwrk = limited.dense_row();
         for (int i = 0; i < ref.nrow(); ++i) {
-            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i);
+            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i);
+            EXPECT_EQ(expected, observed);
         }
     }
 
@@ -268,7 +274,9 @@ TEST(DenseMatrix, TypeOverflow) {
         auto rwrk = ref.dense_column(59, 189);
         auto lwrk = limited.dense_column(59, 189);
         for (int i = 0; i < ref.ncol(); ++i) {
-            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i);
+            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i);
+            EXPECT_EQ(expected, observed);
         }
     }
 
@@ -276,7 +284,9 @@ TEST(DenseMatrix, TypeOverflow) {
         auto rwrk = ref.dense_row(59, 89);
         auto lwrk = limited.dense_row(59, 89);
         for (int i = 0; i < ref.nrow(); ++i) {
-            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i);
+            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i);
+            EXPECT_EQ(expected, observed);
         }
     }
 
@@ -287,7 +297,9 @@ TEST(DenseMatrix, TypeOverflow) {
         auto rwrk = ref.dense_column(std::move(indices));
         auto lwrk = limited.dense_column(std::move(uindices));
         for (int i = 0; i < ref.ncol(); ++i) {
-            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i);
+            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i);
+            EXPECT_EQ(expected, observed);
         }
     }
 
@@ -298,7 +310,9 @@ TEST(DenseMatrix, TypeOverflow) {
         auto rwrk = ref.dense_row(std::move(indices));
         auto lwrk = limited.dense_row(std::move(uindices));
         for (int i = 0; i < ref.nrow(); ++i) {
-            EXPECT_EQ(rwrk->fetch(i), lwrk->fetch(i));
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i);
+            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i);
+            EXPECT_EQ(expected, observed);
         }
     }
 }

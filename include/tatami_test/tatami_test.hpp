@@ -3,5 +3,7 @@
 
 #include "simulate_vector.hpp"
 #include "test_access.hpp"
+#include "fetch.hpp"
+#include "throw_error.hpp"
 
 #endif
