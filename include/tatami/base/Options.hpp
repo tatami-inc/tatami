@@ -42,14 +42,6 @@ struct Options {
      * Setting this to `false` may reduce computational work in situations where the order of non-zero elements does not matter.
      */
     bool sparse_ordered_index = true;
-
-    /** 
-     * Whether to ask extractors to cache information from every `fetch()` call.
-     * Specifically, this refers to intermediate data structures that are specific to a particular dimension element,
-     * which can be re-used if the same dimension element is requested in a subsequent call.
-     * This may enable faster iteration if the same extractor object is re-used for multiple passes over the same matrix.
-     */
-    bool cache_for_reuse = false;
 };
 
 }

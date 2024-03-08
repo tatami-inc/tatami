@@ -125,7 +125,7 @@ struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         storage(store), secondary(sec), primary(prim) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        size_t offset = i;
+        size_t offset = i; // use size_t to avoid overflow.
         auto copy = buffer;
         for (Index_ x = 0; x < primary; ++x, ++copy, offset += secondary) {
             *copy = storage[offset];
@@ -149,11 +149,11 @@ public:
 
 template<typename Value_, typename Index_, class Storage_>
 struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
-    SecondaryMyopicBlockDense(const Storage_& store, size_t sec, Index_ bs, Index_ bl) : 
+    SecondaryMyopicBlockDense(const Storage_& store, Index_ sec, Index_ bs, Index_ bl) : 
         storage(store), secondary(sec), block_start(bs), block_length(bl) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        size_t offset = i + block_start * secondary;
+        size_t offset = i + block_start * static_cast<size_t>(secondary); // cast to avoid overflow.
         auto copy = buffer;
         for (Index_ x = 0; x < block_length; ++x, ++copy, offset += secondary) {
             *copy = storage[offset];
@@ -167,7 +167,7 @@ struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
 
 private:
     const Storage_& storage;
-    size_t secondary;
+    Index_ secondary;
     Index_ block_start, block_length;
 
 public:
@@ -182,13 +182,13 @@ public:
 
 template<typename Value_, typename Index_, class Storage_>
 struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
-    SecondaryMyopicIndexDense(const Storage_& store, size_t sec, std::vector<Index_> idx) : 
+    SecondaryMyopicIndexDense(const Storage_& store, Index_ sec, std::vector<Index_> idx) : 
         storage(store), secondary(sec), indices(std::move(idx)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto copy = buffer;
         for (auto x : indices) {
-            *copy = storage[secondary * x + i];
+            *copy = storage[static_cast<size_t>(secondary) * x + i]; // cast to avoid overflow.
             ++copy;
         }
         return buffer;
@@ -200,7 +200,7 @@ struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
 
 private:
     const Storage_& storage;
-    size_t secondary;
+    Index_ secondary;
     std::vector<Index_> indices;
 
 public:
