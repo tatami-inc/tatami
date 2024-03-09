@@ -382,7 +382,7 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
             std::vector<Value_> output(indices.size());
             auto oIt = output.begin();
             size_t j = 0;
-            for (auto x : svec.index) {
+            for (auto x : indices) {
                 while (1) {
                     if (j == svec.index.size()) {
                         return output;
@@ -390,6 +390,8 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
                     if (svec.index[j] == x) {
                         *oIt = svec.value[j];
                         ++j;
+                        break;
+                    } else if (svec.index[j] > x) {
                         break;
                     }
                     ++j;

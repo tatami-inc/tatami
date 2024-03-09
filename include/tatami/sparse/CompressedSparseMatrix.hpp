@@ -39,7 +39,7 @@ struct PrimaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         auto offset = indptr[i];
         auto vIt = values.begin() + offset;
         auto iIt = indices.begin() + offset;
-        auto delta = indptr[i+1] - indptr[i];
+        size_t delta = indptr[i+1] - indptr[i];
 
         std::fill(buffer, buffer + secondary, static_cast<Value_>(0));
         for (size_t x = 0; x < delta; ++x, ++vIt, ++iIt) {
@@ -163,6 +163,7 @@ struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill(buffer, buffer + subset.size(), static_cast<Value_>(0));
         auto vIt = values.begin() + indptr[i];
+
         sparse_utils::retrieve_primary_subset(
             indices.begin() + indptr[i], 
             indices.begin() + indptr[i+1],
@@ -175,7 +176,7 @@ struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
     }
 
     Index_ number() const {
-        return indices.size();
+        return subset.size();
     }
 
 private:
@@ -242,7 +243,7 @@ public:
     }
 
     pointer_type end_offset(Index_ primary) const {
-        return indptr[primary];
+        return indptr[primary + 1];
     }
 
     auto raw(Index_) const {

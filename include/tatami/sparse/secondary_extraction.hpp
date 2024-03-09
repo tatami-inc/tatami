@@ -137,6 +137,11 @@ private:
 
         auto& curptr = cached_indptrs[index_primary];
         if (curdex == secondaryP1) {
+            // Recall that 'curdex' is the reverse lower bound for 'last_request' (plus 1),
+            // but 'curptr' points to the lower bound. This means that 'curptr' needs to be 
+            // decremented to actually point to 'curdex' if 'curdex' is not equal to 'last_request + 1'.
+            // After cancellation, the decrement should only happen 'last_request != secondary'.
+            curptr -= (last_request != secondary);
             store(primary, index_primary, curptr);
             return;
         }
@@ -148,15 +153,16 @@ private:
             return;
         }
 
-        --curptr;
         auto iraw = indices.raw(primary);
-        auto inext = iraw + curptr;
+        auto inext = iraw + curptr - 1;
         curdex = *inext + 1;
         if (curdex < secondaryP1) {
             return;
         }
 
         if (curdex == secondaryP1) {
+            // The decrement here is necessary to match 'curdex' (the reverse lower bound) with 'curptr' (the lower bound).
+            --curptr;
             store(primary, index_primary, curptr);
             return;
         }
@@ -169,6 +175,7 @@ private:
         curptr = inext - iraw;
 
         if (curdex == secondaryP1) {
+            // No need for decrement logic here, as both 'curdex' and 'curptr' are the lower bound right now.
             store(primary, index_primary, curptr);
             return;
         }
@@ -178,6 +185,7 @@ private:
             return;
         }
 
+        // Get 'curdex' back to being the reverse lower bound.
         --inext;
         curdex = *inext + 1;
         return;
@@ -233,8 +241,10 @@ protected:
                     auto curptr = cached_indptrs[p];
                     if (curptr != indices.end_offset(primary) && *(iraw + curptr) == last_request) {
                         cached_indices[p] = last_request + 1;
+                    } else if (curptr != indices.start_offset(primary)) {
+                        cached_indices[p] = *(iraw + curptr - 1) + 1;
                     } else {
-                        cached_indices[p] = (curptr == indices.start_offset(primary) ? 0 : *(iraw + curptr - 1) + 1);
+                        cached_indices[p] = 0;
                     }
                     search_below(secondary, p, primary, store);
                 }

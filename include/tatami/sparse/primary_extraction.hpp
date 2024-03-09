@@ -61,6 +61,8 @@ void retrieve_primary_subset(IndexIt_ indices_start, IndexIt_ indices_end, const
                 store(s, offset, curi);
                 ++s;
                 break;
+            } else if (curi < subset[s]) {
+                break;
             }
             ++s;
         }
