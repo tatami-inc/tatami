@@ -49,6 +49,10 @@ public:
 
     SparseSecondaryExtractionCache(Index_ mi, Index_ length) : cached_indptrs(length), cached_indices(length), max_index(mi) {}
 
+    auto size() const {
+        return cached_indices.size();
+    }
+
 private:
     template<class ServeIndices_, class Store_>
     void search_above(Index_ secondary, Index_ index_primary, Index_ primary, const ServeIndices_& indices, Store_& store) {
@@ -71,14 +75,14 @@ private:
         // lucky enough that the requested index is below this, as would be the
         // case for consecutive or near-consecutive accesses.
         ++curptr;
-        auto istart = indices.start(primary);
-        auto iend = indices.end(primary);
-        auto inext = istart + curptr;
-        if (inext == iend) {
+        auto endptr = indices.end_offset(primary);
+        if (curptr == endptr) {
             curdex = max_index;
             return;
         }
 
+        auto iraw = indices.raw(primary);
+        auto inext = iraw + curptr;
         curdex = *inext;
         if (curdex > secondary) {
             return;
@@ -93,8 +97,8 @@ private:
         // do a quick increment to cut down the search space a bit more. We
         // also define our own comparator to avoid problems with signed
         // comparisons, depending on the types of IndexIt_ and Index_.
-        inext = std::lower_bound(inext + 1, iend, secondary, [](Index_ a, Index_b) -> bool { return a < b; });
-        curptr = inext - istart;
+        inext = std::lower_bound(inext + 1, iraw + endptr, secondary, [](Index_ a, Index_b) -> bool { return a < b; });
+        curptr = inext - iraw;
         if (curptr == endptr) {
             curdex = max_index;
             return;
@@ -125,14 +129,15 @@ private:
         }
 
         // Can't decrement any further.
-        if (curptr == 0) {
+        auto startptr = indices.start_offset(primary);
+        if (curptr == startptr) {
             curdex = 0;
             return;
         }
 
         --curptr;
-        auto istart = indices.start(primary);
-        auto inext = istart + curptr;
+        auto iraw = indices.begin(primary);
+        auto inext = iraw + curptr;
         curdex = *inext + 1;
         if (curdex < secondaryP1) {
             return;
@@ -144,16 +149,16 @@ private:
         }
 
         // Otherwise we need to search indices below the existing position.
-        inext = std::lower_bound(istart, inext, secondary, [](Index_ a, Index_b) -> bool { return a < b; });
+        inext = std::lower_bound(iraw + startptr, inext, secondary, [](Index_ a, Index_b) -> bool { return a < b; });
         curdex = *inext + 1;
-        curptr = inext - istart;
+        curptr = inext - iraw;
 
         if (curdex == secondaryP1) {
             store(primary, index_primary, curptr);
             return;
         }
 
-        if (curptr == 0) {
+        if (curptr == startptr) {
             curdex = 0;
             return;
         }
@@ -163,9 +168,9 @@ private:
         return;
     }
 
-protected:
+public:
     template<class Index_, class PrimaryFunction_, class ServeIndices_, class Store_>
-    void search_base(Index_ secondary, PrimaryFunction_ to_primary, const ServeIndices_& indices, Store_& store) {
+    void search(Index_ secondary, PrimaryFunction_ to_primary, const ServeIndices_& indices, Store_ store) {
         Index_ primary_length = cached_indices.size(); 
         if (primary_length == 0) {
             return;
