@@ -59,16 +59,16 @@ struct PrimaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
     PrimaryMyopicFullSparse(const ValueVectorStorage_& vstore, const IndexVectorStorage_& istore, Index_ sec, const Options& opt) :
         values(vstore), indices(istore), secondary(sec), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
-    const Value_* fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         const auto& curv = values[i];
         const auto& curi = indices[i];
 
         SparseRange<Value_, Index_> output(curv.size(), NULL, NULL);
         if (needs_value) {
-            output.value = sparse_utils::extract_primary_vector(curv, 0, curv.size(), vbuffer);
+            output.value = sparse_utils::extract_primary_vector(curv, static_cast<size_t>(0), curv.size(), vbuffer);
         }
         if (needs_index) {
-            output.index = sparse_utils::extract_primary_vector(curi, 0, curi.size(), ibuffer);
+            output.index = sparse_utils::extract_primary_vector(curi, static_cast<size_t>(0), curi.size(), ibuffer);
         }
         return output;
     }
@@ -119,7 +119,7 @@ struct PrimaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
     PrimaryMyopicBlockSparse(const ValueVectorStorage_& vstore, const IndexVectorStorage_& istore, Index_ sec, Index_ bs, Index_ bl, const Options& opt) :
         values(vstore), indices(istore), secondary(sec), block_start(bs), block_length(bl), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
-    const Value_* fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         const auto& curi = indices[i];
         auto iStart = curi.begin();
         auto iEnd = curi.end();
@@ -129,10 +129,10 @@ struct PrimaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
 
         SparseRange<Value_, Index_> output(delta, NULL, NULL);
         if (needs_value) {
-            output.value = sparse_utils::extract_primary_vector(curi, offset, delta, vbuffer);
+            output.value = sparse_utils::extract_primary_vector(values[i], offset, delta, vbuffer);
         }
         if (needs_index) {
-            output.index = sparse_utils::extract_primary_vector(values[i], offset, delta, ibuffer);
+            output.index = sparse_utils::extract_primary_vector(curi, offset, delta, ibuffer);
         }
         return output;
     }
@@ -158,7 +158,7 @@ struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
         const auto& curi = indices[i];
         const auto& curv = values[i];
         std::fill(buffer, buffer + subset.size(), static_cast<Value_>(0));
-        retrieve_primary_subset(
+        sparse_utils::retrieve_primary_subset(
             curi.begin(),
             curi.end(),
             subset,
@@ -170,7 +170,7 @@ struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
     }
 
     Index_ number() const {
-        return indices.size();
+        return subset.size();
     }
 
 private:
@@ -184,14 +184,14 @@ struct PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
     PrimaryMyopicIndexSparse(const ValueVectorStorage_& vstore, const IndexVectorStorage_& istore, std::vector<Index_> sub, const Options& opt) :
         values(vstore), indices(istore), subset(std::move(sub)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
-    const Value_* fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         const auto& curi = indices[i];
         const auto& curv = values[i];
         Index_ count = 0;
         auto vcopy = vbuffer;
         auto icopy = ibuffer;
 
-        retrieve_primary_subset(
+        sparse_utils::retrieve_primary_subset(
             curi.begin(),
             curi.end(),
             subset,
@@ -251,12 +251,12 @@ auto make_ServeIndices(const IndexVectorStorage_& i) {
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_> 
 struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
     SecondaryMyopicFullDense(const ValueVectorStorage_& vstore, const IndexVectorStorage_& istore, Index_ sec) :
-        values(vstore), cache(make_ServeIndices<Index_>(istore), sec, istore.size() - 1) {} 
+        values(vstore), cache(make_ServeIndices<Index_>(istore), sec, istore.size()) {} 
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
-        cache.search(i, [&](Index_, Index_ index_primary, size_t ptr) {
-            buffer[index_primary] = values[ptr];
+        cache.search(i, [&](Index_ primary, Index_ index_primary, size_t ptr) {
+            buffer[index_primary] = values[primary][ptr];
         });
         return buffer;
     }
@@ -273,13 +273,13 @@ private:
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
 struct SecondaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
     SecondaryMyopicFullSparse(const ValueVectorStorage_& vstore, const IndexVectorStorage_& istore, Index_ sec, const Options& opt) :
-        values(vstore), cache(make_ServeIndices<Index_>(istore), sec, istore.size() - 1), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
+        values(vstore), cache(make_ServeIndices<Index_>(istore), sec, istore.size()), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         Index_ count = 0;
         cache.search(i, [&](Index_ primary, Index_, size_t ptr) {
             if (needs_value) {
-                vbuffer[count] = values[ptr];
+                vbuffer[count] = values[primary][ptr];
             }
             if (needs_index) {
                 ibuffer[count] = primary;
@@ -306,8 +306,8 @@ struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
-        cache.search(i, [&](Index_, Index_ index_primary, size_t ptr) {
-            buffer[index_primary] = values[ptr];
+        cache.search(i, [&](Index_ primary, Index_ index_primary, size_t ptr) {
+            buffer[index_primary] = values[primary][ptr];
         });
         return buffer;
     }
@@ -330,7 +330,7 @@ struct SecondaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_>
         Index_ count = 0;
         cache.search(i, [&](Index_ primary, Index_, size_t ptr) {
             if (needs_value) {
-                vbuffer[count] = values[ptr];
+                vbuffer[count] = values[primary][ptr];
             }
             if (needs_index) {
                 ibuffer[count] = primary;
@@ -357,8 +357,8 @@ struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
-        cache.search(i, [&](Index_, Index_ index_primary, size_t ptr) {
-            buffer[index_primary] = values[ptr];
+        cache.search(i, [&](Index_ primary, Index_ index_primary, size_t ptr) {
+            buffer[index_primary] = values[primary][ptr];
         });
         return buffer;
     }
@@ -381,7 +381,7 @@ struct SecondaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_>
         Index_ count = 0;
         cache.search(i, [&](Index_ primary, Index_, size_t ptr) {
             if (needs_value) {
-                vbuffer[count] = values[ptr];
+                vbuffer[count] = values[primary][ptr];
             }
             if (needs_index) {
                 ibuffer[count] = primary;
@@ -543,7 +543,7 @@ private:
         if constexpr(row_ == accrow_) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicFullDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary());
         } else {
-            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicFullDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices); 
+            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicFullDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary()); 
         }
     }
 
@@ -552,7 +552,7 @@ private:
         if constexpr(row_ == accrow_) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicBlockDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary(), block_start, block_end);
         } else {
-            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicBlockDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, block_start, block_end);
+            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicBlockDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary(), block_start, block_end);
         }
     }
 
@@ -561,7 +561,7 @@ private:
         if constexpr(row_ == accrow_) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicIndexDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, std::move(subset));
         } else {
-            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicIndexDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, std::move(subset));
+            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicIndexDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary(), std::move(subset));
         }
     }
 
@@ -599,7 +599,7 @@ private:
         if constexpr(row_ == accrow_) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicFullSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary(), opt);
         } else {
-            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicFullSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, opt); 
+            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicFullSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary(), opt); 
         }
     }
 
@@ -608,7 +608,7 @@ private:
         if constexpr(row_ == accrow_) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicBlockSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary(), block_start, block_end, opt);
         } else {
-            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicBlockSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, block_start, block_end, opt);
+            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicBlockSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary(), block_start, block_end, opt);
         }
     }
 
@@ -617,7 +617,7 @@ private:
         if constexpr(row_ == accrow_) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicIndexSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, std::move(subset), opt);
         } else {
-            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicIndexSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, std::move(subset), opt);
+            return std::make_unique<FragmentedSparseMatrix_internal::SecondaryMyopicIndexSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(values, indices, secondary(), std::move(subset), opt);
         }
     }
 
