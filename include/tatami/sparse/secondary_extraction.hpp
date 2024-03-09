@@ -30,6 +30,7 @@ private:
     //
     // More specifically, if 'last_increasing = true', we define 'cached_indices[i] := indices[cached_indptrs[i]]'.
     // If 'cached_indptrs[i]' is out of range, the cached index is instead set to 'max_index'.
+    // In short, 'cached_indices[i]' just contains the usual lower bound for 'last_request'.
     //
     // On the other hand, if 'last_increasing = false', we define 'cached_indices[i]' to be:
     // - 'last_request + 1', if 'indices[cached_indptrs[i]] == last_request'.
@@ -138,9 +139,12 @@ private:
         auto& curptr = cached_indptrs[index_primary];
         if (curdex == secondaryP1) {
             // Recall that 'curdex' is the reverse lower bound for 'last_request' (plus 1),
-            // but 'curptr' points to the lower bound. This means that 'curptr' needs to be 
-            // decremented to actually point to 'curdex' if 'curdex' is not equal to 'last_request + 1'.
-            // After cancellation, the decrement should only happen 'last_request != secondary'.
+            // but 'curptr' points to the lower bound. This means that, if 'curptr' does not
+            // already point to 'curdex', the former needs to be decremented so that 'store()' gets 
+            // the right value. 'curptr' will only point to 'curdex' if 'curdex' is equal to
+            // 'last_request + 1', as per the definition of 'cached_indices' above; thus,
+            // the decrement should only occur if 'curdex != last_request + 1', which simplifies
+            // to 'last_request != secondary' when we're inside this 'if' condition.
             curptr -= (last_request != secondary);
             store(primary, index_primary, curptr);
             return;
@@ -153,6 +157,8 @@ private:
             return;
         }
 
+        // Don't decrement 'curptr' yet; if 'curdex < secondary + 1', 'curptr' needs
+        // to continue being the lower bound, while 'curdex' is the reverse lower bound.
         auto iraw = indices.raw(primary);
         auto inext = iraw + curptr - 1;
         curdex = *inext + 1;
@@ -161,7 +167,8 @@ private:
         }
 
         if (curdex == secondaryP1) {
-            // The decrement here is necessary to match 'curdex' (the reverse lower bound) with 'curptr' (the lower bound).
+            // Decrement 'curptr' to match the definition of 'curdex', now that the 
+            // lower bound and reverse lower bound are equal here.
             --curptr;
             store(primary, index_primary, curptr);
             return;
@@ -175,7 +182,7 @@ private:
         curptr = inext - iraw;
 
         if (curdex == secondaryP1) {
-            // No need for decrement logic here, as both 'curdex' and 'curptr' are the lower bound right now.
+            // No need for decrement logic here, as both 'curdex' and 'curptr' are consistent right now.
             store(primary, index_primary, curptr);
             return;
         }
@@ -185,7 +192,7 @@ private:
             return;
         }
 
-        // Get 'curdex' back to being the reverse lower bound.
+        // Setting 'curdex' to the reverse lower bound again.
         --inext;
         curdex = *inext + 1;
         return;
