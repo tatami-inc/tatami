@@ -30,7 +30,7 @@ TEST_P(ConvertToCompressedSparseTest, RowToRow) {
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(wrk2->fetch(i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
     }
 }
 
@@ -56,9 +56,9 @@ TEST_P(ConvertToCompressedSparseTest, ColumnToColumn) {
     auto wrk = mat->dense_column();
     auto wrk2 = converted2->dense_column();
     for (size_t i = 0; i < NC; ++i) {
-        auto expected = wrk->fetch(i);
+        auto expected = tatami_test::fetch(wrk.get(), static_cast<int>(i));
         std::vector<int> expected2(expected.begin(), expected.end());
-        EXPECT_EQ(wrk2->fetch(i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
     }
 }
 
@@ -85,7 +85,7 @@ TEST_P(ConvertToCompressedSparseTest, RowToColumn) {
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(wrk2->fetch(i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
     }
 }
 
@@ -111,9 +111,9 @@ TEST_P(ConvertToCompressedSparseTest, ColumnToRow) {
     auto wrk = mat->dense_column();
     auto wrk2 = converted2->dense_column();
     for (size_t i = 0; i < NC; ++i) {
-        auto expected = wrk->fetch(i);
+        auto expected = tatami_test::fetch(wrk.get(), static_cast<int>(i));
         std::vector<int> expected2(expected.begin(), expected.end());
-        EXPECT_EQ(wrk2->fetch(i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
     }
 }
 

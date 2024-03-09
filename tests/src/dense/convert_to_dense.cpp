@@ -2,7 +2,7 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/sparse/CompressedSparseMatrix.hpp"
-#include "tatami/utils/convert_to_dense.hpp"
+#include "tatami/dense/convert_to_dense.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 
@@ -39,7 +39,7 @@ TEST_P(ConvertToDenseTest, RowToRow) {
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(wrk2->fetch(i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
     }
 }
 
@@ -63,7 +63,7 @@ TEST_P(ConvertToDenseTest, ColumnToColumn) {
     for (size_t i = 0; i < NC; ++i) {
         auto start = vec.begin() + i * NR;
         std::vector<int> expected2(start, start + NR);
-        EXPECT_EQ(wrk2->fetch(i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
     }
 }
 
@@ -87,7 +87,7 @@ TEST_P(ConvertToDenseTest, RowToColumn) {
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(wrk2->fetch(i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
     }
 }
 
@@ -110,7 +110,7 @@ TEST_P(ConvertToDenseTest, ColumnToRow) {
     for (size_t i = 0; i < NC; ++i) {
         auto start = vec.begin() + i * NR;
         std::vector<int> expected2(start, start + NR);
-        EXPECT_EQ(wrk2->fetch(i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
     }
 }
 

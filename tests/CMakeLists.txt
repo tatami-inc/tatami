@@ -19,7 +19,7 @@ add_executable(
     libtest 
 
     src/dense/DenseMatrix.cpp
-#    src/dense/convert_to_dense.cpp
+    src/dense/convert_to_dense.cpp
 
 #    src/other/DelayedBind.cpp
 #    src/other/DelayedTranspose.cpp
@@ -43,8 +43,8 @@ add_executable(
     src/sparse/FragmentedSparseMatrix.cpp
 #    src/sparse/SemiCompressedSparseMatrix.cpp
 #    src/sparse/SparseSecondaryExtractorCore.cpp
-#    src/sparse/convert_to_compressed_sparse.cpp
-#    src/sparse/convert_to_fragmented_sparse.cpp
+    src/sparse/convert_to_compressed_sparse.cpp
+    src/sparse/convert_to_fragmented_sparse.cpp
 #
 #    src/stats/sums.cpp
 #    src/stats/variances.cpp

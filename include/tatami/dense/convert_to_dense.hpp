@@ -1,7 +1,6 @@
 #ifndef TATAMI_CONVERT_TO_DENSE_H
 #define TATAMI_CONVERT_TO_DENSE_H
 
-#include "../base/utils.hpp"
 #include "../stats/utils.hpp"
 #include "../dense/DenseMatrix.hpp"
 
@@ -42,10 +41,13 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
             auto store_copy = store + start * secondary;
             auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
 
-            while (wrk->used_predictions < wrk->total_predictions) {
+            for (InputIndex_ x = 0; x < length; ++x) {
                 InputIndex_ p;
                 if constexpr(same_type) {
-                    wrk->fetch_copy(p, store_copy);
+                    auto ptr = wrk->fetch(p, store_copy);
+                    if (ptr != store_copy) {
+                        std::copy(ptr, ptr + secondary, store_copy);
+                    }
                 } else {
                     auto ptr = wrk->fetch(p, temp.data());
                     std::copy(ptr, ptr + secondary, store_copy);
@@ -62,15 +64,14 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
 
         parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
             auto wrk = consecutive_extractor<!row_, false>(incoming, 0, secondary, start, length);
-            auto len = wrk->block_length;
-            std::vector<InputValue_> temp(len);
+            std::vector<InputValue_> temp(length);
             auto store_copy = store + start * secondary;
 
-            while (wrk->used_predictions < wrk->total_predictions) {
+            for (InputIndex_ x = 0; x < secondary; ++x) {
                 InputIndex_ s;
                 auto ptr = wrk->fetch(s, temp.data());
                 auto bptr = store_copy;
-                for (InputIndex_ p = 0; p < len; ++p, bptr += secondary) {
+                for (InputIndex_ p = 0; p < length; ++p, bptr += secondary) {
                     *bptr = ptr[p]; 
                 }
                 ++store_copy;
