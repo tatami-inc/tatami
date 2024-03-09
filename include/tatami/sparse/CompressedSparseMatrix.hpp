@@ -230,40 +230,41 @@ private:
 
 template<typename Index_, class IndexStorage_, class PointerStorage_>
 struct ServeIndices {
-    auto start_offset(Index_ primary) const {
+    ServeIndices(const IndexStorage_& i, const PointerStorage_& p) : indices(i), indptr(p) {}
+    const IndexStorage_& indices;
+    const PointerStorage_& indptr;
+
+public:
+    typedef ElementType<PointerStorage_> pointer_type;
+
+    pointer_type start_offset(Index_ primary) const {
         return indptr[primary];
     }
 
-    auto end_offset(Index_ primary) const {
+    pointer_type end_offset(Index_ primary) const {
         return indptr[primary];
     }
 
     auto raw(Index_) const {
         return indices.begin();
     }
-
-    ServeIndices(const IndexStorage_& i, const PointerStorage_& p) : indices(i), indptr(p) {}
-    const IndexStorage_& indices;
-    const PointerStorage_& indptr;
 };
+
+template<typename Index_, class IndexStorage_, class PointerStorage_>
+auto make_ServeIndices(const IndexStorage_& i, const PointerStorage_& p) {
+    return ServeIndices<Index_, IndexStorage_, PointerStorage_>(i, p);
+}
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
     SecondaryMyopicFullDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec) :
-        values(vstore), server(istore, pstore), cache(sec, pstore.size() - 1) {} 
-
-    typedef ElementType<PointerStorage_> Pointer_;
+        values(vstore), cache(make_ServeIndices<Index_>(istore, pstore), sec, pstore.size() - 1) {} 
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
-        cache.search(
-            i,
-            [](Index_ j) -> Index_ { return j; },
-            server,
-            [&](Index_, Index_ index_primary, Pointer_ ptr) {
-                buffer[index_primary] = values[ptr];
-            }
-        );
+        cache.search(i, [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) {
+            buffer[index_primary] = values[ptr];
+        });
         return buffer;
     }
 
@@ -273,33 +274,25 @@ struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
 
 private:
     const ValueStorage_& values;
-    ServeIndices<Index_, IndexStorage_, PointerStorage_> server;
-    sparse_utils::SparseSecondaryExtractionCache<Index_, Pointer_> cache;
+    sparse_utils::FullSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexStorage_, PointerStorage_> > cache;
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct SecondaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
     SecondaryMyopicFullSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, const Options& opt) :
-        values(vstore), server(istore, pstore), cache(sec, pstore.size() - 1), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
-
-    typedef ElementType<PointerStorage_> Pointer_;
+        values(vstore), cache(make_ServeIndices<Index_>(istore, pstore), sec, pstore.size() - 1), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         Index_ count = 0;
-        cache.search(
-            i,
-            [](Index_ j) -> Index_ { return j; },
-            server,
-            [&](Index_ primary, Index_, Pointer_ ptr) {
-                if (needs_value) {
-                    vbuffer[count] = values[ptr];
-                }
-                if (needs_index) {
-                    ibuffer[count] = primary;
-                }
-                ++count;
+        cache.search(i, [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) {
+            if (needs_value) {
+                vbuffer[count] = values[ptr];
             }
-        );
+            if (needs_index) {
+                ibuffer[count] = primary;
+            }
+            ++count;
+        });
         return SparseRange<Value_, Index_>(count, needs_value ? vbuffer : NULL, needs_index ? ibuffer : NULL);
     }
 
@@ -309,28 +302,20 @@ struct SecondaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> 
 
 private:
     const ValueStorage_& values;
-    ServeIndices<Index_, IndexStorage_, PointerStorage_> server;
-    sparse_utils::SparseSecondaryExtractionCache<Index_, Pointer_> cache;
+    sparse_utils::FullSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexStorage_, PointerStorage_> > cache;
     bool needs_value, needs_index;
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
     SecondaryMyopicBlockDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, Index_ bs, Index_ bl) :
-        values(vstore), server(istore, pstore), cache(sec, bl), block_start(bs) {} 
-
-    typedef ElementType<PointerStorage_> Pointer_;
+        values(vstore), cache(make_ServeIndices<Index_>(istore, pstore), sec, bs, bl) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
-        cache.search(
-            i,
-            [&](Index_ j) -> Index_ { return block_start + j; },
-            server,
-            [&](Index_, Index_ index_primary, Pointer_ ptr) {
-                buffer[index_primary] = values[ptr];
-            }
-        );
+        cache.search(i, [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) {
+            buffer[index_primary] = values[ptr];
+        });
         return buffer;
     }
 
@@ -340,34 +325,25 @@ struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
 
 private:
     const ValueStorage_& values;
-    ServeIndices<Index_, IndexStorage_, PointerStorage_> server;
-    sparse_utils::SparseSecondaryExtractionCache<Index_, Pointer_> cache;
-    Index_ block_start;
+    sparse_utils::BlockSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexStorage_, PointerStorage_> > cache;
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct SecondaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
     SecondaryMyopicBlockSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, Index_ bs, Index_ bl, const Options& opt) :
-        values(vstore), server(istore, pstore), cache(sec, bl), block_start(bs), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
-
-    typedef ElementType<PointerStorage_> Pointer_;
+        values(vstore), cache(make_ServeIndices<Index_>(istore, pstore), sec, bs, bl), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         Index_ count = 0;
-        cache.search(
-            i,
-            [&](Index_ j) -> Index_ { return j; },
-            server,
-            [&](Index_ primary, Index_, Pointer_ ptr) {
-                if (needs_value) {
-                    vbuffer[count] = values[ptr];
-                }
-                if (needs_index) {
-                    ibuffer[count] = primary;
-                }
-                ++count;
+        cache.search(i, [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) {
+            if (needs_value) {
+                vbuffer[count] = values[ptr];
             }
-        );
+            if (needs_index) {
+                ibuffer[count] = primary;
+            }
+            ++count;
+        });
         return SparseRange<Value_, Index_>(count, needs_value ? vbuffer : NULL, needs_index ? ibuffer : NULL);
     }
 
@@ -377,29 +353,20 @@ struct SecondaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_>
 
 private:
     const ValueStorage_& values;
-    ServeIndices<Index_, IndexStorage_, PointerStorage_> server;
-    sparse_utils::SparseSecondaryExtractionCache<Index_, Pointer_> cache;
-    Index_ block_start;
+    sparse_utils::BlockSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexStorage_, PointerStorage_> > cache;
     bool needs_value, needs_index;
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
     SecondaryMyopicIndexDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, std::vector<Index_> sub) :
-        values(vstore), server(istore, pstore), cache(sec, sub.size()), subset(std::move(sub)) {} 
-
-    typedef ElementType<PointerStorage_> Pointer_;
+        values(vstore), cache(make_ServeIndices<Index_>(istore, pstore), sec, std::move(sub)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
-        cache.search(
-            i,
-            [&](Index_ j) -> Index_ { return subset[j]; },
-            server,
-            [&](Index_, Index_ index_primary, Pointer_ ptr) {
-                buffer[index_primary] = values[ptr];
-            }
-        );
+        cache.search(i, [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) {
+            buffer[index_primary] = values[ptr];
+        });
         return buffer;
     }
 
@@ -409,34 +376,25 @@ struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
 
 private:
     const ValueStorage_& values;
-    ServeIndices<Index_, IndexStorage_, PointerStorage_> server;
-    sparse_utils::SparseSecondaryExtractionCache<Index_, Pointer_> cache;
-    std::vector<Index_> subset;
+    sparse_utils::IndexSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexStorage_, PointerStorage_> > cache;
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct SecondaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
     SecondaryMyopicIndexSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, std::vector<Index_> sub, const Options& opt) :
-        values(vstore), server(istore, pstore), cache(sec, sub.size()), subset(std::move(sub)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
-
-    typedef ElementType<PointerStorage_> Pointer_;
+        values(vstore), cache(make_ServeIndices<Index_>(istore, pstore), sec, std::move(sub)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         Index_ count = 0;
-        cache.search(
-            i,
-            [&](Index_ j) -> Index_ { return subset[j]; },
-            server,
-            [&](Index_ primary, Index_, Pointer_ ptr) {
-                if (needs_value) {
-                    vbuffer[count] = values[ptr];
-                }
-                if (needs_index) {
-                    ibuffer[count] = primary;
-                }
-                ++count;
+        cache.search(i, [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) {
+            if (needs_value) {
+                vbuffer[count] = values[ptr];
             }
-        );
+            if (needs_index) {
+                ibuffer[count] = primary;
+            }
+            ++count;
+        });
         return SparseRange<Value_, Index_>(count, needs_value ? vbuffer : NULL, needs_index ? ibuffer : NULL);
     }
 
@@ -446,9 +404,7 @@ struct SecondaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_>
 
 private:
     const ValueStorage_& values;
-    ServeIndices<Index_, IndexStorage_, PointerStorage_> server;
-    sparse_utils::SparseSecondaryExtractionCache<Index_, Pointer_> cache;
-    std::vector<Index_> subset;
+    sparse_utils::IndexSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexStorage_, PointerStorage_> > cache;
     bool needs_value, needs_index;
 };
 

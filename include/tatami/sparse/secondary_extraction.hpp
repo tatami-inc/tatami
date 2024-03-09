@@ -11,8 +11,15 @@ namespace tatami {
 
 namespace sparse_utils {
 
-template<typename Index_, typename Pointer_ = size_t> 
-struct SparseSecondaryExtractionCache {
+template<typename Index_, class IndexServer_> 
+struct SecondaryExtractionCache {
+private:
+    Index_ max_index;
+
+    IndexServer_ indices;
+
+    typedef typename IndexServer_::pointer_type Pointer_;
+
 private:
     // The cached position of the pointer at each primary element.
     // Specifically, 'indices[cached_indptrs[i]]' is the lower bound for 'last_request' in the primary element 'i'.
@@ -36,26 +43,32 @@ private:
     // If 'last_increasing = false', this is the maximum of values in 'cached_indices'.
     Index_ closest_cached_index = 0;
 
-private:
-    Index_ max_index;
-
     // What was the last requested index on the secondary dimension?
     Index_ last_request = 0;
 
+    // Was the last requested index greater than its predecessor?
     bool last_increasing = true;
 
 public:
-    SparseSecondaryExtractionCache() = default;
-
-    SparseSecondaryExtractionCache(Index_ mi, Index_ length) : cached_indptrs(length), cached_indices(length), max_index(mi) {}
+    template<class PrimaryFunction_>
+    SecondaryExtractionCache(IndexServer_ isrv, Index_ mi, Index_ length, PrimaryFunction_ to_primary) :
+        indices(std::move(isrv)), max_index(mi), cached_indptrs(length), cached_indices(length) 
+    {
+        for (Index_ p = 0; p < length; ++p) {
+            auto primary = to_primary(p);
+            auto& curptr = cached_indptrs[p];
+            curptr = indices.start_offset(primary);
+            cached_indices[p] = (curptr == indices.end_offset(primary) ? max_index : *(indices.raw(primary) + curptr));
+        }
+    }
 
     auto size() const {
         return cached_indices.size();
     }
 
 private:
-    template<class ServeIndices_, class Store_>
-    void search_above(Index_ secondary, Index_ index_primary, Index_ primary, const ServeIndices_& indices, Store_& store) {
+    template<class Store_>
+    void search_above(Index_ secondary, Index_ index_primary, Index_ primary, Store_& store) {
         // Skipping if the curdex (corresponding to curptr) is already higher
         // than secondary. So, we only need to do more work if the request is
         // greater than the stored index. This also catches cases where we're
@@ -114,8 +127,8 @@ private:
     }
 
 private:
-    template<class ServeIndices_, class Store_>
-    void search_below(Index_ secondary, Index_ index_primary, Index_ primary, const ServeIndices_& indices, Store_& store) {
+    template<class Store_>
+    void search_below(Index_ secondary, Index_ index_primary, Index_ primary, Store_& store) {
         auto secondaryP1 = secondary + 1;
         auto& curdex = cached_indices[index_primary];
         if (curdex < secondaryP1) {
@@ -170,9 +183,9 @@ private:
         return;
     }
 
-public:
-    template<class PrimaryFunction_, class ServeIndices_, class Store_>
-    void search(Index_ secondary, PrimaryFunction_ to_primary, const ServeIndices_& indices, Store_ store) {
+protected:
+    template<class PrimaryFunction_, class Store_>
+    void search_base(Index_ secondary, PrimaryFunction_ to_primary, Store_ store) {
         Index_ primary_length = cached_indices.size(); 
         if (primary_length == 0) {
             return;
@@ -185,7 +198,7 @@ public:
                     return; 
                 }
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_above(secondary, p, to_primary(p), indices, store);
+                    search_above(secondary, p, to_primary(p), store);
                 }
 
             } else {
@@ -195,7 +208,7 @@ public:
                     auto primary = to_primary(p);
                     auto curptr = cached_indptrs[p];
                     cached_indices[p] = (curptr == indices.end_offset(primary) ? max_index : *(indices.raw(primary) + curptr));
-                    search_above(secondary, p, primary, indices, store);
+                    search_above(secondary, p, primary, store);
                 }
             }
 
@@ -208,7 +221,7 @@ public:
                     return;
                 }
                 for (Index_ p = 0; p < primary_length; ++p) {
-                    search_below(secondary, p, to_primary(p), indices, store);
+                    search_below(secondary, p, to_primary(p), store);
                 }
 
             } else {
@@ -223,7 +236,7 @@ public:
                     } else {
                         cached_indices[p] = (curptr == indices.start_offset(primary) ? 0 : *(iraw + curptr - 1) + 1);
                     }
-                    search_below(secondary, p, primary, indices, store);
+                    search_below(secondary, p, primary, store);
                 }
             }
 
@@ -233,6 +246,44 @@ public:
         last_request = secondary; 
         return;
     }
+};
+
+// Subclasses for each selection typeblock_start.
+template<typename Index_, class IndexServer_> 
+struct FullSecondaryExtractionCache : public SecondaryExtractionCache<Index_, IndexServer_> {
+    FullSecondaryExtractionCache(IndexServer_ isrv, Index_ mi, Index_ length) :
+        SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, length, [](Index_ ip) -> Index_ { return ip; }) {}
+
+    template<class Store_>
+    void search(Index_ secondary, Store_ store) {
+        this->search_base(secondary, [](Index_ ip) -> Index_ { return ip; }, std::move(store));
+    }
+};
+
+template<typename Index_, class IndexServer_> 
+struct BlockSecondaryExtractionCache : public SecondaryExtractionCache<Index_, IndexServer_> {
+    BlockSecondaryExtractionCache(IndexServer_ isrv, Index_ mi, Index_ bs, Index_ bl) :
+        SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, bl, [&](Index_ ip) -> Index_ { return bs + ip; }), block_start(bs) {}
+
+    template<class Store_>
+    void search(Index_ secondary, Store_ store) {
+        this->search_base(secondary, [&](Index_ ip) -> Index_ { return ip + block_start; }, std::move(store));
+    }
+
+    Index_ block_start;
+};
+
+template<typename Index_, class IndexServer_> 
+struct IndexSecondaryExtractionCache : public SecondaryExtractionCache<Index_, IndexServer_> {
+    IndexSecondaryExtractionCache(IndexServer_ isrv, Index_ mi, std::vector<Index_> sub) :
+        SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, sub.size(), [&](Index_ ip) -> Index_ { return sub[ip]; }), subset(std::move(sub)) {}
+
+    template<class Store_>
+    void search(Index_ secondary, Store_ store) {
+        this->search_base(secondary, [&](Index_ ip) -> Index_ { return subset[ip]; }, std::move(store));
+    }
+
+    std::vector<Index_> subset;
 };
 
 }
