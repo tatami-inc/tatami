@@ -3,7 +3,7 @@
 
 #include "../base/Matrix.hpp"
 #include "primary_extraction.hpp"
-#include "secondary_Extraction.hpp"
+#include "secondary_extraction.hpp"
 
 #include "../utils/ElementType.hpp"
 #include "../utils/has_data.hpp"
@@ -64,7 +64,7 @@ struct PrimaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
     PrimaryMyopicFullSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, const Options& opt) :
         values(vstore), indices(istore), indptr(pstore), secondary(sec), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
-    const Value_* fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         auto offset = indptr[i];
         auto delta = indptr[i+1] - indptr[i];
 
@@ -98,7 +98,7 @@ struct PrimaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto iStart = indices.begin() + indptr[i];
         auto iEnd = indices.begin() + indptr[i + 1];
-        sparse_utils::refine_primary_block_limits(iStart, iEnd, secondary, block_start, block_end);
+        sparse_utils::refine_primary_block_limits(iStart, iEnd, secondary, block_start, block_length);
 
         std::fill(buffer, buffer + block_length, static_cast<Value_>(0));
         auto vIt = values.begin() + (iStart - indices.begin());
@@ -125,10 +125,10 @@ struct PrimaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
     PrimaryMyopicBlockSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, Index_ bs, Index_ bl, const Options& opt) :
         values(vstore), indices(istore), indptr(pstore), secondary(sec), block_start(bs), block_length(bl), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
-    const Value_* fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         auto iStart = indices.begin() + indptr[i];
         auto iEnd = indices.begin() + indptr[i + 1];
-        sparse_utils::refine_primary_block_limits(iStart, iEnd, secondary, block_start, block_end);
+        sparse_utils::refine_primary_block_limits(iStart, iEnd, secondary, block_start, block_length);
         size_t offset = iStart - indices.begin();
         size_t delta = iEnd - iStart;
 
@@ -163,7 +163,7 @@ struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill(buffer, buffer + subset.size(), static_cast<Value_>(0));
         auto vIt = values.begin() + indptr[i];
-        retrieve_primary_subset(
+        sparse_utils::retrieve_primary_subset(
             indices.begin() + indptr[i], 
             indices.begin() + indptr[i+1],
             subset,
@@ -188,15 +188,15 @@ private:
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
     PrimaryMyopicIndexSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, std::vector<Index_> sub, const Options& opt) :
-        values(vstore), indices(istore), indptr(pstore), subset(std::move(sub)), needs_value(opts.sparse_extract_value), needs_index(opts.sparse_extract_index) {} 
+        values(vstore), indices(istore), indptr(pstore), subset(std::move(sub)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
-    const Value_* fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         Index_ count = 0;
         auto vcopy = vbuffer;
         auto icopy = ibuffer;
 
         auto vIt = values.begin() + indptr[i];
-        retrieve_primary_subset(
+        sparse_utils::retrieve_primary_subset(
             indices.begin() + indptr[i], 
             indices.begin() + indptr[i+1],
             subset,
@@ -230,15 +230,15 @@ private:
 
 template<typename Index_, class IndexStorage_, class PointerStorage_>
 struct ServeIndices {
-    auto start_offset(Index_ primary) {
+    auto start_offset(Index_ primary) const {
         return indptr[primary];
     }
 
-    auto end_offset(Index_ primary) {
+    auto end_offset(Index_ primary) const {
         return indptr[primary];
     }
 
-    auto raw(Index_) {
+    auto raw(Index_) const {
         return indices.begin();
     }
 
@@ -249,13 +249,13 @@ struct ServeIndices {
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
-    SecondaryMyopicFullDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore) :
-        values(vstore), server(indices, indptr), cache(indptr.size() - 1) {} 
+    SecondaryMyopicFullDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec) :
+        values(vstore), server(istore, pstore), cache(sec, pstore.size() - 1) {} 
 
     typedef ElementType<PointerStorage_> Pointer_;
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        std::fill(vbuffer, vbuffer + cache.size(), static_cast<Value_>(0));
+        std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
         cache.search(
             i,
             [](Index_ j) -> Index_ { return j; },
@@ -264,6 +264,7 @@ struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
                 buffer[index_primary] = values[ptr];
             }
         );
+        return buffer;
     }
 
     Index_ number() const {
@@ -277,9 +278,9 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-struct SecondaryMyopicFullSparse : public MyopicDenseExtractor<Value_, Index_> {
-    SecondaryMyopicFullSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, const Options& opt) :
-        values(vstore), server(indices, indptr), cache(indptr.size() - 1), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
+struct SecondaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
+    SecondaryMyopicFullSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, const Options& opt) :
+        values(vstore), server(istore, pstore), cache(sec, pstore.size() - 1), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
     typedef ElementType<PointerStorage_> Pointer_;
 
@@ -315,13 +316,13 @@ private:
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
-    SecondaryMyopicBlockDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ bs, Index_ bl) :
-        values(vstore), server(indices, indptr), cache(bl), block_start(bs) {} 
+    SecondaryMyopicBlockDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, Index_ bs, Index_ bl) :
+        values(vstore), server(istore, pstore), cache(sec, bl), block_start(bs) {} 
 
     typedef ElementType<PointerStorage_> Pointer_;
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        std::fill(vbuffer, vbuffer + cache.size(), static_cast<Value_>(0));
+        std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
         cache.search(
             i,
             [&](Index_ j) -> Index_ { return block_start + j; },
@@ -330,6 +331,7 @@ struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
                 buffer[index_primary] = values[ptr];
             }
         );
+        return buffer;
     }
 
     Index_ number() const {
@@ -344,9 +346,9 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-struct SecondaryMyopicBlockSparse : public MyopicDenseExtractor<Value_, Index_> {
-    SecondaryMyopicBlockSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ bs, Index_ bl, const Options& opt) :
-        values(vstore), server(indices, indptr), cache(bl), block_start(bs), needs_values(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
+struct SecondaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
+    SecondaryMyopicBlockSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, Index_ bs, Index_ bl, const Options& opt) :
+        values(vstore), server(istore, pstore), cache(sec, bl), block_start(bs), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
     typedef ElementType<PointerStorage_> Pointer_;
 
@@ -383,13 +385,13 @@ private:
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
-    SecondaryMyopicIndexDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, std::vector<Index_> sub) :
-        values(vstore), server(indices, indptr), cache(sub.size()), subset(std::move(sub)) {} 
+    SecondaryMyopicIndexDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, std::vector<Index_> sub) :
+        values(vstore), server(istore, pstore), cache(sec, sub.size()), subset(std::move(sub)) {} 
 
     typedef ElementType<PointerStorage_> Pointer_;
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        std::fill(vbuffer, vbuffer + cache.size(), static_cast<Value_>(0));
+        std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
         cache.search(
             i,
             [&](Index_ j) -> Index_ { return subset[j]; },
@@ -398,6 +400,7 @@ struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
                 buffer[index_primary] = values[ptr];
             }
         );
+        return buffer;
     }
 
     Index_ number() const {
@@ -412,9 +415,9 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-struct SecondaryMyopicFullSparse : public MyopicDenseExtractor<Value_, Index_> {
-    SecondaryMyopicFullDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, std::vector<Index_> sub, const Options& opt) :
-        values(vstore), server(indices, indptr), cache(bl), subset(std::move(sub)), needs_values(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
+struct SecondaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
+    SecondaryMyopicIndexSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, Index_ sec, std::vector<Index_> sub, const Options& opt) :
+        values(vstore), server(istore, pstore), cache(sec, sub.size()), subset(std::move(sub)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
     typedef ElementType<PointerStorage_> Pointer_;
 
@@ -480,7 +483,7 @@ template<
     class IndexStorage_ = std::vector<Index_>, 
     class PointerStorage_ = std::vector<size_t> 
 >
-class CompressedSparseMatrix : public OracleUnawareMatrix<Value_, Index_> {
+class CompressedSparseMatrix : public Matrix<Value_, Index_> {
 public:
     /**
      * @param nr Number of rows.
@@ -599,55 +602,55 @@ private:
      *****************************/
 private:
     template<bool accrow_>
-    auto dense_internal(const Options&) const {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_internal(const Options&) const {
         if constexpr(row_ == accrow_) {
-            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicFullDense<Value_, Index_> >(values, indices, indptrs, secondary());
+            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicFullDense<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary());
         } else {
-            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicFullDense<Value_, Index_> >(values, indices, indptrs); 
+            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicFullDense<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary()); 
         }
     }
 
     template<bool accrow_>
-    auto dense_internal(Index_ block_start, Index_ block_end, const Options&) const {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_internal(Index_ block_start, Index_ block_end, const Options&) const {
         if constexpr(row_ == accrow_) {
-            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicBlockDense<Value_, Index_> >(values, indices, indptrs, secondary(), block_start, block_end);
+            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicBlockDense<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary(), block_start, block_end);
         } else {
-            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicBlockDense<Value_, Index_> >(values, indices, indptrs, block_start, block_end);
+            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicBlockDense<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary(), block_start, block_end);
         }
     }
 
     template<bool accrow_>
-    auto dense_internal(std::vector<Index_> subset, const Options&) const {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_internal(std::vector<Index_> subset, const Options&) const {
         if constexpr(row_ == accrow_) {
-            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicIndexDense<Value_, Index_> >(values, indices, indptrs, std::move(subset));
+            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicIndexDense<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, std::move(subset));
         } else {
-            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicIndexDense<Value_, Index_> >(values, indices, indptrs, std::move(subset));
+            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicIndexDense<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary(), std::move(subset));
         }
     }
 
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(const Options& opt) const {
-        return dense_full<true>(opt);
+        return dense_internal<true>(opt);
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return dense_block<true>(block_start, block_length, opt);
+        return dense_internal<true>(block_start, block_length, opt);
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> subset, const Options& opt) const {
-        return dense_index<true>(std::move(subset), opt);
+        return dense_internal<true>(std::move(subset), opt);
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(const Options& opt) const {
-        return dense_full<false>(opt);
+        return dense_internal<false>(opt);
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return dense_block<false>(block_start, block_length, opt);
+        return dense_internal<false>(block_start, block_length, opt);
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> subset, const Options& opt) const {
-        return dense_index<false>(std::move(subset), opt);
+        return dense_internal<false>(std::move(subset), opt);
     }
 
     /******************************
@@ -657,53 +660,53 @@ private:
     template<bool accrow_>
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_internal(const Options& opt) const {
         if constexpr(row_ == accrow_) {
-            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicFullSparse<Value_, Index_> >(values, indices, indptrs, secondary(), opt);
+            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicFullSparse<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary(), opt);
         } else {
-            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicFullSparse<Value_, Index_> >(values, indices, indptrs, opt); 
+            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicFullSparse<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary(), opt); 
         }
     }
 
     template<bool accrow_>
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_internal(Index_ block_start, Index_ block_end, const Options& opt) const {
         if constexpr(row_ == accrow_) {
-            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicBlockSparse<Value_, Index_> >(values, indices, indptrs, secondary(), block_start, block_end, opt);
+            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicBlockSparse<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary(), block_start, block_end, opt);
         } else {
-            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicBlockSparse<Value_, Index_> >(values, indices, indptrs, block_start, block_end, opt);
+            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicBlockSparse<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary(), block_start, block_end, opt);
         }
     }
 
     template<bool accrow_>
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_internal(std::vector<Index_> subset, const Options& opt) const {
         if constexpr(row_ == accrow_) {
-            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicIndexSparse<Value_, Index_> >(values, indices, indptrs, std::move(subset), opt);
+            return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicIndexSparse<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, std::move(subset), opt);
         } else {
-            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicIndexSparse<Value_, Index_> >(values, indices, indptrs, std::move(subset), opt);
+            return std::make_unique<CompressedSparseMatrix_internal::SecondaryMyopicIndexSparse<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(values, indices, indptrs, secondary(), std::move(subset), opt);
         }
     }
 
 public:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(const Options& opt) const {
-        return sparse_full<true>(opt);
+        return sparse_internal<true>(opt);
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return sparse_block<true>(block_start, block_length, opt);
+        return sparse_internal<true>(block_start, block_length, opt);
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> subset, const Options& opt) const {
-        return sparse_index<true>(std::move(subset), opt);
+        return sparse_internal<true>(std::move(subset), opt);
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(const Options& opt) const {
-        return sparse_full<false>(opt);
+        return sparse_internal<false>(opt);
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return sparse_block<false>(block_start, block_length, opt);
+        return sparse_internal<false>(block_start, block_length, opt);
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> subset, const Options& opt) const {
-        return sparse_index<false>(std::move(subset), opt);
+        return sparse_internal<false>(std::move(subset), opt);
     }
 
     /*******************************

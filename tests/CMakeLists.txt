@@ -39,7 +39,7 @@ add_executable(
 #    src/isometric/binary/compare_helpers.cpp
 #    src/isometric/binary/boolean_helpers.cpp
 #
-#    src/sparse/CompressedSparseMatrix.cpp
+    src/sparse/CompressedSparseMatrix.cpp
 #    src/sparse/FragmentedSparseMatrix.cpp
 #    src/sparse/SemiCompressedSparseMatrix.cpp
 #    src/sparse/SparseSecondaryExtractorCore.cpp

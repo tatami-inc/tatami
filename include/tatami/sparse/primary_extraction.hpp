@@ -9,9 +9,9 @@ namespace tatami {
 
 namespace sparse_utils {
 
-template<class Storage_, typename Offset_, typename T_>
-const T_* extract_primary_vector(const Storage_& input, Pointer_ offset, Pointer_ delta, T_* buffer) {
-    if constexpr(has_data<T_, Storage_>::value) {
+template<class Storage_, typename Pointer_, typename Data_>
+const Data_* extract_primary_vector(const Storage_& input, Pointer_ offset, Pointer_ delta, Data_* buffer) {
+    if constexpr(has_data<Data_, Storage_>::value) {
         return input.data() + offset;
     } else {
         auto it = input.begin() + offset;
@@ -28,7 +28,7 @@ void refine_primary_block_limits(IndexIt_& indices_start, IndexIt_& indices_end,
     }
 
     auto block_end = block_start + block_length;
-    if (block_end != secondary) {
+    if (block_end != extent) {
         indices_end = std::lower_bound(indices_start, indices_end, block_end, [](Index_ a, Index_ b) -> bool { return a < b; });
     }
 }
@@ -67,6 +67,8 @@ void retrieve_primary_subset(IndexIt_ indices_start, IndexIt_ indices_end, const
         ++indices_start;
         ++offset;
     }
+}
+
 }
 
 }

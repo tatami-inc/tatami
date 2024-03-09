@@ -2,7 +2,7 @@
 #define TATAMI_STATS_UTILS_HPP
 
 #include "../base/Matrix.hpp"
-#include "../base/utils.hpp"
+#include "../base/new_extractor.hpp"
 #include "../utils/ConsecutiveOracle.hpp"
 
 #include <cmath>

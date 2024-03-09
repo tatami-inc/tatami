@@ -97,7 +97,7 @@ private:
         // do a quick increment to cut down the search space a bit more. We
         // also define our own comparator to avoid problems with signed
         // comparisons, depending on the types of IndexIt_ and Index_.
-        inext = std::lower_bound(inext + 1, iraw + endptr, secondary, [](Index_ a, Index_b) -> bool { return a < b; });
+        inext = std::lower_bound(inext + 1, iraw + endptr, secondary, [](Index_ a, Index_ b) -> bool { return a < b; });
         curptr = inext - iraw;
         if (curptr == endptr) {
             curdex = max_index;
@@ -136,7 +136,7 @@ private:
         }
 
         --curptr;
-        auto iraw = indices.begin(primary);
+        auto iraw = indices.raw(primary);
         auto inext = iraw + curptr;
         curdex = *inext + 1;
         if (curdex < secondaryP1) {
@@ -149,7 +149,9 @@ private:
         }
 
         // Otherwise we need to search indices below the existing position.
-        inext = std::lower_bound(iraw + startptr, inext, secondary, [](Index_ a, Index_b) -> bool { return a < b; });
+        // Again, we use our own comparator to force casting and avoid
+        // signed/unsigned comparisons.
+        inext = std::lower_bound(iraw + startptr, inext, secondary, [](Index_ a, Index_ b) -> bool { return a < b; });
         curdex = *inext + 1;
         curptr = inext - iraw;
 
@@ -169,7 +171,7 @@ private:
     }
 
 public:
-    template<class Index_, class PrimaryFunction_, class ServeIndices_, class Store_>
+    template<class PrimaryFunction_, class ServeIndices_, class Store_>
     void search(Index_ secondary, PrimaryFunction_ to_primary, const ServeIndices_& indices, Store_ store) {
         Index_ primary_length = cached_indices.size(); 
         if (primary_length == 0) {
@@ -191,10 +193,8 @@ public:
                 last_increasing = true;
                 for (Index_ p = 0; p < primary_length; ++p) {
                     auto primary = to_primary(p);
-                    auto istart = indices.start(primary);
-                    auto iend = indices.end(primary);
-                    auto icurrent = istart + cached_indptrs[p];
-                    cached_indices[p] = (icurrent == iend ? max_index : *icurrent);
+                    auto curptr = cached_indptrs[p];
+                    cached_indices[p] = (curptr == indices.end_offset(primary) ? max_index : *(indices.raw(primary) + curptr));
                     search_above(secondary, p, primary, indices, store);
                 }
             }
@@ -216,13 +216,12 @@ public:
                 last_increasing = false;
                 for (Index_ p = 0; p < primary_length; ++p) {
                     auto primary = to_primary(p);
-                    auto istart = indices.start(primary);
-                    auto iend = indices.end(primary);
-                    auto icurrent = istart + cached_indptrs[p];
-                    if (icurrent != iend && *icurrent == last_request) {
+                    auto iraw = indices.raw(primary);
+                    auto curptr = cached_indptrs[p];
+                    if (curptr != indices.end_offset(primary) && *(iraw + curptr) == last_request) {
                         cached_indices[p] = last_request + 1;
                     } else {
-                        cached_indices[p] = (istart == icurrent ? 0 : *(icurrent - 1) + 1);
+                        cached_indices[p] = (curptr == indices.start_offset(primary) ? 0 : *(iraw + curptr - 1) + 1);
                     }
                     search_below(secondary, p, primary, indices, store);
                 }
@@ -235,6 +234,8 @@ public:
         return;
     }
 };
+
+}
 
 }
 
