@@ -3,6 +3,11 @@
 
 #include "Matrix.hpp"
 
+/**
+ * @file new_extractor.hpp
+ * @brief Templated construction of a new extractor.
+ */
+
 namespace tatami {
 
 /**
@@ -16,7 +21,7 @@ namespace tatami {
  * @param args Zero or more additional arguments to pass to methods like `Matrix::dense_row()`.
  *
  * @return An extractor to access the requested dimension of `ptr`.
- * This may be any of `MyopicDenseExtractor`, `MyopicSparseExtractor`, `OracularDenseEextractor` or `OracularSparseExtractor`,
+ * This may be any of `MyopicDenseExtractor`, `MyopicSparseExtractor`, `OracularDenseExtractor` or `OracularSparseExtractor`,
  * depending on `sparse_` and whether an `Oracle` is supplied in `args`.
  */
 template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>

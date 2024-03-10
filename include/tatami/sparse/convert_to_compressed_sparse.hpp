@@ -3,7 +3,8 @@
 
 #include "CompressedSparseMatrix.hpp"
 #include "convert_to_fragmented_sparse.hpp"
-#include "../stats/utils.hpp"
+#include "../utils/parallelize.hpp"
+#include "../utils/consecutive_extractor.hpp"
 
 #include <memory>
 #include <vector>

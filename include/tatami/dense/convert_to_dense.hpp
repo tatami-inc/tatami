@@ -1,8 +1,9 @@
 #ifndef TATAMI_CONVERT_TO_DENSE_H
 #define TATAMI_CONVERT_TO_DENSE_H
 
-#include "../stats/utils.hpp"
 #include "../dense/DenseMatrix.hpp"
+#include "../utils/consecutive_extractor.hpp"
+#include "../utils/parallelize.hpp"
 
 #include <memory>
 #include <vector>

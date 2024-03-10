@@ -2,7 +2,8 @@
 #define TATAMI_CONVERT_TO_FRAGMENTED_SPARSE_H
 
 #include "FragmentedSparseMatrix.hpp"
-#include "../stats/utils.hpp"
+#include "../utils/parallelize.hpp"
+#include "../utils/consecutive_extractor.hpp"
 
 #include <memory>
 #include <vector>
