@@ -61,6 +61,9 @@ public:
             curptr = indices.start_offset(primary);
             cached_indices[p] = (curptr == indices.end_offset(primary) ? max_index : *(indices.raw(primary) + curptr));
         }
+        if (length) {
+            closest_cached_index = *(std::min_element(cached_indices.begin(), cached_indices.end()));
+        }
     }
 
     auto size() const {
@@ -200,17 +203,17 @@ private:
 
 protected:
     template<class PrimaryFunction_, class Store_>
-    void search_base(Index_ secondary, PrimaryFunction_ to_primary, Store_ store) {
+    bool search_base(Index_ secondary, PrimaryFunction_ to_primary, Store_ store) {
         Index_ primary_length = cached_indices.size(); 
         if (primary_length == 0) {
-            return;
+            return false;
         }
 
         if (secondary > last_request || (last_increasing && secondary == last_request)) {
             if (last_increasing) {
                 if (secondary < closest_cached_index) {
                     last_request = secondary;
-                    return; 
+                    return false; 
                 }
                 for (Index_ p = 0; p < primary_length; ++p) {
                     search_above(secondary, p, to_primary(p), store);
@@ -233,7 +236,7 @@ protected:
             if (!last_increasing) {
                 if (secondary + 1 > closest_cached_index) {
                     last_request = secondary;
-                    return;
+                    return false;
                 }
                 for (Index_ p = 0; p < primary_length; ++p) {
                     search_below(secondary, p, to_primary(p), store);
@@ -261,7 +264,7 @@ protected:
         }
 
         last_request = secondary; 
-        return;
+        return true;
     }
 };
 
@@ -272,8 +275,8 @@ struct FullSecondaryExtractionCache : public SecondaryExtractionCache<Index_, In
         SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, length, [](Index_ ip) -> Index_ { return ip; }) {}
 
     template<class Store_>
-    void search(Index_ secondary, Store_ store) {
-        this->search_base(secondary, [](Index_ ip) -> Index_ { return ip; }, std::move(store));
+    bool search(Index_ secondary, Store_ store) {
+        return this->search_base(secondary, [](Index_ ip) -> Index_ { return ip; }, std::move(store));
     }
 };
 
@@ -283,8 +286,8 @@ struct BlockSecondaryExtractionCache : public SecondaryExtractionCache<Index_, I
         SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, bl, [&](Index_ ip) -> Index_ { return bs + ip; }), block_start(bs) {}
 
     template<class Store_>
-    void search(Index_ secondary, Store_ store) {
-        this->search_base(secondary, [&](Index_ ip) -> Index_ { return ip + block_start; }, std::move(store));
+    bool search(Index_ secondary, Store_ store) {
+        return this->search_base(secondary, [&](Index_ ip) -> Index_ { return ip + block_start; }, std::move(store));
     }
 
     Index_ block_start;
@@ -296,8 +299,8 @@ struct IndexSecondaryExtractionCache : public SecondaryExtractionCache<Index_, I
         SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, sub.size(), [&](Index_ ip) -> Index_ { return sub[ip]; }), subset(std::move(sub)) {}
 
     template<class Store_>
-    void search(Index_ secondary, Store_ store) {
-        this->search_base(secondary, [&](Index_ ip) -> Index_ { return subset[ip]; }, std::move(store));
+    bool search(Index_ secondary, Store_ store) {
+        return this->search_base(secondary, [&](Index_ ip) -> Index_ { return subset[ip]; }, std::move(store));
     }
 
     std::vector<Index_> subset;

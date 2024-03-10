@@ -42,7 +42,7 @@ add_executable(
     src/sparse/CompressedSparseMatrix.cpp
     src/sparse/FragmentedSparseMatrix.cpp
 #    src/sparse/SemiCompressedSparseMatrix.cpp
-#    src/sparse/SparseSecondaryExtractorCore.cpp
+    src/sparse/secondary_extraction.cpp
     src/sparse/convert_to_compressed_sparse.cpp
     src/sparse/convert_to_fragmented_sparse.cpp
     src/sparse/compress_sparse_triplets.cpp
