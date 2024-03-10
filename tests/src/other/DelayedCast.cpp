@@ -6,7 +6,7 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/other/DelayedCast.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 
@@ -25,33 +25,33 @@ protected:
         auto sparse_matrix = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.08);
         {
             dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, sparse_matrix));
-            sparse = tatami::convert_to_sparse<false>(dense.get()); // column-major.
+            sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column-major.
         }
 
         // Both the value and indices are changed in type.
         std::vector<float> fsparse_matrix(sparse_matrix.begin(), sparse_matrix.end());
         {
             fdense = std::shared_ptr<tatami::Matrix<float, size_t> >(new tatami::DenseRowMatrix<float, size_t>(nrow, ncol, fsparse_matrix));
-            fsparse = tatami::convert_to_sparse<false, float, size_t>(fdense.get()); // column-major.
+            fsparse = tatami::convert_to_compressed_sparse<false, float, size_t>(fdense.get()); // column-major.
         }
 
         // Reference with reduced precision, for comparison with double->float->double casts.
         {
             std::vector<double> dsparse_matrix(fsparse_matrix.begin(), fsparse_matrix.end());
             fdense_ref = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(dsparse_matrix)));
-            fsparse_ref = tatami::convert_to_sparse<false>(fdense_ref.get()); // column-major.
+            fsparse_ref = tatami::convert_to_compressed_sparse<false>(fdense_ref.get()); // column-major.
         }
 
         // Only the value is changed in type.
         {
             auto refdense = std::shared_ptr<tatami::Matrix<float, int> >(new tatami::DenseRowMatrix<float, int>(nrow, ncol, fsparse_matrix));
-            fsparse_value = tatami::convert_to_sparse<false, float, int>(refdense.get()); 
+            fsparse_value = tatami::convert_to_compressed_sparse<false, float, int>(refdense.get()); 
         }
 
         // Only the index is changed in type.
         {
             auto redense = std::shared_ptr<tatami::Matrix<double, size_t> >(new tatami::DenseRowMatrix<double, size_t>(nrow, ncol, sparse_matrix));
-            sparse_index = tatami::convert_to_sparse<false, double, size_t>(redense.get()); 
+            sparse_index = tatami::convert_to_compressed_sparse<false, double, size_t>(redense.get()); 
         }
 
         return;
@@ -61,12 +61,16 @@ protected:
 /****************************************************
  ****************************************************/
 
-class DelayedCastFullAccess : public CastTest<std::tuple<bool, size_t> > {};
+class DelayedCastFullAccess : public CastTest<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t> > {};
 
 TEST_P(DelayedCastFullAccess, Dense) {
-    auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
+    auto tparam = GetParam(); 
+
+    tatami_test::TestAccessParameters params;
+    params.use_row = std::get<0>(tparam);
+    params.use_oracle = std::get<1>(tparam);
+    params.order = std::get<2>(tparam);
+    params.jump = std::get<3>(tparam);
 
     auto cast_dense = tatami::make_DelayedCast<double, int>(dense);
     EXPECT_EQ(cast_dense->nrow(), nrow);
@@ -75,19 +79,20 @@ TEST_P(DelayedCastFullAccess, Dense) {
     EXPECT_EQ(cast_dense->sparse_proportion(), dense->sparse_proportion());
     EXPECT_EQ(cast_dense->prefer_rows(), dense->prefer_rows());
     EXPECT_EQ(cast_dense->prefer_rows_proportion(), dense->prefer_rows_proportion());
-
-    tatami_test::test_simple_row_access(cast_dense.get(), dense.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(cast_dense.get(), dense.get(), FORWARD, JUMP);
+    tatami_test::test_full_access(params, cast_dense.get(), dense.get());
 
     auto cast_fdense = tatami::make_DelayedCast<double, int>(fdense);
-    tatami_test::test_simple_row_access(cast_fdense.get(), fdense_ref.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(cast_fdense.get(), fdense_ref.get(), FORWARD, JUMP);
+    tatami_test::test_full_access(params, cast_fdense.get(), fdense_ref.get());
 }
 
 TEST_P(DelayedCastFullAccess, Sparse) {
-    auto param = GetParam(); 
-    bool FORWARD = std::get<0>(param);
-    size_t JUMP = std::get<1>(param);
+    auto tparam = GetParam(); 
+
+    tatami_test::TestAccessParameters params;
+    params.use_row = std::get<0>(tparam);
+    params.use_oracle = std::get<1>(tparam);
+    params.order = std::get<2>(tparam);
+    params.jump = std::get<3>(tparam);
 
     auto cast_sparse = tatami::make_DelayedCast<double, int>(sparse);
     EXPECT_EQ(cast_sparse->nrow(), nrow);
@@ -96,28 +101,25 @@ TEST_P(DelayedCastFullAccess, Sparse) {
     EXPECT_EQ(cast_sparse->sparse_proportion(), sparse->sparse_proportion());
     EXPECT_EQ(cast_sparse->prefer_rows(), sparse->prefer_rows());
     EXPECT_EQ(cast_sparse->prefer_rows_proportion(), sparse->prefer_rows_proportion());
-
-    tatami_test::test_simple_row_access(cast_sparse.get(), sparse.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(cast_sparse.get(), sparse.get(), FORWARD, JUMP);
+    tatami_test::test_full_access(params, cast_sparse.get(), sparse.get());
 
     auto cast_fsparse = tatami::make_DelayedCast<double, int>(fsparse);
-    tatami_test::test_simple_row_access(cast_fsparse.get(), fsparse_ref.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(cast_fsparse.get(), fsparse_ref.get(), FORWARD, JUMP);
+    tatami_test::test_full_access(params, cast_fsparse.get(), fsparse_ref.get());
 
     auto cast_fsparse_value = tatami::make_DelayedCast<double, int>(fsparse_value);
-    tatami_test::test_simple_row_access(cast_fsparse_value.get(), fsparse_ref.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(cast_fsparse_value.get(), fsparse_ref.get(), FORWARD, JUMP);
+    tatami_test::test_full_access(params, cast_fsparse_value.get(), fsparse_ref.get());
 
     auto cast_sparse_index = tatami::make_DelayedCast<double, int>(sparse_index);
-    tatami_test::test_simple_row_access(cast_sparse_index.get(), sparse.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(cast_sparse_index.get(), sparse.get(), FORWARD, JUMP);
+    tatami_test::test_full_access(params, cast_sparse_index.get(), sparse.get());
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastFullAccess,
     ::testing::Combine(
-        ::testing::Values(true, false), // iterate forward or back, to test the workspace's memory.
+        ::testing::Values(true, false), // row extraction.
+        ::testing::Values(true, false), // an oracle.
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 3) // jump, to test the workspace memory.
     )
 );
@@ -125,57 +127,66 @@ INSTANTIATE_TEST_SUITE_P(
 /****************************************************
  ****************************************************/
 
-class DelayedCastBlockAccess : public CastTest<std::tuple<size_t, std::vector<double> > > {};
+class DelayedCastBlockAccess : public CastTest<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t, std::pair<double, double> > > {};
 
 TEST_P(DelayedCastBlockAccess, Dense) {
-    auto param = GetParam(); 
-    size_t JUMP = std::get<0>(param);
-    auto interval_info = std::get<1>(param);
-    size_t RFIRST = interval_info[0] * nrow, RLAST = interval_info[1] * nrow;
-    size_t CFIRST = interval_info[0] * ncol, CLAST = interval_info[1] * ncol;
+    auto tparam = GetParam(); 
+
+    tatami_test::TestAccessParameters params;
+    params.use_row = std::get<0>(tparam);
+    params.use_oracle = std::get<1>(tparam);
+    params.order = std::get<2>(tparam);
+    params.jump = std::get<3>(tparam);
+
+    auto interval_info = std::get<4>(tparam);
+    auto len = (params.use_row ? ncol : nrow);
+    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
 
     auto cast_dense = tatami::make_DelayedCast<double, int>(dense);
-    tatami_test::test_sliced_row_access(cast_dense.get(), dense.get(), true, JUMP, CFIRST, CLAST);
-    tatami_test::test_sliced_column_access(cast_dense.get(), dense.get(), true, JUMP, RFIRST, RLAST);
+    tatami_test::test_block_access(params, cast_dense.get(), dense.get(), FIRST, LAST);
 
     auto cast_fdense = tatami::make_DelayedCast<double, int>(fdense);
-    tatami_test::test_sliced_row_access(cast_fdense.get(), fdense_ref.get(), true, JUMP, CFIRST, CLAST);
-    tatami_test::test_sliced_column_access(cast_fdense.get(), fdense_ref.get(), true, JUMP, RFIRST, RLAST);
+    tatami_test::test_block_access(params, cast_fdense.get(), fdense_ref.get(), FIRST, LAST);
 }
 
 TEST_P(DelayedCastBlockAccess, Sparse) {
-    auto param = GetParam();
-    size_t JUMP = std::get<0>(param);
-    auto interval_info = std::get<1>(param);
-    size_t RFIRST = interval_info[0] * nrow, RLAST = interval_info[1] * nrow;
-    size_t CFIRST = interval_info[0] * ncol, CLAST = interval_info[1] * ncol;
+    auto tparam = GetParam();
+
+    tatami_test::TestAccessParameters params;
+    params.use_row = std::get<0>(tparam);
+    params.use_oracle = std::get<1>(tparam);
+    params.order = std::get<2>(tparam);
+    params.jump = std::get<3>(tparam);
+
+    auto interval_info = std::get<4>(tparam);
+    auto len = (params.use_row ? ncol : nrow);
+    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
 
     auto cast_sparse = tatami::make_DelayedCast<double, int>(sparse);
-    tatami_test::test_sliced_row_access(cast_sparse.get(), sparse.get(), true, JUMP, CFIRST, CLAST);
-    tatami_test::test_sliced_column_access(cast_sparse.get(), sparse.get(), true, JUMP, RFIRST, RLAST);
+    tatami_test::test_block_access(params, cast_sparse.get(), sparse.get(), FIRST, LAST);
 
     auto cast_fsparse = tatami::make_DelayedCast<double, int>(fsparse);
-    tatami_test::test_sliced_row_access(cast_fsparse.get(), fsparse_ref.get(), true, JUMP, CFIRST, CLAST);
-    tatami_test::test_sliced_column_access(cast_fsparse.get(), fsparse_ref.get(), true, JUMP, RFIRST, RLAST);
+    tatami_test::test_block_access(params, cast_fsparse.get(), fsparse_ref.get(), FIRST, LAST);
 
     auto cast_fsparse_value = tatami::make_DelayedCast<double, int>(fsparse_value);
-    tatami_test::test_sliced_row_access(cast_fsparse_value.get(), fsparse_ref.get(), true, JUMP, CFIRST, CLAST);
-    tatami_test::test_sliced_column_access(cast_fsparse_value.get(), fsparse_ref.get(), true, JUMP, RFIRST, RLAST);
+    tatami_test::test_block_access(params, cast_fsparse_value.get(), fsparse_ref.get(), FIRST, LAST);
 
     auto cast_sparse_index = tatami::make_DelayedCast<double, int>(sparse_index);
-    tatami_test::test_sliced_row_access(cast_sparse_index.get(), sparse.get(), true, JUMP, CFIRST, CLAST);
-    tatami_test::test_sliced_column_access(cast_sparse_index.get(), sparse.get(), true, JUMP, RFIRST, RLAST);
+    tatami_test::test_block_access(params, cast_sparse_index.get(), sparse.get(), FIRST, LAST);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastBlockAccess,
     ::testing::Combine(
+        ::testing::Values(true, false), // row extraction.
+        ::testing::Values(true, false), // an oracle.
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 3), // jump, to check the workspace memory
         ::testing::Values(
-            std::vector<double>({ 0, 0.6 }), 
-            std::vector<double>({ 0.5, 0.75 }),
-            std::vector<double>({ 0.24, 1 })
+            std::make_pair(0, 0.6), 
+            std::make_pair(0.5, 0.75),
+            std::make_pair(0.24, 1)
         )
     )
 );
@@ -183,101 +194,68 @@ INSTANTIATE_TEST_SUITE_P(
 /****************************************************
  ****************************************************/
 
-class DelayedCastIndexAccess : public CastTest<std::tuple<size_t, std::vector<double> > > {};
+class DelayedCastIndexAccess : public CastTest<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t, std::pair<double, double> > > {};
 
 TEST_P(DelayedCastIndexAccess, Dense) {
-    auto param = GetParam(); 
-    size_t JUMP = std::get<0>(param);
-    auto interval_info = std::get<1>(param);
-    size_t RFIRST = interval_info[0] * nrow, RSTEP = interval_info[1] * nrow;
-    size_t CFIRST = interval_info[0] * ncol, CSTEP = interval_info[1] * ncol;
+    auto tparam = GetParam(); 
+
+    tatami_test::TestAccessParameters params;
+    params.use_row = std::get<0>(tparam);
+    params.use_oracle = std::get<1>(tparam);
+    params.order = std::get<2>(tparam);
+    params.jump = std::get<3>(tparam);
+
+    auto interval_info = std::get<4>(tparam);
+    auto len = (params.use_row ? ncol : nrow);
+    size_t FIRST = interval_info.first * len, STEP = interval_info.second * len;
 
     auto cast_dense = tatami::make_DelayedCast<double, int>(dense);
-    tatami_test::test_indexed_row_access(cast_dense.get(), dense.get(), true, JUMP, CFIRST, CSTEP);
-    tatami_test::test_indexed_column_access(cast_dense.get(), dense.get(), true, JUMP, RFIRST, RSTEP);
+    tatami_test::test_indexed_access(params, cast_dense.get(), dense.get(), FIRST, STEP);
 
     auto cast_fdense = tatami::make_DelayedCast<double, int>(fdense);
-    tatami_test::test_indexed_row_access(cast_fdense.get(), fdense_ref.get(), true, JUMP, CFIRST, CSTEP);
-    tatami_test::test_indexed_column_access(cast_fdense.get(), fdense_ref.get(), true, JUMP, RFIRST, RSTEP);
+    tatami_test::test_indexed_access(params, cast_fdense.get(), fdense_ref.get(), FIRST, STEP);
 }
 
 TEST_P(DelayedCastIndexAccess, Sparse) {
-    auto param = GetParam();
-    size_t JUMP = std::get<0>(param);
-    auto interval_info = std::get<1>(param);
-    size_t RFIRST = interval_info[0] * nrow, RSTEP = interval_info[1] * nrow;
-    size_t CFIRST = interval_info[0] * ncol, CSTEP = interval_info[1] * ncol;
+    auto tparam = GetParam();
+
+    tatami_test::TestAccessParameters params;
+    params.use_row = std::get<0>(tparam);
+    params.use_oracle = std::get<1>(tparam);
+    params.order = std::get<2>(tparam);
+    params.jump = std::get<3>(tparam);
+
+    auto interval_info = std::get<4>(tparam);
+    auto len = (params.use_row ? ncol : nrow);
+    size_t FIRST = interval_info.first * len, STEP = interval_info.second * len;
 
     auto cast_sparse = tatami::make_DelayedCast<double, int>(sparse);
-    tatami_test::test_indexed_row_access(cast_sparse.get(), sparse.get(), true, JUMP, CFIRST, CSTEP);
-    tatami_test::test_indexed_column_access(cast_sparse.get(), sparse.get(), true, JUMP, RFIRST, RSTEP);
+    tatami_test::test_indexed_access(params, cast_sparse.get(), sparse.get(), FIRST, STEP);
 
     auto cast_fsparse = tatami::make_DelayedCast<double, int>(fsparse);
-    tatami_test::test_indexed_row_access(cast_fsparse.get(), fsparse_ref.get(), true, JUMP, CFIRST, CSTEP);
-    tatami_test::test_indexed_column_access(cast_fsparse.get(), fsparse_ref.get(), true, JUMP, RFIRST, RSTEP);
+    tatami_test::test_indexed_access(params, cast_fsparse.get(), fsparse_ref.get(), FIRST, STEP);
 
     auto cast_fsparse_value = tatami::make_DelayedCast<double, int>(fsparse_value);
-    tatami_test::test_indexed_row_access(cast_fsparse_value.get(), fsparse_ref.get(), true, JUMP, CFIRST, CSTEP);
-    tatami_test::test_indexed_column_access(cast_fsparse_value.get(), fsparse_ref.get(), true, JUMP, RFIRST, RSTEP);
+    tatami_test::test_indexed_access(params, cast_fsparse_value.get(), fsparse_ref.get(), FIRST, STEP);
 
     auto cast_sparse_index = tatami::make_DelayedCast<double, int>(sparse_index);
-    tatami_test::test_indexed_row_access(cast_sparse_index.get(), sparse.get(), true, JUMP, CFIRST, CSTEP);
-    tatami_test::test_indexed_column_access(cast_sparse_index.get(), sparse.get(), true, JUMP, RFIRST, RSTEP);
+    tatami_test::test_indexed_access(params, cast_sparse_index.get(), sparse.get(), FIRST, STEP);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastIndexAccess,
     ::testing::Combine(
+        ::testing::Values(true, false), // row extraction.
+        ::testing::Values(true, false), // an oracle.
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 3), // jump, to check the workspace memory
         ::testing::Values(
-            std::vector<double>({ 0, 0.015 }), 
-            std::vector<double>({ 0.5, 0.025 }),
-            std::vector<double>({ 0.666, 0.055 })
+            std::make_pair(0, 0.015), 
+            std::make_pair(0.5, 0.025),
+            std::make_pair(0.666, 0.055)
         )
     )
-);
-
-/****************************************************
- ****************************************************/
-
-class DelayedCastOracleTest : public ::testing::TestWithParam<bool> {
-protected:
-    size_t NR = 109, NC = 88;
-    std::shared_ptr<tatami::NumericMatrix> cast_dense, cast_sparse, wrapped_cast_dense, wrapped_cast_sparse;
-
-protected:
-    void assemble() {
-        auto simulated = tatami_test::simulate_sparse_vector<float>(NR * NC, 0.2);
-        auto raw_dense = std::shared_ptr<tatami::Matrix<float, size_t> >(new tatami::DenseRowMatrix<float, size_t>(NR, NC, simulated));
-        auto raw_sparse = tatami::convert_to_sparse<false, float, size_t>(raw_dense.get()); 
-
-        cast_dense = tatami::make_DelayedCast<double, int>(raw_dense);
-        cast_sparse = tatami::make_DelayedCast<double, int>(raw_sparse);
-
-        wrapped_cast_dense = tatami::make_DelayedCast<double, int>(tatami_test::make_CrankyMatrix<float, size_t>(raw_dense));
-        wrapped_cast_sparse = tatami::make_DelayedCast<double, int>(tatami_test::make_CrankyMatrix<float, size_t>(raw_sparse));
-    }
-};
-
-TEST_P(DelayedCastOracleTest, Validate) {
-    assemble();
-    auto random = GetParam();
-
-    EXPECT_FALSE(cast_dense->uses_oracle(true));
-    EXPECT_TRUE(wrapped_cast_dense->uses_oracle(true));
-
-    tatami_test::test_oracle_column_access(wrapped_cast_dense.get(), cast_dense.get(), random);
-    tatami_test::test_oracle_column_access(wrapped_cast_sparse.get(), cast_sparse.get(), random);
-
-    tatami_test::test_oracle_row_access(wrapped_cast_dense.get(), cast_dense.get(), random);
-    tatami_test::test_oracle_row_access(wrapped_cast_sparse.get(), cast_sparse.get(), random);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    DelayedCast,
-    DelayedCastOracleTest,
-    ::testing::Values(true, false)  // use random or consecutive oracle.
 );
 
 /****************************************************

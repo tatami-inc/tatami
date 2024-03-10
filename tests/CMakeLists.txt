@@ -23,7 +23,7 @@ add_executable(
 
 #    src/other/DelayedBind.cpp
 #    src/other/DelayedTranspose.cpp
-#    src/other/DelayedCast.cpp
+    src/other/DelayedCast.cpp
 #
 #    src/subset/DelayedSubset.cpp
 #    src/subset/DelayedSubsetBlock.cpp
