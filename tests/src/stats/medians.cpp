@@ -8,8 +8,8 @@
 #endif
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/utils/convert_to_dense.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/dense/convert_to_dense.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 #include "tatami/stats/medians.hpp"
 
 #include "tatami_test/tatami_test.hpp"
@@ -69,8 +69,8 @@ TEST(ComputingDimMedians, SparseMedians) {
     // median; in this case, we choose all-positive values.
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, 1, 10)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     auto rref = tatami::row_medians(dense_row.get());
     EXPECT_EQ(rref.size(), NR);
@@ -100,8 +100,8 @@ TEST(ComputingDimMedians, AllZero) {
     size_t NR = 55, NC = 22;
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, std::vector<double>(NR * NC)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     auto ref = tatami::row_medians(dense_row.get());
     EXPECT_EQ(ref, std::vector<double>(NR));
@@ -140,8 +140,8 @@ TEST_P(MedianTriangularTest, Positive) {
 
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(order, order, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     auto ref = tatami::row_medians(dense_row.get());
     EXPECT_EQ(ref.size(), order);
@@ -164,8 +164,8 @@ TEST_P(MedianTriangularTest, Negative) {
 
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(order, order, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     auto ref = tatami::row_medians(dense_row.get());
     EXPECT_EQ(ref.size(), order);
@@ -188,8 +188,8 @@ TEST_P(MedianTriangularTest, Mixed) {
 
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(order, order, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     auto ref = tatami::row_medians(dense_row.get());
     EXPECT_EQ(ref.size(), order);
@@ -227,8 +227,8 @@ TEST(ComputingDimMedians, DirtyOutput) {
     auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, 1, 10); // see comments above about why we use 0.5.
     auto dense_row = std::unique_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     auto ref = tatami::row_medians(dense_row.get());
 

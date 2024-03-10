@@ -1,21 +1,8 @@
 #ifndef TATAMI_STATS_UTILS_HPP
 #define TATAMI_STATS_UTILS_HPP
 
-#include "../base/Matrix.hpp"
-#include "../base/new_extractor.hpp"
-#include "../utils/ConsecutiveOracle.hpp"
-
-#include <cmath>
 #include <vector>
 #include <algorithm>
-
-#ifndef TATAMI_CUSTOM_PARALLEL
-#ifndef _OPENMP
-#include <thread>
-#endif
-#include <string>
-#include <stdexcept>
-#endif
 
 /**
  * @file utils.hpp

@@ -2,6 +2,8 @@
 #define TATAMI_STATS_VARS_HPP
 
 #include "../base/Matrix.hpp"
+#include "../utils/consecutive_extractor.hpp"
+#include "../utils/parallelize.hpp"
 #include "utils.hpp"
 
 #include <vector>
@@ -244,7 +246,7 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<row_, true>(p, s, l);
                 std::vector<Value_> vbuffer(otherdim);
-                while (ext->used_predictions < ext->total_predictions) {
+                for (Index_ x = 0; x < l; ++x) {
                     Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
                     output[i] = variances::compute_direct<Output_>(out, otherdim).second;
@@ -256,21 +258,20 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
 
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, l);
-                auto len = ext->block_length;
-                std::vector<Value_> vbuffer(len);
-                std::vector<Index_> ibuffer(len);
+                std::vector<Value_> vbuffer(l);
+                std::vector<Index_> ibuffer(l);
 
-                std::vector<Output_> running_means(len);
-                std::vector<Index_> running_nzeros(len);
+                std::vector<Output_> running_means(l);
+                std::vector<Index_> running_nzeros(l);
                 auto running_vars = output + s;
                 int counter = 0;
 
-                while (ext->used_predictions < ext->total_predictions) {
+                for (Index_ x = 0; x < otherdim; ++x) {
                     Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
                     variances::compute_running(out, running_means.data(), running_vars, running_nzeros.data(), counter, /* skip_zeros = */ true, /* subtract = */ s);
                 }
-                variances::finish_running(len, running_means.data(), running_vars, running_nzeros.data(), counter);
+                variances::finish_running(l, running_means.data(), running_vars, running_nzeros.data(), counter);
             }, dim, threads);
         }
 
@@ -279,7 +280,7 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<row_, false>(p, s, l);
                 std::vector<Value_> buffer(otherdim);
-                while (ext->used_predictions < ext->total_predictions) {
+                for (Index_ x = 0; x < l; ++x) {
                     Index_ i;
                     auto out = ext->fetch(i, buffer.data());
                     output[i] = variances::compute_direct<Output_>(out, otherdim).second;
@@ -291,19 +292,18 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
 
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, l);
-                auto len = ext->block_length;
-                std::vector<Value_> buffer(len);
+                std::vector<Value_> buffer(l);
 
-                std::vector<Output_> running_means(len);
+                std::vector<Output_> running_means(l);
                 auto running_vars = output + s;
                 int counter = 0;
 
-                while (ext->used_predictions < ext->total_predictions) {
+                for (Index_ x = 0; x < otherdim; ++x) {
                     Index_ i;
                     auto out = ext->fetch(i, buffer.data());
-                    variances::compute_running(out, len, running_means.data(), running_vars, counter);
+                    variances::compute_running(out, l, running_means.data(), running_vars, counter);
                 }
-                variances::finish_running(len, running_means.data(), running_vars, counter);
+                variances::finish_running(l, running_means.data(), running_vars, counter);
             }, dim, threads);
         }
     }

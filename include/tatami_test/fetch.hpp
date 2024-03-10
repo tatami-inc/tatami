@@ -3,6 +3,7 @@
 
 #include "../tatami/base/Extractor.hpp"
 #include "../tatami/base/SparseRange.hpp"
+#include "../tatami/utils/copy.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -11,23 +12,11 @@ namespace tatami_test {
 
 namespace internal {
 
-template<typename Value_>
-void clone_dense(const Value_* src, std::vector<Value_>& dest) {
-    if (src != dest.data()) {
-        std::copy(src, src + dest.size(), dest.data());
-    }
-}
-
 template<typename Value_, typename Index_>
 void trim_sparse(const tatami::SparseRange<Value_, Index_>& raw, std::vector<Value_>& output_v, std::vector<Index_>& output_i) {
-    if (raw.value != output_v.data()) {
-        std::copy(raw.value, raw.value + raw.number, output_v.data());
-    }
+    tatami::copy_n(raw.value, raw.number, output_v.data());
     output_v.resize(raw.number);
-
-    if (raw.index != output_i.data()) {
-        std::copy(raw.index, raw.index + raw.number, output_i.data());
-    }
+    tatami::copy_n(raw.index, raw.number, output_i.data());
     output_i.resize(raw.number);
 }
 
@@ -37,7 +26,7 @@ template<typename Value_, typename Index_>
 std::vector<Value_> fetch(tatami::MyopicDenseExtractor<Value_, Index_>* ext, Index_ i) {
     std::vector<Value_> output(ext->number());
     auto raw = ext->fetch(i, output.data());
-    internal::clone_dense(raw, output);
+    tatami::copy_n(raw, output.size(), output.data());
     return output;
 }
 
@@ -45,7 +34,7 @@ template<typename Value_, typename Index_>
 std::vector<Value_> fetch(tatami::OracularDenseExtractor<Value_, Index_>* ext, Index_& i) {
     std::vector<Value_> output(ext->number());
     auto raw = ext->fetch(i, output.data());
-    internal::clone_dense(raw, output);
+    tatami::copy_n(raw, output.size(), output.data());
     return output;
 }
 

@@ -2,7 +2,10 @@
 #define TATAMI_STATS_SUMS_HPP
 
 #include "../base/Matrix.hpp"
+#include "../utils/parallelize.hpp"
+#include "../utils/consecutive_extractor.hpp"
 #include "utils.hpp"
+
 #include <vector>
 #include <numeric>
 #include <algorithm>
@@ -33,7 +36,7 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
                 std::vector<Value_> vbuffer(otherdim);
-                while (ext->used_predictions < ext->total_predictions) {
+                for (Index_ x = 0; x < l; ++x) {
                     Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), NULL);
                     output[i] = std::accumulate(out.value, out.value + out.number, static_cast<Output_>(0));
@@ -45,10 +48,9 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
 
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, l);
-                auto len = ext->block_length;
-                std::vector<Value_> vbuffer(len);
-                std::vector<Index_> ibuffer(len);
-                while (ext->used_predictions < ext->total_predictions) {
+                std::vector<Value_> vbuffer(l);
+                std::vector<Index_> ibuffer(l);
+                for (Index_ x = 0; x < otherdim; ++x) {
                     Index_ i;
                     auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
                     for (Index_ j = 0; j < out.number; ++j) {
@@ -63,7 +65,7 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<row_, false>(p, s, l);
                 std::vector<Value_> buffer(otherdim);
-                while (ext->used_predictions < ext->total_predictions) {
+                for (Index_ x = 0; x < l; ++x) {
                     Index_ i;
                     auto out = ext->fetch(i, buffer.data());
                     output[i] = std::accumulate(out, out + otherdim, static_cast<Output_>(0));
@@ -75,12 +77,11 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
 
             parallelize([&](size_t, Index_ s, Index_ l) {
                 auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, l);
-                std::vector<Value_> buffer(ext->block_length);
-                auto len = ext->block_length;
-                while (ext->used_predictions < ext->total_predictions) {
+                std::vector<Value_> buffer(l);
+                for (Index_ x = 0; x < otherdim; ++x) {
                     Index_ i;
                     auto out = ext->fetch(i, buffer.data());
-                    for (Index_ j = 0; j < len; ++j) {
+                    for (Index_ j = 0; j < l; ++j) {
                         output[s + j] += out[j];
                     }
                 }

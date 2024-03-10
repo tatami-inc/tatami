@@ -4,6 +4,7 @@
 #include "../dense/DenseMatrix.hpp"
 #include "../utils/consecutive_extractor.hpp"
 #include "../utils/parallelize.hpp"
+#include "../utils/copy.hpp"
 
 #include <memory>
 #include <vector>
@@ -46,12 +47,10 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
                 InputIndex_ p;
                 if constexpr(same_type) {
                     auto ptr = wrk->fetch(p, store_copy);
-                    if (ptr != store_copy) {
-                        std::copy(ptr, ptr + secondary, store_copy);
-                    }
+                    copy_n(ptr, secondary, store_copy);
                 } else {
                     auto ptr = wrk->fetch(p, temp.data());
-                    std::copy(ptr, ptr + secondary, store_copy);
+                    std::copy_n(ptr, secondary, store_copy);
                 }
                 store_copy += secondary;
             }
