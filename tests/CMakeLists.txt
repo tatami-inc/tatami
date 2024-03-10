@@ -45,6 +45,7 @@ add_executable(
 #    src/sparse/SparseSecondaryExtractorCore.cpp
     src/sparse/convert_to_compressed_sparse.cpp
     src/sparse/convert_to_fragmented_sparse.cpp
+    src/sparse/compress_sparse_triplets.cpp
 
     src/stats/sums.cpp
     src/stats/variances.cpp
@@ -54,14 +55,14 @@ add_executable(
 #    src/stats/grouped_medians.cpp
 #    src/stats/grouped_sums.cpp
 
-#    src/utils/parallelize.cpp
-#    src/utils/wrap_shared_ptr.cpp
-#    src/utils/SomeNumericArray.cpp
-#    src/utils/ArrayView.cpp
+    src/utils/parallelize.cpp
+    src/utils/wrap_shared_ptr.cpp
+    src/utils/SomeNumericArray.cpp
+    src/utils/ArrayView.cpp
 #    src/utils/bind_intersection.cpp
-#    src/utils/compress_sparse_triplets.cpp
-#    src/utils/Oracles.cpp
-#    src/utils/process_consecutive_indices.cpp
+    src/utils/ConsecutiveOracle.cpp
+    src/utils/FixedOracle.cpp
+    src/utils/process_consecutive_indices.cpp
 )
 
 target_link_libraries(
@@ -94,7 +95,7 @@ macro(create_partest target)
         src/stats/medians.cpp
         src/stats/ranges.cpp
         src/stats/counts.cpp
-        src/stats/parallelize.cpp
+        src/utils/parallelize.cpp
         src/stats/grouped_medians.cpp
         src/stats/grouped_sums.cpp
     )

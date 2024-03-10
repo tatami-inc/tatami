@@ -7,7 +7,7 @@
 #include "custom_parallel.h"
 #endif
 
-#include "tatami/stats/utils.hpp"
+#include "tatami/utils/parallelize.hpp"
 
 TEST(ParallelizeTest, BasicCheck) {
     std::vector<int> start(3, -1), length(3, -1);
