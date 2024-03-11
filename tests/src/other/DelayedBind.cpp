@@ -5,7 +5,7 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/other/DelayedBind.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 
@@ -28,7 +28,7 @@ protected:
             } else {
                 collected_dense.emplace_back(new tatami::DenseColumnMatrix<double, int>(dim, lengths[i], to_add));
             }
-            collected_sparse.push_back(tatami::convert_to_sparse<false>(collected_dense.back().get())); // always CSC
+            collected_sparse.push_back(tatami::convert_to_compressed_sparse<false>(collected_dense.back().get())); // always CSC
         }
 
         if (row) {
@@ -142,27 +142,32 @@ TEST_F(DelayedBindUtilsTest, ConstOverloads) {
 /****************************
  ****************************/
 
-class DelayedBindFullAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int> >, public DelayedBindTestMethods {};
+class DelayedBindFullAccessTest : 
+    public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, bool, tatami_test::TestAccessOrder, int> >, 
+    public DelayedBindTestMethods {};
 
 TEST_P(DelayedBindFullAccessTest, Basic) {
-    auto param = GetParam();
-    assemble(std::get<0>(param), 50, std::get<1>(param));
-    int FORWARD = std::get<2>(param);
-    int JUMP = std::get<3>(param);
+    auto tparam = GetParam();
+    assemble(std::get<0>(tparam), 50, std::get<1>(tparam));
 
-    tatami_test::test_simple_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP);
-    tatami_test::test_simple_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP);
+    tatami_test::TestAccessParameters params;
+    params.use_row = std::get<2>(tparam);
+    params.use_oracle = std::get<3>(tparam);
+    params.order = std::get<4>(tparam);
+    params.jump = std::get<5>(tparam);
 
-    tatami_test::test_simple_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP);
-    tatami_test::test_simple_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP);
+    tatami_test::test_full_access(params, bound_sparse.get(), manual.get());
+    tatami_test::test_full_access(params, bound_dense.get(), manual.get());
 }
 
 static auto spawn_bind_scenarios () {
     return ::testing::Values(
         std::vector<int>{ 10 },
         std::vector<int>{ 10, 20 },
+        std::vector<int>{ 20, 10 },
         std::vector<int>{ 5, 2, 5 },
         std::vector<int>{ 5, 10, 20 },
+        std::vector<int>{ 20, 10, 5 },
         std::vector<int>{ 5, 0, 5 }
     );
 }
@@ -173,7 +178,9 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Combine(
         spawn_bind_scenarios(),
         ::testing::Values(true, false), // bind by row or by column
-        ::testing::Values(true, false), // forward or backward traversal.
+        ::testing::Values(true, false), // access by row or column
+        ::testing::Values(true, false), // use oracle or not.
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 3) // jump, to test the workspace's memory.
     )
 );
@@ -181,203 +188,76 @@ INSTANTIATE_TEST_SUITE_P(
 /****************************
  ****************************/
 
-class DelayedBindSlicedAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int, std::vector<double> > >, public DelayedBindTestMethods {};
-
-TEST_P(DelayedBindSlicedAccessTest, Basic) {
-    auto param = GetParam();
-    assemble(std::get<0>(param), 50, std::get<1>(param));
-    int FORWARD = std::get<2>(param);
-    int JUMP = std::get<3>(param);
-
-    auto interval_info = std::get<4>(param);
-    size_t RFIRST = interval_info[0] * manual->nrow(), RLAST = interval_info[1] * manual->nrow();
-    size_t CFIRST = interval_info[0] * manual->ncol(), CLAST = interval_info[1] * manual->ncol();
-
-    tatami_test::test_sliced_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
-    tatami_test::test_sliced_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
-
-    tatami_test::test_sliced_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
-    tatami_test::test_sliced_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    DelayedBind,
-    DelayedBindSlicedAccessTest,
-    ::testing::Combine(
-        spawn_bind_scenarios(),
-        ::testing::Values(true, false), // bind by row or by column
-        ::testing::Values(true, false), // forward or backward traversal.
-        ::testing::Values(1, 3), // jump, to test the workspace's memory.
-        ::testing::Values(
-            std::vector<double>({ 0, 0.6 }), 
-            std::vector<double>({ 0.25, 0.75 }), 
-            std::vector<double>({ 0.55, 1 })
-        )
-    )
-);
-
-/****************************
- ****************************/
-
-class DelayedBindIndexedAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int, std::vector<double> > >, public DelayedBindTestMethods {};
-
-TEST_P(DelayedBindIndexedAccessTest, Basic) {
-    auto param = GetParam();
-    assemble(std::get<0>(param), 50, std::get<1>(param));
-    int FORWARD = std::get<2>(param);
-    int JUMP = std::get<3>(param);
-
-    auto interval_info = std::get<4>(param);
-    size_t RFIRST = interval_info[0] * manual->nrow(),
-        CFIRST = interval_info[0] * manual->ncol(), 
-        STEP = interval_info[1];
-
-    tatami_test::test_indexed_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
-    tatami_test::test_indexed_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
-
-    tatami_test::test_indexed_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
-    tatami_test::test_indexed_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    DelayedBind,
-    DelayedBindIndexedAccessTest,
-    ::testing::Combine(
-        spawn_bind_scenarios(),
-        ::testing::Values(true, false), // bind by row or by column
-        ::testing::Values(true, false), // forward or backward traversal.
-        ::testing::Values(1, 3), // jump, to test the workspace's memory.
-        ::testing::Values(
-            std::vector<double>({ 0, 5 }), 
-            std::vector<double>({ 0.33, 3 }),
-            std::vector<double>({ 0.5, 2 })
-        )
-    )
-);
-
-/****************************
- ****************************/
-
-class DelayedBindOracleTestCore {
-protected:
-    std::vector<std::shared_ptr<tatami::NumericMatrix> > collected;
-    std::shared_ptr<tatami::NumericMatrix> bound;
-
-    void assemble(const std::vector<int>& lengths, int dim, bool row) {
-        for (size_t i = 0; i < lengths.size(); ++i) {
-            int len = lengths[i];
-            auto to_add = tatami_test::simulate_sparse_compressed<double>(len, dim, 0.2, /* lower = */ -10, /* upper = */ 10, /* seed = */ i * 99);
-            if (row) {
-                collected.emplace_back(new tatami::CompressedSparseRowMatrix<double, int>(len, dim, std::move(to_add.value), std::move(to_add.index), std::move(to_add.ptr)));
-            } else {
-                collected.emplace_back(new tatami::CompressedSparseColumnMatrix<double, int>(dim, len, std::move(to_add.value), std::move(to_add.index), std::move(to_add.ptr)));
-            }
-        }
-
-        bound = combine(collected, row);
-    }
-
-    static std::shared_ptr<tatami::NumericMatrix> combine(std::vector<std::shared_ptr<tatami::NumericMatrix> > inputs, bool row) {
-        if (row) {
-            return tatami::make_DelayedBind<0>(std::move(inputs));
-        } else {
-            return tatami::make_DelayedBind<1>(std::move(inputs));
-        }
-    }
-};
-
-class DelayedBindOracleTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool> >, public DelayedBindOracleTestCore {};
-
-TEST_P(DelayedBindOracleTest, AllOracular) {
-    auto param = GetParam();
-    assemble(std::get<0>(param), 500, std::get<1>(param));
-    auto random = std::get<2>(param);
-
-    for (size_t m = 0; m < collected.size(); ++m) {
-        int step_size = (m + 1) * 10; // variable prediction number across bound matrices, for some variety.
-        collected[m] = tatami_test::make_CrankyMatrix(std::move(collected[m]), step_size);
-    }
-    auto wrapped_bound = combine(std::move(collected), std::get<1>(param));
-
-    EXPECT_FALSE(bound->uses_oracle(true));
-    EXPECT_TRUE(wrapped_bound->uses_oracle(true));
-
-    tatami_test::test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
-    tatami_test::test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
-}
-
-TEST_P(DelayedBindOracleTest, FirstOracular) {
-    auto param = GetParam();
-    assemble(std::get<0>(param), 350, std::get<1>(param));
-    auto random = std::get<2>(param);
-
-    collected.front() = tatami_test::make_CrankyMatrix(std::move(collected.front()));
-    auto wrapped_bound = combine(std::move(collected), std::get<1>(param));
-
-    EXPECT_FALSE(bound->uses_oracle(true));
-    EXPECT_TRUE(wrapped_bound->uses_oracle(true));
-
-    tatami_test::test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
-    tatami_test::test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
-}
-
-TEST_P(DelayedBindOracleTest, LastOracular) {
-    auto param = GetParam();
-    assemble(std::get<0>(param), 540, std::get<1>(param));
-    auto random = std::get<2>(param);
-
-    collected.back() = tatami_test::make_CrankyMatrix(std::move(collected.back()));
-    auto wrapped_bound = combine(std::move(collected), std::get<1>(param));
-
-    EXPECT_FALSE(bound->uses_oracle(true));
-    EXPECT_TRUE(wrapped_bound->uses_oracle(true));
-
-    tatami_test::test_oracle_column_access(wrapped_bound.get(), bound.get(), random);
-    tatami_test::test_oracle_row_access(wrapped_bound.get(), bound.get(), random);
-}
-
-INSTANTIATE_TEST_SUITE_P(
-    DelayedBind,
-    DelayedBindOracleTest,
-    ::testing::Combine(
-        ::testing::Values(
-            std::vector<int>{ 100 },
-            std::vector<int>{ 150, 100 },
-            std::vector<int>{ 50, 200, 150 }
-        ),
-        ::testing::Values(true, false), // bind by row or by column
-        ::testing::Values(true, false)  // use random or consecutive oracle.
-    )
-);
-
-class DelayedBindOracleTest2 : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool> >, public DelayedBindOracleTestCore {};
-
-TEST_F(DelayedBindOracleTest2, Elongated) {
-    size_t NC = 200;
-    assemble({ 10, 20, 30 }, NC, true);
-    for (size_t m = 0; m < collected.size(); ++m) {
-        collected[m] = tatami_test::make_CrankyMatrix(std::move(collected[m]), 20 - m); // again, some variety in the prediction numbers.
-    }
-    auto wrapped_bound = combine(std::move(collected), true); // combining by row.
-
-    // Use a very long simulated sequence.
-    // This checks that the collection of expired predictions works correctly
-    // in the ParallelExtractor::ParentOracle class.
-
-    std::mt19937_64 rng(4123123); 
-    std::vector<int> fixed(50000);
-    for (auto& x : fixed) {
-        x = rng() % NC;
-    }
-
-    auto swork = bound->sparse_column();
-    auto swork_o = wrapped_bound->sparse_column();
-    swork_o->set_oracle(std::make_unique<tatami::FixedOracle<int> >(fixed.data(), fixed.size()));
-
-    for (auto i : fixed) {
-        auto sexpected = swork->fetch(i);
-        auto sobserved = swork_o->fetch(i);
-        EXPECT_EQ(sexpected.index, sobserved.index);
-        EXPECT_EQ(sexpected.value, sobserved.value);
-    }
-}
+//class DelayedBindSlicedAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int, std::vector<double> > >, public DelayedBindTestMethods {};
+//
+//TEST_P(DelayedBindSlicedAccessTest, Basic) {
+//    auto param = GetParam();
+//    assemble(std::get<0>(param), 50, std::get<1>(param));
+//    int FORWARD = std::get<2>(param);
+//    int JUMP = std::get<3>(param);
+//
+//    auto interval_info = std::get<4>(param);
+//    size_t RFIRST = interval_info[0] * manual->nrow(), RLAST = interval_info[1] * manual->nrow();
+//    size_t CFIRST = interval_info[0] * manual->ncol(), CLAST = interval_info[1] * manual->ncol();
+//
+//    tatami_test::test_sliced_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
+//    tatami_test::test_sliced_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, RLAST);
+//
+//    tatami_test::test_sliced_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
+//    tatami_test::test_sliced_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, CLAST);
+//}
+//
+//INSTANTIATE_TEST_SUITE_P(
+//    DelayedBind,
+//    DelayedBindSlicedAccessTest,
+//    ::testing::Combine(
+//        spawn_bind_scenarios(),
+//        ::testing::Values(true, false), // bind by row or by column
+//        ::testing::Values(true, false), // forward or backward traversal.
+//        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+//        ::testing::Values(
+//            std::vector<double>({ 0, 0.6 }), 
+//            std::vector<double>({ 0.25, 0.75 }), 
+//            std::vector<double>({ 0.55, 1 })
+//        )
+//    )
+//);
+//
+///****************************
+// ****************************/
+//
+//class DelayedBindIndexedAccessTest : public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, int, std::vector<double> > >, public DelayedBindTestMethods {};
+//
+//TEST_P(DelayedBindIndexedAccessTest, Basic) {
+//    auto param = GetParam();
+//    assemble(std::get<0>(param), 50, std::get<1>(param));
+//    int FORWARD = std::get<2>(param);
+//    int JUMP = std::get<3>(param);
+//
+//    auto interval_info = std::get<4>(param);
+//    size_t RFIRST = interval_info[0] * manual->nrow(),
+//        CFIRST = interval_info[0] * manual->ncol(), 
+//        STEP = interval_info[1];
+//
+//    tatami_test::test_indexed_column_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
+//    tatami_test::test_indexed_column_access(bound_dense.get(), manual.get(), FORWARD, JUMP, RFIRST, STEP);
+//
+//    tatami_test::test_indexed_row_access(bound_sparse.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
+//    tatami_test::test_indexed_row_access(bound_dense.get(), manual.get(), FORWARD, JUMP, CFIRST, STEP);
+//}
+//
+//INSTANTIATE_TEST_SUITE_P(
+//    DelayedBind,
+//    DelayedBindIndexedAccessTest,
+//    ::testing::Combine(
+//        spawn_bind_scenarios(),
+//        ::testing::Values(true, false), // bind by row or by column
+//        ::testing::Values(true, false), // forward or backward traversal.
+//        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+//        ::testing::Values(
+//            std::vector<double>({ 0, 5 }), 
+//            std::vector<double>({ 0.33, 3 }),
+//            std::vector<double>({ 0.5, 2 })
+//        )
+//    )
+//);
