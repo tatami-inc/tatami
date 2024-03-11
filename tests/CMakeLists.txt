@@ -22,7 +22,7 @@ add_executable(
     src/dense/convert_to_dense.cpp
 
 #    src/other/DelayedBind.cpp
-#    src/other/DelayedTranspose.cpp
+    src/other/DelayedTranspose.cpp
     src/other/DelayedCast.cpp
 #
 #    src/subset/DelayedSubset.cpp
