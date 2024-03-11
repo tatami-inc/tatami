@@ -2,12 +2,16 @@
 #define TATAMI_DELAYED_BIND_HPP
 
 #include "../base/Matrix.hpp"
-#include "../base/utils.hpp"
+#include "../base/new_extractor.hpp"
+#include "../utils/ConsecutiveOracle.hpp"
+#include "../utils/FixedOracle.hpp"
+#include "../utils/copy.hpp"
 
+#include <numeric>
 #include <algorithm>
 #include <memory>
 #include <array>
-#include <deque>
+#include <type_traits>
 
 /**
  * @file DelayedBind.hpp
@@ -18,6 +22,1095 @@
  */
 
 namespace tatami {
+
+/**
+ * @cond
+ */
+namespace DelayedBind_internal {
+
+/*********************
+ *** Full parallel ***
+ *********************/
+
+template<typename Value_, typename Index_, class Store_>
+void fetch_dense_parallel_full(const std::vector<Index_>& cumulative, Value_* buffer, Store_ store) {
+    for (size_t x = 0, end = cumulative.size() - 1; x < end; ++x) {
+        Index_ last = cumulative[x];
+        auto copy = buffer + last;
+        auto ptr = store(x, copy);
+        copy_n(ptr, cumulative[x + 1] - last, copy);
+    }
+}
+
+template<typename Value_, typename Index_>
+struct MyopicParallelFullDense : public MyopicDenseExtractor<Value_, Index_> {
+    template<bool row_>
+    MyopicParallelFullDense(
+        const std::vector<Index_>& cum,
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>, 
+        const Options& opt) : 
+        cumulative(cum) 
+    {
+        internal.reserve(mats.size());
+        for (const auto& m : mats) {
+            internal.emplace_back(new_extractor<row_, false>(m.get(), opt));
+        }
+    }
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        fetch_dense_parallel_full(
+            cumulative, 
+            buffer, 
+            [&](size_t x, Value_* copy) -> const Value_* { 
+                return internal[x]->fetch(i, copy); 
+            }
+        );
+        return buffer;
+    }
+
+    Index_ number() const {
+        return cumulative.back();
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    std::vector<std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > > internal;
+};
+
+template<typename Value_, typename Index_>
+struct OracularParallelFullDense : public OracularDenseExtractor<Value_, Index_> {
+    template<bool row_>
+    OracularParallelFullDense(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        std::shared_ptr<Oracle<Index_> > ora, 
+        const Options& opt) : 
+        cumulative(cum) 
+    {
+        if (mats.empty()) {
+            oracle = std::move(ora);
+        } else {
+            internal.reserve(mats.size());
+            for (const auto& m : mats) {
+                internal.emplace_back(new_extractor<row_, false>(m.get(), ora, opt));
+            }
+        }
+    }
+
+    const Value_* fetch(Index_& i, Value_* buffer) {
+        if (internal.empty()) {
+            i = oracle->get(used);
+            ++used;
+        } 
+        fetch_dense_parallel_full(
+            cumulative, 
+            buffer, 
+            [&](size_t x, Value_* copy) -> const Value_* {
+                return internal[x]->fetch(i, copy);
+            }
+        );
+        return buffer;
+    }
+
+    Index_ number() const {
+        return cumulative.back();
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    bool needs_value, needs_index;
+    std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > internal;
+    std::shared_ptr<Oracle<Index_> > oracle;
+    size_t used = 0;
+};
+
+template<typename Value_, typename Index_, class Store_>
+SparseRange<Value_, Index_> fetch_sparse_full(
+    const std::vector<Index_>& cumulative, 
+    bool needs_value, 
+    bool needs_index, 
+    Value_* vbuffer, 
+    Index_* ibuffer, 
+    Store_ store) 
+{
+    auto vcopy = vbuffer;
+    auto icopy = ibuffer;
+    Index_ accumulated = 0;
+
+    for (size_t x = 0, end = cumulative.size() - 1; x < end; ++x) {
+        auto range = store(x, vcopy, icopy);
+        accumulated += range.number;
+        if (needs_value) {
+            copy_n(range.value, range.number, vcopy);
+            vcopy += range.number;
+        }
+        if (needs_index) {
+            auto offset = cumulative[x];
+            for (Index_ y = 0; y < range.number; ++y) {
+                icopy[y] = range.index[y] + offset;
+            }
+            icopy += range.number;
+        }
+    }
+
+    return SparseRange<Value_, Index_>(
+        accumulated, 
+        (needs_value ? vbuffer : NULL), 
+        (needs_index ? ibuffer : NULL)
+    );
+}
+
+template<typename Value_, typename Index_>
+struct MyopicParallelFullSparse : public MyopicSparseExtractor<Value_, Index_> {
+    template<bool row_>
+    MyopicParallelFullSparse(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        const Options& opt) : 
+        cumulative(cum), 
+        needs_value(opt.sparse_extract_value), 
+        needs_index(opt.sparse_extract_index)
+    {
+        internal.reserve(mats.size());
+        for (const auto& m : mats) {
+            internal.emplace_back(new_extractor<row_, true>(m.get(), opt));
+        }
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        return fetch_sparse_full(
+            cumulative, 
+            needs_value, 
+            needs_index, 
+            vbuffer, 
+            ibuffer, 
+            [&](size_t x, Value_* vcopy, Index_* icopy) -> SparseRange<Value_, Index_> {
+                return internal[x]->fetch(i, vcopy, icopy); 
+            }
+        );
+    }
+
+    Index_ number() const {
+        return cumulative.back();
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    bool needs_value, needs_index;
+    std::vector<std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > > internal;
+};
+
+template<typename Value_, typename Index_>
+struct OracularParallelFullSparse : public OracularSparseExtractor<Value_, Index_> {
+    template<bool row_>
+    OracularParallelFullSparse(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        std::shared_ptr<Oracle<Index_> > ora,
+        const Options& opt) :
+        cumulative(cum), 
+        needs_value(opt.sparse_extract_value), 
+        needs_index(opt.sparse_extract_index)
+    {
+        if (mats.empty()) {
+            oracle = std::move(ora);
+        } else {
+            internal.reserve(mats.size());
+            for (const auto& m : mats) {
+                internal.emplace_back(new_extractor<row_, true>(m.get(), ora, opt));
+            }
+        }
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
+        if (internal.empty()) {
+            i = oracle->get(used);
+            ++used;
+        } 
+        return fetch_sparse_full(
+            cumulative,
+            needs_value,
+            needs_index,
+            vbuffer, 
+            ibuffer, 
+            [&](size_t x, Value_* vcopy, Index_* icopy) -> SparseRange<Value_, Index_> { 
+                return internal[x]->fetch(i, vcopy, icopy); 
+            }
+        );
+    }
+
+    Index_ number() const {
+        return cumulative.back();
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    bool needs_value, needs_index;
+    std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > internal;
+    std::shared_ptr<Oracle<Index_> > oracle;
+    size_t used = 0;
+};
+
+/**********************
+ *** Block parallel ***
+ **********************/
+
+template<typename Index_>
+size_t find_segment(const std::vector<Index_>& cumulative, Index_ target) {
+    return std::upper_bound(cumulative.begin(), cumulative.end(), target) - cumulative.begin() - 1;
+}
+
+template<typename Value_, typename Index_, class Initialize_>
+size_t initialize_parallel_block(
+    const std::vector<Index_>& cumulative, 
+    const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+    Index_ block_start, 
+    Index_ block_length, 
+    Initialize_ init) 
+{
+    size_t start_index = find_segment(cumulative, block_start); // finding the first matrix.
+    Index_ actual_start = block_start - cumulative[start_index];
+    Index_ block_end = block_start + block_length;
+
+    size_t nmats = mats.size();
+    for (auto index = start_index; index < nmats; ++index) {
+        bool not_final = (block_end > cumulative[index + 1]);
+        Index_ actual_end = (not_final ? cumulative[index + 1] : block_end) - cumulative[index];
+        init(index, actual_start, actual_end - actual_start);
+        if (!not_final) {
+            break;
+        }
+        actual_start = 0;
+    }
+
+    return start_index;
+}
+
+template<typename Value_, typename Index_, class Store_>
+void fetch_dense_parallel_block(const std::vector<Index_>& count, Value_* buffer, Store_ store) {
+    auto copy = buffer;
+    for (size_t x = 0, end = count.size(); x < end; ++x) {
+        auto ptr = store(x, copy);
+        auto j = count[x];
+        copy_n(ptr, j, copy);
+        copy += j;
+    }
+}
+
+template<typename Value_, typename Index_>
+struct MyopicParallelBlockDense : public MyopicDenseExtractor<Value_, Index_> {
+    template<bool row_>
+    MyopicParallelBlockDense(
+        const std::vector<Index_>& cumulative, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        Index_ block_start, 
+        Index_ block_length, 
+        const Options& opt) : 
+        block_length(block_length) 
+    {
+        internal.reserve(mats.size());
+        count.reserve(mats.size());
+        initialize_parallel_block(
+            cumulative, 
+            mats, 
+            block_start, 
+            block_length,
+            [&](size_t i, Index_ s, Index_ l) {
+                count.emplace_back(l);
+                internal.emplace_back(new_extractor<row_, false>(mats[i].get(), s, l, opt));
+            }
+        );
+    }
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        fetch_dense_parallel_block(
+            count, 
+            buffer, 
+            [&](size_t x, Value_* copy) -> const Value_* { 
+                return internal[x]->fetch(i, copy); 
+            }
+        );
+        return buffer;
+    }
+
+    Index_ number() const {
+        return block_length;
+    }
+
+private:
+    Index_ block_length;
+    std::vector<std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > > internal;
+    std::vector<Index_> count;
+};
+
+template<typename Value_, typename Index_>
+struct OracularParallelBlockDense : public OracularDenseExtractor<Value_, Index_> {
+    template<bool row_>
+    OracularParallelBlockDense(
+        const std::vector<Index_>& cumulative, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        std::shared_ptr<Oracle<Index_> > ora, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const Options& opt) : 
+        block_length(block_length) 
+    {
+        internal.reserve(mats.size());
+        count.reserve(mats.size());
+        initialize_parallel_block(
+            cumulative, 
+            mats, 
+            block_start, 
+            block_length,
+            [&](size_t i, Index_ s, Index_ l) {
+                count.emplace_back(l);
+                internal.emplace_back(new_extractor<row_, false>(mats[i].get(), ora, s, l, opt));
+            }
+        );
+        if (internal.empty()) {
+            oracle = std::move(ora);
+        }
+    }
+
+    const Value_* fetch(Index_& i, Value_* buffer) {
+        if (internal.empty()) {
+            i = oracle->get(used);
+            ++used;
+        } 
+        fetch_dense_parallel_block(
+            count, 
+            buffer, 
+            [&](size_t x, Value_* copy) -> const Value_* { 
+                return internal[x]->fetch(i, copy); 
+            }
+        );
+        return buffer;
+    }
+
+    Index_ number() const {
+        return block_length;
+    }
+
+private:
+    Index_ block_length;
+    std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > internal;
+    std::vector<Index_> count;
+    std::shared_ptr<Oracle<Index_> > oracle;
+    size_t used = 0;
+};
+
+template<typename Value_, typename Index_, class Store_>
+SparseRange<Value_, Index_> fetch_sparse_parallel_block(
+    const std::vector<Index_>& cumulative, 
+    size_t which_start, 
+    size_t num, 
+    bool needs_value, 
+    bool needs_index, 
+    Value_* vbuffer, 
+    Index_* ibuffer, 
+    Store_ store) 
+{
+    auto vcopy = vbuffer;
+    auto icopy = ibuffer;
+    Index_ count = 0;
+
+    for (size_t x = 0; x < num; ++x) {
+        auto range = store(x, vcopy, icopy);
+        count += range.number;
+        if (needs_value) {
+            copy_n(range.value, range.number, vcopy);
+            vcopy += range.number;
+        }
+        if (needs_index) {
+            Index_ offset = cumulative[x + which_start];
+            for (Index_ y = 0; y < range.number; ++y) {
+                icopy[y] = range.index[y] + offset;
+            }
+            icopy += range.number;
+        }
+    }
+
+    return SparseRange<Value_, Index_>(
+        count,
+        (needs_value ? vbuffer : NULL),
+        (needs_index ? ibuffer : NULL)
+    );
+}
+
+template<typename Value_, typename Index_>
+struct MyopicParallelBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
+    template<bool row_>
+    MyopicParallelBlockSparse(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        Index_ block_start, 
+        Index_ block_length, 
+        const Options& opt) : 
+        cumulative(cum), 
+        block_length(block_length), 
+        needs_value(opt.sparse_extract_value), 
+        needs_index(opt.sparse_extract_index) 
+    {
+        internal.reserve(mats.size());
+        which_start = initialize_parallel_block(
+            cumulative, 
+            mats, 
+            block_start, 
+            block_length,
+            [&](size_t i, Index_ s, Index_ l) {
+                internal.emplace_back(new_extractor<row_, true>(mats[i].get(), s, l, opt));
+            }
+        );
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        return fetch_sparse_parallel_block(
+            cumulative, 
+            which_start,
+            internal.size(),
+            needs_value, 
+            needs_index, 
+            vbuffer, 
+            ibuffer, 
+            [&](size_t x, Value_* vcopy, Index_* icopy) -> SparseRange<Value_, Index_> {
+                return internal[x]->fetch(i, vcopy, icopy);
+            }
+        );
+    }
+
+    Index_ number() const {
+        return block_length;
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    Index_ block_length;
+    bool needs_value, needs_index;
+    std::vector<std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > > internal;
+    size_t which_start;
+};
+
+template<typename Value_, typename Index_>
+struct OracularParallelBlockSparse : public OracularSparseExtractor<Value_, Index_> {
+    template<bool row_>
+    OracularParallelBlockSparse(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        std::shared_ptr<Oracle<Index_> > ora, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const Options& opt) : 
+        cumulative(cum), 
+        block_length(block_length), 
+        needs_value(opt.sparse_extract_value), 
+        needs_index(opt.sparse_extract_index)
+    {
+        internal.reserve(mats.size());
+        which_start = initialize_parallel_block(
+            cumulative, 
+            mats, 
+            block_start, 
+            block_length,
+            [&](size_t i, Index_ s, Index_ l) {
+                internal.emplace_back(new_extractor<row_, true>(mats[i].get(), ora, s, l, opt));
+            }
+        );
+        if (internal.empty()) {
+            oracle = std::move(ora);
+        }
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
+        if (internal.empty()) {
+            i = oracle->get(used);
+            ++used;
+        } 
+        return fetch_sparse_parallel_block(
+            cumulative, 
+            which_start,
+            internal.size(),
+            needs_value, 
+            needs_index, 
+            vbuffer, 
+            ibuffer, 
+            [&](size_t x, Value_* vcopy, Index_* icopy) -> SparseRange<Value_, Index_> {
+                return internal[x]->fetch(i, vcopy, icopy);
+            }
+        );
+    }
+
+    Index_ number() const {
+        return block_length;
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    Index_ block_length;
+    bool needs_value, needs_index;
+    std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > internal;
+    size_t which_start;
+    std::shared_ptr<Oracle<Index_> > oracle;
+    size_t used = 0;
+};
+
+/**********************
+ *** Index parallel ***
+ **********************/
+
+template<typename Value_, typename Index_, class Initialize_>
+void initialize_parallel_index(
+    const std::vector<Index_>& cumulative, 
+    const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+    const std::vector<Index_>& indices, 
+    Initialize_ init) 
+{
+    if (indices.empty()) {
+        return;
+    } 
+
+    Index_ counter = 0, il = indices.size();
+    for (size_t index = find_segment(cumulative, indices.front()), nmats = mats.size(); index < nmats; ++index) {
+        Index_ lower = cumulative[index];
+        Index_ upper = cumulative[index + 1];
+
+        std::vector<Index_> curslice;
+        while (counter < il && indices[counter] < upper) {
+            curslice.push_back(indices[counter] - lower);
+            ++counter;
+        }
+
+        if (!curslice.empty()) {
+            init(index, std::move(curslice));
+        }
+
+        if (counter == il) {
+            break;
+        }
+    }
+}
+
+template<typename Value_, typename Index_, class Store_>
+void fetch_dense_parallel_index(const std::vector<Index_>& count, Value_* buffer, Store_ store) {
+    auto copy = buffer;
+    for (size_t x = 0, end = count.size(); x < end; ++x) {
+        auto ptr = store(x, copy);
+        auto j = count[x];
+        copy_n(ptr, j, copy);
+        copy += j;
+    }
+}
+
+template<typename Value_, typename Index_>
+struct MyopicParallelIndexDense : public MyopicDenseExtractor<Value_, Index_> {
+    template<bool row_>
+    MyopicParallelIndexDense(
+        const std::vector<Index_>& cumulative, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        const std::vector<Index_>& indices,
+        const Options& opt) :
+        index_length(indices.size()) 
+    {
+        internal.reserve(mats.size());
+        count.reserve(mats.size());
+        initialize_parallel_index(
+            cumulative, 
+            mats, 
+            indices,
+            [&](size_t i, std::vector<Index_> idx) {
+                count.emplace_back(idx.size());
+                internal.emplace_back(new_extractor<row_, false>(mats[i].get(), std::move(idx), opt));
+            }
+        );
+    }
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        fetch_dense_parallel_index(
+            count, 
+            buffer, 
+            [&](size_t x, Value_* copy) -> const Value_* { 
+                return internal[x]->fetch(i, copy); 
+            }
+        );
+        return buffer;
+    }
+
+    Index_ number() const {
+        return index_length;
+    }
+
+private:
+    Index_ index_length;
+    std::vector<std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > > internal;
+    std::vector<Index_> count;
+};
+
+template<typename Value_, typename Index_>
+struct OracularParallelIndexDense : public OracularDenseExtractor<Value_, Index_> {
+    template<bool row_>
+    OracularParallelIndexDense(
+        const std::vector<Index_>& cumulative, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        std::shared_ptr<Oracle<Index_> > ora, 
+        const std::vector<Index_>& indices,
+        const Options& opt) : 
+        index_length(indices.size()) 
+    {
+        internal.reserve(mats.size());
+        count.reserve(mats.size());
+        initialize_parallel_index(
+            cumulative, 
+            mats, 
+            indices,
+            [&](size_t i, std::vector<Index_> idx) {
+                count.emplace_back(idx.size());
+                internal.emplace_back(new_extractor<row_, false>(mats[i].get(), ora, std::move(idx), opt));
+            }
+        );
+        if (internal.empty()) {
+            oracle = std::move(ora);
+        }
+    }
+
+    const Value_* fetch(Index_& i, Value_* buffer) {
+        if (internal.empty()) {
+            i = oracle->get(used);
+            ++used;
+        } 
+        fetch_dense_parallel_index(
+            count, 
+            buffer, 
+            [&](size_t x, Value_* copy) -> const Value_* { 
+                return internal[x]->fetch(i, copy);
+            }
+        );
+        return buffer;
+    }
+
+    Index_ number() const {
+        return index_length;
+    }
+
+private:
+    Index_ index_length;
+    std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > internal;
+    std::vector<Index_> count;
+    std::shared_ptr<Oracle<Index_> > oracle;
+    size_t used = 0;
+};
+
+template<typename Value_, typename Index_, class Store_>
+SparseRange<Value_, Index_> fetch_sparse_parallel_index(
+    const std::vector<Index_>& cumulative, 
+    const std::vector<size_t>& which, 
+    bool needs_value, 
+    bool needs_index, 
+    Value_* vbuffer, 
+    Index_* ibuffer, 
+    Store_ store) 
+{
+    auto vcopy = vbuffer;
+    auto icopy = ibuffer;
+    Index_ count = 0;
+
+    for (size_t x = 0, end = which.size(); x < end; ++x) {
+        auto range = store(x, vcopy, icopy);
+        count += range.number;
+        if (needs_value) {
+            copy_n(range.value, range.number, vcopy);
+            vcopy += range.number;
+        }
+
+        if (needs_index) {
+            Index_ offset = cumulative[which[x]];
+            for (Index_ y = 0; y < range.number; ++y) {
+                icopy[y] = range.index[y] + offset;
+            }
+            icopy += range.number;
+        }
+    }
+
+    return SparseRange<Value_, Index_>(
+        count,
+        (needs_value ? vbuffer : NULL),
+        (needs_index ? ibuffer : NULL)
+    );
+}
+
+template<typename Value_, typename Index_>
+struct MyopicParallelIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
+    template<bool row_>
+    MyopicParallelIndexSparse(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        const std::vector<Index_>& indices,
+        const Options& opt) : 
+        cumulative(cum),
+        index_length(indices.size()), 
+        needs_value(opt.sparse_extract_value), 
+        needs_index(opt.sparse_extract_index) 
+    {
+        internal.reserve(mats.size());
+        which.reserve(mats.size());
+        initialize_parallel_index(
+            cumulative, 
+            mats, 
+            indices,
+            [&](size_t i, std::vector<Index_> idx) {
+                which.emplace_back(i);
+                internal.emplace_back(new_extractor<row_, true>(mats[i].get(), std::move(idx), opt));
+            }
+        );
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        return fetch_sparse_parallel_index(
+            cumulative,
+            which, 
+            needs_value, 
+            needs_index, 
+            vbuffer, 
+            ibuffer, 
+            [&](size_t x, Value_* vcopy, Index_* icopy) -> SparseRange<Value_, Index_> {
+                return internal[x]->fetch(i, vcopy, icopy);
+            }
+        );
+    }
+
+    Index_ number() const {
+        return index_length;
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    Index_ index_length;
+    bool needs_value, needs_index;
+    std::vector<std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > > internal;
+    std::vector<size_t> which;
+};
+
+template<typename Value_, typename Index_>
+struct OracularParallelIndexSparse : public OracularSparseExtractor<Value_, Index_> {
+    template<bool row_>
+    OracularParallelIndexSparse(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>,
+        std::shared_ptr<Oracle<Index_> > ora, 
+        const std::vector<Index_>& indices,
+        const Options& opt) : 
+        cumulative(cum),
+        index_length(indices.size()), 
+        needs_value(opt.sparse_extract_value), 
+        needs_index(opt.sparse_extract_index) 
+    {
+        internal.reserve(mats.size());
+        which.reserve(mats.size());
+        initialize_parallel_index(
+            cumulative, 
+            mats, 
+            indices,
+            [&](size_t i, std::vector<Index_> idx) {
+                which.emplace_back(i);
+                internal.emplace_back(new_extractor<row_, true>(mats[i].get(), ora, std::move(idx), opt));
+            }
+        );
+        if (internal.empty()) {
+            oracle = std::move(ora);
+        } 
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
+        if (internal.empty()) {
+            i = oracle->get(used);
+            ++used;
+        } 
+        return fetch_sparse_parallel_index(
+            cumulative,
+            which, 
+            needs_value, 
+            needs_index, 
+            vbuffer, 
+            ibuffer, 
+            [&](size_t x, Value_* vcopy, Index_* icopy) -> SparseRange<Value_, Index_> {
+                return internal[x]->fetch(i, vcopy, icopy);
+            }
+        );
+    }
+
+    Index_ number() const {
+        return index_length;
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    Index_ index_length;
+    bool needs_value, needs_index;
+    std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > internal;
+    std::vector<size_t> which;
+    std::shared_ptr<Oracle<Index_> > oracle;
+    size_t used = 0;
+};
+
+/*********************
+ *** Perpendicular ***
+ *********************/
+
+template<typename Index_>
+struct ChooseSegment {
+    ChooseSegment(const std::vector<Index_>& cum) : cumulative(cum) {}
+
+    const std::vector<Index_>& cumulative;
+private:
+    size_t last_segment = 0;
+
+public:
+    size_t choose_segment(Index_ i) {
+        if (cumulative[last_segment] > i) {
+            if (last_segment && cumulative[last_segment - 1] <= i) {
+                --last_segment;
+            } else {
+                last_segment = find_segment(cumulative, i);
+            }
+        } else if (cumulative[last_segment + 1] <= i) {
+            if (last_segment + 2 < cumulative.size() && cumulative[last_segment + 2] > i) {
+                ++last_segment;
+            } else {
+                last_segment = find_segment(cumulative, i);
+            }
+        }
+        return last_segment;
+    }
+};
+
+template<typename Value_, typename Index_>
+struct MyopicPerpendicularDense : public MyopicDenseExtractor<Value_, Index_> {
+    template<bool row_, typename ... Args_>
+    MyopicPerpendicularDense(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>, 
+        Index_ extent,
+        const Args_& ... args) : 
+        chooser(cum), 
+        extracted_number(extent)
+    {
+        internal.reserve(mats.size());
+        for (auto& m : mats) {
+            internal.emplace_back(new_extractor<row_, false>(m.get(), args...));
+        }
+    }
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        size_t chosen = chooser.choose_segment(i);
+        return internal[chosen]->fetch(i - chooser.cumulative[chosen], buffer);
+    }
+
+    Index_ number() const {
+        return extracted_number;
+    }
+
+private:
+    ChooseSegment<Index_> chooser;
+    Index_ extracted_number;
+    std::vector<std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > > internal;
+};
+
+template<typename Value_, typename Index_>
+struct MyopicPerpendicularSparse : public MyopicSparseExtractor<Value_, Index_> {
+    template<bool row_, typename ... Args_>
+    MyopicPerpendicularSparse(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>, 
+        Index_ extent,
+        const Args_& ... args) : 
+        chooser(cum), 
+        extracted_number(extent)
+    {
+        internal.reserve(mats.size());
+        for (auto& m : mats) {
+            internal.emplace_back(new_extractor<row_, true>(m.get(), args...));
+        }
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        size_t chosen = chooser.choose_segment(i);
+        return internal[chosen]->fetch(i - chooser.cumulative[chosen], vbuffer, ibuffer);
+    }
+
+    Index_ number() const {
+        return extracted_number;
+    }
+
+private:
+    ChooseSegment<Index_> chooser;
+    Index_ extracted_number;
+    std::vector<std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > > internal;
+};
+
+template<typename Index_, class Initialize_>
+void initialize_perp_oracular(
+    const std::vector<Index_>& cumulative, 
+    const Oracle<Index_>* oracle, 
+    std::vector<size_t>& chosen, 
+    Initialize_ init) 
+{
+    size_t ntotal = oracle->total();
+    chosen.reserve(ntotal);
+    ChooseSegment<Index_> chooser(cumulative);
+
+    struct Predictions {
+        bool consecutive = true;
+        Index_ start = 0;
+        Index_ number = 0;
+        std::vector<Index_> predictions;
+
+        void add(Index_ p) {
+            if (consecutive) {
+                if (number == 0) {
+                    start = p;
+                    number = 1;
+                    return;
+                }
+                if (number + start == p) {
+                    ++number;
+                    return;
+                }
+                consecutive = false;
+                predictions.resize(number);
+                std::iota(predictions.begin(), predictions.end(), start);
+            }
+
+            predictions.push_back(p);
+        }
+    };
+
+    size_t nmats = cumulative.size() - 1;
+    std::vector<Predictions> predictions(nmats);
+    for (size_t i = 0; i < ntotal; ++i) {
+        auto prediction = oracle->get(i);
+        size_t choice = chooser.choose_segment(prediction);
+        chosen.push_back(choice);
+        predictions[choice].add(prediction - cumulative[choice]);
+    }
+
+    for (size_t x = 0; x < nmats; ++x) {
+        auto& current = predictions[x];
+        if (current.consecutive) {
+            if (current.number) {
+                init(x, std::make_shared<ConsecutiveOracle<Index_> >(current.start, current.number));
+            }
+        } else {
+            if (!current.predictions.empty()) {
+                init(x, std::make_shared<FixedVectorOracle<Index_> >(std::move(current.predictions)));
+            }
+        }
+    }
+}
+
+template<typename Value_, typename Index_>
+struct OracularPerpendicularDense : public OracularDenseExtractor<Value_, Index_> {
+    template<bool row_, typename ... Args_>
+    OracularPerpendicularDense(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>, 
+        Index_ extent,
+        std::shared_ptr<Oracle<Index_> > ora, 
+        const Args_& ... args) : 
+        cumulative(cum), 
+        extracted_number(extent) 
+    {
+        internal.resize(mats.size());
+        initialize_perp_oracular(
+            cum,
+            ora.get(),
+            segments,
+            [&](size_t x, std::shared_ptr<Oracle<Index_> > subora) {
+                internal[x] = new_extractor<row_, false>(mats[x].get(), std::move(subora), args...);
+            }
+        );
+    }
+
+    const Value_* fetch(Index_& i, Value_* buffer) {
+        auto chosen = segments[used];
+        auto output = internal[chosen]->fetch(i, buffer);
+        i += cumulative[chosen];
+        ++used;
+        return output;
+    }
+
+    Index_ number() const {
+        return extracted_number;
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    Index_ extracted_number;
+    std::vector<size_t> segments;
+    std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > internal;
+    size_t used = 0;
+};
+
+template<typename Value_, typename Index_>
+struct OracularPerpendicularSparse : public OracularSparseExtractor<Value_, Index_> {
+    template<bool row_, typename ... Args_>
+    OracularPerpendicularSparse(
+        const std::vector<Index_>& cum, 
+        const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
+        std::integral_constant<bool, row_>, 
+        Index_ extent, 
+        std::shared_ptr<Oracle<Index_> > ora, 
+        const Args_& ... args) : 
+        cumulative(cum), 
+        extracted_number(extent) 
+    {
+        internal.resize(mats.size());
+        initialize_perp_oracular(
+            cum,
+            ora.get(),
+            segments,
+            [&](size_t x, std::shared_ptr<Oracle<Index_> > subora) {
+                internal[x] = new_extractor<row_, true>(mats[x].get(), std::move(subora), args...);
+            }
+        );
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
+        auto chosen = segments[used];
+        auto output = internal[chosen]->fetch(i, vbuffer, ibuffer);
+        i += cumulative[chosen];
+        ++used;
+        return output;
+    }
+
+    Index_ number() const {
+        return extracted_number;
+    }
+
+private:
+    const std::vector<Index_>& cumulative;
+    Index_ extracted_number;
+    std::vector<size_t> segments;
+    std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > internal;
+    size_t used = 0;
+};
+
+}
+/**
+ * @endcond
+ */
 
 /**
  * @brief Delayed combining of a matrix.
@@ -167,556 +1260,276 @@ public:
 
     using Matrix<Value_, Index_>::sparse_column;
 
-    /****************************************
-     ********** Parallel extractor **********
-     ****************************************/
+    /**********************************
+     ********** Myopic dense **********
+     **********************************/
 private:
-    template<DimensionSelectionType selection_, bool sparse_>
-    struct ParallelExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-        static constexpr bool accrow_ = margin_ != 0;
-
-        ParallelExtractor(const DelayedBind* p, const Options& opt) : parent(p) {
-            workspaces.reserve(p->mats.size());
-
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->full_length = (accrow_ ? p->internal_ncol() : p->internal_nrow());
-                for (const auto& m : parent->mats) {
-                    // TODO: manage opt.selection, manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(m.get(), opt));
-                }
-            }
-        }
-
-        ParallelExtractor(const DelayedBind* p, const Options& opt, Index_ bs, Index_ bl) : parent(p) {
-            size_t nmats = parent->mats.size();
-            workspaces.reserve(nmats);
-
-            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->block_start = bs;
-                this->block_length = bl;
-
-                const auto& cumulative = this->parent->cumulative;
-                size_t index = std::upper_bound(cumulative.begin(), cumulative.end(), this->block_start) - cumulative.begin() - 1; // finding the first matrix.
-                Index_ actual_start = this->block_start - cumulative[index];
-                Index_ end = this->block_start + this->block_length;
-                if constexpr(sparse_) {
-                    kept.reserve(nmats);
-                }
-
-                for (; index < nmats; ++index) {
-                    bool not_final = (end > cumulative[index + 1]);
-                    Index_ actual_end = (not_final ? cumulative[index + 1] : end) - cumulative[index];
-
-                    // TODO: manage opt.selection, manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), actual_start, actual_end - actual_start, opt));
-
-                    if constexpr(sparse_) {
-                        kept.push_back(index);
-                    }
-
-                    if (!not_final) {
-                        break;
-                    }
-                    actual_start = 0;
-                }
-            }
-        }
-
-        ParallelExtractor(const DelayedBind* p, const Options& opt, std::vector<Index_> idx) : parent(p) {
-            size_t nmats = parent->mats.size();
-            workspaces.reserve(nmats);
-
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                indices = std::move(idx);
-                Index_ il = indices.size();
-                this->index_length = il;
-
-                if (il) {
-                    const auto& cumulative = this->parent->cumulative;
-                    size_t index = std::upper_bound(cumulative.begin(), cumulative.end(), indices[0]) - cumulative.begin() - 1; // finding the first matrix.
-                    if constexpr(sparse_) {
-                        kept.reserve(nmats);
-                    }
-
-                    Index_ counter = 0;
-                    for (; index < nmats; ++index) {
-                        Index_ lower = cumulative[index];
-                        Index_ upper = cumulative[index + 1];
-
-                        std::vector<Index_> curslice;
-                        while (counter < il && indices[counter] < upper) {
-                            curslice.push_back(indices[counter] - lower);
-                            ++counter;
-                        }
-
-                        if (!curslice.empty()) {
-                            // TODO: manage opt.selection, manage opt.access.sequencer!
-                            workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), std::move(curslice), opt));
-                            if constexpr(sparse_) {
-                                kept.push_back(index);
-                            }
-                        }
-
-                        if (counter == il) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-    protected:
-        const DelayedBind* parent;
-        std::vector<std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > > workspaces;
-        typename std::conditional<sparse_ && selection_ != DimensionSelectionType::FULL, std::vector<size_t>, bool>::type kept;
-        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
-
-    public:
-        const Index_* index_start() const {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                return indices.data();
-            } else {
-                return NULL;
-            }
-        }
-
-    private:
-        struct ParentOracle {
-            ParentOracle(std::unique_ptr<Oracle<Index_> > o, size_t nmats) : source(std::move(o)), counters(nmats) {}
-
-            size_t fill(size_t id, Index_* buffer, size_t number) {
-                auto& current = counters[id];
-                size_t end = current + number;
-                size_t available = stream.size();
-
-                if (available >= end) {
-                    std::copy(stream.begin() + current, stream.begin() + end, buffer);
-                    current = end;
-                    return number;
-                }
-
-                size_t handled = 0;
-                if (current < available) {
-                    std::copy(stream.begin() + current, stream.end(), buffer);
-                    handled = available - current;
-                    buffer += handled;
-                    number -= handled;
-                }
-
-                size_t filled = source->predict(buffer, number);
-                current = available + filled;
-
-                // Try to slim down if the accumulated stream has gotten too big.
-                if (stream.size() >= 10000) { 
-                    size_t minimum = *std::min_element(counters.begin(), counters.end());
-                    if (minimum) {
-                        stream.erase(stream.begin(), stream.begin() + minimum);
-                        for (auto& x : counters) {
-                            x -= minimum;
-                        }
-                    }
-                }
-
-                stream.insert(stream.end(), buffer, buffer + filled);
-                return filled + handled;
-            }
-        private:
-            std::unique_ptr<Oracle<Index_> > source;
-            std::deque<Index_> stream;
-            std::vector<size_t> counters;
-        };
-
-        struct ChildOracle : public Oracle<Index_> {
-            ChildOracle(ParentOracle* o, size_t i) : parent(o), id(i) {}
-            size_t predict(Index_* buffer, size_t number) {
-                return parent->fill(id, buffer, number);
-            }
-        private:
-            ParentOracle* parent;
-            size_t id;
-        };
-
-        std::unique_ptr<ParentOracle> parent_oracle;
-
-    public:
-        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            // Figure out how many of these need an oracle.
-            std::vector<size_t> need_oracles;
-            size_t nmats = parent->mats.size();
-            need_oracles.reserve(nmats);
-
-            for (size_t m = 0; m < nmats; ++m) {
-                if (parent->mats[m]->uses_oracle(accrow_)) {
-                    need_oracles.push_back(m);
-                }
-            }
-
-            // Now we create child oracles that reference the parent;
-            // or, if only one inner matrix needs an oracle, we pass it directly.
-            size_t needy = need_oracles.size();
-            if (needy > 1) {
-                parent_oracle.reset(new ParentOracle(std::move(o), needy));
-                for (size_t n = 0; n < needy; ++n) {
-                    workspaces[need_oracles[n]]->set_oracle(std::make_unique<ChildOracle>(parent_oracle.get(), n));
-                }
-            } else if (needy) {
-                workspaces[need_oracles.front()]->set_oracle(std::move(o));
-            }
-        }
-    };
-
-private:
-    template<DimensionSelectionType selection_>
-    struct DenseParallelExtractor : public ParallelExtractor<selection_, false> {
-        template<typename ... Args_>
-        DenseParallelExtractor(const DelayedBind* p, const Options& opt, Args_&& ... args) : ParallelExtractor<selection_, false>(p, opt, std::forward<Args_>(args)...) {}
-
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            auto copy = buffer;
-            for (auto& w : this->workspaces) {
-                w->fetch_copy(i, copy);
-                copy += extracted_length<selection_, Index_>(*w);
-            }
-            return buffer;
-        }
-    };
-
-    template<DimensionSelectionType selection_>
-    struct SparseParallelExtractor : public ParallelExtractor<selection_, true> {
-        template<typename ... Args_>
-        SparseParallelExtractor(const DelayedBind* p, const Options& opt, Args_&& ... args) : 
-            ParallelExtractor<selection_, true>(p, opt, std::forward<Args_>(args)...),
-            needs_value(opt.sparse_extract_value), 
-            needs_index(opt.sparse_extract_index)
-        {}
-
-        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            auto vcopy = vbuffer;
-            auto icopy = ibuffer;
-            Index_ total = 0;
-            size_t counter = 0;
-
-            for (auto& w : this->workspaces) {
-                auto raw = w->fetch_copy(i, vcopy, icopy);
-                total += raw.number;
-
-                if (needs_value) {
-                    vcopy += raw.number;
-                }
-
-                if (needs_index) {
-                    Index_ adjustment;
-                    if constexpr(selection_ == DimensionSelectionType::FULL) {
-                        adjustment = this->parent->cumulative[counter];
-                    } else {
-                        adjustment = this->parent->cumulative[this->kept[counter]];
-                    }
-
-                    if (adjustment) {
-                        for (Index_ j = 0; j < raw.number; ++j) {
-                            icopy[j] += adjustment;
-                        }
-                    }
-
-                    icopy += raw.number;
-                }
-
-                ++counter;
-            }
-
-            if (!needs_value) {
-                vbuffer = NULL;
-            }
-            if (!needs_index) {
-                ibuffer = NULL;
-            }
-
-            return SparseRange<Value_, Index_>(total, vbuffer, ibuffer);
-        }
-
-    protected:
-        bool needs_value;
-        bool needs_index;
-    };
-
-    /*********************************************
-     ********** Perpendicular extractor **********
-     *********************************************/
-private:
-    template<DimensionSelectionType selection_, bool sparse_>
-    struct PerpendicularExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-        static constexpr bool accrow_ = margin_ == 0;
-
-        PerpendicularExtractor(const DelayedBind* p, const Options& opt) : parent(p) {
-            workspaces.reserve(parent->mats.size());
-
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->full_length = (accrow_ ? p->internal_ncol() : p->internal_nrow());
-                for (const auto& m : parent->mats) {
-                    // TODO: manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(m.get(), opt));
-                }
-            }
-        }
-
-        PerpendicularExtractor(const DelayedBind* p, const Options& opt, Index_ bs, Index_ bl) : parent(p) {
-            workspaces.reserve(p->mats.size());
-
-            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->block_start = bs;
-                this->block_length = bl;
-                for (const auto& m : parent->mats) {
-                    // TODO: manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(m.get(), bs, bl, opt));
-                }
-            }
-        }
-
-        PerpendicularExtractor(const DelayedBind* p, const Options& opt, std::vector<Index_> idx) : parent(p) {
-            workspaces.reserve(p->mats.size());
-
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                this->index_length = idx.size();
-                for (const auto& m : parent->mats) {
-                    // TODO: manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(m.get(), idx, opt)); // copy of 'idx' is deliberate here.
-                }
-
-                if (workspaces.empty()) {
-                    indices = std::move(idx);
-                }
-            }
-        }
-
-    protected:
-        const DelayedBind* parent;
-        std::vector<std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > > workspaces;
-        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
-        size_t last_segment = 0;
-
-    private:
-        static size_t choose_segment_raw(Index_ i, const std::vector<Index_>& cumulative) {
-            return std::upper_bound(cumulative.begin(), cumulative.end(), i) - cumulative.begin() - 1;
-        }
-
-        static void choose_segment(Index_ i, size_t& last_segment, const std::vector<Index_>& cumulative) {
-            if (cumulative[last_segment] > i) {
-                if (last_segment && cumulative[last_segment - 1] <= i) {
-                    --last_segment;
-                } else {
-                    last_segment = choose_segment_raw(i, cumulative);
-                }
-            } else if (cumulative[last_segment + 1] <= i) {
-                if (last_segment + 2 < cumulative.size() && cumulative[last_segment + 2] > i) {
-                    ++last_segment;
-                } else {
-                    last_segment = choose_segment_raw(i, cumulative);
-                }
-            }
-            return;
-        }
-
-    protected:
-        size_t choose_segment(Index_ i) {
-            choose_segment(i, last_segment, parent->cumulative);
-            return last_segment;
-        }
-
-    public:
-        const Index_* index_start() const {
-            if (workspaces.empty()) {
-                return indices.data();
-            } else {
-                return workspaces.front()->index_start();
-            }
-        }
-
-    private:
-        struct ParentOracle {
-            ParentOracle(std::unique_ptr<Oracle<Index_> > o, std::vector<unsigned char> u, const std::vector<Index_>* c) : 
-                source(std::move(o)), streams(u.size()), used(std::move(u)), cumulative(c) {}
-
-            size_t fill(size_t id, Index_* buffer, size_t number) {
-                auto& stream = streams[id];
-
-                // Trying to top it up, but we won't try too hard, as we might
-                // end up doing lots of predictions to fill up the stream for a
-                // bound matrix with very few elements.
-                if (stream.size() < number) {
-                    const auto& cum = *cumulative;
-                    bool unfound = true;
-                    do {
-                        size_t filled = source->predict(buffer, number);
-                        if (!filled) {
-                            break;
-                        }
-
-                        for (size_t f = 0; f < filled; ++f) {
-                            PerpendicularExtractor::choose_segment(buffer[f], chosen_segment, cum);
-                            if (used[chosen_segment]) {
-                                streams[chosen_segment].push_back(buffer[f] - cum[chosen_segment]);
-                                if (chosen_segment == id) {
-                                    unfound = true;
-                                }
-                            }
-                        }
-                    } while (unfound);
-
-                    if (stream.size() < number) {
-                        number = stream.size();
-                    }
-                }
-
-                if (number) {
-                    std::copy(stream.begin(), stream.begin() + number, buffer);
-                    stream.erase(stream.begin(), stream.begin() + number);
-                }
-                return number;
-            }
-        private:
-            std::unique_ptr<Oracle<Index_> > source;
-            std::vector<std::deque<Index_> > streams;
-            std::vector<unsigned char> used;
-            const std::vector<Index_>* cumulative;
-            size_t chosen_segment = 0;
-        };
-
-        struct ChildOracle : public Oracle<Index_> {
-            ChildOracle(ParentOracle* o, size_t i) : parent(o), id(i) {}
-            size_t predict(Index_* buffer, size_t number) {
-                return parent->fill(id, buffer, number);
-            }
-        private:
-            ParentOracle* parent;
-            size_t id;
-        };
-
-        std::unique_ptr<ParentOracle> parent_oracle;
-
-    public:
-        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            // Figure out how many of these need an oracle.
-            std::vector<size_t> need_oracles;
-            size_t nmats = parent->mats.size();
-            need_oracles.reserve(nmats);
-
-            for (size_t m = 0; m < nmats; ++m) {
-                if (parent->mats[m]->uses_oracle(accrow_)) {
-                    need_oracles.push_back(m);
-                }
-            }
-
-            // Now we create child oracles that reference the parent;
-            // or, if only one inner matrix needs an oracle, we pass it directly.
-            if (!need_oracles.empty()) {
-                std::vector<unsigned char> used(nmats);
-                for (auto n : need_oracles) {
-                    used[n] = 1;
-                }
-                parent_oracle.reset(new ParentOracle(std::move(o), std::move(used), &(parent->cumulative))); 
-                for (auto n : need_oracles) {
-                    workspaces[n]->set_oracle(std::make_unique<ChildOracle>(parent_oracle.get(), n));
-                }
-            }
-        }
-    };
-
-private:
-    template<DimensionSelectionType selection_>
-    struct DensePerpendicularExtractor : public PerpendicularExtractor<selection_, false> {
-        template<typename ... Args_>
-        DensePerpendicularExtractor(const DelayedBind* p, const Options& opt, Args_&& ... args) : PerpendicularExtractor<selection_, false>(p, opt, std::forward<Args_>(args)...) {}
-
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            size_t chosen = this->choose_segment(i);
-            return this->workspaces[chosen]->fetch(i - this->parent->cumulative[chosen], buffer);
-        }
-    };
-
-    template<DimensionSelectionType selection_>
-    struct SparsePerpendicularExtractor : public PerpendicularExtractor<selection_, true> {
-        template<typename ... Args_>
-        SparsePerpendicularExtractor(const DelayedBind* p, const Options& opt, Args_&& ... args) : PerpendicularExtractor<selection_, true>(p, opt, std::forward<Args_>(args)...) {}
-
-        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            size_t chosen = this->choose_segment(i);
-            return this->workspaces[chosen]->fetch(i - this->parent->cumulative[chosen], vbuffer, ibuffer);
-        }
-    };
-
-    /************************************
-     ********** Public methods **********
-     ************************************/
-private:
-    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_&&... args) const {
-        std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
-
-        if constexpr(sparse_) {
-            if constexpr(accrow_ == (margin_ == 0)) {
-                output.reset(new SparsePerpendicularExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
-            } else {
-                output.reset(new SparseParallelExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
-            }
+    Index_ perpendicular_extent() const {
+        if constexpr(margin_ == 0) {
+            return internal_ncol();
         } else {
-            if constexpr(accrow_ == (margin_ == 0)) {
-                output.reset(new DensePerpendicularExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
-            } else {
-                output.reset(new DenseParallelExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
-            }
+            return internal_nrow();
         }
+    }
 
+    template<bool accrow_>
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_internal(const Options& opt) const {
+        std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            output.reset(new DelayedBind_internal::MyopicPerpendicularDense(cumulative, mats, flag, perpendicular_extent(), opt));
+        } else {
+            output.reset(new DelayedBind_internal::MyopicParallelFullDense(cumulative, mats, flag, opt));
+        }
+        return output;
+    }
+
+    template<bool accrow_>
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_internal(Index_ block_start, Index_ block_length, const Options& opt) const {
+        std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            output.reset(new DelayedBind_internal::MyopicPerpendicularDense(cumulative, mats, flag, block_length, block_start, block_length, opt));
+        } else {
+            output.reset(new DelayedBind_internal::MyopicParallelBlockDense(cumulative, mats, flag, block_start, block_length, opt));
+        }
+        return output;
+    }
+
+    template<bool accrow_>
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_internal(std::vector<Index_> indices, const Options& opt) const {
+        std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            Index_ extent = indices.size();
+            output.reset(new DelayedBind_internal::MyopicPerpendicularDense(cumulative, mats, flag, extent, std::move(indices), opt));
+        } else {
+            output.reset(new DelayedBind_internal::MyopicParallelIndexDense(cumulative, mats, flag, std::move(indices), opt));
+        }
         return output;
     }
 
 public:
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options& opt) const {
-        return populate<true, DimensionSelectionType::FULL, false>(opt);
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(const Options& opt) const {
+        return dense_internal<true>(opt);
     }
 
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return populate<true, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const {
+        return dense_internal<true>(block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const {
-        return populate<true, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const {
+        return dense_internal<true>(std::move(indices), opt);
     }
 
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options& opt) const {
-        return populate<false, DimensionSelectionType::FULL, false>(opt);
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(const Options& opt) const {
+        return dense_internal<false>(opt);
     }
 
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return populate<false, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const {
+        return dense_internal<false>(block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const {
-        return populate<false, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const {
+        return dense_internal<false>(std::move(indices), opt);
+    }
+
+    /***********************************
+     ********** Myopic sparse **********
+     ***********************************/
+private:
+    template<bool accrow_>
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_internal(const Options& opt) const {
+        std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            output.reset(new DelayedBind_internal::MyopicPerpendicularSparse(cumulative, mats, flag, perpendicular_extent(), opt));
+        } else {
+            output.reset(new DelayedBind_internal::MyopicParallelFullSparse(cumulative, mats, flag, opt));
+        }
+        return output;
+    }
+
+    template<bool accrow_>
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_internal(Index_ block_start, Index_ block_length, const Options& opt) const {
+        std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            output.reset(new DelayedBind_internal::MyopicPerpendicularSparse(cumulative, mats, flag, block_length, block_start, block_length, opt));
+        } else {
+            output.reset(new DelayedBind_internal::MyopicParallelBlockSparse(cumulative, mats, flag, block_start, block_length, opt));
+        }
+        return output;
+    }
+
+    template<bool accrow_>
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_internal(std::vector<Index_> indices, const Options& opt) const {
+        std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            Index_ extent = indices.size();
+            output.reset(new DelayedBind_internal::MyopicPerpendicularSparse(cumulative, mats, flag, extent, std::move(indices), opt));
+        } else {
+            output.reset(new DelayedBind_internal::MyopicParallelIndexSparse(cumulative, mats, flag, std::move(indices), opt));
+        }
+        return output;
     }
 
 public:
-    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options& opt) const {
-        return populate<true, DimensionSelectionType::FULL, true>(opt);
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(const Options& opt) const {
+        return sparse_internal<true>(opt);
     }
 
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return populate<true, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const {
+        return sparse_internal<true>(block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) const {
-        return populate<true, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) const {
+        return sparse_internal<true>(std::move(indices), opt);
     }
 
-    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options& opt) const {
-        return populate<false, DimensionSelectionType::FULL, true>(opt);
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(const Options& opt) const {
+        return sparse_internal<false>(opt);
     }
 
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return populate<false, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const {
+        return sparse_internal<false>(block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) const {
-        return populate<false, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) const {
+        return sparse_internal<false>(std::move(indices), opt);
+    }
+
+    /************************************
+     ********** Oracular dense **********
+     ************************************/
+private:
+    template<bool accrow_>
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_internal(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        std::unique_ptr<OracularDenseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            output.reset(new DelayedBind_internal::OracularPerpendicularDense(cumulative, mats, flag, perpendicular_extent(), std::move(oracle), opt));
+        } else {
+            output.reset(new DelayedBind_internal::OracularParallelFullDense(cumulative, mats, flag, std::move(oracle), opt));
+        }
+        return output;
+    }
+
+    template<bool accrow_>
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_internal(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        std::unique_ptr<OracularDenseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            output.reset(new DelayedBind_internal::OracularPerpendicularDense(cumulative, mats, flag, block_length, std::move(oracle), block_start, block_length, opt));
+        } else {
+            output.reset(new DelayedBind_internal::OracularParallelBlockDense(cumulative, mats, flag, std::move(oracle), block_start, block_length, opt));
+        }
+        return output;
+    }
+
+    template<bool accrow_>
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_internal(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        std::unique_ptr<OracularDenseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            Index_ extent = indices.size();
+            output.reset(new DelayedBind_internal::OracularPerpendicularDense(cumulative, mats, flag, extent, std::move(oracle), std::move(indices), opt));
+        } else {
+            output.reset(new DelayedBind_internal::OracularParallelIndexDense(cumulative, mats, flag, std::move(oracle), std::move(indices), opt));
+        }
+        return output;
+    }
+
+public:
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        return dense_internal<true>(std::move(oracle), opt);
+    }
+
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return dense_internal<true>(std::move(oracle), block_start, block_length, opt);
+    }
+
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        return dense_internal<true>(std::move(oracle), std::move(indices), opt);
+    }
+
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        return dense_internal<false>(std::move(oracle), opt);
+    }
+
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return dense_internal<false>(std::move(oracle), block_start, block_length, opt);
+    }
+
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        return dense_internal<false>(std::move(oracle), std::move(indices), opt);
+    }
+
+    /*************************************
+     ********** Oracular sparse **********
+     *************************************/
+private:
+    template<bool accrow_>
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_internal(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        std::unique_ptr<OracularSparseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            output.reset(new DelayedBind_internal::OracularPerpendicularSparse(cumulative, mats, flag, perpendicular_extent(), std::move(oracle), opt));
+        } else {
+            output.reset(new DelayedBind_internal::OracularParallelFullSparse(cumulative, mats, flag, std::move(oracle), opt));
+        }
+        return output;
+    }
+
+    template<bool accrow_>
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_internal(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        std::unique_ptr<OracularSparseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            output.reset(new DelayedBind_internal::OracularPerpendicularSparse(cumulative, mats, flag, block_length, std::move(oracle), block_start, block_length, opt));
+        } else {
+            output.reset(new DelayedBind_internal::OracularParallelBlockSparse(cumulative, mats, flag, std::move(oracle), block_start, block_length, opt));
+        }
+        return output;
+    }
+
+    template<bool accrow_>
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_internal(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        std::unique_ptr<OracularSparseExtractor<Value_, Index_> > output;
+        std::integral_constant<bool, accrow_> flag;
+        if constexpr(accrow_ == (margin_ == 0)) {
+            Index_ extent = indices.size();
+            output.reset(new DelayedBind_internal::OracularPerpendicularSparse(cumulative, mats, flag, extent, std::move(oracle), std::move(indices), opt));
+        } else {
+            output.reset(new DelayedBind_internal::OracularParallelIndexSparse(cumulative, mats, flag, std::move(oracle), std::move(indices), opt));
+        }
+        return output;
+    }
+
+public:
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        return sparse_internal<true>(std::move(oracle), opt);
+    }
+
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return sparse_internal<true>(std::move(oracle), block_start, block_length, opt);
+    }
+
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        return sparse_internal<true>(std::move(oracle), std::move(indices), opt);
+    }
+
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        return sparse_internal<false>(std::move(oracle), opt);
+    }
+
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return sparse_internal<false>(std::move(oracle), block_start, block_length, opt);
+    }
+
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        return sparse_internal<false>(std::move(oracle), std::move(indices), opt);
     }
 };
 
