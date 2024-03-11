@@ -20,6 +20,163 @@
 namespace tatami {
 
 /**
+ * @cond
+ */
+namespace DelayedBind_internal {
+
+template<typename Value_, typename Index_>
+struct ParallelFullDense {
+    ParallelFullDense(const std::vector<Index_>& cum) : cumulative(cum) {}
+
+protected:
+    const std::vector<Index_>& cumulative;
+
+    template<class Store_>
+    void fetch_base(Value_* buffer, Store_ store) {
+        for (size_t x = 0, end = cumulative.size() - 1; x < end; ++x) {
+            Index_ last = cumulative[x];
+            auto copy = buffer + last;
+            auto ptr = store(x, copy);
+            copy_n(ptr, cumulative[x + 1] - last, copy);
+        }
+    }
+};
+
+template<typename Value_, typename Index_>
+struct MyopicParallelFullDense : public MyopicDenseExtractor<Value_, Index_>, public ParallelFullDense<Value_, Index_> {
+    MyopicParallelFullBase(const std::vector<Index_>& cum, std::vector<std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > > in) : 
+        ParallelFullDense<Value_, Index_>(cum), internal(std::move(in)) {} 
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        this->fetch_base(buffer, [&](size_t x, Value_* copy) -> Value_* { return internal[x]->fetch(i, copy); });
+        return buffer;
+    }
+
+    Index_ number() const {
+        return this->cumulative.back();
+    }
+
+private:
+    std::vector<std::unique_ptr<MyopicDenseExtractor_<Value_, Index_> > > internal;
+};
+
+template<typename Value_, typename Index_>
+struct OracularParallelFullDense : public OracularDenseExtractor<Value_, Index_>, public ParallelFullDense<Value_, Index_> {
+    OracularParallelFullBase(const std::vector<Index_>& cum, std::vector<std::unique_ptr<OracularDenseExtractor<Value_, Index_> > > in, std::shared_ptr<Oracle<Index_> > ora) : 
+        ParallelFullDense<Value_, Index_>(cum), internal(std::move(in)) 
+    {
+        if (internal.empty()) {
+            oracle = std::move(ora);
+        }
+    }
+
+    const Value_* fetch(Index_& i, Value_* buffer) {
+        if (internal.empty()) {
+            i = oracle->get(used);
+            ++used;
+        } else {
+            this->fetch_base(buffer, [&](size_t x, Value_* copy) -> Value_* { return internal[x]->fetch(i, copy); });
+        }
+        return buffer;
+    }
+
+    Index_ number() const {
+        return this->cumulative.back();
+    }
+
+private:
+    std::vector<std::unique_ptr<OracularDenseExtractor_<Value_, Index_> > > internal;
+    std::shared_ptr<Oracle<Index_> > oracle;
+    size_t used = 0;
+};
+
+template<typename Value_, typename Index_>
+struct ParallelFullSparse {
+    ParallelFullSparse(const std::vector<Index_>& cum, const Options& opt) : 
+        cumulative(cum), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {}
+
+protected:
+    const std::vector<Index_>& cumulative;
+    bool needs_value, needs_index;
+
+    template<class Store_>
+    SparseRange<Value_, Index_> fetch_base(Value_* vbuffer, Index_* ibuffer, Store_ store) {
+        auto vcopy = vbuffer;
+        auto icopy = ibuffer;
+        Index_ accumulated = 0;
+
+        for (size_t x = 0, end = cumulative.size() - 1; x < end; ++x) {
+            auto range = store(x, vcopy, icopy);
+            accumulated += range.number;
+
+            if (needs_value) {
+                copy_n(range.value, range.number, vcopy);
+                vcopy += range.number;
+            }
+            if (needs_index) {
+                auto offset = cumulative[x];
+                for (Index_ y = 0; y < range.number; ++y) {
+                    icopy[y] = range.index[y] + offset;
+                }
+                icopy += range.number;
+            }
+        }
+
+        return SparseRange<Value_, Index_>(accumulated, (needs_value ? vbuffer : NULL), (needs_index ? ibuffer : NULL));
+    }
+};
+
+template<typename Value_, typename Index_>
+struct MyopicParallelFullSparse : public MyopicSparseExtractor<Value_, Index_>, public ParallelFullSparse<Value_, Index_> {
+    MyopicParallelFullBase(const std::vector<Index_>& cum, std::vector<std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > > in) : 
+        ParallelFullSparse<Value_, Index_>(cum), internal(std::move(in)) {} 
+
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        return this->fetch_base(vbuffer, ibuffer, [&](size_t x, Value_* vcopy, Index_* icopy) -> Value_* { return internal[x]->fetch(i, vcopy, icopy); });
+    }
+
+    Index_ number() const {
+        return this->cumulative.back();
+    }
+
+private:
+    std::vector<std::unique_ptr<MyopicSparseExtractor_<Value_, Index_> > > internal;
+};
+
+template<typename Value_, typename Index_>
+struct OracularParallelFullSparse : public OracularSparseExtractor<Value_, Index_>, public ParallelFullSparse<Value_, Index_> {
+    OracularParallelFullBase(const std::vector<Index_>& cum, std::vector<std::unique_ptr<OracularSparseExtractor<Value_, Index_> > > in, std::shared_ptr<Oracle<Index_> > ora) : 
+        ParallelFullSparse<Value_, Index_>(cum), internal(std::move(in)) 
+    {
+        if (internal.empty()) {
+            oracle = std::move(ora);
+        }
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        if (internal.empty()) {
+            i = oracle->get(used);
+            ++used;
+        } 
+        return this->fetch_base(vbuffer, ibuffer, [&](size_t x, Value_* vcopy, Index_* icopy) -> Value_* { return internal[x]->fetch(i, vcopy, icopy); });
+    }
+
+    Index_ number() const {
+        return this->cumulative.back();
+    }
+
+private:
+    std::vector<std::unique_ptr<OracularSparseExtractor_<Value_, Index_> > > internal;
+    std::shared_ptr<Oracle<Index_> > oracle;
+    size_t used = 0;
+};
+
+}
+/**
+ * @endcond
+ */
+
+/**
  * @brief Delayed combining of a matrix.
  *
  * Implements delayed combining by rows or columns of a matrix.
@@ -167,203 +324,6 @@ public:
 
     using Matrix<Value_, Index_>::sparse_column;
 
-    /****************************************
-     ********** Parallel extractor **********
-     ****************************************/
-private:
-    template<DimensionSelectionType selection_, bool sparse_>
-    struct ParallelExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-        static constexpr bool accrow_ = margin_ != 0;
-
-        ParallelExtractor(const DelayedBind* p, const Options& opt) : parent(p) {
-            workspaces.reserve(p->mats.size());
-
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->full_length = (accrow_ ? p->internal_ncol() : p->internal_nrow());
-                for (const auto& m : parent->mats) {
-                    // TODO: manage opt.selection, manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(m.get(), opt));
-                }
-            }
-        }
-
-        ParallelExtractor(const DelayedBind* p, const Options& opt, Index_ bs, Index_ bl) : parent(p) {
-            size_t nmats = parent->mats.size();
-            workspaces.reserve(nmats);
-
-            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->block_start = bs;
-                this->block_length = bl;
-
-                const auto& cumulative = this->parent->cumulative;
-                size_t index = std::upper_bound(cumulative.begin(), cumulative.end(), this->block_start) - cumulative.begin() - 1; // finding the first matrix.
-                Index_ actual_start = this->block_start - cumulative[index];
-                Index_ end = this->block_start + this->block_length;
-                if constexpr(sparse_) {
-                    kept.reserve(nmats);
-                }
-
-                for (; index < nmats; ++index) {
-                    bool not_final = (end > cumulative[index + 1]);
-                    Index_ actual_end = (not_final ? cumulative[index + 1] : end) - cumulative[index];
-
-                    // TODO: manage opt.selection, manage opt.access.sequencer!
-                    workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), actual_start, actual_end - actual_start, opt));
-
-                    if constexpr(sparse_) {
-                        kept.push_back(index);
-                    }
-
-                    if (!not_final) {
-                        break;
-                    }
-                    actual_start = 0;
-                }
-            }
-        }
-
-        ParallelExtractor(const DelayedBind* p, const Options& opt, std::vector<Index_> idx) : parent(p) {
-            size_t nmats = parent->mats.size();
-            workspaces.reserve(nmats);
-
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                indices = std::move(idx);
-                Index_ il = indices.size();
-                this->index_length = il;
-
-                if (il) {
-                    const auto& cumulative = this->parent->cumulative;
-                    size_t index = std::upper_bound(cumulative.begin(), cumulative.end(), indices[0]) - cumulative.begin() - 1; // finding the first matrix.
-                    if constexpr(sparse_) {
-                        kept.reserve(nmats);
-                    }
-
-                    Index_ counter = 0;
-                    for (; index < nmats; ++index) {
-                        Index_ lower = cumulative[index];
-                        Index_ upper = cumulative[index + 1];
-
-                        std::vector<Index_> curslice;
-                        while (counter < il && indices[counter] < upper) {
-                            curslice.push_back(indices[counter] - lower);
-                            ++counter;
-                        }
-
-                        if (!curslice.empty()) {
-                            // TODO: manage opt.selection, manage opt.access.sequencer!
-                            workspaces.push_back(new_extractor<accrow_, sparse_>(this->parent->mats[index].get(), std::move(curslice), opt));
-                            if constexpr(sparse_) {
-                                kept.push_back(index);
-                            }
-                        }
-
-                        if (counter == il) {
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-    protected:
-        const DelayedBind* parent;
-        std::vector<std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > > workspaces;
-        typename std::conditional<sparse_ && selection_ != DimensionSelectionType::FULL, std::vector<size_t>, bool>::type kept;
-        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
-
-    public:
-        const Index_* index_start() const {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                return indices.data();
-            } else {
-                return NULL;
-            }
-        }
-
-    private:
-        struct ParentOracle {
-            ParentOracle(std::unique_ptr<Oracle<Index_> > o, size_t nmats) : source(std::move(o)), counters(nmats) {}
-
-            size_t fill(size_t id, Index_* buffer, size_t number) {
-                auto& current = counters[id];
-                size_t end = current + number;
-                size_t available = stream.size();
-
-                if (available >= end) {
-                    std::copy(stream.begin() + current, stream.begin() + end, buffer);
-                    current = end;
-                    return number;
-                }
-
-                size_t handled = 0;
-                if (current < available) {
-                    std::copy(stream.begin() + current, stream.end(), buffer);
-                    handled = available - current;
-                    buffer += handled;
-                    number -= handled;
-                }
-
-                size_t filled = source->predict(buffer, number);
-                current = available + filled;
-
-                // Try to slim down if the accumulated stream has gotten too big.
-                if (stream.size() >= 10000) { 
-                    size_t minimum = *std::min_element(counters.begin(), counters.end());
-                    if (minimum) {
-                        stream.erase(stream.begin(), stream.begin() + minimum);
-                        for (auto& x : counters) {
-                            x -= minimum;
-                        }
-                    }
-                }
-
-                stream.insert(stream.end(), buffer, buffer + filled);
-                return filled + handled;
-            }
-        private:
-            std::unique_ptr<Oracle<Index_> > source;
-            std::deque<Index_> stream;
-            std::vector<size_t> counters;
-        };
-
-        struct ChildOracle : public Oracle<Index_> {
-            ChildOracle(ParentOracle* o, size_t i) : parent(o), id(i) {}
-            size_t predict(Index_* buffer, size_t number) {
-                return parent->fill(id, buffer, number);
-            }
-        private:
-            ParentOracle* parent;
-            size_t id;
-        };
-
-        std::unique_ptr<ParentOracle> parent_oracle;
-
-    public:
-        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            // Figure out how many of these need an oracle.
-            std::vector<size_t> need_oracles;
-            size_t nmats = parent->mats.size();
-            need_oracles.reserve(nmats);
-
-            for (size_t m = 0; m < nmats; ++m) {
-                if (parent->mats[m]->uses_oracle(accrow_)) {
-                    need_oracles.push_back(m);
-                }
-            }
-
-            // Now we create child oracles that reference the parent;
-            // or, if only one inner matrix needs an oracle, we pass it directly.
-            size_t needy = need_oracles.size();
-            if (needy > 1) {
-                parent_oracle.reset(new ParentOracle(std::move(o), needy));
-                for (size_t n = 0; n < needy; ++n) {
-                    workspaces[need_oracles[n]]->set_oracle(std::make_unique<ChildOracle>(parent_oracle.get(), n));
-                }
-            } else if (needy) {
-                workspaces[need_oracles.front()]->set_oracle(std::move(o));
-            }
-        }
-    };
 
 private:
     template<DimensionSelectionType selection_>
