@@ -3,9 +3,11 @@
 
 #include "../base/Matrix.hpp"
 #include "../base/new_extractor.hpp"
+#include "../utils/ConsecutiveOracle.hpp"
 #include "../utils/FixedOracle.hpp"
 #include "../utils/copy.hpp"
 
+#include <numeric>
 #include <algorithm>
 #include <memory>
 #include <array>
@@ -270,22 +272,22 @@ size_t initialize_parallel_block(
     Index_ block_length, 
     Initialize_ init) 
 {
-    size_t index = find_segment(cumulative, block_start); // finding the first matrix.
-    Index_ actual_start = block_start - cumulative[index];
-    Index_ end = block_start + block_length;
+    size_t start_index = find_segment(cumulative, block_start); // finding the first matrix.
+    Index_ actual_start = block_start - cumulative[start_index];
+    Index_ block_end = block_start + block_length;
 
     size_t nmats = mats.size();
-    for (; index < nmats; ++index) {
-        bool not_final = (end > cumulative[index + 1]);
-        Index_ len = (not_final ? cumulative[index + 1] : end) - cumulative[index];
-        init(index, actual_start, len);
+    for (auto index = start_index; index < nmats; ++index) {
+        bool not_final = (block_end > cumulative[index + 1]);
+        Index_ actual_end = (not_final ? cumulative[index + 1] : block_end) - cumulative[index];
+        init(index, actual_start, actual_end - actual_start);
         if (!not_final) {
             break;
         }
         actual_start = 0;
     }
 
-    return index;
+    return start_index;
 }
 
 template<typename Value_, typename Index_, class Store_>
@@ -684,7 +686,7 @@ struct OracularParallelIndexDense : public OracularDenseExtractor<Value_, Index_
             i = oracle->get(used);
             ++used;
         } 
-        fetch_dense_parallel_block(
+        fetch_dense_parallel_index(
             count, 
             buffer, 
             [&](size_t x, Value_* copy) -> const Value_* { 
@@ -968,19 +970,51 @@ void initialize_perp_oracular(
     chosen.reserve(ntotal);
     ChooseSegment<Index_> chooser(cumulative);
 
+    struct Predictions {
+        bool consecutive = true;
+        Index_ start = 0;
+        Index_ number = 0;
+        std::vector<Index_> predictions;
+
+        void add(Index_ p) {
+            if (consecutive) {
+                if (number == 0) {
+                    start = p;
+                    number = 1;
+                    return;
+                }
+                if (number + start == p) {
+                    ++number;
+                    return;
+                }
+                consecutive = false;
+                predictions.resize(number);
+                std::iota(predictions.begin(), predictions.end(), start);
+            }
+
+            predictions.push_back(p);
+        }
+    };
+
     size_t nmats = cumulative.size() - 1;
-    std::vector<std::vector<Index_> > predictions(nmats);
+    std::vector<Predictions> predictions(nmats);
     for (size_t i = 0; i < ntotal; ++i) {
         auto prediction = oracle->get(i);
         size_t choice = chooser.choose_segment(prediction);
         chosen.push_back(choice);
-        predictions[choice].push_back(prediction - cumulative[choice]);
+        predictions[choice].add(prediction - cumulative[choice]);
     }
 
     for (size_t x = 0; x < nmats; ++x) {
         auto& current = predictions[x];
-        if (!current.empty()) {
-            init(x, std::make_shared<FixedVectorOracle<Index_> >(std::move(current)));
+        if (current.consecutive) {
+            if (current.number) {
+                init(x, std::make_shared<ConsecutiveOracle<Index_> >(current.start, current.number));
+            }
+        } else {
+            if (!current.predictions.empty()) {
+                init(x, std::make_shared<FixedVectorOracle<Index_> >(std::move(current.predictions)));
+            }
         }
     }
 }
