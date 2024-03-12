@@ -39,7 +39,7 @@ TEST_P(ConvertToDenseTest, RowToRow) {
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i, NC), expected2);
     }
 }
 
@@ -63,7 +63,7 @@ TEST_P(ConvertToDenseTest, ColumnToColumn) {
     for (size_t i = 0; i < NC; ++i) {
         auto start = vec.begin() + i * NR;
         std::vector<int> expected2(start, start + NR);
-        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i, NR), expected2);
     }
 }
 
@@ -87,7 +87,7 @@ TEST_P(ConvertToDenseTest, RowToColumn) {
     for (size_t i = 0; i < NR; ++i) {
         auto start = vec.begin() + i * NC;
         std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i, NC), expected2);
     }
 }
 
@@ -110,7 +110,7 @@ TEST_P(ConvertToDenseTest, ColumnToRow) {
     for (size_t i = 0; i < NC; ++i) {
         auto start = vec.begin() + i * NR;
         std::vector<int> expected2(start, start + NR);
-        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i), expected2);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i, NR), expected2);
     }
 }
 

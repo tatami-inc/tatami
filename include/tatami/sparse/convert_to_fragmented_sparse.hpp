@@ -79,10 +79,9 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
                 auto wrk = consecutive_extractor<row_, true>(incoming, start, length);
 
                 for (InputIndex_ x = 0; x < length; ++x) {
-                    InputIndex_ p;
-                    auto range = wrk->fetch(p, buffer_v.data(), buffer_i.data());
-                    auto& sv = store_v[p];
-                    auto& si = store_i[p];
+                    auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
+                    auto& sv = store_v[x + start];
+                    auto& si = store_i[x + start];
                     sv.reserve(range.number);
                     si.reserve(range.number);
 
@@ -103,10 +102,9 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
                 // Special conversion from dense to save ourselves from having to make
                 // indices that we aren't really interested in.
                 for (InputIndex_ x = 0; x < length; ++x) {
-                    InputIndex_ p;
-                    auto ptr = wrk->fetch(p, buffer_v.data());
-                    auto& sv = store_v[p];
-                    auto& si = store_i[p];
+                    auto ptr = wrk->fetch(buffer_v.data());
+                    auto& sv = store_v[x + start];
+                    auto& si = store_i[x + start];
 
                     for (InputIndex_ s = 0; s < secondary; ++s, ++ptr) {
                         if (*ptr) {
@@ -131,12 +129,11 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
                 auto wrk = consecutive_extractor<!row_, true>(incoming, static_cast<InputIndex_>(0), secondary, start, length);
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {
-                    InputIndex_ s;
-                    auto range = wrk->fetch(s, buffer_v.data(), buffer_i.data());
+                    auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
                     for (InputIndex_ i = 0; i < range.number; ++i, ++range.value, ++range.index) {
                         if (*range.value) {
                             store_v[*range.index].push_back(*range.value);
-                            store_i[*range.index].push_back(s);
+                            store_i[*range.index].push_back(x);
                         }
                     }
                 }
@@ -148,12 +145,11 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
                 std::vector<InputValue_> buffer_v(length);
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {
-                    InputIndex_ s;
-                    auto ptr = wrk->fetch(s, buffer_v.data());
+                    auto ptr = wrk->fetch(buffer_v.data());
                     for (InputIndex_ p = 0; p < length; ++p, ++ptr) {
                         if (*ptr) {
                             store_v[p + start].push_back(*ptr);
-                            store_i[p + start].push_back(s);
+                            store_i[p + start].push_back(x);
                         }
                     }
                 }

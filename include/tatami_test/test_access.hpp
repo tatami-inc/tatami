@@ -57,8 +57,8 @@ void sanitize_nan(std::vector<T>& values, bool has_nan, T replacement = 12345678
     }
 }
 
-template<bool use_row_, bool use_oracle_, class TestMatrix_, class RefMatrix_, class DenseExtract_, class SparseExpand_, class PropCheck_, typename ...Args_>
-void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr, const RefMatrix_* ref, DenseExtract_ expector, SparseExpand_ sparse_expand, PropCheck_ check_properties, Args_... args) {
+template<bool use_row_, bool use_oracle_, class TestMatrix_, class RefMatrix_, class DenseExtract_, class SparseExpand_, typename ...Args_>
+void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr, const RefMatrix_* ref, DenseExtract_ expector, SparseExpand_ sparse_expand, Args_... args) {
     int NR = ptr->nrow();
     ASSERT_EQ(NR, ref->nrow());
     int NC = ptr->ncol();
@@ -156,19 +156,18 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
     for (auto i : sequence) {
         auto expected = expector(i);
         sanitize_nan(expected, params.has_nan);
-        dense_extracted += expected.size();
+
+        auto extent = expected.size(); // using the dense expected size to determine the expected extraction length.
+        dense_extracted += extent;
         ++counter;
 
         // Checking dense retrieval first.
         {
             auto observed = [&]() {
                 if constexpr(use_oracle_) {
-                    Index_ j = limit;
-                    auto output = fetch(pwork.get(), j);
-                    EXPECT_EQ(i, j);
-                    return output;
+                    return fetch(pwork.get(), extent);
                 } else {
-                    return fetch(pwork.get(), i);
+                    return fetch(pwork.get(), i, extent);
                 }
             }();
             sanitize_nan(observed, params.has_nan);
@@ -179,12 +178,9 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
         {
             auto observed = [&]() {
                 if constexpr(use_oracle_) {
-                    Index_ j = limit;
-                    auto output = fetch(swork.get(), j);
-                    EXPECT_EQ(i, j);
-                    return output;
+                    return fetch(swork.get(), extent);
                 } else {
-                    return fetch(swork.get(), i);
+                    return fetch(swork.get(), i, extent);
                 }
             }();
 
@@ -203,13 +199,10 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
                 ASSERT_TRUE(is_increasing);
             }
 
-            std::vector<int> indices(expected.size()); // using the dense expected size as a proxy for the extraction length in block/indexed cases.
+            std::vector<int> indices(extent);
             auto observed_i = [&]() {
                 if constexpr(use_oracle_) {
-                    Index_ j = limit;
-                    auto output = swork_i->fetch(j, NULL, indices.data());
-                    EXPECT_EQ(i, j);
-                    return output;
+                    return swork_i->fetch(NULL, indices.data());
                 } else {
                     return swork_i->fetch(i, NULL, indices.data());
                 }
@@ -218,13 +211,10 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
             std::vector<int> indices_only(observed_i.index, observed_i.index + observed_i.number);
             ASSERT_EQ(observed.index, indices_only);
 
-            std::vector<double> vbuffer(expected.size());
+            std::vector<double> vbuffer(extent);
             auto observed_v = [&]() {
                 if constexpr(use_oracle_) {
-                    Index_ j = limit;
-                    auto output = swork_v->fetch(j, vbuffer.data(), NULL);
-                    EXPECT_EQ(i, j);
-                    return output;
+                    return swork_v->fetch(vbuffer.data(), NULL);
                 } else {
                     return swork_v->fetch(i, vbuffer.data(), NULL);
                 }
@@ -236,10 +226,7 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
 
             auto observed_n = [&]() {
                 if constexpr(use_oracle_) {
-                    Index_ j = limit;
-                    auto output = swork_n->fetch(j, NULL, NULL);
-                    EXPECT_EQ(i, j);
-                    return output;
+                    return swork_n->fetch(NULL, NULL);
                 } else {
                     return swork_n->fetch(i, NULL, NULL);
                 }
@@ -250,12 +237,9 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
 
             auto observed_uns = [&]() {
                 if constexpr(use_oracle_) {
-                    Index_ j = limit;
-                    auto output = fetch(swork_uns.get(), j);
-                    EXPECT_EQ(i, j);
-                    return output;
+                    return fetch(swork_uns.get(), extent);
                 } else {
-                    return fetch(swork_uns.get(), i);
+                    return fetch(swork_uns.get(), i, extent);
                 }
             }();
             sanitize_nan(observed_uns.value, params.has_nan);
@@ -269,10 +253,6 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
             ASSERT_TRUE(dense_extracted > sparse_extracted);
         }
     }
-
-    // Checking the expected lengths.
-    check_properties(pwork.get());
-    check_properties(swork.get());
 }
 
 template<bool use_row_, bool use_oracle_, class Matrix_, class Matrix2_>
@@ -285,6 +265,13 @@ void test_full_access(const TestAccessParameters& params, const Matrix_* ptr, co
             return ref->dense_column();
         }
     }();
+    auto extent = [&]() {
+        if constexpr(use_row_) {
+            return ref->ncol();
+        } else {
+            return ref->nrow();
+        }
+    }();
 
     typedef typename Matrix_::value_type Value_;
     test_access_base<use_row_, use_oracle_>(
@@ -292,7 +279,7 @@ void test_full_access(const TestAccessParameters& params, const Matrix_* ptr, co
         ptr, 
         ref, 
         [&](int i) -> auto { 
-            auto expected = fetch(refwork.get(), i);
+            auto expected = fetch(refwork.get(), i, extent);
             EXPECT_EQ(expected.size(), nsecondary);
             return expected;
         },
@@ -302,9 +289,6 @@ void test_full_access(const TestAccessParameters& params, const Matrix_* ptr, co
                 output[svec.index[i]] = svec.value[i];
             }
             return output;
-        },
-        [&](const auto* work) {
-            EXPECT_EQ(work->number(), nsecondary);
         }
     );
 }
@@ -319,6 +303,13 @@ void test_block_access(const TestAccessParameters& params, const Matrix_* ptr, c
             return ref->dense_column();
         }
     }();
+    auto extent = [&]() {
+        if constexpr(use_row_) {
+            return ref->ncol();
+        } else {
+            return ref->nrow();
+        }
+    }();
 
     typedef typename Matrix_::value_type Value_;
     test_access_base<use_row_, use_oracle_>(
@@ -326,7 +317,7 @@ void test_block_access(const TestAccessParameters& params, const Matrix_* ptr, c
         ptr, 
         ref, 
         [&](int i) -> auto { 
-            auto raw_expected = fetch(refwork.get(), i);
+            auto raw_expected = fetch(refwork.get(), i, extent);
             return std::vector<Value_>(raw_expected.begin() + start, raw_expected.begin() + end);
         }, 
         [&](const auto& svec) -> auto {
@@ -335,9 +326,6 @@ void test_block_access(const TestAccessParameters& params, const Matrix_* ptr, c
                 output[svec.index[i] - start] = svec.value[i];
             }
             return output;
-        },
-        [&](const auto* work) {
-            EXPECT_EQ(work->number(), end - start);
         },
         start,
         end - start
@@ -352,6 +340,13 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
             return ref->dense_row();
         } else {
             return ref->dense_column();
+        }
+    }();
+    auto extent = [&]() {
+        if constexpr(use_row_) {
+            return ref->ncol();
+        } else {
+            return ref->nrow();
         }
     }();
 
@@ -370,7 +365,7 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
         ptr, 
         ref, 
         [&](int i) -> auto { 
-            auto raw_expected = fetch(refwork.get(), i);
+            auto raw_expected = fetch(refwork.get(), i, extent);
             std::vector<typename Matrix_::value_type> expected;
             expected.reserve(indices.size());
             for (auto idx : indices) {
@@ -399,9 +394,6 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
                 ++oIt;
             }
             return output;
-        },
-        [&](const auto* work) {
-            EXPECT_EQ(work->number(), indices.size());
         },
         indices
     );

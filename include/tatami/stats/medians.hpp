@@ -133,10 +133,9 @@ void dimension_medians(const Matrix<Value_, Index_>* p, Output_* output, int thr
             std::vector<Value_> buffer(otherdim);
             auto vbuffer = buffer.data();
             for (Index_ x = 0; x < l; ++x) {
-                Index_ i;
-                auto range = ext->fetch(i, vbuffer, NULL);
+                auto range = ext->fetch(vbuffer, NULL);
                 copy_n(range.value, range.number, vbuffer);
-                output[i] = compute_median<Output_>(vbuffer, range.number, otherdim);
+                output[x + s] = compute_median<Output_>(vbuffer, range.number, otherdim);
             }
         }, dim, threads);
 
@@ -145,10 +144,9 @@ void dimension_medians(const Matrix<Value_, Index_>* p, Output_* output, int thr
             std::vector<Value_> buffer(otherdim);
             auto ext = consecutive_extractor<row_, false>(p, s, l);
             for (Index_ x = 0; x < l; ++x) {
-                Index_ i;
-                auto ptr = ext->fetch(i, buffer.data());
+                auto ptr = ext->fetch(buffer.data());
                 copy_n(ptr, otherdim, buffer.data());
-                output[i] = compute_median<Output_>(buffer.data(), otherdim);
+                output[x + s] = compute_median<Output_>(buffer.data(), otherdim);
             }
         }, dim, threads);
     }

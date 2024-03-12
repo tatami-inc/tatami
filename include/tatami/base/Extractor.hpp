@@ -11,11 +11,6 @@
  * @file Extractor.hpp
  *
  * @brief Virtual classes for extracting matrix data.
- *
- * We denote the "iteration" dimension of the `Matrix` as the one that is being iteratively accessed across its elements.
- * The other dimension is subsequently denoted as the "extraction" dimension.
- * For example, when iterating across the rows of a matrix, the rows are the iteration dimension, the columns are the extraction dimension,
- * and the current element of the iteration dimension is the specific row that is being accessed at any loop iteration.
  */
 
 namespace tatami {
@@ -23,24 +18,24 @@ namespace tatami {
 /**
  * @tparam Value_ Data value type, should be numeric.
  * @tparam Index_ Row/column index type, should be integer.
- * @brief Extract in dense form without an oracle.
+ *
+ * @brief Extract a dimension element in dense form without an oracle.
  */
 template<typename Value_, typename Index_>
 struct MyopicDenseExtractor {
     /**
-     * @return Number of elements to extract at each iteration. 
-     */
-    virtual Index_ number() const = 0;
-
-    /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
-     * @param i Index of the desired element on the iteration dimension.
-     * @param[out] buffer Pointer to an array of length no less than `number()`.
+     * @param i Index of the desired dimension element,
+     * i.e., the row or column index for instances created with `Matrix::dense_row()` or `Matrix::dense_column()`, respectively.
+     * @param[out] buffer Pointer to an array of length no less than `N`, where `N` is defined as:
+     * - the number of indices, for instances created by any `Matrix::dense_row()` or `Matrix::dense_column()` method that accepts a vector of indices.
+     * - the block length, for instances created by any `Matrix::dense_row()` or `Matrix::dense_column()` method that accepts a block start and length.
+     * - `Matrix::ncol()` or `Matrix::nrow()`, for all other instances created with `Matrix::dense_row()` and `Matrix::dense_column()` respectively.
      *
-     * @return Pointer to an array containing the values from the `i`-th element of the iteration dimension.
-     * This is guaranteed to hold `number()` values.
+     * @return Pointer to an array containing the values from the `i`-th dimension element.
+     * This is guaranteed to hold `N` values.
      */
     virtual const Value_* fetch(Index_ i, Value_* buffer) = 0;
 
@@ -61,23 +56,17 @@ struct MyopicDenseExtractor {
 template<typename Value_, typename Index_>
 struct OracularDenseExtractor {
     /**
-     * @return Number of elements to extract at each iteration. 
-     */
-    virtual Index_ number() const = 0;
-
-    /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
-     * @param[out] i Index of the predicted element on the iteration dimension.
-     * @param[out] buffer Pointer to an array of length no less than `number()`.
-     * This does not have to be filled if a pointer can be directly returned.
+     * @param[out] buffer Pointer to an array of length no less than `N`,
+     * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
-     * @return Pointer to an array containing the `i`-th element of the iteration dimension.
-     * This is guaranteed to have `number()` values.
-     * `i` is filled with the index of the current prediction.
+     * @return Pointer to an array containing the contents of the next dimension element,
+     * as predicted by the `Oracle` used to construct this instance.
+     * This is guaranteed to have `N` values.
      */
-    virtual const Value_* fetch(Index_& i, Value_* buffer) = 0;
+    virtual const Value_* fetch(Value_* buffer) = 0;
 
     /**
      * @cond
@@ -96,25 +85,25 @@ struct OracularDenseExtractor {
 template<typename Value_, typename Index_>
 struct MyopicSparseExtractor {
     /**
-     * @return Number of elements to extract at each iteration. 
-     */
-    virtual Index_ number() const = 0;
-
-    /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
-     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled. 
+     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled.
      * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
-     * @param i Index of the desired element on the iteration dimension.
-     * @param[out] vbuffer Pointer to an array with enough space for at least `number()` values.
-     * Ignored if `Options::sparse_extract_value` was set to `false` during construction of this instance.
-     * @param[out] ibuffer Pointer to an array with enough space for at least `number()` indices.
-     * Ignored if `Options::sparse_extract_index` was set to `false` during construction of this instance.
+     * If `Options::sparse_extract_value` was set to `false` during construction of this instance,
+     * `vbuffer` is ignored and `SparseRange::value` is set to `NULL` in the output.
+     * Similarly, if `Options::sparse_extract_index` was set to `false` during construction of this instance,
+     * `ibuffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
      *
-     * @return A `SparseRange` object describing the contents of the desired dimension element.
-     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, 
-     * based on the setting of `Options::sparse_extract_mode` used to construct this object.
-     * Both arrays are guaranteed to have no more than `number()` values.
+     * @param i Index of the desired dimension element,
+     * i.e., the row or column index for instances created with `Matrix::sparse_row()` or `Matrix::sparse_column()`, respectively.
+     * @param[out] vbuffer Pointer to an array with enough space for at least `N` values, where `N` is defined as:
+     * - the number of indices, for instances created by any `Matrix::sparse_row()` or `Matrix::sparse_column()` method that accepts a vector of indices.
+     * - the block length, for instances created by any `Matrix::sparse_row()` or `Matrix::sparse_column()` method that accepts a block start and length.
+     * - `Matrix::ncol()` or `Matrix::nrow()`, for all other instances created with `Matrix::sparse_row()` and `Matrix::sparse_column()` respectively.
+     * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
+     * where `N` is defined as described for `vbuffer`
+     *
+     * @return A `SparseRange` object describing the contents of the `i`-th dimension element.
      */
     virtual SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) = 0;
 
@@ -135,28 +124,25 @@ struct MyopicSparseExtractor {
 template<typename Value_, typename Index_>
 struct OracularSparseExtractor {
     /**
-     * @return Number of elements to extract at each iteration. 
-     */
-    virtual Index_ number() const = 0;
-
-    /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
-     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled. 
+     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled.
      * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
-     * @param[out] i Index of the desired element on the iteration dimension.
-     * @param[out] vbuffer Pointer to an array with enough space for at least `number()` values.
-     * Ignored if `Options::sparse_extract_value` was set to `false` during construction of this instance.
-     * @param[out] ibuffer Pointer to an array with enough space for at least `number()` indices.
-     * Ignored if `Options::sparse_extract_index` was set to `false` during construction of this instance.
+     * If `Options::sparse_extract_value` was set to `false` during construction of this instance,
+     * `vbuffer` is ignored and `SparseRange::value` is set to `NULL` in the output.
+     * Similarly, if `Options::sparse_extract_index` was set to `false` during construction of this instance,
+     * `ibuffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
      *
-     * @return A `SparseRange` object describing the contents of the desired dimension element.
-     * Either or both of `value` or `index` is set to `NULL` if extraction of that field is skipped, 
-     * based on the setting of `Options::sparse_extract_mode` used to construct this object.
-     * Both arrays are guaranteed to have no more than `number()` values.
-     * `i` is filled with the index of the current prediction.
+     * @param[out] i Index of the desired element on the iteration dimension.
+     * @param[out] vbuffer Pointer to an array with enough space for at least `N` values,
+     * where `N` is defined as described for `MyopicSparseExtractor::fetch()`.
+     * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
+     * where `N` is defined as described for `MyopicSparseExtractor::fetch()`.
+     *
+     * @return A `SparseRange` object describing the contents of the next dimension element,
+     * as predicted by the `Oracle` used to construct this instance.
      */
-    virtual SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) = 0;
+    virtual SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) = 0;
 
     /**
      * @cond

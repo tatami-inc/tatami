@@ -48,10 +48,6 @@ struct PrimaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         return buffer;
     }
 
-    Index_ number() const {
-        return secondary;
-    }
-
 private:
     const ValueStorage_& values;
     const IndexStorage_& indices;
@@ -78,10 +74,6 @@ struct PrimaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
         return output;
     }
 
-    Index_ number() const {
-        return secondary;
-    }
-
 private:
     const ValueStorage_& values;
     const IndexStorage_& indices;
@@ -106,10 +98,6 @@ struct PrimaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
             buffer[*iStart - block_start] = *vIt;
         }
         return buffer;
-    }
-
-    Index_ number() const {
-        return block_length;
     }
 
 private:
@@ -142,10 +130,6 @@ struct PrimaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
         return output;
     }
 
-    Index_ number() const {
-        return block_length;
-    }
-
 private:
     const ValueStorage_& values;
     const IndexStorage_& indices;
@@ -173,10 +157,6 @@ struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
             }
         );
         return buffer;
-    }
-
-    Index_ number() const {
-        return subset.size();
     }
 
 private:
@@ -215,10 +195,6 @@ struct PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
         );
 
         return SparseRange<Value_, Index_>(count, needs_value ? vbuffer : NULL, needs_index ? ibuffer : NULL);
-    }
-
-    Index_ number() const {
-        return subset.size();
     }
 
 private:
@@ -269,10 +245,6 @@ struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         return buffer;
     }
 
-    Index_ number() const {
-        return cache.size();
-    }
-
 private:
     const ValueStorage_& values;
     sparse_utils::FullSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexStorage_, PointerStorage_> > cache;
@@ -297,10 +269,6 @@ struct SecondaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> 
         return SparseRange<Value_, Index_>(count, needs_value ? vbuffer : NULL, needs_index ? ibuffer : NULL);
     }
 
-    Index_ number() const {
-        return cache.size();
-    }
-
 private:
     const ValueStorage_& values;
     sparse_utils::FullSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexStorage_, PointerStorage_> > cache;
@@ -318,10 +286,6 @@ struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
             buffer[index_primary] = values[ptr];
         });
         return buffer;
-    }
-
-    Index_ number() const {
-        return cache.size();
     }
 
 private:
@@ -348,10 +312,6 @@ struct SecondaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_>
         return SparseRange<Value_, Index_>(count, needs_value ? vbuffer : NULL, needs_index ? ibuffer : NULL);
     }
 
-    Index_ number() const {
-        return cache.size();
-    }
-
 private:
     const ValueStorage_& values;
     sparse_utils::BlockSecondaryExtractionCache<Index_, ServeIndices<Index_, IndexStorage_, PointerStorage_> > cache;
@@ -369,10 +329,6 @@ struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
             buffer[index_primary] = values[ptr];
         });
         return buffer;
-    }
-
-    Index_ number() const {
-        return cache.size();
     }
 
 private:
@@ -397,10 +353,6 @@ struct SecondaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_>
             ++count;
         });
         return SparseRange<Value_, Index_>(count, needs_value ? vbuffer : NULL, needs_index ? ibuffer : NULL);
-    }
-
-    Index_ number() const {
-        return cache.size();
     }
 
 private:

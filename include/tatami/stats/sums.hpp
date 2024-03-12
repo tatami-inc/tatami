@@ -37,9 +37,8 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
                 auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
                 std::vector<Value_> vbuffer(otherdim);
                 for (Index_ x = 0; x < l; ++x) {
-                    Index_ i;
-                    auto out = ext->fetch(i, vbuffer.data(), NULL);
-                    output[i] = std::accumulate(out.value, out.value + out.number, static_cast<Output_>(0));
+                    auto out = ext->fetch(vbuffer.data(), NULL);
+                    output[x + s] = std::accumulate(out.value, out.value + out.number, static_cast<Output_>(0));
                 }
             }, dim, threads);
 
@@ -51,8 +50,7 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
                 std::vector<Value_> vbuffer(l);
                 std::vector<Index_> ibuffer(l);
                 for (Index_ x = 0; x < otherdim; ++x) {
-                    Index_ i;
-                    auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
+                    auto out = ext->fetch(vbuffer.data(), ibuffer.data());
                     for (Index_ j = 0; j < out.number; ++j) {
                         output[out.index[j]] += out.value[j];
                     }
@@ -66,9 +64,8 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
                 auto ext = consecutive_extractor<row_, false>(p, s, l);
                 std::vector<Value_> buffer(otherdim);
                 for (Index_ x = 0; x < l; ++x) {
-                    Index_ i;
-                    auto out = ext->fetch(i, buffer.data());
-                    output[i] = std::accumulate(out, out + otherdim, static_cast<Output_>(0));
+                    auto out = ext->fetch(buffer.data());
+                    output[x + s] = std::accumulate(out, out + otherdim, static_cast<Output_>(0));
                 }
             }, dim, threads);
 
@@ -79,8 +76,7 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
                 auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, l);
                 std::vector<Value_> buffer(l);
                 for (Index_ x = 0; x < otherdim; ++x) {
-                    Index_ i;
-                    auto out = ext->fetch(i, buffer.data());
+                    auto out = ext->fetch(buffer.data());
                     for (Index_ j = 0; j < l; ++j) {
                         output[s + j] += out[j];
                     }

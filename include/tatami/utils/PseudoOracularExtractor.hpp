@@ -4,21 +4,31 @@
 #include "../base/Matrix.hpp"
 #include "../base/Extractor.hpp"
 
+/**
+ * @file PseudoOracularExtractor.hpp
+ * @brief Mimic the oracle-aware extractor interface.
+ */
+
 namespace tatami {
 
+/**
+ * @brief Mimic the `OracularDenseExtractor` interface.
+ * @tparam Value_ Data value type, should be numeric.
+ * @tparam Index_ Row/column index type, should be integer.
+ *
+ * This is used to quickly implement the dense extraction methods for a `Matrix` subclass that does not benefit from an `Oracle`.
+ * Specifically, the oracle is used to generate a prediction that is passed to an oracle-unaware `MyopicDenseExtractor`.
+ * This allows `Matrix` subclasses to satisfy the dense oracle-aware extraction interface.
+ */
 template<typename Value_, typename Index_> 
 struct PseudoOracularDenseExtractor : public OracularDenseExtractor<Value_, Index_> {
     PseudoOracularDenseExtractor(std::shared_ptr<Oracle<Index_> > ora, std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > r) :
         oracle(std::move(ora)), raw(std::move(r)) {}
 
-    const Value_* fetch(Index_& i, Value_* buffer) {
-        i = oracle->get(used);
+    const Value_* fetch(Value_* buffer) {
+        auto i = oracle->get(used);
         ++used;
         return raw->fetch(i, buffer);
-    }
-
-    Index_ number() const {
-        return raw->number();
     }
 
 private:
@@ -27,19 +37,24 @@ private:
     size_t used = 0;
 };
 
+/**
+ * @brief Mimic the `OracularSparseExtractor` interface.
+ * @tparam Value_ Data value type, should be numeric.
+ * @tparam Index_ Row/column index type, should be integer.
+ *
+ * This is used to quickly implement the sparse extraction methods for a `Matrix` subclass that does not benefit from an `Oracle`.
+ * Specifically, the oracle is used to generate a prediction that is passed to an oracle-unaware `MyopicSparseExtractor`.
+ * This allows `Matrix` subclasses to satisfy the sparse oracle-aware extraction interface without much effort.
+ */
 template<typename Value_, typename Index_> 
 struct PseudoOracularSparseExtractor : public OracularSparseExtractor<Value_, Index_> {
     PseudoOracularSparseExtractor(std::shared_ptr<Oracle<Index_> > ora, std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > r) :
         oracle(std::move(ora)), raw(std::move(r)) {}
 
-    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
-        i = oracle->get(used);
+    SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
+        auto i = oracle->get(used);
         ++used;
         return raw->fetch(i, vbuffer, ibuffer);
-    }
-
-    Index_ number() const {
-        return raw->number();
     }
 
 private:

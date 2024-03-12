@@ -44,12 +44,11 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
             auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
 
             for (InputIndex_ x = 0; x < length; ++x) {
-                InputIndex_ p;
                 if constexpr(same_type) {
-                    auto ptr = wrk->fetch(p, store_copy);
+                    auto ptr = wrk->fetch(store_copy);
                     copy_n(ptr, secondary, store_copy);
                 } else {
-                    auto ptr = wrk->fetch(p, temp.data());
+                    auto ptr = wrk->fetch(temp.data());
                     std::copy_n(ptr, secondary, store_copy);
                 }
                 store_copy += secondary;
@@ -68,8 +67,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
             auto store_copy = store + start * secondary;
 
             for (InputIndex_ x = 0; x < secondary; ++x) {
-                InputIndex_ s;
-                auto ptr = wrk->fetch(s, temp.data());
+                auto ptr = wrk->fetch(temp.data());
                 auto bptr = store_copy;
                 for (InputIndex_ p = 0; p < length; ++p, bptr += secondary) {
                     *bptr = ptr[p]; 

@@ -40,10 +40,6 @@ struct PrimaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         }
     }
 
-    Index_ number() const {
-        return secondary;
-    }
-
 private:
     const Storage_& storage;
     Index_ secondary;
@@ -68,10 +64,6 @@ struct PrimaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
             std::copy(it, it + block_length, buffer);
             return buffer;
         }
-    }
-
-    Index_ number() const {
-        return block_length;
     }
 
 private:
@@ -104,10 +96,6 @@ struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
         return buffer;
     }
 
-    Index_ number() const {
-        return indices.size();
-    }
-
 private:
     const Storage_& storage;
     size_t secondary;
@@ -133,10 +121,6 @@ struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         return buffer;
     }
 
-    Index_ number() const {
-        return primary;
-    }
-
 private:
     const Storage_& storage;
     Index_ secondary, primary;
@@ -159,10 +143,6 @@ struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
             *copy = storage[offset];
         }
         return buffer;
-    }
-
-    Index_ number() const {
-        return block_length;
     }
 
 private:
@@ -192,10 +172,6 @@ struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
             ++copy;
         }
         return buffer;
-    }
-
-    Index_ number() const {
-        return indices.size();
     }
 
 private:

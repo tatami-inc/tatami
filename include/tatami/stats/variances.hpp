@@ -247,9 +247,8 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
                 auto ext = consecutive_extractor<row_, true>(p, s, l);
                 std::vector<Value_> vbuffer(otherdim);
                 for (Index_ x = 0; x < l; ++x) {
-                    Index_ i;
-                    auto out = ext->fetch(i, vbuffer.data(), NULL);
-                    output[i] = variances::compute_direct<Output_>(out, otherdim).second;
+                    auto out = ext->fetch(vbuffer.data(), NULL);
+                    output[x + s] = variances::compute_direct<Output_>(out, otherdim).second;
                 }
             }, dim, threads);
 
@@ -267,8 +266,7 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
                 int counter = 0;
 
                 for (Index_ x = 0; x < otherdim; ++x) {
-                    Index_ i;
-                    auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
+                    auto out = ext->fetch(vbuffer.data(), ibuffer.data());
                     variances::compute_running(out, running_means.data(), running_vars, running_nzeros.data(), counter, /* skip_zeros = */ true, /* subtract = */ s);
                 }
                 variances::finish_running(l, running_means.data(), running_vars, running_nzeros.data(), counter);
@@ -281,9 +279,8 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
                 auto ext = consecutive_extractor<row_, false>(p, s, l);
                 std::vector<Value_> buffer(otherdim);
                 for (Index_ x = 0; x < l; ++x) {
-                    Index_ i;
-                    auto out = ext->fetch(i, buffer.data());
-                    output[i] = variances::compute_direct<Output_>(out, otherdim).second;
+                    auto out = ext->fetch(buffer.data());
+                    output[x + s] = variances::compute_direct<Output_>(out, otherdim).second;
                 }
             }, dim, threads);
 
@@ -299,8 +296,7 @@ void dimension_variances(const Matrix<Value_, Index_>* p, Output_* output, int t
                 int counter = 0;
 
                 for (Index_ x = 0; x < otherdim; ++x) {
-                    Index_ i;
-                    auto out = ext->fetch(i, buffer.data());
+                    auto out = ext->fetch(buffer.data());
                     variances::compute_running(out, l, running_means.data(), running_vars, counter);
                 }
                 variances::finish_running(l, running_means.data(), running_vars, counter);

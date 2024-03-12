@@ -63,10 +63,6 @@ public:
         return internal->fetch(i, buffer);
     }
 
-    Index_ number() const {
-        return internal->number();
-    }
-
 private:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > internal;
 };
@@ -88,12 +84,8 @@ struct OracularAlongDense : public OracularDenseExtractor<Value_, Index_> {
     }
 
 public:
-    const Value_* fetch(Index_& i, Value_* buffer) {
-        return internal->fetch(i, buffer);
-    }
-
-    Index_ number() const {
-        return internal->number();
+    const Value_* fetch(Value_* buffer) {
+        return internal->fetch(buffer);
     }
 
 private:
@@ -125,10 +117,6 @@ public:
         return output;
     }
 
-    Index_ number() const {
-        return internal->number();
-    }
-
 private:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > internal;
     Index_ shift;
@@ -153,14 +141,10 @@ struct OracularAlongSparse : public OracularSparseExtractor<Value_, Index_> {
     }
 
 public:
-    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
-        auto output = internal->fetch(i, vbuffer, ibuffer);
+    SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
+        auto output = internal->fetch(vbuffer, ibuffer);
         debump_indices(output, ibuffer, shift);
         return output;
-    }
-
-    Index_ number() const {
-        return internal->number();
     }
 
 private:
@@ -173,10 +157,6 @@ struct MyopicAcrossDense : public MyopicDenseExtractor<Value_, Index_> {
     template<bool row_, typename ... Args_>
     MyopicAcrossDense(const Matrix<Value_, Index_>* mat, std::integral_constant<bool, row_>, Index_ subset_start, Args_&& ... args) :
         internal(new_extractor<row_, false>(mat, std::forward<Args_>(args)...)), shift(subset_start) {}
-
-    Index_ number() const {
-        return internal->number();
-    }
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         return internal->fetch(i + shift, buffer);
@@ -192,10 +172,6 @@ struct MyopicAcrossSparse : public MyopicSparseExtractor<Value_, Index_> {
     template<bool row_, typename ... Args_>
     MyopicAcrossSparse(const Matrix<Value_, Index_>* mat, std::integral_constant<bool, row_>, Index_ subset_start, Args_&& ... args) :
         internal(new_extractor<row_, true>(mat, std::forward<Args_>(args)...)), shift(subset_start) {}
-
-    Index_ number() const {
-        return internal->number();
-    }
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         return internal->fetch(i + shift, vbuffer, ibuffer);
@@ -227,42 +203,28 @@ template<typename Value_, typename Index_>
 struct OracularAcrossDense : public OracularDenseExtractor<Value_, Index_> {
     template<bool row_, typename ... Args_>
     OracularAcrossDense(const Matrix<Value_, Index_>* mat, std::integral_constant<bool, row_>, Index_ subset_start, std::shared_ptr<Oracle<Index_> > oracle, Args_&& ... args) :
-        internal(new_extractor<row_, false>(mat, std::make_shared<SubsetOracle<Index_> > (std::move(oracle), subset_start), std::forward<Args_>(args)...)), shift(subset_start) {}
+        internal(new_extractor<row_, false>(mat, std::make_shared<SubsetOracle<Index_> > (std::move(oracle), subset_start), std::forward<Args_>(args)...)) {}
 
-    Index_ number() const {
-        return internal->number();
-    }
-
-    const Value_* fetch(Index_& i, Value_* buffer) {
-        auto out = internal->fetch(i, buffer);
-        i -= shift;
-        return out;
+    const Value_* fetch(Value_* buffer) {
+        return internal->fetch(buffer);
     }
 
 private:
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > internal;
-    Index_ shift;
 };
 
 template<typename Value_, typename Index_>
 struct OracularAcrossSparse : public OracularSparseExtractor<Value_, Index_> {
     template<bool row_, typename ... Args_>
     OracularAcrossSparse(const Matrix<Value_, Index_>* mat, std::integral_constant<bool, row_>, Index_ subset_start, std::shared_ptr<Oracle<Index_> > oracle, Args_&& ... args) :
-        internal(new_extractor<row_, true>(mat, std::make_shared<SubsetOracle<Index_> >(std::move(oracle), subset_start), std::forward<Args_>(args)...)), shift(subset_start) {}
+        internal(new_extractor<row_, true>(mat, std::make_shared<SubsetOracle<Index_> >(std::move(oracle), subset_start), std::forward<Args_>(args)...)) {}
 
-    Index_ number() const {
-        return internal->number();
-    }
-
-    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
-        auto out = internal->fetch(i, vbuffer, ibuffer);
-        i -= shift;
-        return out;
+    SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
+        return internal->fetch(vbuffer, ibuffer);
     }
 
 private:
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > internal;
-    Index_ shift;
 };
 
 }

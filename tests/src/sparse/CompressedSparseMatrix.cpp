@@ -278,7 +278,7 @@ TEST(CompressedSparseMatrix, SecondarySkip) {
         int all_zero = 0;
         auto wrk = dense.dense_row();
         for (int r = 0; r < nrow; ++r) {
-            auto extracted = tatami_test::fetch(wrk.get(), r);
+            auto extracted = tatami_test::fetch(wrk.get(), r, ncol);
             int non_zero = false;
             for (auto x : extracted) {
                 non_zero += x != 0;

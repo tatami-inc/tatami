@@ -20,35 +20,27 @@ namespace tatami {
  */
 namespace SparsifiedWrapper_internal {
 
-template<bool oracle_, DimensionSelectionType selection_, typename Value_, typename Index_, class Extractor_>
-SparseRange<Value_, Index_> fetch_raw(typename std::conditional<oracle_, Index_&, Index_>::type i, Value_* vbuffer, Index_* ibuffer, Extractor_& raw, bool needs_value, bool needs_index) {
-    Index_ num;
+template<DimensionSelectionType selection_, class Extractor_>
+auto fetch_number(const Extractor_& raw) {
     if constexpr(selection_ == DimensionSelectionType::FULL) {
-        num = raw.sparsify_full_length();
+        return raw.sparsify_full_length();
     } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-        num = raw.sparsify_block_length();
+        return raw.sparsify_block_length();
     } else {
-        num = raw.sparsify_indices().size();
+        return raw.sparsify_indices().size();
     }
+}
 
-    SparseRange<Value_, Index_> output(num, NULL, NULL);
-    if (needs_value) {
-        output.value = raw.fetch(i, vbuffer);
+template<DimensionSelectionType selection_, class Extractor_, typename Index_>
+void populate_indices(const Extractor_& raw, Index_* ibuffer) {
+    if constexpr(selection_ == DimensionSelectionType::FULL) {
+        std::iota(ibuffer, ibuffer + raw.sparsify_full_length(), static_cast<Index_>(0));
+    } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
+        std::iota(ibuffer, ibuffer + raw.sparsify_block_length(), raw.sparsify_block_start());
+    } else {
+        const auto& ix = raw.sparsify_indices();
+        std::copy(ix.begin(), ix.end(), ibuffer);
     }
-
-    if (needs_index) {
-        if constexpr(selection_ == DimensionSelectionType::FULL) {
-            std::iota(ibuffer, ibuffer + raw.sparsify_full_length(), static_cast<Index_>(0));
-        } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-            std::iota(ibuffer, ibuffer + raw.sparsify_block_length(), raw.sparsify_block_start());
-        } else {
-            const auto& ix = raw.sparsify_indices();
-            std::copy(ix.begin(), ix.end(), ibuffer);
-        }
-        output.index = ibuffer;
-    }
-
-    return output;
 }
 
 }
@@ -86,11 +78,16 @@ struct MyopicSparsifiedWrapper : public MyopicSparseExtractor<Value_, Index_> {
         raw(std::move(r)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {}
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        return SparsifiedWrapper_internal::fetch_raw<false, selection_, Value_, Index_>(i, vbuffer, ibuffer, raw, needs_value, needs_index);
-    }
-
-    Index_ number() const {
-        return raw.number();
+        Index_ num = SparsifiedWrapper_internal::fetch_number<selection_>(raw); 
+        SparseRange<Value_, Index_> output(num, NULL, NULL);
+        if (needs_value) {
+            output.value = raw.fetch(i, vbuffer);
+        }
+        if (needs_index) {
+            SparsifiedWrapper_internal::populate_indices<selection_>(raw, ibuffer);
+            output.index = ibuffer;
+        }
+        return output;
     }
 
 private:
@@ -114,39 +111,30 @@ private:
 template<DimensionSelectionType selection_, typename Value_, typename Index_, class Extractor_>
 struct OracularSparsifiedWrapper : public OracularSparseExtractor<Value_, Index_> {
     /**
-     * @param ora Instance of an `Oracle`.
-     * @param r Instance of the dense extractor.
-     * This should be a `OracularDenseExtractor` subclass produced by `Matrix::dense_row()` or `Matrix::dense_column()` with the same `Oracle` as `ora`.
+     * @param r Instance of the dense extractor,
+     * produced by `Matrix::dense_row()` or `Matrix::dense_column()` with an `Oracle`.
      * @param opt Options for extraction.
      */
-    OracularSparsifiedWrapper(std::shared_ptr<Oracle<Index_> > ora, Extractor_ r, const Options& opt) :
-        raw(std::move(r)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index)
-    {
-        if (!needs_value) {
-            oracle = std::move(ora);
-        }
-    }
+    OracularSparsifiedWrapper(Extractor_ r, const Options& opt) :
+        raw(std::move(r)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {}
 
-    SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
-        // If needs_value = false, we never call raw.fetch() and 'i' doesn't
-        // update with the latest predicted value; so we have to do that ourselves.
-        if (!needs_value) {
-            i = oracle->get(used_predictions);
-            ++used_predictions;
+    SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
+        Index_ num = SparsifiedWrapper_internal::fetch_number<selection_>(raw); 
+        SparseRange<Value_, Index_> output(num, NULL, NULL);
+        if (needs_value) {
+            output.value = raw.fetch(vbuffer);
         }
-        return SparsifiedWrapper_internal::fetch_raw<true, selection_, Value_, Index_>(i, vbuffer, ibuffer, raw, needs_value, needs_index);
-    }
-
-    Index_ number() const {
-        return raw.number();
+        if (needs_index) {
+            SparsifiedWrapper_internal::populate_indices<selection_>(raw, ibuffer);
+            output.index = ibuffer;
+        }
+        return output;
     }
 
 private:
     Extractor_ raw;
     bool needs_value;
     bool needs_index;
-    std::shared_ptr<Oracle<Index_> > oracle;
-    size_t used_predictions = 0;
 };
 
 }
