@@ -89,13 +89,12 @@ struct OracularParallelFullDense : public OracularDenseExtractor<Value_, Index_>
         const Options& opt) : 
         cumulative(cum) 
     {
-        if (mats.empty()) {
+        internal.reserve(mats.size());
+        for (const auto& m : mats) {
+            internal.emplace_back(new_extractor<row_, false>(m.get(), ora, opt));
+        }
+        if (internal.empty()) {
             oracle = std::move(ora);
-        } else {
-            internal.reserve(mats.size());
-            for (const auto& m : mats) {
-                internal.emplace_back(new_extractor<row_, false>(m.get(), ora, opt));
-            }
         }
     }
 
@@ -103,7 +102,7 @@ struct OracularParallelFullDense : public OracularDenseExtractor<Value_, Index_>
         if (internal.empty()) {
             i = oracle->get(used);
             ++used;
-        } 
+        }
         fetch_dense_parallel_full(
             cumulative, 
             buffer, 
@@ -216,13 +215,12 @@ struct OracularParallelFullSparse : public OracularSparseExtractor<Value_, Index
         needs_value(opt.sparse_extract_value), 
         needs_index(opt.sparse_extract_index)
     {
-        if (mats.empty()) {
+        internal.reserve(mats.size());
+        for (const auto& m : mats) {
+            internal.emplace_back(new_extractor<row_, true>(m.get(), ora, opt));
+        }
+        if (internal.empty()) {
             oracle = std::move(ora);
-        } else {
-            internal.reserve(mats.size());
-            for (const auto& m : mats) {
-                internal.emplace_back(new_extractor<row_, true>(m.get(), ora, opt));
-            }
         }
     }
 
@@ -230,7 +228,7 @@ struct OracularParallelFullSparse : public OracularSparseExtractor<Value_, Index
         if (internal.empty()) {
             i = oracle->get(used);
             ++used;
-        } 
+        }
         return fetch_sparse_full(
             cumulative,
             needs_value,
@@ -382,7 +380,7 @@ struct OracularParallelBlockDense : public OracularDenseExtractor<Value_, Index_
         if (internal.empty()) {
             i = oracle->get(used);
             ++used;
-        } 
+        }
         fetch_dense_parallel_block(
             count, 
             buffer, 
@@ -532,7 +530,7 @@ struct OracularParallelBlockSparse : public OracularSparseExtractor<Value_, Inde
         if (internal.empty()) {
             i = oracle->get(used);
             ++used;
-        } 
+        }
         return fetch_sparse_parallel_block(
             cumulative, 
             which_start,
@@ -575,9 +573,11 @@ void initialize_parallel_index(
     if (indices.empty()) {
         return;
     } 
+    size_t start_index = find_segment(cumulative, indices.front());
+    size_t nmats = cumulative.size();
 
     Index_ counter = 0, il = indices.size();
-    for (size_t index = find_segment(cumulative, indices.front()), nmats = mats.size(); index < nmats; ++index) {
+    for (size_t index = 0; index < nmats; ++index) {
         Index_ lower = cumulative[index];
         Index_ upper = cumulative[index + 1];
 
@@ -685,7 +685,7 @@ struct OracularParallelIndexDense : public OracularDenseExtractor<Value_, Index_
         if (internal.empty()) {
             i = oracle->get(used);
             ++used;
-        } 
+        }
         fetch_dense_parallel_index(
             count, 
             buffer, 
@@ -827,14 +827,14 @@ struct OracularParallelIndexSparse : public OracularSparseExtractor<Value_, Inde
         );
         if (internal.empty()) {
             oracle = std::move(ora);
-        } 
+        }
     }
 
     SparseRange<Value_, Index_> fetch(Index_& i, Value_* vbuffer, Index_* ibuffer) {
         if (internal.empty()) {
             i = oracle->get(used);
             ++used;
-        } 
+        }
         return fetch_sparse_parallel_index(
             cumulative,
             which, 
@@ -1128,40 +1128,40 @@ class DelayedBind : public Matrix<Value_, Index_> {
 public:
     /**
      * @param ps Pointers to the matrices to be combined.
+     * All matrices to be combined should have the same number of columns (if `margin_ == 0`) or rows (otherwise).
      */
     DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps) : mats(std::move(ps)), cumulative(mats.size()+1) {
         size_t sofar = 0;
-        for (size_t i = 0; i < mats.size(); ++i) {
+        for (size_t i = 0, nmats = mats.size(); i < nmats; ++i) {
             auto& current = mats[i];
-            auto& cum = cumulative[sofar + 1];
-
-            if constexpr(margin_==0) {
-                auto nr = current->nrow();
-                if (nr == 0) {
-                    continue;
-                }
-                cum += nr;
-
+            Index_ primary, secondary;
+            if constexpr(margin_ == 0) {
+                primary = current->nrow();
+                secondary = current->ncol();
             } else {
-                auto nc = current->ncol();
-                if (nc == 0) {
-                    continue;
+                primary = current->ncol();
+                secondary = current->nrow();
+            }
+
+            if (i == 0) {
+                otherdim = secondary;
+            } else if (otherdim != secondary) {
+                throw std::runtime_error("all 'mats' should have the same number of " + (margin_ == 0 ? std::string("columns") : std::string("rows")));
+            }
+
+            // Removing the matrices that don't contribute anything,
+            // so we don't have to deal with their overhead.
+            if (primary > 0) {
+                if (sofar != i) {
+                    mats[sofar] = std::move(current);
                 }
-                cum += nc;
+                cumulative[sofar + 1] = cumulative[sofar] + primary;
+                ++sofar;
             }
-
-            cum += cumulative[sofar];
-            if (sofar != i) {
-                mats[sofar] = std::move(current);
-            }
-            ++sofar;
-
         }
 
-        if (sofar != mats.size()) {
-            mats.resize(sofar);
-            cumulative.resize(sofar + 1);
-        }
+        cumulative.resize(sofar + 1);
+        mats.resize(sofar);
 
         double denom = 0;
         for (const auto& x : mats) {
@@ -1188,48 +1188,33 @@ public:
 
     /**
      * @param ps Pointers to the matrices to be combined.
+     * All matrices to be combined should have the same number of columns (if `margin_ == 0`) or rows (otherwise).
      */
     DelayedBind(const std::vector<std::shared_ptr<Matrix<Value_, Index_> > >& ps) : DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(ps.begin(), ps.end())) {}
 
 private:
     std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > mats;
+    Index_ otherdim = 0;
     std::vector<Index_> cumulative;
 
     double sparse_prop = 0, row_prop = 0;
     std::array<bool, 2> stored_uses_oracle;
 
-private:
-    Index_ internal_nrow() const {
-        if constexpr(margin_==0) {
-            return cumulative.back();
-        } else {
-            if (mats.empty()) {
-                return 0;
-            } else {
-                return mats.front()->nrow();
-            }
-        }
-    }
-
-    Index_ internal_ncol() const {
-        if constexpr(margin_==0) {
-            if (mats.empty()) {
-                return 0;
-            } else {
-                return mats.front()->ncol();
-            }
-        } else {
-            return cumulative.back();
-        }
-    }
-
 public:
     Index_ nrow() const {
-        return internal_nrow();
+        if constexpr(margin_==0) {
+            return cumulative.back();
+        } else {
+            return otherdim;
+        }
     }
 
     Index_ ncol() const {
-        return internal_ncol();
+        if constexpr(margin_==0) {
+            return otherdim;
+        } else {
+            return cumulative.back();
+        }
     }
 
     bool sparse() const {
@@ -1264,49 +1249,35 @@ public:
      ********** Myopic dense **********
      **********************************/
 private:
-    Index_ perpendicular_extent() const {
-        if constexpr(margin_ == 0) {
-            return internal_ncol();
-        } else {
-            return internal_nrow();
-        }
-    }
-
     template<bool accrow_>
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_internal(const Options& opt) const {
-        std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            output.reset(new DelayedBind_internal::MyopicPerpendicularDense(cumulative, mats, flag, perpendicular_extent(), opt));
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(cumulative, mats, flag, otherdim, opt);
         } else {
-            output.reset(new DelayedBind_internal::MyopicParallelFullDense(cumulative, mats, flag, opt));
+            return std::make_unique<DelayedBind_internal::MyopicParallelFullDense<Value_, Index_> >(cumulative, mats, flag, opt);
         }
-        return output;
     }
 
     template<bool accrow_>
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_internal(Index_ block_start, Index_ block_length, const Options& opt) const {
-        std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            output.reset(new DelayedBind_internal::MyopicPerpendicularDense(cumulative, mats, flag, block_length, block_start, block_length, opt));
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(cumulative, mats, flag, block_length, block_start, block_length, opt);
         } else {
-            output.reset(new DelayedBind_internal::MyopicParallelBlockDense(cumulative, mats, flag, block_start, block_length, opt));
+            return std::make_unique<DelayedBind_internal::MyopicParallelBlockDense<Value_, Index_> >(cumulative, mats, flag, block_start, block_length, opt);
         }
-        return output;
     }
 
     template<bool accrow_>
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_internal(std::vector<Index_> indices, const Options& opt) const {
-        std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             Index_ extent = indices.size();
-            output.reset(new DelayedBind_internal::MyopicPerpendicularDense(cumulative, mats, flag, extent, std::move(indices), opt));
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(cumulative, mats, flag, extent, std::move(indices), opt);
         } else {
-            output.reset(new DelayedBind_internal::MyopicParallelIndexDense(cumulative, mats, flag, std::move(indices), opt));
+            return std::make_unique<DelayedBind_internal::MyopicParallelIndexDense<Value_, Index_> >(cumulative, mats, flag, std::move(indices), opt);
         }
-        return output;
     }
 
 public:
@@ -1340,39 +1311,33 @@ public:
 private:
     template<bool accrow_>
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_internal(const Options& opt) const {
-        std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            output.reset(new DelayedBind_internal::MyopicPerpendicularSparse(cumulative, mats, flag, perpendicular_extent(), opt));
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(cumulative, mats, flag, otherdim, opt);
         } else {
-            output.reset(new DelayedBind_internal::MyopicParallelFullSparse(cumulative, mats, flag, opt));
+            return std::make_unique<DelayedBind_internal::MyopicParallelFullSparse<Value_, Index_> >(cumulative, mats, flag, opt);
         }
-        return output;
     }
 
     template<bool accrow_>
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_internal(Index_ block_start, Index_ block_length, const Options& opt) const {
-        std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            output.reset(new DelayedBind_internal::MyopicPerpendicularSparse(cumulative, mats, flag, block_length, block_start, block_length, opt));
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(cumulative, mats, flag, block_length, block_start, block_length, opt);
         } else {
-            output.reset(new DelayedBind_internal::MyopicParallelBlockSparse(cumulative, mats, flag, block_start, block_length, opt));
+            return std::make_unique<DelayedBind_internal::MyopicParallelBlockSparse<Value_, Index_> >(cumulative, mats, flag, block_start, block_length, opt);
         }
-        return output;
     }
 
     template<bool accrow_>
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_internal(std::vector<Index_> indices, const Options& opt) const {
-        std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             Index_ extent = indices.size();
-            output.reset(new DelayedBind_internal::MyopicPerpendicularSparse(cumulative, mats, flag, extent, std::move(indices), opt));
+            return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(cumulative, mats, flag, extent, std::move(indices), opt);
         } else {
-            output.reset(new DelayedBind_internal::MyopicParallelIndexSparse(cumulative, mats, flag, std::move(indices), opt));
+            return std::make_unique<DelayedBind_internal::MyopicParallelIndexSparse<Value_, Index_> >(cumulative, mats, flag, std::move(indices), opt);
         }
-        return output;
     }
 
 public:
@@ -1406,39 +1371,33 @@ public:
 private:
     template<bool accrow_>
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_internal(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
-        std::unique_ptr<OracularDenseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            output.reset(new DelayedBind_internal::OracularPerpendicularDense(cumulative, mats, flag, perpendicular_extent(), std::move(oracle), opt));
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mats, flag, otherdim, std::move(oracle), opt);
         } else {
-            output.reset(new DelayedBind_internal::OracularParallelFullDense(cumulative, mats, flag, std::move(oracle), opt));
+            return std::make_unique<DelayedBind_internal::OracularParallelFullDense<Value_, Index_> >(cumulative, mats, flag, std::move(oracle), opt);
         }
-        return output;
     }
 
     template<bool accrow_>
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_internal(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        std::unique_ptr<OracularDenseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            output.reset(new DelayedBind_internal::OracularPerpendicularDense(cumulative, mats, flag, block_length, std::move(oracle), block_start, block_length, opt));
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mats, flag, block_length, std::move(oracle), block_start, block_length, opt);
         } else {
-            output.reset(new DelayedBind_internal::OracularParallelBlockDense(cumulative, mats, flag, std::move(oracle), block_start, block_length, opt));
+            return std::make_unique<DelayedBind_internal::OracularParallelBlockDense<Value_, Index_> >(cumulative, mats, flag, std::move(oracle), block_start, block_length, opt);
         }
-        return output;
     }
 
     template<bool accrow_>
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_internal(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
-        std::unique_ptr<OracularDenseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             Index_ extent = indices.size();
-            output.reset(new DelayedBind_internal::OracularPerpendicularDense(cumulative, mats, flag, extent, std::move(oracle), std::move(indices), opt));
+            return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mats, flag, extent, std::move(oracle), std::move(indices), opt);
         } else {
-            output.reset(new DelayedBind_internal::OracularParallelIndexDense(cumulative, mats, flag, std::move(oracle), std::move(indices), opt));
+            return std::make_unique<DelayedBind_internal::OracularParallelIndexDense<Value_, Index_> >(cumulative, mats, flag, std::move(oracle), std::move(indices), opt);
         }
-        return output;
     }
 
 public:
@@ -1475,7 +1434,7 @@ private:
         std::unique_ptr<OracularSparseExtractor<Value_, Index_> > output;
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            output.reset(new DelayedBind_internal::OracularPerpendicularSparse(cumulative, mats, flag, perpendicular_extent(), std::move(oracle), opt));
+            output.reset(new DelayedBind_internal::OracularPerpendicularSparse(cumulative, mats, flag, otherdim, std::move(oracle), opt));
         } else {
             output.reset(new DelayedBind_internal::OracularParallelFullSparse(cumulative, mats, flag, std::move(oracle), opt));
         }

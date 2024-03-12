@@ -98,37 +98,6 @@ TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
     EXPECT_FALSE(combined->prefer_rows());
 }
 
-TEST_F(DelayedBindUtilsTest, EmptyBind) {
-    assemble({}, 20, true); 
-    EXPECT_EQ(bound_dense->nrow(), 0);
-    EXPECT_EQ(bound_dense->ncol(), 0);
-
-    // Checking that empty workspaces can be constructed.
-    {
-        auto rthing = bound_dense->dense_row();
-        EXPECT_NE(rthing.get(), nullptr);
-
-        auto cthing = bound_dense->dense_column();
-        EXPECT_NE(cthing.get(), nullptr);
-    }
-
-    {
-        auto rthing = bound_dense->dense_row(0, 0);
-        EXPECT_NE(rthing.get(), nullptr);
-
-        auto cthing = bound_dense->dense_column(0, 0);
-        EXPECT_NE(cthing.get(), nullptr);
-    }
-
-    {
-        auto rthing = bound_dense->dense_row(std::vector<int>());
-        EXPECT_NE(rthing.get(), nullptr);
-
-        auto cthing = bound_dense->dense_column(std::vector<int>());
-        EXPECT_NE(cthing.get(), nullptr);
-    }
-}
-
 TEST_F(DelayedBindUtilsTest, ConstOverloads) {
     assemble({ 10, 50 }, 20, true); 
     std::vector<std::shared_ptr<const tatami::NumericMatrix> > const_collected({ bound_dense, bound_sparse });
@@ -138,6 +107,60 @@ TEST_F(DelayedBindUtilsTest, ConstOverloads) {
     EXPECT_EQ(const_combined->nrow(), 120); // i.e., (10 + 50) * 2 
     EXPECT_EQ(const_combined->ncol(), 20);
 }
+
+TEST(DelayedBindUtils, ErrorCheck) {
+    std::vector<std::shared_ptr<tatami::NumericMatrix> > collected;
+    collected.emplace_back(new tatami::DenseRowMatrix<double, int>(10, 20, std::vector<double>(200)));
+    collected.emplace_back(new tatami::DenseRowMatrix<double, int>(20, 10, std::vector<double>(200)));
+    tatami_test::throws_error([&]() { tatami::make_DelayedBind<0>(collected); }, "same number of columns");
+    tatami_test::throws_error([&]() { tatami::make_DelayedBind<1>(collected); }, "same number of rows");
+}
+
+TEST(DelayedBindUtils, AllEmpty) {
+    auto empty = tatami::make_DelayedBind<0>(std::vector<std::shared_ptr<tatami::Matrix<double, int> > >{});
+    EXPECT_EQ(empty->nrow(), 0);
+    EXPECT_EQ(empty->ncol(), 0);
+}
+
+/****************************
+ ****************************/
+
+class DelayedBindEmptyAccessTest : 
+    public ::testing::TestWithParam<std::tuple<bool, bool, bool> >, 
+    public DelayedBindTestMethods {};
+
+TEST_P(DelayedBindEmptyAccessTest, Empty) {
+    auto tparam = GetParam();
+    auto bind_rows = std::get<0>(tparam);
+    assemble({0, 0}, 50, bind_rows);
+
+    if (bind_rows) {
+        EXPECT_EQ(bound_dense->nrow(), 0);
+        EXPECT_EQ(bound_dense->ncol(), 50);
+    } else {
+        EXPECT_EQ(bound_dense->nrow(), 50);
+        EXPECT_EQ(bound_dense->ncol(), 0);
+    }
+
+    tatami_test::TestAccessParameters params;
+    params.use_row = std::get<1>(tparam);
+    params.use_oracle = std::get<2>(tparam);
+
+    // Check that we can perform all of the accesses.
+    tatami_test::test_full_access(params, bound_dense.get(), manual.get());
+    tatami_test::test_block_access(params, bound_dense.get(), manual.get(), 0, 0);
+    tatami_test::test_indexed_access(params, bound_dense.get(), manual.get(), 0, 1);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedBind,
+    DelayedBindEmptyAccessTest,
+    ::testing::Combine(
+        ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(true, false), // access by row or column
+        ::testing::Values(true, false) // use oracle or not.
+    )
+);
 
 /****************************
  ****************************/
