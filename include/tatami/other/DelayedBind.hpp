@@ -1225,6 +1225,10 @@ public:
 private:
     template<bool accrow_>
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_internal(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        if (!stored_uses_oracle[accrow_]) {
+            return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense_internal<accrow_>(opt));
+        }
+
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mats, flag, std::move(oracle), opt);
@@ -1235,6 +1239,10 @@ private:
 
     template<bool accrow_>
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_internal(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        if (!stored_uses_oracle[accrow_]) {
+            return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense_internal<accrow_>(block_start, block_length, opt));
+        }
+
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mats, flag, std::move(oracle), block_start, block_length, opt);
@@ -1245,6 +1253,10 @@ private:
 
     template<bool accrow_>
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_internal(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        if (!stored_uses_oracle[accrow_]) {
+            return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense_internal<accrow_>(std::move(indices), opt));
+        }
+
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mats, flag, std::move(oracle), std::move(indices), opt);
@@ -1284,6 +1296,10 @@ public:
 private:
     template<bool accrow_>
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_internal(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+        if (!stored_uses_oracle[accrow_]) {
+            return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse_internal<accrow_>(opt));
+        }
+
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(cumulative, mats, flag, std::move(oracle), opt);
@@ -1294,6 +1310,10 @@ private:
 
     template<bool accrow_>
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_internal(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        if (!stored_uses_oracle[accrow_]) {
+            return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse_internal<accrow_>(block_start, block_length, opt));
+        }
+
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(cumulative, mats, flag, std::move(oracle), block_start, block_length, opt);
@@ -1304,6 +1324,10 @@ private:
 
     template<bool accrow_>
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_internal(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+        if (!stored_uses_oracle[accrow_]) {
+            return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse_internal<accrow_>(std::move(indices), opt));
+        }
+
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(cumulative, mats, flag, std::move(oracle), std::move(indices), opt);

@@ -5,5 +5,6 @@
 #include "test_access.hpp"
 #include "fetch.hpp"
 #include "throw_error.hpp"
+#include "ForcedOracleMatrix.hpp"
 
 #endif

@@ -13,7 +13,7 @@ class DelayedBindTestMethods {
 protected:
     std::shared_ptr<tatami::NumericMatrix> bound_dense, bound_sparse, manual;
 
-    void assemble(const std::vector<int>& lengths, int dim, bool row) {
+    void assemble(const std::vector<int>& lengths, int dim, bool row, bool force_oracle) {
         std::vector<double> concat;
         size_t n_total = 0;
         std::vector<std::shared_ptr<tatami::NumericMatrix> > collected_dense, collected_sparse;
@@ -29,6 +29,17 @@ protected:
                 collected_dense.emplace_back(new tatami::DenseColumnMatrix<double, int>(dim, lengths[i], to_add));
             }
             collected_sparse.push_back(tatami::convert_to_compressed_sparse<false>(collected_dense.back().get())); // always CSC
+        }
+
+        if (force_oracle) {
+            for (auto& b : collected_dense) {
+                auto out = std::make_shared<tatami_test::ForcedOracleMatrix<double, int> >(std::move(b));
+                b = std::move(out);
+            }
+            for (auto& b : collected_sparse) {
+                auto out = std::make_shared<tatami_test::ForcedOracleMatrix<double, int> >(std::move(b));
+                b = std::move(out);
+            }
         }
 
         if (row) {
@@ -48,7 +59,7 @@ protected:
 class DelayedBindUtilsTest : public ::testing::Test, public DelayedBindTestMethods {};
 
 TEST_F(DelayedBindUtilsTest, ByRow) {
-    assemble({ 10, 20, 5 }, 20, true);
+    assemble({ 10, 20, 5 }, 20, true, false);
 
     EXPECT_EQ(bound_dense->nrow(), 35);
     EXPECT_EQ(bound_dense->ncol(), 20);
@@ -69,7 +80,7 @@ TEST_F(DelayedBindUtilsTest, ByRow) {
 }
 
 TEST_F(DelayedBindUtilsTest, ByColumn) {
-    assemble({ 10, 20, 5 }, 20, false);
+    assemble({ 10, 20, 5 }, 20, false, false);
 
     EXPECT_EQ(bound_dense->nrow(), 20);
     EXPECT_EQ(bound_dense->ncol(), 35);
@@ -86,7 +97,7 @@ TEST_F(DelayedBindUtilsTest, ByColumn) {
 }
 
 TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
-    assemble({ 10, 20, 5 }, 20, true); 
+    assemble({ 10, 20, 5 }, 20, true, false); 
 
     // Bound_sparse is CSC, bound_dense is row-major.
     auto combined = tatami::make_DelayedBind<1>(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ bound_sparse, bound_dense });
@@ -99,7 +110,7 @@ TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
 }
 
 TEST_F(DelayedBindUtilsTest, ConstOverloads) {
-    assemble({ 10, 50 }, 20, true); 
+    assemble({ 10, 50 }, 20, true, false); 
     std::vector<std::shared_ptr<const tatami::NumericMatrix> > const_collected({ bound_dense, bound_sparse });
     auto const_combined = tatami::make_DelayedBind<0>(std::move(const_collected));
 
@@ -116,6 +127,34 @@ TEST(DelayedBindUtils, ErrorCheck) {
     tatami_test::throws_error([&]() { tatami::make_DelayedBind<1>(collected); }, "same number of rows");
 }
 
+TEST(DelayedBindUtils, PartialOracleUsage) {
+    std::vector<std::shared_ptr<tatami::NumericMatrix> > collected;
+    collected.emplace_back(new tatami::DenseRowMatrix<double, int>(10, 20, std::vector<double>(200)));
+    collected.emplace_back(new tatami::DenseRowMatrix<double, int>(10, 20, std::vector<double>(200)));
+
+    {
+        auto combined = tatami::make_DelayedBind<0>(collected); 
+        EXPECT_FALSE(combined->uses_oracle(true));
+        EXPECT_FALSE(combined->uses_oracle(false));
+    }
+
+    {
+        auto p = std::make_shared<tatami_test::ForcedOracleMatrix<double, int> >(std::move(collected.back()));
+        collected.back() = std::move(p);
+        auto combined = tatami::make_DelayedBind<0>(collected); 
+        EXPECT_TRUE(combined->uses_oracle(true));
+        EXPECT_TRUE(combined->uses_oracle(false));
+    }
+
+    {
+        auto p = std::make_shared<tatami_test::ForcedOracleMatrix<double, int> >(std::move(collected.front()));
+        collected.front() = std::move(p);
+        auto combined = tatami::make_DelayedBind<0>(collected); 
+        EXPECT_TRUE(combined->uses_oracle(true));
+        EXPECT_TRUE(combined->uses_oracle(false));
+    }
+}
+
 TEST(DelayedBindUtils, AllEmpty) {
     auto empty = tatami::make_DelayedBind<0>(std::vector<std::shared_ptr<tatami::Matrix<double, int> > >{});
     EXPECT_EQ(empty->nrow(), 0);
@@ -126,13 +165,14 @@ TEST(DelayedBindUtils, AllEmpty) {
  ****************************/
 
 class DelayedBindEmptyAccessTest : 
-    public ::testing::TestWithParam<std::tuple<bool, bool, bool> >, 
+    public ::testing::TestWithParam<std::tuple<bool, tatami_test::TestAccessOracle, bool> >, 
     public DelayedBindTestMethods {};
 
 TEST_P(DelayedBindEmptyAccessTest, Empty) {
     auto tparam = GetParam();
     auto bind_rows = std::get<0>(tparam);
-    assemble({0, 0}, 50, bind_rows);
+    auto ora_usage = std::get<1>(tparam);
+    assemble({0, 0}, 50, bind_rows, ora_usage == tatami_test::FORCED_ORACLE);
 
     if (bind_rows) {
         EXPECT_EQ(bound_dense->nrow(), 0);
@@ -144,7 +184,7 @@ TEST_P(DelayedBindEmptyAccessTest, Empty) {
 
     tatami_test::TestAccessParameters params;
     params.use_row = std::get<1>(tparam);
-    params.use_oracle = std::get<2>(tparam);
+    params.use_oracle = ora_usage != tatami_test::NO_ORACLE;
 
     // Check that we can perform all of the accesses.
     tatami_test::test_full_access(params, bound_dense.get(), manual.get());
@@ -157,8 +197,8 @@ INSTANTIATE_TEST_SUITE_P(
     DelayedBindEmptyAccessTest,
     ::testing::Combine(
         ::testing::Values(true, false), // bind by row or by column
-        ::testing::Values(true, false), // access by row or column
-        ::testing::Values(true, false) // use oracle or not.
+        ::testing::Values(tatami_test::NO_ORACLE, tatami_test::DEFAULT_ORACLE, tatami_test::FORCED_ORACLE),
+        ::testing::Values(true, false) // access by row or column
     )
 );
 
@@ -166,16 +206,17 @@ INSTANTIATE_TEST_SUITE_P(
  ****************************/
 
 class DelayedBindFullAccessTest : 
-    public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, bool, tatami_test::TestAccessOrder, int> >, 
+    public ::testing::TestWithParam<std::tuple<std::vector<int>, tatami_test::TestAccessOracle, bool, bool, tatami_test::TestAccessOrder, int> >, 
     public DelayedBindTestMethods {};
 
 TEST_P(DelayedBindFullAccessTest, Basic) {
     auto tparam = GetParam();
-    assemble(std::get<0>(tparam), 50, std::get<1>(tparam));
+    auto ora_usage = std::get<2>(tparam);
+    assemble(std::get<0>(tparam), 50, std::get<1>(tparam), ora_usage == tatami_test::FORCED_ORACLE);
 
     tatami_test::TestAccessParameters params;
-    params.use_row = std::get<2>(tparam);
-    params.use_oracle = std::get<3>(tparam);
+    params.use_row = std::get<3>(tparam);
+    params.use_oracle = ora_usage != tatami_test::NO_ORACLE;
     params.order = std::get<4>(tparam);
     params.jump = std::get<5>(tparam);
 
@@ -201,8 +242,8 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Combine(
         spawn_bind_scenarios(),
         ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(tatami_test::NO_ORACLE, tatami_test::DEFAULT_ORACLE, tatami_test::FORCED_ORACLE),
         ::testing::Values(true, false), // access by row or column
-        ::testing::Values(true, false), // use oracle or not.
         ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 3) // jump, to test the workspace's memory.
     )
@@ -212,16 +253,17 @@ INSTANTIATE_TEST_SUITE_P(
  ****************************/
 
 class DelayedBindSlicedAccessTest : 
-    public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, bool, tatami_test::TestAccessOrder, int, std::pair<double, double> > >, 
+    public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, tatami_test::TestAccessOracle, bool, tatami_test::TestAccessOrder, int, std::pair<double, double> > >, 
     public DelayedBindTestMethods {};
 
 TEST_P(DelayedBindSlicedAccessTest, Basic) {
     auto tparam = GetParam();
-    assemble(std::get<0>(tparam), 50, std::get<1>(tparam));
+    auto ora_usage = std::get<2>(tparam);
+    assemble(std::get<0>(tparam), 50, std::get<1>(tparam), ora_usage == tatami_test::FORCED_ORACLE);
 
     tatami_test::TestAccessParameters params;
-    params.use_row = std::get<2>(tparam);
-    params.use_oracle = std::get<3>(tparam);
+    params.use_row = std::get<3>(tparam);
+    params.use_oracle = ora_usage != tatami_test::NO_ORACLE;
     params.order = std::get<4>(tparam);
     params.jump = std::get<5>(tparam);
 
@@ -239,8 +281,8 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Combine(
         spawn_bind_scenarios(),
         ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(tatami_test::NO_ORACLE, tatami_test::DEFAULT_ORACLE, tatami_test::FORCED_ORACLE),
         ::testing::Values(true, false), // access by row or column
-        ::testing::Values(true, false), // use oracle or not.
         ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 3), // jump, to test the workspace's memory.
         ::testing::Values(
@@ -255,16 +297,17 @@ INSTANTIATE_TEST_SUITE_P(
  ****************************/
 
 class DelayedBindIndexedAccessTest : 
-    public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, bool, bool, tatami_test::TestAccessOrder, int, std::pair<double, int> > >, 
+    public ::testing::TestWithParam<std::tuple<std::vector<int>, bool, tatami_test::TestAccessOracle, bool, tatami_test::TestAccessOrder, int, std::pair<double, int> > >, 
     public DelayedBindTestMethods {};
 
 TEST_P(DelayedBindIndexedAccessTest, Basic) {
     auto tparam = GetParam();
-    assemble(std::get<0>(tparam), 50, std::get<1>(tparam));
+    auto ora_usage = std::get<2>(tparam);
+    assemble(std::get<0>(tparam), 50, std::get<1>(tparam), ora_usage == tatami_test::FORCED_ORACLE);
 
     tatami_test::TestAccessParameters params;
-    params.use_row = std::get<2>(tparam);
-    params.use_oracle = std::get<3>(tparam);
+    params.use_row = std::get<3>(tparam);
+    params.use_oracle = ora_usage != tatami_test::NO_ORACLE;
     params.order = std::get<4>(tparam);
     params.jump = std::get<5>(tparam);
 
@@ -282,8 +325,8 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Combine(
         spawn_bind_scenarios(),
         ::testing::Values(true, false), // bind by row or by column
+        ::testing::Values(tatami_test::NO_ORACLE, tatami_test::DEFAULT_ORACLE, tatami_test::FORCED_ORACLE),
         ::testing::Values(true, false), // access by row or column
-        ::testing::Values(true, false), // use oracle or not.
         ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
         ::testing::Values(1, 3), // jump, to test the workspace's memory.
         ::testing::Values(
