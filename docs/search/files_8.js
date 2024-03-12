@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['new_5fextractor_2ehpp_0',['new_extractor.hpp',['../new__extractor_8hpp.html',1,'']]]
+  ['options_2ehpp_0',['Options.hpp',['../Options_8hpp.html',1,'']]],
+  ['oracles_2ehpp_1',['Oracles.hpp',['../Oracles_8hpp.html',1,'']]]
 ];

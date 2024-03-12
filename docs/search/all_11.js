@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['value_0',['value',['../structtatami_1_1SparseRange.html#a6bd0dcad11850847dd8dd336e1932732',1,'tatami::SparseRange::value'],['../structtatami_1_1SparseRangeCopy.html#a6f924c14d5830aedf2d175b850099b45',1,'tatami::SparseRangeCopy::value'],['../structtatami_1_1CompressedSparseContents.html#a42f014b8d8da15e6c49511db087bebf7',1,'tatami::CompressedSparseContents::value'],['../structtatami_1_1FragmentedSparseContents.html#a24193eb145792effdc67d3e1425f1cd2',1,'tatami::FragmentedSparseContents::value']]],
-  ['value_5ftype_1',['value_type',['../classtatami_1_1Matrix.html#a5b783d3ab440b7696c635a4b16516ba8',1,'tatami::Matrix::value_type'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a452df712534d47fdb8543805affd038b',1,'tatami::SomeNumericArray::Iterator::value_type']]],
-  ['variances_2ehpp_2',['variances.hpp',['../variances_8hpp.html',1,'']]]
+  ['wrap_5fshared_5fptr_0',['wrap_shared_ptr',['../namespacetatami.html#a7518f5e8e09a6f6d7d3955b8ea286689',1,'tatami']]],
+  ['wrap_5fshared_5fptr_2ehpp_1',['wrap_shared_ptr.hpp',['../wrap__shared__ptr_8hpp.html',1,'']]]
 ];

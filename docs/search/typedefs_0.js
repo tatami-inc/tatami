@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['compressedsparsecolumnmatrix_0',['CompressedSparseColumnMatrix',['../namespacetatami.html#a18cee3a5d9734f0092b03d023cfe4b6a',1,'tatami']]],
-  ['compressedsparserowmatrix_1',['CompressedSparseRowMatrix',['../namespacetatami.html#a0111adeeb583aeb7e24e9e1e25be4aa0',1,'tatami']]]
+  ['blockdenseextractor_0',['BlockDenseExtractor',['../namespacetatami.html#ae75de1fc78b7d361ea8b59a5379ea4da',1,'tatami']]],
+  ['blocksparseextractor_1',['BlockSparseExtractor',['../namespacetatami.html#ac8d0024399a66ce61f6315f5f46ebb63',1,'tatami']]]
 ];
