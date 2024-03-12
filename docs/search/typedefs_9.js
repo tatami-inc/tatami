@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['semicompressedsparsecolumnmatrix_0',['SemiCompressedSparseColumnMatrix',['../namespacetatami.html#a6f03d0d880bc056e09c2cbb80eb2c2ec',1,'tatami']]],
-  ['semicompressedsparserowmatrix_1',['SemiCompressedSparseRowMatrix',['../namespacetatami.html#a412cb6ee12f3ee81d404d6eb0e494e4d',1,'tatami']]]
+  ['value_5ftype_0',['value_type',['../classtatami_1_1Matrix.html#a5b783d3ab440b7696c635a4b16516ba8',1,'tatami::Matrix::value_type'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a452df712534d47fdb8543805affd038b',1,'tatami::SomeNumericArray::Iterator::value_type']]]
 ];

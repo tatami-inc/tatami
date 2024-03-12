@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['reference_0',['reference',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#ab83a68ab47e92b1265fd043bc4351be9',1,'tatami::SomeNumericArray::Iterator']]]
+  ['semicompressedsparsecolumnmatrix_0',['SemiCompressedSparseColumnMatrix',['../namespacetatami.html#a6f03d0d880bc056e09c2cbb80eb2c2ec',1,'tatami']]],
+  ['semicompressedsparserowmatrix_1',['SemiCompressedSparseRowMatrix',['../namespacetatami.html#a412cb6ee12f3ee81d404d6eb0e494e4d',1,'tatami']]]
 ];

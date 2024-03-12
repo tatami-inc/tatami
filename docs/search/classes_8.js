@@ -1,7 +1,5 @@
 var searchData=
 [
-  ['options_0',['Options',['../structtatami_1_1Options.html',1,'tatami']]],
-  ['oracle_1',['Oracle',['../structtatami_1_1Oracle.html',1,'tatami']]],
-  ['oracle_3c_20index_5fin_5f_20_3e_2',['Oracle&lt; Index_in_ &gt;',['../structtatami_1_1Oracle.html',1,'tatami']]],
-  ['oraclestream_3',['OracleStream',['../structtatami_1_1OracleStream.html',1,'tatami']]]
+  ['pseudooraculardenseextractor_0',['PseudoOracularDenseExtractor',['../structtatami_1_1PseudoOracularDenseExtractor.html',1,'tatami']]],
+  ['pseudooracularsparseextractor_1',['PseudoOracularSparseExtractor',['../structtatami_1_1PseudoOracularSparseExtractor.html',1,'tatami']]]
 ];

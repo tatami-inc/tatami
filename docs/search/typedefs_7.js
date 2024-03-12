@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['pointer_0',['pointer',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#adfb70cf5c5bbfdfdebe7f20244fc5f30',1,'tatami::SomeNumericArray::Iterator']]]
+  ['reference_0',['reference',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#ab83a68ab47e92b1265fd043bc4351be9',1,'tatami::SomeNumericArray::Iterator']]]
 ];
