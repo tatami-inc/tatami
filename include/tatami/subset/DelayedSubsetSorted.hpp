@@ -196,10 +196,15 @@ private:
  *********************/
 
 template<typename Index_>
+struct SparseParallelExpansion {
+    std::vector<Index_> start, length;
+    Index_ offset= 0;
+};
+
+template<typename Index_>
 struct SparseParallelResults {
     std::vector<Index_> collapsed;
-    std::vector<Index_> expansion_start, expansion_length;
-    Index_ expansion_offset = 0;
+    SparseParallelExpansion<Index_> expansion;
 };
 
 template<typename Index_, class IndexStorage_, class ToIndex_>
@@ -208,24 +213,29 @@ SparseParallelResults<Index_> format_sparse_parallel(const IndexStorage_& indice
 
     if (len) {
         auto last = indices[toindex(0)];
+        output.expansion.offset = last;
 
+        // We use 'expansion_offset' and 'allocation' to avoid having to
+        // allocate the entirety of the subsetted dimension for this
+        // look-up; rather, we just allocate the range that we need.
         auto allocation = indices[toindex(len - 1)] - last + 1;
-        output.expansion_start.resize(allocation);
-        output.expansion_length.resize(allocation);
-        output.collapsed.reserve(len);
+        output.expansion.start.resize(allocation);
+        output.expansion.length.resize(allocation);
 
+        output.collapsed.reserve(len);
         output.collapsed.push_back(last);
-        output.expansion_start[0] = 0;
-        output.expansion_length[0] = 1;
+
+        output.expansion.start[0] = 0;
+        output.expansion.length[0] = 1;
 
         for (Index_ i = 1; i < len; ++i) {
             auto current = indices[toindex(i)];
             if (current == last) {
-                ++(output.expansion_length[current - start]);
+                ++(output.expansion.length[current - start]);
             } else {
                 last = current;
-                output.expansion_start[current - start] = i;
-                output.expansion_length[current - start] = 1;
+                output.expansion.start[current - start] = i;
+                output.expansion.length[current - start] = 1;
                 output.collapsed.push_back(last);
             }
         }
@@ -256,9 +266,7 @@ SparseRange<Value_, Index_> expand_sparse_parallel(
     Index_* ibuffer, 
     bool needs_value,
     bool needs_index,
-    const std::vector<Index_>& expansion_start, 
-    const std::vector<Index_>& expansion_length,
-    Index_ expansion_offset) 
+    const SparseParallelExpansion& expansion)
 {
     auto vcopy = vbuffer;
     auto icopy = ibuffer;
@@ -272,8 +280,8 @@ SparseRange<Value_, Index_> expand_sparse_parallel(
     // assumes that 'input' has been shifted enough to make space for
     // expansion; the required shift depends on the number of duplicates.
     for (Index i = 0; i < input.number; ++i) {
-        auto expansion_index = input.index[i] - expansion_offset;
-        auto nexpand = expansion_length[expansion_index];
+        auto eindex = input.index[i] - expansion.offset;
+        auto nexpand = expansion.length[eindex];
         count += nexpand;
 
         if (replace_value) {
@@ -284,7 +292,7 @@ SparseRange<Value_, Index_> expand_sparse_parallel(
         }
 
         if (needs_index) {
-            auto sexpand = expansion_start[expansion_index];
+            auto sexpand = expansion.start[eindex];
             std::iota(icopy, icopy + nexpand, sexpand);
             icopy += nexpand;
         }
@@ -330,8 +338,7 @@ private:
         }
 
         internal = new_extractor<row_, false>(mat, std::move(processed.collapsed), opt);
-        expansion_start = std::move(processed.expansion_start);
-        expansion_length = std::move(processed.expansion_length);
+        expansion = std::move(processed.expansion);
     }
 
 public:
@@ -339,17 +346,20 @@ public:
         if (shift == 0) {
             return internal->fetch(i, vbuffer, ibuffer);
         } 
+
         // Shifting so that there's enough space for expansion, but only doing
-        // so if we actually are guaranteed non-NULL pointers.
-        auto src = internal->fetch(i, (needs_value ? vbuffer + shift : NULL), (needs_index ? ibuffer + shift : iholding.data()));
-        return expand_sparse_parallel(src, vbuffer, ibuffer, needs_value, needs_index, expansion_start, expansion_length);
+        // so if these pointers are guaranteed to be non-NULL.
+        auto vinit = (needs_value ? vbuffer + shift : NULL);
+        auto iinit = (needs_index ? ibuffer + shift : iholding.data());
+        auto src = internal->fetch(i, vinit, iinit);
+        return expand_sparse_parallel(src, vbuffer, ibuffer, needs_value, needs_index, expansion);
     }
 
 private:
     bool needs_value, needs_index;
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > internal;
     std::vector<Index_> iholding;
-    std::vector<Index_> expansion, expansion_length;
+    SparseParallelExpansion<Index_> expansion;
     size_t shift;
 };
 
@@ -390,8 +400,7 @@ private:
         }
 
         internal = new_extractor<row_, false>(mat, std::move(oracle), std::move(processed.collapsed), opt);
-        expansion_start = std::move(processed.expansion_start);
-        expansion_length = std::move(processed.expansion_length);
+        expansion = std::move(processed.expansion);
     }
 
 public:
@@ -399,17 +408,20 @@ public:
         if (shift == 0) {
             return internal->fetch(vbuffer, ibuffer);
         } 
+
         // Shifting so that there's enough space for expansion, but only doing
-        // so if we actually are guaranteed non-NULL pointers.
-        auto src = internal->fetch((needs_value ? vbuffer + shift : NULL), (needs_index ? ibuffer + shift : iholding.data()));
-        return expand_sparse_parallel(src, vbuffer, ibuffer, needs_value, needs_index, expansion_start, expansion_length);
+        // so if these pointers are guaranteed to be non-NULL.
+        auto vinit = (needs_value ? vbuffer + shift : NULL);
+        auto iinit = (needs_index ? ibuffer + shift : iholding.data());
+        auto src = internal->fetch(vinit, iinit);
+        return expand_sparse_parallel(src, vbuffer, ibuffer, needs_value, needs_index, expansion);
     }
 
 private:
     bool needs_value, needs_index;
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > internal;
     std::vector<Index_> iholding;
-    std::vector<Index_> expansion, expansion_length;
+    SparseParallelExpansion<Index_> expansion;
     size_t shift;
 };
 
