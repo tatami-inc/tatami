@@ -44,7 +44,7 @@ DenseParallelResults<Index_> format_dense_parallel(const IndexStorage_& indices,
     DenseParallelResults<Index_> output;
     output.sorted.reserve(len);
     output.permutation.reserve(len);
-    for (auto pp : collected) {
+    for (const auto& pp : collected) {
         output.sorted.push_back(pp.first);
         output.permutation.push_back(pp.second);
     }
@@ -82,7 +82,7 @@ template<typename Value_, typename Index_>
 struct MyopicParallelDense : MyopicDenseExtractor<Value_, Index_> {
     template<bool row_, class IndexStorage_>
     MyopicParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, const Options& opt) {
-        auto processed = format_dense_parallel<Index_>(indices, 0, indices.size());
+        auto processed = format_dense_parallel<Index_>(indices);
         initialize<row_>(processed, indices.size(), opt);
     }
 
@@ -127,7 +127,7 @@ template<typename Value_, typename Index_>
 struct OracularParallelDense : OracularDenseExtractor<Value_, Index_> {
     template<bool row_, class IndexStorage_>
     OracularParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) {
-        auto processed = format_dense_parallel<Index_>(indices, 0, indices.size());
+        auto processed = format_dense_parallel<Index_>(indices);
         initialize<row_>(processed, indices.size(), std::move(oracle), opt);
     }
 
@@ -164,9 +164,9 @@ private:
     std::vector<Index_> permutation;
 };
 
-/**********************
- *** Oracular dense ***
- **********************/
+/*********************
+ *** Myopic sparse ***
+ *********************/
 
 template<typename Index_, class IndexStorage_, class ToIndex_>
 std::vector<Index_> format_sparse_parallel(const IndexStorage_& indices, Index_ len, ToIndex_ to_index) {
@@ -263,21 +263,22 @@ void allocate_sparse_parallel(
     Options& opt,
     size_t extent)
 {
-    // The conditionals here mirror those in 'reorder_sparse_parallel';
-    // this documents the case where each of the temporaries are needed.
+    // The conditionals here mirror those in 'reorder_sparse_parallel',
+    // to self-document the case where each of the temporaries are needed.
     if (!needs_sort) {
         if (needs_index) {
             ; // no 'iholding' required as a user-provided 'ibuffer' should be available.
         }
-        return;
+
     } else if (needs_value) {
         opt.sparse_extract_index = true;
         sortspace.reserve(extent);
         if (needs_index) {
             ; // no 'iholding' required as a user-provided 'ibuffer' should be available.
         } else {
-            iholding.reserve(extent); // needs 'iholding' as user-provided 'ibuffer' may be NULL.
+            iholding.resize(extent); // needs 'iholding' as user-provided 'ibuffer' may be NULL.
         }
+
     } else if (needs_index) {
         ; // no 'iholding' required as a user-provided 'ibuffer' should be available.
     }
@@ -352,9 +353,9 @@ private:
     std::vector<Index_> iholding;
 };
 
-/**********************
+/***********************
  *** Oracular sparse ***
- **********************/
+ ***********************/
 
 template<typename Value_, typename Index_>
 struct OracularParallelSparse : OracularSparseExtractor<Value_, Index_> {

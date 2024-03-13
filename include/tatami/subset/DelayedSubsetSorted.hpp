@@ -76,12 +76,12 @@ DenseParallelResults<Index_> format_dense_parallel(const IndexStorage_& indices,
 
 template<typename Value_, typename Index_>
 void expand_dense_parallel(const Value_* input, Value_* output, const std::vector<Index_>& expansion) {
-    // 'input' and 'output' may point to overlapping arrays as long as 'output'
-    // precedes 'input'. The idea is that the expansion of values into 'output'
-    // will cause it to "catch up" to 'input' without clobbering any values in
-    // the latter. This assumes that 'input' has been shifted enough to make
-    // space for expansion; the required shift depends on the number of
-    // duplicates in 'expansion'.
+    // 'input' and 'output' may optionally point to overlapping arrays as long
+    // as 'output' precedes 'input'. The idea is that the expansion of values
+    // into 'output' will cause it to "catch up" to 'input' without clobbering
+    // any values in the latter. This assumes that 'input' has been shifted
+    // enough to make space for expansion; the required shift depends on the
+    // number of duplicates in 'expansion'.
     for (auto e : expansion) {
         auto val = *input;
         std::fill_n(output, e, val);
@@ -197,8 +197,15 @@ private:
 
 template<typename Index_>
 struct SparseParallelExpansion {
-    std::vector<Index_> start, length;
-    Index_ offset= 0;
+    // Holds the start position in 'indices' for each value, i.e., 
+    // 'indices[start[i - offset]]' is the first entry equal to 'i'.
+    std::vector<Index_> start;
+
+    // Holds the length of the stretch of identical values in 'indices', i.e., 
+    // 'indices[start[i - offset] + lengths[i - offset] - 1]' is the last entry equal to 'i'.
+    std::vector<Index_> length;
+
+    Index_ offset = 0;
 };
 
 template<typename Index_>
@@ -212,32 +219,39 @@ SparseParallelResults<Index_> format_sparse_parallel(const IndexStorage_& indice
     SparseParallelResults<Index_> output;
 
     if (len) {
-        auto last = indices[toindex(0)];
-        output.expansion.offset = last;
+        output.collapsed.reserve(len);
+        Index_ first = indices[toindex(0)];
 
-        // We use 'expansion_offset' and 'allocation' to avoid having to
-        // allocate the entirety of the subsetted dimension for this
-        // look-up; rather, we just allocate the range that we need.
-        auto allocation = indices[toindex(len - 1)] - last + 1;
+        // 'start' and 'length' are vectors that enable look-up according to
+        // the indices of the underlying array. To avoid the need to allocate a
+        // vector of length equal to the underlying array's dimension, we only
+        // consider the extremes of 'indices'; we allocate the two vectors to
+        // have length equal to the range of 'indices'. The 'offset' defines
+        // the lower bound that must be subtracted from the array indices to
+        // get an index into 'start' or 'length'.
+        output.expansion.offset = first;
+        auto allocation = indices[toindex(len - 1)] - output.expansion.offset + 1;
         output.expansion.start.resize(allocation);
         output.expansion.length.resize(allocation);
 
-        output.collapsed.reserve(len);
-        output.collapsed.push_back(last);
-
+        Index_ lookup = 0;
         output.expansion.start[0] = 0;
         output.expansion.length[0] = 1;
+        output.collapsed.push_back(first);
+        auto last = first;
 
         for (Index_ i = 1; i < len; ++i) {
             auto current = indices[toindex(i)];
             if (current == last) {
-                ++(output.expansion.length[current - start]);
-            } else {
-                last = current;
-                output.expansion.start[current - start] = i;
-                output.expansion.length[current - start] = 1;
-                output.collapsed.push_back(last);
-            }
+                ++(output.expansion.length[lookup]);
+                continue;
+            } 
+
+            lookup = current - output.expansion.offset;
+            output.expansion.start[lookup] = i;
+            output.expansion.length[lookup] = 1;
+            output.collapsed.push_back(current);
+            last = current;
         }
     }
 
@@ -266,29 +280,31 @@ SparseRange<Value_, Index_> expand_sparse_parallel(
     Index_* ibuffer, 
     bool needs_value,
     bool needs_index,
-    const SparseParallelExpansion& expansion)
+    const SparseParallelExpansion<Index_>& expansion)
 {
     auto vcopy = vbuffer;
     auto icopy = ibuffer;
     Index_ count = 0;
     bool replace_value = needs_value;
 
-    // Pointers in 'input' and the two 'buffer' pointers may point to
-    // overlapping arrays as long as both 'buffer' pointers precede 'input'.
-    // The idea is that the expansion of values into 'buffer' will cause it to
-    // "catch up" to 'input' without clobbering any values in the latter. This
-    // assumes that 'input' has been shifted enough to make space for
-    // expansion; the required shift depends on the number of duplicates.
+    // Pointers in 'input' and the two 'buffer' pointers may optionally point
+    // to overlapping arrays as long as each 'buffer' pointer precede its
+    // corresponding pointer in 'input'.  The idea is that the expansion of
+    // values into 'buffer' will cause it to "catch up" to 'input' without
+    // clobbering any values in the latter. This assumes that 'input' has been
+    // shifted enough to make space for expansion; the required shift depends
+    // on the number of duplicates.
     for (Index i = 0; i < input.number; ++i) {
         auto eindex = input.index[i] - expansion.offset;
         auto nexpand = expansion.length[eindex];
         count += nexpand;
 
         if (replace_value) {
-            auto v = input.value[i];
+            auto ivptr = input.value + i;
+            auto v = *ivptr; // make a copy just in case 'vcopy' and 'input.value' overlap.
             std::fill_n(vcopy, nexpand, v);
             vcopy += nexpand;
-            replace_value = (vcopy != input.value); // if we've caught up, there no need to do this replacement.
+            replace_value = (vcopy != ivptr); // if we've caught up, there no need to do this replacement.
         }
 
         if (needs_index) {
