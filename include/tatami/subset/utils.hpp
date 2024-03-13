@@ -2,7 +2,7 @@
 #define TATAMI_DELAYED_SUBSET_UTILS_HPP
 
 #include "../base/Matrix.hpp"
-#include "../base/utils.hpp"
+#include "../base/new_extractor.hpp"
 
 #include <vector>
 #include <algorithm>
@@ -24,90 +24,78 @@ const Value_* remap_dense(const Value_* input, Value_* buffer, const std::vector
 
 template<typename Index_, class IndexStorage_>
 struct SubsetOracle : public Oracle<Index_> {
-    SubsetOracle(std::unique_ptr<Oracle<Index_> > o, const IndexStorage_* is) : source(std::move(o)), indices(is) {}
+    SubsetOracle(std::shared_ptr<Oracle<Index_> > ora, const IndexStorage_& ix) : source(std::move(rao)), indices(ix) {}
 
-    size_t predict(Index_* buffer, size_t length) {
-        size_t filled = source->predict(buffer, length);
-        for (size_t i = 0; i < filled; ++i) {
-            buffer[i] = (*indices)[buffer[i]];
-        }
-        return filled;
+    Index_ get(size_t i) const {
+        return indices[source->get(i)];
     }
+
+    size_t total() const {
+        return source->total();
+    }
+
 private:
-    std::unique_ptr<Oracle<Index_> > source;
-    const IndexStorage_* indices;
+    std::shared_ptr<Oracle<Index_> > source;
+    const IndexStorage_& indices;
 };
 
-template<DimensionSelectionType selection_, bool sparse_, typename Value_, typename Index_, class IndexStorage_>
-struct PerpendicularExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-    PerpendicularExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > i, const IndexStorage_& in) : 
-        internal(std::move(i)), indices(&in)
-    {
-        if constexpr(selection_ == DimensionSelectionType::FULL) {
-            this->full_length = internal->full_length;
-        } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-            this->block_start = internal->block_start;
-            this->block_length = internal->block_length;
-        } else {
-            this->index_length = internal->index_length;
-        }
+template<typename Value_, typename Index_, class IndexStorage_>
+struct MyopicPerpendicularDense : public MyopicDenseExtractor<Value_, Index_> {
+    template<bool row_, template ... Args_>
+    MyopicPerpendicularDenseExtractor(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, Args_&& ... args) : 
+        indices(in), internal(new_extractor<row_, false>(mat, std::forward<Args_>(args)...)) {}
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        return internal->fetch(indices[i], buffer);
     }
 
 protected:
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal;
-    const IndexStorage_* indices;
-
-public:
-    const Index_* index_start() const {
-        if constexpr(selection_ == DimensionSelectionType::INDEX) {
-            return internal->index_start();
-        } else {
-            return NULL;
-        }
-    }
-
-    void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-        internal->set_oracle(std::make_unique<SubsetOracle<Index_, IndexStorage_> >(std::move(o), indices));
-    }
+    const IndexStorage_& indices;
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > internal;
 };
 
-template<DimensionSelectionType selection_, typename Value_, typename Index_, class IndexStorage_>
-struct DensePerpendicularExtractor : public PerpendicularExtractor<selection_, false, Value_, Index_, IndexStorage_> {
-    DensePerpendicularExtractor(std::unique_ptr<Extractor<selection_, false, Value_, Index_> > i, const IndexStorage_& p) : 
-        PerpendicularExtractor<selection_, false, Value_, Index_, IndexStorage_>(std::move(i), p) {}
-
-    const Value_* fetch(Index_ i, Value_* buffer) {
-        return this->internal->fetch((*(this->indices))[i], buffer);
-    }
-};
-
-template<DimensionSelectionType selection_, typename Value_, typename Index_, class IndexStorage_>
-struct SparsePerpendicularExtractor : public PerpendicularExtractor<selection_, true, Value_, Index_, IndexStorage_> {
-    SparsePerpendicularExtractor(std::unique_ptr<Extractor<selection_, true, Value_, Index_> > i, const IndexStorage_& p) : 
-        PerpendicularExtractor<selection_, true, Value_, Index_, IndexStorage_>(std::move(i), p) {}
+template<typename Value_, typename Index_, class IndexStorage_>
+struct MyopicPerpendicularSparse : public MyopicSparseExtractor<Value_, Index_> {
+    template<bool row_, template ... Args_>
+    MyopicPerpendicularSparseExtractor(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, Args_&& ... args) : 
+        indices(in), internal(new_extractor<row_, true>(mat, std::forward<Args_>(args)...)) {}
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        return this->internal->fetch((*(this->indices))[i], vbuffer, ibuffer);
+        return internal->fetch(indices[i], vbuffer, ibuffer);
     }
+
+protected:
+    const IndexStorage_& indices;
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > internal;
 };
 
-template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename Value_, typename Index_, class IndexStorage_, typename ... Args_>
-std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_perpendicular(
-    const Matrix<Value_, Index_>* mat, 
-    const IndexStorage_& indices, 
-    const Options& options, 
-    Args_&& ... args)
-{
-    // TODO: handle variable access patterns here.
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
+template<typename Value_, typename Index_, class IndexStorage_>
+struct OracularPerpendicularDense : public OracularDenseExtractor<Value_, Index_> {
+    template<bool row_, template ... Args_>
+    OracularPerpendicularDenseExtractor(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > ora, Args_&& ... args) :
+        internal(new_extractor<row_, false>(mat, std::make_shared<SubsetOracle<Index_, IndexStorage_> >(std::move(ora), in), std::forward<Args_>(args)...)) {}
 
-    if constexpr(sparse_) {
-        output.reset(new SparsePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, std::forward<Args_>(args)..., options), indices));
-    } else {
-        output.reset(new DensePerpendicularExtractor<selection_, Value_, Index_, IndexStorage_>(new_extractor<accrow_, sparse_>(mat, std::forward<Args_>(args)..., options), indices));
+    const Value_* fetch(Value_* buffer) {
+        return internal->fetch(vbuffer);
     }
-    return output;
-}
+
+protected:
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > internal;
+};
+
+template<typename Value_, typename Index_, class IndexStorage_>
+struct OracularPerpendicularSparse : public OracularSparseExtractor<Value_, Index_> {
+    template<bool row_, template ... Args_>
+    OracularPerpendicularSparseExtractor(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > ora, Args_&& ... args) :
+        internal(new_extractor<row_, true>(mat, std::make_shared<SubsetOracle<Index_, IndexStorage_> >(std::move(ora), in), std::forward<Args_>(args)...)) {}
+
+    SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
+        return internal->fetch(vbuffer, ibuffer);
+    }
+
+protected:
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > internal;
+};
 
 }
 
