@@ -3,7 +3,7 @@
 
 #include <memory>
 #include "../base/Matrix.hpp"
-#include "../base/new_extractor.hpp"
+#include "new_extractor.hpp"
 #include "ConsecutiveOracle.hpp"
 
 /**

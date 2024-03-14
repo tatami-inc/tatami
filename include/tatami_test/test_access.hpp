@@ -2,7 +2,7 @@
 #define TATAMI_TEST_ACCESS_BASE_HPP
 
 #include "fetch.hpp"
-#include "../tatami/base/new_extractor.hpp"
+#include "../tatami/utils/new_extractor.hpp"
 #include "../tatami/utils/ConsecutiveOracle.hpp"
 #include "../tatami/utils/FixedOracle.hpp"
 

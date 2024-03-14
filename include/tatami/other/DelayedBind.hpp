@@ -2,7 +2,7 @@
 #define TATAMI_DELAYED_BIND_HPP
 
 #include "../base/Matrix.hpp"
-#include "../base/new_extractor.hpp"
+#include "../utils/new_extractor.hpp"
 #include "../utils/ConsecutiveOracle.hpp"
 #include "../utils/FixedOracle.hpp"
 #include "../utils/PseudoOracularExtractor.hpp"

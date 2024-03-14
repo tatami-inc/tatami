@@ -2,7 +2,7 @@
 #define TATAMI_DELAYED_SUBSET_BLOCK
 
 #include "../base/Matrix.hpp"
-#include "../base/new_extractor.hpp"
+#include "../utils/new_extractor.hpp"
 
 #include <vector>
 #include <algorithm>

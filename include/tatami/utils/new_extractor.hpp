@@ -1,7 +1,7 @@
 #ifndef TATAMI_NEW_EXTRACTOR_HPP
 #define TATAMI_NEW_EXTRACTOR_HPP
 
-#include "Matrix.hpp"
+#include "../base/Matrix.hpp"
 
 /**
  * @file new_extractor.hpp
