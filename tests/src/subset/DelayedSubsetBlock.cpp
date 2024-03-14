@@ -5,7 +5,7 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/subset/DelayedSubsetBlock.hpp"
-//#include "tatami/subset/make_DelayedSubset.hpp"
+#include "tatami/subset/make_DelayedSubset.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
@@ -208,27 +208,27 @@ TEST(DelayedSubsetBlock, ConstOverload) {
     EXPECT_EQ(sub->nrow(), NR);
 }
 
-//TEST(DelayedSubsetBlock, CorrectMaker) {
-//    int NR = 90, NC = 50;
-//    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_dense_vector<double>(NR * NC)));
-//
-//    // Checking that the make function dispatches correctly to the block subset class.
-//    {
-//        std::vector<int> indices { 5, 6, 7, 8, 9, 10 };
-//        auto sub = tatami::make_DelayedSubset<1>(dense, indices);
-//        EXPECT_EQ(sub->ncol(), 6);
-//        EXPECT_EQ(sub->nrow(), NR);
-//
-//        auto ref = tatami::make_DelayedSubsetBlock<1>(dense, static_cast<int>(5), static_cast<int>(6));
-//        tatami_test::test_simple_row_access(sub.get(), ref.get(), true, 1);
-//        tatami_test::test_simple_column_access(sub.get(), ref.get(), true, 1);
-//    }
-//
-//    // Checking that it behaves correctly with an empty index vector.
-//    {
-//        std::vector<int> indices;
-//        auto sub = tatami::make_DelayedSubset<0>(dense, indices);
-//        EXPECT_EQ(sub->ncol(), NC);
-//        EXPECT_EQ(sub->nrow(), 0);
-//    }
-//}
+TEST(DelayedSubsetBlock, CorrectMaker) {
+    int NR = 90, NC = 50;
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_dense_vector<double>(NR * NC)));
+
+    // Checking that the make function dispatches correctly to the block subset class.
+    {
+        std::vector<int> indices { 5, 6, 7, 8, 9, 10 };
+        auto sub = tatami::make_DelayedSubset<1>(dense, indices);
+        EXPECT_EQ(sub->ncol(), 6);
+        EXPECT_EQ(sub->nrow(), NR);
+
+        auto ref = tatami::make_DelayedSubsetBlock<1>(dense, static_cast<int>(5), static_cast<int>(6));
+        tatami_test::test_simple_row_access(sub.get(), ref.get());
+        tatami_test::test_simple_column_access(sub.get(), ref.get());
+    }
+
+    // Checking that it behaves correctly with an empty index vector.
+    {
+        std::vector<int> indices;
+        auto sub = tatami::make_DelayedSubset<0>(dense, indices);
+        EXPECT_EQ(sub->ncol(), NC);
+        EXPECT_EQ(sub->nrow(), 0);
+    }
+}
