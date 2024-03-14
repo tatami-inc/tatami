@@ -42,7 +42,7 @@ struct MyopicDenseExtractor {
     /**
      * @cond
      */
-    ~MyopicDenseExtractor() = default;
+    virtual ~MyopicDenseExtractor() = default;
     /**
      * @endcond
      */
@@ -71,7 +71,7 @@ struct OracularDenseExtractor {
     /**
      * @cond
      */
-    ~OracularDenseExtractor() = default;
+    virtual ~OracularDenseExtractor() = default;
     /**
      * @endcond
      */
@@ -110,7 +110,7 @@ struct MyopicSparseExtractor {
     /**
      * @cond
      */
-    ~MyopicSparseExtractor() = default;
+    virtual ~MyopicSparseExtractor() = default;
     /**
      * @endcond
      */
@@ -147,7 +147,7 @@ struct OracularSparseExtractor {
     /**
      * @cond
      */
-    ~OracularSparseExtractor() = default;
+    virtual ~OracularSparseExtractor() = default;
     /**
      * @endcond
      */
