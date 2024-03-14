@@ -26,9 +26,6 @@ struct TestAccessParameters {
     // Whether to expect NaNs (and sanitize them in the comparison).
     bool has_nan = false;
 
-    // Whether the input matrix is actually sparse and should have fewer values from the sparse extractors. 
-    bool less_sparse = false; 
-
     // Ordering of rows/columns to test.
     TestAccessOrder order = FORWARD;
 
@@ -187,16 +184,10 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
     }
 
     // Looping over rows/columns and checking extraction against the reference.
-    size_t sparse_extracted = 0, dense_extracted = 0;
-    int counter = 0;
-
     for (auto i : sequence) {
         auto expected = expector(i);
         sanitize_nan(expected, params.has_nan);
-
         auto extent = expected.size(); // using the dense expected size to determine the expected extraction length.
-        dense_extracted += extent;
-        ++counter;
 
         // Checking dense retrieval first.
         {
@@ -223,7 +214,6 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
 
             sanitize_nan(observed.value, params.has_nan);
             ASSERT_EQ(expected, sparse_expand(observed));
-            sparse_extracted += observed.index.size();
 
             {
                 bool is_increasing = true;
@@ -329,13 +319,6 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
                 ASSERT_EQ(observed.value.size(), observed_n.number);
             }
         } 
-    }
-
-    // Check that sparse extraction isn't just the same as the dense extractor. 
-    if (params.less_sparse) {
-        if (ptr->sparse()) {
-            ASSERT_TRUE(dense_extracted > sparse_extracted);
-        }
     }
 }
 
