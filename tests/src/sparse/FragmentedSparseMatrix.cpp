@@ -161,6 +161,7 @@ TEST_P(FragmentedSparseFullAccessTest, Full) {
     param.use_oracle = std::get<1>(tparam);
     param.order = std::get<2>(tparam);
     param.jump = std::get<3>(tparam);
+    param.less_sparse = true;
 
     tatami_test::test_full_access(param, sparse_column.get(), dense.get());
     tatami_test::test_full_access(param, sparse_row.get(), dense.get());
@@ -196,6 +197,7 @@ TEST_P(FragmentedSparseSlicedAccessTest, Sliced) {
     param.use_oracle = std::get<1>(tparam);
     param.order = std::get<2>(tparam);
     param.jump = std::get<3>(tparam);
+    param.less_sparse = true;
 
     auto interval_info = std::get<4>(tparam);
     auto len = (param.use_row ? ncol : nrow);
@@ -240,6 +242,7 @@ TEST_P(FragmentedSparseIndexedAccessTest, Indexed) {
     param.use_oracle = std::get<1>(tparam);
     param.order = std::get<2>(tparam);
     param.jump = std::get<3>(tparam);
+    param.less_sparse = true;
 
     auto interval_info = std::get<4>(tparam);
     auto len = (param.use_row ? ncol : nrow);
