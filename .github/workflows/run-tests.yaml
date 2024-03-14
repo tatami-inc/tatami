@@ -48,8 +48,10 @@ jobs:
         # new process for each individual test, which is crazy.
         for x in $(find . -type f -executable)
         do
-            echo $x
+            echo "#### RUNNING ${x} ####"
+            echo 
             ./${x} --gtest_brief=1
+            echo
         done 
 
     - name: Generate code coverage

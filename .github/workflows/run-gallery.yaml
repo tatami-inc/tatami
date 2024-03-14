@@ -38,7 +38,7 @@ jobs:
     - name: Run the no-argument tests
       run: | 
         cd build/gallery
-        for x in char2double colsums parallel sparse_extractor
+        for x in $(find . -type f -executable)
         do
             echo "#### RUNNING ${x} ####"
             echo
