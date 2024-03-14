@@ -359,6 +359,11 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
         }
     }
 
+    std::vector<size_t> reposition(nsecondary, -1);
+    for (size_t i = 0, end = indices.size(); i < end; ++i) {
+        reposition[indices[i]] = i;
+    }
+
     typedef typename Matrix_::value_type Value_;
     test_access_base<use_row_, use_oracle_>(
         params,
@@ -374,26 +379,11 @@ void test_indexed_access(const TestAccessParameters& params, const Matrix_* ptr,
             return expected;
         }, 
         [&](const auto& svec) -> auto {
-            std::vector<Value_> output(indices.size());
-            auto oIt = output.begin();
-            size_t j = 0;
-            for (auto x : indices) {
-                while (1) {
-                    if (j == svec.index.size()) {
-                        return output;
-                    }
-                    if (svec.index[j] == x) {
-                        *oIt = svec.value[j];
-                        ++j;
-                        break;
-                    } else if (svec.index[j] > x) {
-                        break;
-                    }
-                    ++j;
-                }
-                ++oIt;
+            std::vector<typename Matrix_::value_type> expected(indices.size());
+            for (size_t i = 0, end = svec.value.size(); i < end; ++i) {
+                expected[reposition[svec.index[i]]] = svec.value[i];
             }
-            return output;
+            return expected;
         },
         indices
     );

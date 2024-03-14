@@ -196,7 +196,8 @@ SparseParallelResults<Index_> format_sparse_parallel_base(const IndexStorage_& i
     std::vector<std::pair<Index_, Index_> > collected;
     collected.reserve(len);
     for (Index_ i = 0; i < len; ++i) {
-        collected.emplace_back(indices[to_index(i)], i);
+        auto curdex = to_index(i);
+        collected.emplace_back(indices[curdex], curdex);
     }
     std::sort(collected.begin(), collected.end());
 
@@ -300,7 +301,7 @@ void reorder_sparse_parallel(
             count += num;
 
             if (replace_value) {
-                auto val = *vsrc; // copy it out just in case 'vcopy' and 'input.value' overlap.
+                auto val = *vsrc; // make a copy just in case 'vcopy' and 'input.value' overlap.
                 std::fill_n(vcopy, num, val);
                 vcopy += num;
                 ++vsrc;
