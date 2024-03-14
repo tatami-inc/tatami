@@ -3,8 +3,8 @@
 #include <vector>
 
 #ifdef CUSTOM_PARALLEL_TEST
-// Put this before any tatami apply imports.
-#include "custom_parallel.h"
+// Put this before any tatami imports.
+#include "../custom_parallel.h"
 #endif
 
 #include "tatami/utils/parallelize.hpp"
