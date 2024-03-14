@@ -61,9 +61,11 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
         if (!has_duplicates) {
             bool consecutive = true;
             for (Index_ i = 0, end = idx.size(); i < end; ++i) {
-                if (idx[i] > idx[i-1] + 1) {
-                    consecutive = false;
-                    break;
+                if (i) {
+                    if (idx[i] > idx[i-1] + 1) {
+                        consecutive = false;
+                        break;
+                    }
                 }
             }
 

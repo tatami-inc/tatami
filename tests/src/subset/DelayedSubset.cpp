@@ -130,10 +130,10 @@ TEST_P(SubsetFullAccessTest, Full) {
     params.use_oracle = std::get<5>(tparam);
     params.order = std::get<6>(tparam);
     params.jump = std::get<7>(tparam);
-    params.unsorted_partial = true;
 
     tatami_test::test_full_access(params, dense_subbed.get(), ref.get());
     tatami_test::test_full_access(params, sparse_subbed.get(), ref.get());
+    tatami_test::test_unsorted_full_access(params, sparse_subbed.get());
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -168,7 +168,6 @@ TEST_P(SubsetSlicedAccessTest, Sliced) {
     params.use_oracle = std::get<5>(tparam);
     params.order = std::get<6>(tparam);
     params.jump = std::get<7>(tparam);
-    params.unsorted_partial = true;
 
     auto interval_info = std::get<8>(tparam);
     auto len = (params.use_row ? ref->ncol() : ref->nrow());
@@ -176,6 +175,7 @@ TEST_P(SubsetSlicedAccessTest, Sliced) {
 
     tatami_test::test_block_access(params, dense_subbed.get(), ref.get(), FIRST, LAST);
     tatami_test::test_block_access(params, sparse_subbed.get(), ref.get(), FIRST, LAST);
+    tatami_test::test_unsorted_block_access(params, sparse_subbed.get(), FIRST, LAST);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -215,7 +215,6 @@ TEST_P(SubsetIndexedAccessTest, Indexed) {
     params.use_oracle = std::get<5>(tparam);
     params.order = std::get<6>(tparam);
     params.jump = std::get<7>(tparam);
-    params.unsorted_partial = true;
 
     auto interval_info = std::get<8>(tparam);
     auto len = (params.use_row ? ref->ncol() : ref->nrow());
@@ -223,6 +222,7 @@ TEST_P(SubsetIndexedAccessTest, Indexed) {
 
     tatami_test::test_indexed_access(params, dense_subbed.get(), ref.get(), FIRST, STEP);
     tatami_test::test_indexed_access(params, sparse_subbed.get(), ref.get(), FIRST, STEP);
+    tatami_test::test_unsorted_indexed_access(params, sparse_subbed.get(), FIRST, STEP);
 }
 
 INSTANTIATE_TEST_SUITE_P(

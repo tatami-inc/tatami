@@ -3,6 +3,7 @@
 
 #include "simulate_vector.hpp"
 #include "test_access.hpp"
+#include "test_unsorted.hpp"
 #include "fetch.hpp"
 #include "throw_error.hpp"
 #include "ForcedOracleMatrix.hpp"
