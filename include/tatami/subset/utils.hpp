@@ -24,7 +24,7 @@ const Value_* remap_dense(const Value_* input, Value_* buffer, const std::vector
 
 template<typename Index_, class IndexStorage_>
 struct SubsetOracle : public Oracle<Index_> {
-    SubsetOracle(std::shared_ptr<Oracle<Index_> > ora, const IndexStorage_& ix) : source(std::move(rao)), indices(ix) {}
+    SubsetOracle(std::shared_ptr<Oracle<Index_> > ora, const IndexStorage_& ix) : source(std::move(ora)), indices(ix) {}
 
     Index_ get(size_t i) const {
         return indices[source->get(i)];
@@ -41,8 +41,8 @@ private:
 
 template<typename Value_, typename Index_, class IndexStorage_>
 struct MyopicPerpendicularDense : public MyopicDenseExtractor<Value_, Index_> {
-    template<bool row_, template ... Args_>
-    MyopicPerpendicularDenseExtractor(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, Args_&& ... args) : 
+    template<bool row_, typename ... Args_>
+    MyopicPerpendicularDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, Args_&& ... args) : 
         indices(in), internal(new_extractor<row_, false>(mat, std::forward<Args_>(args)...)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
@@ -56,8 +56,8 @@ protected:
 
 template<typename Value_, typename Index_, class IndexStorage_>
 struct MyopicPerpendicularSparse : public MyopicSparseExtractor<Value_, Index_> {
-    template<bool row_, template ... Args_>
-    MyopicPerpendicularSparseExtractor(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, Args_&& ... args) : 
+    template<bool row_, typename ... Args_>
+    MyopicPerpendicularSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, Args_&& ... args) : 
         indices(in), internal(new_extractor<row_, true>(mat, std::forward<Args_>(args)...)) {}
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
@@ -71,12 +71,12 @@ protected:
 
 template<typename Value_, typename Index_, class IndexStorage_>
 struct OracularPerpendicularDense : public OracularDenseExtractor<Value_, Index_> {
-    template<bool row_, template ... Args_>
-    OracularPerpendicularDenseExtractor(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > ora, Args_&& ... args) :
+    template<bool row_, typename ... Args_>
+    OracularPerpendicularDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > ora, Args_&& ... args) :
         internal(new_extractor<row_, false>(mat, std::make_shared<SubsetOracle<Index_, IndexStorage_> >(std::move(ora), in), std::forward<Args_>(args)...)) {}
 
     const Value_* fetch(Value_* buffer) {
-        return internal->fetch(vbuffer);
+        return internal->fetch(buffer);
     }
 
 protected:
@@ -85,8 +85,8 @@ protected:
 
 template<typename Value_, typename Index_, class IndexStorage_>
 struct OracularPerpendicularSparse : public OracularSparseExtractor<Value_, Index_> {
-    template<bool row_, template ... Args_>
-    OracularPerpendicularSparseExtractor(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > ora, Args_&& ... args) :
+    template<bool row_, typename ... Args_>
+    OracularPerpendicularSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& in, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > ora, Args_&& ... args) :
         internal(new_extractor<row_, true>(mat, std::make_shared<SubsetOracle<Index_, IndexStorage_> >(std::move(ora), in), std::forward<Args_>(args)...)) {}
 
     SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {

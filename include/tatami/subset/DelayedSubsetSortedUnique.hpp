@@ -80,7 +80,7 @@ struct MyopicParallelSparse : public MyopicSparseExtractor<Value_, Index_> {
 
     template<bool row_, class IndexStorage_>
     MyopicParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, const std::vector<Index_>& remap, std::integral_constant<bool, row_>, Index_ block_start, Index_ block_length, const Options& opt) : 
-        internal(new_extractor<row_, true>(mat, slice(indices, block_start, block_length), opt), remapping(remap) {}
+        internal(new_extractor<row_, true>(mat, slice(indices, block_start, block_length), opt)), remapping(remap) {}
 
     template<bool row_, class IndexStorage_>
     MyopicParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, const std::vector<Index_>& remap, std::integral_constant<bool, row_>, std::vector<Index_> idx, const Options& opt) : remapping(remap) {
@@ -126,17 +126,44 @@ protected:
 template<typename Value_, typename Index_>
 struct OracularParallelSparse : public OracularSparseExtractor<Value_, Index_> {
     template<bool row_, class IndexStorage_>
-    OracularParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, const std::vector<Index_>& remap, std::integral_constant<bool, row_>, const Options& opt) : 
-        internal(new_extractor<row_, true>(mat, create<Index_>(indices), opt)), remapping(remap) {}
+    OracularParallelSparse(
+        const Matrix<Value_, Index_>* mat, 
+        const IndexStorage_& indices, 
+        const std::vector<Index_>& remap, 
+        std::integral_constant<bool, row_>, 
+        std::shared_ptr<Oracle<Index_> > oracle, 
+        const Options& opt) : 
+        internal(new_extractor<row_, true>(mat, std::move(oracle), create<Index_>(indices), opt)), 
+        remapping(remap) 
+    {}
 
     template<bool row_, class IndexStorage_>
-    OracularParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, const std::vector<Index_>& remap, std::integral_constant<bool, row_>, Index_ block_start, Index_ block_length, const Options& opt) :
-        internal(new_extractor<row_, true>(mat, slice(indices, block_start, block_length), opt)), remapping(remap) {}
+    OracularParallelSparse(
+        const Matrix<Value_, Index_>* mat, 
+        const IndexStorage_& indices, 
+        const std::vector<Index_>& remap, 
+        std::integral_constant<bool, row_>, 
+        std::shared_ptr<Oracle<Index_> > oracle, 
+        Index_ block_start, 
+        Index_ block_length, 
+        const Options& opt) :
+        internal(new_extractor<row_, true>(mat, std::move(oracle), slice(indices, block_start, block_length), opt)), 
+        remapping(remap) 
+    {}
 
     template<bool row_, class IndexStorage_>
-    OracularParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, const std::vector<Index_>& remap, std::integral_constant<bool, row_>, std::vector<Index_> idx, const Options& opt) : remapping(remap) {
+    OracularParallelSparse(
+        const Matrix<Value_, Index_>* mat, 
+        const IndexStorage_& indices, 
+        const std::vector<Index_>& remap, 
+        std::integral_constant<bool, row_>, 
+        std::shared_ptr<Oracle<Index_> > oracle, 
+        std::vector<Index_> idx, 
+        const Options& opt) : 
+        remapping(remap) 
+    {
         reindex(indices, idx);
-        internal = new_extractor<row_, true>(mat, std::move(idx), opt);
+        internal = new_extractor<row_, true>(mat, std::move(oracle), std::move(idx), opt);
     }
 
     SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
@@ -249,13 +276,14 @@ public:
      *** Myopic dense ***
      ********************/
 private:
-    template<bool accrow_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_myopic_dense(Args_&& ... args) const {
+    template<bool accrow_, typename ... Args_>
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > populate_myopic_dense(Args_&& ... args) const {
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<subset_utils::MyopicPerpendicularDense<Value_, Index_, IndexStorage_> >(mat.get(), indices, flag, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubsetSortedUnique_internal::MyopicParallelSparse<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubsetSortedUnique_internal::MyopicParallelDense<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
+        }
     }
 
 public:
@@ -288,12 +316,12 @@ public:
      *********************/
 private:
     template<bool accrow_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_myopic_sparse(Args_&& ... args) const {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > populate_myopic_sparse(Args_&& ... args) const {
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            return std::make_unique<subset_utils::MyopicPerpendicularSparse<Value_, Index_, IndexStorage_> >(mat.get(), indices, remapping, flag, std::forward<Args_>(args)...); 
+            return std::make_unique<subset_utils::MyopicPerpendicularSparse<Value_, Index_, IndexStorage_> >(mat.get(), indices, flag, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubsetSortedUnique_internal::MyopicParallelSparse<Value_, Index_> >(mat.get(), indices, remapping, flag, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubsetSortedUnique_internal::MyopicParallelSparse<Value_, Index_> >(mat.get(), indices, mapping_single, flag, std::forward<Args_>(args)...);
         }
     }
 
@@ -326,13 +354,14 @@ public:
      *** Oracular dense ***
      **********************/
 private:
-    template<bool accrow_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_oracular_dense(Args_&& ... args) const {
+    template<bool accrow_, typename ... Args_>
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > populate_oracular_dense(Args_&& ... args) const {
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<subset_utils::OracularPerpendicularDense<Value_, Index_, IndexStorage_> >(mat.get(), indices, flag, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubsetSortedUnique_internal::OracularParallelSparse<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubsetSortedUnique_internal::OracularParallelDense<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
+        }
     }
 
 public:
@@ -365,12 +394,12 @@ public:
      ***********************/
 private:
     template<bool accrow_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_oracular_sparse(Args_&& ... args) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > populate_oracular_sparse(Args_&& ... args) const {
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            return std::make_unique<subset_utils::OracularPerpendicularSparse<Value_, Index_, IndexStorage_> >(mat.get(), indices, remapping, flag, std::forward<Args_>(args)...); 
+            return std::make_unique<subset_utils::OracularPerpendicularSparse<Value_, Index_, IndexStorage_> >(mat.get(), indices, flag, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubsetSortedUnique_internal::OracularParallelSparse<Value_, Index_> >(mat.get(), indices, remapping, flag, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubsetSortedUnique_internal::OracularParallelSparse<Value_, Index_> >(mat.get(), indices, mapping_single, flag, std::forward<Args_>(args)...);
         }
     }
 

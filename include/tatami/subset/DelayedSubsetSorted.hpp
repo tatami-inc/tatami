@@ -102,24 +102,24 @@ struct MyopicParallelDense : MyopicDenseExtractor<Value_, Index_> {
     template<bool row_, class IndexStorage_>
     MyopicParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, const Options& opt) {
         auto processed = format_dense_parallel<Index_>(indices);
-        initialize<row_>(processed, indices.size(), opt);
+        initialize<row_>(mat, std::move(processed), indices.size(), opt);
     }
 
     template<bool row_, class IndexStorage_>
     MyopicParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, Index_ block_start, Index_ block_length, const Options& opt) {
         auto processed = format_dense_parallel<Index_>(indices, block_start, block_length);
-        initialize<row_>(processed, block_length, opt);
+        initialize<row_>(mat, std::move(processed), block_length, opt);
     }
 
     template<bool row_, class IndexStorage_>
     MyopicParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, std::vector<Index_> subset, const Options& opt) {
         auto processed = format_dense_parallel<Index_>(indices, subset);
-        initialize<row_>(processed, subset.size(), opt);
+        initialize<row_>(mat, std::move(processed), subset.size(), opt);
     }
 
 private:
     template<bool row_>
-    void initialize(DenseParallelResults<Index_>& processed, size_t extent, const Options& opt) {
+    void initialize(const Matrix<Value_, Index_>* mat, DenseParallelResults<Index_> processed, size_t extent, const Options& opt) {
         shift = extent - processed.collapsed.size();
         internal = new_extractor<row_, false>(mat, std::move(processed.collapsed), opt);
         expansion = std::move(processed.expansion);
@@ -151,24 +151,24 @@ struct OracularParallelDense : OracularDenseExtractor<Value_, Index_> {
     template<bool row_, class IndexStorage_>
     OracularParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) {
         auto processed = format_dense_parallel<Index_>(indices);
-        initialize<row_>(processed, indices.size(), std::move(oracle), opt);
+        initialize<row_>(mat, std::move(processed), indices.size(), std::move(oracle), opt);
     }
 
     template<bool row_, class IndexStorage_>
     OracularParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) {
         auto processed = format_dense_parallel<Index_>(indices, block_start, block_length);
-        initialize<row_>(processed, block_length, std::move(oracle), opt);
+        initialize<row_>(mat, std::move(processed), block_length, std::move(oracle), opt);
     }
 
     template<bool row_, class IndexStorage_>
     OracularParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> subset, const Options& opt) {
         auto processed = format_dense_parallel<Index_>(indices, subset);
-        initialize<row_>(processed, subset.size(), std::move(oracle), opt);
+        initialize<row_>(mat, std::move(processed), subset.size(), std::move(oracle), opt);
     }
 
 private:
     template<bool row_>
-    void initialize(DenseParallelResults<Index_>& processed, size_t extent, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) { 
+    void initialize(const Matrix<Value_, Index_>* mat, DenseParallelResults<Index_> processed, size_t extent, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) { 
         shift = extent - processed.collapsed.size();
         internal = new_extractor<row_, false>(mat, std::move(oracle), std::move(processed.collapsed), opt);
         expansion = std::move(processed.expansion);
@@ -294,7 +294,7 @@ SparseRange<Value_, Index_> expand_sparse_parallel(
     // clobbering any values in the latter. This assumes that 'input' has been
     // shifted enough to make space for expansion; the required shift depends
     // on the number of duplicates.
-    for (Index i = 0; i < input.number; ++i) {
+    for (Index_ i = 0; i < input.number; ++i) {
         auto eindex = input.index[i] - expansion.offset;
         auto nexpand = expansion.length[eindex];
         count += nexpand;
@@ -326,24 +326,24 @@ struct MyopicParallelSparse : MyopicSparseExtractor<Value_, Index_> {
     template<bool row_, class IndexStorage_>
     MyopicParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, const Options& opt) {
         auto processed = format_sparse_parallel<Index_>(indices);
-        initialize<row_>(processed, indices.size(), opt);
+        initialize<row_>(mat, std::move(processed), indices.size(), opt);
     }
 
     template<bool row_, class IndexStorage_>
     MyopicParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, Index_ block_start, Index_ block_length, const Options& opt) {
         auto processed = format_sparse_parallel<Index_>(indices, block_start, block_length);
-        initialize<row_>(processed, block_length, opt);
+        initialize<row_>(mat, std::move(processed), block_length, opt);
     }
 
     template<bool row_, class IndexStorage_>
     MyopicParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, std::vector<Index_> subset, const Options& opt) {
         auto processed = format_sparse_parallel<Index_>(indices, subset);
-        initialize<row_>(processed, subset.size(), opt);
+        initialize<row_>(mat, std::move(processed), subset.size(), opt);
     }
 
 private:
     template<bool row_>
-    void initialize(SparseParallelResults<Index_>& processed, size_t extent, Options opt) {
+    void initialize(const Matrix<Value_, Index_>* mat, SparseParallelResults<Index_> processed, size_t extent, Options opt) {
         shift = extent - processed.collapsed.size();
 
         needs_value = opt.sparse_extract_value;
@@ -353,7 +353,7 @@ private:
             iholding.reserve(processed.collapsed.size()); // need a holding space for indices if 'ibuffer' is not supplied.
         }
 
-        internal = new_extractor<row_, false>(mat, std::move(processed.collapsed), opt);
+        internal = new_extractor<row_, true>(mat, std::move(processed.collapsed), opt);
         expansion = std::move(processed.expansion);
     }
 
@@ -388,24 +388,24 @@ struct OracularParallelSparse : OracularSparseExtractor<Value_, Index_> {
     template<bool row_, class IndexStorage_>
     OracularParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) {
         auto processed = format_sparse_parallel<Index_>(indices);
-        initialize<row_>(processed, indices.size(), std::move(oracle), opt);
+        initialize<row_>(mat, std::move(processed), indices.size(), std::move(oracle), opt);
     }
 
     template<bool row_, class IndexStorage_>
     OracularParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) {
         auto processed = format_sparse_parallel<Index_>(indices, block_start, block_length);
-        initialize<row_>(processed, block_length, std::move(oracle), opt);
+        initialize<row_>(mat, std::move(processed), block_length, std::move(oracle), opt);
     }
 
     template<bool row_, class IndexStorage_>
     OracularParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, std::integral_constant<bool, row_>, std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> subset, const Options& opt) {
         auto processed = format_sparse_parallel<Index_>(indices, subset);
-        initialize<row_>(processed, subset.size(), std::move(oracle), opt);
+        initialize<row_>(mat, std::move(processed), subset.size(), std::move(oracle), opt);
     }
 
 private:
     template<bool row_>
-    void initialize(SparseParallelResults<Index_>& processed, size_t extent, std::shared_ptr<Oracle<Index_> > oracle, Options opt) {
+    void initialize(const Matrix<Value_, Index_>* mat, SparseParallelResults<Index_> processed, size_t extent, std::shared_ptr<Oracle<Index_> > oracle, Options opt) {
         shift = extent - processed.collapsed.size();
 
         needs_value = opt.sparse_extract_value;
@@ -415,7 +415,7 @@ private:
             iholding.reserve(processed.collapsed.size()); // need a holding space for indices if 'ibuffer' is not supplied.
         }
 
-        internal = new_extractor<row_, false>(mat, std::move(oracle), std::move(processed.collapsed), opt);
+        internal = new_extractor<row_, true>(mat, std::move(oracle), std::move(processed.collapsed), opt);
         expansion = std::move(processed.expansion);
     }
 
@@ -539,13 +539,14 @@ public:
      *** Myopic dense ***
      ********************/
 private:
-    template<bool accrow_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_myopic_dense(Args_&& ... args) const {
+    template<bool accrow_, typename ... Args_>
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > populate_myopic_dense(Args_&& ... args) const {
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<subset_utils::MyopicPerpendicularDense<Value_, Index_, IndexStorage_> >(mat.get(), indices, flag, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubsetSorted_internal::MyopicParallelSparse<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubsetSorted_internal::MyopicParallelDense<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
+        }
     }
 
 public:
@@ -578,12 +579,12 @@ public:
      *********************/
 private:
     template<bool accrow_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_myopic_sparse(Args_&& ... args) const {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > populate_myopic_sparse(Args_&& ... args) const {
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            return std::make_unique<subset_utils::MyopicPerpendicularSparse<Value_, Index_, IndexStorage_> >(mat.get(), indices, remapping, flag, std::forward<Args_>(args)...); 
+            return std::make_unique<subset_utils::MyopicPerpendicularSparse<Value_, Index_, IndexStorage_> >(mat.get(), indices, flag, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubsetSorted_internal::MyopicParallelSparse<Value_, Index_> >(mat.get(), indices, remapping, flag, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubsetSorted_internal::MyopicParallelSparse<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
         }
     }
 
@@ -616,13 +617,14 @@ public:
      *** Oracular dense ***
      **********************/
 private:
-    template<bool accrow_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_oracular_dense(Args_&& ... args) const {
+    template<bool accrow_, typename ... Args_>
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > populate_oracular_dense(Args_&& ... args) const {
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
             return std::make_unique<subset_utils::OracularPerpendicularDense<Value_, Index_, IndexStorage_> >(mat.get(), indices, flag, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubsetSorted_internal::OracularParallelSparse<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubsetSorted_internal::OracularParallelDense<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
+        }
     }
 
 public:
@@ -655,12 +657,12 @@ public:
      ***********************/
 private:
     template<bool accrow_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate_oracular_sparse(Args_&& ... args) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > populate_oracular_sparse(Args_&& ... args) const {
         std::integral_constant<bool, accrow_> flag;
         if constexpr(accrow_ == (margin_ == 0)) {
-            return std::make_unique<subset_utils::OracularPerpendicularSparse<Value_, Index_, IndexStorage_> >(mat.get(), indices, remapping, flag, std::forward<Args_>(args)...); 
+            return std::make_unique<subset_utils::OracularPerpendicularSparse<Value_, Index_, IndexStorage_> >(mat.get(), indices, flag, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubsetSorted_internal::OracularParallelSparse<Value_, Index_> >(mat.get(), indices, remapping, flag, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubsetSorted_internal::OracularParallelSparse<Value_, Index_> >(mat.get(), indices, flag, std::forward<Args_>(args)...);
         }
     }
 
