@@ -9,8 +9,8 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/subset/make_DelayedSubset.hpp"
-#include "tatami/utils/convert_to_dense.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/dense/convert_to_dense.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 #include "tatami/stats/grouped_sums.hpp"
 
 #include "tatami_test/tatami_test.hpp"
@@ -19,8 +19,8 @@ TEST(GroupedSums, ByRow) {
     size_t NR = 99, NC = 155;
     auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     std::vector<int> cgroups(NC);
     int ngroup = 3; 
@@ -58,8 +58,8 @@ TEST(GroupedSums, ByColumn) {
     size_t NR = 56, NC = 179;
     auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     std::vector<int> rgroups(NR);
     int ngroup = 7; 
@@ -110,8 +110,8 @@ TEST(GroupedSums, DirtyOutputs) {
     size_t NR = 56, NC = 179;
     auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     int ngroup = 5; 
     std::vector<int> grouping;

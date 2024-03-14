@@ -20,15 +20,15 @@ protected:
         return id_ptr;
     }
 
-    size_t find_chosen(int chosen_id, const std::vector<int>& ids) {
-        size_t actual_chosen = -1;
+    int find_chosen(int chosen_id, const std::vector<int>& ids) {
+        int actual_chosen = -1;
         for (size_t j = 0; j < ids.size(); ++j) {
             if (chosen_id == ids[j]) {
                 actual_chosen = j;
                 break;
             }
         }
-        if (actual_chosen == static_cast<size_t>(-1)) {
+        if (actual_chosen == -1) {
             throw std::runtime_error("could not find the chosen ID");
         }
         return actual_chosen;
@@ -65,14 +65,14 @@ TEST_F(BindIntersectionTest, NoOp) {
     EXPECT_EQ(output.second, expected);
 
     // Checking that the matrix contains the expected values.
-    size_t chosen = 5;
+    int chosen = 5;
     auto wrk = output.first->dense_row();
-    auto vals = wrk->fetch(chosen);
+    auto vals = tatami_test::fetch(wrk.get(), chosen, output.first->ncol());
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto iwrk = collected[i]->dense_row();
-        auto expected = iwrk->fetch(chosen);
+        auto expected = tatami_test::fetch(iwrk.get(), chosen, collected[i]->ncol());
         auto sofar = offset;
         offset += collected[i]->ncol();
         std::vector<double> observed(vals.begin() + sofar, vals.begin() + offset);
@@ -110,16 +110,16 @@ TEST_F(BindIntersectionTest, Shuffled) {
     EXPECT_EQ(output.second, expected);
 
     // Checking that the matrix contains the expected values.
-    size_t chosen = 1;
+    int chosen = 1;
     auto wrk = output.first->dense_row();
-    auto vals = wrk->fetch(chosen);
+    auto vals = tatami_test::fetch(wrk.get(), chosen, output.first->ncol());
     size_t chosen_id = ids[0][output.second[chosen]];
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto actual_chosen = find_chosen(chosen_id, ids[i]);
         auto iwrk = collected[i]->dense_row();
-        auto expected = iwrk->fetch(actual_chosen);
+        auto expected = tatami_test::fetch(iwrk.get(), actual_chosen, collected[i]->ncol());
         auto sofar = offset;
         offset += collected[i]->ncol();
         std::vector<double> observed(vals.begin() + sofar, vals.begin() + offset);
@@ -161,16 +161,16 @@ TEST_F(BindIntersectionTest, Uncommon) {
     EXPECT_EQ(true_ids, expected);
 
     // Checking that the matrix contains the expected values.
-    size_t chosen = 0;
+    int chosen = 0;
     auto wrk = output.first->dense_row();
-    auto vals = wrk->fetch(chosen);
+    auto vals = tatami_test::fetch(wrk.get(), chosen, output.first->ncol());
     size_t chosen_id = ids[0][output.second[chosen]];
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto actual_chosen = find_chosen(chosen_id, ids[i]);
         auto iwrk = collected[i]->dense_row();
-        auto expected = iwrk->fetch(actual_chosen);
+        auto expected = tatami_test::fetch(iwrk.get(), actual_chosen, collected[i]->ncol());
         auto sofar = offset;
         offset += collected[i]->ncol();
         std::vector<double> observed(vals.begin() + sofar, vals.begin() + offset);
@@ -238,16 +238,16 @@ TEST_F(BindIntersectionTest, ByRows) {
     EXPECT_EQ(true_ids, expected);
 
     // Checking that the matrix contains the expected values.
-    size_t chosen = 4;
+    int chosen = 4;
     auto wrk = output.first->dense_column();
-    auto vals = wrk->fetch(chosen);
+    auto vals = tatami_test::fetch(wrk.get(), chosen, output.first->nrow());
     size_t chosen_id = ids[0][output.second[chosen]];
 
     size_t offset = 0;
     for (int i = 0; i < 3; ++i) {
         auto actual_chosen = find_chosen(chosen_id, ids[i]);
         auto iwrk = collected[i]->dense_column();
-        auto expected = iwrk->fetch(actual_chosen);
+        auto expected = tatami_test::fetch(iwrk.get(), actual_chosen, collected[i]->nrow());
         auto sofar = offset;
         offset += collected[i]->nrow();
         std::vector<double> observed(vals.begin() + sofar, vals.begin() + offset);

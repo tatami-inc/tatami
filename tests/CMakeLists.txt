@@ -52,14 +52,14 @@ add_executable(
     src/stats/medians.cpp
     src/stats/ranges.cpp
     src/stats/counts.cpp
-#    src/stats/grouped_medians.cpp
-#    src/stats/grouped_sums.cpp
+    src/stats/grouped_medians.cpp
+    src/stats/grouped_sums.cpp
 
     src/utils/parallelize.cpp
     src/utils/wrap_shared_ptr.cpp
     src/utils/SomeNumericArray.cpp
     src/utils/ArrayView.cpp
-#    src/utils/bind_intersection.cpp
+    src/utils/bind_intersection.cpp
     src/utils/ConsecutiveOracle.cpp
     src/utils/FixedOracle.cpp
     src/utils/process_consecutive_indices.cpp

@@ -196,7 +196,6 @@ protected:
  */
 template<int margin_, typename Value_, typename Index_, class IndexStorage_>
 class DelayedSubsetSortedUnique : public Matrix<Value_, Index_> {
-    static constexpr bool storage_has_data = has_data<Index_, IndexStorage_>::value;
 public:
     /**
      * @param p Pointer to the underlying (pre-subset) matrix.
