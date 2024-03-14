@@ -34,6 +34,9 @@ struct TestAccessParameters {
 
     // Minimum jump between rows/columns.
     int jump = 1;
+
+    // Whether to check for partial unsorted extraction (i.e., without values and/or indices).
+    bool unsorted_partial = false;
 };
 
 /********************************************************
@@ -110,44 +113,78 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
         }
     }();
 
-    tatami::Options opt;
-    opt.sparse_ordered_index = false;
-    auto swork_uns = [&]() {
-        if constexpr(use_oracle_) {
-            return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
-        } else {
-            return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
-        }
-    }();
-    opt.sparse_ordered_index = true;
+    decltype(swork) swork_v, swork_i, swork_n;
+    {
+        tatami::Options opt;
+        opt.sparse_extract_index = false;
+        swork_v = [&]() {
+            if constexpr(use_oracle_) {
+                return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
+            } else {
+                return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
+            }
+        }();
 
-    opt.sparse_extract_index = false;
-    auto swork_v = [&]() {
-        if constexpr(use_oracle_) {
-            return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
-        } else {
-            return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
-        }
-    }();
+        opt.sparse_extract_value = false;
+        swork_n = [&]() {
+            if constexpr(use_oracle_) {
+                return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
+            } else {
+                return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
+            }
+        }();
 
-    opt.sparse_extract_value = false;
-    auto swork_n = [&]() {
-        if constexpr(use_oracle_) {
-            return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
-        } else {
-            return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
-        }
-    }();
+        opt.sparse_extract_index = true;
+        swork_i = [&]() {
+            if constexpr(use_oracle_) {
+                return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
+            } else {
+                return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
+            }
+        }();
+    }
 
-    opt.sparse_extract_index = true;
-    auto swork_i = [&]() {
-        if constexpr(use_oracle_) {
-            return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
-        } else {
-            return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
+    decltype(swork) swork_uns, swork_uns_v, swork_uns_i, swork_uns_n;
+    {
+        tatami::Options opt;
+        opt.sparse_ordered_index = false;
+        swork_uns = [&]() {
+            if constexpr(use_oracle_) {
+                return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
+            } else {
+                return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
+            }
+        }();
+
+        if (params.unsorted_partial) {
+            opt.sparse_extract_index = false;
+            swork_uns_v = [&]() {
+                if constexpr(use_oracle_) {
+                    return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
+                } else {
+                    return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
+                }
+            }();
+
+            opt.sparse_extract_value = false;
+            swork_uns_n = [&]() {
+                if constexpr(use_oracle_) {
+                    return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
+                } else {
+                    return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
+                }
+            }();
+
+            opt.sparse_extract_index = true;
+            swork_uns_i = [&]() {
+                if constexpr(use_oracle_) {
+                    return tatami::new_extractor<use_row_, true>(ptr, oracle, args..., opt);
+                } else {
+                    return tatami::new_extractor<use_row_, true>(ptr, args..., opt);
+                }
+            }();
         }
-    }();
-    opt.sparse_extract_value = true;
+    }
 
     // Looping over rows/columns and checking extraction against the reference.
     size_t sparse_extracted = 0, dense_extracted = 0;
@@ -208,8 +245,9 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
                 }
             }();
             ASSERT_TRUE(observed_i.value == NULL);
-            std::vector<int> indices_only(observed_i.index, observed_i.index + observed_i.number);
-            ASSERT_EQ(observed.index, indices_only);
+            tatami::copy_n(observed_i.index, observed_i.number, indices.data());
+            indices.resize(observed_i.number);
+            ASSERT_EQ(observed.index, indices);
 
             std::vector<double> vbuffer(extent);
             auto observed_v = [&]() {
@@ -220,9 +258,10 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
                 }
             }();
             ASSERT_TRUE(observed_v.index == NULL);
-            std::vector<double> values_only(observed_v.value, observed_v.value + observed_v.number);
-            sanitize_nan(values_only, params.has_nan);
-            ASSERT_EQ(observed.value, values_only);
+            tatami::copy_n(observed_v.value, observed_v.number, vbuffer.data());
+            vbuffer.resize(observed_v.number);
+            sanitize_nan(vbuffer, params.has_nan);
+            ASSERT_EQ(observed.value, vbuffer);
 
             auto observed_n = [&]() {
                 if constexpr(use_oracle_) {
@@ -244,6 +283,51 @@ void test_access_base(const TestAccessParameters& params, const TestMatrix_* ptr
             }();
             sanitize_nan(observed_uns.value, params.has_nan);
             ASSERT_EQ(expected, sparse_expand(observed_uns));
+
+            // If necessary, testing all of the partial extractions with unsorted = true.
+            if (params.unsorted_partial) {
+                std::vector<int> indices(extent);
+                auto observed_i = [&]() {
+                    if constexpr(use_oracle_) {
+                        return swork_uns_i->fetch(NULL, indices.data());
+                    } else {
+                        return swork_uns_i->fetch(i, NULL, indices.data());
+                    }
+                }();
+                ASSERT_TRUE(observed_i.value == NULL);
+                tatami::copy_n(observed_i.index, observed_i.number, indices.data());
+                indices.resize(observed_i.number);
+                std::sort(indices.begin(), indices.end());
+                ASSERT_EQ(observed.index, indices);
+
+                std::vector<double> vbuffer(extent);
+                auto observed_v = [&]() {
+                    if constexpr(use_oracle_) {
+                        return swork_uns_v->fetch(vbuffer.data(), NULL);
+                    } else {
+                        return swork_uns_v->fetch(i, vbuffer.data(), NULL);
+                    }
+                }();
+                ASSERT_TRUE(observed_v.index == NULL);
+                tatami::copy_n(observed_v.value, observed_v.number, vbuffer.data());
+                vbuffer.resize(observed_v.number);
+                sanitize_nan(vbuffer, params.has_nan);
+                std::sort(vbuffer.begin(), vbuffer.end());
+                auto vexpected = observed.value;
+                std::sort(vexpected.begin(), vexpected.end());
+                ASSERT_EQ(vexpected, vbuffer);
+
+                auto observed_n = [&]() {
+                    if constexpr(use_oracle_) {
+                        return swork_uns_n->fetch(NULL, NULL);
+                    } else {
+                        return swork_uns_n->fetch(i, NULL, NULL);
+                    }
+                }();
+                ASSERT_TRUE(observed_n.value == NULL);
+                ASSERT_TRUE(observed_n.index == NULL);
+                ASSERT_EQ(observed.value.size(), observed_n.number);
+            }
         } 
     }
 

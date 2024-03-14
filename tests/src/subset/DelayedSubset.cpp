@@ -130,6 +130,7 @@ TEST_P(SubsetFullAccessTest, Full) {
     params.use_oracle = std::get<5>(tparam);
     params.order = std::get<6>(tparam);
     params.jump = std::get<7>(tparam);
+    params.unsorted_partial = true;
 
     tatami_test::test_full_access(params, dense_subbed.get(), ref.get());
     tatami_test::test_full_access(params, sparse_subbed.get(), ref.get());
@@ -167,6 +168,7 @@ TEST_P(SubsetSlicedAccessTest, Sliced) {
     params.use_oracle = std::get<5>(tparam);
     params.order = std::get<6>(tparam);
     params.jump = std::get<7>(tparam);
+    params.unsorted_partial = true;
 
     auto interval_info = std::get<8>(tparam);
     auto len = (params.use_row ? ref->ncol() : ref->nrow());
@@ -213,6 +215,7 @@ TEST_P(SubsetIndexedAccessTest, Indexed) {
     params.use_oracle = std::get<5>(tparam);
     params.order = std::get<6>(tparam);
     params.jump = std::get<7>(tparam);
+    params.unsorted_partial = true;
 
     auto interval_info = std::get<8>(tparam);
     auto len = (params.use_row ? ref->ncol() : ref->nrow());
