@@ -41,7 +41,6 @@ add_executable(
 #
     src/sparse/CompressedSparseMatrix.cpp
     src/sparse/FragmentedSparseMatrix.cpp
-#    src/sparse/SemiCompressedSparseMatrix.cpp
     src/sparse/secondary_extraction.cpp
     src/sparse/convert_to_compressed_sparse.cpp
     src/sparse/convert_to_fragmented_sparse.cpp
@@ -59,7 +58,6 @@ add_executable(
     src/utils/wrap_shared_ptr.cpp
     src/utils/SomeNumericArray.cpp
     src/utils/ArrayView.cpp
-    src/utils/bind_intersection.cpp
     src/utils/ConsecutiveOracle.cpp
     src/utils/FixedOracle.cpp
     src/utils/process_consecutive_indices.cpp
