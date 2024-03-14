@@ -197,14 +197,15 @@ private:
 
 template<typename Index_>
 struct SparseParallelExpansion {
-    // Holds the start position in 'indices' for each index 'i', i.e., 
-    // 'indices[f(start[i - offset])]' is the first entry equal to 'i',
-    // where 'f' is some selection-specific function (identity for full
-    // selection, x + start for block selection and subset[x] for indexed selection).
+    // This is a bit complicated to explain.
+    // Let 'x = start[i - offset]'.
+    // Let 'y = lengths[i - offset]'.
+    // Let 'z' denote any integer in '[x, x + y)'.
+    // Let 'f' be the selection-specific function such that 'f(a)' is the a-th element of the selection
+    // (i.e., 'a' for full selection, 'a + start' for block selection and 'subset[a]' for indexed selection).
+    // In which case, 'indices[f(z)]' is equal to 'i'.
+    // The general idea is that 'f(z)' can be used to fill the 'SparseRange::index' on output.
     std::vector<Index_> start;
-
-    // Holds the length of the stretch of identical values in 'indices', i.e., 
-    // 'indices[f(start[i - offset] + lengths[i - offset] - 1)]' is the last entry equal to 'i'.
     std::vector<Index_> length;
 
     Index_ offset = 0;

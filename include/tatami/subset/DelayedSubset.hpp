@@ -180,6 +180,7 @@ struct SparseParallelReindex {
     // Let 'y = pool_ptrs[i - offset + 1]'.
     // Let 'z' denote any integer in '[x, y)'.
     // In which case, 'indices[pool_indices[z]]' is equal to 'i'.
+    // The general idea is that 'pool_indices[z]' can be used to fill the 'SparseRange::index' on output.
     std::vector<Index_> pool_ptrs;
     std::vector<Index_> pool_indices;
     Index_ offset;
