@@ -285,7 +285,9 @@ SparseRange<Value_, Index_> expand_sparse_parallel(
     auto vcopy = vbuffer;
     auto icopy = ibuffer;
     Index_ count = 0;
-    bool replace_value = needs_value;
+
+    auto vsrc = input.value;
+    bool replace_value = needs_value && vsrc != vcopy;
 
     // Pointers in 'input' and the two 'buffer' pointers may optionally point
     // to overlapping arrays as long as each 'buffer' pointer precede its
@@ -300,11 +302,11 @@ SparseRange<Value_, Index_> expand_sparse_parallel(
         count += nexpand;
 
         if (replace_value) {
-            auto ivptr = input.value + i;
-            auto v = *ivptr; // make a copy just in case 'vcopy' and 'input.value' overlap.
+            auto v = *vsrc; // make a copy just in case 'vcopy' and 'input.value' overlap.
             std::fill_n(vcopy, nexpand, v);
             vcopy += nexpand;
-            replace_value = (vcopy != ivptr); // if we've caught up, there no need to do this replacement.
+            ++vsrc;
+            replace_value = (vcopy != vsrc); // if we've caught up, there no need to do this replacement.
         }
 
         if (needs_index) {

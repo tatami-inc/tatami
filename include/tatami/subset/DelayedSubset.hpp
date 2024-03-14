@@ -275,18 +275,23 @@ void reorder_sparse_parallel(
     const SparseParallelReindex<Index_>& reindex,
     std::vector<std::pair<Index_, Value_> >& sortspace)
 {
-    // Pointers in 'input' and the two 'buffer' pointers may optionally point
-    // to overlapping arrays as long as each 'buffer' pointer precede its
-    // corresponding pointer in 'input'.  The idea is that the expansion of
-    // values into 'buffer' will cause it to "catch up" to 'input' without
-    // clobbering any values in the latter. This assumes that 'input' has been
-    // shifted enough to make space for expansion; the required shift depends
-    // on the number of duplicates.
+    // We assume that the indices have already been extracted for sorting
+    // and expansion purposes, even if they weren't actually requested.
+
     if (!needs_sort) {
+        // Pointers in 'input' and the two 'buffer' pointers may optionally point
+        // to overlapping arrays as long as each 'buffer' pointer precedes its
+        // corresponding pointer in 'input'.  The idea is that the expansion of
+        // values into, e.g., 'vbuffer' will cause it to catch up to 'input.value'
+        // without clobbering any values in the latter. This assumes that
+        // 'input.value' has been shifted enough to make space for expansion; the
+        // required shift depends on the number of duplicates.
         Index_ count = 0;
         auto vcopy = vbuffer;
         auto icopy = ibuffer;
-        bool replace_value = needs_value;
+
+        auto vsrc = input.value;
+        bool replace_value = needs_value && vsrc != vcopy;
 
         for (Index_ i = 0; i < input.number; ++i) {
             auto lookup = input.index[i] - reindex.offset;
@@ -295,14 +300,18 @@ void reorder_sparse_parallel(
             count += num;
 
             if (replace_value) {
-                auto ivptr = input.value + i;
-                auto val = *ivptr; // copy it out just in case 'vcopy' and 'input.value' overlap.
-                std::fill_n(vcopy, vcopy + num, val);
+                auto val = *vsrc; // copy it out just in case 'vcopy' and 'input.value' overlap.
+                std::fill_n(vcopy, num, val);
                 vcopy += num;
-                replace_value = (vcopy != ivptr); // if we've caught up, there no need to do this replacement.
+                ++vsrc;
+                replace_value = (vcopy != vsrc); // if we've caught up, there no need to do this replacement.
             }
 
             if (needs_index) {
+                // Again, 'icopy' will eventually catch up to 'input.index' if
+                // they point to overlapping arrays. But we still need to
+                // replace values once we've managed to catch up, so we can't
+                // short-circuit like we did with 'replace_value'.
                 std::copy_n(reindex.pool_indices.begin() + start, num, icopy);
                 icopy += num;
             }
@@ -319,8 +328,9 @@ void reorder_sparse_parallel(
         }
 
     } else if (needs_value) {
-        // We assume that the indices have already been extracted for sorting
-        // purposes, even if they weren't actually requested.
+        // This does not require any careful consideration of the overlaps
+        // between 'input' and 'buffers', as we're copying things into
+        // 'sortspace' anyway before copying them back into 'buffer'.
         sortspace.clear();
         for (Index_ i = 0; i < input.number; ++i) {
             auto val = input.value[i];
@@ -353,8 +363,10 @@ void reorder_sparse_parallel(
         }
 
     } else {
-        // Again, we assume that the indices have already been extracted for
-        // sorting purposes, even if they weren't actually requested.
+        // Again, 'input.index' and 'ibuffer' may point to overlapping arrays,
+        // as long as the latter precedes the former; expansion into the latter
+        // will allow it to catch up to the former without clobbering, assuming 
+        // that the latter was shifted back to provide enough space. 
         Index_ count = 0;
         auto icopy = ibuffer;
 
@@ -430,6 +442,7 @@ private:
         if (needs_sort && needs_value) {
             sortspace.reserve(extent);
         } 
+        opt.sparse_extract_index = true;
         if (!needs_index) {
             iholding.resize(processed.collapsed.size());
         }
@@ -513,6 +526,7 @@ private:
         if (needs_sort && needs_value) {
             sortspace.reserve(extent);
         } 
+        opt.sparse_extract_index = true;
         if (!needs_index) {
             iholding.resize(processed.collapsed.size());
         }

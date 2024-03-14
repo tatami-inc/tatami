@@ -455,18 +455,20 @@ public:
      * @param check Whether to check `idx` for unique values.
      */
     DelayedSubsetUnique(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx, bool check = true) : mat(std::move(p)), indices(std::move(idx)) {
+        Index_ fulldim = margin_ == 0 ? mat->nrow() : mat->ncol();
+
         if (check) {
-            std::vector<Index_> collected(idx.begin(), idx.end());
-            std::sort(collected.begin(), collected.end());
-            for (Index_ i = 1, end = collected.size(); i < end; ++i) {
-                if (collected[i] == collected[i-1]) {
+            std::vector<unsigned char> checks(fulldim);
+            for (Index_ i = 0, end = indices.size(); i < end; ++i) {
+                auto& found = checks[indices[i]];
+                if (found) {
                     throw std::runtime_error("indices should be unique");
-                    break;
-                }
+                } 
+                found = 1;
             }
         }
 
-        mapping_single.resize(margin_ == 0 ? p->nrow() : p->ncol());
+        mapping_single.resize(fulldim);
         for (Index_  i = 0, end = indices.size(); i < end; ++i) {
             mapping_single[indices[i]] = i;
         }
