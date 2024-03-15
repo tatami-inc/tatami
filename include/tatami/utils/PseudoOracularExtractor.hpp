@@ -25,7 +25,7 @@ struct PseudoOracularDenseExtractor : public OracularDenseExtractor<Value_, Inde
     PseudoOracularDenseExtractor(std::shared_ptr<Oracle<Index_> > ora, std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > r) :
         oracle(std::move(ora)), raw(std::move(r)) {}
 
-    const Value_* fetch(Value_* buffer) {
+    const Value_* fetch(Index_, Value_* buffer) {
         auto i = oracle->get(used);
         ++used;
         return raw->fetch(i, buffer);
@@ -51,7 +51,7 @@ struct PseudoOracularSparseExtractor : public OracularSparseExtractor<Value_, In
     PseudoOracularSparseExtractor(std::shared_ptr<Oracle<Index_> > ora, std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > r) :
         oracle(std::move(ora)), raw(std::move(r)) {}
 
-    SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch(Index_, Value_* vbuffer, Index_* ibuffer) {
         auto i = oracle->get(used);
         ++used;
         return raw->fetch(i, vbuffer, ibuffer);

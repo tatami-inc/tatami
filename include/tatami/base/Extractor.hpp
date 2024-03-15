@@ -201,6 +201,28 @@ struct OracularSparseExtractor {
      */
 };
 
+/**
+ * @tparam oracle_ Whether to use an oracle-aware interface.
+ * @tparam Value_ Data value type, should be numeric.
+ * @tparam Index_ Row/column index type, should be integer.
+ *
+ * Type alias that switches between `OracularDenseExtractor` and `MyopicDenseExtractor` depending on `oracle_`.
+ * Intended for templated class definitions, where setting `oracle_` can define subclasses for both interfaces.
+ */
+template<bool oracle_, typename Value_, typename Index_>
+using DenseExtractor = typename std::conditional<oracle_, OracularDenseExtractor<Value_, Index_>, MyopicDenseExtractor<Value_, Index_> >::type;
+
+/**
+ * @tparam oracle_ Whether to use an oracle-aware interface.
+ * @tparam Value_ Data value type, should be numeric.
+ * @tparam Index_ Row/column index type, should be integer.
+ *
+ * Type alias that switches between `OracularSparseExtractor` and `MyopicSparseExtractor` depending on `oracle_`.
+ * Intended for templated class definitions, where setting `oracle_` can define subclasses for both interfaces.
+ */
+template<bool oracle_, typename Value_, typename Index_>
+using SparseExtractor = typename std::conditional<oracle_, OracularSparseExtractor<Value_, Index_>, MyopicSparseExtractor<Value_, Index_> >::type;
+
 }
 
 #endif

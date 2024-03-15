@@ -19,48 +19,48 @@ add_executable(
     libtest 
 
     src/dense/DenseMatrix.cpp
-    src/dense/convert_to_dense.cpp
-
-    src/other/DelayedBind.cpp
-    src/other/DelayedTranspose.cpp
-    src/other/DelayedCast.cpp
-
-    src/subset/DelayedSubset.cpp
-    src/subset/DelayedSubsetBlock.cpp
+#    src/dense/convert_to_dense.cpp
 #
-#    src/isometric/unary/arith_vector_helpers.cpp
-#    src/isometric/unary/arith_scalar_helpers.cpp
-#    src/isometric/unary/math_helpers.cpp
-#    src/isometric/unary/compare_scalar_helpers.cpp
-#    src/isometric/unary/compare_vector_helpers.cpp
-#    src/isometric/unary/boolean_scalar_helpers.cpp
-#    src/isometric/unary/boolean_vector_helpers.cpp
-#    src/isometric/binary/arith_helpers.cpp
-#    src/isometric/binary/compare_helpers.cpp
-#    src/isometric/binary/boolean_helpers.cpp
+#    src/other/DelayedBind.cpp
+#    src/other/DelayedTranspose.cpp
+#    src/other/DelayedCast.cpp
 #
-    src/sparse/CompressedSparseMatrix.cpp
-    src/sparse/FragmentedSparseMatrix.cpp
-    src/sparse/secondary_extraction.cpp
-    src/sparse/convert_to_compressed_sparse.cpp
-    src/sparse/convert_to_fragmented_sparse.cpp
-    src/sparse/compress_sparse_triplets.cpp
-
-    src/stats/sums.cpp
-    src/stats/variances.cpp
-    src/stats/medians.cpp
-    src/stats/ranges.cpp
-    src/stats/counts.cpp
-    src/stats/grouped_medians.cpp
-    src/stats/grouped_sums.cpp
-
-    src/utils/parallelize.cpp
-    src/utils/wrap_shared_ptr.cpp
-    src/utils/SomeNumericArray.cpp
-    src/utils/ArrayView.cpp
-    src/utils/ConsecutiveOracle.cpp
-    src/utils/FixedOracle.cpp
-    src/utils/process_consecutive_indices.cpp
+#    src/subset/DelayedSubset.cpp
+#    src/subset/DelayedSubsetBlock.cpp
+##
+##    src/isometric/unary/arith_vector_helpers.cpp
+##    src/isometric/unary/arith_scalar_helpers.cpp
+##    src/isometric/unary/math_helpers.cpp
+##    src/isometric/unary/compare_scalar_helpers.cpp
+##    src/isometric/unary/compare_vector_helpers.cpp
+##    src/isometric/unary/boolean_scalar_helpers.cpp
+##    src/isometric/unary/boolean_vector_helpers.cpp
+##    src/isometric/binary/arith_helpers.cpp
+##    src/isometric/binary/compare_helpers.cpp
+##    src/isometric/binary/boolean_helpers.cpp
+##
+#    src/sparse/CompressedSparseMatrix.cpp
+#    src/sparse/FragmentedSparseMatrix.cpp
+#    src/sparse/secondary_extraction.cpp
+#    src/sparse/convert_to_compressed_sparse.cpp
+#    src/sparse/convert_to_fragmented_sparse.cpp
+#    src/sparse/compress_sparse_triplets.cpp
+#
+#    src/stats/sums.cpp
+#    src/stats/variances.cpp
+#    src/stats/medians.cpp
+#    src/stats/ranges.cpp
+#    src/stats/counts.cpp
+#    src/stats/grouped_medians.cpp
+#    src/stats/grouped_sums.cpp
+#
+#    src/utils/parallelize.cpp
+#    src/utils/wrap_shared_ptr.cpp
+#    src/utils/SomeNumericArray.cpp
+#    src/utils/ArrayView.cpp
+#    src/utils/ConsecutiveOracle.cpp
+#    src/utils/FixedOracle.cpp
+#    src/utils/process_consecutive_indices.cpp
 )
 
 target_link_libraries(

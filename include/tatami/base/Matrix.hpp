@@ -157,7 +157,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for dense access to a contiguous block of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const {
         return dense(true, block_start, block_length, opt);
     }
 
@@ -168,7 +168,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for dense access to a indexed subset of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(VectorPtr<Index_> indices_ptr, const Options& opt) {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return dense(true, std::move(indices_ptr), opt);
     }
 
@@ -178,7 +178,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for dense access to a indexed subset of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const {
         return dense_row(std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     }
 
@@ -198,7 +198,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for dense access to a contiguous block of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const {
         return dense(false, block_start, block_length, opt);
     }
 
@@ -209,7 +209,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for dense access to a indexed subset of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(VectorPtr<Index_> indices_ptr, const Options& opt) {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return dense(false, std::move(indices_ptr), opt);
     }
 
@@ -219,7 +219,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for dense access to a indexed subset of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) {
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const {
         return dense_column(std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     }
 
@@ -347,7 +347,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for sparse access to a contiguous block of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const {
         return sparse(true, block_start, block_length, opt);
     }
 
@@ -358,7 +358,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for sparse access to a indexed subset of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(VectorPtr<Index_> indices_ptr, const Options& opt) {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return sparse(true, std::move(indices_ptr), opt);
     }
 
@@ -368,7 +368,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for sparse access to a indexed subset of each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) const {
         return sparse_row(std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     }
 
@@ -388,7 +388,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for sparse access to a contiguous block of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const {
         return sparse(false, block_start, block_length, opt);
     }
 
@@ -399,7 +399,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for sparse access to a indexed subset of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(VectorPtr<Index_> indices_ptr, const Options& opt) {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return sparse(false, std::move(indices_ptr), opt);
     }
 
@@ -409,7 +409,7 @@ public: // ==== Convenience methods ====
      * @return An extractor for sparse access to a indexed subset of each column.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) {
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) const {
         return sparse_column(std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     }
 
@@ -588,7 +588,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        return dense(false, block_start, block_length, opt);
+        return dense(false, std::move(oracle), block_start, block_length, opt);
     }
 
     /**
@@ -600,7 +600,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return dense(false, std::move(indices_ptr), opt);
+        return dense(false, std::move(oracle), std::move(indices_ptr), opt);
     }
 
     /**
@@ -708,7 +708,7 @@ public:
      * @return An extractor for sparse access to full rows (if `row = true)` or columns (otherwise).
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const = 0;
+    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const = 0;
 
     /**
      * @param row Whether to create a row-wise extractor.
@@ -719,7 +719,7 @@ public:
      * @return An extractor for sparse access to a contiguous block of each row (if `row = true`) or column (otherwise).
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
+    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
     /**
      * @param row Whether to create a row-wise extractor.
@@ -730,7 +730,7 @@ public:
      * @return An extractor for sparse access to a indexed subset of each row (if `row = true`) or column (otherwise).
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
+    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
 
 public: // ==== Convenience methods ====
     /**
@@ -774,7 +774,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
-        return sparse(true, std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return sparse_row(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     }
 
     /**
@@ -784,7 +784,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
-        return sparse(false, opt);
+        return sparse(false, std::move(oracle), opt);
     }
 
     /**
@@ -819,7 +819,7 @@ public: // ==== Convenience methods ====
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
-        return sparse(false, std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
+        return sparse_column(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     }
 
 public: // ==== Default option overloads ====
