@@ -115,7 +115,7 @@ public:
     /**
      * @param row Whether to create a row-wise extractor.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to full rows (if `row = true`) or columns (otherwise).
+     * @return Object for extracting the full extent of each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, const Options& opt) const = 0;
@@ -125,7 +125,7 @@ public:
      * @param block_start Index of the column (if `row = true`) or row (otherwise) at the start of the block.
      * @param block_length Number of columns (if `row = true`) or rows (otherwise) in the block.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a contiguous block within each row (if `row = true`) or column (otherwise).
+     * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
@@ -135,7 +135,7 @@ public:
      * @param indices_ptr Pointer to a vector of sorted and unique column indices (if `row = true`) or row indices (otherwise).
      * This should be non-NULL.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each row (if `row = true`) or column (otherwise).
+     * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
@@ -143,7 +143,7 @@ public:
 public: // ==== Convenience methods ====
     /**
      * @param opt Options for extraction.
-     * @return An extractor for dense access to full rows.
+     * @return Object for extracting the full extent of each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(const Options& opt) const {
@@ -154,7 +154,7 @@ public: // ==== Convenience methods ====
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a contiguous block of each row.
+     * @return Object for extracting a contiguous block from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const {
@@ -165,7 +165,7 @@ public: // ==== Convenience methods ====
      * @param indices_ptr Pointer to a vector of sorted and unique column indices.
      * This should not be NULL.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each row.
+     * @return Object for extracting an indexed subset from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(VectorPtr<Index_> indices_ptr, const Options& opt) const {
@@ -175,7 +175,7 @@ public: // ==== Convenience methods ====
     /**
      * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each row.
+     * @return Object for extracting an indexed subset from each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const {
@@ -184,7 +184,7 @@ public: // ==== Convenience methods ====
 
     /**
      * @param opt Options for extraction.
-     * @return An extractor for dense access to full columns.
+     * @return Object for extracting the full extent of each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(const Options& opt) const {
@@ -195,7 +195,7 @@ public: // ==== Convenience methods ====
      * @param block_start Index of the row at the start of the block.
      * @param block_length Number of rows in the block.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a contiguous block of each column.
+     * @return Object for extracting a contiguous block from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const {
@@ -206,7 +206,7 @@ public: // ==== Convenience methods ====
      * @param indices_ptr Pointer to a vector of sorted and unique row indices.
      * This should not be NULL.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each column.
+     * @return Object for extracting an indexed subset from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(VectorPtr<Index_> indices_ptr, const Options& opt) const {
@@ -216,7 +216,7 @@ public: // ==== Convenience methods ====
     /**
      * @param indices Vector of sorted and unique row indices.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each column.
+     * @return Object for extracting an indexed subset from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const {
@@ -225,7 +225,8 @@ public: // ==== Convenience methods ====
 
 public: // ==== Default option overloads ====
     /**
-     * @return An extractor for dense access to full rows, created using default options.
+     * Overload of `dense_row()` that uses the default options.
+     * @return Object for extracting the full extent of each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row() const {
@@ -233,9 +234,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_row()` that uses the default options.
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
-     * @return An extractor for dense access to a contiguous block of each row, created using default options.
+     * @return Object for extracting a contiguous block from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length) const {
@@ -243,9 +245,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_row()` that uses the default options.
      * @param indices_ptr Pointer to a vector of sorted and unique column indices.
      * This should be non-NULL.
-     * @return An extractor for dense access to a indexed subset of each row, created using default options.
+     * @return Object for extracting an indexed subset from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(VectorPtr<Index_> indices_ptr) const {
@@ -253,8 +256,9 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_row()` that uses the default options.
      * @param indices Vector of sorted and unique column indices.
-     * @return An extractor for dense access to a indexed subset of each row, created using default options.
+     * @return Object for extracting an indexed subset from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices) const {
@@ -262,7 +266,8 @@ public: // ==== Default option overloads ====
     }
 
     /**
-     * @return An extractor for dense access to full columns, created using default options.
+     * Overload of `dense_column()` that uses the default options.
+     * @return Object for extracting the full extent of each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column() const {
@@ -270,9 +275,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_column()` that uses the default options.
      * @param block_start Index of the row at the start of the block.
      * @param block_length Number of rows in the block.
-     * @return An extractor for dense access to a contiguous block of each column, created using default options.
+     * @return Object for extracting a contiguous block from each column in dense form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length) const {
@@ -280,9 +286,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_column()` that uses the default options.
      * @param indices_ptr Pointer to a vector of sorted and unique row indices.
      * This should be non-NULL.
-     * @return An extractor object for dense access to a indexed subset of each column, created using default options.
+     * @return Obejct for extracting an indexed subset from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(VectorPtr<Index_> indices_ptr) const {
@@ -290,8 +297,9 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_column()` that uses the default options.
      * @param indices Vector of sorted and unique row indices.
-     * @return An extractor object for dense access to a indexed subset of each column, created using default options.
+     * @return Obejct for extracting an indexed subset from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices) const {
@@ -305,7 +313,7 @@ public:
     /**
      * @param row Whether to create a row-wise extractor.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to full rows (if `row = true`) or columns (otherwise).
+     * @return Object for extracting the full extent of each row (if `row = true`) or columns (otherwise) in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const Options& opt) const = 0;
@@ -315,7 +323,7 @@ public:
      * @param block_start Index of the column (if `row = true`) or row (otherwise) at the start of the block.
      * @param block_length Number of columns (if `row = true`) or rows (otherwise) in the block.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a contiguous block of each row (if `row = true`) or column (otherwise).
+     * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
@@ -325,7 +333,7 @@ public:
      * @param indices_ptr Pointer to a vector of sorted and unique column indices (if `row = true`) or row indices (otherwise).
      * This should be non-NULL.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each row.
+     * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
@@ -333,7 +341,7 @@ public:
 public: // ==== Convenience methods ====
     /**
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to full rows.
+     * @return Object for extracting the full extent of each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(const Options& opt) const {
@@ -344,7 +352,7 @@ public: // ==== Convenience methods ====
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a contiguous block of each row.
+     * @return Object for extracting a contiguous block from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const {
@@ -355,7 +363,7 @@ public: // ==== Convenience methods ====
      * @param indices_ptr Pointer to a vector of sorted and unique column indices.
      * This should not be NULL.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each row.
+     * @return Object for extracting an indexed subset from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(VectorPtr<Index_> indices_ptr, const Options& opt) const {
@@ -365,7 +373,7 @@ public: // ==== Convenience methods ====
     /**
      * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each row.
+     * @return Object for extracting an indexed subset from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) const {
@@ -374,7 +382,7 @@ public: // ==== Convenience methods ====
 
     /**
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to full columns.
+     * @return Object for extracting the full extent of each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(const Options& opt) const {
@@ -385,7 +393,7 @@ public: // ==== Convenience methods ====
      * @param block_start Index of the row at the start of the block.
      * @param block_length Number of rows in the block.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a contiguous block of each column.
+     * @return Object for extracting a contiguous block from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const {
@@ -396,7 +404,7 @@ public: // ==== Convenience methods ====
      * @param indices_ptr Pointer to a vector of sorted and unique row indices.
      * This should not be NULL.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each column.
+     * @return Object for extracting an indexed subset from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(VectorPtr<Index_> indices_ptr, const Options& opt) const {
@@ -406,7 +414,7 @@ public: // ==== Convenience methods ====
     /**
      * @param indices_ptr Vector of sorted and unique row indices.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each column.
+     * @return Object for extracting an indexed subset from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) const {
@@ -415,7 +423,8 @@ public: // ==== Convenience methods ====
 
 public: // ==== Default option overloads ====
     /**
-     * @return An extractor for sparse access to full rows, created using default options.
+     * Overload of `sparse_row()` that uses the default options.
+     * @return Object for extracting the full extent of each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row() const {
@@ -423,9 +432,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_row()` that uses the default options.
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
-     * @return An extractor for sparse access to a contiguous block of each row, created using default options.
+     * @return Object for extracting a contiguous block from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length) const {
@@ -433,9 +443,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_row()` that uses the default options.
      * @param indices_ptr Pointer to a vector of sorted and unique column indices.
      * This should not be NULL.
-     * @return An extractor for sparse access to a indexed subset of each row, created using default options.
+     * @return Object for extracting an indexed subset from each row in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(VectorPtr<Index_> indices_ptr) const {
@@ -443,8 +454,9 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_row()` that uses the default options.
      * @param indices Vector of sorted and unique column indices.
-     * @return An extractor for sparse access to a indexed subset of each row, created using default options.
+     * @return Object for extracting an indexed subset from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices) const {
@@ -452,7 +464,8 @@ public: // ==== Default option overloads ====
     }
 
     /**
-     * @return An extractor for sparse access to full columns, created using default options.
+     * Overload of `sparse_column()` that uses the default options.
+     * @return Object for extracting the full extent of each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column() const {
@@ -460,9 +473,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_column()` that uses the default options.
      * @param block_start Index of the row at the start of the block.
      * @param block_length Number of rows in the block.
-     * @return An extractor for sparse access to a contiguous block of each column, created using default options.
+     * @return Object for extracting a contiguous block from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length) const {
@@ -470,9 +484,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_column()` that uses the default options.
      * @param indices_ptr Pointer to a vector of sorted and unique row indices.
      * This should not be NULL.
-     * @return An extractor for sparse access to a indexed subset of each column, created using default options.
+     * @return Object for extracting an indexed subset from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(VectorPtr<Index_> indices_ptr) const {
@@ -480,8 +495,9 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_column()` that uses the default options.
      * @param indices Vector of sorted and unique row indices.
-     * @return An extractor for sparse access to a indexed subset of each column, created using default options.
+     * @return Object for extracting an indexed subset from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices) const {
@@ -496,7 +512,7 @@ public:
      * @param row Whether to create a row-wise extractor.
      * @param oracle An oracle supplying predictions of the next requested row (if `row = true`) or column (otherwise).
      * @param opt Options for extraction.
-     * @return An extractor for dense access to full rows (if `row = true)` or columns (otherwise).
+     * @return Object for extracting the full extent of each row (if `row = true)` or columns (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const = 0;
@@ -507,7 +523,7 @@ public:
      * @param block_start Index of the column (if `row = true`) or row (otherwise) at the start of the block.
      * @param block_length Number of columns (if `row = true`) or rows (otherwise) in the block.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a contiguous block of each row (if `row = true`) or column (otherwise).
+     * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
@@ -518,7 +534,7 @@ public:
      * @param indices_ptr Pointer to a vector of sorted and unique column indices (if `row = true`) or row indices (otherwise).
      * This should not be NULL.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each row (if `row = true`) or column (otherwise).
+     * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
@@ -527,7 +543,7 @@ public: // ==== Convenience methods ====
     /**
      * @param oracle An oracle supplying row predictions.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to full rows.
+     * @return Object for extracting the full extent of each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
@@ -539,7 +555,7 @@ public: // ==== Convenience methods ====
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a contiguous block of each row.
+     * @return Object for extracting a contiguous block from each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
@@ -551,7 +567,7 @@ public: // ==== Convenience methods ====
      * @param indices_ptr Pointer to a vector of sorted and unique column indices.
      * This should not be NULL.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each row.
+     * @return Object for extracting an indexed subset from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
@@ -562,7 +578,7 @@ public: // ==== Convenience methods ====
      * @param oracle An oracle supplying row predictions.
      * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each row.
+     * @return Object for extracting an indexed subset from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
@@ -572,7 +588,7 @@ public: // ==== Convenience methods ====
     /**
      * @param oracle An oracle supplying column predictions.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to full columns.
+     * @return Object for extracting the full extent of each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
@@ -584,7 +600,7 @@ public: // ==== Convenience methods ====
      * @param block_length Number of rows in the block.
      * @param oracle An oracle supplying column predictions.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a contiguous block of each column.
+     * @return Object for extracting a contiguous block from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
@@ -596,7 +612,7 @@ public: // ==== Convenience methods ====
      * @param indices_ptr Pointer to a vector of sorted and unique row indices.
      * This should not be NULL.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each column.
+     * @return Object for extracting an indexed subset from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
@@ -607,7 +623,7 @@ public: // ==== Convenience methods ====
      * @param oracle An oracle supplying column predictions.
      * @param indices Vector of sorted and unique row indices.
      * @param opt Options for extraction.
-     * @return An extractor for dense access to a indexed subset of each column.
+     * @return Object for extracting an indexed subset from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
@@ -616,8 +632,9 @@ public: // ==== Convenience methods ====
 
 public: // ==== Default option overloads ====
     /**
+     * Overload of `dense_row()` that uses the default options.
      * @param oracle An oracle supplying row predictions.
-     * @return An extractor for dense access to full rows, created using default options.
+     * @return Object for extracting the full extent of each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle) const {
@@ -625,10 +642,12 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_row()` that uses the default options.
+     * @param oracle An oracle supplying row predictions.
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
      * @param oracle An oracle supplying row predictions.
-     * @return An extractor for dense access to a contiguous block of each row, created using default options.
+     * @return Object for extracting a contiguous block from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
@@ -636,10 +655,11 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_row()` that uses the default options.
      * @param indices_ptr Pointer to a vector of sorted and unique column indices.
      * This should not be NULL.
      * @param oracle An oracle supplying row predictions.
-     * @return An extractor for dense access to a indexed subset of each row, created using default options.
+     * @return Object for extracting an indexed subset from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
@@ -647,9 +667,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_row()` that uses the default options.
      * @param indices Vector of sorted and unique column indices.
      * @param oracle An oracle supplying row predictions.
-     * @return An extractor for dense access to a indexed subset of each row, created using default options.
+     * @return Object for extracting an indexed subset from each row in dense form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
@@ -657,8 +678,9 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_column()` that uses the default options.
      * @param oracle An oracle supplying column predictions.
-     * @return An extractor for dense access to full columns, created using default options.
+     * @return Object for extracting the full extent of each column in dense form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle) const {
@@ -666,10 +688,11 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_column()` that uses the default options.
      * @param block_start Index of the row at the start of the block.
      * @param block_length Number of rows in the block.
      * @param oracle An oracle supplying column predictions.
-     * @return An extractor for dense access to a contiguous block of each column, created using default options.
+     * @return Object for extracting a contiguous block from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
@@ -677,10 +700,11 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_column()` that uses the default options.
      * @param indices_ptr Pointer to a vector of sorted and unique row indices.
      * This should not be NULL.
      * @param oracle An oracle supplying column predictions.
-     * @return An extractor for dense access to a indexed subset of each column, created using default options.
+     * @return Object for extracting an indexed subset from each column in dense form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
@@ -688,9 +712,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `dense_column()` that uses the default options.
      * @param indices Vector of sorted and unique row indices.
      * @param oracle An oracle supplying column predictions.
-     * @return An extractor for dense access to a indexed subset of each column, created using default options.
+     * @return Object for extracting an indexed subset from each column in dense form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
@@ -705,7 +730,7 @@ public:
      * @param row Whether to create a row-wise extractor.
      * @param oracle An oracle supplying predictions of the next requested row (if `row = true`) or column (otherwise).
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to full rows (if `row = true)` or columns (otherwise).
+     * @return Object for extracting the full extent of each row (if `row = true)` or columns (otherwise) in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const = 0;
@@ -716,7 +741,7 @@ public:
      * @param block_start Index of the column (if `row = true`) or row (otherwise) at the start of the block.
      * @param block_length Number of columns (if `row = true`) or rows (otherwise) in the block.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a contiguous block of each row (if `row = true`) or column (otherwise).
+     * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
@@ -727,7 +752,7 @@ public:
      * @param indices_ptr Pointer to a vector of sorted and unique column indices (if `row = true`) or row indices (otherwise).
      * This should not be NULL.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each row (if `row = true`) or column (otherwise).
+     * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
@@ -736,7 +761,7 @@ public: // ==== Convenience methods ====
     /**
      * @param oracle An oracle supplying row predictions.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to full rows.
+     * @return Object for extracting the full extent of each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
@@ -748,7 +773,7 @@ public: // ==== Convenience methods ====
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a contiguous block of each row.
+     * @return Object for extracting a contiguous block from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
@@ -759,7 +784,7 @@ public: // ==== Convenience methods ====
      * @param oracle An oracle supplying row predictions.
      * @param indices_ptr Pointer to a vector of sorted and unique column indices.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each row.
+     * @return Object for extracting an indexed subset from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
@@ -770,7 +795,7 @@ public: // ==== Convenience methods ====
      * @param oracle An oracle supplying row predictions.
      * @param indices Vector of sorted and unique column indices.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each row.
+     * @return Object for extracting an indexed subset from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
@@ -780,7 +805,7 @@ public: // ==== Convenience methods ====
     /**
      * @param oracle An oracle supplying column predictions.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to full columns.
+     * @return Object for extracting the full extent of each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
@@ -792,7 +817,7 @@ public: // ==== Convenience methods ====
      * @param block_length Number of rows in the block.
      * @param oracle An oracle supplying column predictions.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a contiguous block of each column.
+     * @return Object for extracting a contiguous block from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
@@ -804,7 +829,7 @@ public: // ==== Convenience methods ====
      * @param indices_ptr Pointer to a vector of sorted and unique row indices.
      * This should not be NULL.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each column.
+     * @return Object for extracting an indexed subset from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
@@ -815,7 +840,7 @@ public: // ==== Convenience methods ====
      * @param oracle An oracle supplying column predictions.
      * @param indices Vector of sorted and unique row indices.
      * @param opt Options for extraction.
-     * @return An extractor for sparse access to a indexed subset of each column.
+     * @return Object for extracting an indexed subset from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
@@ -824,8 +849,9 @@ public: // ==== Convenience methods ====
 
 public: // ==== Default option overloads ====
     /**
+     * Overload of `sparse_row()` that uses the default options.
      * @param oracle An oracle supplying row predictions.
-     * @return An extractor for sparse access to full rows, created using default options.
+     * @return Object for extracting the full extent of each row in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle) const {
@@ -833,10 +859,11 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_row()` that uses the default options.
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
      * @param oracle An oracle supplying row predictions.
-     * @return An extractor for sparse access to a contiguous block of each row, created using default options.
+     * @return Object for extracting a contiguous block from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
@@ -844,9 +871,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_row()` that uses the default options.
      * @param oracle An oracle supplying row predictions.
      * @param indices_ptr Pointer to a vector of sorted and unique column indices.
-     * @return An extractor for sparse access to a indexed subset of each row, created using default options.
+     * @return Object for extracting an indexed subset from each row in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
@@ -854,9 +882,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_row()` that uses the default options.
      * @param oracle An oracle supplying row predictions.
      * @param indices Vector of sorted and unique column indices.
-     * @return An extractor for sparse access to a indexed subset of each row, created using default options.
+     * @return Object for extracting an indexed subset from each row in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
@@ -864,8 +893,9 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_column()` that uses the default options.
      * @param oracle An oracle supplying column predictions.
-     * @return An extractor for sparse access to full columns, created using default options.
+     * @return Object for extracting the full extent of each column in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle) const {
@@ -873,10 +903,11 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_column()` that uses the default options.
      * @param block_start Index of the row at the start of the block.
      * @param block_length Number of rows in the block.
      * @param oracle An oracle supplying column predictions.
-     * @return An extractor for sparse access to a contiguous block of each column, created using default options.
+     * @return Object for extracting a contiguous block from each column in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
@@ -884,9 +915,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_column()` that uses the default options.
      * @param indices_ptr Pointer to a vector of sorted and unique row indices.
      * @param oracle An oracle supplying column predictions.
-     * @return An extractor for sparse access to a indexed subset of each column, created using default options.
+     * @return Object for extracting an indexed subset from each column in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
@@ -894,9 +926,10 @@ public: // ==== Default option overloads ====
     }
 
     /**
+     * Overload of `sparse_column()` that uses the default options.
      * @param indices Vector of sorted and unique row indices.
      * @param oracle An oracle supplying column predictions.
-     * @return An extractor for sparse access to a indexed subset of each column, created using default options.
+     * @return Object for extracting an indexed subset from each column in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {

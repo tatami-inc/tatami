@@ -27,12 +27,12 @@ struct MyopicDenseExtractor {
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
-     * @param i Index of the desired dimension element,
-     * i.e., the row or column index for instances created with `Matrix::dense_row()` or `Matrix::dense_column()`, respectively.
+     * @param i Index of the desired dimension element, i.e., the row or column index.
      * @param[out] buffer Pointer to an array of length no less than `N`, where `N` is defined as:
-     * - the number of indices, for instances created by any `Matrix::dense_row()` or `Matrix::dense_column()` method that accepts a vector of indices.
-     * - the block length, for instances created by any `Matrix::dense_row()` or `Matrix::dense_column()` method that accepts a block start and length.
-     * - `Matrix::ncol()` or `Matrix::nrow()`, for all other instances created with `Matrix::dense_row()` and `Matrix::dense_column()` respectively.
+     * - the number of columns, when extracting the full extent of each row.
+     * - the number of rows, when extracting the full extent of each column.
+     * - the block length, when extracting a contiguous block from each row/column.
+     * - the number of indices, when extracting an indexed subset of each row/column.
      *
      * @return Pointer to an array containing the values from the `i`-th dimension element.
      * This is guaranteed to hold `N` values.
@@ -60,7 +60,7 @@ struct OracularDenseExtractor {
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
      * @param i Ignored.
-     * This argument is only provided for consistency with `MyopicSparseExtractor::fetch()`,
+     * This argument is only provided for consistency with `MyopicDenseExtractor::fetch()`,
      * @param[out] buffer Pointer to an array of length no less than `N`,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
@@ -111,7 +111,8 @@ template<typename Value_, typename Index_>
 struct MyopicSparseExtractor {
     /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
-     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled.
+     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`;
+     * if they are the same, `vbuffer` has been filled with `SparseRange::number` values.
      * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
      * If `Options::sparse_extract_value` was set to `false` during construction of this instance,
@@ -119,14 +120,11 @@ struct MyopicSparseExtractor {
      * Similarly, if `Options::sparse_extract_index` was set to `false` during construction of this instance,
      * `ibuffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
      *
-     * @param i Index of the desired dimension element,
-     * i.e., the row or column index for instances created with `Matrix::sparse_row()` or `Matrix::sparse_column()`, respectively.
-     * @param[out] vbuffer Pointer to an array with enough space for at least `N` values, where `N` is defined as:
-     * - the number of indices, for instances created by any `Matrix::sparse_row()` or `Matrix::sparse_column()` method that accepts a vector of indices.
-     * - the block length, for instances created by any `Matrix::sparse_row()` or `Matrix::sparse_column()` method that accepts a block start and length.
-     * - `Matrix::ncol()` or `Matrix::nrow()`, for all other instances created with `Matrix::sparse_row()` and `Matrix::sparse_column()` respectively.
+     * @param i Index of the desired dimension element, i.e., the row or column index.
+     * @param[out] vbuffer Pointer to an array with enough space for at least `N` values,
+     * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
-     * where `N` is defined as described for `vbuffer`
+     * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
      * @return A `SparseRange` object describing the contents of the `i`-th dimension element.
      */
@@ -150,7 +148,8 @@ template<typename Value_, typename Index_>
 struct OracularSparseExtractor {
     /**
      * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
-     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; if they are the same, `vbuffer` has been filled.
+     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; 
+     * if they are the same, `vbuffer` has been filled with `SparseRange::number` values.
      * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
      *
      * If `Options::sparse_extract_value` was set to `false` during construction of this instance,
@@ -159,9 +158,9 @@ struct OracularSparseExtractor {
      * `ibuffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
      *
      * @param[out] vbuffer Pointer to an array with enough space for at least `N` values,
-     * where `N` is defined as described for `MyopicSparseExtractor::fetch()`.
+     * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
-     * where `N` is defined as described for `MyopicSparseExtractor::fetch()`.
+     * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
      * @return A `SparseRange` object describing the contents of the next dimension element,
      * as predicted by the `Oracle` used to construct this instance.
@@ -183,9 +182,9 @@ struct OracularSparseExtractor {
      *
      * @param i Ignored, only provided for consistency with `MyopicSparseExtractor::fetch()`.
      * @param[out] vbuffer Pointer to an array with enough space for at least `N` values,
-     * where `N` is defined as described for `MyopicSparseExtractor::fetch()`.
+     * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
-     * where `N` is defined as described for `MyopicSparseExtractor::fetch()`.
+     * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
      * @return A `SparseRange` object describing the contents of the next dimension element,
      * as predicted by the `Oracle` used to construct this instance.
