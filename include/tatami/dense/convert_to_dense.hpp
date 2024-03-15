@@ -41,7 +41,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
         parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
             std::vector<InputValue_> temp(same_type ? 0 : secondary);
             auto store_copy = store + start * secondary;
-            auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
+            auto wrk = consecutive_extractor<false>(incoming, row_, start, length);
 
             for (InputIndex_ x = 0; x < length; ++x) {
                 if constexpr(same_type) {
@@ -62,7 +62,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
         // into the output buffers. 
 
         parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
-            auto wrk = consecutive_extractor<!row_, false>(incoming, 0, secondary, start, length);
+            auto wrk = consecutive_extractor<false>(incoming, !row_, 0, secondary, start, length);
             std::vector<InputValue_> temp(length);
             auto store_copy = store + start * secondary;
 
