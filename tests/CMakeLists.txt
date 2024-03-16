@@ -25,9 +25,9 @@ add_executable(
     src/other/DelayedTranspose.cpp
     src/other/DelayedCast.cpp
 
-#    src/subset/DelayedSubset.cpp
+    src/subset/DelayedSubset.cpp
     src/subset/DelayedSubsetBlock.cpp
-##
+
 ##    src/isometric/unary/arith_vector_helpers.cpp
 ##    src/isometric/unary/arith_scalar_helpers.cpp
 ##    src/isometric/unary/math_helpers.cpp
