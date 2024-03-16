@@ -494,7 +494,7 @@ struct OracularPerpendicularDense : public OracularDenseExtractor<Value_, Index_
         const std::vector<Index_>& cum, 
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
         bool row,
-        std::shared_ptr<Oracle<Index_> > ora, 
+        std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args) : 
         cumulative(cum)
     {
@@ -503,7 +503,7 @@ struct OracularPerpendicularDense : public OracularDenseExtractor<Value_, Index_
             cum,
             ora.get(),
             segments,
-            [&](size_t x, std::shared_ptr<Oracle<Index_> > subora) {
+            [&](size_t x, std::shared_ptr<const Oracle<Index_> > subora) {
                 internal[x] = mats[x]->dense(row, std::move(subora), args...);
             }
         );
@@ -530,7 +530,7 @@ struct OracularPerpendicularSparse : public OracularSparseExtractor<Value_, Inde
         const std::vector<Index_>& cum, 
         const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
         bool row,
-        std::shared_ptr<Oracle<Index_> > ora, 
+        std::shared_ptr<const Oracle<Index_> > ora, 
         const Args_& ... args) : 
         cumulative(cum)
     {
@@ -539,7 +539,7 @@ struct OracularPerpendicularSparse : public OracularSparseExtractor<Value_, Inde
             cum,
             ora.get(),
             segments,
-            [&](size_t x, std::shared_ptr<Oracle<Index_> > subora) {
+            [&](size_t x, std::shared_ptr<const Oracle<Index_> > subora) {
                 internal[x] = mats[x]->sparse(row, std::move(subora), args...);
             }
         );
@@ -757,7 +757,7 @@ private:
      ********** Oracular dense **********
      ************************************/
 public:
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
         if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, opt));
         } else if (row == (margin_ == 0)) {
@@ -767,7 +767,7 @@ public:
         }
     }
 
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, block_start, block_length, opt));
         } else if (row == (margin_ == 0)) {
@@ -777,7 +777,7 @@ public:
         }
     }
 
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, std::move(indices_ptr), opt));
         } else if (row == (margin_ == 0)) {
@@ -791,7 +791,7 @@ public:
      ********** Oracular sparse **********
      *************************************/
 private:
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
         if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, opt));
         } else if (row == (margin_ == 0)) {
@@ -801,7 +801,7 @@ private:
         }
     }
 
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, block_start, block_length, opt));
         } else if (row == (margin_ == 0)) {
@@ -811,7 +811,7 @@ private:
         }
     }
 
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, std::move(indices_ptr), opt));
         } else if (row == (margin_ == 0)) {

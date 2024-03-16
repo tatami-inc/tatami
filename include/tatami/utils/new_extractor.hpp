@@ -17,7 +17,7 @@ namespace tatami {
  * Maybe an `Oracle`, maybe a placeholder boolean, depending on `oracle_`.
  */
 template<bool oracle_, typename Index_>
-using MaybeOracle = typename std::conditional<oracle_, std::shared_ptr<Oracle<Index_> >, bool>::type;
+using MaybeOracle = typename std::conditional<oracle_, std::shared_ptr<const Oracle<Index_> >, bool>::type;
 
 /**
  * This utility makes it easier for developers to write a single templated function that works with and without oracles.

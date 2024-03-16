@@ -110,7 +110,7 @@ using OracularSparse = Sparse<true, ValueOut_, IndexOut_, ValueIn_, IndexIn_>;
 
 template<typename IndexIn_, typename IndexOut_>
 struct CastOracle : public Oracle<IndexIn_> {
-    CastOracle(std::shared_ptr<Oracle<IndexOut_> > o) : oracle(std::move(o)) {}
+    CastOracle(std::shared_ptr<const Oracle<IndexOut_> > o) : oracle(std::move(o)) {}
 
     IndexIn_ get(size_t i) const {
         return oracle->get(i);
@@ -120,11 +120,11 @@ struct CastOracle : public Oracle<IndexIn_> {
         return oracle->total();
     }
 
-    std::shared_ptr<Oracle<IndexOut_> > oracle;
+    std::shared_ptr<const Oracle<IndexOut_> > oracle;
 };
 
 template<typename IndexIn_, typename IndexOut_>
-std::shared_ptr<Oracle<IndexIn_> > convert(std::shared_ptr<Oracle<IndexOut_> > o) {
+std::shared_ptr<const Oracle<IndexIn_> > convert(std::shared_ptr<const Oracle<IndexOut_> > o) {
     if constexpr(std::is_same<IndexIn_, IndexOut_>::value) {
         return o;
     } else {
@@ -259,21 +259,21 @@ public:
      *** Oracular dense ***
      **********************/
 public:
-    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, std::shared_ptr<Oracle<IndexOut_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, const Options& opt) const {
         return std::make_unique<DelayedCast_internal::OracularDense<ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(
             ptr->dense(row, DelayedCast_internal::convert<IndexIn_>(std::move(oracle)), opt),
             (row ? ptr->ncol() : ptr->nrow())
         );
     }
 
-    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, std::shared_ptr<Oracle<IndexOut_> > oracle, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) const {
         return std::make_unique<DelayedCast_internal::OracularDense<ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(
             ptr->dense(row, DelayedCast_internal::convert<IndexIn_>(std::move(oracle)), block_start, block_length, opt),
             block_length
         );
     }
 
-    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, std::shared_ptr<Oracle<IndexOut_> > oracle, VectorPtr<IndexOut_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<ValueOut_, IndexOut_> > dense(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, VectorPtr<IndexOut_> indices_ptr, const Options& opt) const {
         size_t extent = indices_ptr->size();
         return std::make_unique<DelayedCast_internal::OracularDense<ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(
             ptr->dense(
@@ -290,7 +290,7 @@ public:
      *** Oracular sparse ***
      ***********************/
 public:
-    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, std::shared_ptr<Oracle<IndexOut_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, const Options& opt) const {
         return std::make_unique<DelayedCast_internal::OracularSparse<ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(
             ptr->sparse(row, DelayedCast_internal::convert<IndexIn_>(std::move(oracle)), opt),
             (row ? ptr->ncol() : ptr->nrow()),
@@ -298,7 +298,7 @@ public:
         );
     }
 
-    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, std::shared_ptr<Oracle<IndexOut_> > oracle, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, IndexOut_ block_start, IndexOut_ block_length, const Options& opt) const {
         return std::make_unique<DelayedCast_internal::OracularSparse<ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(
             ptr->sparse(row, DelayedCast_internal::convert<IndexIn_>(std::move(oracle)), block_start, block_length, opt),
             block_length,
@@ -306,7 +306,7 @@ public:
         );
     }
 
-    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, std::shared_ptr<Oracle<IndexOut_> > oracle, VectorPtr<IndexOut_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<ValueOut_, IndexOut_> > sparse(bool row, std::shared_ptr<const Oracle<IndexOut_> > oracle, VectorPtr<IndexOut_> indices_ptr, const Options& opt) const {
         size_t extent = indices_ptr->size();
         return std::make_unique<DelayedCast_internal::OracularSparse<ValueOut_, IndexOut_, ValueIn_, IndexIn_> >(
             ptr->sparse(

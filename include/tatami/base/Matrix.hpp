@@ -515,7 +515,7 @@ public:
      * @return Object for extracting the full extent of each row (if `row = true)` or columns (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const = 0;
+    virtual std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const = 0;
 
     /**
      * @param row Whether to create a row-wise extractor.
@@ -526,7 +526,7 @@ public:
      * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
+    virtual std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
     /**
      * @param row Whether to create a row-wise extractor.
@@ -537,7 +537,7 @@ public:
      * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
+    virtual std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
 
 public: // ==== Convenience methods ====
     /**
@@ -546,7 +546,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting the full extent of each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
         return dense(true, std::move(oracle), opt);
     }
 
@@ -558,7 +558,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting a contiguous block from each row.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         return dense(true, std::move(oracle), block_start, block_length, opt);
     }
 
@@ -570,7 +570,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting an indexed subset from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return dense(true, std::move(oracle), std::move(indices_ptr), opt);
     }
 
@@ -581,7 +581,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting an indexed subset from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
         return dense_row(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     } 
 
@@ -591,7 +591,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting the full extent of each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
         return dense(false, std::move(oracle), opt);
     }
 
@@ -603,7 +603,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting a contiguous block from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         return dense(false, std::move(oracle), block_start, block_length, opt);
     }
 
@@ -615,7 +615,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting an indexed subset from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return dense(false, std::move(oracle), std::move(indices_ptr), opt);
     }
 
@@ -626,7 +626,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting an indexed subset from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
         return dense_column(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     }
 
@@ -637,7 +637,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting the full extent of each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<const Oracle<Index_> > oracle) const {
         return dense_row(std::move(oracle), Options());
     }
 
@@ -650,7 +650,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting a contiguous block from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
         return dense_row(std::move(oracle), block_start, block_length, Options());
     }
 
@@ -662,7 +662,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting an indexed subset from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
         return dense_row(std::move(oracle), std::move(indices_ptr), Options());
     }
 
@@ -673,7 +673,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting an indexed subset from each row in dense form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_row(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices) const {
         return dense_row(std::move(oracle), std::move(indices), Options());
     }
 
@@ -683,7 +683,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting the full extent of each column in dense form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<const Oracle<Index_> > oracle) const {
         return dense_column(std::move(oracle), Options());
     }
 
@@ -695,7 +695,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting a contiguous block from each column in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
         return dense_column(std::move(oracle), block_start, block_length, Options());
     }
 
@@ -707,7 +707,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting an indexed subset from each column in dense form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
         return dense_column(std::move(oracle), std::move(indices_ptr), Options()); 
     }
 
@@ -718,7 +718,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting an indexed subset from each column in dense form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense_column(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices) const {
         return dense_column(std::move(oracle), std::move(indices), Options()); 
     }
 
@@ -733,7 +733,7 @@ public:
      * @return Object for extracting the full extent of each row (if `row = true)` or columns (otherwise) in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const = 0;
+    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const = 0;
 
     /**
      * @param row Whether to create a row-wise extractor.
@@ -744,7 +744,7 @@ public:
      * @return Object for extracting a contiguous block from each row (if `row = true`) or column (otherwise) in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
+    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const = 0;
 
     /**
      * @param row Whether to create a row-wise extractor.
@@ -755,7 +755,7 @@ public:
      * @return Object for extracting an indexed subset from each row (if `row = true`) or column (otherwise) in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
+    virtual std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const = 0;
 
 public: // ==== Convenience methods ====
     /**
@@ -764,7 +764,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting the full extent of each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
         return sparse(true, std::move(oracle), opt);
     }
 
@@ -776,7 +776,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting a contiguous block from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         return sparse(true, std::move(oracle), block_start, block_length, opt);
     }
 
@@ -787,7 +787,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting an indexed subset from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return sparse(true, std::move(oracle), std::move(indices_ptr), opt);
     }
 
@@ -798,7 +798,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting an indexed subset from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
         return sparse_row(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     }
 
@@ -808,7 +808,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting the full extent of each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
         return sparse(false, std::move(oracle), opt);
     }
 
@@ -820,7 +820,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting a contiguous block from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         return sparse(false, std::move(oracle), block_start, block_length, opt);
     }
 
@@ -832,7 +832,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting an indexed subset from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return sparse(false, std::move(oracle), std::move(indices_ptr), opt);
     }
 
@@ -843,7 +843,7 @@ public: // ==== Convenience methods ====
      * @return Object for extracting an indexed subset from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices, const Options& opt) const {
         return sparse_column(std::move(oracle), std::make_shared<std::vector<Index_> >(std::move(indices)), opt);
     }
 
@@ -854,7 +854,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting the full extent of each row in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<const Oracle<Index_> > oracle) const {
         return sparse_row(std::move(oracle), Options());
     }
 
@@ -866,7 +866,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting a contiguous block from each row in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
         return sparse_row(std::move(oracle), block_start, block_length, Options());
     }
 
@@ -877,7 +877,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting an indexed subset from each row in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
         return sparse_row(std::move(oracle), std::move(indices_ptr), Options());
     }
 
@@ -888,7 +888,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting an indexed subset from each row in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_row(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices) const {
         return sparse_row(std::move(oracle), std::move(indices), Options());
     }
 
@@ -898,7 +898,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting the full extent of each column in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle) const {
         return sparse_column(std::move(oracle), Options());
     }
 
@@ -910,7 +910,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting a contiguous block from each column in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length) const {
         return sparse_column(std::move(oracle), block_start, block_length, Options());
     }
 
@@ -921,7 +921,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting an indexed subset from each column in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr) const {
         return sparse_column(std::move(oracle), std::move(indices_ptr), Options());
     }
 
@@ -932,7 +932,7 @@ public: // ==== Default option overloads ====
      * @return Object for extracting an indexed subset from each column in sparse form. 
      * This should not outlive the parent `Matrix` from which it was created.
      */
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<Oracle<Index_> > oracle, std::vector<Index_> indices) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse_column(std::shared_ptr<const Oracle<Index_> > oracle, std::vector<Index_> indices) const {
         return sparse_column(std::move(oracle), std::move(indices), Options());
     }
 };

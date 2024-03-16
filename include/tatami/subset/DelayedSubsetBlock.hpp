@@ -95,7 +95,7 @@ private:
 
 template<typename Index_>
 struct SubsetOracle : public Oracle<Index_> {
-    SubsetOracle(std::shared_ptr<Oracle<Index_> > input, Index_ shift) : input(std::move(input)), shift(shift) {}
+    SubsetOracle(std::shared_ptr<const Oracle<Index_> > input, Index_ shift) : input(std::move(input)), shift(shift) {}
 
     size_t total() const {
         return input->total();
@@ -106,7 +106,7 @@ struct SubsetOracle : public Oracle<Index_> {
     }
 
 private:
-    std::shared_ptr<Oracle<Index_> > input;
+    std::shared_ptr<const Oracle<Index_> > input;
     Index_ shift;
 };
 
@@ -282,15 +282,15 @@ public:
      ***** Oracular dense *****
      **************************/
 public:
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
         return dense_internal<true>(row, std::move(oracle), opt);
     }
 
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         return dense_internal<true>(row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return dense_internal<true>(row, std::move(oracle), std::move(indices_ptr), opt);
     }
 
@@ -298,15 +298,15 @@ public:
      ***** Oracular sparse *****
      ***************************/
 public:
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
         return sparse_internal<true>(row, std::move(oracle), opt);
     }
 
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         return sparse_internal<true>(row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return sparse_internal<true>(row, std::move(oracle), std::move(indices_ptr), opt);
     }
 };
