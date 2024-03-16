@@ -34,16 +34,6 @@ void bump_indices(VectorPtr<Index_>& indices_ptr, Index_ subset_start) {
     }
 }
 
-template<typename Value_, typename Index_>
-void debump_indices(SparseRange<Value_, Index_>& range, Index_* buffer, Index_ subset_start) {
-    if (range.index && subset_start) {
-        for (Index_ i = 0; i < range.number; ++i) {
-            buffer[i] = range.index[i] - subset_start;
-        }
-        range.index = buffer;
-    }
-}
-
 template<bool oracle_, typename Value_, typename Index_>
 struct AlongDense : public DenseExtractor<oracle_, Value_, Index_> {
     AlongDense(const Matrix<Value_, Index_>* mat, Index_ subset_start, Index_ subset_length, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) :
@@ -84,7 +74,12 @@ struct AlongSparse : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         auto output = internal->fetch(i, vbuffer, ibuffer);
-        debump_indices(output, ibuffer, shift);
+        if (output.index && shift) {
+            for (Index_ i = 0; i < output.number; ++i) {
+                ibuffer[i] = output.index[i] - shift;
+            }
+            output.index = ibuffer;
+        }
         return output;
     }
 
