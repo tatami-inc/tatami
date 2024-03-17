@@ -219,7 +219,7 @@ public:
     template<typename Index_>
     void dense(bool row, Index_ idx, const std::vector<Index_>& indices, Value_* buffer) const {
         if (row == (margin_ == 0)) {
-            delayed_boolean_run_simple<op_>(vec[idx], length, buffer);
+            delayed_boolean_run_simple<op_>(vec[idx], indices.size(), buffer);
         } else {
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
                 delayed_boolean_run<op_>(buffer[i], vec[indices[i]]);

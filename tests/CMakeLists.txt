@@ -30,7 +30,7 @@ add_executable(
 
 ##    src/isometric/unary/arith_vector_helpers.cpp
 ##    src/isometric/unary/arith_scalar_helpers.cpp
-##    src/isometric/unary/math_helpers.cpp
+    src/isometric/unary/math_helpers.cpp
 ##    src/isometric/unary/compare_scalar_helpers.cpp
 ##    src/isometric/unary/compare_vector_helpers.cpp
 ##    src/isometric/unary/boolean_scalar_helpers.cpp

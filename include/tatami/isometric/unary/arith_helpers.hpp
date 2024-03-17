@@ -231,16 +231,16 @@ public:
     template<typename Index_>
     void dense(bool row, Index_ idx, const std::vector<Index_>& indices, Value_* buffer) const {
         if (row == (margin_ == 0)) {
-            delayed_arith_run_simple<op_, right_>(vec[idx], length, buffer);
+            delayed_arith_run_simple<op_, right_>(vec[idx], indices.size(), buffer);
         } else {
-            for (Index_ i = 0; i < length; ++i) {
+            for (Index_ i = 0, length = indices.size(); i < length; ++i) {
                 delayed_arith_run<op_, right_>(buffer[i], vec[indices[i]]);
             }
         }
     }
 
     template<bool accrow_, typename Index_>
-    void sparse(Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
+    void sparse(bool row, Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
         if (row == (margin_ == 0)) {
             delayed_arith_run_simple<op_, right_>(vec[idx], number, buffer);
         } else {

@@ -5,7 +5,7 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 
@@ -18,7 +18,7 @@ protected:
     void SetUp() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -10, /* upper = */ 10);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
+        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
         return;
     }
 };
@@ -45,11 +45,11 @@ TEST_F(MathTest, Abs) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, SignByColumn) {
@@ -72,11 +72,11 @@ TEST_F(MathTest, SignByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, SqrtByColumn) {
@@ -104,11 +104,11 @@ TEST_F(MathTest, SqrtByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, LogByColumn) {
@@ -143,11 +143,11 @@ TEST_F(MathTest, LogByColumn) {
         bool FORWARD = true;
         int JUMP = 1;
 
-        tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-        tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+        tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+        tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-        tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-        tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+        tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+        tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
     }
 
     // Trying with another base.
@@ -171,11 +171,11 @@ TEST_F(MathTest, LogByColumn) {
         bool FORWARD = true;
         int JUMP = 1;
 
-        tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-        tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+        tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+        tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-        tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-        tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+        tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+        tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
     }
 }
 
@@ -206,11 +206,11 @@ TEST_F(MathTest, Log1pByColumn) {
         bool FORWARD = true;
         int JUMP = 1;
 
-        tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-        tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+        tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+        tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-        tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-        tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+        tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+        tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
     }
 
     // Trying with another base.
@@ -234,11 +234,11 @@ TEST_F(MathTest, Log1pByColumn) {
         bool FORWARD = true;
         int JUMP = 1;
 
-        tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-        tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+        tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+        tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-        tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-        tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+        tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+        tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
     }
 }
 
@@ -262,11 +262,11 @@ TEST_F(MathTest, ExpByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, Expm1ByColumn) {
@@ -289,11 +289,11 @@ TEST_F(MathTest, Expm1ByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, RoundByColumn) {
@@ -316,11 +316,11 @@ TEST_F(MathTest, RoundByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, CeilingByColumn) {
@@ -343,11 +343,11 @@ TEST_F(MathTest, CeilingByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, FloorByColumn) {
@@ -370,11 +370,11 @@ TEST_F(MathTest, FloorByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, TruncByColumn) {
@@ -397,11 +397,11 @@ TEST_F(MathTest, TruncByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, SinByColumn) {
@@ -424,11 +424,11 @@ TEST_F(MathTest, SinByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, CosByColumn) {
@@ -451,11 +451,11 @@ TEST_F(MathTest, CosByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, TanByColumn) {
@@ -478,11 +478,11 @@ TEST_F(MathTest, TanByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, AsinByColumn) {
@@ -511,11 +511,11 @@ TEST_F(MathTest, AsinByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, AcosByColumn) {
@@ -544,11 +544,11 @@ TEST_F(MathTest, AcosByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, AtanByColumn) {
@@ -571,11 +571,11 @@ TEST_F(MathTest, AtanByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, SinhByColumn) {
@@ -598,11 +598,11 @@ TEST_F(MathTest, SinhByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, CoshByColumn) {
@@ -625,11 +625,11 @@ TEST_F(MathTest, CoshByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, TanhByColumn) {
@@ -652,11 +652,11 @@ TEST_F(MathTest, TanhByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, AsinhByColumn) {
@@ -679,11 +679,11 @@ TEST_F(MathTest, AsinhByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, AcoshByColumn) {
@@ -712,11 +712,11 @@ TEST_F(MathTest, AcoshByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, AtanhByColumn) {
@@ -745,11 +745,11 @@ TEST_F(MathTest, AtanhByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, GammaByColumn) {
@@ -776,11 +776,11 @@ TEST_F(MathTest, GammaByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }
 
 TEST_F(MathTest, LgammaByColumn) {
@@ -807,9 +807,9 @@ TEST_F(MathTest, LgammaByColumn) {
     bool FORWARD = true;
     int JUMP = 1;
 
-    tatami_test::test_simple_column_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_column_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_column_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
-    tatami_test::test_simple_row_access(dense_mod.get(), &ref, FORWARD, JUMP);
-    tatami_test::test_simple_row_access(sparse_mod.get(), &ref, FORWARD, JUMP);
+    tatami_test::test_simple_row_access(dense_mod.get(), &ref);
+    tatami_test::test_simple_row_access(sparse_mod.get(), &ref);
 }

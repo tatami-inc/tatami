@@ -23,10 +23,6 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool needs_row = false;
 
     static constexpr bool needs_column = false;
