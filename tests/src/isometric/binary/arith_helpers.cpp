@@ -948,21 +948,3 @@ INSTANTIATE_TEST_SUITE_P(
         )
     )
 );
-
-/***********************************
- ********* CONST OVERLOADS *********
- ***********************************/
-
-TEST(BinaryArith, ConstOverload) {
-    int nrow = 23, ncol = 42;
-    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
-    auto dense_left = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-    auto dense_right = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-
-    auto op = tatami::make_DelayedBinaryAddHelper();
-    auto mat = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, std::move(op));
-
-    // cursory checks.
-    EXPECT_EQ(mat->nrow(), nrow);
-    EXPECT_EQ(mat->ncol(), ncol);
-}

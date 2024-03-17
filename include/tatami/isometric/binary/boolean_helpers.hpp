@@ -28,7 +28,7 @@ public:
      * @cond
      */
     // It's sparse if f(0, 0) == 0.
-    static constexpr bool always_sparse = (op_ != DelayedBooleanOp::EQUAL);
+    static constexpr bool is_sparse = (op_ != DelayedBooleanOp::EQUAL);
     /**
      * @endcond
      */
@@ -52,7 +52,7 @@ public:
     }
 
     template<typename Value_, typename Index_>
-    SparseRange<Value_, Index_> sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
+    Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
         // Don't bother storing an explicit zero for AND operations when either entry is zero.
         constexpr bool must_have_both = (op_ == DelayedBooleanOp::AND);
         return delayed_binary_isometric_sparse_operation<must_have_both>(

@@ -22,7 +22,7 @@ namespace tatami {
 /**
  * @cond
  */
-namespace DelayedIsometricBinaryOp_internal {
+namespace DelayedBinaryIsometricOp_internal {
 
 template<bool oracle_, typename Value_, typename Index_, class Operation_>
 struct DenseFull : public DenseExtractor<oracle_, Value_, Index_> {
@@ -46,7 +46,7 @@ struct DenseFull : public DenseExtractor<oracle_, Value_, Index_> {
         auto lptr = left->fetch(i, buffer);
         copy_n(lptr, extent, buffer);
         auto rptr = right->fetch(i, holding_buffer.data());
-        operation.template dense<Value_, Index_>(row, i, 0, extent, buffer, rptr);
+        operation.dense(row, i, static_cast<Index_>(0), extent, buffer, rptr);
         return buffer;
     }
 
@@ -83,7 +83,7 @@ struct DenseBlock : public DenseExtractor<oracle_, Value_, Index_> {
         auto lptr = left->fetch(i, buffer);
         copy_n(lptr, block_length, buffer);
         auto rptr = right->fetch(i, holding_buffer.data());
-        operation.template dense<Value_, Index_>(row, i, block_start, block_length, buffer, rptr);
+        operation.dense(row, i, block_start, block_length, buffer, rptr);
         return buffer;
     }
 
@@ -118,7 +118,7 @@ struct DenseIndex : public DenseExtractor<oracle_, Value_, Index_> {
         auto lptr = left->fetch(i, buffer);
         copy_n(lptr, holding_buffer.size(), buffer);
         auto rptr = right->fetch(i, holding_buffer.data());
-        operation.template dense<Value_, Index_>(row, i, *indices_ptr, buffer, rptr);
+        operation.dense(row, i, *indices_ptr, buffer, rptr);
         return buffer;
     }
 
@@ -199,7 +199,7 @@ public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         auto left_ranges = left->fetch(i, left_internal_vbuffer.data(), left_internal_ibuffer.data());
         auto right_ranges = right->fetch(i, right_internal_vbuffer.data(), right_internal_ibuffer.data());
-        return operation.template sparse<Value_, Index_>(
+        auto num = operation.sparse(
             row, 
             i, 
             left_ranges, 
@@ -209,6 +209,7 @@ public:
             report_value,
             report_index
         );
+        return SparseRange(num, (report_value ? vbuffer : NULL), (report_index ? ibuffer : NULL));
     }
 
 private:
@@ -233,39 +234,11 @@ private:
  * Each entry of the output matrix is a function of the corresponding values in the two input matrices.
  * This operation is "delayed" in that it is only evaluated on request, e.g., with `DenseExtractor::fetch()` or friends.
  *
- * The `Operation_` class is expected to provide the following static `constexpr` member variables:
- *
- * - `always_sparse`: whether the operation can be optimized to return a sparse result if both input matrices are sparse.
- * 
- * The class should implement the following method:
- *
- * - `void dense(bool row, Index_ i, Index_ start, Index_ length, Value_* left_buffer, const Value_* right_buffer) const`: 
- *   This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
- *   When `row = true`, these buffers contain a contiguous block of elements from row `i` of the left and right matrices, 
- *   where the block starts at column `start` and is of length `length`.
- *   If `row = false`, `i` is instead a column and the block starts at row `start`.
- *   The result of the operation should be stored in `left_buffer`.
- * - `void dense(bool row, Index_ i, const std::vector<Index_>& indices, Value_* buffer1, const Value_* buffer2) const`: 
- *   This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
- *   When `row = true`, these buffers contain a subset of elements from row `i` of the left and right matrices, 
- *   where the subset is defined by column indices in the `indices` array of length `length`.
- *   If `row_ = false`, `i` is instead a column and `indices` contains row indices.
- *   The result of the operation should be stored in `left_buffer`.
- * 
- * If `always_sparse = true`, the class should implement:
- *
- * - `Index_ sparse(bool row, Index_ i, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const`:
- *   This method should apply the operation to the sparse ranges in `left` and `right`.
- *   These ranges consist of the contents of row `i` (if `row = true)` or column `i` (otherwise) from the left and right matrices.
- *   `left` and `right` will always return indices regardless of `needs_index`, and these are always sorted by increasing index;
- *   however, values will only be returned if `needs_value = true`.
- *   All non-zero values resulting from the operation should be stored in `value_buffer` if `needs_value = true`, otherwise `value_buffer = NULL` and should be ignored.
- *   The corresponding indices of those values should be stored in `index_buffer` if `needs_index = true`, otherwise `index_buffer = NULL` and should be ignored.
- *   The return value should be the number of structural non-zero elements in the output buffers.
- *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
  * @tparam Operation_ Class implementing the operation.
+ * A non-sparsity-preserving operation should implement the same methods as `DelayedBinaryMockDenseHelper`,
+ * while a sparsity-preserving operation should implement the same methods as `DelayedBinaryMockSparseHelper`.
  */
 template<typename Value_, typename Index_, class Operation_>
 class DelayedBinaryIsometricOp : public Matrix<Value_, Index_> {
@@ -304,14 +277,14 @@ public:
      * Otherwise returns `false`.
      */
     bool sparse() const {
-        if constexpr(Operation_::always_sparse) {
+        if constexpr(Operation_::is_sparse) {
             return left->sparse() && right->sparse();
         }
         return false;
     }
 
     double sparse_proportion() const {
-        if constexpr(Operation_::always_sparse) {
+        if constexpr(Operation_::is_sparse) {
             // Well, better than nothing.
             return (left->sparse_proportion() + right->sparse_proportion())/2;
         }
@@ -344,7 +317,7 @@ public:
 private:
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
-        return std::make_unique<DelayedIsometricBinaryOp_internal::DenseFull<oracle_, Value_, Index_, Operation_> >(
+        return std::make_unique<DelayedBinaryIsometricOp_internal::DenseFull<oracle_, Value_, Index_, Operation_> >(
             left.get(),
             right.get(),
             operation,
@@ -356,7 +329,7 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        return std::make_unique<DelayedIsometricBinaryOp_internal::DenseBlock<oracle_, Value_, Index_, Operation_> >(
+        return std::make_unique<DelayedBinaryIsometricOp_internal::DenseBlock<oracle_, Value_, Index_, Operation_> >(
             left.get(),
             right.get(),
             operation,
@@ -370,7 +343,7 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return std::make_unique<DelayedIsometricBinaryOp_internal::DenseIndex<oracle_, Value_, Index_, Operation_> >(
+        return std::make_unique<DelayedBinaryIsometricOp_internal::DenseIndex<oracle_, Value_, Index_, Operation_> >(
             left.get(),
             right.get(),
             operation,
@@ -400,8 +373,8 @@ public:
 private:
     template<bool oracle_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
-        if constexpr(Operation_::always_sparse) {
-            return std::make_unique<DelayedIsometricBinaryOp_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
+        if constexpr(Operation_::is_sparse) {
+            return std::make_unique<DelayedBinaryIsometricOp_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
                 left.get(),
                 right.get(),
                 operation,
@@ -420,8 +393,8 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        if constexpr(Operation_::always_sparse) {
-            return std::make_unique<DelayedIsometricBinaryOp_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
+        if constexpr(Operation_::is_sparse) {
+            return std::make_unique<DelayedBinaryIsometricOp_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
                 left.get(),
                 right.get(),
                 operation,
@@ -443,8 +416,8 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        if constexpr(Operation_::always_sparse) {
-            return std::make_unique<DelayedIsometricBinaryOp_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
+        if constexpr(Operation_::is_sparse) {
+            return std::make_unique<DelayedBinaryIsometricOp_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
                 left.get(),
                 right.get(),
                 operation,
@@ -547,5 +520,7 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shar
 #include "compare_helpers.hpp"
 
 #include "boolean_helpers.hpp"
+
+#include "mock_helpers.hpp"
 
 #endif
