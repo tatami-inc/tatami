@@ -63,11 +63,7 @@ public:
 
     static constexpr bool needs_column = false;
 
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = (op_ == DelayedBooleanOp::AND);
-
-    bool actual_sparse() const {
+    bool is_sparse() const {
         return still_sparse;
     }
     /**
@@ -78,18 +74,23 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_> 
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         delayed_boolean_run_simple<op_>(scalar, length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_> 
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        delayed_boolean_run_simple<op_>(scalar, indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         delayed_boolean_run_simple<op_>(scalar, number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ zero(bool, Index_) const {
         Value_ output = 0;
         delayed_boolean_run<op_>(output, scalar);
         return output;
@@ -114,10 +115,6 @@ struct DelayedBooleanNotHelper {
     static constexpr bool needs_row = false;
 
     static constexpr bool needs_column = false;
-
-    static constexpr bool always_dense = true;
-
-    static constexpr bool always_sparse = false;
     /**
      * @endcond
      */
@@ -134,18 +131,23 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ zero(bool, Index_) const {
         return 1;
     }
     /**
@@ -192,11 +194,7 @@ public:
 
     static constexpr bool needs_column = (margin_ == 1);
 
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = (op_ == DelayedBooleanOp::AND);
-
-    bool actual_sparse() const {
+    bool is_sparse() const {
         return still_sparse;
     }
     /**
@@ -207,28 +205,32 @@ public:
     /**
      * @cond
      */
-    template<bool accrow_, typename Index_, typename ExtractType_>
-    void dense(Index_ idx, ExtractType_ start, Index_ length, Value_* buffer) const {
-        if constexpr(accrow_ == (margin_ == 0)) {
+    template<typename Index_>
+    void dense(bool row, Index_ idx, Index_ start, Index_ length, Value_* buffer) const {
+        if (row == (margin_ == 0)) {
             delayed_boolean_run_simple<op_>(vec[idx], length, buffer);
-
-        } else if constexpr(std::is_same<ExtractType_, Index_>::value) {
-            for (Index_ i = 0; i < length; ++i) {
-                delayed_boolean_run<op_>(buffer[i], vec[i + start]);
-            }
-
         } else {
             for (Index_ i = 0; i < length; ++i) {
-                delayed_boolean_run<op_>(buffer[i], vec[start[i]]);
+                delayed_boolean_run<op_>(buffer[i], vec[i + start]);
             }
         }
     }
 
-    template<bool accrow_, typename Index_>
-    void sparse(Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
-        if constexpr(accrow_ == (margin_ == 0)) {
-            delayed_boolean_run_simple<op_>(vec[idx], number, buffer);
+    template<typename Index_>
+    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, Value_* buffer) const {
+        if (row == (margin_ == 0)) {
+            delayed_boolean_run_simple<op_>(vec[idx], length, buffer);
+        } else {
+            for (Index_ i = 0, length = indices.size(); i < length; ++i) {
+                delayed_boolean_run<op_>(buffer[i], vec[indices[i]]);
+            }
+        }
+    }
 
+    template<typename Index_>
+    void sparse(bool row, Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
+        if (row == (margin_ == 0)) {
+            delayed_boolean_run_simple<op_>(vec[idx], number, buffer);
         } else {
             for (Index_ i = 0; i < number; ++i) {
                 delayed_boolean_run<op_>(buffer[i], vec[indices[i]]);
@@ -236,7 +238,7 @@ public:
         }
     }
 
-    template<bool, typename Index_>
+    template<typename Index_>
     Value_ zero(Index_ idx) const {
         Value_ output = 0;
         delayed_boolean_run<op_>(output, vec[idx]);
