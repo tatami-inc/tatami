@@ -5,6 +5,7 @@
 #include <type_traits>
 #include <algorithm>
 
+#include "../base/Matrix.hpp"
 #include "utils.hpp"
 
 namespace tatami {
@@ -283,27 +284,47 @@ struct FullSecondaryExtractionCache : public SecondaryExtractionCache<Index_, In
 template<typename Index_, class IndexServer_> 
 struct BlockSecondaryExtractionCache : public SecondaryExtractionCache<Index_, IndexServer_> {
     BlockSecondaryExtractionCache(IndexServer_ isrv, Index_ mi, Index_ bs, Index_ bl) :
-        SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, bl, [&](Index_ ip) -> Index_ { return bs + ip; }), block_start(bs) {}
+        SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, bl, Helper(bs)), block_start(bs) {}
 
     template<class Store_>
     bool search(Index_ secondary, Store_ store) {
-        return this->search_base(secondary, [&](Index_ ip) -> Index_ { return ip + block_start; }, std::move(store));
+        return this->search_base(secondary, Helper(block_start), std::move(store));
     }
 
     Index_ block_start;
+
+private:
+    // Just to avoid rewriting the lambda all the time.
+    struct Helper {
+        Helper(Index_ s) : shift(s) {}
+        Index_ shift;
+        Index_ operator()(Index_ ip) const {
+            return ip + shift;
+        }
+    };
 };
 
 template<typename Index_, class IndexServer_> 
 struct IndexSecondaryExtractionCache : public SecondaryExtractionCache<Index_, IndexServer_> {
-    IndexSecondaryExtractionCache(IndexServer_ isrv, Index_ mi, std::vector<Index_> sub) :
-        SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, sub.size(), [&](Index_ ip) -> Index_ { return sub[ip]; }), subset(std::move(sub)) {}
+    IndexSecondaryExtractionCache(IndexServer_ isrv, Index_ mi, VectorPtr<Index_> sub_ptr) :
+        SecondaryExtractionCache<Index_, IndexServer_>(std::move(isrv), mi, sub_ptr->size(), Helper(*sub_ptr)), subset_ptr(std::move(sub_ptr)) {}
 
     template<class Store_>
     bool search(Index_ secondary, Store_ store) {
-        return this->search_base(secondary, [&](Index_ ip) -> Index_ { return subset[ip]; }, std::move(store));
+        return this->search_base(secondary, Helper(*subset_ptr), std::move(store));
     }
 
-    std::vector<Index_> subset;
+    VectorPtr<Index_> subset_ptr;
+
+private:
+    // Just to avoid rewriting the lambda all the time.
+    struct Helper {
+        Helper(const std::vector<Index_>& s) : subset(s) {}
+        const std::vector<Index_>& subset;
+        Index_ operator()(Index_ ip) const {
+            return subset[ip];
+        }
+    };
 };
 
 }

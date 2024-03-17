@@ -33,7 +33,7 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
             parallelize([&](int, Index_ start, Index_ len) -> void {
                 // Always convert to size_t when doing any pointer arithmetic.
                 auto curoutput = output + static_cast<size_t>(start) * num_groups;
-                auto ext = tatami::consecutive_extractor<row_, true>(p, start, len, opt);
+                auto ext = tatami::consecutive_extractor<true>(p, row_, start, len, opt);
                 std::vector<Value_> xbuffer(otherdim);
                 std::vector<Index_> ibuffer(otherdim);
 
@@ -52,7 +52,7 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
 
             parallelize([&](int, Index_ start, Index_ len) -> void {
                 auto curoutput = output + static_cast<size_t>(start) * num_groups;
-                auto ext = tatami::consecutive_extractor<!row_, true>(p, 0, otherdim, start, len, opt);
+                auto ext = tatami::consecutive_extractor<true>(p, !row_, 0, otherdim, start, len, opt);
                 std::vector<Value_> xbuffer(len);
                 std::vector<Index_> ibuffer(len);
 
@@ -71,7 +71,7 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
             parallelize([&](int, Index_ start, Index_ len) -> void {
                 auto curoutput = output + static_cast<size_t>(start) * num_groups;
                 std::vector<Value_> xbuffer(otherdim);
-                auto ext = tatami::consecutive_extractor<row_, false>(p, start, len);
+                auto ext = tatami::consecutive_extractor<false>(p, row_, start, len);
 
                 for (Index_ i = 0; i < len; ++i) {
                     auto ptr = ext->fetch(xbuffer.data());
@@ -89,7 +89,7 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
             parallelize([&](int, Index_ start, Index_ len) -> void {
                 auto curoutput = output + static_cast<size_t>(start) * num_groups;
                 std::vector<double> xbuffer(len);
-                auto ext = tatami::consecutive_extractor<!row_, false>(p, 0, otherdim, start, len);
+                auto ext = tatami::consecutive_extractor<false>(p, !row_, 0, otherdim, start, len);
 
                 for (int i = 0; i < otherdim; ++i) {
                     auto ptr = ext->fetch(xbuffer.data());

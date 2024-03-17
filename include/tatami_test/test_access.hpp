@@ -87,28 +87,6 @@ auto create_oracle(const TestAccessParameters& params, const std::vector<Index_>
     }
 }
 
-template<bool sparse_, bool use_oracle_, typename Value_, typename Index_, typename ... Args_>
-auto create_extractor(
-    const tatami::Matrix<Value_, Index_>* ptr, 
-    bool use_row, 
-    typename std::conditional<use_oracle_, std::shared_ptr<tatami::Oracle<Index_> >, bool>::type oracle, 
-    Args_&& ... args)
-{
-    if constexpr(use_oracle_) {
-        if (use_row) {
-            return tatami::new_extractor<true, sparse_>(ptr, std::move(oracle), std::forward<Args_>(args)...);
-        } else {
-            return tatami::new_extractor<false, sparse_>(ptr, std::move(oracle), std::forward<Args_>(args)...);
-        }
-    } else {
-        if (use_row) {
-            return tatami::new_extractor<true, sparse_>(ptr, std::forward<Args_>(args)...);
-        } else {
-            return tatami::new_extractor<false, sparse_>(ptr, std::forward<Args_>(args)...);
-        }
-    }
-}
-
 template<bool use_oracle_, typename Value_, typename Index_, class DenseExtract_, class SparseExpand_, typename ...Args_>
 void test_access_base(
     const TestAccessParameters& params, 
@@ -126,18 +104,18 @@ void test_access_base(
     auto sequence = simulate_sequence(params, NR, NC);
     auto oracle = create_oracle<use_oracle_>(params, sequence);
 
-    auto pwork = create_extractor<false, use_oracle_>(ptr, params.use_row, oracle, args...);
-    auto swork = create_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args...);
+    auto pwork = tatami::new_extractor<false, use_oracle_>(ptr, params.use_row, oracle, args...);
+    auto swork = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args...);
 
     tatami::Options opt;
     opt.sparse_extract_index = false;
-    auto swork_v = create_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
+    auto swork_v = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
 
     opt.sparse_extract_value = false;
-    auto swork_n = create_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
+    auto swork_n = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
 
     opt.sparse_extract_index = true;
-    auto swork_i = create_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
+    auto swork_i = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
 
     // Looping over rows/columns and checking extraction against the reference.
     for (auto i : sequence) {

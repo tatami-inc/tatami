@@ -98,7 +98,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
             opt.sparse_ordered_index = false;
 
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
-                auto wrk = consecutive_extractor<row_, true>(incoming, start, length, opt);
+                auto wrk = consecutive_extractor<true>(incoming, row_, start, length, opt);
                 for (InputIndex_ x = 0; x < length; ++x) {
                     auto range = wrk->fetch(NULL, NULL);
                     output_p[start + x + 1] = range.number;
@@ -108,7 +108,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
         } else {
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
-                auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
+                auto wrk = consecutive_extractor<false>(incoming, row_, start, length);
                 for (InputIndex_ x = 0; x < length; ++x) {
                     auto ptr = wrk->fetch(buffer_v.data());
                     size_t count = 0;
@@ -134,7 +134,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
                 std::vector<InputIndex_> buffer_i(secondary);
-                auto wrk = consecutive_extractor<row_, true>(incoming, start, length, opt);
+                auto wrk = consecutive_extractor<true>(incoming, row_, start, length, opt);
 
                 for (InputIndex_ x = 0; x < length; ++x) {
                     // Resist the urge to `fetch()` straight into 'output_p'
@@ -152,7 +152,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
         } else {
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
-                auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
+                auto wrk = consecutive_extractor<false>(incoming, row_, start, length);
 
                 for (InputIndex_ x = 0; x < length; ++x) {
                     auto ptr = wrk->fetch(buffer_v.data());
@@ -182,7 +182,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
 
             parallelize([&](size_t t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputIndex_> buffer_i(primary);
-                auto wrk = consecutive_extractor<!row_, true>(incoming, start, length, opt);
+                auto wrk = consecutive_extractor<true>(incoming, !row_, start, length, opt);
                 auto& my_counts = nz_counts[t];
 
                 for (InputIndex_ x = 0; x < length; ++x) {
@@ -195,7 +195,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
 
         } else {
             parallelize([&](size_t t, InputIndex_ start, InputIndex_ length) -> void {
-                auto wrk = consecutive_extractor<!row_, false>(incoming, start, length);
+                auto wrk = consecutive_extractor<false>(incoming, !row_, start, length);
                 std::vector<InputValue_> buffer_v(primary);
                 auto& my_counts = nz_counts[t];
 
@@ -234,7 +234,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(length);
                 std::vector<InputIndex_> buffer_i(length);
-                auto wrk = consecutive_extractor<!row_, true>(incoming, static_cast<InputIndex_>(0), secondary, start, length, opt);
+                auto wrk = consecutive_extractor<true>(incoming, !row_, static_cast<InputIndex_>(0), secondary, start, length, opt);
                 std::vector<size_t> offset_copy(output_p.begin() + start, output_p.begin() + start + length);
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {
@@ -251,7 +251,7 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
         } else {
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(length);
-                auto wrk = consecutive_extractor<!row_, false>(incoming, static_cast<InputIndex_>(0), secondary, start, length);
+                auto wrk = consecutive_extractor<false>(incoming, !row_, static_cast<InputIndex_>(0), secondary, start, length);
                 std::vector<size_t> offset_copy(output_p.begin() + start, output_p.begin() + start + length);
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {

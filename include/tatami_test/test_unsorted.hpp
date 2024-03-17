@@ -26,20 +26,20 @@ void test_unsorted_access_base(const TestAccessParameters& params, const tatami:
     auto sequence = simulate_sequence(params, NR, NC);
     auto oracle = create_oracle<use_oracle_>(params, sequence);
 
-    auto swork = create_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args...);
+    auto swork = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args...);
 
     tatami::Options opt;
     opt.sparse_ordered_index = false;
-    auto swork_uns = create_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
+    auto swork_uns = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
 
     opt.sparse_extract_index = false;
-    auto swork_uns_v = create_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
+    auto swork_uns_v = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
 
     opt.sparse_extract_value = false;
-    auto swork_uns_n = create_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
+    auto swork_uns_n = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
 
     opt.sparse_extract_index = true;
-    auto swork_uns_i = create_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
+    auto swork_uns_i = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
 
     // Looping over rows/columns and checking extraction for various unsorted combinations.
     for (auto i : sequence) {

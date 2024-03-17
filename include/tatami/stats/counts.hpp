@@ -38,7 +38,7 @@ void dimension_counts(const Matrix<Value_, Index_>* p, int threads, Output_* out
             tatami::parallelize([&](int, Index_ start, Index_ len) -> void {
                 std::vector<Value_> xbuffer(otherdim);
                 std::vector<Index_> ibuffer(otherdim);
-                auto ext = tatami::consecutive_extractor<row_, true>(p, start, len, opt);
+                auto ext = tatami::consecutive_extractor<true>(p, row_, start, len, opt);
                 for (Index_ x = 0; x < len; ++x) {
                     auto range = ext->fetch(xbuffer.data(), ibuffer.data());
                     Output_ target = 0;
@@ -52,7 +52,7 @@ void dimension_counts(const Matrix<Value_, Index_>* p, int threads, Output_* out
         } else {
             tatami::parallelize([&](int, Index_ start, Index_ len) -> void {
                 std::vector<Value_> xbuffer(otherdim);
-                auto ext = tatami::consecutive_extractor<row_, false>(p, start, len);
+                auto ext = tatami::consecutive_extractor<false>(p, row_, start, len);
 
                 for (Index_ x = 0; x < len; ++x) {
                     auto ptr = ext->fetch(xbuffer.data());
@@ -82,7 +82,7 @@ void dimension_counts(const Matrix<Value_, Index_>* p, int threads, Output_* out
             tatami::parallelize([&](int t, Index_ start, Index_ len) -> void {
                 std::vector<Value_> xbuffer(dim);
                 std::vector<Index_> ibuffer(dim);
-                auto ext = tatami::consecutive_extractor<!row_, true>(p, start, len, opt);
+                auto ext = tatami::consecutive_extractor<true>(p, !row_, start, len, opt);
 
                 auto curoutput = threaded_output_ptrs[t];
                 std::vector<Index_> nonzeros(dim);
@@ -102,7 +102,7 @@ void dimension_counts(const Matrix<Value_, Index_>* p, int threads, Output_* out
         } else {
             tatami::parallelize([&](int t, Index_ start, Index_ len) -> void {
                 std::vector<Value_> xbuffer(dim);
-                auto ext = tatami::consecutive_extractor<!row_, false>(p, start, len);
+                auto ext = tatami::consecutive_extractor<false>(p, !row_, start, len);
                 auto curoutput = threaded_output_ptrs[t];
                 for (Index_ x = 0; x < len; ++x) {
                     auto ptr = ext->fetch(xbuffer.data());

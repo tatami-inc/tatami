@@ -22,17 +22,17 @@ namespace tatami {
  */
 template<typename Value_, typename Index_> 
 struct PseudoOracularDenseExtractor : public OracularDenseExtractor<Value_, Index_> {
-    PseudoOracularDenseExtractor(std::shared_ptr<Oracle<Index_> > ora, std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > r) :
+    PseudoOracularDenseExtractor(std::shared_ptr<const Oracle<Index_> > ora, std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > r) :
         oracle(std::move(ora)), raw(std::move(r)) {}
 
-    const Value_* fetch(Value_* buffer) {
+    const Value_* fetch(Index_, Value_* buffer) {
         auto i = oracle->get(used);
         ++used;
         return raw->fetch(i, buffer);
     }
 
 private:
-    std::shared_ptr<Oracle<Index_> > oracle;
+    std::shared_ptr<const Oracle<Index_> > oracle;
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > raw;
     size_t used = 0;
 };
@@ -48,17 +48,17 @@ private:
  */
 template<typename Value_, typename Index_> 
 struct PseudoOracularSparseExtractor : public OracularSparseExtractor<Value_, Index_> {
-    PseudoOracularSparseExtractor(std::shared_ptr<Oracle<Index_> > ora, std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > r) :
+    PseudoOracularSparseExtractor(std::shared_ptr<const Oracle<Index_> > ora, std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > r) :
         oracle(std::move(ora)), raw(std::move(r)) {}
 
-    SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
+    SparseRange<Value_, Index_> fetch(Index_, Value_* vbuffer, Index_* ibuffer) {
         auto i = oracle->get(used);
         ++used;
         return raw->fetch(i, vbuffer, ibuffer);
     }
 
 private:
-    std::shared_ptr<Oracle<Index_> > oracle;
+    std::shared_ptr<const Oracle<Index_> > oracle;
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > raw;
     size_t used = 0;
 };

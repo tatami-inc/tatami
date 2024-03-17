@@ -34,7 +34,7 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
             Options opt;
             opt.sparse_extract_index = false;
             parallelize([&](size_t, Index_ s, Index_ l) {
-                auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
+                auto ext = consecutive_extractor<true>(p, row_, s, l, opt);
                 std::vector<Value_> vbuffer(otherdim);
                 for (Index_ x = 0; x < l; ++x) {
                     auto out = ext->fetch(vbuffer.data(), NULL);
@@ -46,7 +46,7 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
             std::fill(output, output + dim, static_cast<Output_>(0));
 
             parallelize([&](size_t, Index_ s, Index_ l) {
-                auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, l);
+                auto ext = consecutive_extractor<true>(p, !row_, 0, otherdim, s, l);
                 std::vector<Value_> vbuffer(l);
                 std::vector<Index_> ibuffer(l);
                 for (Index_ x = 0; x < otherdim; ++x) {
@@ -61,7 +61,7 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
     } else {
         if (direct) {
             parallelize([&](size_t, Index_ s, Index_ l) {
-                auto ext = consecutive_extractor<row_, false>(p, s, l);
+                auto ext = consecutive_extractor<false>(p, row_, s, l);
                 std::vector<Value_> buffer(otherdim);
                 for (Index_ x = 0; x < l; ++x) {
                     auto out = ext->fetch(buffer.data());
@@ -73,7 +73,7 @@ void dimension_sums(const Matrix<Value_, Index_>* p, Output_* output, int thread
             std::fill(output, output + dim, static_cast<Output_>(0));
 
             parallelize([&](size_t, Index_ s, Index_ l) {
-                auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, l);
+                auto ext = consecutive_extractor<false>(p, !row_, 0, otherdim, s, l);
                 std::vector<Value_> buffer(l);
                 for (Index_ x = 0; x < otherdim; ++x) {
                     auto out = ext->fetch(buffer.data());

@@ -76,7 +76,7 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
                 std::vector<InputIndex_> buffer_i(secondary);
-                auto wrk = consecutive_extractor<row_, true>(incoming, start, length);
+                auto wrk = consecutive_extractor<true>(incoming, row_, start, length);
 
                 for (InputIndex_ x = 0; x < length; ++x) {
                     auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
@@ -97,7 +97,7 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
         } else {
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
-                auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
+                auto wrk = consecutive_extractor<false>(incoming, row_, start, length);
 
                 // Special conversion from dense to save ourselves from having to make
                 // indices that we aren't really interested in.
@@ -126,7 +126,7 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(primary);
                 std::vector<InputIndex_> buffer_i(primary);
-                auto wrk = consecutive_extractor<!row_, true>(incoming, static_cast<InputIndex_>(0), secondary, start, length);
+                auto wrk = consecutive_extractor<true>(incoming, !row_, static_cast<InputIndex_>(0), secondary, start, length);
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {
                     auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
@@ -141,7 +141,7 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
 
         } else {
             parallelize([&](size_t, Index_ start, Index_ length) -> void {
-                auto wrk = consecutive_extractor<!row_, false>(incoming, static_cast<InputIndex_>(0), secondary, start, length);
+                auto wrk = consecutive_extractor<false>(incoming, !row_, static_cast<InputIndex_>(0), secondary, start, length);
                 std::vector<InputValue_> buffer_v(length);
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {
