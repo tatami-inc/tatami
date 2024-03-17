@@ -411,7 +411,7 @@ private:
             );
         } else {
             return std::make_unique<FullSparsifiedWrapper<oracle_, Value_, Index_> >(
-                dense_internal(row, std::move(oracle), opt),
+                dense_internal<oracle_>(row, std::move(oracle), opt),
                 row ? left->ncol() : left->nrow(),
                 opt
             );
@@ -433,7 +433,7 @@ private:
             );
         } else {
             return std::make_unique<BlockSparsifiedWrapper<oracle_, Value_, Index_> >(
-                dense_internal(row, std::move(oracle), block_start, block_length, opt),
+                dense_internal<oracle_>(row, std::move(oracle), block_start, block_length, opt),
                 block_start,
                 block_length,
                 opt
@@ -455,7 +455,7 @@ private:
             );
         } else {
             return std::make_unique<IndexSparsifiedWrapper<oracle_, Value_, Index_> >(
-                dense_internal(row, std::move(oracle), indices_ptr, opt),
+                dense_internal<oracle_>(row, std::move(oracle), indices_ptr, opt),
                 indices_ptr,
                 opt
             );
