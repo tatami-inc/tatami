@@ -38,22 +38,31 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
+    template<typename Value_, typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
         for (Index_ i = 0; i < length; ++i) {
             delayed_arith_run<op_, true>(left_buffer[i], right_buffer[i]);
         }
     }
 
-    template<bool, bool needs_value, bool needs_index, typename Value_, typename Index_>
-    Index_ sparse(Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
+    template<typename Value_, typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* left_buffer, const Value_* right_buffer) const {
+        for (Index_ i = 0, length = indices.size(); i < length; ++i) {
+            delayed_arith_run<op_, true>(left_buffer[i], right_buffer[i]);
+        }
+    }
+
+    template<typename Value_, typename Index_>
+    Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
         // Don't bother storing an explicit zero for MULTIPLY operations when either entry is zero.
         constexpr bool must_have_both = (op_ == DelayedArithOp::MULTIPLY);
-        return delayed_binary_isometric_sparse_operation<must_have_both, needs_value, needs_index>(
+        return delayed_binary_isometric_sparse_operation<must_have_both>(
             left, 
             right, 
             value_buffer, 
             index_buffer, 
+            needs_value,
+            needs_index,
             [](Value_& l, Value_ r) { delayed_arith_run<op_, true>(l, r); }
         );
     }

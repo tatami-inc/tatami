@@ -37,15 +37,15 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
+    template<typename Value_, typename Index_, typename ExtractType_>
+    void dense(bool, Index_, ExtractType_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
         for (Index_ i = 0; i < length; ++i) {
             delayed_compare_run<op_>(left_buffer[i], right_buffer[i]);
         }
     }
 
-    template<bool, bool needs_value, bool needs_index, typename Value_, typename Index_>
-    Index_ sparse(Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
+    template<typename Value_, typename Index_>
+    Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
         // None of the operations will return zero if one entry is zero and the other entry is non-zero...
         // except for equality, but then, the sparse() method would never even be used.
         return delayed_binary_isometric_sparse_operation<false, needs_value, needs_index>(
@@ -53,6 +53,8 @@ public:
             right, 
             value_buffer, 
             index_buffer, 
+            needs_value,
+            needs_index,
             [](Value_& l, Value_ r) { delayed_compare_run<op_>(l, r); }
         );
     }
