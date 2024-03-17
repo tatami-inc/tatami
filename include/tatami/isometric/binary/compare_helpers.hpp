@@ -37,18 +37,25 @@ public:
     /**
      * @cond
      */
-    template<typename Value_, typename Index_, typename ExtractType_>
-    void dense(bool, Index_, ExtractType_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
+    template<typename Value_, typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
         for (Index_ i = 0; i < length; ++i) {
             delayed_compare_run<op_>(left_buffer[i], right_buffer[i]);
         }
     }
 
     template<typename Value_, typename Index_>
-    Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* left_buffer, const Value_* right_buffer) const {
+        for (Index_ i = 0, length = indices.size(); i < length; ++i) {
+            delayed_compare_run<op_>(left_buffer[i], right_buffer[i]);
+        }
+    }
+
+    template<typename Value_, typename Index_>
+    SparseRange<Value_, Index_> sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
         // None of the operations will return zero if one entry is zero and the other entry is non-zero...
         // except for equality, but then, the sparse() method would never even be used.
-        return delayed_binary_isometric_sparse_operation<false, needs_value, needs_index>(
+        return delayed_binary_isometric_sparse_operation<false>(
             left, 
             right, 
             value_buffer, 
