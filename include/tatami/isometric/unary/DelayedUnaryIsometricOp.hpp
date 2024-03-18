@@ -334,7 +334,7 @@ private:
     std::vector<Value_> internal_vbuffer;
     std::vector<Index_> internal_ibuffer;
     std::vector<Index_> remapping;
-    Index_ remapping_offset;
+    Index_ remapping_offset = 0;
     MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
 
@@ -352,7 +352,7 @@ public:
         }
 
         for (Index_ i = 0; i < range.number; ++i) {
-            buffer[remapping[range.index[i]] - remapping_offset] = vbuffer[i];
+            buffer[remapping[range.index[i] - remapping_offset]] = vbuffer[i];
         }
 
         return buffer;
@@ -806,7 +806,7 @@ using DelayedIsometricOp = DelayedUnaryIsometricOp<Value_, Index_, Operation_>;
 
 #include "arith_helpers.hpp"
 
-//#include "math_helpers.hpp"
+#include "math_helpers.hpp"
 
 #include "compare_helpers.hpp"
 
