@@ -613,12 +613,15 @@ private:
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, Args_&& ... args) const {
         if (left->sparse() && right->sparse()) {
-            // Hide all the expanded code behind constexpr(), because some
-            // operation classes might not define the relevant methods/members.
+            // Hide sparse->dense expanded code behind constexpr(), because
+            // non-sparse operation classes won't define sparse().
             if constexpr(Operation_::is_sparse) {
                 return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
+
             } else if constexpr(!Operation_::zero_depends_on_row || !Operation_::zero_depends_on_column) {
-                if ((!Operation_::zero_depends_on_row && row) || (!Operation_::zero_depends_on_column && !row)) {
+                // If we don't depend on the rows, then we don't need row indices when 'row = false'.
+                // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.
+                if ((!Operation_::zero_depends_on_row && !row) || (!Operation_::zero_depends_on_column && row)) {
                     return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
                 }
             }
