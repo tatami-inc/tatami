@@ -28,9 +28,9 @@ public:
      * @cond
      */
     // It's sparse if f(0, 0) == 0.
-    static constexpr bool is_sparse = (op_ != DelayedCompareOp::EQUAL && 
-                                       op_ != DelayedCompareOp::GREATER_THAN_OR_EQUAL && 
-                                       op_ != DelayedCompareOp::LESS_THAN_OR_EQUAL);
+    static constexpr bool known_sparse = (op_ != DelayedCompareOp::EQUAL && 
+                                          op_ != DelayedCompareOp::GREATER_THAN_OR_EQUAL && 
+                                          op_ != DelayedCompareOp::LESS_THAN_OR_EQUAL);
 
     static constexpr bool zero_depends_on_row = false;
 
@@ -79,7 +79,15 @@ public:
 
     template<typename Value_, typename Index_>
     Value_ fill(Index_) const {
-        return static_cast<Value_>(1);
+        if constexpr(known_sparse) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    bool is_sparse() const {
+        return known_sparse;
     }
     /**
      * @endcond
