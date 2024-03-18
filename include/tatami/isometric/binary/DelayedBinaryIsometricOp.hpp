@@ -152,6 +152,7 @@ struct DenseExpandedFull : public DenseExtractor<oracle_, Value_, Index_> {
     {
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
+        opt.sparse_ordered_index = true;
         left = new_extractor<true, oracle_>(lmat, row, oracle, opt);
         right = new_extractor<true, oracle_>(rmat, row, std::move(oracle), opt);
 
@@ -217,6 +218,7 @@ struct DenseExpandedBlock : public DenseExtractor<oracle_, Value_, Index_> {
     {
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
+        opt.sparse_ordered_index = true;
         left = new_extractor<true, oracle_>(lmat, row, oracle, block_start, block_length, opt);
         right = new_extractor<true, oracle_>(rmat, row, std::move(oracle), block_start, block_length, opt);
 
@@ -291,6 +293,7 @@ struct DenseExpandedIndex : public DenseExtractor<oracle_, Value_, Index_> {
 
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
+        opt.sparse_ordered_index = true;
         left = new_extractor<true, oracle_>(lmat, row, oracle, indices_ptr, opt);
         right = new_extractor<true, oracle_>(rmat, row, std::move(oracle), std::move(indices_ptr), opt);
 

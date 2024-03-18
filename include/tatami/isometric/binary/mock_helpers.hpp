@@ -17,7 +17,8 @@ namespace tatami {
  */
 struct DelayedBinaryMockVariableDenseHelper {
     /**
-     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
+     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`,
+     * representing the dense contents of the same row/column from the left and right matrices respectively.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
@@ -48,7 +49,8 @@ struct DelayedBinaryMockVariableDenseHelper {
     }
 
     /**
-     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
+     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`,
+     * representing the dense contents of the same row/column from the left and right matrices respectively.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
@@ -111,8 +113,10 @@ struct DelayedBinaryMockVariableDenseHelper {
  */
 struct DelayedBinaryMockConstantDenseHelper : public DelayedBinaryMockVariableDenseHelper {
     /**
-     * This method applies the operation to the sparse ranges in `left` and `right`, storing results in the `output_*` buffers.
-     * The results of the operation only need to be reported for the structural non-zeros, as the zeros are populated by `fill()`.
+     * This method applies the operation to the sparse ranges in `left` and `right`,
+     * representing the contents of the same row/column from the left and right matrices respectively.
+     * Specifically, the operation only needs to be applied to the structural non-zeros, as the zeros are populated by `fill()`.
+     * The results of the operation should then be stored in the `output_*` buffers.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
@@ -191,8 +195,10 @@ struct DelayedBinaryMockConstantDenseHelper : public DelayedBinaryMockVariableDe
  */
 struct DelayedBinaryMockSparseHelper : public DelayedBinaryMockVariableDenseHelper {
     /**
-     * This method applies the operation to the sparse ranges in `left` and `right`, storing results in the `output_*` buffers.
+     * This method applies the operation to the sparse ranges in `left` and `right`, 
+     * representing the contents of the same row/column from the left and right matrices respectively.
      * It should only be called for sparsity-preserving operations, enabling optimizations by skipping structural zeros.
+     * The results of the operation should then be stored in the `output_*` buffers.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
