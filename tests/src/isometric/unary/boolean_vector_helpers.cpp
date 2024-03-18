@@ -60,6 +60,9 @@ TEST_P(BooleanVectorTest, AND) {
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
     EXPECT_TRUE(sparse_mod->sparse());
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {
@@ -103,6 +106,9 @@ TEST_P(BooleanVectorTest, OR) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {
@@ -146,6 +152,9 @@ TEST_P(BooleanVectorTest, XOR) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {
@@ -191,6 +200,9 @@ TEST_P(BooleanVectorTest, EQUAL) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {

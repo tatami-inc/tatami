@@ -52,7 +52,7 @@ TEST_P(CompareScalarTest, Equal) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -82,7 +82,7 @@ TEST_P(CompareScalarTest, GreaterThan) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -112,7 +112,7 @@ TEST_P(CompareScalarTest, LessThan) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -142,7 +142,7 @@ TEST_P(CompareScalarTest, GreaterThanOrEqual) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -172,7 +172,7 @@ TEST_P(CompareScalarTest, LessThanOrEqual) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -202,7 +202,7 @@ TEST_P(CompareScalarTest, NotEqual) {
         EXPECT_TRUE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;

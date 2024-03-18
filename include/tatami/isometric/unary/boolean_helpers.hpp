@@ -123,6 +123,10 @@ struct DelayedBooleanNotHelper {
     static constexpr bool non_zero_depends_on_row = false;
 
     static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return false;
+    }
     /**
      * @endcond
      */

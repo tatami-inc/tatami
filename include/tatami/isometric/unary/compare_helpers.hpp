@@ -148,7 +148,7 @@ public:
 
     static constexpr bool non_zero_depends_on_column = (margin_ == 1);
 
-    bool actual_sparse() const {
+    bool is_sparse() const {
         return still_sparse;
     }
     /**

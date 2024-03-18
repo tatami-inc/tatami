@@ -180,8 +180,6 @@ public:
 
     static constexpr bool non_zero_depends_on_column = (margin_ == 1);
 
-    typedef typename std::remove_reference<decltype(std::declval<Vector_>()[0])>::type Scalar_;
-
     bool is_sparse() const {
         return still_sparse;
     }

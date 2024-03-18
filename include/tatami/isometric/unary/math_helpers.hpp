@@ -30,6 +30,11 @@ public:
     static constexpr bool non_zero_depends_on_row = false;
 
     static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
+
     /**
      * @endcond
      */
@@ -61,10 +66,6 @@ public:
         core(number, buffer);
     }
 
-    bool is_sparse() const {
-        return true;
-    }
-
     template<typename Index_>
     Value_ fill(Index_) const {
         return 0;
@@ -84,13 +85,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -109,14 +114,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core<Index_>(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -145,13 +160,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = true;
-
-    static constexpr bool always_sparse = false;
-
     static const bool zero_depends_on_row = false;
 
     static const bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return false;
+    }
     /**
      * @endcond
      */
@@ -170,18 +189,23 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core<Index_>(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ fill(Index_) const {
         // Use the implementation-defined value.
         return std::log(static_cast<Value_>(0));
     }
@@ -200,13 +224,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -223,14 +251,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -247,13 +285,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -270,14 +312,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core<Index_>(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -294,13 +346,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -317,14 +373,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -341,13 +407,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -364,14 +434,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -400,13 +480,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -425,14 +509,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -449,13 +543,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -472,14 +570,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -496,13 +604,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = true;
-
-    static constexpr bool always_sparse = false;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return false;
+    }
     /**
      * @endcond
      */
@@ -519,18 +631,23 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ fill(Index_) const {
         return 1.0;
     }
     /**
@@ -548,13 +665,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -571,14 +692,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -595,13 +726,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = true;
-
-    static constexpr bool always_sparse = false;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return false;
+    }
     /**
      * @endcond
      */
@@ -618,18 +753,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        // Use the implementation-defined special value.
         return std::acos(0);
     }
     /**
@@ -647,13 +788,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = true;
-
-    static constexpr bool always_sparse = false;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return false;
+    }
     /**
      * @endcond
      */
@@ -670,18 +815,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        // Use the implementation-defined special value.
         return std::acosh(static_cast<Value_>(0));
     }
     /**
@@ -699,13 +850,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -722,14 +877,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -746,13 +911,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -769,14 +938,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -793,13 +972,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -816,14 +999,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -840,13 +1033,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -863,14 +1060,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -887,13 +1094,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = true;
-
-    static constexpr bool always_sparse = false;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return false;
+    }
     /**
      * @endcond
      */
@@ -910,18 +1121,23 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ fill(Index_) const {
         return 1.0;
     }
     /**
@@ -939,13 +1155,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = true;
-
-    static constexpr bool always_sparse = false;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return false;
+    }
     /**
      * @endcond
      */
@@ -962,18 +1182,23 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ fill(Index_) const {
         return 1.0;
     }
     /**
@@ -991,13 +1216,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -1014,14 +1243,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -1038,13 +1277,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -1061,14 +1304,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -1085,13 +1338,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -1108,14 +1365,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -1132,13 +1399,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = false;
-
-    static constexpr bool always_sparse = true;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return true;
+    }
     /**
      * @endcond
      */
@@ -1155,14 +1426,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
+    }
+
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        return 0;
     }
     /**
      * @endcond
@@ -1179,13 +1460,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = true;
-
-    static constexpr bool always_sparse = false;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return false;
+    }
     /**
      * @endcond
      */
@@ -1202,18 +1487,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        // Use the implementation-defined special value.
         return std::tgamma(static_cast<Value_>(0));
     }
     /**
@@ -1231,13 +1522,17 @@ public:
     /**
      * @cond
      */
-    static constexpr bool always_dense = true;
-
-    static constexpr bool always_sparse = false;
-
     static constexpr bool zero_depends_on_row = false;
 
     static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
+
+    bool is_sparse() const {
+        return false;
+    }
     /**
      * @endcond
      */
@@ -1254,18 +1549,24 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* buffer) const {
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
         core(length, buffer);
     }
 
-    template<bool, typename Index_>
-    void sparse(Index_, Index_ number, Value_* buffer, const Index_*) const {
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        core(indices.size(), buffer);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
         core(number, buffer);
     }
 
-    template<bool, typename Index_>
-    Value_ zero(Index_) const {
+    template<typename Index_>
+    Value_ fill(Index_) const {
+        // Use the implementation-defined special value.
         return std::lgamma(static_cast<Value_>(0));
     }
     /**

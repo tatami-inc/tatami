@@ -37,7 +37,7 @@ TEST_P(BooleanScalarTest, AND) {
     EXPECT_EQ(dense->ncol(), ncol);
     EXPECT_TRUE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -67,7 +67,7 @@ TEST_P(BooleanScalarTest, OR) {
         EXPECT_TRUE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -97,7 +97,7 @@ TEST_P(BooleanScalarTest, XOR) {
         EXPECT_TRUE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -127,7 +127,7 @@ TEST_P(BooleanScalarTest, EQUAL) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -161,7 +161,7 @@ TEST(BooleanNotTest, Basic) {
     EXPECT_EQ(dense->ncol(), ncol);
     EXPECT_FALSE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
