@@ -9,11 +9,13 @@ namespace tatami {
 /**
  * @brief Mock helper for dense operations in `DelayedBinaryIsometricOp`.
  *
+ * This defines the expectations for operations that discard sparsity in a variable manner
+ * (i.e., zeros are transformed into non-zeros of different value depending on their position in the `Matrix`).
  * Actual operations aren't expected to inherit from this class;
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-struct DelayedBinaryMockDenseHelper {
+struct DelayedBinaryMockVariableDenseHelper {
     /**
      * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
      *
@@ -75,17 +77,109 @@ struct DelayedBinaryMockDenseHelper {
     }
  
     /**
-     * This operation is not sparsity preserving. 
+     * This operation does not preserve sparsity.
      */
     static constexpr bool is_sparse = false;
 
     /**
+     * Conversion of zeros to non-zero values is dependent on rows.
+     */
+    static constexpr bool zero_depends_on_row = true;
+
+    /**
+     * Conversion of zeros to non-zero values is dependent on columns.
+     */
+    static constexpr bool zero_depends_on_column = true;
+
+    /**
      * @cond
      */
-    virtual ~DelayedBinaryMockDenseHelper() = default;
+    virtual ~DelayedBinaryMockVariableDenseHelper() = default;
     /**
      * @endcond
      */
+};
+
+/**
+ * @brief Mock helper for constant dense operations in `DelayedBinaryIsometricOp`.
+ *
+ * This defines the expectations for operations that discard sparsity in a variable manner
+ * (i.e., zeros are transformed into non-zeros of different value depending on their position in the `Matrix`).
+ * Actual operations aren't expected to inherit from this class;
+ * this is only provided for documentation purposes.
+ * Operations only need to implement methods with the same signatures for compile-time polymorphism.
+ */
+struct DelayedBinaryMockConstantDenseHelper : public DelayedBinaryMockVariableDenseHelper {
+    /**
+     * This method applies the operation to the sparse ranges in `left` and `right`, storing results in the `output_*` buffers.
+     * The results of the operation only need to be reported for the structural non-zeros, as the zeros are populated by `fill()`.
+     *
+     * @tparam Value_ Type of matrix value.
+     * @tparam Index_ Type of index value.
+     *
+     * @param row Whether `left_buffer` and `right_buffer` contain the row contents.
+     * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * @param left Contents of row/column `i` extracted from the left matrix.
+     * @param right Contents of row/column `i` extracted from the right matrix.
+     * @param[out] output_value Pointer to an array for storing output values of the operation.
+     * This is guaranteed to have enough space for the union of indices in `left` and `right`.
+     * @param[out] output_index Pointer to an array for storing output indices of the operation.
+     * This is guaranteed to have enough space for the union of indices in `left` and `right`.
+     *
+     * @return Number of structural non-zero elements in the `output_*` buffers.
+     *
+     * Both `left` and `right` are guaranteed to have non-NULL `value` pointers and `index` pointers.
+     * Indices in `index` are also guaranteed to be in ascending order.
+     *
+     * Note that this method does not necessarily need to have the same template arguments.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     */
+    template<typename Value_, typename Index_>
+    Index_ sparse(
+        [[maybe_unused]] bool row, 
+        [[maybe_unused]] Index_ i, 
+        [[maybe_unused]] const SparseRange<Value_, Index_>& left, 
+        [[maybe_unused]] const SparseRange<Value_, Index_>& right, 
+        [[maybe_unused]] Value_* output_value,
+        [[maybe_unused]] Index_* output_index)
+    const {
+        return 0;
+    }
+
+    /**
+     * @tparam Value_ Type of matrix value.
+     * @tparam Index_ Type of index value.
+     *
+     * @param i The index of the row containing the zero, if `zero_variance` is `DelayedBinaryDenseZeroVariance::ROW`;
+     * the index of the column containing the zero, if `zero_variance` is `DelayedBinaryDenseZeroVariance::COLUMN`;
+     * or ignored, if `zero_variance` is `DelayedBinaryDenseZeroVariance::NONE`.
+     *
+     * @return The result of the operation being applied on zeros from both the left and right matrices.
+     * This should be constant for all elements in the row/column/matrix, depending on the interpretation of `i`.
+     *
+     * This method will be called with the `Value_` template parameter.
+     */
+    template<typename Value_, typename Index_>
+    Value_ fill([[maybe_unused]] Index_ i) const { 
+        return 0;
+    }
+
+    /**
+     * This operation does not preserve sparsity.
+     */
+    static constexpr bool is_sparse = false;
+
+    /**
+     * Conversion of zeros to non-zero values is not dependent on rows.
+     * This may also be `true` provided that `zero_depends_on_column = false`.
+     */
+    static constexpr bool zero_depends_on_row = false;
+
+    /**
+     * Conversion of zeros to non-zero values is not dependent on columns.
+     * This may also be `true` provided that `zero_depends_on_row = false`.
+     */
+    static constexpr bool zero_depends_on_column = false;
 };
 
 /**
@@ -95,7 +189,7 @@ struct DelayedBinaryMockDenseHelper {
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-struct DelayedBinaryMockSparseHelper : public DelayedBinaryMockDenseHelper {
+struct DelayedBinaryMockSparseHelper : public DelayedBinaryMockVariableDenseHelper {
     /**
      * This method applies the operation to the sparse ranges in `left` and `right`, storing results in the `output_*` buffers.
      * It should only be called for sparsity-preserving operations, enabling optimizations by skipping structural zeros.
@@ -144,7 +238,7 @@ struct DelayedBinaryMockSparseHelper : public DelayedBinaryMockDenseHelper {
     }
 
     /**
-     * This operation is sparsity preserving. 
+     * This operation preserves sparsity.
      */
     static constexpr bool is_sparse = true;
 };

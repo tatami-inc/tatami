@@ -29,6 +29,10 @@ public:
      */
     // It's sparse if f(0, 0) == 0.
     static constexpr bool is_sparse = (op_ != DelayedBooleanOp::EQUAL);
+
+    static constexpr bool zero_depends_on_row = false;
+
+    static constexpr bool zero_depends_on_column = false;
     /**
      * @endcond
      */
@@ -64,6 +68,16 @@ public:
             needs_index,
             [](Value_& l, Value_ r) { delayed_boolean_run<op_>(l, r); }
         );
+    }
+
+    template<typename Value_, typename Index_>
+    Index_ sparse(bool r, Index_ i, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
+        return sparse(r, i, left, right, value_buffer, index_buffer, true, true);
+    }
+
+    template<typename Value_, typename Index_>
+    Value_ fill(Index_) const {
+        return 1;
     }
     /**
      * @endcond

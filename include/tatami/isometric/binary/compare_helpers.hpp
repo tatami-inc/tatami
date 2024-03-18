@@ -31,6 +31,10 @@ public:
     static constexpr bool is_sparse = (op_ != DelayedCompareOp::EQUAL && 
                                        op_ != DelayedCompareOp::GREATER_THAN_OR_EQUAL && 
                                        op_ != DelayedCompareOp::LESS_THAN_OR_EQUAL);
+
+    static constexpr bool zero_depends_on_row = false;
+
+    static constexpr bool zero_depends_on_column = false;
     /**
      * @endcond
      */
@@ -66,6 +70,16 @@ public:
             needs_index,
             [](Value_& l, Value_ r) { delayed_compare_run<op_>(l, r); }
         );
+    }
+
+    template<typename Value_, typename Index_>
+    Index_ sparse(bool r, Index_ i, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
+        return sparse<Value_, Index_>(r, i, left, right, value_buffer, index_buffer, true, true);
+    }
+
+    template<typename Value_, typename Index_>
+    Value_ fill(Index_) const {
+        return static_cast<Value_>(1);
     }
     /**
      * @endcond

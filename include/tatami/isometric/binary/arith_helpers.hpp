@@ -3,6 +3,8 @@
 
 #include "../arith_utils.hpp"
 #include "utils.hpp"
+#include <limits>
+#include <vector>
 
 /**
  * @file arith_helpers.hpp
@@ -30,6 +32,10 @@ public:
     static constexpr bool is_sparse = (op_ == DelayedArithOp::ADD ||
                                        op_ == DelayedArithOp::SUBTRACT ||
                                        op_ == DelayedArithOp::MULTIPLY);
+
+    static constexpr bool zero_depends_on_row = false;
+
+    static constexpr bool zero_depends_on_column = false;
     /**
      * @endcond
      */
@@ -65,6 +71,21 @@ public:
             needs_index,
             [](Value_& l, Value_ r) { delayed_arith_run<op_, true>(l, r); }
         );
+    }
+
+    template<typename Value_, typename Index_>
+    Index_ sparse(bool r, Index_ i, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
+        return sparse<Value_, Index_>(r, i, left, right, value_buffer, index_buffer, true, true);
+    }
+
+    template<typename Value_, typename Index_>
+    Value_ fill(Index_) const {
+        if constexpr(op_ == DelayedArithOp::POWER) {
+            return 1;
+        } else {
+            // Zero divided/modulo by zero gives NaN.
+            return std::numeric_limits<Value_>::quiet_NaN();
+        }
     }
     /**
      * @endcond
