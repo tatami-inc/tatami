@@ -27,15 +27,17 @@ namespace DelayedUnaryIsometricOp_internal {
 template<class Operation_, bool oracle_, typename Index_>
 struct MaybeOracleDepends {
     MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& ora, bool row) {
-        if constexpr(Operation_::zero_depends_on_row && Operation_::zero_depends_on_column) {
-            // Put this in a constexpr in case Operation_ only satisfies the basic interface,
-            // in which case it won't have the non_zero_depends_* members.
-            oracle = ora;
-        } else if (
-            (row  && (Operation_::zero_depends_on_row || Operation_::non_zero_depends_on_row)) || 
-            (!row && (Operation_::zero_depends_on_column || Operation_::non_zero_depends_on_column))
-        ) {
-            oracle = ora;
+        if constexpr(oracle_) {
+            if constexpr(Operation_::zero_depends_on_row && Operation_::zero_depends_on_column) {
+                // Put this in a constexpr in case Operation_ only satisfies the basic interface,
+                // in which case it won't have the non_zero_depends_* members.
+                oracle = ora;
+            } else if (
+                (row  && (Operation_::zero_depends_on_row || Operation_::non_zero_depends_on_row)) || 
+                (!row && (Operation_::zero_depends_on_column || Operation_::non_zero_depends_on_column))
+            ) {
+                oracle = ora;
+            }
         }
     }
 
@@ -311,10 +313,14 @@ struct DenseExpandedIndex : public DenseExtractor<oracle_, Value_, Index_> {
         internal_vbuffer.resize(extent);
         internal_ibuffer.resize(extent);
 
+        // Create a remapping vector to map the extracted indices back to the
+        // dense buffer. We use the 'remapping_offset' to avoid allocating the
+        // full extent of the dimension.
         if (extent) {
-            index_mapping.resize(row ? p->ncol() : p->nrow());
+            remapping_offset = indices.front();
+            remapping.resize(indices.back() - remapping_offset + 1);
             for (Index_ i = 0; i < extent; ++i) {
-                index_mapping[indices[i]] = i;
+                remapping[indices[i] - remapping_offset] = i;
             }
         }
 
@@ -327,7 +333,8 @@ private:
     Index_ extent;
     std::vector<Value_> internal_vbuffer;
     std::vector<Index_> internal_ibuffer;
-    std::vector<Index_> index_mapping;
+    std::vector<Index_> remapping;
+    Index_ remapping_offset;
     MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
 
@@ -345,7 +352,7 @@ public:
         }
 
         for (Index_ i = 0; i < range.number; ++i) {
-            buffer[index_mapping[range.index[i]]] = vbuffer[i];
+            buffer[remapping[range.index[i]] - remapping_offset] = vbuffer[i];
         }
 
         return buffer;
