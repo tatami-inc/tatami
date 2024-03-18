@@ -24,6 +24,44 @@ namespace tatami {
  */
 namespace DelayedUnaryIsometricOp_internal {
 
+template<class Operation_, bool oracle_, typename Index_>
+struct MaybeOracleDepends {
+    MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& ora, bool row) {
+        if constexpr(Operation_::zero_depends_on_row && Operation_::zero_depends_on_column) {
+            // Put this in a constexpr in case Operation_ only satisfies the basic interface,
+            // in which case it won't have the non_zero_depends_* members.
+            oracle = ora;
+        } else if (
+            (row  && (Operation_::zero_depends_on_row || Operation_::non_zero_depends_on_row)) || 
+            (!row && (Operation_::zero_depends_on_column || Operation_::non_zero_depends_on_column))
+        ) {
+            oracle = ora;
+        }
+    }
+
+    Index_ get(Index_ i) {
+        if constexpr(oracle_) {
+            if constexpr(Operation_::zero_depends_on_row && Operation_::zero_depends_on_column) {
+                // Put this in a constexpr in case Operation_ only satisfies the basic interface,
+                // in which case it won't have the non_zero_depends_* members.
+                return oracle->get(used++);
+            } else if constexpr(Operation_::zero_depends_on_row || 
+                 Operation_::non_zero_depends_on_row ||
+                 Operation_::zero_depends_on_column || 
+                 Operation_::non_zero_depends_on_column)
+            {
+                if (oracle) {
+                    return oracle->get(used++);
+                }
+            }
+        }
+        return i;
+    }
+
+    MaybeOracle<oracle_, Index_> oracle;
+    size_t used = 0;
+};
+
 /**
  * DenseBasic is used if:
  *
@@ -46,6 +84,7 @@ struct DenseBasicFull : public DenseExtractor<oracle_, Value_, Index_> {
         operation(op),
         row(row),
         extent(row ? p->ncol() : p->nrow()),
+        oracle_copy(oracle, row),
         internal(new_extractor<false, oracle_>(p, row, std::move(oracle), opt))
     {}
 
@@ -53,13 +92,14 @@ private:
     const Operation_& operation;
     bool row;
     Index_ extent;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > internal;
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto ptr = internal->fetch(i, buffer);
         copy_n(ptr, extent, buffer);
-        operation.dense(row, i, 0, extent, buffer);
+        operation.dense(row, oracle_copy.get(i), static_cast<Index_>(0), extent, buffer);
         return buffer;
     }
 };
@@ -77,6 +117,7 @@ struct DenseBasicBlock : public DenseExtractor<oracle_, Value_, Index_> {
         const Options& opt) :
         operation(op),
         row(row),
+        oracle_copy(oracle, row),
         block_start(bs),
         block_length(bl),
         internal(new_extractor<false, oracle_>(p, row, std::move(oracle), bs, bl, opt))
@@ -85,6 +126,7 @@ struct DenseBasicBlock : public DenseExtractor<oracle_, Value_, Index_> {
 private:
     const Operation_& operation;
     bool row;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     Index_ block_start, block_length;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > internal;
 
@@ -92,7 +134,7 @@ public:
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto ptr = internal->fetch(i, buffer);
         copy_n(ptr, block_length, buffer);
-        operation.dense(row, i, block_start, block_length, buffer);
+        operation.dense(row, oracle_copy.get(i), block_start, block_length, buffer);
         return buffer;
     }
 };
@@ -109,6 +151,7 @@ struct DenseBasicIndex : public DenseExtractor<oracle_, Value_, Index_> {
         const Options& opt) :
         operation(op),
         row(row),
+        oracle_copy(oracle, row),
         indices_ptr(idx_ptr),
         internal(new_extractor<false, oracle_>(p, row, std::move(oracle), std::move(idx_ptr), opt))
     {}
@@ -116,6 +159,7 @@ struct DenseBasicIndex : public DenseExtractor<oracle_, Value_, Index_> {
 private:
     const Operation_& operation;
     bool row;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     VectorPtr<Index_> indices_ptr;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > internal;
 
@@ -124,7 +168,7 @@ public:
         auto ptr = internal->fetch(i, buffer);
         const auto& indices = *indices_ptr;
         copy_n(ptr, indices.size(), buffer);
-        operation.dense(row, i, indices, buffer);
+        operation.dense(row, oracle_copy.get(i), indices, buffer);
         return buffer;
     }
 };
@@ -151,6 +195,7 @@ struct DenseExpandedFull : public DenseExtractor<oracle_, Value_, Index_> {
         Options opt) :
         operation(op),
         row(row),
+        oracle_copy(oracle, row),
         extent(row ? p->ncol() : p->nrow()),
         internal_vbuffer(extent),
         internal_ibuffer(extent)
@@ -166,23 +211,20 @@ private:
     Index_ extent;
     std::vector<Value_> internal_vbuffer;
     std::vector<Index_> internal_ibuffer;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto vbuffer = internal_vbuffer.data();
         auto range = this->internal->fetch(i, vbuffer, internal_ibuffer.data());
+        copy_n(range.value, range.number, vbuffer);
+        i = oracle_copy.get(i);
         operation.sparse(row, i, range.number, vbuffer, range.index);
 
         // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (range.number < extent) { 
-            std::fill_n(buffer, extent, [&]() {
-                if constexpr(Operation_::is_sparse) {
-                    return static_cast<Value_>(0);
-                } else {
-                    return operation.template fill<Value_>(i);
-                }
-            }());
+            std::fill_n(buffer, extent, operation.template fill<Value_>(i));
         }
 
         for (Index_ i = 0; i < range.number; ++i) {
@@ -206,6 +248,7 @@ struct DenseExpandedBlock : public DenseExtractor<oracle_, Value_, Index_> {
         Options opt) :
         operation(op),
         row(row),
+        oracle_copy(oracle, row),
         block_start(bs),
         block_length(bl),
         internal_vbuffer(block_length),
@@ -220,6 +263,7 @@ private:
     const Operation_& operation;
     bool row;
     Index_ block_start, block_length;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::vector<Value_> internal_vbuffer;
     std::vector<Index_> internal_ibuffer;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
@@ -228,17 +272,13 @@ public:
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto vbuffer = internal_vbuffer.data();
         auto range = this->internal->fetch(i, vbuffer, internal_ibuffer.data());
+        copy_n(range.value, range.number, vbuffer);
+        i = oracle_copy.get(i);
         operation.sparse(row, i, range.number, vbuffer, range.index);
 
         // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (range.number < block_length) { 
-            std::fill_n(buffer, block_length, [&]() {
-                if constexpr(Operation_::is_sparse) {
-                    return static_cast<Value_>(0);
-                } else {
-                    return operation.template fill<Value_>(i);
-                }
-            }());
+            std::fill_n(buffer, block_length, operation.template fill<Value_>(i));
         }
 
         for (Index_ i = 0; i < range.number; ++i) {
@@ -260,7 +300,8 @@ struct DenseExpandedIndex : public DenseExtractor<oracle_, Value_, Index_> {
         VectorPtr<Index_> indices_ptr,
         Options opt) :
         operation(op),
-        row(row)
+        row(row),
+        oracle_copy(oracle, row)
     {
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
@@ -287,23 +328,20 @@ private:
     std::vector<Value_> internal_vbuffer;
     std::vector<Index_> internal_ibuffer;
     std::vector<Index_> index_mapping;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto vbuffer = internal_vbuffer.data();
         auto range = this->internal->fetch(i, vbuffer, internal_ibuffer.data());
+        copy_n(range.value, range.number, vbuffer);
+        i = oracle_copy.get(i);
         operation.sparse(row, i, range.number, vbuffer, range.index);
 
         // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (range.number < extent) { 
-            std::fill_n(buffer, extent, [&]() {
-                if constexpr(Operation_::is_sparse) {
-                    return static_cast<Value_>(0);
-                } else {
-                    return operation.template fill<Value_>(i);
-                }
-            }());
+            std::fill_n(buffer, extent, operation.template fill<Value_>(i));
         }
 
         for (Index_ i = 0; i < range.number; ++i) {
@@ -331,6 +369,7 @@ struct SparseSimple : public SparseExtractor<oracle_, Value_, Index_> {
         const Options& opt) :
         operation(op),
         row(row),
+        oracle_copy(oracle, row),
         internal(new_extractor<true, oracle_>(p, row, std::move(oracle), opt)) 
     {}
 
@@ -344,6 +383,7 @@ struct SparseSimple : public SparseExtractor<oracle_, Value_, Index_> {
         const Options& opt) :
         operation(op),
         row(row),
+        oracle_copy(oracle, row),
         internal(new_extractor<true, oracle_>(p, row, std::move(oracle), bs, bl, opt)) 
     {}
 
@@ -356,12 +396,14 @@ struct SparseSimple : public SparseExtractor<oracle_, Value_, Index_> {
         const Options& opt) :
         operation(op),
         row(row),
+        oracle_copy(oracle, row),
         internal(new_extractor<true, oracle_>(p, row, std::move(oracle), std::move(indices_ptr), opt)) 
     {}
 
 private:
     const Operation_& operation;
     bool row;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
 
 public:
@@ -369,7 +411,7 @@ public:
         auto raw = internal->fetch(i, vbuffer, ibuffer);
         if (raw.value) {
             copy_n(raw.value, raw.number, vbuffer);
-            operation.sparse(row, i, raw.number, vbuffer, raw.index);
+            operation.sparse(row, oracle_copy.get(i), raw.number, vbuffer, raw.index);
             raw.value = vbuffer;
         }
         return raw;
@@ -392,7 +434,8 @@ struct SparseNeedsIndices : public SparseExtractor<oracle_, Value_, Index_> {
         MaybeOracle<oracle_, Index_> oracle, 
         Options opt) :
         operation(op),
-        row(row)
+        row(row),
+        oracle_copy(oracle, row)
     {
         initialize(opt, row ? p->ncol() : p->nrow());
         internal = new_extractor<true, oracle_>(p, row, std::move(oracle), opt);
@@ -407,7 +450,8 @@ struct SparseNeedsIndices : public SparseExtractor<oracle_, Value_, Index_> {
         Index_ bl,
         Options opt) :
         operation(op),
-        row(row)
+        row(row),
+        oracle_copy(oracle, row)
     {
         initialize(opt, bl);
         internal = new_extractor<true, oracle_>(p, row, std::move(oracle), bs, bl, opt);
@@ -421,7 +465,8 @@ struct SparseNeedsIndices : public SparseExtractor<oracle_, Value_, Index_> {
         VectorPtr<Index_> indices_ptr,
         Options opt) :
         operation(op),
-        row(row)
+        row(row),
+        oracle_copy(oracle, row)
     {
         initialize(opt, indices_ptr->size());
         internal = new_extractor<true, oracle_>(p, row, std::move(oracle), std::move(indices_ptr), opt);
@@ -451,6 +496,7 @@ private:
     bool row;
     bool report_value, report_index;
     std::vector<Index_> internal_ibuffer;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
 
 public:
@@ -459,7 +505,7 @@ public:
 
         if (report_value) {
             copy_n(raw.value, raw.number, vbuffer);
-            operation.sparse(row, i, raw.number, vbuffer, raw.index);
+            operation.sparse(row, oracle_copy.get(i), raw.number, vbuffer, raw.index);
             raw.value = vbuffer;
         }
 
@@ -503,6 +549,8 @@ private:
     std::shared_ptr<const Matrix<Value_, Index_> > mat;
     Operation_ operation;
 
+    static constexpr bool is_advanced = (!Operation_::zero_depends_on_row || !Operation_::zero_depends_on_column);
+
 public:
     Index_ nrow() const {
         return mat->nrow();
@@ -512,23 +560,22 @@ public:
         return mat->ncol();
     }
 
-    /**
-     * @return `true` if both the underlying (pre-operation) matrix is sparse and the operation preserves sparsity.
-     * Otherwise returns `false`.
-     */
     bool sparse() const {
-        if constexpr(Operation_::is_sparse) {
-            return mat->sparse();
+        if constexpr(is_advanced) {
+            if (operation.is_sparse()) {
+                return mat->sparse();
+            }
         }
         return false;
     }
 
     double sparse_proportion() const {
-        if constexpr(Operation_::is_sparse) {
-            return mat->sparse_proportion();
-        } else {
-            return 0;
+        if constexpr(is_advanced) {
+            if (operation.is_sparse()) {
+                return mat->sparse_proportion();
+            }
         }
+        return 0;
     }
 
     bool prefer_rows() const { 
@@ -587,18 +634,12 @@ private:
 
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, Args_&& ... args) const {
-        if (mat->sparse()) {
-            // Hide sparse->dense expanded code behind constexpr(), because
-            // non-sparse operation classes won't define sparse().
-            if constexpr(Operation_::is_sparse) {
-                return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
-            } else {
-                if constexpr(!Operation_::zero_depends_on_row || !Operation_::zero_depends_on_column) {
-                    // If we don't depend on the rows, then we don't need row indices when 'row = false'.
-                    // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.
-                    if ((!Operation_::zero_depends_on_row && !row) || (!Operation_::zero_depends_on_column && row)) {
-                        return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
-                    }
+        if constexpr(is_advanced) {
+            if (mat->sparse()) {
+                // If we don't depend on the rows, then we don't need row indices when 'row = false'.
+                // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.
+                if ((!Operation_::zero_depends_on_row && !row) || (!Operation_::zero_depends_on_column && row)) {
+                    return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
                 }
             }
         }
@@ -653,19 +694,15 @@ public:
 
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) const {
-        if (mat->sparse()) { 
-            // Hide sparse code behind constexpr(), because non-sparse
-            // operation classes won't define sparse().
-            if constexpr(Operation_::is_sparse) {
-                if constexpr(!Operation_::depends_on_row || !Operation_::depends_on_column) {
-                    if ((!Operation_::depends_on_row && !row) || (!Operation_::depends_on_column && row)) {
-                        // If we don't depend on the rows, then we don't need row indices when 'row = false'.
-                        // Similarly, if we don't depend on columsns, then we don't column row indices when 'row = true'.
-                        return std::make_unique<DelayedUnaryIsometricOp_internal::SparseSimple<oracle_, Value_, Index_, Operation_> >(mat.get(), operation, row, std::move(oracle), std::forward<Args_>(args)...);
-                    }
+        if constexpr(is_advanced) {
+            if (operation.is_sparse() && mat->sparse()) { 
+                if ((!Operation_::non_zero_depends_on_row && !row) || (!Operation_::non_zero_depends_on_column && row)) {
+                    // If we don't depend on the rows, then we don't need row indices when 'row = false'.
+                    // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.
+                    return std::make_unique<DelayedUnaryIsometricOp_internal::SparseSimple<oracle_, Value_, Index_, Operation_> >(mat.get(), operation, row, std::move(oracle), std::forward<Args_>(args)...);
+                } else {
+                    return std::make_unique<DelayedUnaryIsometricOp_internal::SparseNeedsIndices<oracle_, Value_, Index_, Operation_> >(mat.get(), operation, row, std::move(oracle), std::forward<Args_>(args)...);
                 }
-
-                return std::make_unique<DelayedUnaryIsometricOp_internal::SparseNeedsIndices<oracle_, Value_, Index_, Operation_> >(mat.get(), operation, row, std::move(oracle), std::forward<Args_>(args)...);
             }
         }
 
@@ -760,13 +797,13 @@ using DelayedIsometricOp = DelayedUnaryIsometricOp<Value_, Index_, Operation_>;
 
 }
 
-//#include "arith_helpers.hpp"
-//
+#include "arith_helpers.hpp"
+
 //#include "math_helpers.hpp"
-//
-//#include "compare_helpers.hpp"
-//
-//#include "boolean_helpers.hpp"
+
+#include "compare_helpers.hpp"
+
+#include "boolean_helpers.hpp"
 
 #include "mock_helpers.hpp"
 

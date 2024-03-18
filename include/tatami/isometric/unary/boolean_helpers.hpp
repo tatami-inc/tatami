@@ -59,9 +59,13 @@ public:
     /**
      * @cond
      */
-    static constexpr bool needs_row = false;
+    static constexpr bool zero_depends_on_row = false;
 
-    static constexpr bool needs_column = false;
+    static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
 
     bool is_sparse() const {
         return still_sparse;
@@ -90,7 +94,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ zero(bool, Index_) const {
+    Value_ fill(Index_) const {
         Value_ output = 0;
         delayed_boolean_run<op_>(output, scalar);
         return output;
@@ -112,9 +116,13 @@ struct DelayedBooleanNotHelper {
     /**
      * @cond
      */
-    static constexpr bool needs_row = false;
+    static constexpr bool zero_depends_on_row = false;
 
-    static constexpr bool needs_column = false;
+    static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
     /**
      * @endcond
      */
@@ -147,7 +155,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ zero(bool, Index_) const {
+    Value_ fill(Index_) const {
         return 1;
     }
     /**
@@ -190,9 +198,13 @@ public:
     /**
      * @cond
      */
-    static constexpr bool needs_row = (margin_ == 0);
+    static constexpr bool zero_depends_on_row = (margin_ == 0);
 
-    static constexpr bool needs_column = (margin_ == 1);
+    static constexpr bool zero_depends_on_column = (margin_ == 1);
+
+    static constexpr bool non_zero_depends_on_row = (margin_ == 0);
+
+    static constexpr bool non_zero_depends_on_column = (margin_ == 1);
 
     bool is_sparse() const {
         return still_sparse;
@@ -239,7 +251,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ zero(Index_ idx) const {
+    Value_ fill(Index_ idx) const {
         Value_ output = 0;
         delayed_boolean_run<op_>(output, vec[idx]);
         return output;

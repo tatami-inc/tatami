@@ -60,9 +60,13 @@ public:
     /**
      * @cond
      */
-    static constexpr bool needs_row = false;
+    static constexpr bool zero_depends_on_row = false;
 
-    static constexpr bool needs_column = false;
+    static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
 
     bool is_sparse() const {
         return still_sparse;
@@ -91,7 +95,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ zero(Index_) const {
+    Value_ fill(Index_) const {
         Value_ output = 0;
         delayed_compare_run<op_>(output, scalar);
         return output;
@@ -136,13 +140,13 @@ public:
     /**
      * @cond
      */
-    static constexpr bool needs_row = (margin_ == 0);
+    static constexpr bool zero_depends_on_row = (margin_ == 0);
 
-    static constexpr bool needs_column = (margin_ == 1);
+    static constexpr bool zero_depends_on_column = (margin_ == 1);
 
-    static constexpr bool always_dense = false;
+    static constexpr bool non_zero_depends_on_row = (margin_ == 0);
 
-    static constexpr bool always_sparse = false;
+    static constexpr bool non_zero_depends_on_column = (margin_ == 1);
 
     bool actual_sparse() const {
         return still_sparse;
@@ -189,7 +193,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ zero(Index_ idx) const {
+    Value_ fill(Index_ idx) const {
         Value_ output = 0;
         delayed_compare_run<op_>(output, vec[idx]);
         return output;

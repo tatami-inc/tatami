@@ -5,7 +5,7 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
@@ -19,7 +19,7 @@ protected:
     void SetUp() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -3, 3);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
+        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
         return;
     }
 

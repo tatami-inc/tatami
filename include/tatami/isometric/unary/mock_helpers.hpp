@@ -7,15 +7,14 @@
 namespace tatami {
 
 /**
- * @brief Mock helper for dense operations in `DelayedUnaryIsometricOp`.
+ * @brief Basic mock operation for a `DelayedUnaryIsometricOp`. 
  *
- * This defines the expectations for operations that discard sparsity in a variable manner
- * (i.e., zeros are transformed into non-zeros of different value depending on their position in the `Matrix`).
+ * This defines the basic expectations for an operation to use in `DelayedUnaryIsometricOp`.
  * Actual operations aren't expected to inherit from this class;
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-struct DelayedUnaryMockVariableDenseHelper {
+struct DelayedUnaryBasicMockHelper {
     /**
      * This method should apply the operation to values in `buffer`,
      * representing a contiguous block of values from a row/column.
@@ -73,11 +72,6 @@ struct DelayedUnaryMockVariableDenseHelper {
     }
  
     /**
-     * This operation does not preserve sparsity.
-     */
-    static constexpr bool is_sparse = false;
-
-    /**
      * Conversion of zeros to non-zero values is dependent on the row of origin.
      * This should be true, otherwise a `DelayeUnaryMockConstantDenseHelper` is expected.
      */
@@ -92,26 +86,30 @@ struct DelayedUnaryMockVariableDenseHelper {
     /**
      * @cond
      */
-    virtual ~DelayedUnaryMockVariableDenseHelper() = default;
+    virtual ~DelayedUnaryBasicMockHelper() = default;
     /**
      * @endcond
      */
 };
 
 /**
- * @brief Mock helper for constant dense operations in `DelayedUnaryIsometricOp`.
+ * @brief Advanced mock operation for `DelayedUnaryIsometricOp`.
  *
- * This defines the expectations for operations that discard sparsity in a variable manner
- * (i.e., zeros are transformed into non-zeros of different value depending on their position in the `Matrix`).
+ * This class defines the advanced expectations for an operation in `DelayedUnaryIsometricOp`,
+ * which improves efficiency by taking advantage of any sparsity in the underlying matrix.
+ * Either the operation itself preserves sparsity, or any loss of sparsity is predictable,
+ * i.e., zeros are transformed into a constant non-zero value that does not depend on its position in the `Matrix`.
+ *
  * Actual operations aren't expected to inherit from this class;
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-struct DelayedUnaryMockConstantDenseHelper : public DelayedUnaryMockVariableDenseHelper {
+struct DelayedUnaryAdvancedMockHelper : public DelayedUnaryBasicMockHelper {
     /**
      * This method applies the operation to a sparse range representing the contents of a row/column from the underyling matrix.
-     * Specifically, the operation only needs to be applied to the structural non-zeros, as the zeros are populated by `fill()`.
-     * The results of the operation should then be stored in the `output_*` buffers.
+     * Specifically, the operation only needs to be applied to the structural non-zeros;
+     * structural zeros are either ignored for sparsity-preserving operations,
+     * or the result of the operation on zeros will be populated by `fill()`.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
@@ -122,11 +120,14 @@ struct DelayedUnaryMockConstantDenseHelper : public DelayedUnaryMockVariableDens
      * @param[in,out] value Pointer to an array of values of the non-zero elements.
      * This is guaranteed to have `num` addressable elements.
      * @param[in] index Pointer to an array of column/row indices of the non-zero elements.
-     * This is guaranteed to have `num` addressable elements.
-     * Note that indices are not guaranteed to be sorted.
+     * Alternatively NULL.
      *
      * This method is expected to iterate over `value` and modify it in place,
      * i.e., replace each value with the result of the operation on that value.
+     *
+     * If `non_zero_depends_on_row && !row` or `non_zero_depends_on_column && row`, `index` is guaranteed to be non-NULL.
+     * Otherwise, it may be NULL and should be ignored.
+     * Even if non-NULL, indices are not guaranteed to be sorted.
      *
      * Note that this method does not necessarily need to have the same template arguments.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
@@ -161,11 +162,6 @@ struct DelayedUnaryMockConstantDenseHelper : public DelayedUnaryMockVariableDens
     }
 
     /**
-     * This operation does not preserve sparsity.
-     */
-    static constexpr bool is_sparse = false;
-
-    /**
      * Conversion of zeros to non-zero values is not dependent on the row of origin.
      * This may also be `true` provided that `zero_depends_on_column = false`.
      */
@@ -176,66 +172,28 @@ struct DelayedUnaryMockConstantDenseHelper : public DelayedUnaryMockVariableDens
      * This may also be `true` provided that `zero_depends_on_row = false`.
      */
     static constexpr bool zero_depends_on_column = false;
-};
-
-/**
- * @brief Interface for sparse operations in `DelayedUnaryIsometricOp`.
- *
- * Actual operations aren't expected to inherit from this class;
- * this is only provided for documentation purposes.
- * Operations only need to implement methods with the same signatures for compile-time polymorphism.
- */
-struct DelayedUnaryMockSparseHelper : public DelayedUnaryMockVariableDenseHelper {
-    /**
-     * This method applies the operation to a sparse range representing the contents of a row/column from the underlying matrix.
-     * It should only be called for sparsity-preserving operations, enabling optimizations by skipping structural zeros.
-     * The results of the operation should then be stored in the `output_*` buffers.
-     *
-     * @tparam Value_ Type of matrix value.
-     * @tparam Index_ Type of index value.
-     *
-     * @param row Whether `buffer` contains the row contents.
-     * @param i Index of the extracted row (if `row = true`) or column (otherwise).
-     * @param[in,out] value Pointer to an array of values of the non-zero elements.
-     * This is guaranteed to have `num` addressable elements.
-     * @param[in] index Pointer to an array of column/row indices of the non-zero elements.
-     * Alternatively this may be NULL.
-     *
-     * This method is expected to iterate over `value` and modify it in place,
-     * i.e., replace each value with the result of the operation on that value.
-     *
-     * If `depends_on_row && !row` or `depends_on_column && row`, `index` is guaranteed to be non-NULL.
-     * Otherwise, it may be NULL and should be ignored.
-     * If supplied, indices are not guaranteed to be sorted.
-     *
-     * Note that this method does not necessarily need to have the same template arguments.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
-     */
-    template<typename Value_, typename Index_>
-    void sparse(
-        [[maybe_unused]] bool row, 
-        [[maybe_unused]] Index_ i, 
-        Index_ num,
-        Value_* value,
-        const Index_* index)
-    const {
-        std::fill(value, value + num, 0);
-    }
-
-    /**
-     * This operation preserves sparsity.
-     */
-    static constexpr bool is_sparse = true;
 
     /**
      * Whether the operation requires the identity of the row of origin.
+     * This only affects the presence of `index` in `sparse()`.
+     * May be true or false.
      */
-    static constexpr bool depends_on_row = false;
+    static constexpr bool non_zero_depends_on_row = false;
 
     /**
      * Whether the operation requires the identity of the column of origin.
+     * This only affects the presence of `index` in `sparse()`.
+     * May be true or false.
      */
-    static constexpr bool depends_on_column = false;
+    static constexpr bool non_zero_depends_on_column = false;
+
+    /** 
+     * @return Does this operation preserve sparsity?
+     * This may return false.
+     */
+    bool is_sparse() const {
+        return true;
+    }
 };
 
 }

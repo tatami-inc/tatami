@@ -59,38 +59,6 @@ Value_ delayed_arith_zero(Scalar_ scalar) {
         return output;
     }
 }
-
-template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
-constexpr bool delayed_arith_always_dense() {
-    // If the scalar is operated on by the matrix, return true if zeros in the matrix yield non-zero results.
-    if constexpr(!right_) {
-        if constexpr(op_ == DelayedArithOp::DIVIDE) {
-            return true;
-        } else if constexpr(op_ == DelayedArithOp::POWER) {
-            return true;
-        } else if constexpr(op_ == DelayedArithOp::MODULO) {
-            return true;
-        } else if constexpr(op_ == DelayedArithOp::INTEGER_DIVIDE) {
-            return true;
-        }
-    }
-
-    return false;    
-}
-
-template<DelayedArithOp op_, bool right_, typename Value_, typename Scalar_>
-constexpr bool delayed_arith_always_sparse() {
-    // Multiplication is always sparse if the Scalar_ type cannot have special values.
-    if constexpr(op_ == DelayedArithOp::MULTIPLY && 
-        !std::numeric_limits<Scalar_>::has_infinity &&
-        !std::numeric_limits<Scalar_>::has_quiet_NaN && 
-        !std::numeric_limits<Scalar_>::has_signaling_NaN)
-    {
-        return true;
-    }
-
-    return false;
-}
 /**
  * @endcond
  */
@@ -123,9 +91,13 @@ public:
     /**
      * @cond
      */
-    static constexpr bool needs_row = false;
+    static constexpr bool zero_depends_on_row = false;
 
-    static constexpr bool needs_column = false;
+    static constexpr bool zero_depends_on_column = false;
+
+    static constexpr bool non_zero_depends_on_row = false;
+
+    static constexpr bool non_zero_depends_on_column = false;
 
     bool is_sparse() const {
         return still_sparse;
@@ -155,7 +127,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ zero(Index_) const {
+    Value_ fill(Index_) const {
         return delayed_arith_zero<op_, right_, Value_>(scalar);
     }
     /**
@@ -200,9 +172,13 @@ public:
     /**
      * @cond
      */
-    static constexpr bool needs_row = (margin_ == 0);
+    static constexpr bool zero_depends_on_row = (margin_ == 0);
 
-    static constexpr bool needs_column = (margin_ == 1);
+    static constexpr bool zero_depends_on_column = (margin_ == 1);
+
+    static constexpr bool non_zero_depends_on_row = (margin_ == 0);
+
+    static constexpr bool non_zero_depends_on_column = (margin_ == 1);
 
     typedef typename std::remove_reference<decltype(std::declval<Vector_>()[0])>::type Scalar_;
 
@@ -239,7 +215,7 @@ public:
         }
     }
 
-    template<bool accrow_, typename Index_>
+    template<typename Index_>
     void sparse(bool row, Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
         if (row == (margin_ == 0)) {
             delayed_arith_run_simple<op_, right_>(vec[idx], number, buffer);
@@ -251,7 +227,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ zero(Index_ idx) const {
+    Value_ fill(Index_ idx) const {
         return delayed_arith_zero<op_, right_, Value_>(vec[idx]);
     }
     /**
