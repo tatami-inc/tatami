@@ -11,13 +11,17 @@
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class CompareScalarTest : public ::testing::TestWithParam<int> { 
+class CompareScalarTest : public ::testing::TestWithParam<int> {
 protected:
-    size_t nrow = 123, ncol = 89;
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse;
-    std::vector<double> simulated;
-protected:
-    void SetUp() {
+    inline static size_t nrow = 123, ncol = 89;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
+    inline static std::vector<double> simulated;
+
+    static void SetUpTestSuite() {
+        if (dense) {
+            return;
+        }
+
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -2, 2);
         for (auto& x : simulated) {
             if (x) {
@@ -31,7 +35,6 @@ protected:
 
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
-        return;
     }
 };
 

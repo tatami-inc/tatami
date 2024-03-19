@@ -13,11 +13,11 @@
 
 class BinaryCompareTest : public ::testing::Test {
 protected:
-    size_t nrow = 151, ncol = 71;
-    std::shared_ptr<tatami::NumericMatrix> dense_left, sparse_left, dense_right, sparse_right;
-    std::vector<double> simulated_left, simulated_right;
-protected:
-    void SetUp() {
+    inline static size_t nrow = 151, ncol = 71;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_left, sparse_left, dense_right, sparse_right;
+    inline static std::vector<double> simulated_left, simulated_right;
+
+    static void SetUpTestSuite() {
         simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.2, /* lower = */ 1, /* upper = */ 4, /* seed */ 12345);
         for (auto& x : simulated_left) { x = std::round(x); } // Rounding for easier tests of exact equality.
         dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_left));

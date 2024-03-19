@@ -25,7 +25,6 @@ protected:
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
-        return;
     }
 
     static void test_simple_row_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
@@ -49,7 +48,7 @@ protected:
 
 class ArithCommutativeScalarTest : public ::testing::TestWithParam<double>, public ArithScalarUtils {
 protected:
-    void SetUp() {
+    static void SetUpTestSuite() {
         assemble();
     }
 };
@@ -115,7 +114,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 class ArithNonCommutativeScalarTest : public ::testing::TestWithParam<std::tuple<double, bool> >, public ArithScalarUtils {
 protected:
-    void SetUp() {
+    static void SetUpTestSuite() {
         assemble();
     }
 };

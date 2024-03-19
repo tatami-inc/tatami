@@ -13,11 +13,11 @@
 
 class BinaryBooleanTest : public ::testing::Test {
 protected:
-    size_t nrow = 123, ncol = 155;
-    std::shared_ptr<tatami::NumericMatrix> dense_left, sparse_left, dense_right, sparse_right;
-    std::vector<double> simulated_left, simulated_right;
-protected:
-    void SetUp() {
+    inline static size_t nrow = 123, ncol = 155;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_left, sparse_left, dense_right, sparse_right;
+    inline static std::vector<double> simulated_left, simulated_right;
+
+    static void SetUpTestSuite() {
         simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.2, /* lower = */ -10, /* upper = */ 10, /* seed */ 12345);
         dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_left));
         sparse_left = tatami::convert_to_compressed_sparse<false>(dense_left.get()); // column major.

@@ -11,17 +11,26 @@
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class BooleanScalarTest : public ::testing::TestWithParam<bool> { 
+class BooleanScalarUtils {
 protected:
-    size_t nrow = 83, ncol = 111;
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse;
-    std::vector<double> simulated;
-protected:
-    void SetUp() {
+    inline static size_t nrow = 83, ncol = 111;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
+    inline static std::vector<double> simulated;
+
+    static void assemble() {
+        if (dense) {
+            return;
+        }
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -2, 2);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
-        return;
+    }
+};
+
+class BooleanScalarTest : public ::testing::TestWithParam<bool>, public BooleanScalarUtils { 
+protected:
+    static void SetUpTestSuite() {
+        assemble();
     }
 };
 
@@ -146,12 +155,14 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(true, false)
 );
 
-TEST(BooleanNotTest, Basic) {
-    size_t nrow = 23, ncol = 41;
-    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.2, -2, 2);
-    auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-    auto sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
+class BooleanNotTest : public ::testing::Test, public BooleanScalarUtils { 
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
+TEST_F(BooleanNotTest, Basic) {
     auto op = tatami::make_DelayedBooleanNotHelper();
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
@@ -173,5 +184,3 @@ TEST(BooleanNotTest, Basic) {
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
-
-

@@ -11,15 +11,14 @@
 
 class MathTest : public ::testing::Test {
 protected:
-    size_t nrow = 82, ncol = 51;
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse;
-    std::vector<double> simulated;
-protected:
-    void SetUp() {
+    inline static size_t nrow = 82, ncol = 51;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
+    inline static std::vector<double> simulated;
+
+    static void SetUpTestSuite() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -10, /* upper = */ 10);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
-        return;
     }
 };
 
