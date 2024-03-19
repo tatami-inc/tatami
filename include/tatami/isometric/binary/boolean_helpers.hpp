@@ -28,7 +28,11 @@ public:
      * @cond
      */
     // It's sparse if f(0, 0) == 0.
-    static constexpr bool always_sparse = (op_ != DelayedBooleanOp::EQUAL);
+    static constexpr bool known_sparse = (op_ != DelayedBooleanOp::EQUAL);
+
+    static constexpr bool zero_depends_on_row = false;
+
+    static constexpr bool zero_depends_on_column = false;
     /**
      * @endcond
      */
@@ -37,24 +41,46 @@ public:
     /**
      * @cond
      */
-    template<bool, typename Value_, typename Index_, typename ExtractType_>
-    void dense(Index_, ExtractType_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
+    template<typename Value_, typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
         for (Index_ i = 0; i < length; ++i) {
             delayed_boolean_run<op_>(left_buffer[i], right_buffer[i]);
         }
     }
 
-    template<bool, bool needs_value, bool needs_index, typename Value_, typename Index_>
-    Index_ sparse(Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
-        // None of the operations will return zero if one entry is zero and the other entry is non-zero...
-        // except for equality, but then, the sparse() method would never even be used.
-        return delayed_binary_isometric_sparse_operation<false, needs_value, needs_index>(
+    template<typename Value_, typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* left_buffer, const Value_* right_buffer) const {
+        for (Index_ i = 0, length = indices.size(); i < length; ++i) {
+            delayed_boolean_run<op_>(left_buffer[i], right_buffer[i]);
+        }
+    }
+
+    template<typename Value_, typename Index_>
+    Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
+        // Don't bother storing an explicit zero for AND operations when either entry is zero.
+        constexpr bool must_have_both = (op_ == DelayedBooleanOp::AND);
+        return delayed_binary_isometric_sparse_operation<must_have_both>(
             left, 
             right, 
             value_buffer, 
             index_buffer, 
+            needs_value,
+            needs_index,
             [](Value_& l, Value_ r) { delayed_boolean_run<op_>(l, r); }
         );
+    }
+
+    template<typename Value_, typename Index_>
+    Value_ fill(Index_) const {
+        if constexpr(known_sparse) {
+            return 0;
+        } else {
+            return 1;
+        }
+    }
+
+    bool is_sparse() const {
+        return known_sparse;
     }
     /**
      * @endcond

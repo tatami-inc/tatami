@@ -7,7 +7,7 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
@@ -21,8 +21,22 @@ protected:
     void assemble() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
+        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
         return;
+    }
+
+    void test_simple_row_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
+        tatami_test::TestAccessParameters params;
+        params.has_nan = true;
+        params.use_row = true;
+        tatami_test::test_full_access(params, test, ref);
+    }
+
+    void test_simple_column_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
+        tatami_test::TestAccessParameters params;
+        params.has_nan = true;
+        params.use_row = false;
+        tatami_test::test_full_access(params, test, ref);
     }
 };
 
@@ -54,7 +68,7 @@ TEST_P(ArithCommutativeScalarTest, Addition) {
         EXPECT_TRUE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected.
     auto refvec = simulated;
@@ -184,11 +198,11 @@ TEST_P(ArithNonCommutativeScalarTest, Division) {
         quick_test_all(sparse_mod.get(), &ref);
     } else {
         // Turning on NaN protection.
-        tatami_test::test_simple_column_access<true>(dense_mod.get(), &ref, true, 1);
-        tatami_test::test_simple_row_access<true>(dense_mod.get(), &ref, true, 1);
+        test_simple_column_access_wt_nan(dense_mod.get(), &ref);
+        test_simple_column_access_wt_nan(dense_mod.get(), &ref);
 
-        tatami_test::test_simple_column_access<true>(sparse_mod.get(), &ref, true, 1);
-        tatami_test::test_simple_row_access<true>(sparse_mod.get(), &ref, true, 1);
+        test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
+        test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
     }
 }
 
@@ -274,11 +288,11 @@ TEST_P(ArithNonCommutativeScalarTest, Modulo) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Turning on NaN protection.
-    tatami_test::test_simple_column_access<true>(dense_mod.get(), &ref, true, 1);
-    tatami_test::test_simple_row_access<true>(dense_mod.get(), &ref, true, 1);
+    test_simple_column_access_wt_nan(dense_mod.get(), &ref);
+    test_simple_column_access_wt_nan(dense_mod.get(), &ref);
 
-    tatami_test::test_simple_column_access<true>(sparse_mod.get(), &ref, true, 1);
-    tatami_test::test_simple_row_access<true>(sparse_mod.get(), &ref, true, 1);
+    test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
+    test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
 }
 
 TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
@@ -319,11 +333,11 @@ TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Turning on NaN protection.
-    tatami_test::test_simple_column_access<true>(dense_mod.get(), &ref, true, 1);
-    tatami_test::test_simple_row_access<true>(dense_mod.get(), &ref, true, 1);
+    test_simple_column_access_wt_nan(dense_mod.get(), &ref);
+    test_simple_column_access_wt_nan(dense_mod.get(), &ref);
 
-    tatami_test::test_simple_column_access<true>(sparse_mod.get(), &ref, true, 1);
-    tatami_test::test_simple_row_access<true>(sparse_mod.get(), &ref, true, 1);
+    test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
+    test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -342,26 +356,16 @@ INSTANTIATE_TEST_SUITE_P(
 TEST(ArithScalarTest, NonIeee754Multiply) {
     int scalar = 5;
     auto op = tatami::make_DelayedMultiplyScalarHelper(scalar);
-    EXPECT_TRUE(decltype(op)::always_sparse);
-    EXPECT_TRUE(op.actual_sparse());
+    EXPECT_TRUE(op.is_sparse());
 }
 
 TEST(ArithScalarTest, NonFiniteMultiply) {
     double scalar = std::numeric_limits<double>::infinity();
     auto op = tatami::make_DelayedMultiplyScalarHelper(scalar);
-    EXPECT_FALSE(decltype(op)::always_sparse);
-    EXPECT_FALSE(op.actual_sparse());
+    EXPECT_FALSE(op.is_sparse());
 }
 
 TEST(ArithScalarTest, NonIeee754Divide) {
     auto op = tatami::make_DelayedDivideScalarHelper<false, int>(5.0);
-
-    bool failed = false;
-    try {
-        op.zero<true>(5);
-    } catch(std::exception& e) {
-        EXPECT_FALSE(std::string(e.what()).find("IEEE-754") == std::string::npos);
-        failed = true;
-    }
-    EXPECT_TRUE(failed);
+    tatami_test::throws_error([&]() { op.template fill<double>(5); }, "IEEE-754");
 }

@@ -6,7 +6,7 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
@@ -20,7 +20,7 @@ protected:
     void SetUp() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -2, 2);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
+        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
         return;
     }
 };
@@ -37,7 +37,7 @@ TEST_P(BooleanScalarTest, AND) {
     EXPECT_EQ(dense->ncol(), ncol);
     EXPECT_TRUE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -67,7 +67,7 @@ TEST_P(BooleanScalarTest, OR) {
         EXPECT_TRUE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -97,7 +97,7 @@ TEST_P(BooleanScalarTest, XOR) {
         EXPECT_TRUE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -127,7 +127,7 @@ TEST_P(BooleanScalarTest, EQUAL) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -150,7 +150,7 @@ TEST(BooleanNotTest, Basic) {
     size_t nrow = 23, ncol = 41;
     auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.2, -2, 2);
     auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-    auto sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
+    auto sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
 
     auto op = tatami::make_DelayedBooleanNotHelper();
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
@@ -161,7 +161,7 @@ TEST(BooleanNotTest, Basic) {
     EXPECT_EQ(dense->ncol(), ncol);
     EXPECT_FALSE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
