@@ -21,10 +21,10 @@ add_executable(
     src/dense/DenseMatrix.cpp
     src/dense/convert_to_dense.cpp
 
-#    src/other/DelayedBind.cpp
-#    src/other/DelayedTranspose.cpp
-#    src/other/DelayedCast.cpp
-#
+    src/other/DelayedBind.cpp
+    src/other/DelayedTranspose.cpp
+    src/other/DelayedCast.cpp
+
 #    src/subset/DelayedSubset.cpp
 #    src/subset/DelayedSubsetBlock.cpp
 

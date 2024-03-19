@@ -9,15 +9,17 @@
 
 #include "tatami_test/tatami_test.hpp"
 
-template<class PARAM>
-class TransposeTest: public ::testing::TestWithParam<PARAM> {
+class TransposeUtils {
 protected:
-    size_t nrow = 199, ncol = 201;
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse, tdense, tsparse, ref;
-    std::vector<double> simulated;
-protected:
-    void SetUp() {
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05);
+    inline static size_t nrow = 199, ncol = 201;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse, tdense, tsparse, ref;
+
+    static void assemble() {
+        if (ref) {
+            return;
+        }
+
+        auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column-major.
         tdense = tatami::make_DelayedTranspose(dense);
@@ -33,17 +35,14 @@ protected:
     }
 };
 
-using TransposeFullTest = TransposeTest<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t> >;
+class TransposeTest : public ::testing::Test, public TransposeUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
-TEST_P(TransposeFullTest, Row) {
-    auto tparam = GetParam(); 
-
-    tatami_test::TestAccessParameters params;
-    params.use_row = std::get<0>(tparam);
-    params.use_oracle = std::get<1>(tparam);
-    params.order = std::get<2>(tparam);
-    params.jump = std::get<3>(tparam);
-
+TEST_F(TransposeTest, Basic) {
     EXPECT_EQ(tdense->ncol(), nrow);
     EXPECT_EQ(tdense->nrow(), ncol);
     EXPECT_FALSE(tdense->sparse());
@@ -57,7 +56,27 @@ TEST_P(TransposeFullTest, Row) {
     EXPECT_EQ(tsparse->sparse_proportion(), 1);
     EXPECT_TRUE(tsparse->prefer_rows());
     EXPECT_EQ(tsparse->prefer_rows_proportion(), 1);
+}
 
+TEST_F(TransposeTest, ConstOverload) {
+    std::shared_ptr<const tatami::NumericMatrix> const_dense(dense);
+    auto tdense = tatami::make_DelayedTranspose(const_dense);
+
+    // Cursory checks.
+    EXPECT_EQ(dense->nrow(), tdense->ncol());
+    EXPECT_EQ(dense->ncol(), tdense->nrow());
+}
+
+class TransposeFullTest : public ::testing::TestWithParam<tatami_test::StandardTestAccessParameters>, public TransposeUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
+
+TEST_P(TransposeFullTest, Basic) {
+    auto tparam = GetParam(); 
+    auto params = tatami_test::convert_access_parameters(tparam);
     tatami_test::test_full_access(params, tdense.get(), ref.get());
     tatami_test::test_full_access(params, tsparse.get(), ref.get());
 }
@@ -65,26 +84,21 @@ TEST_P(TransposeFullTest, Row) {
 INSTANTIATE_TEST_SUITE_P(
     TransposeTest,
     TransposeFullTest,
-    ::testing::Combine(
-        ::testing::Values(true, false), // row extraction.
-        ::testing::Values(true, false), // an oracle.
-        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
-        ::testing::Values(1, 4, 10, 20) // jump, to test the workspace's memory.
-    )
+    tatami_test::standard_test_access_parameter_combinations()
 );
 
-using TransposeBlockTest = TransposeTest<std::tuple<bool, bool, tatami_test::TestAccessOrder, int, std::pair<double, double> > >;
+class TransposeBlockTest : public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, public TransposeUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
-TEST_P(TransposeBlockTest, Sliced) {
+TEST_P(TransposeBlockTest, Basic) {
     auto tparam = GetParam(); 
+    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
 
-    tatami_test::TestAccessParameters params;
-    params.use_row = std::get<0>(tparam);
-    params.use_oracle = std::get<1>(tparam);
-    params.order = std::get<2>(tparam);
-    params.jump = std::get<3>(tparam);
-
-    auto interval_info = std::get<4>(tparam);
+    auto interval_info = std::get<1>(tparam);
     auto len = (params.use_row ? tdense->ncol() : tdense->nrow());
     size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
 
@@ -96,10 +110,7 @@ INSTANTIATE_TEST_SUITE_P(
     TransposeTest,
     TransposeBlockTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // row extraction.
-        ::testing::Values(true, false), // an oracle.
-        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
-        ::testing::Values(1, 4), // jumps (to test workspace memory)
+        tatami_test::standard_test_access_parameter_combinations(),
         ::testing::Values(
             std::make_pair(0, 0.44),
             std::make_pair(0.21, 0.89), 
@@ -108,20 +119,20 @@ INSTANTIATE_TEST_SUITE_P(
     )
 );
 
-using TransposeIndexTest = TransposeTest<std::tuple<bool, bool, tatami_test::TestAccessOrder, int, std::pair<double, double> > >;
+class TransposeIndexTest : public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, public TransposeUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
-TEST_P(TransposeIndexTest, Column) {
+TEST_P(TransposeIndexTest, Basic) {
     auto tparam = GetParam(); 
+    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
 
-    tatami_test::TestAccessParameters params;
-    params.use_row = std::get<0>(tparam);
-    params.use_oracle = std::get<1>(tparam);
-    params.order = std::get<2>(tparam);
-    params.jump = std::get<3>(tparam);
-
-    auto interval_info = std::get<4>(tparam);
+    auto interval_info = std::get<1>(tparam);
     auto len = (params.use_row ? tdense->ncol() : tdense->nrow());
-    size_t FIRST = interval_info.first * len, STEP = interval_info.second * len;
+    size_t FIRST = interval_info.first * len, STEP = interval_info.second;
 
     tatami_test::test_indexed_access(params, tdense.get(), ref.get(), FIRST, STEP);
     tatami_test::test_indexed_access(params, tsparse.get(), ref.get(), FIRST, STEP);
@@ -131,25 +142,11 @@ INSTANTIATE_TEST_SUITE_P(
     TransposeTest,
     TransposeIndexTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // row extraction.
-        ::testing::Values(true, false), // an oracle.
-        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
-        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        tatami_test::standard_test_access_parameter_combinations(),
         ::testing::Values(
-            std::make_pair(0, 0.05),
-            std::make_pair(0.2, 0.1), 
-            std::make_pair(0.7, 0.03)
+            std::make_pair(0, 5),
+            std::make_pair(0.2, 10), 
+            std::make_pair(0.7, 3)
         )
     )
 );
-
-TEST(TransposeTest, ConstOverload) {
-    int nrow = 10, ncol = 15;
-    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05);
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-    auto tdense = tatami::make_DelayedTranspose(dense);
-
-    // Cursory checks.
-    EXPECT_EQ(dense->nrow(), tdense->ncol());
-    EXPECT_EQ(dense->ncol(), tdense->nrow());
-}
