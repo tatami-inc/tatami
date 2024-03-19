@@ -41,9 +41,6 @@ TEST_F(MathTest, Abs) {
     // Toughest tests are handled by the Vector case; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -68,9 +65,6 @@ TEST_F(MathTest, SignByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -100,9 +94,6 @@ TEST_F(MathTest, SqrtByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -139,9 +130,6 @@ TEST_F(MathTest, LogByColumn) {
         tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
         // Again, doing some light tests.
-        bool FORWARD = true;
-        int JUMP = 1;
-
         tatami_test::test_simple_column_access(dense_mod.get(), &ref);
         tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -167,9 +155,6 @@ TEST_F(MathTest, LogByColumn) {
         tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
         // Again, doing some light tests.
-        bool FORWARD = true;
-        int JUMP = 1;
-
         tatami_test::test_simple_column_access(dense_mod.get(), &ref);
         tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -202,9 +187,6 @@ TEST_F(MathTest, Log1pByColumn) {
         tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
         // Again, doing some light tests.
-        bool FORWARD = true;
-        int JUMP = 1;
-
         tatami_test::test_simple_column_access(dense_mod.get(), &ref);
         tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -230,9 +212,6 @@ TEST_F(MathTest, Log1pByColumn) {
         tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
         // Again, doing some light tests.
-        bool FORWARD = true;
-        int JUMP = 1;
-
         tatami_test::test_simple_column_access(dense_mod.get(), &ref);
         tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -258,9 +237,6 @@ TEST_F(MathTest, ExpByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -285,9 +261,6 @@ TEST_F(MathTest, Expm1ByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -312,9 +285,6 @@ TEST_F(MathTest, RoundByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -339,9 +309,6 @@ TEST_F(MathTest, CeilingByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -366,9 +333,6 @@ TEST_F(MathTest, FloorByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -393,9 +357,6 @@ TEST_F(MathTest, TruncByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -420,9 +381,6 @@ TEST_F(MathTest, SinByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -447,9 +405,6 @@ TEST_F(MathTest, CosByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -474,9 +429,6 @@ TEST_F(MathTest, TanByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -507,9 +459,6 @@ TEST_F(MathTest, AsinByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -540,9 +489,6 @@ TEST_F(MathTest, AcosByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -567,9 +513,6 @@ TEST_F(MathTest, AtanByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -594,9 +537,6 @@ TEST_F(MathTest, SinhByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -621,9 +561,6 @@ TEST_F(MathTest, CoshByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -648,9 +585,6 @@ TEST_F(MathTest, TanhByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -675,9 +609,6 @@ TEST_F(MathTest, AsinhByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -708,9 +639,6 @@ TEST_F(MathTest, AcoshByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -741,9 +669,6 @@ TEST_F(MathTest, AtanhByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -772,9 +697,6 @@ TEST_F(MathTest, GammaByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 
@@ -803,9 +725,6 @@ TEST_F(MathTest, LgammaByColumn) {
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
-    bool FORWARD = true;
-    int JUMP = 1;
-
     tatami_test::test_simple_column_access(dense_mod.get(), &ref);
     tatami_test::test_simple_column_access(sparse_mod.get(), &ref);
 

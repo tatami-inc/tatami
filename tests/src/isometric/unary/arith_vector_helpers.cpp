@@ -50,6 +50,12 @@ protected:
     }
 };
 
+#define ARITH_VECTOR_CONFIGURE(y) \
+    if (ref && y == last_params) { \
+        return; \
+    } \
+    last_params = y;
+
 #define ARITH_VECTOR_BASIC_SETUP(name, base) \
     class name : \
         public ::testing::TestWithParam<typename base::SimulationParameters>, \
@@ -87,7 +93,7 @@ protected:
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS \
+            tatami_test::standard_test_access_parameter_combinations() \
         ) \
     );
 
@@ -116,7 +122,7 @@ protected:
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS, \
+            tatami_test::standard_test_access_parameter_combinations(), \
             ::testing::Values( \
                 std::make_pair(0.0, 0.35), \
                 std::make_pair(0.38, 0.61), \
@@ -150,7 +156,7 @@ protected:
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS, \
+            tatami_test::standard_test_access_parameter_combinations(), \
             ::testing::Values( \
                 std::make_pair(0.0, 7), \
                 std::make_pair(0.21, 5), \
@@ -173,11 +179,6 @@ public:
         );
     }
 
-protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-
-    inline static SimulationParameters current_params;
-
     static void apply_operation(
         bool row,
         const std::vector<double>& vec,
@@ -195,15 +196,15 @@ protected:
         }
     }
 
-    static void assemble(SimulationParameters sim_params) {
-        if (ref && current_params == sim_params) {
-            return;
-        }
+protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
+    inline static SimulationParameters last_params;
 
+    static void assemble(SimulationParameters sim_params) {
+        ARITH_VECTOR_CONFIGURE(sim_params);
         ArithVectorUtils::assemble();
 
-        current_params = sim_params;
-        auto row = std::get<0>(current_params);
+        auto row = std::get<0>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, 5, 0.5);
         apply_operation(row, vec, dense_mod, sparse_mod);
 
@@ -236,16 +237,20 @@ ARITH_VECTOR_FULL_TEST(ArithVectorAdditionFullTest, ArithVectorAdditionUtils)
 ARITH_VECTOR_BLOCK_TEST(ArithVectorAdditionBlockTest, ArithVectorAdditionUtils)
 ARITH_VECTOR_INDEX_TEST(ArithVectorAdditionIndexTest, ArithVectorAdditionUtils)
 
-class ArithVectorAdditionZeroedTest : public ::testing::TestWithParam<typename ArithVectorAdditionUtils::SimulationParameters>, public ArithVectorAdditionUtils {};
+class ArithVectorAdditionZeroedTest : public ::testing::TestWithParam<typename ArithVectorAdditionUtils::SimulationParameters>, public ArithVectorUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
 TEST_P(ArithVectorAdditionZeroedTest, Basic) {
-    ArithVectorUtils::assemble();
-    auto current_params = GetParam();
-    auto row = std::get<0>(current_params);
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
 
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    apply_operation(row, zeroed, dense_z, sparse_z);
+    ArithVectorAdditionUtils::apply_operation(row, zeroed, dense_z, sparse_z);
 
     EXPECT_FALSE(dense_z->sparse());
     EXPECT_TRUE(sparse_z->sparse());
@@ -278,10 +283,6 @@ public:
         );
     }
 
-protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters current_params;
-
     static void apply_operation(
         bool row, 
         bool right, 
@@ -312,14 +313,14 @@ protected:
         }
     }
 
-    static void assemble(SimulationParameters sim_params) {
-        if (ref && current_params == sim_params) {
-            return;
-        }
+protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
+    inline static SimulationParameters last_params;
 
+    static void assemble(SimulationParameters sim_params) {
+        ARITH_VECTOR_CONFIGURE(sim_params);
         ArithVectorUtils::assemble();
 
-        current_params = sim_params;
         auto row = std::get<0>(sim_params);
         auto right = std::get<1>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, -10, 2.222);
@@ -355,17 +356,21 @@ ARITH_VECTOR_FULL_TEST(ArithVectorSubtractionFullTest, ArithVectorSubtractionUti
 ARITH_VECTOR_BLOCK_TEST(ArithVectorSubtractionBlockTest, ArithVectorSubtractionUtils)
 ARITH_VECTOR_INDEX_TEST(ArithVectorSubtractionIndexTest, ArithVectorSubtractionUtils)
 
-class ArithVectorSubtractionZeroedTest : public ::testing::TestWithParam<typename ArithVectorSubtractionUtils::SimulationParameters>, public ArithVectorSubtractionUtils {};
+class ArithVectorSubtractionZeroedTest : public ::testing::TestWithParam<typename ArithVectorSubtractionUtils::SimulationParameters>, public ArithVectorUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
 TEST_P(ArithVectorSubtractionZeroedTest, Basic) {
-    ArithVectorUtils::assemble();
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
+    auto right = std::get<1>(sim_params);
 
-    auto current_params = GetParam();
-    auto row = std::get<0>(current_params);
-    auto right = std::get<1>(current_params);
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    apply_operation(row, right, zeroed, dense_z, sparse_z);
+    ArithVectorSubtractionUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     EXPECT_FALSE(dense_z->sparse());
     EXPECT_TRUE(sparse_z->sparse());
@@ -411,10 +416,6 @@ public:
         );
     }
 
-protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters current_params;
-
     static void apply_operation(
         bool row, 
         const std::vector<double>& vec, 
@@ -432,15 +433,15 @@ protected:
         }
     }
 
-    static void assemble(SimulationParameters sim_params) {
-        if (ref && sim_params == current_params) {
-            return;
-        }
+protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
+    inline static SimulationParameters last_params;
 
+    static void assemble(SimulationParameters sim_params) {
+        ARITH_VECTOR_CONFIGURE(sim_params);
         ArithVectorUtils::assemble();
 
-        current_params = sim_params;
-        auto row = std::get<0>(current_params);
+        auto row = std::get<0>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, 99, -2.5);
         apply_operation(row, vec, dense_mod, sparse_mod);
 
@@ -471,16 +472,20 @@ ARITH_VECTOR_FULL_TEST(ArithVectorMultiplicationFullTest, ArithVectorMultiplicat
 ARITH_VECTOR_BLOCK_TEST(ArithVectorMultiplicationBlockTest, ArithVectorMultiplicationUtils)
 ARITH_VECTOR_INDEX_TEST(ArithVectorMultiplicationIndexTest, ArithVectorMultiplicationUtils)
 
-class ArithVectorMultiplicationZeroedTest : public ::testing::TestWithParam<typename ArithVectorMultiplicationUtils::SimulationParameters>, public ArithVectorMultiplicationUtils {};
+class ArithVectorMultiplicationZeroedTest : public ::testing::TestWithParam<typename ArithVectorMultiplicationUtils::SimulationParameters>, public ArithVectorUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
 TEST_P(ArithVectorMultiplicationZeroedTest, Basic) {
-    ArithVectorUtils::assemble();
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
 
-    auto current_params = GetParam();
-    auto row = std::get<0>(current_params);
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    apply_operation(row, zeroed, dense_z, sparse_z);
+    ArithVectorMultiplicationUtils::apply_operation(row, zeroed, dense_z, sparse_z);
 
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::vector<double>(nrow * ncol));
 
@@ -512,10 +517,6 @@ public:
         );
     }
 
-protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters current_params;
-
     static void apply_operation(
         bool row,
         bool right,
@@ -546,16 +547,16 @@ protected:
         }
     }
 
-    static void assemble(SimulationParameters sim_params) {
-        if (ref && current_params == sim_params) {
-            return;
-        }
+protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
+    inline static SimulationParameters last_params;
 
+    static void assemble(SimulationParameters sim_params) {
+        ARITH_VECTOR_CONFIGURE(sim_params);
         ArithVectorUtils::assemble();
 
-        current_params = sim_params;
-        auto row = std::get<0>(current_params);
-        auto right = std::get<1>(current_params);
+        auto row = std::get<0>(sim_params);
+        auto right = std::get<1>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, -19, 2.11);
         apply_operation(row, right, vec, dense_mod, sparse_mod);
 
@@ -585,7 +586,7 @@ ARITH_VECTOR_BASIC_SETUP(ArithVectorDivisionTest, ArithVectorDivisionUtils)
 TEST_P(ArithVectorDivisionTest, Basic) {
     EXPECT_FALSE(dense_mod->sparse());
 
-    auto right = std::get<1>(current_params);
+    auto right = std::get<1>(last_params);
     if (right) {
         EXPECT_TRUE(sparse_mod->sparse());
     } else {
@@ -603,17 +604,21 @@ ARITH_VECTOR_FULL_TEST(ArithVectorDivisionFullTest, ArithVectorDivisionUtils);
 ARITH_VECTOR_BLOCK_TEST(ArithVectorDivisionBlockTest, ArithVectorDivisionUtils);
 ARITH_VECTOR_INDEX_TEST(ArithVectorDivisionIndexTest, ArithVectorDivisionUtils);
 
-class ArithVectorDivisionZeroedTest : public ::testing::TestWithParam<typename ArithVectorDivisionUtils::SimulationParameters>, public ArithVectorDivisionUtils {};
+class ArithVectorDivisionZeroedTest : public ::testing::TestWithParam<typename ArithVectorDivisionUtils::SimulationParameters>, public ArithVectorUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
 TEST_P(ArithVectorDivisionZeroedTest, AllZero) {
-    ArithVectorUtils::assemble();
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
+    auto right = std::get<1>(sim_params);
 
-    auto current_params = GetParam();
-    auto row = std::get<0>(current_params);
-    auto right = std::get<1>(current_params);
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    apply_operation(row, right, zeroed, dense_z, sparse_z);
+    ArithVectorDivisionUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     auto copy = simulated;
     if (right) {
@@ -639,16 +644,15 @@ TEST_P(ArithVectorDivisionZeroedTest, AllZero) {
 }
 
 TEST_P(ArithVectorDivisionZeroedTest, OneZero) {
-    // But actually, even 1 zero is enough to break sparsity.
-    ArithVectorUtils::assemble();
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
+    auto right = std::get<1>(sim_params);
 
-    auto current_params = GetParam();
-    auto row = std::get<0>(current_params);
-    auto right = std::get<1>(current_params);
+    // But actually, even 1 zero is enough to break sparsity.
     std::vector<double> solo_zero(row ? nrow : ncol, 1);
     solo_zero[0] = 0;
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    apply_operation(row, right, solo_zero, dense_z, sparse_z);
+    ArithVectorDivisionUtils::apply_operation(row, right, solo_zero, dense_z, sparse_z);
 
     auto copy = simulated;
     if (row) {
@@ -712,10 +716,6 @@ public:
         );
     }
     
-protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters current_params;
-
     static void apply_operation(
         bool row, 
         bool right, 
@@ -750,16 +750,16 @@ protected:
         }
     }
 
-    static void assemble(SimulationParameters sim_params) {
-        if (ref && sim_params == current_params) {
-            return;
-        }
+protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
+    inline static SimulationParameters last_params;
 
+    static void assemble(SimulationParameters sim_params) {
+        ARITH_VECTOR_CONFIGURE(sim_params);
         ArithVectorUtils::assemble();
 
-        current_params = sim_params;
-        auto row = std::get<0>(current_params);
-        auto right = std::get<1>(current_params);
+        auto row = std::get<0>(sim_params);
+        auto right = std::get<1>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, 0.01, 2.11);
         apply_operation(row, right, vec, dense_mod, sparse_mod);
 
@@ -783,7 +783,7 @@ ARITH_VECTOR_BASIC_SETUP(ArithVectorPowerTest, ArithVectorPowerUtils)
 TEST_P(ArithVectorPowerTest, Basic) {
     EXPECT_FALSE(dense_mod->sparse());
 
-    auto right = std::get<1>(current_params);
+    auto right = std::get<1>(last_params);
     if (right) {
         EXPECT_TRUE(sparse_mod->sparse());
     } else {
@@ -801,17 +801,21 @@ ARITH_VECTOR_FULL_TEST(ArithVectorPowerFullTest, ArithVectorPowerUtils);
 ARITH_VECTOR_BLOCK_TEST(ArithVectorPowerBlockTest, ArithVectorPowerUtils);
 ARITH_VECTOR_INDEX_TEST(ArithVectorPowerIndexTest, ArithVectorPowerUtils);
 
-class ArithVectorPowerZeroedTest : public ::testing::TestWithParam<typename ArithVectorPowerUtils::SimulationParameters>, public ArithVectorPowerUtils {};
+class ArithVectorPowerZeroedTest : public ::testing::TestWithParam<typename ArithVectorPowerUtils::SimulationParameters>, public ArithVectorUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
 TEST_P(ArithVectorPowerZeroedTest, AllZero) {
-    ArithVectorUtils::assemble();
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
+    auto right = std::get<1>(sim_params);
 
-    auto current_params = GetParam();
-    auto row = std::get<0>(current_params);
-    auto right = std::get<1>(current_params);
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    apply_operation(row, right, zeroed, dense_z, sparse_z);
+    ArithVectorPowerUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     auto copy = simulated;
     if (right) {
@@ -838,15 +842,14 @@ TEST_P(ArithVectorPowerZeroedTest, AllZero) {
 
 TEST_P(ArithVectorPowerZeroedTest, OneZero) {
     // But actually, even 1 zero is enough to break sparsity.
-    ArithVectorUtils::assemble();
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
+    auto right = std::get<1>(sim_params);
 
-    auto current_params = GetParam();
-    auto row = std::get<0>(current_params);
-    auto right = std::get<1>(current_params);
     std::vector<double> solo_zero(row ? nrow : ncol, 1);
     solo_zero[0] = 0;
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    apply_operation(row, right, solo_zero, dense_z, sparse_z);
+    ArithVectorPowerUtils::apply_operation(row, right, solo_zero, dense_z, sparse_z);
 
     auto copy = simulated;
     for (auto& x : copy) {
@@ -924,7 +927,7 @@ INSTANTIATE_TEST_SUITE_P(
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS \
+            tatami_test::standard_test_access_parameter_combinations() \
         ) \
     ); \
 
@@ -954,7 +957,7 @@ INSTANTIATE_TEST_SUITE_P(
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS, \
+            tatami_test::standard_test_access_parameter_combinations(), \
             ::testing::Values( \
                 std::make_pair(0.0, 0.35), \
                 std::make_pair(0.38, 0.61), \
@@ -989,7 +992,7 @@ INSTANTIATE_TEST_SUITE_P(
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS, \
+            tatami_test::standard_test_access_parameter_combinations(), \
             ::testing::Values( \
                 std::make_pair(0.0, 7), \
                 std::make_pair(0.21, 5), \
@@ -1009,10 +1012,6 @@ public:
             ::testing::Values(true, false)  // on the right or left
         );
     }
-
-protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters current_params;
 
     static void apply_operation(
         bool row,
@@ -1044,16 +1043,16 @@ protected:
         }
     }
 
-    static void assemble(SimulationParameters sim_params) {
-        if (ref && sim_params == current_params) {
-            return;
-        }
+protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
+    inline static SimulationParameters last_params;
 
+    static void assemble(SimulationParameters sim_params) {
+        ARITH_VECTOR_CONFIGURE(sim_params);
         ArithVectorUtils::assemble();
 
-        current_params = sim_params;
-        auto row = std::get<0>(current_params);
-        auto right = std::get<1>(current_params);
+        auto row = std::get<0>(sim_params);
+        auto right = std::get<1>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, -19, 2.11);
         apply_operation(row, right, vec, dense_mod, sparse_mod);
 
@@ -1077,7 +1076,7 @@ ARITH_VECTOR_BASIC_SETUP(ArithVectorModuloTest, ArithVectorModuloUtils);
 TEST_P(ArithVectorModuloTest, Basic) {
     EXPECT_FALSE(dense_mod->sparse());
 
-    auto right = std::get<1>(current_params);
+    auto right = std::get<1>(last_params);
     if (right) {
         EXPECT_TRUE(sparse_mod->sparse());
     } else {
@@ -1095,17 +1094,21 @@ ARITH_VECTOR_FULL_TEST_WITH_NAN(ArithVectorModuloFullTest, ArithVectorModuloUtil
 ARITH_VECTOR_BLOCK_TEST_WITH_NAN(ArithVectorModuloBlockTest, ArithVectorModuloUtils);
 ARITH_VECTOR_INDEX_TEST_WITH_NAN(ArithVectorModuloIndexTest, ArithVectorModuloUtils);
 
-class ArithVectorModuloZeroedTest : public ::testing::TestWithParam<typename ArithVectorModuloUtils::SimulationParameters>, public ArithVectorModuloUtils {};
+class ArithVectorModuloZeroedTest : public ::testing::TestWithParam<typename ArithVectorModuloUtils::SimulationParameters>, public ArithVectorUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
 TEST_P(ArithVectorModuloZeroedTest, AllZero) {
-    ArithVectorUtils::assemble();
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
+    auto right = std::get<1>(sim_params);
 
-    auto current_params = GetParam();
-    auto row = std::get<0>(current_params);
-    auto right = std::get<1>(current_params);
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    apply_operation(row, right, zeroed, dense_z, sparse_z);
+    ArithVectorModuloUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     auto copy = simulated;
     if (right) {
@@ -1151,10 +1154,6 @@ public:
         );
     }
 
-protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters current_params;
-
     static void apply_operation(
         bool row,
         bool right,
@@ -1185,16 +1184,16 @@ protected:
         }
     }
 
-    void assemble(SimulationParameters sim_params) {
-        if (ref && sim_params == current_params) {
-            return;
-        }
+protected:
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
+    inline static SimulationParameters last_params;
 
+    void assemble(SimulationParameters sim_params) {
+        ARITH_VECTOR_CONFIGURE(sim_params);
         ArithVectorUtils::assemble();
 
-        current_params = sim_params;
-        auto row = std::get<0>(current_params);
-        auto right = std::get<1>(current_params);
+        auto row = std::get<0>(sim_params);
+        auto right = std::get<1>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, -19, 2.11);
         apply_operation(row, right, vec, dense_mod, sparse_mod);
 
@@ -1219,7 +1218,7 @@ ARITH_VECTOR_BASIC_SETUP(ArithVectorIntegerDivisionTest, ArithVectorIntegerDivis
 TEST_P(ArithVectorIntegerDivisionTest, Basic) {
     EXPECT_FALSE(dense_mod->sparse());
 
-    auto right = std::get<1>(current_params);
+    auto right = std::get<1>(last_params);
     if (right) {
         EXPECT_TRUE(sparse_mod->sparse());
     } else {
@@ -1237,17 +1236,21 @@ ARITH_VECTOR_FULL_TEST_WITH_NAN(ArithVectorIntegerDivisionFullTest, ArithVectorI
 ARITH_VECTOR_BLOCK_TEST_WITH_NAN(ArithVectorIntegerDivisionBlockTest, ArithVectorIntegerDivisionUtils);
 ARITH_VECTOR_INDEX_TEST_WITH_NAN(ArithVectorIntegerDivisionIndexTest, ArithVectorIntegerDivisionUtils);
 
-class ArithVectorIntegerDivisionZeroedTest : public ::testing::TestWithParam<typename ArithVectorIntegerDivisionUtils::SimulationParameters>, public ArithVectorIntegerDivisionUtils {};
+class ArithVectorIntegerDivisionZeroedTest : public ::testing::TestWithParam<typename ArithVectorIntegerDivisionUtils::SimulationParameters>, public ArithVectorUtils {
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
 
 TEST_P(ArithVectorIntegerDivisionZeroedTest, AllZero) {
-    ArithVectorUtils::assemble();
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
+    auto right = std::get<1>(sim_params);
 
-    auto current_params = GetParam();
-    auto row = std::get<0>(current_params);
-    auto right = std::get<1>(current_params);
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    apply_operation(row, right, zeroed, dense_z, sparse_z);
+    ArithVectorIntegerDivisionUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     auto copy = simulated;
     if (right) {

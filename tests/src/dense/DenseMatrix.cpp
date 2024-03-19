@@ -90,7 +90,6 @@ protected:
 
         dense_row.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(simulated)));
         dense_column.reset(new tatami::DenseColumnMatrix<double, int>(nrow, ncol, std::move(transposed)));
-        return;
     }
 };
 
@@ -120,7 +119,7 @@ class DenseFullAccessTest :
     public ::testing::TestWithParam<typename tatami_test::StandardTestAccessParameters>,
     public DenseTestMethods {
 protected:
-    void SetUp() {
+    static void SetUpTestSuite() {
         assemble();
     }
 };
@@ -135,7 +134,7 @@ TEST_P(DenseFullAccessTest, Full) {
 INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseFullAccessTest,
-    TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS
+    tatami_test::standard_test_access_parameter_combinations()
 );
 
 /*************************************
@@ -145,7 +144,7 @@ class DenseSlicedAccessTest :
     public ::testing::TestWithParam<std::tuple<typename tatami_test::StandardTestAccessParameters, std::pair<double, double> > >,
     public DenseTestMethods {
 protected:
-    void SetUp() {
+    static void SetUpTestSuite() {
         assemble();
     }
 };
@@ -166,7 +165,7 @@ INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseSlicedAccessTest,
     ::testing::Combine(
-        TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS,
+        tatami_test::standard_test_access_parameter_combinations(),
         ::testing::Values(
             std::make_pair(0.0, 0.45),
             std::make_pair(0.2, 0.8), 
@@ -182,7 +181,7 @@ class DenseIndexedAccessTest :
     public ::testing::TestWithParam<std::tuple<typename tatami_test::StandardTestAccessParameters, std::pair<double, int> > >,
     public DenseTestMethods {
 protected:
-    void SetUp() {
+    static void SetUpTestSuite() {
         assemble();
     }
 };
@@ -203,7 +202,7 @@ INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseIndexedAccessTest,
     ::testing::Combine(
-        TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS,
+        tatami_test::standard_test_access_parameter_combinations(),
         ::testing::Values(
             std::make_pair(0.0, 5),
             std::make_pair(0.2, 10), 

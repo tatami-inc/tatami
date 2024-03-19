@@ -18,10 +18,6 @@ protected:
     inline static std::vector<double> simulated;
 
     static void SetUpTestSuite() {
-        if (dense) {
-            return;
-        }
-
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -2, 2);
         for (auto& x : simulated) {
             if (x) {

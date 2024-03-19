@@ -1,6 +1,8 @@
 #ifndef TATAMI_TEST_ACCESS_HPP
 #define TATAMI_TEST_ACCESS_HPP
 
+#include <gtest/gtest.h>
+
 #include "fetch.hpp"
 #include "../tatami/utils/new_extractor.hpp"
 #include "../tatami/utils/ConsecutiveOracle.hpp"
@@ -11,14 +13,6 @@
 #include <random>
 #include <cmath>
 #include <memory>
-
-#define TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS \
-    ::testing::Combine( \
-        ::testing::Values(true, false), /* whether to access the rows. */ \
-        ::testing::Values(true, false), /* whether to use an oracle. */ \
-        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), /* access order. */ \
-        ::testing::Values(1, 3) /* jump between rows/columns. */ \
-    )
 
 namespace tatami_test {
 
@@ -50,6 +44,15 @@ inline TestAccessParameters convert_access_parameters(const StandardTestAccessPa
     output.order = std::get<2>(tup);
     output.jump = std::get<3>(tup);
     return output;
+}
+
+inline auto standard_test_access_parameter_combinations() {
+    return ::testing::Combine(
+        ::testing::Values(true, false), /* whether to access the rows. */
+        ::testing::Values(true, false), /* whether to use an oracle. */
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), /* access order. */
+        ::testing::Values(1, 3) /* jump between rows/columns. */
+    );
 }
 
 /********************************************************

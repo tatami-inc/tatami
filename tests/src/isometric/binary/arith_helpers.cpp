@@ -39,7 +39,7 @@ protected:
         public ::testing::Test, \
         public base { \
     protected: \
-        void SetUp() { \
+        static void SetUpTestSuite() { \
             assemble(); \
         } \
     };
@@ -49,7 +49,7 @@ protected:
         public ::testing::TestWithParam<tatami_test::StandardTestAccessParameters>, \
         public base { \
     protected: \
-        void SetUp() { \
+        static void SetUpTestSuite() { \
             assemble(); \
         } \
     }; \
@@ -63,7 +63,7 @@ protected:
     INSTANTIATE_TEST_SUITE_P( \
         BinaryArith, \
         name, \
-        TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS \
+        tatami_test::standard_test_access_parameter_combinations() \
     );
 
 #define BINARY_ARITH_BLOCK_TEST(name, base) \
@@ -71,7 +71,7 @@ protected:
         public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, \
         public base { \
     protected: \
-        void SetUp() { \
+        static void SetUpTestSuite() { \
             assemble(); \
         } \
     }; \
@@ -90,7 +90,7 @@ protected:
         BinaryArith, \
         name, \
         ::testing::Combine( \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS, \
+            tatami_test::standard_test_access_parameter_combinations(), \
             ::testing::Values( \
                 std::make_pair(0, 0.35), \
                 std::make_pair(0.27, 0.87), \
@@ -104,7 +104,7 @@ protected:
         public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, \
         public base { \
     protected: \
-        void SetUp() { \
+        static void SetUpTestSuite() { \
             assemble(); \
         } \
     }; \
@@ -123,7 +123,7 @@ protected:
         BinaryArith, \
         name, \
         ::testing::Combine( \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS, \
+            tatami_test::standard_test_access_parameter_combinations(), \
             ::testing::Values( \
                 std::make_pair(0.0, 4), \
                 std::make_pair(0.21, 9), \
@@ -265,7 +265,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
         public ::testing::TestWithParam<tatami_test::StandardTestAccessParameters>, \
         public base { \
     protected: \
-        void SetUp() { \
+        static void SetUpTestSuite() { \
             assemble(); \
         } \
     }; \
@@ -280,7 +280,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
     INSTANTIATE_TEST_SUITE_P( \
         BinaryArith, \
         name, \
-        TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS \
+        tatami_test::standard_test_access_parameter_combinations() \
     );
 
 #define BINARY_ARITH_BLOCK_TEST_WITH_NAN(name, base) \
@@ -288,7 +288,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
         public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, \
         public base { \
     protected: \
-        void SetUp() { \
+        static void SetUpTestSuite() { \
             assemble(); \
         } \
     }; \
@@ -308,7 +308,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
         BinaryArith, \
         name, \
         ::testing::Combine( \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS, \
+            tatami_test::standard_test_access_parameter_combinations(), \
             ::testing::Values( \
                 std::make_pair(0, 0.35), \
                 std::make_pair(0.27, 0.87), \
@@ -322,7 +322,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
         public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, \
         public base { \
     protected: \
-        void SetUp() { \
+        static void SetUpTestSuite() { \
             assemble(); \
         } \
     }; \
@@ -342,7 +342,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
         BinaryArith, \
         name, \
         ::testing::Combine( \
-            TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS, \
+            tatami_test::standard_test_access_parameter_combinations(), \
             ::testing::Values( \
                 std::make_pair(0.0, 4), \
                 std::make_pair(0.21, 9), \
