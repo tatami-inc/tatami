@@ -12,6 +12,14 @@
 #include <cmath>
 #include <memory>
 
+#define TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS \
+    ::testing::Combine( \
+        ::testing::Values(true, false), /* whether to access the rows. */ \
+        ::testing::Values(true, false), /* whether to use an oracle. */ \
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), /* access order. */ \
+        ::testing::Values(1, 3) /* jump between rows/columns. */ \
+    )
+
 namespace tatami_test {
 
 enum TestAccessOrder { FORWARD, REVERSE, RANDOM };
@@ -32,6 +40,17 @@ struct TestAccessParameters {
     // Minimum jump between rows/columns.
     int jump = 1;
 };
+
+typedef std::tuple<bool, bool, TestAccessOrder, int> StandardTestAccessParameters;
+
+inline TestAccessParameters convert_access_parameters(const StandardTestAccessParameters& tup) {
+    TestAccessParameters output;
+    output.use_row = std::get<0>(tup);
+    output.use_oracle = std::get<1>(tup);
+    output.order = std::get<2>(tup);
+    output.jump = std::get<3>(tup);
+    return output;
+}
 
 /********************************************************
  ********************************************************/

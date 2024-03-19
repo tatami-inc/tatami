@@ -72,12 +72,15 @@ TEST(DenseMatrix, OddsAndEnds) {
 
 class DenseTestMethods {
 protected:
-    size_t nrow = 200, ncol = 100;
-    std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column;
+    inline static size_t nrow = 200, ncol = 100;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_row, dense_column;
 
-    void assemble() {
+    static void assemble() {
+        if (dense_row) {
+            return;
+        }
+
         auto simulated = tatami_test::simulate_dense_vector<double>(nrow * ncol, 0.05);
-
         auto transposed = std::vector<double>(nrow * ncol);
         for (size_t c = 0; c < ncol; ++c) {
             for (size_t r = 0; r < nrow; ++r) {
@@ -95,7 +98,6 @@ class DenseUtilsTest : public ::testing::Test, public DenseTestMethods {
 protected:
     void SetUp() {
         assemble();
-        return;
     }
 };
 
@@ -114,23 +116,18 @@ TEST_F(DenseUtilsTest, Basic) {
 /*************************************
  *************************************/
 
-class DenseFullAccessTest : public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOrder, int> >, public DenseTestMethods {
+class DenseFullAccessTest : 
+    public ::testing::TestWithParam<typename tatami_test::StandardTestAccessParameters>,
+    public DenseTestMethods {
 protected:
     void SetUp() {
         assemble();
-        return;
     }
 };
 
 TEST_P(DenseFullAccessTest, Full) {
     auto tparam = GetParam(); 
-
-    tatami_test::TestAccessParameters params;
-    params.use_row = std::get<0>(tparam);
-    params.use_oracle = std::get<1>(tparam);
-    params.order = std::get<2>(tparam);
-    params.jump = std::get<3>(tparam);
-
+    auto params = tatami_test::convert_access_parameters(tparam);
     tatami_test::test_full_access(params, dense_row.get(), dense_column.get());
     tatami_test::test_full_access(params, dense_column.get(), dense_row.get());
 }
@@ -138,54 +135,42 @@ TEST_P(DenseFullAccessTest, Full) {
 INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseFullAccessTest,
-    ::testing::Combine(
-        ::testing::Values(true, false), // row extraction.
-        ::testing::Values(true, false), // an oracle.
-        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
-        ::testing::Values(1, 4) // jump, to test the workspace's memory.
-    )
+    TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS
 );
 
 /*************************************
  *************************************/
 
-class DenseSlicedAccessTest : public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t, std::vector<double> > >, public DenseTestMethods {
+class DenseSlicedAccessTest : 
+    public ::testing::TestWithParam<std::tuple<typename tatami_test::StandardTestAccessParameters, std::pair<double, double> > >,
+    public DenseTestMethods {
 protected:
     void SetUp() {
         assemble();
-        return;
     }
 };
 
 TEST_P(DenseSlicedAccessTest, Sliced) {
     auto tparam = GetParam(); 
+    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
 
-    tatami_test::TestAccessParameters param;
-    param.use_row = std::get<0>(tparam);
-    param.use_oracle = std::get<1>(tparam);
-    param.order = std::get<2>(tparam);
-    param.jump = std::get<3>(tparam);
+    auto interval_info = std::get<1>(tparam);
+    auto len = (params.use_row ? ncol : nrow);
+    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
 
-    auto interval_info = std::get<4>(tparam);
-    auto len = (param.use_row ? ncol : nrow);
-    size_t FIRST = interval_info[0] * len, LAST = interval_info[1] * len;
-
-    tatami_test::test_block_access(param, dense_column.get(), dense_row.get(), FIRST, LAST);
-    tatami_test::test_block_access(param, dense_row.get(), dense_column.get(), FIRST, LAST);
+    tatami_test::test_block_access(params, dense_column.get(), dense_row.get(), FIRST, LAST);
+    tatami_test::test_block_access(params, dense_row.get(), dense_column.get(), FIRST, LAST);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseSlicedAccessTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // row extraction.
-        ::testing::Values(true, false), // an oracle.
-        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
-        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS,
         ::testing::Values(
-            std::vector<double>({ 0, 0.45 }),
-            std::vector<double>({ 0.2, 0.8 }), 
-            std::vector<double>({ 0.7, 1 })
+            std::make_pair(0.0, 0.45),
+            std::make_pair(0.2, 0.8), 
+            std::make_pair(0.7, 1.0)
         )
     )
 );
@@ -193,43 +178,36 @@ INSTANTIATE_TEST_SUITE_P(
 /*************************************
  *************************************/
 
-class DenseIndexedAccessTest : public ::testing::TestWithParam<std::tuple<bool, bool, tatami_test::TestAccessOrder, size_t, std::vector<double> > >, public DenseTestMethods {
+class DenseIndexedAccessTest :
+    public ::testing::TestWithParam<std::tuple<typename tatami_test::StandardTestAccessParameters, std::pair<double, int> > >,
+    public DenseTestMethods {
 protected:
     void SetUp() {
         assemble();
-        return;
     }
 };
 
 TEST_P(DenseIndexedAccessTest, Indexed) {
     auto tparam = GetParam(); 
+    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
 
-    tatami_test::TestAccessParameters param;
-    param.use_row = std::get<0>(tparam);
-    param.use_oracle = std::get<1>(tparam);
-    param.order = std::get<2>(tparam);
-    param.jump = std::get<3>(tparam);
+    auto interval_info = std::get<1>(tparam);
+    auto len = (params.use_row ? ncol : nrow);
+    size_t FIRST = interval_info.first * len, STEP = interval_info.second;
 
-    auto interval_info = std::get<4>(tparam);
-    auto len = (param.use_row ? ncol : nrow);
-    size_t FIRST = interval_info[0] * len, STEP = interval_info[1] * len;
-
-    tatami_test::test_indexed_access(param, dense_column.get(), dense_row.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(param, dense_row.get(), dense_column.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(params, dense_column.get(), dense_row.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(params, dense_row.get(), dense_column.get(), FIRST, STEP);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseIndexedAccessTest,
     ::testing::Combine(
-        ::testing::Values(true, false), // row extraction.
-        ::testing::Values(true, false), // an oracle.
-        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), 
-        ::testing::Values(1, 3), // jump, to test the workspace's memory.
+        TATAMI_TEST_STANDARD_ACCESS_PARAMETER_COMBINATIONS,
         ::testing::Values(
-            std::vector<double>({ 0, 0.05 }),
-            std::vector<double>({ 0.2, 0.1 }), 
-            std::vector<double>({ 0.7, 0.03 })
+            std::make_pair(0.0, 5),
+            std::make_pair(0.2, 10), 
+            std::make_pair(0.7, 3)
         )
     )
 );

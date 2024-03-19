@@ -39,7 +39,7 @@ TEST_F(BinaryBooleanTest, EQUAL) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = static_cast<bool>(simulated_left[i]) == static_cast<bool>(simulated_right[i]);
@@ -60,7 +60,7 @@ TEST_F(BinaryBooleanTest, AND) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = static_cast<bool>(simulated_left[i]) && static_cast<bool>(simulated_right[i]);
@@ -81,7 +81,7 @@ TEST_F(BinaryBooleanTest, OR) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = static_cast<bool>(simulated_left[i]) || static_cast<bool>(simulated_right[i]);
@@ -102,7 +102,7 @@ TEST_F(BinaryBooleanTest, XOR) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = static_cast<bool>(simulated_left[i]) != static_cast<bool>(simulated_right[i]);

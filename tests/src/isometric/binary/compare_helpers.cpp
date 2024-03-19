@@ -41,7 +41,7 @@ TEST_F(BinaryCompareTest, Equal) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] == simulated_right[i]);
@@ -62,7 +62,7 @@ TEST_F(BinaryCompareTest, GreaterThan) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] > simulated_right[i]);
@@ -83,7 +83,7 @@ TEST_F(BinaryCompareTest, LessThan) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] < simulated_right[i]);
@@ -104,7 +104,7 @@ TEST_F(BinaryCompareTest, GreaterThanOrEqual) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] >= simulated_right[i]);
@@ -125,7 +125,7 @@ TEST_F(BinaryCompareTest, LessThanOrEqual) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] <= simulated_right[i]);
@@ -146,7 +146,7 @@ TEST_F(BinaryCompareTest, NotEqual) {
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] != simulated_right[i]);

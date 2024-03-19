@@ -14,25 +14,28 @@
 
 class ArithScalarUtils { 
 protected:
-    size_t nrow = 123, ncol = 89;
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse;
-    std::vector<double> simulated;
-protected:
-    void assemble() {
+    inline static size_t nrow = 123, ncol = 89;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
+    inline static std::vector<double> simulated;
+
+    static void assemble() {
+        if (dense) {
+            return;
+        }
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
         return;
     }
 
-    void test_simple_row_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
+    static void test_simple_row_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
         tatami_test::TestAccessParameters params;
         params.has_nan = true;
         params.use_row = true;
         tatami_test::test_full_access(params, test, ref);
     }
 
-    void test_simple_column_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
+    static void test_simple_column_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
         tatami_test::TestAccessParameters params;
         params.has_nan = true;
         params.use_row = false;
