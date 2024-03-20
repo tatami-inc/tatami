@@ -26,20 +26,6 @@ protected:
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
     }
-
-    static void test_simple_row_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
-        tatami_test::TestAccessParameters params;
-        params.has_nan = true;
-        params.use_row = true;
-        tatami_test::test_full_access(params, test, ref);
-    }
-
-    static void test_simple_column_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
-        tatami_test::TestAccessParameters params;
-        params.has_nan = true;
-        params.use_row = false;
-        tatami_test::test_full_access(params, test, ref);
-    }
 };
 
 /*******************************
@@ -195,17 +181,8 @@ TEST_P(ArithNonCommutativeScalarTest, Division) {
     }
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
-    if (val) {
-        quick_test_all(dense_mod.get(), &ref);
-        quick_test_all(sparse_mod.get(), &ref);
-    } else {
-        // Turning on NaN protection.
-        test_simple_column_access_wt_nan(dense_mod.get(), &ref);
-        test_simple_column_access_wt_nan(dense_mod.get(), &ref);
-
-        test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
-        test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
-    }
+    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ (val == 0));
+    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ (val == 0));
 }
 
 TEST_P(ArithNonCommutativeScalarTest, Power) {
@@ -289,12 +266,8 @@ TEST_P(ArithNonCommutativeScalarTest, Modulo) {
     }
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
-    // Turning on NaN protection.
-    test_simple_column_access_wt_nan(dense_mod.get(), &ref);
-    test_simple_column_access_wt_nan(dense_mod.get(), &ref);
-
-    test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
-    test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
+    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ !(on_right && val));
+    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ !(on_right && val));
 }
 
 TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
@@ -334,12 +307,8 @@ TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
     }
     tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
 
-    // Turning on NaN protection.
-    test_simple_column_access_wt_nan(dense_mod.get(), &ref);
-    test_simple_column_access_wt_nan(dense_mod.get(), &ref);
-
-    test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
-    test_simple_column_access_wt_nan(sparse_mod.get(), &ref);
+    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ !(on_right && val));
+    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ !(on_right && val));
 }
 
 INSTANTIATE_TEST_SUITE_P(

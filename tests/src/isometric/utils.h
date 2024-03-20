@@ -17,8 +17,9 @@ T careful_division(T left, T right) {
 }
 
 template<class Matrix1, class Matrix2>
-void quick_test_all(const Matrix1* mat, const Matrix2* ref) {
+void quick_test_all(const Matrix1* mat, const Matrix2* ref, bool has_nan = false) {
     tatami_test::TestAccessParameters params;
+    params.has_nan = has_nan;
     int nrow = mat->nrow();
     int ncol = mat->ncol();
 
