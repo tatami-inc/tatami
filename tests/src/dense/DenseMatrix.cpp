@@ -47,24 +47,11 @@ TEST(DenseMatrix, Basic) {
     EXPECT_FALSE(mat.uses_oracle(true));
 }
 
-TEST(DenseMatrix, OddsAndEnds) {
-    std::vector<double> contents(200);
-    double counter = -105;
-    for (auto& i : contents) { i = counter++; }
-
-    // Checks run properly.
-    contents.clear();
-    EXPECT_ANY_THROW({
+TEST(DenseMatrix, Errors) {
+    std::vector<double> contents;
+    tatami_test::throws_error([&]() {
         tatami::DenseColumnMatrix<double> mat(10, 20, contents);
-    });
-    EXPECT_ANY_THROW({
-        tatami::DenseColumnMatrix<double> mat(10, 20, std::move(contents));
-    });
-
-    std::deque<double> more_contents(200);
-    std::iota(more_contents.begin(), more_contents.end(), 1);
-    tatami::DenseColumnMatrix<double, int, std::deque<double> > mat2(10, 20, more_contents);
-    EXPECT_EQ(more_contents.size(), 200);
+    }, "length of 'values' should be equal");
 }
 
 /*************************************
@@ -214,7 +201,7 @@ INSTANTIATE_TEST_SUITE_P(
 /*************************************
  *************************************/
 
-TEST(DenseMatrix, TypeOverflow) {
+TEST(DenseMatrix, IndexTypeOverflow) {
     // Check for correct pointer arithmetic when indices are supplied in a smaller integer type;
     // the class should convert them into size_t before doing any work.
     std::vector<double> contents(20000);
@@ -289,6 +276,39 @@ TEST(DenseMatrix, TypeOverflow) {
         for (int i = 0; i < ref.nrow(); ++i) {
             auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.ncol());
             auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i, limited.ncol());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+}
+
+TEST(DenseMatrix, DifferentValueType) {
+    // Checking that everything works when there is no .data() method of the right type.
+    std::deque<int> contents(20000);
+    double counter = -105;
+    for (auto& i : contents) { i = counter++; }
+
+    tatami::DenseColumnMatrix<double> ref(100, 200, std::vector<double>(contents.begin(), contents.end()));
+    tatami::DenseColumnMatrix<double, int, decltype(contents)> vstore(100, 200, contents);
+
+    EXPECT_EQ(vstore.nrow(), 100);
+    EXPECT_EQ(vstore.ncol(), 200);
+
+    {
+        auto rwrk = ref.dense_column();
+        auto lwrk = vstore.dense_column();
+        for (int i = 0; i < ref.ncol(); ++i) {
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.nrow());
+            auto observed = tatami_test::fetch<double, int>(lwrk.get(), i, vstore.nrow());
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    {
+        auto rwrk = ref.dense_row();
+        auto lwrk = vstore.dense_row();
+        for (int i = 0; i < ref.nrow(); ++i) {
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.ncol());
+            auto observed = tatami_test::fetch<double, int>(lwrk.get(), i, vstore.ncol());
             EXPECT_EQ(expected, observed);
         }
     }

@@ -78,10 +78,10 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
                 std::vector<InputIndex_> buffer_i(secondary);
                 auto wrk = consecutive_extractor<true>(incoming, row_, start, length);
 
-                for (InputIndex_ x = 0; x < length; ++x) {
+                for (InputIndex_ p = start, pe = start + length; p < pe; ++p) {
                     auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
-                    auto& sv = store_v[x + start];
-                    auto& si = store_i[x + start];
+                    auto& sv = store_v[p];
+                    auto& si = store_i[p];
                     sv.reserve(range.number);
                     si.reserve(range.number);
 
@@ -101,10 +101,10 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
 
                 // Special conversion from dense to save ourselves from having to make
                 // indices that we aren't really interested in.
-                for (InputIndex_ x = 0; x < length; ++x) {
+                for (InputIndex_ p = start, pe = start + length; p < pe; ++p) {
                     auto ptr = wrk->fetch(buffer_v.data());
-                    auto& sv = store_v[x + start];
-                    auto& si = store_i[x + start];
+                    auto& sv = store_v[p];
+                    auto& si = store_i[p];
 
                     for (InputIndex_ s = 0; s < secondary; ++s, ++ptr) {
                         if (*ptr) {
@@ -146,10 +146,10 @@ FragmentedSparseContents<Value_, Index_> retrieve_fragmented_sparse_contents(con
 
                 for (InputIndex_ x = 0; x < secondary; ++x) {
                     auto ptr = wrk->fetch(buffer_v.data());
-                    for (InputIndex_ p = 0; p < length; ++p, ++ptr) {
+                    for (InputIndex_ p = start, pe = start + length; p < pe; ++p, ++ptr) {
                         if (*ptr) {
-                            store_v[p + start].push_back(*ptr);
-                            store_i[p + start].push_back(x);
+                            store_v[p].push_back(*ptr);
+                            store_i[p].push_back(x);
                         }
                     }
                 }
