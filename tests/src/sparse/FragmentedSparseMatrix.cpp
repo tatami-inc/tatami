@@ -143,32 +143,6 @@ TEST_F(FragmentedSparseTest, Basic) {
     EXPECT_EQ(sparse_column->prefer_rows_proportion(), 0);
 
     EXPECT_FALSE(sparse_row->uses_oracle(true));
-
-    // Check that we actually get sparse output, and it doesn't just defer to
-    // the dense methods (i.e., the number of extracted values < NR * NC).
-    {
-        auto sext = sparse_column->sparse_column();
-        std::vector<double> values(NR);
-        std::vector<int> indices(NR);
-        int collected = 0;
-        for (size_t c = 0; c < NC; ++c) {
-            auto out = sext->fetch(c, values.data(), indices.data());
-            collected += out.number;
-        }
-        EXPECT_TRUE(collected < NR * NC);
-    }
-
-    {
-        auto sext = sparse_column->sparse_row();
-        std::vector<double> values(NC);
-        std::vector<int> indices(NC);
-        int collected = 0;
-        for (size_t r = 0; r < NR; ++r) {
-            auto out = sext->fetch(r, values.data(), indices.data());
-            collected += out.number;
-        }
-        EXPECT_TRUE(collected < NR * NC);
-    }
 }
 
 /*************************************

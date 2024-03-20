@@ -25,14 +25,18 @@ struct TestAccessParameters {
     // Whether to test access across rows.
     bool use_row = true;
 
-    // Whether to expect NaNs (and sanitize them in the comparison).
-    bool has_nan = false;
-
     // Ordering of rows/columns to test.
     TestAccessOrder order = FORWARD;
 
     // Minimum jump between rows/columns.
     int jump = 1;
+
+    // Whether to expect NaNs (and sanitize them in the comparison).
+    bool has_nan = false;
+
+    // Whether to check that "sparse" matrices are actually sparse.
+    bool check_sparse = true;
+
 };
 
 typedef std::tuple<bool, bool, TestAccessOrder, int> StandardTestAccessParameters;
@@ -139,6 +143,8 @@ void test_access_base(
     opt.sparse_extract_index = true;
     auto swork_i = tatami::new_extractor<true, use_oracle_>(ptr, params.use_row, oracle, args..., opt);
 
+    size_t sparse_counter = 0;
+
     // Looping over rows/columns and checking extraction against the reference.
     for (auto i : sequence) {
         auto expected = expector(i);
@@ -171,6 +177,7 @@ void test_access_base(
             sanitize_nan(observed.value, params.has_nan);
             ASSERT_EQ(expected, sparse_expand(observed));
 
+            sparse_counter += observed.value.size();
             {
                 bool is_increasing = true;
                 for (size_t i = 1; i < observed.index.size(); ++i) {
@@ -220,6 +227,10 @@ void test_access_base(
             ASSERT_TRUE(observed_n.index == NULL);
             ASSERT_EQ(observed.value.size(), observed_n.number);
         } 
+    }
+
+    if (params.check_sparse && ptr->sparse()) {
+        EXPECT_TRUE(sparse_counter < NR * NC);
     }
 }
 
