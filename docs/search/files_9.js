@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['process_5fconsecutive_5findices_2ehpp_0',['process_consecutive_indices.hpp',['../process__consecutive__indices_8hpp.html',1,'']]]
+  ['new_5fextractor_2ehpp_0',['new_extractor.hpp',['../new__extractor_8hpp.html',1,'']]]
 ];

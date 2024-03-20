@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['blockextractor_0',['BlockExtractor',['../structtatami_1_1BlockExtractor.html',1,'tatami']]]
+  ['blocksparsifiedwrapper_0',['BlockSparsifiedWrapper',['../structtatami_1_1BlockSparsifiedWrapper.html',1,'tatami']]]
 ];

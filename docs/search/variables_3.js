@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['index_0',['index',['../structtatami_1_1SparseRange.html#ae187f7d169bbdc0701fe7414dd051717',1,'tatami::SparseRange::index'],['../structtatami_1_1SparseRangeCopy.html#a62432f2387296b4070ce917e3c2eaac8',1,'tatami::SparseRangeCopy::index'],['../structtatami_1_1CompressedSparseContents.html#ad6aa16e860a82ebc6de6774e8b6905ea',1,'tatami::CompressedSparseContents::index'],['../structtatami_1_1FragmentedSparseContents.html#a8c1a2bebb066b64451576dc356877091',1,'tatami::FragmentedSparseContents::index']]],
-  ['index_5flength_1',['index_length',['../structtatami_1_1IndexExtractor.html#ace949af0d062f6d1a07c2771d072805a',1,'tatami::IndexExtractor']]]
+  ['sparse_5fextract_5findex_0',['sparse_extract_index',['../structtatami_1_1Options.html#a192a47606233c7f5c76bb1e7a62867a5',1,'tatami::Options']]],
+  ['sparse_5fextract_5fvalue_1',['sparse_extract_value',['../structtatami_1_1Options.html#abe1ec7b8bfc82728742ca4a496e59548',1,'tatami::Options']]],
+  ['sparse_5fordered_5findex_2',['sparse_ordered_index',['../structtatami_1_1Options.html#a4d2e6f2631a7e813bfbf3f215594a79b',1,'tatami::Options']]]
 ];
