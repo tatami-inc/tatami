@@ -26,19 +26,16 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
     Index_ otherdim = (row_ ? p->ncol() : p->nrow());
 
     if (p->sparse()) {
-        Options opt;
-        opt.sparse_ordered_index = false;
-
         if (p->prefer_rows() == row_) {
             parallelize([&](int, Index_ start, Index_ len) -> void {
                 // Always convert to size_t when doing any pointer arithmetic.
                 auto curoutput = output + static_cast<size_t>(start) * num_groups;
-                auto ext = tatami::consecutive_extractor<row_, true>(p, start, len, opt);
+                auto ext = tatami::consecutive_extractor<true>(p, row_, start, len);
                 std::vector<Value_> xbuffer(otherdim);
                 std::vector<Index_> ibuffer(otherdim);
 
-                for (Index_ i = start, end = start + len; i < end; ++i) {
-                    auto range = ext->fetch(i, xbuffer.data(), ibuffer.data());
+                for (Index_ i = 0; i < len; ++i) {
+                    auto range = ext->fetch(xbuffer.data(), ibuffer.data());
                     std::fill(curoutput, curoutput + num_groups, static_cast<Output_>(0));
                     for (int j = 0; j < range.number; ++j) {
                         curoutput[groups[range.index[j]]] += range.value[j];
@@ -48,16 +45,18 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
             }, dim, threads);
 
         } else {
+            Options opt;
+            opt.sparse_ordered_index = false; // doesn't affect numerical precision, as addition order is already well-defined for a running calculation.
             std::fill(output, output + static_cast<size_t>(dim) * num_groups, static_cast<Output_>(0));
 
             parallelize([&](int, Index_ start, Index_ len) -> void {
                 auto curoutput = output + static_cast<size_t>(start) * num_groups;
-                auto ext = tatami::consecutive_extractor<!row_, true>(p, 0, otherdim, start, len, opt);
+                auto ext = tatami::consecutive_extractor<true>(p, !row_, 0, otherdim, start, len, opt);
                 std::vector<Value_> xbuffer(len);
                 std::vector<Index_> ibuffer(len);
 
                 for (int i = 0; i < otherdim; ++i) {
-                    auto range = ext->fetch(i, xbuffer.data(), ibuffer.data());
+                    auto range = ext->fetch(xbuffer.data(), ibuffer.data());
                     auto outcopy = curoutput + groups[i];
                     for (int j = 0; j < range.number; ++j) {
                         outcopy[static_cast<size_t>(range.index[j] - start) * num_groups] += range.value[j];
@@ -71,11 +70,11 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
             parallelize([&](int, Index_ start, Index_ len) -> void {
                 auto curoutput = output + static_cast<size_t>(start) * num_groups;
                 std::vector<Value_> xbuffer(otherdim);
-                auto ext = tatami::consecutive_extractor<row_, false>(p, start, len);
+                auto ext = tatami::consecutive_extractor<false>(p, row_, start, len);
 
-                for (Index_ i = start, end = start + len; i < end; ++i) {
+                for (Index_ i = 0; i < len; ++i) {
+                    auto ptr = ext->fetch(xbuffer.data());
                     std::fill(curoutput, curoutput + num_groups, static_cast<Output_>(0));
-                    auto ptr = ext->fetch(i, xbuffer.data());
                     for (Index_ j = 0; j < otherdim; ++j) {
                         curoutput[groups[j]] += ptr[j];
                     }
@@ -89,10 +88,10 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
             parallelize([&](int, Index_ start, Index_ len) -> void {
                 auto curoutput = output + static_cast<size_t>(start) * num_groups;
                 std::vector<double> xbuffer(len);
-                auto ext = tatami::consecutive_extractor<!row_, false>(p, 0, otherdim, start, len);
+                auto ext = tatami::consecutive_extractor<false>(p, !row_, 0, otherdim, start, len);
 
                 for (int i = 0; i < otherdim; ++i) {
-                    auto ptr = ext->fetch(i, xbuffer.data());
+                    auto ptr = ext->fetch(xbuffer.data());
                     auto outcopy = curoutput + groups[i];
                     for (int j = 0; j < len; ++j) {
                         *outcopy += ptr[j];

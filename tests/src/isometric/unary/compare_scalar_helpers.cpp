@@ -6,18 +6,18 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class CompareScalarTest : public ::testing::TestWithParam<int> { 
+class CompareScalarTest : public ::testing::TestWithParam<int> {
 protected:
-    size_t nrow = 123, ncol = 89;
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse;
-    std::vector<double> simulated;
-protected:
-    void SetUp() {
+    inline static size_t nrow = 123, ncol = 89;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
+    inline static std::vector<double> simulated;
+
+    static void SetUpTestSuite() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -2, 2);
         for (auto& x : simulated) {
             if (x) {
@@ -30,8 +30,7 @@ protected:
         }
 
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
-        return;
+        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
     }
 };
 
@@ -52,7 +51,7 @@ TEST_P(CompareScalarTest, Equal) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -82,7 +81,7 @@ TEST_P(CompareScalarTest, GreaterThan) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -112,7 +111,7 @@ TEST_P(CompareScalarTest, LessThan) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -142,7 +141,7 @@ TEST_P(CompareScalarTest, GreaterThanOrEqual) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -172,7 +171,7 @@ TEST_P(CompareScalarTest, LessThanOrEqual) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;
@@ -202,7 +201,7 @@ TEST_P(CompareScalarTest, NotEqual) {
         EXPECT_TRUE(sparse_mod->sparse());
     }
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
     auto refvec = simulated;

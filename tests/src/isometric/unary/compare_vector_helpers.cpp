@@ -5,18 +5,18 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
 class CompareVectorTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
 protected:
-    size_t nrow = 291, ncol = 188;
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse;
-    std::vector<double> simulated;
-protected:
-    void SetUp() {
+    inline static size_t nrow = 291, ncol = 188;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
+    inline static std::vector<double> simulated;
+
+    static void SetUpTestSuite() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -3, 3);
         for (auto& x : simulated) {
             if (x) {
@@ -29,8 +29,7 @@ protected:
         }
 
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_sparse<false>(dense.get()); // column major.
-        return;
+        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
     }
 
     static void fill_default_vector(std::vector<double>& vec) {
@@ -79,6 +78,9 @@ TEST_P(CompareVectorTest, Equal) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {
@@ -128,6 +130,9 @@ TEST_P(CompareVectorTest, GreaterThan) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {
@@ -177,6 +182,9 @@ TEST_P(CompareVectorTest, LessThan) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {
@@ -226,6 +234,9 @@ TEST_P(CompareVectorTest, GreaterThanOrEqual) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {
@@ -275,6 +286,9 @@ TEST_P(CompareVectorTest, LessThanOrEqual) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {
@@ -318,6 +332,9 @@ TEST_P(CompareVectorTest, NotEqual) {
         EXPECT_FALSE(sparse_mod->sparse());
     }
 
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
     auto refvec = this->simulated;
     for (size_t r = 0; r < this->nrow; ++r) {
         for (size_t c = 0; c < this->ncol; ++c) {

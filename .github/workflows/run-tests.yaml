@@ -43,8 +43,16 @@ jobs:
 
     - name: Run the tests
       run: |
-        cd build
-        ctest
+        cd build/tests
+        # Avoid using ctest because it's so slow; it starts a
+        # new process for each individual test, which is crazy.
+        for x in $(find . -type f -executable)
+        do
+            echo "#### RUNNING ${x} ####"
+            echo 
+            ./${x} --gtest_brief=1
+            echo
+        done 
 
     - name: Generate code coverage
       if: ${{ matrix.config.cov }}

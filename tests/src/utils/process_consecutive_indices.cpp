@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "tatami/tatami.hpp"
+#include "tatami/utils/process_consecutive_indices.hpp"
 
 TEST(ProcessConsecutiveIndices, Basic) {
     {

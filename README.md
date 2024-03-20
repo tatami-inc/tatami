@@ -50,8 +50,9 @@ Users can create an instance of a concrete `tatami::Matrix` subclass by using on
 |--------------------------------------------|------------------------------------|
 | Dense matrix                               | `DenseMatrix`                      |
 | Compressed sparse matrix                   | `CompressedSparseMatrix`           |
-| "Semi-compressed" sparse matrix            | `SemiCompressedSparseMatrix`       |
-| Delayed isometric unary operation          | `make_DelayedIsometricOp()`        |
+| List of lists sparse matrix                | `FragmentedSparseMatrix`           |
+| Delayed isometric unary operation          | `make_DelayedUnaryIsometricOp()`   |
+| Delayed isometric binary operation         | `make_DelayedBinaryIsometricOp()`  |
 | Delayed combination                        | `make_DelayedBind()`               |
 | Delayed subset                             | `make_DelayedSubset()`             |
 | Delayed transpose                          | `make_DelayedTranspose()`          |
@@ -99,7 +100,7 @@ e.g., for [HDF5-backed matrices](https://github.com/tatami-inc/tatami_hdf5) and 
 
 ### Extracting matrix contents
 
-Given an abstract `tatami::Matrix`, we create an `Extractor` to actually extract the matrix data.
+Given an abstract `tatami::Matrix`, we create an `Extractor` instance to actually extract the matrix data.
 Each `Extractor` object can store intermediate data for re-use during iteration through the matrix, which is helpful for some matrix implementations that do not easily support random access.
 For example, to perform extract dense rows from our `mat`:
 
@@ -116,13 +117,13 @@ for (int r = 0; r < NR; ++r) {
 }
 ```
 
-The `tatami::DenseExtractor::fetch()` method returns a pointer to an array of length equal to the number of columns that contains each row's contents.
+The `tatami::MyopicDenseExtractor::fetch()` method returns a pointer to an array of length equal to the number of columns that contains each row's contents.
 In some matrix representations (e.g., `DenseMatrix`), the returned pointer directly refers to the matrix's internal data store.
 However, this is not the case in general so we need to allocate a buffer of appropriate length (`buffer`) in which the dense contents can be stored;
 if this buffer is used, the returned pointer refers to the buffer start.
-Users can also use `tatami::DenseExtractor::fetch_copy()` if they want to force a copy of the row contents into the buffer, regardless of the representation.
+Users can also use `tatami::MyopicDenseExtractor::fetch_copy()` if they want to force a copy of the row contents into the buffer, regardless of the representation.
 
-Alternatively, we could extract sparse columns via `tatami::SparseExtractor::fetch()`, 
+Alternatively, we could extract sparse columns via `tatami::MyopicSparseExtractor::fetch()`, 
 which returns a `tatami::SparseRange` containing pointers to arrays of (structurally non-zero) values and their row indices.
 This provides some opportunities for optimization in algorithms that only need to operate on non-zero values.
 The `fetch()` call requires buffers for both arrays - again, this may not be used for matrix subclasses with contiguous internal storage of the values/indices.
@@ -227,32 +228,31 @@ tatami::parallelize([&](int thread, int start, int length) -> void {
 
 ### Defining an oracle
 
-Advanced users can provide each `Extractor` with an `Oracle` that specifies the rows/columns to be accessed by future calls to `fetch()`.
+When calling the `tatami::Matrix` methods, advanced users can supply an `Oracle` that specifies the sequence of rows/columns to be accessed.
 Knowledge of the future access pattern enables optimizations in some `Matrix` implementations, 
 e.g., file-backed matrices can reduce the number of disk reads by pre-fetching the right data for future accesses.
 The most obvious use case involves accessing consecutive rows/columns:
 
 ```cpp
-auto wrk = mat->dense_row();
-wrk->set_oracle(std::make_unique<ConsecutiveOracle<int> >(0, NR));
+auto o = std::make_shared<tatami::ConsecutiveOracle<int> >(0, NR));
+auto wrk = mat->dense_row(o);
 for (int r = 0; r < NR; ++r) {
-    auto ptr = wrk->fetch(r, buffer.data());
+    // No need to specify the index to fetch, as 'wrk' already knows the
+    // sequence of indices as prediced by the oracle.
+    auto ptr = wrk->fetch(buffer.data());
 }
 ```
 
-In fact, this use case is so common that we can just use the `tatami::consecutive_extractor()` wrapper to set the oracle.
-The first template boolean specifies whether we want row access, the second boolean specifies whether we want sparse extraction,
-and the numbers specify the start and length of the sequence of consecutive elements.
+In fact, this use case is so common that we can just use the `tatami::consecutive_extractor()` wrapper to construct the oracle and pass it to `tatami::Matrix`.
+This will return a `tatami::OracularDenseExtractor` instance that contains the oracle's predictions.
 
 ```cpp
-auto cwrk = tatami::consecutive_extractor<true, false>(mat.get(), 0, NR);
+// Same as 'wrk' above.
+auto cwrk = tatami::consecutive_extractor<false>(mat.get(), row, 0, NR);
 ```
 
 Alternatively, we can use the `FixedOracle` class with an array of row/column indices that are known ahead of time.
 Advanced users can also define their own `Oracle` subclasses to provide dynamic custom predictions, e.g., based on PRNG output.
-
-In all cases where an oracle is supplied, the subsequent `fetch()` calls should exactly match the predictions returned by the oracle.
-Failing to do so will result in undefined behavior.
 
 ## Comments on other operations
 

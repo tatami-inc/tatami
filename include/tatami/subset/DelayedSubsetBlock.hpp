@@ -2,7 +2,9 @@
 #define TATAMI_DELAYED_SUBSET_BLOCK
 
 #include "../base/Matrix.hpp"
-#include "../base/utils.hpp"
+#include "../utils/new_extractor.hpp"
+
+#include <vector>
 #include <algorithm>
 #include <memory>
 
@@ -15,6 +17,138 @@
  */
 
 namespace tatami {
+
+/**
+ * @cond
+ */
+namespace DelayedSubsetBlock_internal {
+
+template<typename Index_>
+void bump_indices(VectorPtr<Index_>& indices_ptr, Index_ subset_start) {
+    if (subset_start) {
+        auto ptr2 = new std::vector<Index_>(*indices_ptr);
+        indices_ptr.reset(ptr2);
+        for (auto& i : *ptr2) {
+            i += subset_start;
+        }
+    }
+}
+
+template<bool oracle_, typename Value_, typename Index_>
+struct AlongDense : public DenseExtractor<oracle_, Value_, Index_> {
+    AlongDense(const Matrix<Value_, Index_>* mat, Index_ subset_start, Index_ subset_length, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) :
+        internal(new_extractor<false, oracle_>(mat, row, std::move(oracle), subset_start, subset_length, opt)) {}
+
+    AlongDense(const Matrix<Value_, Index_>* mat, Index_ subset_start, [[maybe_unused]] Index_ subset_length, bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) :
+        internal(new_extractor<false, oracle_>(mat, row, std::move(oracle), subset_start + block_start, block_length, opt)) {}
+
+    AlongDense(const Matrix<Value_, Index_>* mat, Index_ subset_start, [[maybe_unused]] Index_ subset_length, bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) {
+        bump_indices(indices_ptr, subset_start); 
+        internal = new_extractor<false, oracle_>(mat, row, std::move(oracle), std::move(indices_ptr), opt);
+    }
+
+public:
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        return internal->fetch(i, buffer);
+    }
+
+private:
+    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > internal;
+};
+
+template<bool oracle_, typename Value_, typename Index_>
+struct AlongSparse : public SparseExtractor<oracle_, Value_, Index_> {
+    AlongSparse(const Matrix<Value_, Index_>* mat, Index_ subset_start, Index_ subset_length, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) :
+        internal(new_extractor<true, oracle_>(mat, row, std::move(oracle), subset_start, subset_length, opt)), shift(subset_start) {}
+
+    AlongSparse(const Matrix<Value_, Index_>* mat, Index_ subset_start, [[maybe_unused]] Index_ subset_length, bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) :
+        internal(new_extractor<true, oracle_>(mat, row, std::move(oracle), subset_start + block_start, block_length, opt)), shift(subset_start) {}
+
+    AlongSparse(const Matrix<Value_, Index_>* mat, Index_ subset_start, [[maybe_unused]] Index_ subset_length, bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) : 
+        shift(subset_start) 
+    {
+        bump_indices(indices_ptr, subset_start); 
+        internal = new_extractor<true, oracle_>(mat, row, std::move(oracle), std::move(indices_ptr), opt);
+    }
+
+public:
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        auto output = internal->fetch(i, vbuffer, ibuffer);
+        if (output.index && shift) {
+            for (Index_ i = 0; i < output.number; ++i) {
+                ibuffer[i] = output.index[i] - shift;
+            }
+            output.index = ibuffer;
+        }
+        return output;
+    }
+
+private:
+    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
+    Index_ shift;
+};
+
+template<typename Index_>
+struct SubsetOracle : public Oracle<Index_> {
+    SubsetOracle(std::shared_ptr<const Oracle<Index_> > input, Index_ shift) : input(std::move(input)), shift(shift) {}
+
+    size_t total() const {
+        return input->total();
+    }
+
+    Index_ get(size_t i) const {
+        return input->get(i) + shift;
+    }
+
+private:
+    std::shared_ptr<const Oracle<Index_> > input;
+    Index_ shift;
+};
+
+template<bool oracle_, typename Value_, typename Index_>
+struct AcrossDense : public DenseExtractor<oracle_, Value_, Index_> {
+    template<typename ... Args_>
+    AcrossDense(const Matrix<Value_, Index_>* mat, Index_ subset_start, bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) : shift(subset_start) {
+        if constexpr(oracle_) {
+            auto ptr = new SubsetOracle(std::move(oracle), shift);
+            oracle.reset(ptr);
+        } 
+        internal = new_extractor<false, oracle_>(mat, row, std::move(oracle), std::forward<Args_>(args)...);
+    }
+
+    const Value_* fetch(Index_ i, Value_* buffer) {
+        return internal->fetch(i + shift, buffer);
+    }
+
+private:
+    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > internal;
+    Index_ shift;
+};
+
+template<bool oracle_, typename Value_, typename Index_>
+struct AcrossSparse : public SparseExtractor<oracle_, Value_, Index_> {
+    template<typename ... Args_>
+    AcrossSparse(const Matrix<Value_, Index_>* mat, Index_ subset_start, bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) : shift(subset_start) {
+        if constexpr(oracle_) {
+            auto ptr = new SubsetOracle(std::move(oracle), shift);
+            oracle.reset(ptr);
+        }
+        internal = new_extractor<true, oracle_>(mat, row, std::move(oracle), std::forward<Args_>(args)...);
+    }
+
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
+        return internal->fetch(i + shift, vbuffer, ibuffer);
+    }
+
+private:
+    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
+    Index_ shift;
+};
+
+}
+/**
+ * @endcond
+ */
 
 /**
  * @brief Delayed subsetting to a contiguous block.
@@ -87,241 +221,88 @@ public:
 
     using Matrix<Value_, Index_>::sparse_row;
 
-    /**********************************
-     ***** Along-subset extractor *****
-     **********************************/
+    /************************
+     ***** Myopic dense *****
+     ************************/
 private:
-    template<DimensionSelectionType selection_>
-    static constexpr DimensionSelectionType define_inner_selection_type() {
-        if constexpr(selection_ == DimensionSelectionType::FULL) {
-            return DimensionSelectionType::BLOCK;
+    template<bool oracle_, typename ... Args_>
+    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, Args_&&... args) const {
+        if (row != (margin_ == 0)) {
+            return std::make_unique<DelayedSubsetBlock_internal::AlongDense<oracle_, Value_, Index_> >(mat.get(), block_start, block_length, row, std::forward<Args_>(args)...);
         } else {
-            return selection_;
+            return std::make_unique<DelayedSubsetBlock_internal::AcrossDense<oracle_, Value_, Index_> >(mat.get(), block_start, row, std::forward<Args_>(args)...);
         }
-    }
-
-    template<DimensionSelectionType selection_, bool sparse_>
-    struct AlongExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-        AlongExtractor(const DelayedSubsetBlock* parent, const Options& opt) {
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->full_length = (margin_ == 0 ? parent->nrow() : parent->ncol());
-                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), parent->block_start, parent->block_length, opt);
-            }
-        }
-
-        AlongExtractor(const DelayedSubsetBlock* parent, const Options& opt, Index_ bs, Index_ bl) {
-            if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->block_start = bs;
-                this->block_length = bl;
-                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), bs + parent->block_start, bl, opt);
-            }
-        }
-
-        AlongExtractor(const DelayedSubsetBlock* parent, const Options& opt, std::vector<Index_> idx) {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                this->index_length = idx.size();
-                indices = std::move(idx);
-
-                // Shifting the block for the underlying matrix.
-                std::vector<Index_> local = indices;
-                for (auto& x : local) {
-                    x += parent->block_start;
-                }
-                internal = new_extractor<margin_ != 0, sparse_>(parent->mat.get(), std::move(local), opt);
-            }
-        }
-
-    protected:
-        std::unique_ptr<Extractor<define_inner_selection_type<selection_>(), sparse_, Value_, Index_> > internal;
-        typename std::conditional<selection_ == DimensionSelectionType::INDEX, std::vector<Index_>, bool>::type indices;
-
-    public:
-        const Index_* index_start() const {
-            if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                return indices.data();
-            } else {
-                return NULL;
-            }
-        }
-
-        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            internal->set_oracle(std::move(o));
-        }
-    };
-
-    template<DimensionSelectionType selection_>
-    struct DenseAlongExtractor : public AlongExtractor<selection_, false> {
-        template<typename ...Args_>
-        DenseAlongExtractor(const DelayedSubsetBlock* p, Args_&& ... args) : AlongExtractor<selection_, false>(p, std::forward<Args_>(args)...) {}
-
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            return this->internal->fetch(i, buffer);
-        }
-    };
-
-    template<DimensionSelectionType selection_>
-    struct SparseAlongExtractor : public AlongExtractor<selection_, true> {
-        template<typename ...Args_>
-        SparseAlongExtractor(const DelayedSubsetBlock* p, Args_&& ... args) : AlongExtractor<selection_, true>(p, std::forward<Args_>(args)...), offset(p->block_start) {}
-
-        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            auto out = this->internal->fetch(i, vbuffer, ibuffer);
-            if (out.index) {
-                if (offset) {
-                    for (Index_ j = 0; j < out.number; ++j) {
-                        ibuffer[j] = out.index[j] - offset;
-                    }
-                    out.index = ibuffer;
-                }
-            } else {
-                out.index = NULL;
-            }
-            return out;
-        }
-    protected:
-        Index_ offset;
-    };
-
-    /***********************************
-     ***** Across-subset extractor *****
-     ***********************************/
-private:
-    template<DimensionSelectionType selection_, bool sparse_>
-    struct AcrossExtractor : public Extractor<selection_, sparse_, Value_, Index_> {
-        AcrossExtractor(std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > inner, Index_ start) : internal(std::move(inner)), offset(start) {
-            if constexpr(selection_ == DimensionSelectionType::FULL) {
-                this->full_length = this->internal->full_length;
-            } else if constexpr(selection_ == DimensionSelectionType::BLOCK) {
-                this->block_start = this->internal->block_start;
-                this->block_length = this->internal->block_length;
-            } else if constexpr(selection_ == DimensionSelectionType::INDEX) {
-                this->index_length= this->internal->index_length;
-            }
-        }
-
-    protected:
-        std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > internal;
-        Index_ offset;
-
-    public:
-        const Index_* index_start() const {
-            return internal->index_start();
-        }
-
-    private:
-        struct SubsetBlockOracle : public Oracle<Index_> {
-            SubsetBlockOracle(std::unique_ptr<Oracle<Index_> > o, Index_ s) : source(std::move(o)), shift(s) {}
-
-            size_t predict(Index_* buffer, size_t length) {
-                size_t filled = source->predict(buffer, length);
-                for (size_t i = 0; i < filled; ++i) {
-                    buffer[i] += shift;
-                }
-                return filled;
-            }            
-        private:
-            std::unique_ptr<Oracle<Index_> > source;
-            Index_ shift;
-        };
-
-    public:
-        void set_oracle(std::unique_ptr<Oracle<Index_> > o) {
-            internal->set_oracle(std::make_unique<SubsetBlockOracle>(std::move(o), offset));
-        }
-    };
-
-    template<DimensionSelectionType selection_>
-    struct DenseAcrossExtractor : public AcrossExtractor<selection_, false> {
-        DenseAcrossExtractor(std::unique_ptr<Extractor<selection_, false, Value_, Index_> > inner, Index_ start) : AcrossExtractor<selection_, false>(std::move(inner), start) {}
-
-        const Value_* fetch(Index_ i, Value_* buffer) {
-            return this->internal->fetch(i + this->offset, buffer);
-        }
-    };
-
-    template<DimensionSelectionType selection_>
-    struct SparseAcrossExtractor : public AcrossExtractor<selection_, true> {
-        SparseAcrossExtractor(std::unique_ptr<Extractor<selection_, true, Value_, Index_> > inner, Index_ start) : AcrossExtractor<selection_, true>(std::move(inner), start) {}
-
-        SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-            return this->internal->fetch(i + this->offset, vbuffer, ibuffer);
-        }
-    };
-
-    /********************************
-     ***** Populating extractor *****
-     ********************************/
-private:
-    template<bool accrow_, DimensionSelectionType selection_, bool sparse_, typename ... Args_>
-    std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > populate(const Options& opt, Args_&& ... args) const {
-        std::unique_ptr<Extractor<selection_, sparse_, Value_, Index_> > output;
-
-        if constexpr(accrow_ != (margin_ == 0)) {
-            if constexpr(sparse_) {
-                output.reset(new SparseAlongExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
-            } else {
-                output.reset(new DenseAlongExtractor<selection_>(this, opt, std::forward<Args_>(args)...));
-            }
-        } else {
-            auto ptr = new_extractor<accrow_, sparse_>(this->mat.get(), std::forward<Args_>(args)..., opt);
-            if constexpr(sparse_) {
-                output.reset(new SparseAcrossExtractor<selection_>(std::move(ptr), this->block_start));
-            } else {
-                output.reset(new DenseAcrossExtractor<selection_>(std::move(ptr), this->block_start));
-            }
-        }
-
-        return output;
     }
 
 public:
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_row(const Options& opt) const {
-        return populate<true, DimensionSelectionType::FULL, false>(opt);
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, const Options& opt) const {
+        return dense_internal<false>(row, false, opt);
     }
 
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_row(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return populate<true, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return dense_internal<false>(row, false, block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_row(std::vector<Index_> indices, const Options& opt) const {
-        return populate<true, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+        return dense_internal<false>(row, false, std::move(indices_ptr), opt);
     }
 
-    std::unique_ptr<FullDenseExtractor<Value_, Index_> > dense_column(const Options& opt) const {
-        return populate<false, DimensionSelectionType::FULL, false>(opt);
-    }
-
-    std::unique_ptr<BlockDenseExtractor<Value_, Index_> > dense_column(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return populate<false, DimensionSelectionType::BLOCK, false>(opt, block_start, block_length);
-    }
-
-    std::unique_ptr<IndexDenseExtractor<Value_, Index_> > dense_column(std::vector<Index_> indices, const Options& opt) const {
-        return populate<false, DimensionSelectionType::INDEX, false>(opt, std::move(indices));
+    /*************************
+     ***** Myopic sparse *****
+     *************************/
+private:
+    template<bool oracle_, typename ... Args_>
+    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, Args_&&... args) const {
+        if (row != (margin_ == 0)) {
+            return std::make_unique<DelayedSubsetBlock_internal::AlongSparse<oracle_, Value_, Index_> >(mat.get(), block_start, block_length, row, std::forward<Args_>(args)...);
+        } else {
+            return std::make_unique<DelayedSubsetBlock_internal::AcrossSparse<oracle_, Value_, Index_> >(mat.get(), block_start, row, std::forward<Args_>(args)...);
+        }
     }
 
 public:
-    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_row(const Options& opt) const {
-        return populate<true, DimensionSelectionType::FULL, true>(opt);
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const Options& opt) const {
+        return sparse_internal<false>(row, false, opt);
     }
 
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_row(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return populate<true, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return sparse_internal<false>(row, false, block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_row(std::vector<Index_> indices, const Options& opt) const {
-        return populate<true, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, VectorPtr<Index_> indices, const Options& opt) const {
+        return sparse_internal<false>(row, false, std::move(indices), opt);
     }
 
-    std::unique_ptr<FullSparseExtractor<Value_, Index_> > sparse_column(const Options& opt) const {
-        return populate<false, DimensionSelectionType::FULL, true>(opt);
+    /**************************
+     ***** Oracular dense *****
+     **************************/
+public:
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
+        return dense_internal<true>(row, std::move(oracle), opt);
     }
 
-    std::unique_ptr<BlockSparseExtractor<Value_, Index_> > sparse_column(Index_ block_start, Index_ block_length, const Options& opt) const {
-        return populate<false, DimensionSelectionType::BLOCK, true>(opt, block_start, block_length);
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return dense_internal<true>(row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<IndexSparseExtractor<Value_, Index_> > sparse_column(std::vector<Index_> indices, const Options& opt) const {
-        return populate<false, DimensionSelectionType::INDEX, true>(opt, std::move(indices));
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+        return dense_internal<true>(row, std::move(oracle), std::move(indices_ptr), opt);
+    }
+
+    /***************************
+     ***** Oracular sparse *****
+     ***************************/
+public:
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
+        return sparse_internal<true>(row, std::move(oracle), opt);
+    }
+
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
+        return sparse_internal<true>(row, std::move(oracle), block_start, block_length, opt);
+    }
+
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
+        return sparse_internal<true>(row, std::move(oracle), std::move(indices_ptr), opt);
     }
 };
 

@@ -37,8 +37,6 @@ namespace tatami {
  */
 template<int margin_, typename Value_, typename Index_, class IndexStorage_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx) {
-    typedef typename std::remove_reference<IndexStorage_>::type PureIndexStorage_;
-
     bool is_unsorted = false;
     for (Index_ i = 0, end = idx.size(); i < end; ++i) {
         if (i) {
@@ -63,9 +61,11 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
         if (!has_duplicates) {
             bool consecutive = true;
             for (Index_ i = 0, end = idx.size(); i < end; ++i) {
-                if (idx[i] > idx[i-1] + 1) {
-                    consecutive = false;
-                    break;
+                if (i) {
+                    if (idx[i] > idx[i-1] + 1) {
+                        consecutive = false;
+                        break;
+                    }
                 }
             }
 
@@ -76,38 +76,35 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
                 );
             } else {
                 return std::shared_ptr<Matrix<Value_, Index_> >(
-                    new DelayedSubsetSortedUnique<margin_, Value_, Index_, PureIndexStorage_>(std::move(p), std::move(idx), false)
+                    new DelayedSubsetSortedUnique<margin_, Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), false)
                 );
             }
         } else {
             return std::shared_ptr<Matrix<Value_, Index_> >(
-                new DelayedSubsetSorted<margin_, Value_, Index_, PureIndexStorage_>(std::move(p), std::move(idx), false)
+                new DelayedSubsetSorted<margin_, Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), false)
             );
         }
     }
 
-    std::vector<std::pair<Index_, Index_> > collected;
-    collected.reserve(idx.size());
-    for (Index_ i = 0, end = idx.size(); i < end; ++i) {
-        collected.emplace_back(idx[i], i);
-    }
-    std::sort(collected.begin(), collected.end());
-
     bool has_duplicates = false;
-    for (Index_ i = 1, end = collected.size(); i < end; ++i) {
-        if (collected[i].first == collected[i-1].first) {
+    std::vector<unsigned char> accumulated(margin_ == 0 ? p->nrow() : p->ncol());
+    for (Index_ i = 0, end = idx.size(); i < end; ++i) {
+        auto& found = accumulated[idx[i]];
+        if (found) {
             has_duplicates = true;
             break;
+        } else {
+            found = 1;
         }
     }
 
     if (!has_duplicates) {
         return std::shared_ptr<Matrix<Value_, Index_> >(
-            new DelayedSubsetUnique<margin_, Value_, Index_, PureIndexStorage_>(std::move(p), collected, std::move(idx))
+            new DelayedSubsetUnique<margin_, Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), false)
         );
     } else {
         return std::shared_ptr<Matrix<Value_, Index_> >(
-            new DelayedSubset<margin_, Value_, Index_, PureIndexStorage_>(std::move(p), collected, std::move(idx))
+            new DelayedSubset<margin_, Value_, Index_, IndexStorage_>(std::move(p), std::move(idx))
         );
     }
 }

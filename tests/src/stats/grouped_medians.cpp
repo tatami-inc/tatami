@@ -3,14 +3,14 @@
 #include <vector>
 
 #ifdef CUSTOM_PARALLEL_TEST
-// Put this before any tatami apply imports.
-#include "custom_parallel.h"
+// Put this before any tatami imports.
+#include "../custom_parallel.h"
 #endif
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/subset/make_DelayedSubset.hpp"
-#include "tatami/utils/convert_to_dense.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/dense/convert_to_dense.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 #include "tatami/stats/grouped_medians.hpp"
 
 #include "tatami_test/tatami_test.hpp"
@@ -18,14 +18,14 @@
 TEST(GroupedMedians, ByRow) {
     size_t NR = 99, NC = 155;
 
-    // We use a density of 0.5 so that we some of the median calculations will
-    // need to use the structural zeros.  We also put all non-zero values on
+    // We use a density of 0.5 so that some of the median calculations will
+    // need to use the structural zeros. We also put all non-zero values on
     // one side of zero, otherwise the structural zeros will dominate the
-    // median; in this case, we choose all-positive values.
+    // median; in this case, we choose all-negative values.
     auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, -10, -2)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     std::vector<int> cgroups(NC);
     int ngroup = 3; 
@@ -57,16 +57,22 @@ TEST(GroupedMedians, ByRow) {
     EXPECT_EQ(rref, tatami::row_medians_by_group(dense_column.get(), cgroups.data(), 3));
     EXPECT_EQ(rref, tatami::row_medians_by_group(sparse_row.get(), cgroups.data(), 3));
     EXPECT_EQ(rref, tatami::row_medians_by_group(sparse_column.get(), cgroups.data(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(rref, tatami::row_medians_by_group(unsorted_row.get(), cgroups.data()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(rref, tatami::row_medians_by_group(unsorted_column.get(), cgroups.data()));
 }
 
 TEST(GroupedMedians, ByColumn) {
     size_t NR = 56, NC = 179;
 
-    // See above for why we use a density of 0.5.
+    // See above for why we use a density of 0.5. This time, we use all-positive values.
     auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, 0.1, 2)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     std::vector<int> rgroups(NR);
     int ngroup = 7; 
@@ -98,6 +104,12 @@ TEST(GroupedMedians, ByColumn) {
     EXPECT_EQ(cref, tatami::column_medians_by_group(dense_column.get(), rgroups.data(), 3));
     EXPECT_EQ(cref, tatami::column_medians_by_group(sparse_row.get(), rgroups.data(), 3));
     EXPECT_EQ(cref, tatami::column_medians_by_group(sparse_column.get(), rgroups.data(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(cref, tatami::column_medians_by_group(unsorted_row.get(), rgroups.data()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(cref, tatami::column_medians_by_group(unsorted_column.get(), rgroups.data()));
 }
 
 TEST(GroupedMedians, EdgeCases) {
@@ -119,8 +131,8 @@ TEST(GroupedMedians, DirtyOutputs) {
     // See above for why we use a density of 0.5.
     auto dense_row = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, -3, -0.5)));
     auto dense_column = tatami::convert_to_dense<false>(dense_row.get());
-    auto sparse_row = tatami::convert_to_sparse<true>(dense_row.get());
-    auto sparse_column = tatami::convert_to_sparse<false>(dense_row.get());
+    auto sparse_row = tatami::convert_to_compressed_sparse<true>(dense_row.get());
+    auto sparse_column = tatami::convert_to_compressed_sparse<false>(dense_row.get());
 
     int ngroup = 5; 
     std::vector<int> grouping;
@@ -145,57 +157,4 @@ TEST(GroupedMedians, DirtyOutputs) {
     std::fill(dirty.begin(), dirty.end(), -1);
     tatami::row_medians_by_group(sparse_column.get(), grouping.data(), tab, dirty.data());
     EXPECT_EQ(ref, dirty);
-}
-
-TEST(GroupedMedians, CrankyOracle) {
-    size_t NR = 199, NC = 20;
-    auto dump = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.5, 10, 20); // see above for why we use a density of 0.5
-
-    auto raw_dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, dump));
-    auto dense_row = tatami_test::make_CrankyMatrix(raw_dense);
-    auto dense_column = tatami_test::make_CrankyMatrix(tatami::convert_to_dense<false>(raw_dense.get()));
-
-    auto raw_sparse = tatami::convert_to_sparse<true>(raw_dense.get());
-    auto sparse_row = tatami_test::make_CrankyMatrix(raw_sparse);
-    auto sparse_column = tatami_test::make_CrankyMatrix(tatami::convert_to_sparse<false>(raw_sparse.get()));
-
-    {
-        std::vector<int> grouping(NR);
-        for (size_t i = 0; i < NR; ++i) {
-            grouping[i] = i % 3;
-        }
-
-        auto ref = tatami::column_medians_by_group(raw_dense.get(), grouping.data());
-
-        EXPECT_EQ(ref, tatami::column_medians_by_group(dense_row.get(), grouping.data()));
-        EXPECT_EQ(ref, tatami::column_medians_by_group(dense_column.get(), grouping.data()));
-        EXPECT_EQ(ref, tatami::column_medians_by_group(sparse_row.get(), grouping.data()));
-        EXPECT_EQ(ref, tatami::column_medians_by_group(sparse_column.get(), grouping.data()));
-
-        // Works correctly when parallelized.
-        EXPECT_EQ(ref, tatami::column_medians_by_group(dense_row.get(), grouping.data(), 2)); 
-        EXPECT_EQ(ref, tatami::column_medians_by_group(dense_column.get(), grouping.data(), 2)); 
-        EXPECT_EQ(ref, tatami::column_medians_by_group(sparse_row.get(), grouping.data(), 2)); 
-        EXPECT_EQ(ref, tatami::column_medians_by_group(sparse_column.get(), grouping.data(), 2)); 
-    }
-
-    {
-        std::vector<int> grouping(NC);
-        for (size_t i = 0; i < NC; ++i) {
-            grouping[i] = i % 3;
-        }
-
-        auto ref = tatami::row_medians_by_group(raw_dense.get(), grouping.data());
-
-        EXPECT_EQ(ref, tatami::row_medians_by_group(dense_row.get(), grouping.data()));
-        EXPECT_EQ(ref, tatami::row_medians_by_group(dense_column.get(), grouping.data()));
-        EXPECT_EQ(ref, tatami::row_medians_by_group(sparse_row.get(), grouping.data()));
-        EXPECT_EQ(ref, tatami::row_medians_by_group(sparse_column.get(), grouping.data()));
-
-        // Works correctly when parallelized.
-        EXPECT_EQ(ref, tatami::row_medians_by_group(dense_row.get(), grouping.data(), 2)); 
-        EXPECT_EQ(ref, tatami::row_medians_by_group(dense_column.get(), grouping.data(), 2)); 
-        EXPECT_EQ(ref, tatami::row_medians_by_group(sparse_row.get(), grouping.data(), 2)); 
-        EXPECT_EQ(ref, tatami::row_medians_by_group(sparse_column.get(), grouping.data(), 2)); 
-    }
 }

@@ -42,44 +42,6 @@ struct Options {
      * Setting this to `false` may reduce computational work in situations where the order of non-zero elements does not matter.
      */
     bool sparse_ordered_index = true;
-
-    /** 
-     * Whether to ask extractors to cache information from every `fetch()` call.
-     * Specifically, this refers to intermediate data structures that are specific to a particular dimension element,
-     * which can be re-used if the same dimension element is requested in a subsequent call.
-     * This may enable faster iteration if the same extractor object is re-used for multiple passes over the same matrix.
-     */
-    bool cache_for_reuse = false;
-};
-
-/**
- * @tparam Index_ Integer type of the row/column indices.
- *
- * @brief Predict future access requests.
- *
- * This allows `Matrix` implementations to pre-fetch data for future requests to `DenseExtractor::fetch()` or `SparseExtractor::fetch()`.
- */
-template<typename Index_>
-struct Oracle {
-    /**
-     * @cond
-     */
-    virtual ~Oracle() = default;
-    /**
-     * @endcond
-     */
-
-    /**
-     * Predict the indices to be accessed in future `fetch()` calls.
-     *
-     * @param[out] predicted Pointer to an array in which to store the predicted indices of future elements to be accessed by `fetch()`.
-     * @param number Maximum number of indices to predict.
-     *
-     * @return Number of indices that were predicted.
-     * This is guaranteed to be no greater than `number`.
-     * If no more predictions are available, this method should return zero.
-     */
-    virtual size_t predict(Index_* predicted, size_t number) = 0;
 };
 
 }

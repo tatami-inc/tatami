@@ -4,7 +4,7 @@
 #include <iostream>
 
 #include "tatami/sparse/CompressedSparseMatrix.hpp"
-#include "tatami/utils/compress_sparse_triplets.hpp"
+#include "tatami/sparse/compress_sparse_triplets.hpp"
 
 /* INTRODUCTION:
  *
@@ -76,7 +76,7 @@ int main() {
 
     // Subtracting the time inflation due to the extractor construction.
     start = std::chrono::high_resolution_clock::now();
-    tatami::FullSparseExtractor<double, int>* ptr;
+    tatami::MyopicSparseExtractor<double, int>* ptr;
     for (size_t r = 0; r < mat->nrow(); ++r) {
         auto wrk = mat->sparse_row(); 
         ptr = wrk.get(); // avoid optimizing out the entire loop.

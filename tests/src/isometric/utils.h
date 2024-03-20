@@ -17,21 +17,21 @@ T careful_division(T left, T right) {
 }
 
 template<class Matrix1, class Matrix2>
-void quick_test_all(const Matrix1* mat, const Matrix2* ref) {
-    // Full access.
-    tatami_test::test_simple_column_access(mat, ref, true, 1);
-    tatami_test::test_simple_row_access(mat, ref, true, 1);
-
+void quick_test_all(const Matrix1* mat, const Matrix2* ref, bool has_nan = false) {
+    tatami_test::TestAccessParameters params;
+    params.has_nan = has_nan;
     int nrow = mat->nrow();
     int ncol = mat->ncol();
 
-    // Block access.
-    tatami_test::test_sliced_column_access(mat, ref, true, 1, nrow * 0.25, nrow * 0.9);
-    tatami_test::test_sliced_row_access(mat, ref, true, 1, ncol * 0.4, ncol * 0.9);
+    params.use_row = true;
+    tatami_test::test_full_access(params, mat, ref);
+    tatami_test::test_block_access(params, mat, ref, ncol * 0.25, ncol * 0.9);
+    tatami_test::test_indexed_access(params, mat, ref, ncol * 0.4, 11);
 
-    // Indexed access.
-    tatami_test::test_indexed_column_access(mat, ref, true, 1, nrow * 0.25, 10);
-    tatami_test::test_indexed_row_access(mat, ref, true, 1, ncol * 0.4, 11);
+    params.use_row = false;
+    tatami_test::test_full_access(params, mat, ref);
+    tatami_test::test_block_access(params, mat, ref, nrow * 0.4, nrow * 0.9);
+    tatami_test::test_indexed_access(params, mat, ref, nrow * 0.25, 10);
 }
 
 #endif

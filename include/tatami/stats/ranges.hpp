@@ -2,7 +2,10 @@
 #define TATAMI_STATS_RANGES_HPP
 
 #include "../base/Matrix.hpp"
+#include "../utils/parallelize.hpp"
+#include "../utils/consecutive_extractor.hpp"
 #include "utils.hpp"
+
 #include <vector>
 #include <algorithm>
 
@@ -45,33 +48,32 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
         if (direct) {
             opt.sparse_extract_index = false;
             parallelize([&](size_t, Index_ s, Index_ l) {
-                auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
+                auto ext = consecutive_extractor<true>(p, row_, s, l, opt);
                 std::vector<Value_> vbuffer(otherdim);
 
-                for (Index_ i = s, e = s + l; i < e; ++i) {
-                    auto out = ext->fetch(i, vbuffer.data(), NULL);
-
+                for (Index_ x = 0; x < l; ++x) {
+                    auto out = ext->fetch(vbuffer.data(), NULL);
                     if (out.number) {
                         if constexpr(store_min) {
                             auto minned = *std::min_element(out.value, out.value + out.number);
                             if (minned > 0 && out.number != otherdim) {
                                 minned = 0;
                             }
-                            min_out[i] = minned;
+                            min_out[x + s] = minned;
                         }
                         if constexpr(store_max) {
                             auto maxed = *std::max_element(out.value, out.value + out.number);
                             if (maxed < 0 && out.number != otherdim) {
                                 maxed = 0;
                             }
-                            max_out[i] = maxed;
+                            max_out[x + s] = maxed;
                         }
                     } else {
                         if constexpr(store_min) {
-                            min_out[i] = 0;
+                            min_out[x + s] = 0;
                         }
                         if constexpr(store_max) {
-                            max_out[i] = 0;
+                            max_out[x + s] = 0;
                         }
                     }
                 }
@@ -79,14 +81,13 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
 
         } else {
             parallelize([&](size_t, Index_ s, Index_ l) {
-                auto ext = consecutive_extractor<!row_, true>(p, 0, otherdim, s, l, opt);
-                auto len = ext->block_length;
-                std::vector<Value_> vbuffer(len);
-                std::vector<Index_> ibuffer(len);
-                std::vector<Index_> counter(len);
+                auto ext = consecutive_extractor<true>(p, !row_, 0, otherdim, s, l, opt);
+                std::vector<Value_> vbuffer(l);
+                std::vector<Index_> ibuffer(l);
+                std::vector<Index_> counter(l);
 
-                for (Index_ i = 0; i < otherdim; ++i) {
-                    auto out = ext->fetch(i, vbuffer.data(), ibuffer.data());
+                for (Index_ x = 0; x < otherdim; ++x) {
+                    auto out = ext->fetch(vbuffer.data(), ibuffer.data());
                     for (Index_ j = 0; j < out.number; ++j) {
                         auto idx = out.index[j];
                         auto& c = counter[idx - s];
@@ -136,37 +137,38 @@ void dimension_extremes(const Matrix<Value_, Index_>* p, int threads, StoreMinim
     } else {
         if (direct) {
             parallelize([&](size_t, Index_ s, Index_ l) {
-                auto ext = consecutive_extractor<row_, false>(p, s, l);
+                auto ext = consecutive_extractor<false>(p, row_, s, l);
                 std::vector<Value_> buffer(otherdim);
-                for (Index_ i = s, e = s + l; i < e; ++i) {
-                    auto ptr = ext->fetch(i, buffer.data());
+                for (Index_ x = 0; x < l; ++x) {
+                    auto ptr = ext->fetch(buffer.data());
                     if constexpr(store_min) {
-                        min_out[i] = *std::min_element(ptr, ptr + otherdim);
+                        min_out[x + s] = *std::min_element(ptr, ptr + otherdim);
                     }
                     if constexpr(store_max) {
-                        max_out[i] = *std::max_element(ptr, ptr + otherdim);
+                        max_out[x + s] = *std::max_element(ptr, ptr + otherdim);
                     } 
                 }
             }, dim, threads);
 
         } else {
             parallelize([&](size_t, Index_ s, Index_ l) {
-                auto ext = consecutive_extractor<!row_, false>(p, 0, otherdim, s, l);
-                auto len = ext->block_length;
-                std::vector<Value_> buffer(len);
+                auto ext = consecutive_extractor<false>(p, !row_, 0, otherdim, s, l);
+                std::vector<Value_> buffer(l);
 
                 // We already have a otherdim > 0 check above.
-                auto ptr = ext->fetch(0, buffer.data());
-                if constexpr(store_min) {
-                    std::copy(ptr, ptr + len, min_out + s);
-                }
-                if constexpr(store_max) {
-                    std::copy(ptr, ptr + len, max_out + s);
+                {
+                    auto ptr = ext->fetch(buffer.data());
+                    if constexpr(store_min) {
+                        std::copy(ptr, ptr + l, min_out + s);
+                    }
+                    if constexpr(store_max) {
+                        std::copy(ptr, ptr + l, max_out + s);
+                    }
                 }
 
-                for (Index_ i = 1; i < otherdim; ++i) {
-                    auto ptr = ext->fetch(i, buffer.data());
-                    for (Index_ d = 0; d < len; ++d) {
+                for (Index_ x = 1; x < otherdim; ++x) {
+                    auto ptr = ext->fetch(buffer.data());
+                    for (Index_ d = 0; d < l; ++d) {
                         auto idx = d + s;
                         auto val = static_cast<Output_>(ptr[d]);
                         if constexpr(store_min) {

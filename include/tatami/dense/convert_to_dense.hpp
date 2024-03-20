@@ -1,9 +1,10 @@
 #ifndef TATAMI_CONVERT_TO_DENSE_H
 #define TATAMI_CONVERT_TO_DENSE_H
 
-#include "../base/utils.hpp"
-#include "../stats/utils.hpp"
 #include "../dense/DenseMatrix.hpp"
+#include "../utils/consecutive_extractor.hpp"
+#include "../utils/parallelize.hpp"
+#include "../utils/copy.hpp"
 
 #include <memory>
 #include <vector>
@@ -40,15 +41,17 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
         parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
             std::vector<InputValue_> temp(same_type ? 0 : secondary);
             auto store_copy = store + start * secondary;
-            auto wrk = consecutive_extractor<row_, false>(incoming, start, length);
+            auto wrk = consecutive_extractor<false>(incoming, row_, start, length);
 
-            for (InputIndex_ p = start, e = start + length; p < e; ++p, store_copy += secondary) {
+            for (InputIndex_ x = 0; x < length; ++x) {
                 if constexpr(same_type) {
-                    wrk->fetch_copy(p, store_copy);
+                    auto ptr = wrk->fetch(store_copy);
+                    copy_n(ptr, secondary, store_copy);
                 } else {
-                    auto ptr = wrk->fetch(p, temp.data());
-                    std::copy(ptr, ptr + secondary, store_copy);
+                    auto ptr = wrk->fetch(temp.data());
+                    std::copy_n(ptr, secondary, store_copy);
                 }
+                store_copy += secondary;
             }
         }, primary, threads);
 
@@ -59,17 +62,17 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
         // into the output buffers. 
 
         parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
-            auto wrk = consecutive_extractor<!row_, false>(incoming, 0, secondary, start, length);
-            auto len = wrk->block_length;
-            std::vector<InputValue_> temp(len);
+            auto wrk = consecutive_extractor<false>(incoming, !row_, 0, secondary, start, length);
+            std::vector<InputValue_> temp(length);
             auto store_copy = store + start * secondary;
 
-            for (InputIndex_ s = 0; s < secondary; ++s, ++store_copy) {
-                auto ptr = wrk->fetch(s, temp.data());
+            for (InputIndex_ x = 0; x < secondary; ++x) {
+                auto ptr = wrk->fetch(temp.data());
                 auto bptr = store_copy;
-                for (InputIndex_ p = 0; p < len; ++p, bptr += secondary) {
+                for (InputIndex_ p = 0; p < length; ++p, bptr += secondary) {
                     *bptr = ptr[p]; 
                 }
+                ++store_copy;
             }
         }, primary, threads);
     }

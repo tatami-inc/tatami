@@ -6,27 +6,27 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/binary/DelayedBinaryIsometricOp.hpp"
-#include "tatami/utils/convert_to_sparse.hpp"
+#include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
 class BinaryCompareTest : public ::testing::Test {
 protected:
-    size_t nrow = 151, ncol = 71;
-    std::shared_ptr<tatami::NumericMatrix> dense_left, sparse_left, dense_right, sparse_right;
-    std::vector<double> simulated_left, simulated_right;
-protected:
-    void SetUp() {
+    inline static size_t nrow = 151, ncol = 71;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_left, sparse_left, dense_right, sparse_right;
+    inline static std::vector<double> simulated_left, simulated_right;
+
+    static void SetUpTestSuite() {
         simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.2, /* lower = */ 1, /* upper = */ 4, /* seed */ 12345);
         for (auto& x : simulated_left) { x = std::round(x); } // Rounding for easier tests of exact equality.
         dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_left));
-        sparse_left = tatami::convert_to_sparse<false>(dense_left.get()); // column major.
+        sparse_left = tatami::convert_to_compressed_sparse<false>(dense_left.get()); // column major.
 
         simulated_right = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.2, /* lower = */ 1, /* upper = */ 4, /* seed */ 67890);
         for (auto& x : simulated_right) { x = std::round(x); } // Rounding for easier tests of exact equality.
         dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_right));
-        sparse_right = tatami::convert_to_sparse<false>(dense_right.get()); // column major.
+        sparse_right = tatami::convert_to_compressed_sparse<false>(dense_right.get()); // column major.
         return;
     }
 };
@@ -39,9 +39,9 @@ TEST_F(BinaryCompareTest, Equal) {
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_FALSE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] == simulated_right[i]);
@@ -60,9 +60,9 @@ TEST_F(BinaryCompareTest, GreaterThan) {
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_TRUE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] > simulated_right[i]);
@@ -81,9 +81,9 @@ TEST_F(BinaryCompareTest, LessThan) {
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_TRUE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] < simulated_right[i]);
@@ -102,9 +102,9 @@ TEST_F(BinaryCompareTest, GreaterThanOrEqual) {
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_FALSE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] >= simulated_right[i]);
@@ -123,9 +123,9 @@ TEST_F(BinaryCompareTest, LessThanOrEqual) {
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_FALSE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] <= simulated_right[i]);
@@ -144,9 +144,9 @@ TEST_F(BinaryCompareTest, NotEqual) {
     EXPECT_FALSE(dense_mod->sparse());
     EXPECT_TRUE(sparse_mod->sparse());
 
-    // Toughest tests are handled by the Vector case; they would
+    // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
-    // to check that the scalar operation behaves as expected. 
+    // to check that the operation behaves as expected. 
     std::vector<double> refvec(nrow * ncol);
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] != simulated_right[i]);

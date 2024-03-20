@@ -2,6 +2,8 @@
 #define TATAMI_STATS_MEDIANS_HPP
 
 #include "../base/Matrix.hpp"
+#include "../utils/parallelize.hpp"
+#include "../utils/consecutive_extractor.hpp"
 #include "./utils.hpp"
 
 #include <cmath>
@@ -127,23 +129,24 @@ void dimension_medians(const Matrix<Value_, Index_>* p, Output_* output, int thr
         opt.sparse_ordered_index = false; // we'll be sorting by value anyway.
 
         parallelize([&](int, Index_ s, Index_ l) -> void {
-            auto ext = consecutive_extractor<row_, true>(p, s, l, opt);
-
+            auto ext = consecutive_extractor<true>(p, row_, s, l, opt);
             std::vector<Value_> buffer(otherdim);
             auto vbuffer = buffer.data();
-            for (Index_ i = s, e = s + l; i < e; ++i) {
-                auto range = ext->fetch_copy(i, vbuffer, NULL);
-                output[i] = compute_median<Output_>(vbuffer, range.number, otherdim);
+            for (Index_ x = 0; x < l; ++x) {
+                auto range = ext->fetch(vbuffer, NULL);
+                copy_n(range.value, range.number, vbuffer);
+                output[x + s] = compute_median<Output_>(vbuffer, range.number, otherdim);
             }
         }, dim, threads);
 
     } else {
         parallelize([&](int, Index_ s, Index_ l) -> void {
             std::vector<Value_> buffer(otherdim);
-            auto ext = consecutive_extractor<row_, false>(p, s, l);
-            for (Index_ i = s, e = s + l; i < e; ++i) {
-                ext->fetch_copy(i, buffer.data());
-                output[i] = compute_median<Output_>(buffer.data(), otherdim);
+            auto ext = consecutive_extractor<false>(p, row_, s, l);
+            for (Index_ x = 0; x < l; ++x) {
+                auto ptr = ext->fetch(buffer.data());
+                copy_n(ptr, otherdim, buffer.data());
+                output[x + s] = compute_median<Output_>(buffer.data(), otherdim);
             }
         }, dim, threads);
     }
