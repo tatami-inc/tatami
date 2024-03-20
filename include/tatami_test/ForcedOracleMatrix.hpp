@@ -5,12 +5,6 @@
 
 namespace tatami_test {
 
-enum TestAccessOracle {
-    NO_ORACLE,
-    DEFAULT_ORACLE,
-    FORCED_ORACLE
-};
-
 template<typename Value_, typename Index_>
 struct ForcedOracleMatrix : public tatami::Matrix<Value_, Index_> {
     ForcedOracleMatrix(std::shared_ptr<const tatami::Matrix<Value_, Index_> > p) : mat(std::move(p)) {}

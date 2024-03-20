@@ -12,11 +12,11 @@
 
 class CompareVectorTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
 protected:
-    size_t nrow = 291, ncol = 188;
-    std::shared_ptr<tatami::NumericMatrix> dense, sparse;
-    std::vector<double> simulated;
-protected:
-    void SetUp() {
+    inline static size_t nrow = 291, ncol = 188;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
+    inline static std::vector<double> simulated;
+
+    static void SetUpTestSuite() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -3, 3);
         for (auto& x : simulated) {
             if (x) {
@@ -30,7 +30,6 @@ protected:
 
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
-        return;
     }
 
     static void fill_default_vector(std::vector<double>& vec) {

@@ -1,6 +1,8 @@
 #ifndef TATAMI_TEST_ACCESS_HPP
 #define TATAMI_TEST_ACCESS_HPP
 
+#include <gtest/gtest.h>
+
 #include "fetch.hpp"
 #include "../tatami/utils/new_extractor.hpp"
 #include "../tatami/utils/ConsecutiveOracle.hpp"
@@ -32,6 +34,26 @@ struct TestAccessParameters {
     // Minimum jump between rows/columns.
     int jump = 1;
 };
+
+typedef std::tuple<bool, bool, TestAccessOrder, int> StandardTestAccessParameters;
+
+inline TestAccessParameters convert_access_parameters(const StandardTestAccessParameters& tup) {
+    TestAccessParameters output;
+    output.use_row = std::get<0>(tup);
+    output.use_oracle = std::get<1>(tup);
+    output.order = std::get<2>(tup);
+    output.jump = std::get<3>(tup);
+    return output;
+}
+
+inline auto standard_test_access_parameter_combinations() {
+    return ::testing::Combine(
+        ::testing::Values(true, false), /* whether to access the rows. */
+        ::testing::Values(true, false), /* whether to use an oracle. */
+        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM), /* access order. */
+        ::testing::Values(1, 3) /* jump between rows/columns. */
+    );
+}
 
 /********************************************************
  ********************************************************/
