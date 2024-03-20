@@ -94,6 +94,14 @@ TEST(ComputingDimMedians, SparseMedians) {
     EXPECT_EQ(cref, tatami::column_medians(dense_column.get(), 3));
     EXPECT_EQ(cref, tatami::column_medians(sparse_row.get(), 3));
     EXPECT_EQ(cref, tatami::column_medians(sparse_column.get(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(rref, tatami::row_medians(unsorted_row.get()));
+    EXPECT_EQ(cref, tatami::column_medians(unsorted_row.get()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(rref, tatami::row_medians(unsorted_column.get()));
+    EXPECT_EQ(cref, tatami::column_medians(unsorted_column.get()));
 }
 
 TEST(ComputingDimMedians, AllZero) {

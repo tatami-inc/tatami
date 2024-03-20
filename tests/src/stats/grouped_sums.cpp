@@ -52,6 +52,12 @@ TEST(GroupedSums, ByRow) {
     EXPECT_EQ(rref, tatami::row_sums_by_group(dense_column.get(), cgroups.data(), 3));
     EXPECT_EQ(rref, tatami::row_sums_by_group(sparse_row.get(), cgroups.data(), 3));
     EXPECT_EQ(rref, tatami::row_sums_by_group(sparse_column.get(), cgroups.data(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(rref, tatami::row_sums_by_group(unsorted_row.get(), cgroups.data()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(rref, tatami::row_sums_by_group(unsorted_column.get(), cgroups.data()));
 }
 
 TEST(GroupedSums, ByColumn) {
@@ -91,6 +97,12 @@ TEST(GroupedSums, ByColumn) {
     EXPECT_EQ(cref, tatami::column_sums_by_group(dense_column.get(), rgroups.data(), 3));
     EXPECT_EQ(cref, tatami::column_sums_by_group(sparse_row.get(), rgroups.data(), 3));
     EXPECT_EQ(cref, tatami::column_sums_by_group(sparse_column.get(), rgroups.data(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(cref, tatami::column_sums_by_group(unsorted_row.get(), rgroups.data()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(cref, tatami::column_sums_by_group(unsorted_column.get(), rgroups.data()));
 }
 
 TEST(GroupedSums, EdgeCases) {

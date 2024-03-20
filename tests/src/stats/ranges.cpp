@@ -47,6 +47,12 @@ TEST_P(ComputingDimExtremesTest, RowMins) {
     EXPECT_EQ(ref, tatami::row_mins(dense_column.get(), 3));
     EXPECT_EQ(ref, tatami::row_mins(sparse_row.get(), 3));
     EXPECT_EQ(ref, tatami::row_mins(sparse_column.get(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(ref, tatami::row_mins(unsorted_row.get()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(ref, tatami::row_mins(unsorted_column.get()));
 }
 
 TEST_P(ComputingDimExtremesTest, ColumnMins) {
@@ -75,6 +81,12 @@ TEST_P(ComputingDimExtremesTest, ColumnMins) {
     EXPECT_EQ(ref, tatami::column_mins(dense_column.get(), 3));
     EXPECT_EQ(ref, tatami::column_mins(sparse_row.get(), 3));
     EXPECT_EQ(ref, tatami::column_mins(sparse_column.get(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(ref, tatami::column_mins(unsorted_row.get()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(ref, tatami::column_mins(unsorted_column.get()));
 }
 
 /********************************************/
@@ -105,6 +117,12 @@ TEST_P(ComputingDimExtremesTest, RowMaxs) {
     EXPECT_EQ(ref, tatami::row_maxs(dense_column.get(), 3));
     EXPECT_EQ(ref, tatami::row_maxs(sparse_row.get(), 3));
     EXPECT_EQ(ref, tatami::row_maxs(sparse_column.get(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(ref, tatami::row_maxs(unsorted_row.get()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(ref, tatami::row_maxs(unsorted_column.get()));
 }
 
 TEST_P(ComputingDimExtremesTest, ColumnMaxs) {
@@ -133,6 +151,12 @@ TEST_P(ComputingDimExtremesTest, ColumnMaxs) {
     EXPECT_EQ(ref, tatami::column_maxs(dense_column.get(), 3));
     EXPECT_EQ(ref, tatami::column_maxs(sparse_row.get(), 3));
     EXPECT_EQ(ref, tatami::column_maxs(sparse_column.get(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(ref, tatami::column_maxs(unsorted_row.get()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(ref, tatami::column_maxs(unsorted_column.get()));
 }
 
 /********************************************/
@@ -158,6 +182,12 @@ TEST_P(ComputingDimExtremesTest, RowRanges) {
     EXPECT_EQ(ref, tatami::row_ranges(dense_column.get(), 3));
     EXPECT_EQ(ref, tatami::row_ranges(sparse_row.get(), 3));
     EXPECT_EQ(ref, tatami::row_ranges(sparse_column.get(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(ref, tatami::row_ranges(unsorted_row.get()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(ref, tatami::row_ranges(unsorted_column.get()));
 
     // Checking correct behavior with dirty output buffers.
     {
@@ -207,6 +237,12 @@ TEST_P(ComputingDimExtremesTest, ColumnRanges) {
     EXPECT_EQ(ref, tatami::column_ranges(dense_column.get(), 3));
     EXPECT_EQ(ref, tatami::column_ranges(sparse_row.get(), 3));
     EXPECT_EQ(ref, tatami::column_ranges(sparse_column.get(), 3));
+
+    // Checking same results from matrices that can yield unsorted indices.
+    std::shared_ptr<tatami::NumericMatrix> unsorted_row(new tatami_test::UnsortedWrapper<double, int>(sparse_row));
+    EXPECT_EQ(ref, tatami::column_ranges(unsorted_row.get()));
+    std::shared_ptr<tatami::NumericMatrix> unsorted_column(new tatami_test::UnsortedWrapper<double, int>(sparse_column));
+    EXPECT_EQ(ref, tatami::column_ranges(unsorted_column.get()));
 }
 
 /********************************************/

@@ -6,6 +6,6 @@
 #include "test_unsorted.hpp"
 #include "fetch.hpp"
 #include "throw_error.hpp"
-#include "ForcedOracleMatrix.hpp"
+#include "TestWrapper.hpp"
 
 #endif

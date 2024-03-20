@@ -26,14 +26,11 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
     Index_ otherdim = (row_ ? p->ncol() : p->nrow());
 
     if (p->sparse()) {
-        Options opt;
-        opt.sparse_ordered_index = false;
-
         if (p->prefer_rows() == row_) {
             parallelize([&](int, Index_ start, Index_ len) -> void {
                 // Always convert to size_t when doing any pointer arithmetic.
                 auto curoutput = output + static_cast<size_t>(start) * num_groups;
-                auto ext = tatami::consecutive_extractor<true>(p, row_, start, len, opt);
+                auto ext = tatami::consecutive_extractor<true>(p, row_, start, len);
                 std::vector<Value_> xbuffer(otherdim);
                 std::vector<Index_> ibuffer(otherdim);
 
@@ -48,6 +45,8 @@ void grouped_sums(const tatami::Matrix<Value_, Index_>* p, const Group_* groups,
             }, dim, threads);
 
         } else {
+            Options opt;
+            opt.sparse_ordered_index = false; // doesn't affect numerical precision, as addition order is already well-defined for a running calculation.
             std::fill(output, output + static_cast<size_t>(dim) * num_groups, static_cast<Output_>(0));
 
             parallelize([&](int, Index_ start, Index_ len) -> void {

@@ -59,8 +59,8 @@ protected:
             }
             collected_sparse.push_back(tatami::convert_to_compressed_sparse<false>(collected_dense.back().get())); // always CSC
 
-            forced_collected_dense.emplace_back(std::make_shared<tatami_test::ForcedOracleMatrix<double, int> >(collected_dense.back()));
-            forced_collected_sparse.emplace_back(std::make_shared<tatami_test::ForcedOracleMatrix<double, int> >(collected_sparse.back()));
+            forced_collected_dense.emplace_back(std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(collected_dense.back()));
+            forced_collected_sparse.emplace_back(std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(collected_sparse.back()));
         }
 
         if (row) {
@@ -163,7 +163,7 @@ TEST(DelayedBindMisc, PartialOracleUsage) {
     }
 
     {
-        auto p = std::make_shared<tatami_test::ForcedOracleMatrix<double, int> >(std::move(collected.back()));
+        auto p = std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(std::move(collected.back()));
         collected.back() = std::move(p);
         auto combined = tatami::make_DelayedBind<0>(collected); 
         EXPECT_TRUE(combined->uses_oracle(true));
@@ -171,7 +171,7 @@ TEST(DelayedBindMisc, PartialOracleUsage) {
     }
 
     {
-        auto p = std::make_shared<tatami_test::ForcedOracleMatrix<double, int> >(std::move(collected.front()));
+        auto p = std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(std::move(collected.front()));
         collected.front() = std::move(p);
         auto combined = tatami::make_DelayedBind<0>(collected); 
         EXPECT_TRUE(combined->uses_oracle(true));
