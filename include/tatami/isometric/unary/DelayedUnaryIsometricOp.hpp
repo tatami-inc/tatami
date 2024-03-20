@@ -670,7 +670,7 @@ public:
     /*********************
      *** Myopic sparse ***
      *********************/
-public:
+private:
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_to_dense_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
         return std::make_unique<FullSparsifiedWrapper<oracle_, Value_, Index_> >(

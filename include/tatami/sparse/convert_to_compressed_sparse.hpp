@@ -53,6 +53,8 @@ struct CompressedSparseContents {
  * @tparam InputIndex_ Integer type for indices in the input interface.
  *
  * @param incoming Pointer to a `tatami::Matrix`. 
+ * @param two_pass Whether to perform the retrieval in two passes.
+ * This requires another pass through `incoming` but is more memory-efficient.
  * @param threads Number of threads to use.
  *
  * @return Contents of the sparse matrix in compressed form, see `FragmentedSparseContents`.

@@ -412,7 +412,7 @@ public: // ==== Convenience methods ====
     }
 
     /**
-     * @param indices_ptr Vector of sorted and unique row indices.
+     * @param indices Vector of sorted and unique row indices.
      * @param opt Options for extraction.
      * @return Object for extracting an indexed subset from each column in sparse form.
      * This should not outlive the parent `Matrix` from which it was created.
@@ -646,7 +646,6 @@ public: // ==== Default option overloads ====
      * @param oracle An oracle supplying row predictions.
      * @param block_start Index of the column at the start of the block.
      * @param block_length Number of columns in the block.
-     * @param oracle An oracle supplying row predictions.
      * @return Object for extracting a contiguous block from each row in dense form.
      * This should not outlive the parent `Matrix` from which it was created.
      */

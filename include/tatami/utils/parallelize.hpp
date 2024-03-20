@@ -15,7 +15,7 @@
 /**
  * @file parallelize.hpp
  *
- * @brief Parallelized iteration over a `Matrix`.
+ * @brief Parallelized iteration over a `tatami::Matrix`.
  */
 
 namespace tatami {

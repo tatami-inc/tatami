@@ -409,7 +409,7 @@ private:
 template<
     bool row_, 
     typename Value_, 
-    typename Index_ = int, 
+    typename Index_,
     class ValueVectorStorage_ = std::vector<std::vector<Value_> >,
     class IndexVectorStorage_ = std::vector<std::vector<Index_> >
 >

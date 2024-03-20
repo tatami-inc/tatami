@@ -20,7 +20,7 @@ namespace tatami {
  * @tparam Args_ Types of further arguments to pass to `Matrix::dense_row` or `Matrix::dense_column`.
  *
  * @param mat Matrix to iterate over.
- * @tparam row Whether to perform extraction on rows.
+ * @param row Whether to perform extraction on rows.
  * @param iter_start Index of the first row/column of the iteration range.
  * @param iter_length Number of rows/columns in the iteration range.
  * @param args Further arguments to pass to `Matrix::dense_row` or `Matrix::dense_column`.

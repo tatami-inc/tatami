@@ -10,7 +10,7 @@
 /**
  * @file SparsifiedWrapper.hpp
  *
- * @brief Wrapper class for sparse extraction from a dense `Matrix`.
+ * @brief Wrapper class for sparse extraction from a dense `tatami::Matrix`.
  */
 
 namespace tatami {
@@ -31,7 +31,7 @@ struct FullSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
     /**
      * @param d Instance of a dense extractor for the full extent of the row/column.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
-     * otherwise it should be an `OracleDenseExtractor` instance.
+     * otherwise it should be an `OracularDenseExtractor` instance.
      * @param ex Extent of the row/column extracted by `d`.
      * @param opt Options for extraction.
      */
@@ -42,6 +42,12 @@ struct FullSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
         needs_index(opt.sparse_extract_index) 
     {}
 
+    /**
+     * @param i Index of the element to extract, ignored if `oracle_ = true`.
+     * @param[in, out] vbuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @param[in, out] ibuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     */
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         SparseRange<Value_, Index_> output(extent, NULL, NULL);
         if (needs_value) {
@@ -77,7 +83,7 @@ struct BlockSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> 
     /**
      * @param d Instance of a dense extractor for a block of the row/column.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
-     * otherwise it should be an `OracleDenseExtractor` instance.
+     * otherwise it should be an `OracularDenseExtractor` instance.
      * @param bs Start of the block extracted by `d`.
      * Should be the same as that used to construct `d`.
      * @param bl Length of the block extracted by `d`.
@@ -92,6 +98,12 @@ struct BlockSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> 
         needs_index(opt.sparse_extract_index) 
     {}
 
+    /**
+     * @param i Index of the element to extract, ignored if `oracle_ = true`.
+     * @param[in, out] vbuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @param[in, out] ibuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     */
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         SparseRange<Value_, Index_> output(block_length, NULL, NULL);
         if (needs_value) {
@@ -127,7 +139,7 @@ struct IndexSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> 
     /**
      * @param d Instance of a dense extractor for a block of the row/column.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
-     * otherwise it should be an `OracleDenseExtractor` instance.
+     * otherwise it should be an `OracularDenseExtractor` instance.
      * @param ip Pointer to a vector of sorted and unique row/column indices to extract.
      * Should be the same as that used to construct `d`.
      * @param opt Options for extraction.
@@ -139,6 +151,12 @@ struct IndexSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> 
         needs_index(opt.sparse_extract_index) 
     {}
 
+    /**
+     * @param i Index of the element to extract, ignored if `oracle_ = true`.
+     * @param[in, out] vbuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @param[in, out] ibuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     */
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         const auto& ix = *indices_ptr;
         SparseRange<Value_, Index_> output(ix.size(), NULL, NULL);

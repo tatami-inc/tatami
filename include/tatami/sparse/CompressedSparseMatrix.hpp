@@ -412,7 +412,7 @@ private:
 template<
     bool row_, 
     typename Value_, 
-    typename Index_ = int, 
+    typename Index_,
     class ValueStorage_ = std::vector<Value_>, 
     class IndexStorage_ = std::vector<Index_>, 
     class PointerStorage_ = std::vector<size_t> 

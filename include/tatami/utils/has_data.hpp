@@ -3,6 +3,11 @@
 
 #include <type_traits>
 
+/**
+ * @file has_data.hpp
+ * @brief Compile-time checks for the `data()` method.
+ */
+
 namespace tatami {
 
 /**
@@ -14,6 +19,9 @@ namespace tatami {
  */
 template<typename T, class V, typename = int>
 struct has_data {
+    /**
+     * Compile-time constant indicating whether `data()` exists.
+     */
     static const bool value = false;
 };
 
@@ -26,6 +34,9 @@ struct has_data {
  */
 template<typename T, class V>
 struct has_data<T, V, decltype((void) std::declval<V>().data(), 0)> { 
+    /**
+     * Compile-time constant indicating whether `data()` exists.
+     */
     static const bool value = std::is_same<T*, decltype(std::declval<V>().data())>::value;
 };
 

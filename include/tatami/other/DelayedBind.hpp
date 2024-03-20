@@ -835,26 +835,20 @@ private:
  * @return A pointer to a `DelayedBind` instance.
  */
 template<int margin_, typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > ps) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<margin_, Value_, Index_>(std::move(ps)));
 }
 
 /**
- * A `make_*` helper function to enable partial template deduction of supplied types.
- *
- * @tparam margin_ Dimension along which the combining is to occur.
- * If 0, matrices are combined along the rows; if 1, matrices are combined to the columns.
- * @tparam Value_ Type of matrix value.
- * @tparam Index_ Type of index value.
- *
- * @param ps Pointers to `const` `Matrix` objects.
- *
- * @return A pointer to a `DelayedBind` instance.
+ * @cond
  */
 template<int margin_, typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps) {
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > ps) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<margin_, Value_, Index_>(std::move(ps)));
 }
+/**
+ * @endcond
+ */
 
 }
 

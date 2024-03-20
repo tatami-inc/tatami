@@ -4,6 +4,11 @@
 #include <vector>
 #include "../../base/SparseRange.hpp"
 
+/** 
+ * @file mock_helpers.hpp
+ * @brief Expectations for `tatami::DelayedBinaryIsometricOp` helpers.
+ */
+
 namespace tatami {
 
 /**
@@ -28,7 +33,7 @@ struct DelayedBinaryBasicMockHelper {
      * @param length Length of the contiguous block.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.
-     * @param[int] right_buffer Contents of the row/column extracted from the right matrix.
+     * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
      * This has `length` addressable elements.
      *
      * Note that this method does not necessarily need to have the same template arguments.
@@ -57,10 +62,9 @@ struct DelayedBinaryBasicMockHelper {
      * @param row Whether `left_buffer` and `right_buffer` contain the row contents.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
-     * @param length Length of the contiguous block.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.
-     * @param[int] right_buffer Contents of the row/column extracted from the right matrix.
+     * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
      * This has `length` addressable elements.
      *
      * Note that this method does not necessarily need to have the same template arguments.

@@ -164,7 +164,7 @@ private:
  * Methods should be available for `size()`, `begin()`, `end()` and `[]`.
  * If a method is available for `data()` that returns a `const Value_*`, it will also be used.
  */
-template<bool row_, typename Value_, typename Index_ = int, class Storage_ = std::vector<Value_> >
+template<bool row_, typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
 class DenseMatrix : public Matrix<Value_, Index_> {
 public: 
     /**
@@ -212,13 +212,9 @@ public:
 
     double prefer_rows_proportion() const { return static_cast<double>(row_); }
 
-    using Matrix<Value_, Index_>::dense_row;
+    using Matrix<Value_, Index_>::dense;
 
-    using Matrix<Value_, Index_>::dense_column;
-
-    using Matrix<Value_, Index_>::sparse_row;
-
-    using Matrix<Value_, Index_>::sparse_column;
+    using Matrix<Value_, Index_>::sparse;
 
 private:
     Index_ primary() const {

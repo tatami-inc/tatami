@@ -22,6 +22,10 @@ namespace tatami {
  */
 template<typename Value_, typename Index_> 
 struct PseudoOracularDenseExtractor : public OracularDenseExtractor<Value_, Index_> {
+    /**
+     * @param ora The oracle.
+     * @param r A dense extractor to extract dimension elements according to `ora`.
+     */
     PseudoOracularDenseExtractor(std::shared_ptr<const Oracle<Index_> > ora, std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > r) :
         oracle(std::move(ora)), raw(std::move(r)) {}
 
@@ -48,6 +52,10 @@ private:
  */
 template<typename Value_, typename Index_> 
 struct PseudoOracularSparseExtractor : public OracularSparseExtractor<Value_, Index_> {
+    /**
+     * @param ora The oracle.
+     * @param r A sparse extractor to extract dimension elements according to `ora`.
+     */
     PseudoOracularSparseExtractor(std::shared_ptr<const Oracle<Index_> > ora, std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > r) :
         oracle(std::move(ora)), raw(std::move(r)) {}
 

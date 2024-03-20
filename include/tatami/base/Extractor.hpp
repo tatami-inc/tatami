@@ -59,8 +59,6 @@ struct OracularDenseExtractor {
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
-     * @param i Ignored.
-     * This argument is only provided for consistency with `MyopicDenseExtractor::fetch()`,
      * @param[out] buffer Pointer to an array of length no less than `N`,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *

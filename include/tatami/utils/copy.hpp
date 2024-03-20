@@ -4,8 +4,8 @@
 #include <algorithm>
 
 /**
- * @brief copy.hpp
- * @file Copy data from one buffer to another.
+ * @file copy.hpp
+ * @brief Copy data from one buffer to another.
  */
 
 namespace tatami {
