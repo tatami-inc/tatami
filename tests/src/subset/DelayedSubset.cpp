@@ -154,6 +154,8 @@ TEST_P(SubsetTest, Basic) {
     EXPECT_EQ(dense->prefer_rows_proportion(), dense_subbed->prefer_rows_proportion());
     EXPECT_FALSE(sparse_subbed->prefer_rows());
     EXPECT_EQ(sparse->prefer_rows_proportion(), sparse_subbed->prefer_rows_proportion());
+
+    EXPECT_FALSE(dense_subbed->uses_oracle(false));
 }
 
 INSTANTIATE_TEST_SUITE_P(

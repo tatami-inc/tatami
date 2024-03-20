@@ -56,6 +56,8 @@ TEST_F(TransposeTest, Basic) {
     EXPECT_EQ(tsparse->sparse_proportion(), 1);
     EXPECT_TRUE(tsparse->prefer_rows());
     EXPECT_EQ(tsparse->prefer_rows_proportion(), 1);
+
+    EXPECT_FALSE(tsparse->uses_oracle(false));
 }
 
 TEST_F(TransposeTest, ConstOverload) {

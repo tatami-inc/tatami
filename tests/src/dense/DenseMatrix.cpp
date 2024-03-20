@@ -312,4 +312,25 @@ TEST(DenseMatrix, DifferentValueType) {
             EXPECT_EQ(expected, observed);
         }
     }
+
+    // Same for blocks, just to make sure we get test coverage.
+    {
+        auto rwrk = ref.dense_column(55, 45);
+        auto lwrk = vstore.dense_column(55, 45);
+        for (int i = 0; i < ref.ncol(); ++i) {
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, 45);
+            auto observed = tatami_test::fetch<double, int>(lwrk.get(), i, 45);
+            EXPECT_EQ(expected, observed);
+        }
+    }
+
+    {
+        auto rwrk = ref.dense_row(10, 70);
+        auto lwrk = vstore.dense_row(10, 70);
+        for (int i = 0; i < ref.nrow(); ++i) {
+            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, 70);
+            auto observed = tatami_test::fetch<double, int>(lwrk.get(), i, 70);
+            EXPECT_EQ(expected, observed);
+        }
+    }
 }

@@ -80,6 +80,8 @@ TEST_F(DelayedCastTest, Dense) {
     EXPECT_EQ(cast_dense->sparse_proportion(), dense->sparse_proportion());
     EXPECT_EQ(cast_dense->prefer_rows(), dense->prefer_rows());
     EXPECT_EQ(cast_dense->prefer_rows_proportion(), dense->prefer_rows_proportion());
+
+    EXPECT_FALSE(cast_dense->uses_oracle(true));
 }
 
 TEST_F(DelayedCastTest, Sparse) {
@@ -89,6 +91,8 @@ TEST_F(DelayedCastTest, Sparse) {
     EXPECT_EQ(cast_sparse->sparse_proportion(), sparse->sparse_proportion());
     EXPECT_EQ(cast_sparse->prefer_rows(), sparse->prefer_rows());
     EXPECT_EQ(cast_sparse->prefer_rows_proportion(), sparse->prefer_rows_proportion());
+
+    EXPECT_FALSE(cast_sparse->uses_oracle(true));
 }
 
 TEST_F(DelayedCastTest, ConstOverload) {
@@ -98,6 +102,12 @@ TEST_F(DelayedCastTest, ConstOverload) {
     // Cursory checks.
     EXPECT_EQ(dense->nrow(), tdense->nrow());
     EXPECT_EQ(dense->ncol(), tdense->ncol());
+}
+
+TEST(DelayedCastMisc, CastOracle) {
+    auto out = std::make_shared<tatami::ConsecutiveOracle<int> >(10, 100);
+    auto casted = tatami::DelayedCast_internal::CastOracle<size_t, int>(out);
+    EXPECT_EQ(casted.total(), 100);
 }
 
 /****************************************************

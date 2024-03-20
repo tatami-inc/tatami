@@ -110,6 +110,8 @@ TEST_P(SubsetBlockTest, Basic) {
     EXPECT_EQ(dense_block->prefer_rows_proportion(), 1);
     EXPECT_FALSE(sparse_block->prefer_rows());
     EXPECT_EQ(sparse_block->prefer_rows_proportion(), 0);
+
+    EXPECT_FALSE(dense_block->uses_oracle(false));
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -117,6 +119,12 @@ INSTANTIATE_TEST_SUITE_P(
     SubsetBlockTest,
     SubsetBlockUtils::simulation_parameter_combinations()
 );
+
+TEST(SubsetBlockMisc, SubsetOracle) {
+    auto out = std::make_shared<tatami::ConsecutiveOracle<int> >(10, 100);
+    auto casted = tatami::DelayedSubsetBlock_internal::SubsetOracle<int>(out, 50);
+    EXPECT_EQ(casted.total(), 100);
+}
 
 /*****************************
  *****************************/
