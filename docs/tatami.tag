@@ -2642,22 +2642,22 @@
       <type>std::unique_ptr&lt; MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>a42b1595eef17fc993962bf33fd3c139c</anchor>
-      <arglist>(bool row, const Options &amp;opt) const</arglist>
+      <anchor>a469092d6a8fb7333bc6f12992172f2a9</anchor>
+      <arglist>(bool row, const Options &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>a17d6af76f11416c8b76390b0302ff72e</anchor>
-      <arglist>(bool row, Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
+      <anchor>aa592f39abc882422b86d26f9f06cfa6b</anchor>
+      <arglist>(bool row, Index_ block_start, Index_ block_length, const Options &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>ac9673d5c5e61e42645e04e85dfe446e4</anchor>
-      <arglist>(bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
+      <anchor>a8d41b3ea1856c8644aeb36b981891170</anchor>
+      <arglist>(bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;) const</arglist>
     </member>
     <member kind="function">
       <type>std::unique_ptr&lt; MyopicSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>

@@ -149,16 +149,16 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>        <span class="keyword">const</span> Options&amp; opt) :</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>        operation(op),</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        row(row),</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        extent(row ? p-&gt;ncol() : p-&gt;nrow()),</div>
-<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        oracle_copy(oracle, row),</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        oracle_copy(oracle, row),</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        extent(row ? p-&gt;ncol() : p-&gt;nrow()),</div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        internal(<a class="code hl_function" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor</a>&lt;false, oracle_&gt;(p, row, std::move(oracle), opt))</div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    {}</div>
 <div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span> </div>
 <div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>    <span class="keyword">const</span> Operation_&amp; operation;</div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordtype">bool</span> row;</div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    Index_ extent;</div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    Index_ extent;</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, Value_, Index_&gt; &gt; internal;</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span> </div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span><span class="keyword">public</span>:</div>
@@ -263,10 +263,10 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>    <span class="keyword">const</span> Operation_&amp; operation;</div>
 <div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    <span class="keywordtype">bool</span> row;</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    Index_ extent;</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>    std::vector&lt;Value_&gt; internal_vbuffer;</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    std::vector&lt;Index_&gt; internal_ibuffer;</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>    Index_ extent;</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    std::vector&lt;Value_&gt; internal_vbuffer;</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>    std::vector&lt;Index_&gt; internal_ibuffer;</div>
 <div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    std::unique_ptr&lt;SparseExtractor&lt;oracle_, Value_, Index_&gt; &gt; internal;</div>
 <div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span> </div>
 <div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span><span class="keyword">public</span>:</div>
@@ -317,8 +317,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>    <span class="keyword">const</span> Operation_&amp; operation;</div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    <span class="keywordtype">bool</span> row;</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    Index_ block_start, block_length;</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>    Index_ block_start, block_length;</div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>    std::vector&lt;Value_&gt; internal_vbuffer;</div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>    std::vector&lt;Index_&gt; internal_ibuffer;</div>
 <div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>    std::unique_ptr&lt;SparseExtractor&lt;oracle_, Value_, Index_&gt; &gt; internal;</div>
@@ -383,12 +383,12 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00330" name="l00330"></a><span class="lineno">  330</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00331" name="l00331"></a><span class="lineno">  331</span>    <span class="keyword">const</span> Operation_&amp; operation;</div>
 <div class="line"><a id="l00332" name="l00332"></a><span class="lineno">  332</span>    <span class="keywordtype">bool</span> row;</div>
-<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    Index_ extent;</div>
-<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>    std::vector&lt;Value_&gt; internal_vbuffer;</div>
-<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    std::vector&lt;Index_&gt; internal_ibuffer;</div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    std::vector&lt;Index_&gt; remapping;</div>
-<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>    Index_ remapping_offset = 0;</div>
-<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>    Index_ extent;</div>
+<div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>    std::vector&lt;Value_&gt; internal_vbuffer;</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>    std::vector&lt;Index_&gt; internal_ibuffer;</div>
+<div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>    std::vector&lt;Index_&gt; remapping;</div>
+<div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span>    Index_ remapping_offset = 0;</div>
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>    std::unique_ptr&lt;SparseExtractor&lt;oracle_, Value_, Index_&gt; &gt; internal;</div>
 <div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span> </div>
 <div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span><span class="keyword">public</span>:</div>
@@ -541,8 +541,8 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00502" name="l00502"></a><span class="lineno">  502</span>    <span class="keyword">const</span> Operation_&amp; operation;</div>
 <div class="line"><a id="l00503" name="l00503"></a><span class="lineno">  503</span>    <span class="keywordtype">bool</span> row;</div>
 <div class="line"><a id="l00504" name="l00504"></a><span class="lineno">  504</span>    <span class="keywordtype">bool</span> report_value, report_index;</div>
-<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>    std::vector&lt;Index_&gt; internal_ibuffer;</div>
-<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00505" name="l00505"></a><span class="lineno">  505</span>    MaybeOracleDepends&lt;Operation_, oracle_, Index_&gt; oracle_copy;</div>
+<div class="line"><a id="l00506" name="l00506"></a><span class="lineno">  506</span>    std::vector&lt;Index_&gt; internal_ibuffer;</div>
 <div class="line"><a id="l00507" name="l00507"></a><span class="lineno">  507</span>    std::unique_ptr&lt;SparseExtractor&lt;oracle_, Value_, Index_&gt; &gt; internal;</div>
 <div class="line"><a id="l00508" name="l00508"></a><span class="lineno">  508</span> </div>
 <div class="line"><a id="l00509" name="l00509"></a><span class="lineno">  509</span><span class="keyword">public</span>:</div>
