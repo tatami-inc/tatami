@@ -230,7 +230,7 @@ void test_access_base(
     }
 
     if (params.check_sparse && ptr->sparse()) {
-        EXPECT_TRUE(sparse_counter < NR * NC);
+        EXPECT_TRUE(sparse_counter < static_cast<size_t>(NR) * static_cast<size_t>(NC));
     }
 }
 
@@ -251,7 +251,7 @@ void test_full_access(
         },
         [&](const auto& svec) -> auto {
             std::vector<Value_> output(nsecondary);
-            for (int i = 0; i < svec.index.size(); ++i) {
+            for (size_t i = 0; i < svec.index.size(); ++i) {
                 output[svec.index[i]] = svec.value[i];
             }
             return output;

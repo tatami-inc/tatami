@@ -38,10 +38,9 @@ size_t find_segment(const std::vector<Index_>& cumulative, Index_ target) {
     return std::upper_bound(cumulative.begin(), cumulative.end(), target) - cumulative.begin() - 1;
 }
 
-template<typename Value_, typename Index_, class Initialize_>
+template<typename Index_, class Initialize_>
 size_t initialize_parallel_block(
     const std::vector<Index_>& cumulative, 
-    const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
     Index_ block_start, 
     Index_ block_length, 
     Initialize_ init) 
@@ -50,8 +49,7 @@ size_t initialize_parallel_block(
     Index_ actual_start = block_start - cumulative[start_index];
     Index_ block_end = block_start + block_length;
 
-    size_t nmats = mats.size();
-    for (auto index = start_index; index < nmats; ++index) {
+    for (auto index = start_index, nmats = cumulative.size() - 1; index < nmats; ++index) {
         bool not_final = (block_end > cumulative[index + 1]);
         Index_ actual_end = (not_final ? cumulative[index + 1] : block_end) - cumulative[index];
         init(index, actual_start, actual_end - actual_start);
@@ -64,10 +62,9 @@ size_t initialize_parallel_block(
     return start_index;
 }
 
-template<typename Value_, typename Index_, class Initialize_>
+template<typename Index_, class Initialize_>
 void initialize_parallel_index(
     const std::vector<Index_>& cumulative, 
-    const std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >& mats, 
     const std::vector<Index_>& indices, 
     Initialize_ init) 
 {
@@ -75,10 +72,9 @@ void initialize_parallel_index(
         return;
     } 
     size_t start_index = find_segment(cumulative, indices.front());
-    size_t nmats = cumulative.size();
 
     Index_ counter = 0, il = indices.size();
-    for (size_t index = 0; index < nmats; ++index) {
+    for (size_t index = start_index, nmats = cumulative.size() -1; index < nmats; ++index) {
         Index_ lower = cumulative[index];
         Index_ upper = cumulative[index + 1];
 
@@ -129,7 +125,6 @@ struct ParallelDense : public DenseExtractor<oracle_, Value_, Index_> {
         count.reserve(mats.size());
         initialize_parallel_block(
             cumulative, 
-            mats, 
             block_start, 
             block_length,
             [&](size_t i, Index_ s, Index_ l) {
@@ -151,7 +146,6 @@ struct ParallelDense : public DenseExtractor<oracle_, Value_, Index_> {
         count.reserve(mats.size());
         initialize_parallel_index(
             cumulative, 
-            mats, 
             *indices_ptr,
             [&](size_t i, VectorPtr<Index_> idx) {
                 count.emplace_back(idx->size());
@@ -246,7 +240,6 @@ struct ParallelBlockSparse : public SparseExtractor<oracle_, Value_, Index_> {
         internal.reserve(mats.size());
         which_start = initialize_parallel_block(
             cumulative, 
-            mats, 
             block_start, 
             block_length,
             [&](size_t i, Index_ s, Index_ l) {
@@ -303,7 +296,6 @@ struct ParallelIndexSparse : public SparseExtractor<oracle_, Value_, Index_> {
         which.reserve(mats.size());
         initialize_parallel_index(
             cumulative, 
-            mats, 
             *indices_ptr,
             [&](size_t i, VectorPtr<Index_> idx) {
                 which.emplace_back(i);

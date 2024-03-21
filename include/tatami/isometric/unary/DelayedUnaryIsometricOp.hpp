@@ -85,16 +85,16 @@ struct DenseBasicFull : public DenseExtractor<oracle_, Value_, Index_> {
         const Options& opt) :
         operation(op),
         row(row),
-        extent(row ? p->ncol() : p->nrow()),
         oracle_copy(oracle, row),
+        extent(row ? p->ncol() : p->nrow()),
         internal(new_extractor<false, oracle_>(p, row, std::move(oracle), opt))
     {}
 
 private:
     const Operation_& operation;
     bool row;
-    Index_ extent;
     MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
+    Index_ extent;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > internal;
 
 public:
@@ -210,10 +210,10 @@ struct DenseExpandedFull : public DenseExtractor<oracle_, Value_, Index_> {
 private:
     const Operation_& operation;
     bool row;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     Index_ extent;
     std::vector<Value_> internal_vbuffer;
     std::vector<Index_> internal_ibuffer;
-    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
 
 public:
@@ -264,8 +264,8 @@ struct DenseExpandedBlock : public DenseExtractor<oracle_, Value_, Index_> {
 private:
     const Operation_& operation;
     bool row;
-    Index_ block_start, block_length;
     MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
+    Index_ block_start, block_length;
     std::vector<Value_> internal_vbuffer;
     std::vector<Index_> internal_ibuffer;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
@@ -330,12 +330,12 @@ struct DenseExpandedIndex : public DenseExtractor<oracle_, Value_, Index_> {
 private:
     const Operation_& operation;
     bool row;
+    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     Index_ extent;
     std::vector<Value_> internal_vbuffer;
     std::vector<Index_> internal_ibuffer;
     std::vector<Index_> remapping;
     Index_ remapping_offset = 0;
-    MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
 
 public:
@@ -502,8 +502,8 @@ private:
     const Operation_& operation;
     bool row;
     bool report_value, report_index;
-    std::vector<Index_> internal_ibuffer;
     MaybeOracleDepends<Operation_, oracle_, Index_> oracle_copy;
+    std::vector<Index_> internal_ibuffer;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
 
 public:

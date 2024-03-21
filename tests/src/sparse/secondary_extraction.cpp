@@ -45,7 +45,7 @@ protected:
     public:
         typedef size_t pointer_type;
 
-        pointer_type start_offset(Index_ primary) const {
+        pointer_type start_offset(Index_) const {
             return 0;
         }
 

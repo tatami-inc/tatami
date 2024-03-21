@@ -173,7 +173,7 @@ struct DenseExpandedFull : public DenseExtractor<oracle_, Value_, Index_> {
     DenseExpandedFull(
         const Matrix<Value_, Index_>* lmat,
         const Matrix<Value_, Index_>* rmat,
-        Operation_ op, 
+        const Operation_& op, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle,
         Options opt) :

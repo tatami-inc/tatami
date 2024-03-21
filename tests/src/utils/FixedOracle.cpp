@@ -16,7 +16,7 @@ TEST(FixedOracle, BasicAccess) {
     EXPECT_EQ(test->total(), predictions.size());
     EXPECT_EQ(test_copy->total(), predictions.size());
 
-    for (int i = 0; i < predictions.size(); ++i) {
+    for (size_t i = 0; i < predictions.size(); ++i) {
         EXPECT_EQ(test->get(i), predictions[i]);
         EXPECT_EQ(test_copy->get(i), predictions[i]);
     }

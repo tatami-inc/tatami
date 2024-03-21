@@ -52,7 +52,7 @@ void retrieve_primary_subset(IndexIt_ indices_start, IndexIt_ indices_end, const
     // The indices should be sparser than subset, so we get a tighter inner loop.
     size_t s = 0;
     while (indices_start != indices_end) {
-        auto curi = *indices_start;
+        Index_ curi = *indices_start;
         while (true) {
             if (s == nsub) {
                 return;

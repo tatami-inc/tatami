@@ -36,7 +36,7 @@ DenseParallelResults<Index_> format_dense_parallel(const IndexStorage_& indices,
     output.collapsed.reserve(len);
 
     if (len) {
-        Index_ last = indices[to_index(0)];
+        auto last = indices[to_index(0)];
         output.expansion.push_back(1);
         output.collapsed.push_back(last);
 
@@ -146,7 +146,7 @@ SparseParallelResults<Index_> format_sparse_parallel(const IndexStorage_& indice
 
     if (len) {
         output.collapsed.reserve(len);
-        Index_ first = indices[to_index(0)];
+        auto first = indices[to_index(0)];
 
         // 'start' and 'length' are vectors that enable look-up according to
         // the indices of the underlying array. To avoid the need to allocate a

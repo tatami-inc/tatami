@@ -15,9 +15,9 @@ namespace sparse_utils {
 template<typename Index_, class IndexServer_> 
 struct SecondaryExtractionCache {
 private:
-    Index_ max_index;
-
     IndexServer_ indices;
+
+    Index_ max_index;
 
     typedef typename IndexServer_::pointer_type Pointer_;
 
@@ -250,7 +250,10 @@ protected:
                     auto primary = to_primary(p);
                     auto iraw = indices.raw(primary);
                     auto curptr = cached_indptrs[p];
-                    if (curptr != indices.end_offset(primary) && *(iraw + curptr) == last_request) {
+
+                    // Casting to Index_, as there's no guarantee that the
+                    // stored index type can represent last_request.
+                    if (curptr != indices.end_offset(primary) && static_cast<Index_>(*(iraw + curptr)) == last_request) {
                         cached_indices[p] = last_request + 1;
                     } else if (curptr != indices.start_offset(primary)) {
                         cached_indices[p] = *(iraw + curptr - 1) + 1;
