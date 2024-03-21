@@ -153,19 +153,16 @@ private:
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
-    PrimaryMyopicIndexDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, VectorPtr<Index_> sub_ptr) :
-        values(vstore), indices(istore), indptr(pstore), subset_ptr(std::move(sub_ptr)) {} 
+    PrimaryMyopicIndexDense(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, const VectorPtr<Index_>& sub_ptr) :
+        values(vstore), indices(istore), indptr(pstore), retriever(*sub_ptr), extent(sub_ptr->size()) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        const auto& subset = *subset_ptr;
-        std::fill(buffer, buffer + subset.size(), static_cast<Value_>(0));
+        std::fill(buffer, buffer + extent, static_cast<Value_>(0));
         auto vIt = values.begin() + indptr[i];
-
-        sparse_utils::retrieve_primary_subset(
+        retriever.populate(
             indices.begin() + indptr[i], 
             indices.begin() + indptr[i+1],
-            subset,
-            [&](size_t s, size_t offset, Index_) {
+            [&](size_t s, size_t offset) {
                 buffer[s] = *(vIt + offset);
             }
         );
@@ -176,13 +173,14 @@ private:
     const ValueStorage_& values;
     const IndexStorage_& indices;
     const PointerStorage_& indptr;
-    VectorPtr<Index_> subset_ptr;
+    sparse_utils::RetrievePrimarySubsetDense<Index_> retriever;
+    size_t extent;
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 struct PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
-    PrimaryMyopicIndexSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, VectorPtr<Index_> sub_ptr, const Options& opt) :
-        values(vstore), indices(istore), indptr(pstore), subset_ptr(std::move(sub_ptr)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
+    PrimaryMyopicIndexSparse(const ValueStorage_& vstore, const IndexStorage_& istore, const PointerStorage_& pstore, const VectorPtr<Index_>& sub_ptr, const Options& opt) :
+        values(vstore), indices(istore), indptr(pstore), retriever(*sub_ptr), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         Index_ count = 0;
@@ -190,11 +188,10 @@ struct PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
         auto icopy = ibuffer;
 
         auto vIt = values.begin() + indptr[i];
-        sparse_utils::retrieve_primary_subset(
+        retriever.populate(
             indices.begin() + indptr[i], 
             indices.begin() + indptr[i+1],
-            *subset_ptr,
-            [&](size_t, size_t offset, Index_ ix) {
+            [&](size_t offset, Index_ ix) {
                 ++count;
                 if (needs_value) {
                     *vcopy = *(vIt + offset);
@@ -214,7 +211,7 @@ private:
     const ValueStorage_& values;
     const IndexStorage_& indices;
     const PointerStorage_& indptr;
-    VectorPtr<Index_> subset_ptr;
+    sparse_utils::RetrievePrimarySubsetSparse retriever;
     bool needs_value, needs_index;
 };
 

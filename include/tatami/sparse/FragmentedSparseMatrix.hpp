@@ -148,18 +148,16 @@ private:
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
 struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
     PrimaryMyopicIndexDense(const ValueVectorStorage_& vstore, const IndexVectorStorage_& istore, VectorPtr<Index_> sub_ptr) :
-        values(vstore), indices(istore), subset_ptr(std::move(sub_ptr)) {} 
+        values(vstore), indices(istore), retriever(*sub_ptr), extent(sub_ptr->size()) {} 
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         const auto& curi = indices[i];
         const auto& curv = values[i];
-        const auto& subset = *subset_ptr;
-        std::fill(buffer, buffer + subset.size(), static_cast<Value_>(0));
-        sparse_utils::retrieve_primary_subset(
+        std::fill(buffer, buffer + extent, static_cast<Value_>(0));
+        retriever.populate(
             curi.begin(),
             curi.end(),
-            subset,
-            [&](size_t s, size_t offset, Index_) {
+            [&](size_t s, size_t offset) {
                 buffer[s] = curv[offset];
             }
         );
@@ -169,13 +167,14 @@ struct PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
 private:
     const ValueVectorStorage_& values;
     const IndexVectorStorage_& indices;
-    VectorPtr<Index_> subset_ptr;
+    sparse_utils::RetrievePrimarySubsetDense<Index_> retriever;
+    size_t extent;
 };
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
 struct PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
     PrimaryMyopicIndexSparse(const ValueVectorStorage_& vstore, const IndexVectorStorage_& istore, VectorPtr<Index_> sub_ptr, const Options& opt) :
-        values(vstore), indices(istore), subset_ptr(std::move(sub_ptr)), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
+        values(vstore), indices(istore), retriever(*sub_ptr), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} 
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
         const auto& curi = indices[i];
@@ -184,11 +183,10 @@ struct PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
         auto vcopy = vbuffer;
         auto icopy = ibuffer;
 
-        sparse_utils::retrieve_primary_subset(
+        retriever.populate(
             curi.begin(),
             curi.end(),
-            *subset_ptr,
-            [&](size_t, size_t offset, Index_ ix) {
+            [&](size_t offset, Index_ ix) {
                 ++count;
                 if (needs_value) {
                     *vcopy = curv[offset];
@@ -207,7 +205,7 @@ struct PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
 private:
     const ValueVectorStorage_& values;
     const IndexVectorStorage_& indices;
-    VectorPtr<Index_> subset_ptr;
+    sparse_utils::RetrievePrimarySubsetSparse retriever;
     bool needs_value, needs_index;
 };
 

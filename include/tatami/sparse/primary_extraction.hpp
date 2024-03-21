@@ -33,43 +33,83 @@ void refine_primary_block_limits(IndexIt_& indices_start, IndexIt_& indices_end,
     }
 }
 
-template<class IndexIt_, typename Index_, class Store_>
-void retrieve_primary_subset(IndexIt_ indices_start, IndexIt_ indices_end, const std::vector<Index_>& subset, Store_ store) {
-    size_t nsub = subset.size();
-    if (nsub == 0) {
-        return;
-    }
+template<typename Index_>
+struct RetrievePrimarySubsetDense {
+    RetrievePrimarySubsetDense(const std::vector<Index_>& subset) {
+        if (!subset.empty()) {
+            offset = subset.front();
+            size_t alloc = subset.back() - offset + 1;
+            present.resize(alloc);
 
-    size_t offset = 0;
-    if (subset[0]) {
-        // Using custom comparator to ensure that we cast to Index_ for signedness-safe comparisons.
-        auto new_start = std::lower_bound(indices_start, indices_end, subset[0], [](Index_ a, Index_ b) -> bool { return a < b; });
-        offset = new_start - indices_start;
-        indices_start = new_start;
-    }
+            // Starting off at 1 to ensure that 0 is still a marker for
+            // absence. It should be fine as subset.size() should fit inside
+            // Index_ (otherwise nrow()/ncol() would give the wrong answer).
+            Index_ counter = 1; 
 
-    // Looping over the indices in the outer loop and 'subset' in the inner loop.
-    // The indices should be sparser than subset, so we get a tighter inner loop.
-    size_t s = 0;
-    while (indices_start != indices_end) {
-        Index_ curi = *indices_start;
-        while (true) {
-            if (s == nsub) {
-                return;
+            for (auto s : subset) {
+                present[s - offset] = counter;
+                ++counter;
             }
-            if (curi == subset[s]) {
-                store(s, offset, curi);
-                ++s;
-                break;
-            } else if (curi < subset[s]) {
-                break;
-            }
-            ++s;
         }
-        ++indices_start;
-        ++offset;
     }
-}
+
+    template<class IndexIt_, class Store_>
+    void populate(IndexIt_ indices_start, IndexIt_ indices_end, Store_ store) const {
+        size_t nmax = present.size();
+        if (nmax == 0) {
+            return;
+        }
+
+        size_t counter = 0;
+        for (; indices_start != indices_end; ++indices_start, ++counter) {
+            auto ix = *indices_start;
+            size_t delta = ix - offset;
+            if (delta < nmax) {
+                auto shift = present[delta];
+                if (shift) {
+                    store(shift - 1, counter);
+                }
+            }
+        }
+    }
+
+    std::vector<Index_> present;
+    size_t offset = 0;
+};
+
+struct RetrievePrimarySubsetSparse {
+    template<typename Index_>
+    RetrievePrimarySubsetSparse(const std::vector<Index_>& subset) {
+        if (!subset.empty()) {
+            offset = subset.front();
+            size_t alloc = subset.back() - offset + 1;
+            present.resize(alloc);
+            for (auto s : subset) {
+                present[s - offset] = 1;
+            }
+        }
+    }
+
+    template<class IndexIt_, class Store_>
+    void populate(IndexIt_ indices_start, IndexIt_ indices_end, Store_ store) const {
+        size_t nmax = present.size();
+        if (nmax == 0) {
+            return;
+        }
+
+        size_t counter = 0;
+        for (; indices_start != indices_end; ++indices_start, ++counter) {
+            auto ix = *indices_start;
+            size_t delta = ix - offset;
+            if (delta < nmax && present[delta]) {
+                store(counter, ix);
+            }
+        }
+    }
+
+    std::vector<unsigned char> present;
+    size_t offset = 0;
+};
 
 }
 
