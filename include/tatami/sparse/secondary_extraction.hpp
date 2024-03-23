@@ -73,7 +73,7 @@ public:
 
 private:
     template<class Store_>
-    void search_above(Index_ secondary, Index_ index_primary, Index_ primary, Store_& store) {
+    void search_above(Index_ secondary, Index_ index_primary, Index_ primary, Store_ store, bool& found) {
         // Skipping if the curdex (corresponding to curptr) is already higher
         // than secondary. So, we only need to do more work if the request is
         // greater than the stored index. This also catches cases where we're
@@ -86,6 +86,7 @@ private:
         auto& curptr = cached_indptrs[index_primary];
         if (curdex == secondary) {
             store(primary, index_primary, cached_indptrs[index_primary]);
+            found = true;
             return;
         }
 
@@ -108,6 +109,7 @@ private:
 
         if (curdex == secondary) {
             store(primary, index_primary, curptr);
+            found = true;
             return;
         }
 
@@ -128,12 +130,13 @@ private:
         }
 
         store(primary, index_primary, curptr);
+        found = true;
         return;
     }
 
 private:
     template<class Store_>
-    void search_below(Index_ secondary, Index_ index_primary, Index_ primary, Store_& store) {
+    void search_below(Index_ secondary, Index_ index_primary, Index_ primary, Store_ store, bool& found) {
         auto secondaryP1 = secondary + 1;
         auto& curdex = cached_indices[index_primary];
         if (curdex < secondaryP1) {
@@ -151,6 +154,7 @@ private:
             // to 'last_request != secondary' when we're inside this 'if' condition.
             curptr -= (last_request != secondary);
             store(primary, index_primary, curptr);
+            found = true;
             return;
         }
 
@@ -175,6 +179,7 @@ private:
             // lower bound and reverse lower bound are equal here.
             --curptr;
             store(primary, index_primary, curptr);
+            found = true;
             return;
         }
 
@@ -188,6 +193,7 @@ private:
         if (curdex == secondaryP1) {
             // No need for decrement logic here, as both 'curdex' and 'curptr' are consistent right now.
             store(primary, index_primary, curptr);
+            found = true;
             return;
         }
 
@@ -205,48 +211,51 @@ private:
 protected:
     template<class PrimaryFunction_, class Store_>
     bool search_base(Index_ secondary, PrimaryFunction_ to_primary, Store_ store) {
-        Index_ primary_length = cached_indices.size(); 
-        if (primary_length == 0) {
-            return false;
-        }
-
         if (secondary > last_request || (last_increasing && secondary == last_request)) {
+            bool found = false;
+
             if (last_increasing) {
                 if (secondary < closest_cached_index) {
                     last_request = secondary;
                     return false; 
                 }
-                for (Index_ p = 0; p < primary_length; ++p) {
-                    search_above(secondary, p, to_primary(p), store);
+                for (Index_ p = 0, plen = cached_indices.size(); p < plen; ++p) {
+                    search_above(secondary, p, to_primary(p), store, found);
                 }
 
             } else {
                 // Need to reset the meaning of 'cached_indices'.
                 last_increasing = true;
-                for (Index_ p = 0; p < primary_length; ++p) {
+                for (Index_ p = 0, plen = cached_indices.size(); p < plen; ++p) {
                     auto primary = to_primary(p);
                     auto curptr = cached_indptrs[p];
                     cached_indices[p] = (curptr == indices.end_offset(primary) ? max_index : *(indices.raw(primary) + curptr));
-                    search_above(secondary, p, primary, store);
+                    search_above(secondary, p, primary, store, found);
                 }
             }
 
-            closest_cached_index = *(std::min_element(cached_indices.begin(), cached_indices.end()));
+            if (found) {
+                closest_cached_index = secondary;
+            } else if (!cached_indices.empty()) {
+                closest_cached_index = *(std::min_element(cached_indices.begin(), cached_indices.end()));
+            }
 
         } else {
+            bool found = false;
+
             if (!last_increasing) {
                 if (secondary + 1 > closest_cached_index) {
                     last_request = secondary;
                     return false;
                 }
-                for (Index_ p = 0; p < primary_length; ++p) {
-                    search_below(secondary, p, to_primary(p), store);
+                for (Index_ p = 0, plen = cached_indices.size(); p < plen; ++p) {
+                    search_below(secondary, p, to_primary(p), store, found);
                 }
 
             } else {
                 // Need to reset the meaning of 'cached_indices'.
                 last_increasing = false;
-                for (Index_ p = 0; p < primary_length; ++p) {
+                for (Index_ p = 0, plen = cached_indices.size(); p < plen; ++p) {
                     auto primary = to_primary(p);
                     auto iraw = indices.raw(primary);
                     auto curptr = cached_indptrs[p];
@@ -260,11 +269,15 @@ protected:
                     } else {
                         cached_indices[p] = 0;
                     }
-                    search_below(secondary, p, primary, store);
+                    search_below(secondary, p, primary, store, found);
                 }
             }
 
-            closest_cached_index = *(std::max_element(cached_indices.begin(), cached_indices.end()));
+            if (found) {
+                closest_cached_index = secondary + 1;
+            } else if (!cached_indices.empty()) {
+                closest_cached_index = *(std::max_element(cached_indices.begin(), cached_indices.end()));
+            }
         }
 
         last_request = secondary; 
