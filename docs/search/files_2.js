@@ -9,6 +9,5 @@ var searchData=
   ['convert_5fto_5fcompressed_5fsparse_2ehpp_6',['convert_to_compressed_sparse.hpp',['../convert__to__compressed__sparse_8hpp.html',1,'']]],
   ['convert_5fto_5fdense_2ehpp_7',['convert_to_dense.hpp',['../convert__to__dense_8hpp.html',1,'']]],
   ['convert_5fto_5ffragmented_5fsparse_2ehpp_8',['convert_to_fragmented_sparse.hpp',['../convert__to__fragmented__sparse_8hpp.html',1,'']]],
-  ['copy_2ehpp_9',['copy.hpp',['../copy_8hpp.html',1,'']]],
-  ['counts_2ehpp_10',['counts.hpp',['../counts_8hpp.html',1,'']]]
+  ['copy_2ehpp_9',['copy.hpp',['../copy_8hpp.html',1,'']]]
 ];

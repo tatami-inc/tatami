@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['parallelize_2ehpp_0',['parallelize.hpp',['../parallelize_8hpp.html',1,'']]],
-  ['process_5fconsecutive_5findices_2ehpp_1',['process_consecutive_indices.hpp',['../process__consecutive__indices_8hpp.html',1,'']]],
-  ['pseudooracularextractor_2ehpp_2',['PseudoOracularExtractor.hpp',['../PseudoOracularExtractor_8hpp.html',1,'']]]
+  ['somenumericarray_2ehpp_0',['SomeNumericArray.hpp',['../SomeNumericArray_8hpp.html',1,'']]],
+  ['sparserange_2ehpp_1',['SparseRange.hpp',['../SparseRange_8hpp.html',1,'']]],
+  ['sparsifiedwrapper_2ehpp_2',['SparsifiedWrapper.hpp',['../SparsifiedWrapper_8hpp.html',1,'']]]
 ];

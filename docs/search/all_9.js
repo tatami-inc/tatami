@@ -67,8 +67,7 @@ var searchData=
   ['matrix_3c_20value_5f_2c_20index_5f_20_3e_64',['Matrix&lt; Value_, Index_ &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
   ['matrix_3c_20valueout_5f_2c_20indexout_5f_20_3e_65',['Matrix&lt; ValueOut_, IndexOut_ &gt;',['../classtatami_1_1Matrix.html',1,'tatami']]],
   ['maybeoracle_66',['MaybeOracle',['../namespacetatami.html#aab9d426a238a93d02635b4172c725808',1,'tatami']]],
-  ['medians_2ehpp_67',['medians.hpp',['../medians_8hpp.html',1,'']]],
-  ['mock_5fhelpers_2ehpp_68',['mock_helpers.hpp',['../unary_2mock__helpers_8hpp.html',1,'(Global Namespace)'],['../binary_2mock__helpers_8hpp.html',1,'(Global Namespace)']]],
-  ['myopicdenseextractor_69',['MyopicDenseExtractor',['../structtatami_1_1MyopicDenseExtractor.html',1,'tatami']]],
-  ['myopicsparseextractor_70',['MyopicSparseExtractor',['../structtatami_1_1MyopicSparseExtractor.html',1,'tatami']]]
+  ['mock_5fhelpers_2ehpp_67',['mock_helpers.hpp',['../unary_2mock__helpers_8hpp.html',1,'(Global Namespace)'],['../binary_2mock__helpers_8hpp.html',1,'(Global Namespace)']]],
+  ['myopicdenseextractor_68',['MyopicDenseExtractor',['../structtatami_1_1MyopicDenseExtractor.html',1,'tatami']]],
+  ['myopicsparseextractor_69',['MyopicSparseExtractor',['../structtatami_1_1MyopicSparseExtractor.html',1,'tatami']]]
 ];
