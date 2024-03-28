@@ -10,8 +10,8 @@
 #include "sparse/convert_to_fragmented_sparse.hpp"
 #include "sparse/compress_sparse_triplets.hpp"
 
-//#include "isometric/unary/DelayedUnaryIsometricOp.hpp"
-//#include "isometric/binary/DelayedBinaryIsometricOp.hpp"
+#include "isometric/unary/DelayedUnaryIsometricOp.hpp"
+#include "isometric/binary/DelayedBinaryIsometricOp.hpp"
 
 #include "other/DelayedBind.hpp"
 #include "other/DelayedCast.hpp"
@@ -26,15 +26,6 @@
 #include "utils/ConsecutiveOracle.hpp"
 #include "utils/FixedOracle.hpp"
 #include "utils/process_consecutive_indices.hpp"
-
-#include "stats/sums.hpp"
-#include "stats/variances.hpp"
-#include "stats/medians.hpp"
-#include "stats/ranges.hpp"
-#include "stats/counts.hpp"
-#include "stats/utils.hpp"
-#include "stats/grouped_medians.hpp"
-#include "stats/grouped_sums.hpp"
 
 /**
  * @file tatami.hpp

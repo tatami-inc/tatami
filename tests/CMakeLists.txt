@@ -49,14 +49,6 @@ add_executable(
     src/sparse/convert_to_fragmented_sparse.cpp
     src/sparse/compress_sparse_triplets.cpp
 
-    src/stats/sums.cpp
-    src/stats/variances.cpp
-    src/stats/medians.cpp
-    src/stats/ranges.cpp
-    src/stats/counts.cpp
-    src/stats/grouped_medians.cpp
-    src/stats/grouped_sums.cpp
-
     src/utils/parallelize.cpp
     src/utils/wrap_shared_ptr.cpp
     src/utils/SomeNumericArray.cpp
@@ -91,14 +83,7 @@ gtest_discover_tests(libtest)
 macro(create_partest target)
     add_executable(
         ${target}
-        src/stats/sums.cpp
-        src/stats/variances.cpp
-        src/stats/medians.cpp
-        src/stats/ranges.cpp
-        src/stats/counts.cpp
         src/utils/parallelize.cpp
-        src/stats/grouped_medians.cpp
-        src/stats/grouped_sums.cpp
     )
 
     target_link_libraries(

@@ -4,7 +4,7 @@
 
 #ifdef CUSTOM_PARALLEL_TEST
 // Put this before any tatami imports.
-#include "../custom_parallel.h"
+#include "custom_parallel.h"
 #endif
 
 #include "tatami/utils/parallelize.hpp"

@@ -257,18 +257,14 @@ Advanced users can also define their own `Oracle` subclasses to provide dynamic 
 ## Comments on other operations
 
 As previously mentioned, **tatami** is designed to pull out rows or columns of a matrix, and little else.
-Some support is provided for basic statistics in the same vein as the [**matrixStats**](https://github.com/HenrikBengtsson/matrixStats) package:
+Some support is provided for basic statistics in the same vein as the [**matrixStats**](https://github.com/HenrikBengtsson/matrixStats) R package -
+see the [**tatami_stats**](https://github.com/tatami-inc/tatami_stats) library for more information.
 
-```cpp
-auto colsums = tatami::column_sums(mat.get());
-auto rowvars = tatami::row_variances(mat.get());
-```
-
-**tatami** is strictly intended for row/column access and does not directly support matrix algebra or decompositions. 
+**tatami** does not directly support matrix algebra or decompositions. 
 If these high-level operations are needed, applications should write their own code, e.g., by using **tatami**'s extractors to implement matrix multiplication.
 Alternatively, we can transfer data from **tatami** into other frameworks like [**Eigen**](https://eigen.tuxfamily.org/) for complex matrix operations,
 effectively trading the diversity of representations for a more comprehensive suite of operations.
-For example, we like to use **tatami** to load the input data, which is usually in a custom format to save memory for large datasets;
+For example, we often use **tatami** to represent the input data in a custom format to save memory for large datasets;
 process it into a much smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis;
 and then copy this cheaply into an `Eigen::MatrixXd` or `Eigen::SparseMatrix` for more computationally intensive work.
 

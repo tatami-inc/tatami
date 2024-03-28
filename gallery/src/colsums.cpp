@@ -99,7 +99,7 @@ std::vector<double> colsums_sparse(std::shared_ptr<tatami::NumericMatrix> p) {
  * is only possible for certain calculations; if we really need an entire
  * column's values at once, there's really no way around calling column().
  *
- * Incidentally, this is the approach that tatami::column_sums() uses.
+ * Incidentally, this is the approach that tatami_stats::sums::by_column() uses.
  */
 std::vector<double> colsums_preferred(std::shared_ptr<tatami::NumericMatrix> p) {
     size_t NR = p->nrow(), NC = p->ncol();
