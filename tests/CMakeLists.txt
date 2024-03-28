@@ -14,20 +14,58 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
+include(GoogleTest)
+
+set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
+set(DO_CODE_COVERAGE OFF)
+if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+    set(DO_CODE_COVERAGE ON)
+endif()
+
+macro(decorate_executable target)
+    target_link_libraries(
+        ${target}
+        gtest_main
+        gmock_main
+        tatami
+    )
+
+    target_compile_definitions(${target} PRIVATE DEBUG=1)
+    target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
+
+    if(DO_CODE_COVERAGE)
+        target_compile_options(${target} PRIVATE -O0 -g --coverage)
+        target_link_options(${target} PRIVATE --coverage)
+    endif()
+
+    gtest_discover_tests(${target})
+endmacro()
+
 # Main test executable.
 add_executable(
-    libtest 
-
+    dense_test
     src/dense/DenseMatrix.cpp
     src/dense/convert_to_dense.cpp
+)
+decorate_executable(dense_test)
 
+add_executable(
+    other_test
     src/other/DelayedBind.cpp
     src/other/DelayedTranspose.cpp
     src/other/DelayedCast.cpp
+)
+decorate_executable(other_test)
 
+add_executable(
+    subset_test
     src/subset/DelayedSubset.cpp
     src/subset/DelayedSubsetBlock.cpp
+)
+decorate_executable(subset_test)
 
+add_executable(
+    isometric_unary_test
     src/isometric/unary/DelayedUnaryIsometricOp.cpp
     src/isometric/unary/arith_vector_helpers.cpp
     src/isometric/unary/arith_scalar_helpers.cpp
@@ -36,19 +74,31 @@ add_executable(
     src/isometric/unary/compare_vector_helpers.cpp
     src/isometric/unary/boolean_scalar_helpers.cpp
     src/isometric/unary/boolean_vector_helpers.cpp
+)
+decorate_executable(isometric_unary_test)
 
+add_executable(
+    isometric_binary_test
     src/isometric/binary/DelayedBinaryIsometricOp.cpp
     src/isometric/binary/arith_helpers.cpp
     src/isometric/binary/compare_helpers.cpp
     src/isometric/binary/boolean_helpers.cpp
+)
+decorate_executable(isometric_binary_test)
 
+add_executable(
+    sparse_test
     src/sparse/CompressedSparseMatrix.cpp
     src/sparse/FragmentedSparseMatrix.cpp
     src/sparse/secondary_extraction.cpp
     src/sparse/convert_to_compressed_sparse.cpp
     src/sparse/convert_to_fragmented_sparse.cpp
     src/sparse/compress_sparse_triplets.cpp
+)
+decorate_executable(sparse_test)
 
+add_executable(
+    utils_test
     src/utils/parallelize.cpp
     src/utils/wrap_shared_ptr.cpp
     src/utils/SomeNumericArray.cpp
@@ -57,27 +107,7 @@ add_executable(
     src/utils/FixedOracle.cpp
     src/utils/process_consecutive_indices.cpp
 )
-
-target_link_libraries(
-    libtest
-    gtest_main
-    gmock_main
-    tatami
-)
-
-target_compile_definitions(libtest PRIVATE DEBUG=1)
-target_compile_options(libtest PRIVATE -Wall -Wextra -Wpedantic -Werror)
-
-set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
-set(DO_CODE_COVERAGE OFF)
-if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    target_compile_options(libtest PRIVATE -O0 -g --coverage)
-    target_link_options(libtest PRIVATE --coverage)
-    set(DO_CODE_COVERAGE ON)
-endif()
-
-include(GoogleTest)
-gtest_discover_tests(libtest)
+decorate_executable(utils_test)
 
 # Test custom parallelization during apply.
 macro(create_partest target)
@@ -102,11 +132,11 @@ macro(create_partest target)
     gtest_discover_tests(${target})
 endmacro()
 
-create_partest(cuspartest)
-target_compile_definitions(cuspartest PRIVATE CUSTOM_PARALLEL_TEST=1)
+create_partest(cuspar_test)
+target_compile_definitions(cuspar_test PRIVATE CUSTOM_PARALLEL_TEST=1)
 
 find_package(OpenMP)
 if(OpenMP_FOUND)
-    create_partest(omptest)
-    target_link_libraries(omptest OpenMP::OpenMP_CXX)
+    create_partest(omp_test)
+    target_link_libraries(omp_test OpenMP::OpenMP_CXX)
 endif()
