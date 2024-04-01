@@ -718,13 +718,26 @@
   <compound kind="struct">
     <name>tatami::DelayedBinaryAdvancedMockHelper</name>
     <filename>structtatami_1_1DelayedBinaryAdvancedMockHelper.html</filename>
-    <base>tatami::DelayedBinaryBasicMockHelper</base>
     <member kind="function">
       <type>Value_</type>
       <name>fill</name>
       <anchorfile>structtatami_1_1DelayedBinaryAdvancedMockHelper.html</anchorfile>
       <anchor>a6a12e19e5693e899c84f0e8d890894fc</anchor>
       <arglist>(Index_ i) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>structtatami_1_1DelayedBinaryAdvancedMockHelper.html</anchorfile>
+      <anchor>ac864ee425da7d1f3025e79dbbb9bac8b</anchor>
+      <arglist>(bool row, Index_ i, Index_ start, Index_ length, Value_ *left_buffer, const Value_ *right_buffer) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>structtatami_1_1DelayedBinaryAdvancedMockHelper.html</anchorfile>
+      <anchor>ae3fb5ab83763694a88ff18ca0540a73b</anchor>
+      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, Value_ *left_buffer, const Value_ *right_buffer) const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
@@ -2288,7 +2301,20 @@
   <compound kind="struct">
     <name>tatami::DelayedUnaryAdvancedMockHelper</name>
     <filename>structtatami_1_1DelayedUnaryAdvancedMockHelper.html</filename>
-    <base>tatami::DelayedUnaryBasicMockHelper</base>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>structtatami_1_1DelayedUnaryAdvancedMockHelper.html</anchorfile>
+      <anchor>ad412007ef9d18673fece69f47a1b605b</anchor>
+      <arglist>(bool row, Index_ i, Index_ start, Index_ length, Value_ *buffer) const</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>dense</name>
+      <anchorfile>structtatami_1_1DelayedUnaryAdvancedMockHelper.html</anchorfile>
+      <anchor>a91f51a30c3a30845bc7c40d590a07c26</anchor>
+      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, Value_ *buffer) const</arglist>
+    </member>
     <member kind="function">
       <type>void</type>
       <name>sparse</name>
