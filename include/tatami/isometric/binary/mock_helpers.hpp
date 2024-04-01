@@ -36,7 +36,7 @@ struct DelayedBinaryBasicMockHelper {
      * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
      * This has `length` addressable elements.
      *
-     * Note that this method does not necessarily need to have the same template arguments.
+     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      */
     template<typename Value_, typename Index_>
@@ -67,7 +67,7 @@ struct DelayedBinaryBasicMockHelper {
      * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
      * This has `length` addressable elements.
      *
-     * Note that this method does not necessarily need to have the same template arguments.
+     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      */
     template<typename Value_, typename Index_>
@@ -83,13 +83,13 @@ struct DelayedBinaryBasicMockHelper {
 
     /**
      * Conversion of zeros to non-zero values is dependent on rows.
-     * This should be `true`, otherwise a `DelayedBinaryAdvancedMockHelper` is expected.
+     * This should be `true`, otherwise an advanced operation is expected (see `DelayedBinaryAdvancedMockHelper`).
      */
     static constexpr bool zero_depends_on_row = true;
 
     /**
      * Conversion of zeros to non-zero values is dependent on columns.
-     * This should be `true`, otherwise a `DelayedBinaryAdvancedMockHelper` is expected.
+     * This should be `true`, otherwise an advanced operation is expected (see `DelayedBinaryAdvancedMockHelper`).
      */
     static constexpr bool zero_depends_on_column = true;
 
@@ -114,7 +114,7 @@ struct DelayedBinaryBasicMockHelper {
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-struct DelayedBinaryAdvancedMockHelper : public DelayedBinaryBasicMockHelper {
+struct DelayedBinaryAdvancedMockHelper {
     /**
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
@@ -126,7 +126,8 @@ struct DelayedBinaryAdvancedMockHelper : public DelayedBinaryBasicMockHelper {
      * @return The result of the operation being applied on zeros from both the left and right matrices.
      * This should be constant for all elements in the row/column/matrix, depending on the interpretation of `i`.
      *
-     * This method will be called with the `Value_` template parameter.
+     * This method will be called with an explicit `Value_` template parameter.
+     * Implementations of this method should either ensure that `Index_` is deducible or use a fixed integer type in the method signature.
      */
     template<typename Value_, typename Index_>
     Value_ fill([[maybe_unused]] Index_ i) const { 
@@ -135,15 +136,78 @@ struct DelayedBinaryAdvancedMockHelper : public DelayedBinaryBasicMockHelper {
 
     /**
      * Conversion of zeros to non-zero values is not dependent on rows.
-     * This may also be `true` provided that `zero_depends_on_column = false`.
+     * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_column = false`;
+     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryBasicMockHelper`).
      */
     static constexpr bool zero_depends_on_row = false;
 
     /**
      * Conversion of zeros to non-zero values is not dependent on columns.
-     * This may also be `true` provided that `zero_depends_on_row = false`.
+     * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_row = false`;
+     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryBasicMockHelper`).
      */
     static constexpr bool zero_depends_on_column = false;
+
+    /**
+     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`,
+     * representing the dense contents of the same row/column from the left and right matrices respectively.
+     *
+     * @tparam Value_ Type of matrix value.
+     * @tparam Index_ Type of index value.
+     *
+     * @param row Whether `left_buffer` and `right_buffer` contain the row contents.
+     * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
+     * @param length Length of the contiguous block.
+     * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
+     * This has `length` addressable elements, and the result of the operation should be stored here.
+     * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
+     * This has `length` addressable elements.
+     *
+     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     */
+    template<typename Value_, typename Index_>
+    void dense(
+        [[maybe_unused]] bool row, 
+        [[maybe_unused]] Index_ i, 
+        [[maybe_unused]] Index_ start, 
+        Index_ length, 
+        Value_* left_buffer, 
+        [[maybe_unused]] const Value_* right_buffer)
+    const {
+        // Just filling it with something as a mock.
+        std::fill_n(left_buffer, length, 0);
+    }
+
+    /**
+     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`,
+     * representing the dense contents of the same row/column from the left and right matrices respectively.
+     *
+     * @tparam Value_ Type of matrix value.
+     * @tparam Index_ Type of index value.
+     *
+     * @param row Whether `left_buffer` and `right_buffer` contain the row contents.
+     * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
+     * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
+     * This has `length` addressable elements, and the result of the operation should be stored here.
+     * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
+     * This has `length` addressable elements.
+     *
+     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     */
+    template<typename Value_, typename Index_>
+    void dense(
+        [[maybe_unused]] bool row, 
+        [[maybe_unused]] Index_ i, 
+        const std::vector<Index_>& indices, 
+        Value_* left_buffer, 
+        [[maybe_unused]] const Value_* right_buffer) 
+    const {
+        std::fill_n(left_buffer, indices.size(), 0);
+    }
 
     /**
      * This method applies the operation to the sparse ranges in `left` and `right`, 
@@ -185,7 +249,7 @@ struct DelayedBinaryAdvancedMockHelper : public DelayedBinaryBasicMockHelper {
      * This implies that implementations should not omit structural non-zeros even if the actual value is zero,
      * as the computation of the actual value requires `report_value = true`.
      *
-     * Note that this method does not necessarily need to have the same template arguments.
+     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      */
     template<typename Value_, typename Index_>
