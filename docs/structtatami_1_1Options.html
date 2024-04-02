@@ -110,7 +110,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Whether to extract the indices in <code>SparseExtractor::fetch</code>. If set to <code>false</code>, this can be used to avoid unnecessary computation and copying in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> methods. </p>
+<p>Whether to extract the indices in <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html#a0641369e8d195d57e681632a199bc462">MyopicSparseExtractor::fetch()</a></code> or <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html#a28c7c5f5e8467153baeffe74bd83cea7">OracularSparseExtractor::fetch()</a></code>. If set to <code>false</code>, this can be used to avoid unnecessary computation and copying in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> methods.</p>
+<p>Note that the number of structural non-zeros reported by <code>fetch()</code> should be independent of this setting. This means that <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> implementations should not try to do something overly clever based on the indices, though this warning is more relevant for <code>sparse_extract_value</code>. </p>
 
 </div>
 </div>
@@ -125,7 +126,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Whether to extract the values in <code>SparseExtractor::fetch</code>. If set to <code>false</code>, this can be used to avoid unnecessary computation and copying in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> methods. </p>
+<p>Whether to extract the values in <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html#a0641369e8d195d57e681632a199bc462">MyopicSparseExtractor::fetch()</a></code> or <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html#a28c7c5f5e8467153baeffe74bd83cea7">OracularSparseExtractor::fetch()</a></code>. If set to <code>false</code>, this can be used to avoid unnecessary computation and copying in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> methods.</p>
+<p>Note that the number of structural non-zeros reported by <code>fetch()</code> should be independent of this setting. This means that <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> implementations should not try to do something overly clever when reporting results, e.g., like filtering out structural non-zeros with values of zero when <code>sparse_extract_value = true</code>; doing so implies that the same filtering should be performed when <code>sparse_extract_value = false</code>, which requires extraction of the value (and thus defeats the purpose of this flag). </p>
 
 </div>
 </div>
@@ -140,7 +142,8 @@ Public Attributes</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Whether the structural non-zeros returned by <code>SparseExtractor::fetch</code> should be ordered by increasing index. Setting this to <code>false</code> may reduce computational work in situations where the order of non-zero elements does not matter. </p>
+<p>Whether the structural non-zeros returned by <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html#a0641369e8d195d57e681632a199bc462">MyopicSparseExtractor::fetch()</a></code> or <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle.">OracularSparseExtractor</a>:fetch()</code> should be ordered by increasing index. Setting this to <code>false</code> may reduce computational work in situations where the order of non-zero elements does not matter.</p>
+<p>If false, <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> implementations may report the structural non-zeros in any order. The order may even vary across separate calls to <code>fetch()</code>, e.g., when pulling data parts asynchronously from a remote source. Note that the number and identity of structural non-zeros reported by <code>fetch()</code> should be independent of this setting. </p>
 
 </div>
 </div>
