@@ -694,7 +694,9 @@ public:
      **********************************/
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, const Options& opt) const {
-        if (row == (margin_ == 0)) {
+        if (mats.size() == 1) {
+            return mats[0]->dense(row, opt);
+        } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(cumulative, mats, row, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(cumulative, mats, row, false, opt);
@@ -702,7 +704,9 @@ public:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_length, const Options& opt) const {
-        if (row == (margin_ == 0)) {
+        if (mats.size() == 1) {
+            return mats[0]->dense(row, block_start, block_length, opt);
+        } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(cumulative, mats, row, block_start, block_length, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(cumulative, mats, row, false, block_start, block_length, opt);
@@ -710,7 +714,9 @@ public:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        if (row == (margin_ == 0)) {
+        if (mats.size() == 1) {
+            return mats[0]->dense(row, std::move(indices_ptr), opt);
+        } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(cumulative, mats, row, std::move(indices_ptr), opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(cumulative, mats, row, false, std::move(indices_ptr), opt);
@@ -722,7 +728,9 @@ public:
      ***********************************/
 private:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const Options& opt) const {
-        if (row == (margin_ == 0)) {
+        if (mats.size() == 1) {
+            return mats[0]->sparse(row, opt);
+        } else  if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(cumulative, mats, row, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelFullSparse<false, Value_, Index_> >(cumulative, mats, row, false, opt);
@@ -730,7 +738,9 @@ private:
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_length, const Options& opt) const {
-        if (row == (margin_ == 0)) {
+        if (mats.size() == 1) {
+            return mats[0]->sparse(row, block_start, block_length, opt);
+        } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(cumulative, mats, row, block_start, block_length, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelBlockSparse<false, Value_, Index_> >(cumulative, mats, row, false, block_start, block_length, opt);
@@ -738,7 +748,9 @@ private:
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        if (row == (margin_ == 0)) {
+        if (mats.size() == 1) {
+            return mats[0]->sparse(row, std::move(indices_ptr), opt);
+        } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(cumulative, mats, row, std::move(indices_ptr), opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelIndexSparse<false, Value_, Index_> >(cumulative, mats, row, false, std::move(indices_ptr), opt);
@@ -750,7 +762,9 @@ private:
      ************************************/
 public:
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
-        if (!stored_uses_oracle[row]) {
+        if (mats.size() == 1) {
+            return mats[0]->dense(row, std::move(oracle), opt);
+        } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, opt));
         } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mats, row, std::move(oracle), opt);
@@ -760,7 +774,9 @@ public:
     }
 
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        if (!stored_uses_oracle[row]) {
+        if (mats.size() == 1) {
+            return mats[0]->dense(row, std::move(oracle), block_start, block_length, opt);
+        } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, block_start, block_length, opt));
         } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mats, row, std::move(oracle), block_start, block_length, opt);
@@ -770,7 +786,9 @@ public:
     }
 
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        if (!stored_uses_oracle[row]) {
+        if (mats.size() == 1) {
+            return mats[0]->dense(row, std::move(oracle), std::move(indices_ptr), opt);
+        } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, std::move(indices_ptr), opt));
         } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mats, row, std::move(oracle), std::move(indices_ptr), opt);
@@ -784,7 +802,9 @@ public:
      *************************************/
 private:
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, const Options& opt) const {
-        if (!stored_uses_oracle[row]) {
+        if (mats.size() == 1) {
+            return mats[0]->sparse(row, std::move(oracle), opt);
+        } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, opt));
         } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(cumulative, mats, row, std::move(oracle), opt);
@@ -794,7 +814,9 @@ private:
     }
 
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        if (!stored_uses_oracle[row]) {
+        if (mats.size() == 1) {
+            return mats[0]->sparse(row, std::move(oracle), block_start, block_length, opt);
+        } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, block_start, block_length, opt));
         } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(cumulative, mats, row, std::move(oracle), block_start, block_length, opt);
@@ -804,7 +826,9 @@ private:
     }
 
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        if (!stored_uses_oracle[row]) {
+        if (mats.size() == 1) {
+            return mats[0]->sparse(row, std::move(oracle), std::move(indices_ptr), opt);
+        } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, std::move(indices_ptr), opt));
         } else if (row == (margin_ == 0)) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(cumulative, mats, row, std::move(oracle), std::move(indices_ptr), opt);
