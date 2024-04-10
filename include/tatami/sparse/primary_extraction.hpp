@@ -21,24 +21,29 @@ const Data_* extract_primary_vector(const Storage_& input, Pointer_ offset, Poin
 }
 
 template<class IndexIt_, typename Index_>
-void refine_primary_block_limits(IndexIt_& indices_start, IndexIt_& indices_end, Index_ extent, Index_ block_start, Index_ block_length) {
-    if (block_start) {
+void refine_primary_limits(IndexIt_& indices_start, IndexIt_& indices_end, Index_ extent, Index_ smallest, Index_ largest_plus_one) {
+    if (smallest) {
         // Using custom comparator to ensure that we cast to Index_ for signedness-safe comparisons.
-        indices_start = std::lower_bound(indices_start, indices_end, block_start, [](Index_ a, Index_ b) -> bool { return a < b; });
+        indices_start = std::lower_bound(indices_start, indices_end, smallest, [](Index_ a, Index_ b) -> bool { return a < b; });
     }
 
-    auto block_end = block_start + block_length;
-    if (block_end != extent) {
-        indices_end = std::lower_bound(indices_start, indices_end, block_end, [](Index_ a, Index_ b) -> bool { return a < b; });
+    if (largest_plus_one != extent) {
+        indices_end = std::lower_bound(indices_start, indices_end, largest_plus_one, [](Index_ a, Index_ b) -> bool { return a < b; });
     }
+}
+
+template<class IndexIt_, typename Index_>
+void refine_primary_block_limits(IndexIt_& indices_start, IndexIt_& indices_end, Index_ extent, Index_ block_start, Index_ block_length) {
+    refine_primary_limits(indices_start, indices_end, extent, block_start, block_start + block_length);
 }
 
 template<typename Index_>
 struct RetrievePrimarySubsetDense {
-    RetrievePrimarySubsetDense(const std::vector<Index_>& subset) {
+    RetrievePrimarySubsetDense(const std::vector<Index_>& subset, Index_ extent) : extent(extent) {
         if (!subset.empty()) {
             offset = subset.front();
-            size_t alloc = subset.back() - offset + 1;
+            lastp1 = subset.back() + 1;
+            size_t alloc = lastp1 - offset;
             present.resize(alloc);
 
             // Starting off at 1 to ensure that 0 is still a marker for
@@ -55,35 +60,42 @@ struct RetrievePrimarySubsetDense {
 
     template<class IndexIt_, class Store_>
     void populate(IndexIt_ indices_start, IndexIt_ indices_end, Store_ store) const {
-        size_t nmax = present.size();
-        if (nmax == 0) {
+        if (present.empty()) {
             return;
         }
 
-        size_t counter = 0;
+        // Limiting the iteration to its boundaries based on the first and last subset index.
+        auto original_start = indices_start;
+        refine_primary_limits(indices_start, indices_end, extent, offset, lastp1);
+
+        size_t counter = indices_start - original_start;
         for (; indices_start != indices_end; ++indices_start, ++counter) {
             auto ix = *indices_start;
-            size_t delta = ix - offset;
-            if (delta < nmax) {
-                auto shift = present[delta];
-                if (shift) {
-                    store(shift - 1, counter);
-                }
+            auto shift = present[ix - offset];
+            if (shift) {
+                store(shift - 1, counter);
             }
         }
     }
 
+    Index_ extent;
     std::vector<Index_> present;
-    size_t offset = 0;
+    Index_ offset = 0;
+    Index_ lastp1 = 0;
 };
 
+template<typename Index_>
 struct RetrievePrimarySubsetSparse {
-    template<typename Index_>
-    RetrievePrimarySubsetSparse(const std::vector<Index_>& subset) {
+    RetrievePrimarySubsetSparse(const std::vector<Index_>& subset, Index_ extent) : extent(extent) {
         if (!subset.empty()) {
             offset = subset.front();
-            size_t alloc = subset.back() - offset + 1;
+            lastp1 = subset.back() + 1;
+            size_t alloc = lastp1 - offset;
             present.resize(alloc);
+
+            // Unlike the dense case, this is a simple present/absent signal,
+            // as we don't need to map each structural non-zero back onto its 
+            // corresponding location on a dense vector.
             for (auto s : subset) {
                 present[s - offset] = 1;
             }
@@ -92,23 +104,27 @@ struct RetrievePrimarySubsetSparse {
 
     template<class IndexIt_, class Store_>
     void populate(IndexIt_ indices_start, IndexIt_ indices_end, Store_ store) const {
-        size_t nmax = present.size();
-        if (nmax == 0) {
+        if (present.empty()) {
             return;
         }
 
-        size_t counter = 0;
+        // Limiting the iteration to its boundaries based on the first and last subset index.
+        auto original_start = indices_start;
+        refine_primary_limits(indices_start, indices_end, extent, offset, lastp1);
+
+        size_t counter = indices_start - original_start;
         for (; indices_start != indices_end; ++indices_start, ++counter) {
             auto ix = *indices_start;
-            size_t delta = ix - offset;
-            if (delta < nmax && present[delta]) {
+            if (present[ix - offset]) {
                 store(counter, ix);
             }
         }
     }
 
+    Index_ extent;
     std::vector<unsigned char> present;
-    size_t offset = 0;
+    Index_ offset = 0;
+    Index_ lastp1 = 0;
 };
 
 }
