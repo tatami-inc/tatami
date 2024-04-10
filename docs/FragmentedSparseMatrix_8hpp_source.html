@@ -169,7 +169,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keyword">auto</span> iEnd = curi.end();</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        sparse_utils::refine_primary_block_limits(iStart, iEnd, secondary, block_start, block_length);</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span> </div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        std::fill(buffer, buffer + block_length, <span class="keyword">static_cast&lt;</span>Value_<span class="keyword">&gt;</span>(0));</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        std::fill_n(buffer, block_length, <span class="keyword">static_cast&lt;</span>Value_<span class="keyword">&gt;</span>(0));</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        <span class="keyword">auto</span> vIt = values[i].begin() + (iStart - curi.begin());</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        <span class="keywordflow">for</span> (; iStart != iEnd; ++iStart, ++vIt) {</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>            buffer[*iStart - block_start] = *vIt;</div>
@@ -221,13 +221,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> ValueVectorStorage_, <span class="keyword">class</span> IndexVectorStorage_&gt;</div>
 <div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span><span class="keyword">struct </span><a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">PrimaryMyopicIndexDense</a> : <span class="keyword">public</span> MyopicDenseExtractor&lt;Value_, Index_&gt; {</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    PrimaryMyopicIndexDense(<span class="keyword">const</span> ValueVectorStorage_&amp; vstore, <span class="keyword">const</span> IndexVectorStorage_&amp; istore, VectorPtr&lt;Index_&gt; sub_ptr) :</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>        values(vstore), indices(istore), retriever(*sub_ptr), extent(sub_ptr-&gt;size()) {} </div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    PrimaryMyopicIndexDense(<span class="keyword">const</span> ValueVectorStorage_&amp; vstore, <span class="keyword">const</span> IndexVectorStorage_&amp; istore, Index_ sec, VectorPtr&lt;Index_&gt; sub_ptr) :</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>        values(vstore), indices(istore), retriever(*sub_ptr, sec), num_indices(sub_ptr-&gt;size()) {} </div>
 <div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span> </div>
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    <span class="keyword">const</span> Value_* fetch(Index_ i, Value_* buffer) {</div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; curi = indices[i];</div>
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; curv = values[i];</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        std::fill(buffer, buffer + extent, <span class="keyword">static_cast&lt;</span>Value_<span class="keyword">&gt;</span>(0));</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        std::fill_n(buffer, num_indices, <span class="keyword">static_cast&lt;</span>Value_<span class="keyword">&gt;</span>(0));</div>
 <div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        retriever.populate(</div>
 <div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>            curi.begin(),</div>
 <div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>            curi.end(),</div>
@@ -242,13 +242,13 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00168" name="l00168"></a><span class="lineno">  168</span>    <span class="keyword">const</span> ValueVectorStorage_&amp; values;</div>
 <div class="line"><a id="l00169" name="l00169"></a><span class="lineno">  169</span>    <span class="keyword">const</span> IndexVectorStorage_&amp; indices;</div>
 <div class="line"><a id="l00170" name="l00170"></a><span class="lineno">  170</span>    sparse_utils::RetrievePrimarySubsetDense&lt;Index_&gt; retriever;</div>
-<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    <span class="keywordtype">size_t</span> extent;</div>
+<div class="line"><a id="l00171" name="l00171"></a><span class="lineno">  171</span>    <span class="keywordtype">size_t</span> num_indices;</div>
 <div class="line"><a id="l00172" name="l00172"></a><span class="lineno">  172</span>};</div>
 <div class="line"><a id="l00173" name="l00173"></a><span class="lineno">  173</span> </div>
 <div class="line"><a id="l00174" name="l00174"></a><span class="lineno">  174</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">class</span> ValueVectorStorage_, <span class="keyword">class</span> IndexVectorStorage_&gt;</div>
 <div class="line"><a id="l00175" name="l00175"></a><span class="lineno">  175</span><span class="keyword">struct </span><a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">PrimaryMyopicIndexSparse</a> : <span class="keyword">public</span> MyopicSparseExtractor&lt;Value_, Index_&gt; {</div>
-<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    PrimaryMyopicIndexSparse(<span class="keyword">const</span> ValueVectorStorage_&amp; vstore, <span class="keyword">const</span> IndexVectorStorage_&amp; istore, VectorPtr&lt;Index_&gt; sub_ptr, <span class="keyword">const</span> Options&amp; opt) :</div>
-<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        values(vstore), indices(istore), retriever(*sub_ptr), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} </div>
+<div class="line"><a id="l00176" name="l00176"></a><span class="lineno">  176</span>    PrimaryMyopicIndexSparse(<span class="keyword">const</span> ValueVectorStorage_&amp; vstore, <span class="keyword">const</span> IndexVectorStorage_&amp; istore, Index_ sec, VectorPtr&lt;Index_&gt; sub_ptr, <span class="keyword">const</span> Options&amp; opt) :</div>
+<div class="line"><a id="l00177" name="l00177"></a><span class="lineno">  177</span>        values(vstore), indices(istore), retriever(*sub_ptr, sec), needs_value(opt.sparse_extract_value), needs_index(opt.sparse_extract_index) {} </div>
 <div class="line"><a id="l00178" name="l00178"></a><span class="lineno">  178</span> </div>
 <div class="line"><a id="l00179" name="l00179"></a><span class="lineno">  179</span>    SparseRange&lt;Value_, Index_&gt; fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {</div>
 <div class="line"><a id="l00180" name="l00180"></a><span class="lineno">  180</span>        <span class="keyword">const</span> <span class="keyword">auto</span>&amp; curi = indices[i];</div>
@@ -279,7 +279,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span><span class="keyword">private</span>:</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="keyword">const</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">ValueVectorStorage_</a>&amp; values;</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    <span class="keyword">const</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">IndexVectorStorage_</a>&amp; indices;</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    sparse_utils::RetrievePrimarySubsetSparse <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">retriever</a>;</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    sparse_utils::RetrievePrimarySubsetSparse&lt;Index_&gt; <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">retriever</a>;</div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keywordtype">bool</span> needs_value, needs_index;</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>};</div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span> </div>
@@ -567,7 +567,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00531" name="l00531"></a><span class="lineno">  531</span> </div>
 <div class="line"><a id="l00532" name="l00532"></a><span class="lineno">  532</span>    std::unique_ptr&lt;MyopicDenseExtractor&lt;Value_, Index_&gt; &gt; dense(<span class="keywordtype">bool</span> row, VectorPtr&lt;Index_&gt; subset_ptr, <span class="keyword">const</span> Options&amp;)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00533" name="l00533"></a><span class="lineno">  533</span>        <span class="keywordflow">if</span> (row_ == row) {</div>
-<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(values, indices, std::move(subset_ptr));</div>
+<div class="line"><a id="l00534" name="l00534"></a><span class="lineno">  534</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(values, indices, secondary(), std::move(subset_ptr));</div>
 <div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span>        } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicIndexDense&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(values, indices, secondary(), std::move(subset_ptr));</div>
 <div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>        }</div>
@@ -595,7 +595,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00559" name="l00559"></a><span class="lineno">  559</span> </div>
 <div class="line"><a id="l00560" name="l00560"></a><span class="lineno">  560</span>    std::unique_ptr&lt;MyopicSparseExtractor&lt;Value_, Index_&gt; &gt; sparse(<span class="keywordtype">bool</span> row, VectorPtr&lt;Index_&gt; subset_ptr, <span class="keyword">const</span> Options&amp; opt)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00561" name="l00561"></a><span class="lineno">  561</span>        <span class="keywordflow">if</span> (row_ == row) {</div>
-<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(values, indices, std::move(subset_ptr), opt);</div>
+<div class="line"><a id="l00562" name="l00562"></a><span class="lineno">  562</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::PrimaryMyopicIndexSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(values, indices, secondary(), std::move(subset_ptr), opt);</div>
 <div class="line"><a id="l00563" name="l00563"></a><span class="lineno">  563</span>        } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00564" name="l00564"></a><span class="lineno">  564</span>            <span class="keywordflow">return</span> std::make_unique&lt;FragmentedSparseMatrix_internal::SecondaryMyopicIndexSparse&lt;Value_, Index_, ValueVectorStorage_, IndexVectorStorage_&gt; &gt;(values, indices, secondary(), std::move(subset_ptr), opt);</div>
 <div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>        }</div>
