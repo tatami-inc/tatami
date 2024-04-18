@@ -6,7 +6,6 @@
 #include <algorithm>
 
 #include "../base/Matrix.hpp"
-#include "utils.hpp"
 
 namespace tatami {
 
