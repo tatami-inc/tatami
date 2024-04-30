@@ -21,5 +21,5 @@ var searchData=
   ['convert_5fto_5ffragmented_5fsparse_18',['convert_to_fragmented_sparse',['../namespacetatami.html#a953ad06ecc9a36c8d2c1f3febe84a787',1,'tatami::convert_to_fragmented_sparse(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)'],['../namespacetatami.html#ae46babb9d985cffcb54bcba89553a811',1,'tatami::convert_to_fragmented_sparse(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)']]],
   ['convert_5fto_5ffragmented_5fsparse_2ehpp_19',['convert_to_fragmented_sparse.hpp',['../convert__to__fragmented__sparse_8hpp.html',1,'']]],
   ['copy_2ehpp_20',['copy.hpp',['../copy_8hpp.html',1,'']]],
-  ['copy_5fn_21',['copy_n',['../namespacetatami.html#ab7e895c7bc2de03426ff4bd79ee6edcc',1,'tatami']]]
+  ['copy_5fn_21',['copy_n',['../namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14',1,'tatami']]]
 ];

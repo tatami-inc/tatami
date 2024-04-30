@@ -147,7 +147,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span> </div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>    <span class="keyword">const</span> Value_* fetch(Index_ i, Value_* buffer) {</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>        <span class="keyword">auto</span> lptr = left-&gt;fetch(i, buffer);</div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <a class="code hl_function" href="namespacetatami.html#ab7e895c7bc2de03426ff4bd79ee6edcc">copy_n</a>(lptr, extent, buffer);</div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span>        <a class="code hl_function" href="namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14">copy_n</a>(lptr, extent, buffer);</div>
 <div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span>        <span class="keyword">auto</span> rptr = right-&gt;fetch(i, holding_buffer.data());</div>
 <div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>        operation.dense(row, oracle_copy.get(i), <span class="keyword">static_cast&lt;</span>Index_<span class="keyword">&gt;</span>(0), extent, buffer, rptr);</div>
 <div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>        <span class="keywordflow">return</span> buffer;</div>
@@ -186,7 +186,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    <span class="keyword">const</span> Value_* fetch(Index_ i, Value_* buffer) {</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        <span class="keyword">auto</span> lptr = left-&gt;fetch(i, buffer);</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        <a class="code hl_function" href="namespacetatami.html#ab7e895c7bc2de03426ff4bd79ee6edcc">copy_n</a>(lptr, block_length, buffer);</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        <a class="code hl_function" href="namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14">copy_n</a>(lptr, block_length, buffer);</div>
 <div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        <span class="keyword">auto</span> rptr = right-&gt;fetch(i, holding_buffer.data());</div>
 <div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        operation.dense(row, oracle_copy.get(i), block_start, block_length, buffer, rptr);</div>
 <div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        <span class="keywordflow">return</span> buffer;</div>
@@ -223,7 +223,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span> </div>
 <div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    <span class="keyword">const</span> Value_* fetch(Index_ i, Value_* buffer) {</div>
 <div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>        <span class="keyword">auto</span> lptr = left-&gt;fetch(i, buffer);</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>        <a class="code hl_function" href="namespacetatami.html#ab7e895c7bc2de03426ff4bd79ee6edcc">copy_n</a>(lptr, holding_buffer.size(), buffer);</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>        <a class="code hl_function" href="namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14">copy_n</a>(lptr, holding_buffer.size(), buffer);</div>
 <div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        <span class="keyword">auto</span> rptr = right-&gt;fetch(i, holding_buffer.data());</div>
 <div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>        operation.dense(row, oracle_copy.get(i), *indices_ptr, buffer, rptr);</div>
 <div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        <span class="keywordflow">return</span> buffer;</div>
@@ -279,7 +279,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        <span class="comment">// Avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.</span></div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>        <span class="keywordflow">if</span> (num &lt; extent) { </div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            std::fill(buffer, buffer + extent, operation.template fill&lt;Value_&gt;(i));</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>            std::fill_n(buffer, extent, operation.template fill&lt;Value_&gt;(i));</div>
 <div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>        }</div>
 <div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span> </div>
 <div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        <span class="keywordflow">for</span> (Index_ j = 0; j &lt; num; ++j) {</div>
@@ -338,7 +338,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span> </div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>        <span class="comment">// Avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.</span></div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        <span class="keywordflow">if</span> (num &lt; block_length) { </div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>            std::fill(buffer, buffer + block_length, operation.template fill&lt;Value_&gt;(i));</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>            std::fill_n(buffer, block_length, operation.template fill&lt;Value_&gt;(i));</div>
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>        }</div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span> </div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        <span class="keywordflow">for</span> (Index_ j = 0; j &lt; num; ++j) {</div>
@@ -407,7 +407,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00333" name="l00333"></a><span class="lineno">  333</span> </div>
 <div class="line"><a id="l00334" name="l00334"></a><span class="lineno">  334</span>        <span class="comment">// Avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.</span></div>
 <div class="line"><a id="l00335" name="l00335"></a><span class="lineno">  335</span>        <span class="keywordflow">if</span> (num &lt; extent) { </div>
-<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>            std::fill(buffer, buffer + extent, operation.template fill&lt;Value_&gt;(i));</div>
+<div class="line"><a id="l00336" name="l00336"></a><span class="lineno">  336</span>            std::fill_n(buffer, extent, operation.template fill&lt;Value_&gt;(i));</div>
 <div class="line"><a id="l00337" name="l00337"></a><span class="lineno">  337</span>        }</div>
 <div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span> </div>
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span>        <span class="keywordflow">for</span> (Index_ j = 0; j &lt; num; ++j) {</div>
@@ -925,7 +925,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="anamespacetatami_html_a4e0374ed6401df3d6ae262ad379a4743"><div class="ttname"><a href="namespacetatami.html#a4e0374ed6401df3d6ae262ad379a4743">tatami::DenseExtractor</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, OracularDenseExtractor&lt; Value_, Index_ &gt;, MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;::type DenseExtractor</div><div class="ttdef"><b>Definition</b> Extractor.hpp:210</div></div>
 <div class="ttc" id="anamespacetatami_html_a9a542a16a6a2c2c1efdc7b6e9eae9040"><div class="ttname"><a href="namespacetatami.html#a9a542a16a6a2c2c1efdc7b6e9eae9040">tatami::SparseExtractor</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, OracularSparseExtractor&lt; Value_, Index_ &gt;, MyopicSparseExtractor&lt; Value_, Index_ &gt; &gt;::type SparseExtractor</div><div class="ttdef"><b>Definition</b> Extractor.hpp:221</div></div>
 <div class="ttc" id="anamespacetatami_html_aab9d426a238a93d02635b4172c725808"><div class="ttname"><a href="namespacetatami.html#aab9d426a238a93d02635b4172c725808">tatami::MaybeOracle</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt;, bool &gt;::type MaybeOracle</div><div class="ttdef"><b>Definition</b> new_extractor.hpp:20</div></div>
-<div class="ttc" id="anamespacetatami_html_ab7e895c7bc2de03426ff4bd79ee6edcc"><div class="ttname"><a href="namespacetatami.html#ab7e895c7bc2de03426ff4bd79ee6edcc">tatami::copy_n</a></div><div class="ttdeci">Value_ * copy_n(const Value_ *input, size_t n, Value_ *output)</div><div class="ttdef"><b>Definition</b> copy.hpp:23</div></div>
+<div class="ttc" id="anamespacetatami_html_ab52a806e3f13a68741a9e1f77dccab14"><div class="ttname"><a href="namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14">tatami::copy_n</a></div><div class="ttdeci">Value_ * copy_n(const Value_ *input, Size_ n, Value_ *output)</div><div class="ttdef"><b>Definition</b> copy.hpp:25</div></div>
 <div class="ttc" id="anamespacetatami_html_abbb0bdf0b79fe19e504b49b43984f634"><div class="ttname"><a href="namespacetatami.html#abbb0bdf0b79fe19e504b49b43984f634">tatami::VectorPtr</a></div><div class="ttdeci">std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt; VectorPtr</div><div class="ttdef"><b>Definition</b> Matrix.hpp:25</div></div>
 <div class="ttc" id="anamespacetatami_html_af05590455e558621c8ffc1b98c4fd454"><div class="ttname"><a href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor</a></div><div class="ttdeci">auto consecutive_extractor(const Matrix&lt; Value_, Index_ &gt; *mat, bool row, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> consecutive_extractor.hpp:35</div></div>
 <div class="ttc" id="anamespacetatami_html_af39c0767d23c6bdc5f4267f062ef2e17"><div class="ttname"><a href="namespacetatami.html#af39c0767d23c6bdc5f4267f062ef2e17">tatami::make_DelayedBinaryIsometricOp</a></div><div class="ttdeci">std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; make_DelayedBinaryIsometricOp(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; right, Operation_ op)</div><div class="ttdef"><b>Definition</b> DelayedBinaryIsometricOp.hpp:793</div></div>

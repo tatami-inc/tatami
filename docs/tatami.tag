@@ -4781,8 +4781,8 @@
       <type>Value_ *</type>
       <name>copy_n</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab7e895c7bc2de03426ff4bd79ee6edcc</anchor>
-      <arglist>(const Value_ *input, size_t n, Value_ *output)</arglist>
+      <anchor>ab52a806e3f13a68741a9e1f77dccab14</anchor>
+      <arglist>(const Value_ *input, Size_ n, Value_ *output)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
