@@ -41,7 +41,7 @@ struct SomeNumericArray {
      * @param n Length of the array pointed to by `x`.
      * @param t Type of the array, see `Type`.
      */
-    SomeNumericArray(void * x, size_t n, Type t) : len(n), type(t) {
+    SomeNumericArray(void* x, size_t n, Type t) : len(n), type(t) {
         switch (t) {
             case I8:
                 i8 = static_cast<const int8_t*>(x);
