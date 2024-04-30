@@ -58,7 +58,5 @@ var searchData=
   ['make_5fdelayedsubtractscalarhelper_55',['make_DelayedSubtractScalarHelper',['../namespacetatami.html#a9bdfe26c0f1426b611e91ee7569045de',1,'tatami']]],
   ['make_5fdelayedsubtractvectorhelper_56',['make_DelayedSubtractVectorHelper',['../namespacetatami.html#a800b92854282015d96308fb283aeb508',1,'tatami']]],
   ['make_5fdelayedtranspose_57',['make_DelayedTranspose',['../namespacetatami.html#afa35d8e9fe286967f327ec0eb6bd5005',1,'tatami']]],
-  ['make_5fdelayedunaryisometricop_58',['make_DelayedUnaryIsometricOp',['../namespacetatami.html#a07b072944c766d85dc4ce4dc734e0b75',1,'tatami']]],
-  ['multiply_59',['multiply',['../namespacetatami.html#abebd49e0f1fe1693e3fa47d8c841738f',1,'tatami']]],
-  ['multiply_5fand_5fadd_60',['multiply_and_add',['../namespacetatami.html#a28eeac7026d5c0df8eb10457d410c388',1,'tatami']]]
+  ['make_5fdelayedunaryisometricop_58',['make_DelayedUnaryIsometricOp',['../namespacetatami.html#a07b072944c766d85dc4ce4dc734e0b75',1,'tatami']]]
 ];
