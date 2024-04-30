@@ -337,6 +337,12 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>multiply.hpp</name>
+    <path>tatami/utils/</path>
+    <filename>multiply_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>new_extractor.hpp</name>
     <path>tatami/utils/</path>
     <filename>new__extractor_8hpp.html</filename>
@@ -4783,6 +4789,20 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab7e895c7bc2de03426ff4bd79ee6edcc</anchor>
       <arglist>(const Value_ *input, size_t n, Value_ *output)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>multiply</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>abebd49e0f1fe1693e3fa47d8c841738f</anchor>
+      <arglist>(size_t a, size_t b)</arglist>
+    </member>
+    <member kind="function">
+      <type>size_t</type>
+      <name>multiply_and_add</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a28eeac7026d5c0df8eb10457d410c388</anchor>
+      <arglist>(size_t a, size_t b, size_t c)</arglist>
     </member>
     <member kind="function">
       <type>auto</type>
