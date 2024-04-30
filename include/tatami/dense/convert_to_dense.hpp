@@ -34,13 +34,13 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
     InputIndex_ NR = incoming->nrow();
     InputIndex_ NC = incoming->ncol();
     InputIndex_ primary = (row_ ? NR : NC);
-    InputIndex_ secondary = (row_ ? NC : NR);
+    size_t secondary = (row_ ? NC : NR);
 
     if (row_ == incoming->prefer_rows()) {
         constexpr bool same_type = std::is_same<InputValue_, StoredValue_>::value;
         parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
             std::vector<InputValue_> temp(same_type ? 0 : secondary);
-            auto store_copy = store + start * secondary;
+            auto store_copy = store + static_cast<size_t>(start) * secondary; // cast to size_t to avoid overflow.
             auto wrk = consecutive_extractor<false>(incoming, row_, start, length);
 
             for (InputIndex_ x = 0; x < length; ++x) {
@@ -62,11 +62,11 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredVa
         // into the output buffers. 
 
         parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
-            auto wrk = consecutive_extractor<false>(incoming, !row_, 0, secondary, start, length);
+            auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(incoming, !row_, 0, secondary, start, length);
             std::vector<InputValue_> temp(length);
-            auto store_copy = store + start * secondary;
+            auto store_copy = store + static_cast<size_t>(start) * secondary; // cast to size_t to avoid overflow.
 
-            for (InputIndex_ x = 0; x < secondary; ++x) {
+            for (size_t x = 0; x < secondary; ++x) {
                 auto ptr = wrk->fetch(temp.data());
                 auto bptr = store_copy;
                 for (InputIndex_ p = 0; p < length; ++p, bptr += secondary) {
@@ -103,9 +103,9 @@ template <
     typename InputIndex_
 >
 inline std::shared_ptr<Matrix<Value_, Index> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, int threads = 1) {
-    size_t NR = incoming->nrow();
-    size_t NC = incoming->ncol();
-    std::vector<StoredValue_> buffer(NR * NC);
+    auto NR = incoming->nrow();
+    auto NC = incoming->ncol();
+    std::vector<StoredValue_> buffer(static_cast<size_t>(NR) * static_cast<size_t>(NC));
     convert_to_dense<row_>(incoming, buffer.data(), threads);
     return std::shared_ptr<Matrix<Value_, Index> >(new DenseMatrix<row_, Value_, Index, decltype(buffer)>(NR, NC, std::move(buffer)));
 }

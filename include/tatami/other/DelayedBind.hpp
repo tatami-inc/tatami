@@ -609,7 +609,7 @@ public:
 
         double denom = 0;
         for (const auto& x : mats) {
-            double total = x->nrow() * x->ncol();
+            double total = static_cast<double>(x->nrow()) * static_cast<double>(x->ncol());
             denom += total;
             sparse_prop += total * x->sparse_proportion();
             row_prop += total * x->prefer_rows_proportion();
