@@ -146,8 +146,8 @@ CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(con
                     // first pass (which might be nothing for an all-zero matrix).
                     auto range = wrk->fetch(buffer_v.data(), buffer_i.data());
                     auto offset = output_p[p];
-                    std::copy(range.value, range.value + range.number, output_v.data() + offset);
-                    std::copy(range.index, range.index + range.number, output_i.data() + offset);
+                    std::copy_n(range.value, range.number, output_v.data() + offset);
+                    std::copy_n(range.index, range.number, output_i.data() + offset);
                 }
             }, primary, threads);
 

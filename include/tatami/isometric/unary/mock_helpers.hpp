@@ -199,7 +199,7 @@ struct DelayedUnaryAdvancedMockHelper {
         Value_* value,
         [[maybe_unused]] const Index_* index)
     const {
-        std::fill(value, value + num, 0);
+        std::fill_n(value, num, 0);
     }
 
     /**

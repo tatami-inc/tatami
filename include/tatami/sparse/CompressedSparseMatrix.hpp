@@ -45,7 +45,7 @@ struct PrimaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         auto iIt = indices.begin() + offset;
         size_t delta = indptr[i+1] - indptr[i];
 
-        std::fill(buffer, buffer + secondary, static_cast<Value_>(0));
+        std::fill_n(buffer, secondary, static_cast<Value_>(0));
         for (size_t x = 0; x < delta; ++x, ++vIt, ++iIt) {
             buffer[*iIt] = *vIt;
         }
@@ -252,7 +252,7 @@ struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         values(vstore), cache(make_ServeIndices<Index_>(istore, pstore), sec, pstore.size() - 1) {} 
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
+        std::fill_n(buffer, cache.size(), static_cast<Value_>(0));
         cache.search(i, [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) {
             buffer[index_primary] = values[ptr];
         });
@@ -299,7 +299,7 @@ struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
         values(vstore), cache(make_ServeIndices<Index_>(istore, pstore), sec, bs, bl) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
+        std::fill_n(buffer, cache.size(), static_cast<Value_>(0));
         cache.search(i, [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) {
             buffer[index_primary] = values[ptr];
         });
@@ -346,7 +346,7 @@ struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
         values(vstore), cache(make_ServeIndices<Index_>(istore, pstore), sec, std::move(sub_ptr)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
+        std::fill_n(buffer, cache.size(), static_cast<Value_>(0));
         cache.search(i, [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) {
             buffer[index_primary] = values[ptr];
         });

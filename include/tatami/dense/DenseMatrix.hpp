@@ -35,7 +35,7 @@ struct PrimaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
             return storage.data() + offset;
         } else {
             auto it = storage.begin() + offset;
-            std::copy(it, it + secondary, buffer);
+            std::copy_n(it, secondary, buffer);
             return buffer;
         }
     }

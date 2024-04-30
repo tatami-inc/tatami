@@ -9,13 +9,13 @@ namespace tatami {
 
 namespace sparse_utils {
 
-template<class Storage_, typename Pointer_, typename Data_>
-const Data_* extract_primary_vector(const Storage_& input, Pointer_ offset, Pointer_ delta, Data_* buffer) {
+template<class Storage_, typename Offset_, typename Data_>
+const Data_* extract_primary_vector(const Storage_& input, Offset_ offset, Offset_ delta, Data_* buffer) {
     if constexpr(has_data<Data_, Storage_>::value) {
         return input.data() + offset;
     } else {
         auto it = input.begin() + offset;
-        std::copy(it, it + delta, buffer);
+        std::copy_n(it, delta, buffer);
         return buffer;
     }
 }

@@ -41,7 +41,7 @@ struct PrimaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         const auto& curv = values[i];
         const auto& curi = indices[i];
 
-        std::fill(buffer, buffer + secondary, static_cast<Value_>(0));
+        std::fill_n(buffer, secondary, static_cast<Value_>(0));
         for (size_t x = 0, end = curv.size(); x < end; ++x) {
             buffer[curi[x]] = curv[x];
         }
@@ -245,7 +245,7 @@ struct SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
         values(vstore), cache(make_ServeIndices<Index_>(istore), sec, istore.size()) {} 
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
+        std::fill_n(buffer, cache.size(), static_cast<Value_>(0));
         cache.search(i, [&](Index_ primary, Index_ index_primary, size_t ptr) {
             buffer[index_primary] = values[primary][ptr];
         });
@@ -292,7 +292,7 @@ struct SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
         values(vstore), cache(make_ServeIndices<Index_>(istore), sec, bs, bl) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
+        std::fill_n(buffer, cache.size(), static_cast<Value_>(0));
         cache.search(i, [&](Index_ primary, Index_ index_primary, size_t ptr) {
             buffer[index_primary] = values[primary][ptr];
         });
@@ -339,7 +339,7 @@ struct SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
         values(vstore), cache(make_ServeIndices<Index_>(istore), sec, std::move(sub_ptr)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        std::fill(buffer, buffer + cache.size(), static_cast<Value_>(0));
+        std::fill_n(buffer, cache.size(), static_cast<Value_>(0));
         cache.search(i, [&](Index_ primary, Index_ index_primary, size_t ptr) {
             buffer[index_primary] = values[primary][ptr];
         });

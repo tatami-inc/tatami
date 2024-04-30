@@ -205,7 +205,7 @@ struct DenseExpandedFull : public DenseExtractor<oracle_, Value_, Index_> {
 
         // Avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (num < extent) { 
-            std::fill(buffer, buffer + extent, operation.template fill<Value_>(i));
+            std::fill_n(buffer, extent, operation.template fill<Value_>(i));
         }
 
         for (Index_ j = 0; j < num; ++j) {
@@ -264,7 +264,7 @@ struct DenseExpandedBlock : public DenseExtractor<oracle_, Value_, Index_> {
 
         // Avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (num < block_length) { 
-            std::fill(buffer, buffer + block_length, operation.template fill<Value_>(i));
+            std::fill_n(buffer, block_length, operation.template fill<Value_>(i));
         }
 
         for (Index_ j = 0; j < num; ++j) {
@@ -333,7 +333,7 @@ struct DenseExpandedIndex : public DenseExtractor<oracle_, Value_, Index_> {
 
         // Avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (num < extent) { 
-            std::fill(buffer, buffer + extent, operation.template fill<Value_>(i));
+            std::fill_n(buffer, extent, operation.template fill<Value_>(i));
         }
 
         for (Index_ j = 0; j < num; ++j) {
