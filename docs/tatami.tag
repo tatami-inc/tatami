@@ -62,6 +62,12 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>transpose.hpp</name>
+    <path>tatami/dense/</path>
+    <filename>transpose_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>arith_utils.hpp</name>
     <path>tatami/isometric/</path>
     <filename>arith__utils_8hpp.html</filename>
@@ -4307,6 +4313,13 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>aa74ad14ba410177396121d272371dffd</anchor>
       <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int order, int threads=1)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>transpose</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a750948db9611b58528430e120e650cd9</anchor>
+      <arglist>(const Input_ *input, Output_ *output, size_t nrow, size_t ncol)</arglist>
     </member>
     <member kind="function">
       <type>DelayedBinaryArithHelper&lt; DelayedArithOp::ADD &gt;</type>

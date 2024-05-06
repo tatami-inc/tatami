@@ -88,33 +88,34 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00003" name="l00003"></a><span class="lineno">    3</span> </div>
 <div class="line"><a id="l00004" name="l00004"></a><span class="lineno">    4</span><span class="preprocessor">#include &quot;<a class="code" href="DenseMatrix_8hpp.html">dense/DenseMatrix.hpp</a>&quot;</span></div>
 <div class="line"><a id="l00005" name="l00005"></a><span class="lineno">    5</span><span class="preprocessor">#include &quot;<a class="code" href="convert__to__dense_8hpp.html">dense/convert_to_dense.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span> </div>
-<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span><span class="preprocessor">#include &quot;<a class="code" href="CompressedSparseMatrix_8hpp.html">sparse/CompressedSparseMatrix.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="FragmentedSparseMatrix_8hpp.html">sparse/FragmentedSparseMatrix.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="convert__to__compressed__sparse_8hpp.html">sparse/convert_to_compressed_sparse.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="convert__to__fragmented__sparse_8hpp.html">sparse/convert_to_fragmented_sparse.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="compress__sparse__triplets_8hpp.html">sparse/compress_sparse_triplets.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span> </div>
-<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedUnaryIsometricOp_8hpp.html">isometric/unary/DelayedUnaryIsometricOp.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedBinaryIsometricOp_8hpp.html">isometric/binary/DelayedBinaryIsometricOp.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span> </div>
-<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedBind_8hpp.html">other/DelayedBind.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedCast_8hpp.html">other/DelayedCast.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedTranspose_8hpp.html">other/DelayedTranspose.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span> </div>
-<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedSubsetBlock_8hpp.html">subset/DelayedSubsetBlock.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &quot;<a class="code" href="make__DelayedSubset_8hpp.html">subset/make_DelayedSubset.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span> </div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="preprocessor">#include &quot;<a class="code" href="wrap__shared__ptr_8hpp.html">utils/wrap_shared_ptr.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &quot;<a class="code" href="ArrayView_8hpp.html">utils/ArrayView.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &quot;<a class="code" href="SomeNumericArray_8hpp.html">utils/SomeNumericArray.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &quot;<a class="code" href="ConsecutiveOracle_8hpp.html">utils/ConsecutiveOracle.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#include &quot;<a class="code" href="FixedOracle_8hpp.html">utils/FixedOracle.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#include &quot;<a class="code" href="process__consecutive__indices_8hpp.html">utils/process_consecutive_indices.hpp</a>&quot;</span></div>
-<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span> </div>
-<div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {}</div>
-<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
-<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00006" name="l00006"></a><span class="lineno">    6</span><span class="preprocessor">#include &quot;<a class="code" href="transpose_8hpp.html">dense/transpose.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00007" name="l00007"></a><span class="lineno">    7</span> </div>
+<div class="line"><a id="l00008" name="l00008"></a><span class="lineno">    8</span><span class="preprocessor">#include &quot;<a class="code" href="CompressedSparseMatrix_8hpp.html">sparse/CompressedSparseMatrix.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00009" name="l00009"></a><span class="lineno">    9</span><span class="preprocessor">#include &quot;<a class="code" href="FragmentedSparseMatrix_8hpp.html">sparse/FragmentedSparseMatrix.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00010" name="l00010"></a><span class="lineno">   10</span><span class="preprocessor">#include &quot;<a class="code" href="convert__to__compressed__sparse_8hpp.html">sparse/convert_to_compressed_sparse.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00011" name="l00011"></a><span class="lineno">   11</span><span class="preprocessor">#include &quot;<a class="code" href="convert__to__fragmented__sparse_8hpp.html">sparse/convert_to_fragmented_sparse.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00012" name="l00012"></a><span class="lineno">   12</span><span class="preprocessor">#include &quot;<a class="code" href="compress__sparse__triplets_8hpp.html">sparse/compress_sparse_triplets.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00013" name="l00013"></a><span class="lineno">   13</span> </div>
+<div class="line"><a id="l00014" name="l00014"></a><span class="lineno">   14</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedUnaryIsometricOp_8hpp.html">isometric/unary/DelayedUnaryIsometricOp.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00015" name="l00015"></a><span class="lineno">   15</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedBinaryIsometricOp_8hpp.html">isometric/binary/DelayedBinaryIsometricOp.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00016" name="l00016"></a><span class="lineno">   16</span> </div>
+<div class="line"><a id="l00017" name="l00017"></a><span class="lineno">   17</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedBind_8hpp.html">other/DelayedBind.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00018" name="l00018"></a><span class="lineno">   18</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedCast_8hpp.html">other/DelayedCast.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00019" name="l00019"></a><span class="lineno">   19</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedTranspose_8hpp.html">other/DelayedTranspose.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span> </div>
+<div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span><span class="preprocessor">#include &quot;<a class="code" href="DelayedSubsetBlock_8hpp.html">subset/DelayedSubsetBlock.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="preprocessor">#include &quot;<a class="code" href="make__DelayedSubset_8hpp.html">subset/make_DelayedSubset.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
+<div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="preprocessor">#include &quot;<a class="code" href="wrap__shared__ptr_8hpp.html">utils/wrap_shared_ptr.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="preprocessor">#include &quot;<a class="code" href="ArrayView_8hpp.html">utils/ArrayView.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="preprocessor">#include &quot;<a class="code" href="SomeNumericArray_8hpp.html">utils/SomeNumericArray.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span><span class="preprocessor">#include &quot;<a class="code" href="ConsecutiveOracle_8hpp.html">utils/ConsecutiveOracle.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span><span class="preprocessor">#include &quot;<a class="code" href="FixedOracle_8hpp.html">utils/FixedOracle.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00029" name="l00029"></a><span class="lineno">   29</span><span class="preprocessor">#include &quot;<a class="code" href="process__consecutive__indices_8hpp.html">utils/process_consecutive_indices.hpp</a>&quot;</span></div>
+<div class="line"><a id="l00030" name="l00030"></a><span class="lineno">   30</span> </div>
+<div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keyword">namespace </span><a class="code hl_namespace" href="namespacetatami.html">tatami</a> {}</div>
+<div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span> </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aArrayView_8hpp_html"><div class="ttname"><a href="ArrayView_8hpp.html">ArrayView.hpp</a></div><div class="ttdoc">Defines a tatami-compatible array view.</div></div>
 <div class="ttc" id="aCompressedSparseMatrix_8hpp_html"><div class="ttname"><a href="CompressedSparseMatrix_8hpp.html">CompressedSparseMatrix.hpp</a></div><div class="ttdoc">Compressed sparse matrix representation.</div></div>
 <div class="ttc" id="aConsecutiveOracle_8hpp_html"><div class="ttname"><a href="ConsecutiveOracle_8hpp.html">ConsecutiveOracle.hpp</a></div><div class="ttdoc">Iterate across consecutive elements of a dimension.</div></div>
@@ -133,8 +134,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="ttc" id="aconvert__to__dense_8hpp_html"><div class="ttname"><a href="convert__to__dense_8hpp.html">convert_to_dense.hpp</a></div><div class="ttdoc">Convert a matrix into a dense format.</div></div>
 <div class="ttc" id="aconvert__to__fragmented__sparse_8hpp_html"><div class="ttname"><a href="convert__to__fragmented__sparse_8hpp.html">convert_to_fragmented_sparse.hpp</a></div><div class="ttdoc">Convert a matrix into a fragmented sparse format.</div></div>
 <div class="ttc" id="amake__DelayedSubset_8hpp_html"><div class="ttname"><a href="make__DelayedSubset_8hpp.html">make_DelayedSubset.hpp</a></div><div class="ttdoc">Make a delayed subset wrapper based on row/column indices.</div></div>
-<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:16</div></div>
+<div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="aprocess__consecutive__indices_8hpp_html"><div class="ttname"><a href="process__consecutive__indices_8hpp.html">process_consecutive_indices.hpp</a></div><div class="ttdoc">Utility to process consecutive indices.</div></div>
+<div class="ttc" id="atranspose_8hpp_html"><div class="ttname"><a href="transpose_8hpp.html">transpose.hpp</a></div><div class="ttdoc">Transpose a dense array.</div></div>
 <div class="ttc" id="awrap__shared__ptr_8hpp_html"><div class="ttname"><a href="wrap__shared__ptr_8hpp.html">wrap_shared_ptr.hpp</a></div><div class="ttdoc">Wrap a raw tatami::Matrix pointer inside a mock shared pointer.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
