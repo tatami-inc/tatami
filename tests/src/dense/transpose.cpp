@@ -14,10 +14,33 @@ TEST_P(TransposeDenseTest, Basic) {
 
     auto values = tatami_test::simulate_dense_vector<double>(NR * NC, 0, 100, /* seed = */ NR * 10 + NC);
     std::vector<double> buffer(NR * NC);
-    tatami::transpose(values.data(), buffer.data(), NR, NC);
+    tatami::transpose(values.data(), NR, NC, buffer.data());
 
     tatami::DenseRowMatrix<double, int> original(NR, NC, std::move(values));
     tatami::DenseColumnMatrix<double, int> flipped(NR, NC, std::move(buffer));
+
+    auto oext = original.dense_row();
+    auto fext = flipped.dense_row();
+    for (int r = 0; r < NR; ++r) {
+        auto oout = tatami_test::fetch(oext.get(), r, NC);
+        auto fout = tatami_test::fetch(fext.get(), r, NC);
+        ASSERT_EQ(oout, fout);
+    }
+}
+
+TEST_P(TransposeDenseTest, Strided) {
+    auto params = GetParam();
+    auto NR = std::get<0>(params);
+    auto NC = std::get<1>(params);
+    auto stride_nr = NR + 17;
+    auto stride_nc = NC + 13;
+
+    auto values = tatami_test::simulate_dense_vector<double>(NR * stride_nc, 0, 100, /* seed = */ NR * 10 + NC);
+    std::vector<double> buffer(stride_nr * NC);
+    tatami::transpose(values.data(), NR, NC, stride_nc, buffer.data(), stride_nr);
+
+    tatami::DenseRowMatrix<double, int> original(NR, stride_nc, std::move(values));
+    tatami::DenseColumnMatrix<double, int> flipped(stride_nr, NC, std::move(buffer));
 
     auto oext = original.dense_row();
     auto fext = flipped.dense_row();

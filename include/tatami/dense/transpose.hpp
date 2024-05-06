@@ -14,18 +14,19 @@ namespace tatami {
  * @tparam Input_ Input type.
  * @tparam Output_ Output type.
  * @param[in] input Pointer to an array containing a row-major matrix with `nrow` rows and `ncol` columns.
- * @param[out] output Pointer to an array of length `nrow * ncol`.
- * On output, this will hold the transpose of the matrix represented by `input`.
  * @param nrow Number of rows in the matrix stored at `input`.
  * @param ncol Number of columns in the matrix stored at `input`.
+ * @param input_stride Distance between corresponding entries on consecutive rows of the `input` matrix.
+ * @param[out] output Pointer to an array of length `nrow * ncol`.
+ * On output, this will hold the transpose of the matrix represented by `input`.
+ * @param output_stride Distance between corresponding entries on consecutive columns of the `output` matrix.
  *
  * This function is intended for developers of `Matrix` subclasses who need to do some transposition, e.g., for dense chunks during caching.
- * Users should instead construct a `DelayedTranspose` object to perform a memory-efficient delayed transposition,
- * or use `convert_to_dense()` to convert their dense data into the desired storage layout.
+ * The `*_stride` arguments allow `input` and `output` to refer to submatrices of larger arrays.
  */
 template<typename Input_, typename Output_>
-void transpose(const Input_* input, Output_* output, size_t nrow, size_t ncol) {
-    if (ncol == 1 || nrow == 1) {
+void transpose(const Input_* input, size_t nrow, size_t ncol, size_t input_stride, Output_* output, size_t output_stride) {
+    if ((nrow == 1 && output_stride == 1) || (ncol == 1 && input_stride == 1)) {
         std::copy_n(input, nrow * ncol, output);
         return;
     }
@@ -41,14 +42,14 @@ void transpose(const Input_* input, Output_* output, size_t nrow, size_t ncol) {
         while (row_start < nrow) {
             size_t row_end = row_start + std::min(block, nrow - row_start);
 
-            auto input2 = input + col_start + row_start * ncol;
-            auto output2 = output + col_start * nrow + row_start;
+            auto input2 = input + col_start + row_start * input_stride;
+            auto output2 = output + col_start * output_stride + row_start;
 
-            for (size_t c = col_start; c < col_end; ++c, ++input2, output2 += nrow) {
+            for (size_t c = col_start; c < col_end; ++c, ++input2, output2 += output_stride) {
                 auto input_copy = input2;
                 auto output_copy = output2;
 
-                for (size_t r = row_start; r < row_end; ++r, input_copy += ncol, ++output_copy) {
+                for (size_t r = row_start; r < row_end; ++r, input_copy += input_stride, ++output_copy) {
                     *output_copy = *input_copy;
                 }
             }
@@ -57,6 +58,24 @@ void transpose(const Input_* input, Output_* output, size_t nrow, size_t ncol) {
         }
         col_start = col_end;
     }
+}
+
+/**
+ * @tparam Input_ Input type.
+ * @tparam Output_ Output type.
+ * @param[in] input Pointer to an array containing a row-major matrix with `nrow` rows and `ncol` columns.
+ * @param nrow Number of rows in the matrix stored at `input`.
+ * @param ncol Number of columns in the matrix stored at `input`.
+ * @param[out] output Pointer to an array of length `nrow * ncol`.
+ * On output, this will hold the transpose of the matrix represented by `input`.
+ *
+ * This function is intended for developers of `Matrix` subclasses who need to do some transposition, e.g., for dense chunks during caching.
+ * Users should instead construct a `DelayedTranspose` object to perform a memory-efficient delayed transposition,
+ * or use `convert_to_dense()` to convert their dense data into the desired storage layout.
+ */
+template<typename Input_, typename Output_>
+void transpose(const Input_* input, size_t nrow, size_t ncol, Output_* output) {
+    transpose(input, nrow, ncol, ncol, output, nrow);
 }
 
 }
