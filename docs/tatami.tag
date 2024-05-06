@@ -4318,8 +4318,15 @@
       <type>void</type>
       <name>transpose</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a750948db9611b58528430e120e650cd9</anchor>
-      <arglist>(const Input_ *input, Output_ *output, size_t nrow, size_t ncol)</arglist>
+      <anchor>a07c1d1f96ea3a59d9f6106b17873d494</anchor>
+      <arglist>(const Input_ *input, size_t nrow, size_t ncol, size_t input_stride, Output_ *output, size_t output_stride)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>transpose</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a86be7b06c9d13b25f9ff04eed87430a7</anchor>
+      <arglist>(const Input_ *input, size_t nrow, size_t ncol, Output_ *output)</arglist>
     </member>
     <member kind="function">
       <type>DelayedBinaryArithHelper&lt; DelayedArithOp::ADD &gt;</type>
