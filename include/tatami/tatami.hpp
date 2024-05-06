@@ -3,6 +3,7 @@
 
 #include "dense/DenseMatrix.hpp"
 #include "dense/convert_to_dense.hpp"
+#include "dense/transpose.hpp"
 
 #include "sparse/CompressedSparseMatrix.hpp"
 #include "sparse/FragmentedSparseMatrix.hpp"
