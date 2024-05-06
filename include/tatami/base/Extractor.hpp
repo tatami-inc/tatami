@@ -5,7 +5,6 @@
 #include <type_traits>
 #include "SparseRange.hpp"
 #include "Options.hpp"
-#include "Oracle.hpp"
 
 /**
  * @file Extractor.hpp
@@ -43,6 +42,16 @@ struct MyopicDenseExtractor {
      * @cond
      */
     virtual ~MyopicDenseExtractor() = default;
+    /**
+     * @endcond
+     */
+
+    /**
+     * @cond
+     */
+    // No-op for back-compatibility only.
+    template<class Oracle_>
+    void set_oracle(Oracle_) {}
     /**
      * @endcond
      */
@@ -98,6 +107,16 @@ struct OracularDenseExtractor {
     /**
      * @endcond
      */
+
+    /**
+     * @cond
+     */
+    // No-op for back-compatibility only.
+    template<class Oracle_>
+    void set_oracle(Oracle_) {}
+    /**
+     * @endcond
+     */
 };
 
 /**
@@ -132,6 +151,16 @@ struct MyopicSparseExtractor {
      * @cond
      */
     virtual ~MyopicSparseExtractor() = default;
+    /**
+     * @endcond
+     */
+
+    /**
+     * @cond
+     */
+    // No-op for back-compatibility only.
+    template<class Oracle_>
+    void set_oracle(Oracle_) {}
     /**
      * @endcond
      */
@@ -193,6 +222,16 @@ struct OracularSparseExtractor {
      * @cond
      */
     virtual ~OracularSparseExtractor() = default;
+    /**
+     * @endcond
+     */
+
+    /**
+     * @cond
+     */
+    // No-op for back-compatibility only.
+    template<class Oracle_>
+    void set_oracle(Oracle_) {}
     /**
      * @endcond
      */

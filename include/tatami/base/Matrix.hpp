@@ -3,6 +3,7 @@
 
 #include "Extractor.hpp"
 #include "Options.hpp"
+#include "Oracle.hpp"
 #include <algorithm>
 #include <numeric>
 #include <memory>

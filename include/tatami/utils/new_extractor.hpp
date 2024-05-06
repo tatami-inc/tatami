@@ -75,6 +75,33 @@ auto new_extractor(const Matrix<Value_, Index_>* ptr, bool row, MaybeOracle<orac
     }
 }
 
+/**
+ * @cond
+ */
+// Provided for back-compatibility only.
+template<bool row_, bool sparse_, typename Value_, typename Index_>
+auto new_extractor(const Matrix<Value_, Index_>* ptr) {
+    return new_extractor<sparse_, false, Value_, Index_>(ptr, row_, false);
+}
+
+template<bool row_, bool sparse_, typename Value_, typename Index_>
+auto new_extractor(const Matrix<Value_, Index_>* ptr, const Options& opt) {
+    return new_extractor<sparse_, false, Value_, Index_>(ptr, row_, false, opt);
+}
+
+template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>
+auto new_extractor(const Matrix<Value_, Index_>* ptr, Index_ start, Index_ len, Args_&&... args) {
+    return new_extractor<sparse_, false, Value_, Index_>(ptr, row_, false, start, len, std::forward<Args_>(args)...);
+}
+
+template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>
+auto new_extractor(const Matrix<Value_, Index_>* ptr, std::vector<Index_> i, Args_&&... args) {
+    return new_extractor<sparse_, false, Value_, Index_>(ptr, row_, false, std::move(i), std::forward<Args_>(args)...);
+}
+/**
+ * @endcond
+ */
+
 }
 
 #endif

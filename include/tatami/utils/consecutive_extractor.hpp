@@ -41,6 +41,18 @@ auto consecutive_extractor(const Matrix<Value_, Index_>* mat, bool row, Index_ i
     );
 }
 
+/**
+ * @cond
+ */
+// Provided for back-compatibility only.
+template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>
+auto consecutive_extractor(const Matrix<Value_, Index_>* ptr, Args_&&... args) {
+    return consecutive_extractor<sparse_, Value_, Index_>(ptr, row_, std::forward<Args_>(args)...);
+}
+/**
+ * @endcond
+ */
+
 }
 
 #endif

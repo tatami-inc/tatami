@@ -106,6 +106,7 @@ add_executable(
     src/utils/ConsecutiveOracle.cpp
     src/utils/FixedOracle.cpp
     src/utils/process_consecutive_indices.cpp
+    src/utils/miscellaneous.cpp
 )
 decorate_executable(utils_test)
 
