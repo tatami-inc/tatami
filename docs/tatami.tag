@@ -4297,15 +4297,15 @@
       <type>void</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3d709db6be55e94d987d38c4c07c71c0</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, StoredValue_ *store, int threads=1)</arglist>
+      <anchor>aaa4de72fa0357087aa607876b2b99366</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool row, StoredValue_ *store, int threads=1)</arglist>
     </member>
     <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index &gt; &gt;</type>
+      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3a0e048d06c98ea3706466139c4c97dc</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, int threads=1)</arglist>
+      <anchor>a7b6e4754f2e6c6451d16f88a01c87c14</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *incoming, bool row, int threads=1)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
