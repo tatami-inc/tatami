@@ -351,7 +351,7 @@ private:
     bool by_row;
 
     Index_ get_mapping_dim() const {
-        if constexpr(by_row) {
+        if (by_row) {
             return mat->nrow();
         } else {
             return mat->ncol();
