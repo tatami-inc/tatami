@@ -277,13 +277,13 @@ TEST_P(SubsetConstructorTest, SortedUnique) {
     auto sub = SubsetCoreUtils::spawn_indices<int>(true, 5, duplicate, sorted);
 
     if (sorted && !duplicate) {
-        tatami::DelayedSubsetSortedUnique<0, double, int, decltype(sub)> manual(dense, sub);
+        tatami::DelayedSubsetSortedUnique<double, int, decltype(sub)> manual(dense, sub, true);
         auto ref = SubsetCoreUtils::reference_on_rows(dense.get(), sub);
         tatami_test::test_simple_row_access(&manual, ref.get());
         tatami_test::test_simple_column_access(&manual, ref.get());
     } else {
         tatami_test::throws_error([&]() {
-            tatami::DelayedSubsetSortedUnique<0, double, int, decltype(sub)> manual(dense, sub);
+            tatami::DelayedSubsetSortedUnique<double, int, decltype(sub)> manual(dense, sub, true);
         }, "unique");
     }
 }
@@ -295,13 +295,13 @@ TEST_P(SubsetConstructorTest, Sorted) {
     auto sub = SubsetCoreUtils::spawn_indices<int>(true, 5, duplicate, sorted);
 
     if (sorted) {
-        tatami::DelayedSubsetSorted<0, double, int, decltype(sub)> manual(dense, sub);
+        tatami::DelayedSubsetSorted<double, int, decltype(sub)> manual(dense, sub, true);
         auto ref = SubsetCoreUtils::reference_on_rows(dense.get(), sub);
         tatami_test::test_simple_row_access(&manual, ref.get());
         tatami_test::test_simple_column_access(&manual, ref.get());
     } else {
         tatami_test::throws_error([&]() {
-            tatami::DelayedSubsetSorted<0, double, int, decltype(sub)> manual(dense, sub); 
+            tatami::DelayedSubsetSorted<double, int, decltype(sub)> manual(dense, sub, true); 
         }, "sorted");
     }
 }
@@ -313,13 +313,13 @@ TEST_P(SubsetConstructorTest, Unique) {
     auto sub = SubsetCoreUtils::spawn_indices<int>(true, 5, duplicate, sorted);
 
     if (!duplicate) {
-        tatami::DelayedSubsetUnique<0, double, int, decltype(sub)> manual(dense, sub);
+        tatami::DelayedSubsetUnique<double, int, decltype(sub)> manual(dense, sub, true);
         auto ref = SubsetCoreUtils::reference_on_rows(dense.get(), sub);
         tatami_test::test_simple_row_access(&manual, ref.get());
         tatami_test::test_simple_column_access(&manual, ref.get());
     } else {
         tatami_test::throws_error([&]() {
-            tatami::DelayedSubsetUnique<0, double, int, decltype(sub)> manual(dense, sub);
+            tatami::DelayedSubsetUnique<double, int, decltype(sub)> manual(dense, sub, true);
         }, "unique");
     }
 }
@@ -330,7 +330,7 @@ TEST_P(SubsetConstructorTest, Any) {
     bool sorted = std::get<1>(param);
     auto sub = SubsetCoreUtils::spawn_indices<int>(true, 5, duplicate, sorted);
 
-    tatami::DelayedSubset<0, double, int, decltype(sub)> manual(dense, sub);
+    tatami::DelayedSubset<double, int, decltype(sub)> manual(dense, sub, true);
     auto ref = reference_on_rows(dense.get(), sub);
     tatami_test::test_simple_row_access(&manual, ref.get());
     tatami_test::test_simple_column_access(&manual, ref.get());

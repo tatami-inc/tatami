@@ -23,8 +23,6 @@ namespace tatami {
  * A `make_*` helper function to enable partial template deduction of supplied types.
  * This will automatically dispatch to `DelayedSubsetSortedUnique`, `DelayedSubsetUnique`, `DelayedSubsetSorted` or `DelayedSubset`, depending on the values in `idx`.
  *
- * @tparam margin_ Dimension along which the subsetting is to occur.
- * If 0, the subset is applied to the rows; if 1, the subset is applied to the columns.
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Integer type of the row/column indices.
  * @tparam IndexStorage_ Vector containing the subset indices, to be automatically deduced.
@@ -32,11 +30,13 @@ namespace tatami {
  *
  * @param p Pointer to a (possibly `const`) `Matrix`.
  * @param idx Instance of the index vector.
+ * @param row Whether to apply the subset to the rows.
+ * If false, the subset is applied to the columns.
  *
  * @return A pointer to a `DelayedSubset` instance.
  */
-template<int margin_, typename Value_, typename Index_, class IndexStorage_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx) {
+template<typename Value_, typename Index_, class IndexStorage_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx, bool row) {
     bool is_unsorted = false;
     for (Index_ i = 0, end = idx.size(); i < end; ++i) {
         if (i) {
@@ -72,22 +72,22 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
             if (consecutive) {
                 auto start = (idx.size() ? idx[0] : 0);
                 return std::shared_ptr<Matrix<Value_, Index_> >(
-                    new DelayedSubsetBlock<margin_, Value_, Index_>(std::move(p), start, idx.size())
+                    new DelayedSubsetBlock<Value_, Index_>(std::move(p), start, idx.size(), row)
                 );
             } else {
                 return std::shared_ptr<Matrix<Value_, Index_> >(
-                    new DelayedSubsetSortedUnique<margin_, Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), false)
+                    new DelayedSubsetSortedUnique<Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), row, false)
                 );
             }
         } else {
             return std::shared_ptr<Matrix<Value_, Index_> >(
-                new DelayedSubsetSorted<margin_, Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), false)
+                new DelayedSubsetSorted<Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), row, false)
             );
         }
     }
 
     bool has_duplicates = false;
-    std::vector<unsigned char> accumulated(margin_ == 0 ? p->nrow() : p->ncol());
+    std::vector<unsigned char> accumulated(row ? p->nrow() : p->ncol());
     for (Index_ i = 0, end = idx.size(); i < end; ++i) {
         auto& found = accumulated[idx[i]];
         if (found) {
@@ -100,11 +100,11 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
 
     if (!has_duplicates) {
         return std::shared_ptr<Matrix<Value_, Index_> >(
-            new DelayedSubsetUnique<margin_, Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), false)
+            new DelayedSubsetUnique<Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), row, false)
         );
     } else {
         return std::shared_ptr<Matrix<Value_, Index_> >(
-            new DelayedSubset<margin_, Value_, Index_, IndexStorage_>(std::move(p), std::move(idx))
+            new DelayedSubset<Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), row)
         );
     }
 }
@@ -112,9 +112,26 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<cons
 /**
  * @cond
  */
+template<typename Value_, typename Index_, class IndexStorage_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<Matrix<Value_, Index_> > p, IndexStorage_ idx, bool row) {
+    return make_DelayedSubset<Value_, Index_, IndexStorage_>(std::shared_ptr<const Matrix<Value_, Index_> >(std::move(p)), std::move(idx), row);
+}
+/**
+ * @endcond
+ */
+
+/**
+ * @cond
+ */
+// Back-compatibility only.
+template<int margin_, typename Value_, typename Index_, class IndexStorage_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx) {
+    return make_DelayedSubset<Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), margin_ == 0);
+}
+
 template<int margin_, typename Value_, typename Index_, class IndexStorage_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubset(std::shared_ptr<Matrix<Value_, Index_> > p, IndexStorage_ idx) {
-    return make_DelayedSubset<margin_, Value_, Index_, IndexStorage_>(std::shared_ptr<const Matrix<Value_, Index_> >(std::move(p)), std::move(idx));
+    return make_DelayedSubset<Value_, Index_, IndexStorage_>(std::move(p), std::move(idx), margin_ == 0);
 }
 /**
  * @endcond
