@@ -20,13 +20,13 @@ protected:
     static void SetUpTestSuite() {
         simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.2, /* lower = */ 1, /* upper = */ 4, /* seed */ 12345);
         for (auto& x : simulated_left) { x = std::round(x); } // Rounding for easier tests of exact equality.
-        dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_left));
-        sparse_left = tatami::convert_to_compressed_sparse<false>(dense_left.get()); // column major.
+        dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_left));
+        sparse_left = tatami::convert_to_compressed_sparse<false, double, int>(dense_left.get()); // column major.
 
         simulated_right = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.2, /* lower = */ 1, /* upper = */ 4, /* seed */ 67890);
         for (auto& x : simulated_right) { x = std::round(x); } // Rounding for easier tests of exact equality.
-        dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_right));
-        sparse_right = tatami::convert_to_compressed_sparse<false>(dense_right.get()); // column major.
+        dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_right));
+        sparse_right = tatami::convert_to_compressed_sparse<false, double, int>(dense_right.get()); // column major.
         return;
     }
 };
@@ -46,7 +46,7 @@ TEST_F(BinaryCompareTest, Equal) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] == simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -67,7 +67,7 @@ TEST_F(BinaryCompareTest, GreaterThan) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] > simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -88,7 +88,7 @@ TEST_F(BinaryCompareTest, LessThan) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] < simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -109,7 +109,7 @@ TEST_F(BinaryCompareTest, GreaterThanOrEqual) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] >= simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -130,7 +130,7 @@ TEST_F(BinaryCompareTest, LessThanOrEqual) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] <= simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -151,7 +151,7 @@ TEST_F(BinaryCompareTest, NotEqual) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = (simulated_left[i] != simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);

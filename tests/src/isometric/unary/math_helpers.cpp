@@ -21,14 +21,14 @@ protected:
 
     static void SetUpTestSuite() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -10, /* upper = */ 10);
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
 
         // Use a tighter range to get most values inside the domain of [-1, 1]
         // (but not all; we still leave a few outside for NaN testing purposes).
         simulated_unit = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -1.1, /* upper = */ 1.1);
-        dense_unit = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_unit));
-        sparse_unit = tatami::convert_to_compressed_sparse<false>(dense_unit.get()); // column major.
+        dense_unit = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_unit));
+        sparse_unit = tatami::convert_to_compressed_sparse<false, double, int>(dense_unit.get()); // column major.
     }
 };
 
@@ -46,7 +46,7 @@ TEST_F(MathTest, Abs) {
     for (auto& r : refvec) {
         r = std::abs(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Toughest tests are handled by the Vector case; they would
     // be kind of redundant here, so we'll just do something simple
@@ -69,7 +69,7 @@ TEST_F(MathTest, Sign) {
     for (auto& r : refvec) {
         r = (0 < r) - (r < 0);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -90,7 +90,7 @@ TEST_F(MathTest, Sqrt) {
     for (auto& r : refvec) {
         r = std::sqrt(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests; we assume that we have IEEE floats so sqrt(-1) => NaN.
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -113,7 +113,7 @@ TEST_F(MathTest, Log) {
         for (auto& r : refvec) {
             r = std::log(r);
         }
-        tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
         // Doing some light tests, assuming that log(-1) => NaN and log(0) => Inf.
         quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -135,7 +135,7 @@ TEST_F(MathTest, Log) {
         for (auto& r : refvec) {
             r = std::log(r) / std::log(2);
         }
-        tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
         // Again, doing some light tests.
         quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -159,7 +159,7 @@ TEST_F(MathTest, Log1pBy) {
         for (auto& r : refvec) {
             r = std::log1p(r);
         }
-        tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
         // Doing some light tests, assuming that log1p(-2) => NaN and log1p(-1) => Inf.
         quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -181,7 +181,7 @@ TEST_F(MathTest, Log1pBy) {
         for (auto& r : refvec) {
             r = std::log1p(r) / std::log(2);
         }
-        tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
         // Again, doing some light tests.
         quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -203,7 +203,7 @@ TEST_F(MathTest, Exp) {
     for (auto& r : refvec) {
         r = std::exp(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -224,7 +224,7 @@ TEST_F(MathTest, Expm1) {
     for (auto& r : refvec) {
         r = std::expm1(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -245,7 +245,7 @@ TEST_F(MathTest, Round) {
     for (auto& r : refvec) {
         r = std::round(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -266,7 +266,7 @@ TEST_F(MathTest, Ceiling) {
     for (auto& r : refvec) {
         r = std::ceil(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -287,7 +287,7 @@ TEST_F(MathTest, Floor) {
     for (auto& r : refvec) {
         r = std::floor(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -308,7 +308,7 @@ TEST_F(MathTest, Trunc) {
     for (auto& r : refvec) {
         r = std::trunc(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -329,7 +329,7 @@ TEST_F(MathTest, Sin) {
     for (auto& r : refvec) {
         r = std::sin(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -350,7 +350,7 @@ TEST_F(MathTest, Cos) {
     for (auto& r : refvec) {
         r = std::cos(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -371,7 +371,7 @@ TEST_F(MathTest, Tan) {
     for (auto& r : refvec) {
         r = std::tan(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -393,7 +393,7 @@ TEST_F(MathTest, Asin) {
     for (auto& r : refvec) {
         r = std::asin(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests. We assume that asin(2) => NaN.
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -414,7 +414,7 @@ TEST_F(MathTest, Acos) {
     for (auto& r : refvec) {
         r = std::acos(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests. We assume that acos(-2) => NaN.
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -435,7 +435,7 @@ TEST_F(MathTest, Atan) {
     for (auto& r : refvec) {
         r = std::atan(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -456,7 +456,7 @@ TEST_F(MathTest, Sinh) {
     for (auto& r : refvec) {
         r = std::sinh(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -477,7 +477,7 @@ TEST_F(MathTest, Cosh) {
     for (auto& r : refvec) {
         r = std::cosh(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -498,7 +498,7 @@ TEST_F(MathTest, Tanh) {
     for (auto& r : refvec) {
         r = std::tanh(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -519,7 +519,7 @@ TEST_F(MathTest, Asinh) {
     for (auto& r : refvec) {
         r = std::asinh(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests.
     quick_test_all(dense_mod.get(), &ref);
@@ -540,7 +540,7 @@ TEST_F(MathTest, Acosh) {
     for (auto& r : refvec) {
         r = std::acosh(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests. We assume that acosh(-1) => NaN.
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -561,7 +561,7 @@ TEST_F(MathTest, Atanh) {
     for (auto& r : refvec) {
         r = std::atanh(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests. We assume that atanh(2) => NaN.
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -582,7 +582,7 @@ TEST_F(MathTest, Gamma) {
     for (auto& r : refvec) {
         r = std::tgamma(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests. We assume that gamma(-1) => NaN.
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
@@ -603,7 +603,7 @@ TEST_F(MathTest, Lgamma) {
     for (auto& r : refvec) {
         r = std::lgamma(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     // Again, doing some light tests. We assume that lgamma(-1) => NaN.
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);

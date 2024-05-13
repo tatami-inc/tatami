@@ -184,13 +184,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<In
  *
  * @return A pointer to a new `tatami::DenseMatrix` with the same dimensions and type as the matrix referenced by `incoming`.
  */
-template <
-    typename Value_ = double,
-    typename Index_ = int,
-    typename StoredValue_ = Value_,
-    typename InputValue_,
-    typename InputIndex_
->
+template<typename Value_, typename Index_, typename StoredValue_ = Value_, typename InputValue_, typename InputIndex_>
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, int order, int threads = 1) {
     if (order < 0) {
         order = static_cast<int>(!incoming->prefer_rows()); 
@@ -202,19 +196,12 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValu
  * @cond
  */
 // Backwards compatbility.
-template <bool row_, typename StoredValue_, typename InputValue_, typename InputIndex_>
+template<bool row_, typename StoredValue_, typename InputValue_, typename InputIndex_>
 void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredValue_* store, int threads = 1) {
     convert_to_dense(incoming, row_, store, threads);
 }
 
-template <
-    bool row_,
-    typename Value_ = double, 
-    typename Index_ = int, 
-    typename StoredValue_ = Value_, 
-    typename InputValue_,
-    typename InputIndex_
->
+template<bool row_, typename Value_, typename Index_, typename StoredValue_ = Value_, typename InputValue_, typename InputIndex_>
 inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, int threads = 1) {
     return convert_to_dense<Value_, Index_, StoredValue_>(incoming, row_, threads);
 }

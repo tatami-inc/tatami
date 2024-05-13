@@ -28,8 +28,8 @@ protected:
             }
         }
 
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
     }
 
     static void fill_default_vector(std::vector<double>& vec) {
@@ -89,7 +89,7 @@ TEST_P(CompareVectorTest, Equal) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(this->nrow, this->ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -141,7 +141,7 @@ TEST_P(CompareVectorTest, GreaterThan) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(this->nrow, this->ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -193,7 +193,7 @@ TEST_P(CompareVectorTest, LessThan) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(this->nrow, this->ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -245,7 +245,7 @@ TEST_P(CompareVectorTest, GreaterThanOrEqual) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(this->nrow, this->ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -297,7 +297,7 @@ TEST_P(CompareVectorTest, LessThanOrEqual) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(this->nrow, this->ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -343,7 +343,7 @@ TEST_P(CompareVectorTest, NotEqual) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(this->nrow, this->ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }

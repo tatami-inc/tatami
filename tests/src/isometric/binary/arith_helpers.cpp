@@ -24,12 +24,12 @@ protected:
         }
 
         simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -5, /* upper = */ 5, /* seed */ 12345);
-        dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_left));
-        sparse_left = tatami::convert_to_compressed_sparse<false>(dense_left.get()); // column major.
+        dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_left));
+        sparse_left = tatami::convert_to_compressed_sparse<false, double, int>(dense_left.get()); // column major.
 
         simulated_right = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -5, /* upper = */ 5, /* seed */ 67890);
-        dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated_right));
-        sparse_right = tatami::convert_to_compressed_sparse<false>(dense_right.get()); // column major.
+        dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_right));
+        sparse_right = tatami::convert_to_compressed_sparse<false, double, int>(dense_right.get()); // column major.
         return;
     }
 };
@@ -162,7 +162,7 @@ protected:
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] += simulated_right[i];
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -217,7 +217,7 @@ protected:
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] -= simulated_right[i];
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -262,7 +262,7 @@ protected:
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] *= simulated_right[i];
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -399,7 +399,7 @@ protected:
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] = careful_division(refvec[i], simulated_right[i]);
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -449,7 +449,7 @@ protected:
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] = std::pow(std::abs(refvec[i]), std::abs(simulated_right[i]));
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -491,7 +491,7 @@ protected:
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] = std::fmod(refvec[i], simulated_right[i]);
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -536,7 +536,7 @@ protected:
             // x == (x %% y) + y * (x %/% y)
             refvec[i] = std::floor(refvec[i] / simulated_right[i]);
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 

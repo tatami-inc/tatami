@@ -57,7 +57,7 @@ protected:
             } else {
                 collected_dense.emplace_back(new tatami::DenseColumnMatrix<double, int>(otherdim, lengths[i], to_add));
             }
-            collected_sparse.push_back(tatami::convert_to_compressed_sparse<false>(collected_dense.back().get())); // always CSC
+            collected_sparse.push_back(tatami::convert_to_compressed_sparse<false, double, int>(collected_dense.back().get())); // always CSC
 
             forced_collected_dense.emplace_back(std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(collected_dense.back()));
             forced_collected_sparse.emplace_back(std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(collected_sparse.back()));

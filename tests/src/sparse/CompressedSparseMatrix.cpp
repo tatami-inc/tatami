@@ -100,8 +100,8 @@ protected:
             return;
         }
         dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05)));
-        sparse_row = tatami::convert_to_compressed_sparse<true>(dense.get());
-        sparse_column = tatami::convert_to_compressed_sparse<false>(dense.get());
+        sparse_row = tatami::convert_to_compressed_sparse<true, double, int>(dense.get());
+        sparse_column = tatami::convert_to_compressed_sparse<false, double, int>(dense.get());
     }
 };
 
@@ -266,7 +266,7 @@ TEST(CompressedSparseMatrix, SecondarySkip) {
 
     // Make a column-sparse compressed matrix, so that we can check
     // that secondary extraction correctly skips the all-zero rows.
-    auto sparse_column = tatami::convert_to_compressed_sparse<false>(&dense);
+    auto sparse_column = tatami::convert_to_compressed_sparse<false, double, int>(&dense);
     tatami_test::TestAccessParameters param;
     param.use_row = true;
     param.order = tatami_test::FORWARD;

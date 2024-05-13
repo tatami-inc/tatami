@@ -8,7 +8,7 @@ TEST(WrapSharedPtrTest, Simple) {
     std::vector<double> contents(200);
     double counter = -105;
     for (auto& i : contents) { i = counter++; }
-    tatami::DenseColumnMatrix<double> mat(10, 20, contents);
+    tatami::DenseColumnMatrix<double, int> mat(10, 20, contents);
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
 

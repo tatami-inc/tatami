@@ -20,8 +20,8 @@ protected:
         if (dense) {
             return;
         }
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column-major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
     }
 
 protected:
@@ -61,7 +61,7 @@ protected:
             ptr += NC;
         }
 
-        return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(sub.size(), NC, std::move(reference)));
+        return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(sub.size(), NC, std::move(reference)));
     }
 
     template<typename V>
@@ -79,7 +79,7 @@ protected:
             }
         }
 
-        return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, sub.size(), std::move(reference)));
+        return std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, sub.size(), std::move(reference)));
     }
 };
 
@@ -350,7 +350,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 TEST(DelayedSubset, ConstOverload) {
     int NR = 9, NC = 7;
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
     std::vector<int> subset{ 1, 3, 5 };
 
     auto sub = tatami::make_DelayedSubset<0>(dense, subset);
@@ -360,7 +360,7 @@ TEST(DelayedSubset, ConstOverload) {
 
 TEST(DelayedSubset, ArrayView) {
     int NR = 9, NC = 7;
-    auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
+    auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
 
     std::vector<int> subset{ 1, 3, 5 };
     tatami::ArrayView<int> aview(subset.data(), subset.size());
