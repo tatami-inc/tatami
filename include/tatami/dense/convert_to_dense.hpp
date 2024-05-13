@@ -166,11 +166,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<In
     auto NC = incoming->ncol();
     std::vector<StoredValue_> buffer(static_cast<size_t>(NR) * static_cast<size_t>(NC));
     convert_to_dense(incoming, row, buffer.data(), threads);
-    if (row) {
-        return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<true, Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer)));
-    } else {
-        return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<false, Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer)));
-    }
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer), row));
 }
 
 /**
@@ -199,11 +195,7 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValu
     if (order < 0) {
         order = static_cast<int>(!incoming->prefer_rows()); 
     }
-    if (order == 0) {
-        return convert_to_dense<true, Value_, Index_, StoredValue_>(incoming, threads);
-    } else {
-        return convert_to_dense<false, Value_, Index_, StoredValue_>(incoming, threads);
-    }
+    return convert_to_dense<Value_, Index_, StoredValue_>(incoming, order == 0, threads);
 }
 
 /**

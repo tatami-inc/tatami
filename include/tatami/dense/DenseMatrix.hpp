@@ -158,8 +158,6 @@ private:
 /**
  * @brief Dense matrix representation.
  *
- * @tparam row_ Whether this is a row-major representation.
- * If `false`, a column-major representation is assumed instead.
  * @tparam Value_ Type of the matrix values.
  * @tparam Index_ Type of the row/column indices.
  * @tparam Storage_ Vector class used to store the matrix values internally.
@@ -167,25 +165,17 @@ private:
  * Methods should be available for `size()`, `begin()`, `end()` and `[]`.
  * If a method is available for `data()` that returns a `const Value_*`, it will also be used.
  */
-template<bool row_, typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
+template<typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
 class DenseMatrix : public Matrix<Value_, Index_> {
 public: 
     /**
      * @param nr Number of rows.
      * @param nc Number of columns.
-     * @param source Vector of values, or length equal to the product of `nr` and `nc`.
+     * @param vals Vector of values of length equal to the product of `nr` and `nc`.
+     * @param row Whether `vals` stores the matrix contents in a row-major representation.
+     * If `false`, a column-major representation is assumed instead.
      */
-    DenseMatrix(Index_ nr, Index_ nc, const Storage_& source) : nrows(nr), ncols(nc), values(source) {
-        check_dimensions(nr, nc, values.size());
-        return;
-    }
-
-    /**
-     * @param nr Number of rows.
-     * @param nc Number of columns.
-     * @param source Vector of values, or length equal to the product of `nr` and `nc`.
-     */
-    DenseMatrix(Index_ nr, Index_ nc, Storage_&& source) : nrows(nr), ncols(nc), values(source) {
+    DenseMatrix(Index_ nr, Index_ nc, Storage_ vals, bool row) : nrows(nr), ncols(nc), values(std::move(vals)), row_major(row) {
         check_dimensions(nr, nc, values.size());
         return;
     }
@@ -193,6 +183,7 @@ public:
 private: 
     Index_ nrows, ncols;
     Storage_ values;
+    bool row_major;
 
     static void check_dimensions(size_t nr, size_t nc, size_t expected) { // cast to size_t is deliberate to avoid overflow on Index_ on product.
         if (nr * nc != expected) {
@@ -205,7 +196,7 @@ public:
 
     Index_ ncol() const { return ncols; }
 
-    bool prefer_rows() const { return row_; }
+    bool prefer_rows() const { return row_major; }
 
     bool uses_oracle(bool) const { return false; }
 
@@ -213,7 +204,7 @@ public:
 
     double sparse_proportion() const { return 0; }
 
-    double prefer_rows_proportion() const { return static_cast<double>(row_); }
+    double prefer_rows_proportion() const { return static_cast<double>(row_major); }
 
     using Matrix<Value_, Index_>::dense;
 
@@ -221,7 +212,7 @@ public:
 
 private:
     Index_ primary() const {
-        if constexpr(row_) {
+        if (row_major) {
             return nrows;
         } else {
             return ncols;
@@ -229,7 +220,7 @@ private:
     }
 
     Index_ secondary() const {
-        if constexpr(row_) {
+        if (row_major) {
             return ncols;
         } else {
             return nrows;
@@ -241,7 +232,7 @@ private:
      *****************************/
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, const Options&) const {
-        if (row_ == row) {
+        if (row_major == row) {
             return std::make_unique<DenseMatrix_internals::PrimaryMyopicFullDense<Value_, Index_, Storage_> >(values, secondary());
         } else {
             return std::make_unique<DenseMatrix_internals::SecondaryMyopicFullDense<Value_, Index_, Storage_> >(values, secondary(), primary()); 
@@ -249,7 +240,7 @@ public:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_length, const Options&) const {
-        if (row_ == row) { 
+        if (row_major == row) { 
             return std::make_unique<DenseMatrix_internals::PrimaryMyopicBlockDense<Value_, Index_, Storage_> >(values, secondary(), block_start, block_length);
         } else {
             return std::make_unique<DenseMatrix_internals::SecondaryMyopicBlockDense<Value_, Index_, Storage_> >(values, secondary(), block_start, block_length);
@@ -257,7 +248,7 @@ public:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> indices_ptr, const Options&) const {
-        if (row_ == row) {
+        if (row_major == row) {
             return std::make_unique<DenseMatrix_internals::PrimaryMyopicIndexDense<Value_, Index_, Storage_> >(values, secondary(), std::move(indices_ptr));
         } else {
             return std::make_unique<DenseMatrix_internals::SecondaryMyopicIndexDense<Value_, Index_, Storage_> >(values, secondary(), std::move(indices_ptr));
@@ -318,15 +309,31 @@ public:
  * Column-major matrix.
  * See `tatami::DenseMatrix` for details on the template parameters.
  */
-template<typename Value_, typename Index_ = int, class Storage_ = std::vector<Value_> >
-using DenseColumnMatrix = DenseMatrix<false, Value_, Index_, Storage_>;
+template<typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
+class DenseColumnMatrix : public DenseMatrix<Value_, Index_, Storage_> {
+public:
+    /**
+     * @param nr Number of rows.
+     * @param nc Number of columns.
+     * @param vals Vector of values of length equal to the product of `nr` and `nc`, storing the matrix in column-major format.
+     */
+    DenseColumnMatrix(Index_ nr, Index_ nc, Storage_ vals) : DenseMatrix<Value_, Index_, Storage_>(nr, nc, std::move(vals), false) {}
+};
 
 /**
  * Row-major matrix.
  * See `tatami::DenseMatrix` for details on the template parameters.
  */
-template<typename Value_, typename Index_ = int, class Storage_ = std::vector<Value_> >
-using DenseRowMatrix = DenseMatrix<true, Value_, Index_, Storage_>;
+template<typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
+class DenseRowMatrix : public DenseMatrix<Value_, Index_, Storage_> {
+public:
+    /**
+     * @param nr Number of rows.
+     * @param nc Number of columns.
+     * @param vals Vector of values of length equal to the product of `nr` and `nc`, storing the matrix in row-major format.
+     */
+    DenseRowMatrix(Index_ nr, Index_ nc, Storage_ vals) : DenseMatrix<Value_, Index_, Storage_>(nr, nc, std::move(vals), true) {}
+};
 
 }
 

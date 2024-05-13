@@ -24,7 +24,7 @@ protected:
 TEST_P(ConvertToDenseTest, FromDenseRowMajor) {
     assemble(GetParam());
     auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
-    auto mat = std::make_shared<tatami::DenseMatrix<true, double, int> >(NR, NC, vec);
+    auto mat = std::make_shared<tatami::DenseMatrix<double, int> >(NR, NC, vec, true);
 
     auto converted = tatami::convert_to_dense(mat.get(), row, threads);
     EXPECT_EQ(converted->prefer_rows(), row);
@@ -48,7 +48,7 @@ TEST_P(ConvertToDenseTest, FromDenseRowMajor) {
 TEST_P(ConvertToDenseTest, FromColumnRowMajor) {
     assemble(GetParam());
     auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
-    auto mat = std::make_shared<tatami::DenseMatrix<false, double, int> >(NR, NC, vec);
+    auto mat = std::make_shared<tatami::DenseMatrix<double, int> >(NR, NC, vec, false);
 
     auto converted = tatami::convert_to_dense(mat.get(), row, threads);
     EXPECT_EQ(converted->prefer_rows(), row);
@@ -74,12 +74,12 @@ TEST_P(ConvertToDenseTest, Automatic) {
     auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
 
     if (row) {
-        tatami::DenseMatrix<true, double, int> mat(NR, NC, vec);
+        tatami::DenseMatrix<double, int> mat(NR, NC, vec, true);
         auto converted = tatami::convert_to_dense(&mat, -1, threads);
         EXPECT_TRUE(converted->prefer_rows());
         tatami_test::test_simple_row_access(converted.get(), &mat);
     } else {
-        tatami::DenseMatrix<false, double, int> mat(NR, NC, vec);
+        tatami::DenseMatrix<double, int> mat(NR, NC, vec, false);
         auto converted = tatami::convert_to_dense(&mat, -1, threads);
         EXPECT_FALSE(converted->prefer_rows());
         tatami_test::test_simple_column_access(converted.get(), &mat);
