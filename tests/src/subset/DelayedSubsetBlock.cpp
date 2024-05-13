@@ -101,10 +101,10 @@ TEST_P(SubsetBlockTest, Basic) {
         EXPECT_EQ(block_length, dense_block->ncol());
     }
 
-    EXPECT_FALSE(dense_block->sparse());
-    EXPECT_EQ(dense_block->sparse_proportion(), 0);
-    EXPECT_TRUE(sparse_block->sparse());
-    EXPECT_EQ(sparse_block->sparse_proportion(), 1);
+    EXPECT_FALSE(dense_block->is_sparse());
+    EXPECT_EQ(dense_block->is_sparse_proportion(), 0);
+    EXPECT_TRUE(sparse_block->is_sparse());
+    EXPECT_EQ(sparse_block->is_sparse_proportion(), 1);
 
     EXPECT_TRUE(dense_block->prefer_rows());
     EXPECT_EQ(dense_block->prefer_rows_proportion(), 1);

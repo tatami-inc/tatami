@@ -168,10 +168,10 @@ protected:
 
 BINARY_ARITH_BASIC_SETUP(BinaryArithAdditionTest, BinaryArithAdditionUtils)
 TEST_F(BinaryArithAdditionTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_EQ(dense_mod->sparse_proportion(), 0);
-    EXPECT_TRUE(sparse_mod->sparse());
-    EXPECT_EQ(sparse_mod->sparse_proportion(), 1);
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_EQ(dense_mod->is_sparse_proportion(), 0);
+    EXPECT_TRUE(sparse_mod->is_sparse());
+    EXPECT_EQ(sparse_mod->is_sparse_proportion(), 1);
     EXPECT_EQ(nrow, dense_mod->nrow());
     EXPECT_EQ(ncol, dense_mod->ncol());
 
@@ -181,9 +181,9 @@ TEST_F(BinaryArithAdditionTest, Basic) {
     EXPECT_EQ(sparse_mod->prefer_rows_proportion(), 0);
 
     auto mixed_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, dense_right, tatami::make_DelayedBinaryAddHelper());
-    EXPECT_FALSE(mixed_mod->sparse());
+    EXPECT_FALSE(mixed_mod->is_sparse());
     EXPECT_EQ(mixed_mod->prefer_rows_proportion(), 0.5);
-    EXPECT_EQ(mixed_mod->sparse_proportion(), 0.5);
+    EXPECT_EQ(mixed_mod->is_sparse_proportion(), 0.5);
 }
 
 BINARY_ARITH_FULL_TEST(BinaryArithAdditionFullTest, BinaryArithAdditionUtils)
@@ -223,11 +223,11 @@ protected:
 
 BINARY_ARITH_BASIC_SETUP(BinaryArithSubtractionTest, BinaryArithSubtractionUtils)
 TEST_F(BinaryArithSubtractionTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
 
     auto mixed_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, dense_right, tatami::make_DelayedBinarySubtractHelper());
-    EXPECT_FALSE(mixed_mod->sparse());
+    EXPECT_FALSE(mixed_mod->is_sparse());
 }
 
 BINARY_ARITH_FULL_TEST(BinaryArithSubtractionFullTest, BinaryArithSubtractionUtils)
@@ -268,8 +268,8 @@ protected:
 
 BINARY_ARITH_BASIC_SETUP(BinaryArithMultiplicationTest, BinaryArithMultiplicationUtils)
 TEST_F(BinaryArithMultiplicationTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
 }
 
 BINARY_ARITH_FULL_TEST(BinaryArithMultiplicationFullTest, BinaryArithMultiplicationUtils)
@@ -405,8 +405,8 @@ protected:
 
 BINARY_ARITH_BASIC_SETUP(BinaryArithDivisionTest, BinaryArithDivisionUtils)
 TEST_F(BinaryArithDivisionTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
@@ -455,8 +455,8 @@ protected:
 
 BINARY_ARITH_BASIC_SETUP(BinaryArithPowerTest, BinaryArithPowerUtils)
 TEST_F(BinaryArithPowerTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
 }
 
 BINARY_ARITH_FULL_TEST(BinaryArithPowerFullTest, BinaryArithPowerUtils)
@@ -497,8 +497,8 @@ protected:
 
 BINARY_ARITH_BASIC_SETUP(BinaryArithModuloTest, BinaryArithModuloUtils)
 TEST_F(BinaryArithModuloTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
@@ -542,8 +542,8 @@ protected:
 
 BINARY_ARITH_BASIC_SETUP(BinaryArithIntegerDivisionTest, BinaryArithIntegerDivisionUtils)
 TEST_F(BinaryArithIntegerDivisionTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }

@@ -606,7 +606,7 @@ public:
         for (const auto& x : mats) {
             double total = static_cast<double>(x->nrow()) * static_cast<double>(x->ncol());
             denom += total;
-            sparse_prop += total * x->sparse_proportion();
+            sparse_prop += total * x->is_sparse_proportion();
             row_prop += total * x->prefer_rows_proportion();
         }
         if (denom) {
@@ -662,11 +662,11 @@ public:
         }
     }
 
-    bool sparse() const {
+    bool is_sparse() const {
         return sparse_prop > 0.5;
     }
 
-    double sparse_proportion() const {
+    double is_sparse_proportion() const {
         return sparse_prop;
     }
 

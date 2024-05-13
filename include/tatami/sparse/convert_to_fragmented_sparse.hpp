@@ -74,7 +74,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
     auto& store_i = output.index;
 
     if (row == incoming->prefer_rows()) {
-        if (incoming->sparse()) {
+        if (incoming->is_sparse()) {
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
                 std::vector<InputIndex_> buffer_i(secondary);
@@ -124,7 +124,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
         // non-preferred dim; it is thus cheaper to do cache-unfriendly inserts
         // into the output buffers. 
 
-        if (incoming->sparse()) {
+        if (incoming->is_sparse()) {
             parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(primary);
                 std::vector<InputIndex_> buffer_i(primary);

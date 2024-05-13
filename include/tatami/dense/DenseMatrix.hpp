@@ -200,9 +200,9 @@ public:
 
     bool uses_oracle(bool) const { return false; }
 
-    bool sparse() const { return false; }
+    bool is_sparse() const { return false; }
 
-    double sparse_proportion() const { return 0; }
+    double is_sparse_proportion() const { return 0; }
 
     double prefer_rows_proportion() const { return static_cast<double>(row_major); }
 

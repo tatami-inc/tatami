@@ -43,11 +43,11 @@ protected:
 };
 
 TEST_P(DelayedUnaryIsometricOpMockTest, Mock) {
-    EXPECT_FALSE(udense->sparse());
-    EXPECT_EQ(udense->sparse_proportion(), 0);
+    EXPECT_FALSE(udense->is_sparse());
+    EXPECT_EQ(udense->is_sparse_proportion(), 0);
 
-    EXPECT_TRUE(usparse->sparse());
-    EXPECT_EQ(usparse->sparse_proportion(), 1);
+    EXPECT_TRUE(usparse->is_sparse());
+    EXPECT_EQ(usparse->is_sparse_proportion(), 1);
 
     // Spamming a whole stack of tests.
     tatami_test::TestAccessParameters params;

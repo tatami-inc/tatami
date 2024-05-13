@@ -492,10 +492,10 @@ public:
 
         if constexpr(is_advanced) {
             if (operation.is_sparse()) {
-                is_sparse_internal = left->sparse() && right->sparse();
+                is_sparse_internal = left->is_sparse() && right->is_sparse();
 
                 // Well, better than nothing, I guess.
-                sparse_proportion_internal = (left->sparse_proportion() + right->sparse_proportion())/2;
+                is_sparse_proportion_internal = (left->is_sparse_proportion() + right->is_sparse_proportion())/2;
             }
         }
     }
@@ -504,7 +504,7 @@ private:
     std::shared_ptr<const Matrix<Value_, Index_> > left, right;
     Operation_ operation;
     double prefer_rows_proportion_internal;
-    double sparse_proportion_internal = 0;
+    double is_sparse_proportion_internal = 0;
     bool is_sparse_internal = false;
 
     static constexpr bool is_advanced = (!Operation_::zero_depends_on_row || !Operation_::zero_depends_on_column);
@@ -518,12 +518,12 @@ public:
         return left->ncol();
     }
 
-    bool sparse() const {
+    bool is_sparse() const {
         return is_sparse_internal;
     }
 
-    double sparse_proportion() const {
-        return sparse_proportion_internal;
+    double is_sparse_proportion() const {
+        return is_sparse_proportion_internal;
     }
 
     bool prefer_rows() const { 
@@ -631,7 +631,7 @@ private:
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, Args_&& ... args) const {
         if constexpr(is_advanced) {
-            if (left->sparse() && right->sparse()) {
+            if (left->is_sparse() && right->is_sparse()) {
                 // If we don't depend on the rows, then we don't need row indices when 'row = false'.
                 // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.
                 if ((!Operation_::zero_depends_on_row && !row) || (!Operation_::zero_depends_on_column && row)) {

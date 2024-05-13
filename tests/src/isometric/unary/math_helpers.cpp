@@ -37,8 +37,8 @@ TEST_F(MathTest, Abs) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -60,8 +60,8 @@ TEST_F(MathTest, Sign) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -81,8 +81,8 @@ TEST_F(MathTest, Sqrt) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -104,8 +104,8 @@ TEST_F(MathTest, Log) {
         auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-        EXPECT_FALSE(dense_mod->sparse());
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(dense_mod->is_sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
         EXPECT_EQ(dense->nrow(), dense_mod->nrow());
         EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -126,8 +126,8 @@ TEST_F(MathTest, Log) {
         auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-        EXPECT_FALSE(dense_mod->sparse());
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(dense_mod->is_sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
         EXPECT_EQ(dense->nrow(), dense_mod->nrow());
         EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -150,8 +150,8 @@ TEST_F(MathTest, Log1pBy) {
         auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-        EXPECT_FALSE(dense_mod->sparse());
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_FALSE(dense_mod->is_sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
         EXPECT_EQ(dense->nrow(), dense_mod->nrow());
         EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -172,8 +172,8 @@ TEST_F(MathTest, Log1pBy) {
         auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
         auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-        EXPECT_FALSE(dense_mod->sparse());
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_FALSE(dense_mod->is_sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
         EXPECT_EQ(dense->nrow(), dense_mod->nrow());
         EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -194,8 +194,8 @@ TEST_F(MathTest, Exp) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -215,8 +215,8 @@ TEST_F(MathTest, Expm1) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -236,8 +236,8 @@ TEST_F(MathTest, Round) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -257,8 +257,8 @@ TEST_F(MathTest, Ceiling) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -278,8 +278,8 @@ TEST_F(MathTest, Floor) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -299,8 +299,8 @@ TEST_F(MathTest, Trunc) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -320,8 +320,8 @@ TEST_F(MathTest, Sin) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -341,8 +341,8 @@ TEST_F(MathTest, Cos) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -362,8 +362,8 @@ TEST_F(MathTest, Tan) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -384,8 +384,8 @@ TEST_F(MathTest, Asin) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_unit, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_unit, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -405,8 +405,8 @@ TEST_F(MathTest, Acos) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_unit, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_unit, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -426,8 +426,8 @@ TEST_F(MathTest, Atan) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -447,8 +447,8 @@ TEST_F(MathTest, Sinh) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -468,8 +468,8 @@ TEST_F(MathTest, Cosh) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -489,8 +489,8 @@ TEST_F(MathTest, Tanh) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -510,8 +510,8 @@ TEST_F(MathTest, Asinh) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -531,8 +531,8 @@ TEST_F(MathTest, Acosh) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -552,8 +552,8 @@ TEST_F(MathTest, Atanh) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_unit, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_unit, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -573,8 +573,8 @@ TEST_F(MathTest, Gamma) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -594,8 +594,8 @@ TEST_F(MathTest, Lgamma) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 

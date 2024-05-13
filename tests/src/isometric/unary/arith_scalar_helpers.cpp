@@ -46,14 +46,14 @@ TEST_P(ArithCommutativeScalarTest, Addition) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
     EXPECT_EQ(dense->ncol(), ncol);
 
     if (val) {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     } else {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -76,8 +76,8 @@ TEST_P(ArithCommutativeScalarTest, Multiplication) {
 
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
@@ -121,14 +121,14 @@ TEST_P(ArithNonCommutativeScalarTest, Subtraction) {
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
     EXPECT_EQ(dense->ncol(), ncol);
 
     if (val) {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     } else {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     }
 
     // Again, doing some light tests.
@@ -162,11 +162,11 @@ TEST_P(ArithNonCommutativeScalarTest, Division) {
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     if (on_right && val) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
@@ -205,14 +205,14 @@ TEST_P(ArithNonCommutativeScalarTest, Power) {
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_mod, op);
     }
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
     EXPECT_EQ(dense->ncol(), ncol);
 
     if (on_right && val) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     // Again, doing some light tests.
@@ -246,14 +246,14 @@ TEST_P(ArithNonCommutativeScalarTest, Modulo) {
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
     if (on_right && val) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     auto refvec = simulated;
@@ -286,14 +286,14 @@ TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
     if (on_right && val) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     auto refvec = simulated;

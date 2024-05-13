@@ -220,10 +220,10 @@ protected:
 
 ARITH_VECTOR_BASIC_SETUP(ArithVectorAdditionTest, ArithVectorAdditionUtils)
 TEST_P(ArithVectorAdditionTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_EQ(dense_mod->sparse_proportion(), 0);
-    EXPECT_FALSE(sparse_mod->sparse());
-    EXPECT_EQ(sparse_mod->sparse_proportion(), 0);
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_EQ(dense_mod->is_sparse_proportion(), 0);
+    EXPECT_FALSE(sparse_mod->is_sparse());
+    EXPECT_EQ(sparse_mod->is_sparse_proportion(), 0);
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -252,8 +252,8 @@ TEST_P(ArithVectorAdditionZeroedTest, Basic) {
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
     ArithVectorAdditionUtils::apply_operation(row, zeroed, dense_z, sparse_z);
 
-    EXPECT_FALSE(dense_z->sparse());
-    EXPECT_TRUE(sparse_z->sparse());
+    EXPECT_FALSE(dense_z->is_sparse());
+    EXPECT_TRUE(sparse_z->is_sparse());
 
     tatami_test::test_simple_column_access(dense_z.get(), dense.get());
     tatami_test::test_simple_column_access(sparse_z.get(), sparse.get()); 
@@ -343,8 +343,8 @@ protected:
 
 ARITH_VECTOR_BASIC_SETUP(ArithVectorSubtractionTest, ArithVectorSubtractionUtils)
 TEST_P(ArithVectorSubtractionTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_FALSE(sparse_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -372,8 +372,8 @@ TEST_P(ArithVectorSubtractionZeroedTest, Basic) {
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
     ArithVectorSubtractionUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
-    EXPECT_FALSE(dense_z->sparse());
-    EXPECT_TRUE(sparse_z->sparse());
+    EXPECT_FALSE(dense_z->is_sparse());
+    EXPECT_TRUE(sparse_z->is_sparse());
 
     if (right) {
         tatami_test::test_simple_column_access(dense_z.get(), dense.get());
@@ -457,10 +457,10 @@ protected:
 
 ARITH_VECTOR_BASIC_SETUP(ArithVectorMultiplicationTest, ArithVectorMultiplicationUtils)
 TEST_P(ArithVectorMultiplicationTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
-    EXPECT_EQ(dense_mod->sparse_proportion(), 0);
-    EXPECT_TRUE(sparse_mod->sparse());
-    EXPECT_EQ(sparse_mod->sparse_proportion(), 1);
+    EXPECT_FALSE(dense_mod->is_sparse());
+    EXPECT_EQ(dense_mod->is_sparse_proportion(), 0);
+    EXPECT_TRUE(sparse_mod->is_sparse());
+    EXPECT_EQ(sparse_mod->is_sparse_proportion(), 1);
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
 
@@ -584,13 +584,13 @@ protected:
 
 ARITH_VECTOR_BASIC_SETUP(ArithVectorDivisionTest, ArithVectorDivisionUtils)
 TEST_P(ArithVectorDivisionTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
 
     auto right = std::get<1>(last_params);
     if (right) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -632,8 +632,8 @@ TEST_P(ArithVectorDivisionZeroedTest, AllZero) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
-    EXPECT_FALSE(dense_z->sparse());
-    EXPECT_FALSE(sparse_z->sparse());
+    EXPECT_FALSE(dense_z->is_sparse());
+    EXPECT_FALSE(sparse_z->is_sparse());
 
     // Turning on NaN protection.
     test_simple_column_access_wt_nan(dense_z.get(), &ref);
@@ -684,8 +684,8 @@ TEST_P(ArithVectorDivisionZeroedTest, OneZero) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
-    EXPECT_FALSE(dense_z->sparse());
-    EXPECT_FALSE(sparse_z->sparse());
+    EXPECT_FALSE(dense_z->is_sparse());
+    EXPECT_FALSE(sparse_z->is_sparse());
 
     // Turning on NaN protection.
     test_simple_column_access_wt_nan(dense_z.get(), &ref);
@@ -781,13 +781,13 @@ protected:
 
 ARITH_VECTOR_BASIC_SETUP(ArithVectorPowerTest, ArithVectorPowerUtils)
 TEST_P(ArithVectorPowerTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
 
     auto right = std::get<1>(last_params);
     if (right) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -829,8 +829,8 @@ TEST_P(ArithVectorPowerZeroedTest, AllZero) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
-    EXPECT_FALSE(dense_z->sparse());
-    EXPECT_FALSE(sparse_z->sparse());
+    EXPECT_FALSE(dense_z->is_sparse());
+    EXPECT_FALSE(sparse_z->is_sparse());
 
     // Turning on NaN protection.
     test_simple_column_access_wt_nan(dense_z.get(), &ref);
@@ -884,8 +884,8 @@ TEST_P(ArithVectorPowerZeroedTest, OneZero) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
-    EXPECT_FALSE(dense_z->sparse());
-    EXPECT_FALSE(sparse_z->sparse());
+    EXPECT_FALSE(dense_z->is_sparse());
+    EXPECT_FALSE(sparse_z->is_sparse());
 
     // Turning on NaN protection.
     test_simple_column_access_wt_nan(dense_z.get(), &ref);
@@ -1074,13 +1074,13 @@ protected:
 
 ARITH_VECTOR_BASIC_SETUP(ArithVectorModuloTest, ArithVectorModuloUtils);
 TEST_P(ArithVectorModuloTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
 
     auto right = std::get<1>(last_params);
     if (right) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -1122,8 +1122,8 @@ TEST_P(ArithVectorModuloZeroedTest, AllZero) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
-    EXPECT_FALSE(dense_z->sparse());
-    EXPECT_FALSE(sparse_z->sparse());
+    EXPECT_FALSE(dense_z->is_sparse());
+    EXPECT_FALSE(sparse_z->is_sparse());
 
     // Turning on NaN protection.
     test_simple_column_access_wt_nan(dense_z.get(), &ref);
@@ -1216,13 +1216,13 @@ protected:
 
 ARITH_VECTOR_BASIC_SETUP(ArithVectorIntegerDivisionTest, ArithVectorIntegerDivisionUtils);
 TEST_P(ArithVectorIntegerDivisionTest, Basic) {
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
 
     auto right = std::get<1>(last_params);
     if (right) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -1265,8 +1265,8 @@ TEST_P(ArithVectorIntegerDivisionZeroedTest, AllZero) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
-    EXPECT_FALSE(dense_z->sparse());
-    EXPECT_FALSE(sparse_z->sparse());
+    EXPECT_FALSE(dense_z->is_sparse());
+    EXPECT_FALSE(sparse_z->is_sparse());
 
     // Turning on NaN protection.
     test_simple_column_access_wt_nan(dense_z.get(), &ref);

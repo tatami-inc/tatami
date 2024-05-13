@@ -51,10 +51,10 @@ protected:
 };
 
 TEST_P(DelayedBinaryIsometricOpMockTest, Basic) {
-    EXPECT_FALSE(bdense->sparse());
-    EXPECT_EQ(bdense->sparse_proportion(), 0);
-    EXPECT_TRUE(bsparse->sparse());
-    EXPECT_EQ(bsparse->sparse_proportion(), 1);
+    EXPECT_FALSE(bdense->is_sparse());
+    EXPECT_EQ(bdense->is_sparse_proportion(), 0);
+    EXPECT_TRUE(bsparse->is_sparse());
+    EXPECT_EQ(bsparse->is_sparse_proportion(), 1);
 
     // Spamming a whole stack of tests.
     tatami_test::TestAccessParameters params;

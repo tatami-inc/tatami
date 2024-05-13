@@ -14,7 +14,7 @@ TEST(FragmentedSparseMatrix, ConstructionEmpty) {
     std::vector<std::vector<int> > indices(20);
 
     tatami::FragmentedSparseColumnMatrix<double, int> mat(10, 20, values, indices);
-    EXPECT_TRUE(mat.sparse());
+    EXPECT_TRUE(mat.is_sparse());
     EXPECT_FALSE(mat.prefer_rows());
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);
@@ -28,7 +28,7 @@ TEST(FragmentedSparseMatrix, ConstructionEmpty) {
     values.resize(10);
     indices.resize(10);
     tatami::FragmentedSparseRowMatrix<double, int> rmat(10, 20, values, indices);
-    EXPECT_TRUE(rmat.sparse());
+    EXPECT_TRUE(rmat.is_sparse());
     EXPECT_EQ(rmat.nrow(), 10);
     EXPECT_EQ(rmat.ncol(), 20);
     tatami_test::test_simple_column_access(&rmat, &dense);
@@ -131,11 +131,11 @@ TEST_F(FragmentedSparseTest, Basic) {
     EXPECT_EQ(sparse_row->ncol(), ncol);
     EXPECT_EQ(sparse_row->nrow(), nrow);
 
-    EXPECT_FALSE(dense->sparse());
-    EXPECT_TRUE(sparse_row->sparse());
-    EXPECT_EQ(sparse_row->sparse_proportion(), 1);
-    EXPECT_TRUE(sparse_column->sparse());
-    EXPECT_EQ(sparse_column->sparse_proportion(), 1);
+    EXPECT_FALSE(dense->is_sparse());
+    EXPECT_TRUE(sparse_row->is_sparse());
+    EXPECT_EQ(sparse_row->is_sparse_proportion(), 1);
+    EXPECT_TRUE(sparse_column->is_sparse());
+    EXPECT_EQ(sparse_column->is_sparse_proportion(), 1);
 
     EXPECT_TRUE(sparse_row->prefer_rows());
     EXPECT_EQ(sparse_row->prefer_rows_proportion(), 1);
@@ -251,7 +251,7 @@ TEST(FragmentedSparseMatrix, ArrayView) {
     std::vector<tatami::ArrayView<int> > indices(20, tatami::ArrayView<int>(NULL, 0));
 
     tatami::FragmentedSparseColumnMatrix<double, int, decltype(values), decltype(indices)> mat(10, 20, values, indices);
-    EXPECT_TRUE(mat.sparse());
+    EXPECT_TRUE(mat.is_sparse());
     EXPECT_FALSE(mat.prefer_rows());
     EXPECT_EQ(mat.nrow(), 10);
     EXPECT_EQ(mat.ncol(), 20);

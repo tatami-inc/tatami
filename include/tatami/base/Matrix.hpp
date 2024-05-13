@@ -96,17 +96,28 @@ public:
      *
      * This can be used to choose between dense and sparse outputs.
      */
-    virtual bool sparse() const = 0;
+    virtual bool is_sparse() const = 0;
+
+    /**
+     * @cond
+     */
+    // Back-compatibility only.
+    bool sparse() const {
+        return is_sparse();
+    }
+    /**
+     * @endcond
+     */
 
     /**
      * @return Approximate proportion of the matrix that is sparse.
      *
      * This is defined as the proportion of matrix elements that lie within sparse submatrices.
      * It is intended for use in `Matrix` representations that consist of combinations of multiple submatrices (e.g., `DelayedBind`),
-     * allowing them to derive a suitable value for `sparse()` based on whether most of its submatrices are sparse.
+     * allowing them to derive a suitable value for `is_sparse()` based on whether most of its submatrices are sparse.
      * (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.)
      */
-    virtual double sparse_proportion() const = 0;
+    virtual double is_sparse_proportion() const = 0;
 
     /**
      * @return The preferred dimension for extracting values.

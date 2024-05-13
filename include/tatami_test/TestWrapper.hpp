@@ -25,12 +25,12 @@ public:
         return mat->ncol();
     }
 
-    bool sparse() const {
-        return mat->sparse();
+    bool is_sparse() const {
+        return mat->is_sparse();
     }
 
-    double sparse_proportion() const {
-        return mat->sparse_proportion();
+    double is_sparse_proportion() const {
+        return mat->is_sparse_proportion();
     }
 
     bool prefer_rows() const {

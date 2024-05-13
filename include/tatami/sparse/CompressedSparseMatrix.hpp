@@ -487,9 +487,9 @@ public:
 
     Index_ ncol() const { return ncols; }
 
-    bool sparse() const { return true; }
+    bool is_sparse() const { return true; }
 
-    double sparse_proportion() const { return 1; }
+    double is_sparse_proportion() const { return 1; }
 
     bool prefer_rows() const { return csr; }
 

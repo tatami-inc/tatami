@@ -92,7 +92,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
         // First pass to figure out how many non-zeros there are.
         output_p.resize(static_cast<size_t>(primary) + 1);
 
-        if (incoming->sparse()) {
+        if (incoming->is_sparse()) {
             Options opt;
             opt.sparse_extract_value = false;
             opt.sparse_extract_index = false;
@@ -128,7 +128,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
         output_i.resize(output_p.back());
 
         // Second pass to actually fill our vectors.
-        if (incoming->sparse()) {
+        if (incoming->is_sparse()) {
             Options opt;
             opt.sparse_ordered_index = false;
 
@@ -176,7 +176,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
             x.resize(static_cast<size_t>(primary) + 1);
         }
 
-        if (incoming->sparse()) {
+        if (incoming->is_sparse()) {
             Options opt;
             opt.sparse_extract_value = false;
             opt.sparse_ordered_index = false;
@@ -228,7 +228,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
         output_i.resize(output_p.back());
 
         // Second pass to actually fill our vectors.
-        if (incoming->sparse()) {
+        if (incoming->is_sparse()) {
             Options opt;
             opt.sparse_ordered_index = false;
 

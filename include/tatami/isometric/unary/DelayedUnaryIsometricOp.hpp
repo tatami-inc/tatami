@@ -485,13 +485,13 @@ private:
         report_index = opt.sparse_extract_index;
 
         // The index is not required if we don't even want the values,
-        // in which case Operation_::sparse() isn't even called.
+        // in which case Operation_::is_sparse() isn't even called.
         if (report_value) {
             opt.sparse_extract_index = true;
 
             // We only need an internal ibuffer if the user wants the
             // values but didn't provide enough space to store the indices
-            // (which we need to pass to Operation_::sparse()).
+            // (which we need to pass to Operation_::is_sparse()).
             if (!report_index) {
                 internal_ibuffer.resize(extent);
             }
@@ -567,19 +567,19 @@ public:
         return mat->ncol();
     }
 
-    bool sparse() const {
+    bool is_sparse() const {
         if constexpr(is_advanced) {
             if (operation.is_sparse()) {
-                return mat->sparse();
+                return mat->is_sparse();
             }
         }
         return false;
     }
 
-    double sparse_proportion() const {
+    double is_sparse_proportion() const {
         if constexpr(is_advanced) {
             if (operation.is_sparse()) {
-                return mat->sparse_proportion();
+                return mat->is_sparse_proportion();
             }
         }
         return 0;
@@ -642,7 +642,7 @@ private:
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, Args_&& ... args) const {
         if constexpr(is_advanced) {
-            if (mat->sparse()) {
+            if (mat->is_sparse()) {
                 // If we don't depend on the rows, then we don't need row indices when 'row = false'.
                 // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.
                 if ((!Operation_::zero_depends_on_row && !row) || (!Operation_::zero_depends_on_column && row)) {
@@ -702,7 +702,7 @@ private:
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) const {
         if constexpr(is_advanced) {
-            if (operation.is_sparse() && mat->sparse()) { 
+            if (operation.is_sparse() && mat->is_sparse()) { 
                 if ((!Operation_::non_zero_depends_on_row && !row) || (!Operation_::non_zero_depends_on_column && row)) {
                     // If we don't depend on the rows, then we don't need row indices when 'row = false'.
                     // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.

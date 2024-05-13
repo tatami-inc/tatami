@@ -54,10 +54,10 @@ TEST_P(BooleanVectorTest, AND) {
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
-    EXPECT_TRUE(sparse_mod->sparse());
+    EXPECT_TRUE(sparse_mod->is_sparse());
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
@@ -96,13 +96,13 @@ TEST_P(BooleanVectorTest, OR) {
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
     if (is_sparse) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -142,13 +142,13 @@ TEST_P(BooleanVectorTest, XOR) {
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
     if (is_sparse) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -190,13 +190,13 @@ TEST_P(BooleanVectorTest, EQUAL) {
         sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
     }
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
     if (is_sparse) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would

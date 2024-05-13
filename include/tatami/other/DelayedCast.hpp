@@ -210,12 +210,12 @@ public:
         return ptr->ncol();
     }
 
-    bool sparse() const {
-        return ptr->sparse();
+    bool is_sparse() const {
+        return ptr->is_sparse();
     }
 
-    double sparse_proportion() const {
-        return ptr->sparse_proportion();
+    double is_sparse_proportion() const {
+        return ptr->is_sparse_proportion();
     }
 
     bool prefer_rows() const { 

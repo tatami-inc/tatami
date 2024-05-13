@@ -158,7 +158,7 @@ auto iext = mat->sparse_row(std::vector<int>{ 1, 3, 5, 7 });
 In performance-critical sections, it may be desirable to customize the extraction based on properties of the matrix.
 This is supported with the following methods:
 
-- `tatami::Matrix::sparse()` indicates whether a matrix is sparse.
+- `tatami::Matrix::is_sparse()` indicates whether a matrix is sparse.
 - `tatami::Matrix::prefer_rows()` indicates whether a matrix is more efficiently accessed along its rows (e.g., row-major dense matrices).
 
 Users can then write dedicated code paths to take advantage of these properties.
@@ -168,7 +168,7 @@ we could iterate on the columns and attempt to compute the statistic in a "runni
 In the most complex cases, this leads to code like:
 
 ```cpp
-if (mat->sparse()) {
+if (mat->is_sparse()) {
     if (mat->prefer_rows()) {
         auto sext = mat->sparse_row();
         // Do compute along sparse rows.

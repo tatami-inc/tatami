@@ -45,15 +45,15 @@ protected:
 TEST_F(TransposeTest, Basic) {
     EXPECT_EQ(tdense->ncol(), nrow);
     EXPECT_EQ(tdense->nrow(), ncol);
-    EXPECT_FALSE(tdense->sparse());
-    EXPECT_EQ(tdense->sparse_proportion(), 0);
+    EXPECT_FALSE(tdense->is_sparse());
+    EXPECT_EQ(tdense->is_sparse_proportion(), 0);
     EXPECT_FALSE(tdense->prefer_rows());
     EXPECT_EQ(tdense->prefer_rows_proportion(), 0);
 
     EXPECT_EQ(tsparse->ncol(), nrow);
     EXPECT_EQ(tsparse->nrow(), ncol);
-    EXPECT_TRUE(tsparse->sparse());
-    EXPECT_EQ(tsparse->sparse_proportion(), 1);
+    EXPECT_TRUE(tsparse->is_sparse());
+    EXPECT_EQ(tsparse->is_sparse_proportion(), 1);
     EXPECT_TRUE(tsparse->prefer_rows());
     EXPECT_EQ(tsparse->prefer_rows_proportion(), 1);
 

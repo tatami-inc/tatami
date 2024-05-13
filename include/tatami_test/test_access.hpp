@@ -229,7 +229,7 @@ void test_access_base(
         } 
     }
 
-    if (params.check_sparse && ptr->sparse()) {
+    if (params.check_sparse && ptr->is_sparse()) {
         EXPECT_TRUE(sparse_counter < static_cast<size_t>(NR) * static_cast<size_t>(NC));
     }
 }

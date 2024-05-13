@@ -86,15 +86,15 @@ TEST_F(DelayedBindUtilsTest, ByRow) {
 
     EXPECT_EQ(bound_dense->nrow(), 35);
     EXPECT_EQ(bound_dense->ncol(), otherdim);
-    EXPECT_FALSE(bound_dense->sparse());
-    EXPECT_EQ(bound_dense->sparse_proportion(), 0);
+    EXPECT_FALSE(bound_dense->is_sparse());
+    EXPECT_EQ(bound_dense->is_sparse_proportion(), 0);
     EXPECT_TRUE(bound_dense->prefer_rows());
     EXPECT_EQ(bound_dense->prefer_rows_proportion(), 1);
 
     EXPECT_EQ(bound_sparse->nrow(), 35);
     EXPECT_EQ(bound_sparse->ncol(), otherdim);
-    EXPECT_TRUE(bound_sparse->sparse());
-    EXPECT_EQ(bound_sparse->sparse_proportion(), 1);
+    EXPECT_TRUE(bound_sparse->is_sparse());
+    EXPECT_EQ(bound_sparse->is_sparse_proportion(), 1);
     EXPECT_FALSE(bound_sparse->prefer_rows());
     EXPECT_EQ(bound_sparse->prefer_rows_proportion(), 0);
 
@@ -107,12 +107,12 @@ TEST_F(DelayedBindUtilsTest, ByColumn) {
 
     EXPECT_EQ(bound_dense->nrow(), otherdim);
     EXPECT_EQ(bound_dense->ncol(), 35);
-    EXPECT_FALSE(bound_dense->sparse());
+    EXPECT_FALSE(bound_dense->is_sparse());
     EXPECT_FALSE(bound_dense->prefer_rows());
 
     EXPECT_EQ(bound_sparse->nrow(), otherdim);
     EXPECT_EQ(bound_sparse->ncol(), 35);
-    EXPECT_TRUE(bound_sparse->sparse());
+    EXPECT_TRUE(bound_sparse->is_sparse());
     EXPECT_FALSE(bound_sparse->prefer_rows());
 
     EXPECT_FALSE(bound_dense->uses_oracle(false));
@@ -125,8 +125,8 @@ TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
     // Bound_sparse is CSC, bound_dense is row-major.
     auto combined = tatami::make_DelayedBind<1>(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ bound_sparse, bound_dense });
 
-    EXPECT_FLOAT_EQ(combined->sparse_proportion(), 0.5);
-    EXPECT_FALSE(combined->sparse());
+    EXPECT_FLOAT_EQ(combined->is_sparse_proportion(), 0.5);
+    EXPECT_FALSE(combined->is_sparse());
 
     EXPECT_FLOAT_EQ(combined->prefer_rows_proportion(), 0.5);
     EXPECT_FALSE(combined->prefer_rows());

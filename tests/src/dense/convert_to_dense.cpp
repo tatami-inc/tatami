@@ -29,14 +29,14 @@ TEST_P(ConvertToDenseTest, FromDense) {
 
     auto converted = tatami::convert_to_dense(mat.get(), to_row, threads);
     EXPECT_EQ(converted->prefer_rows(), to_row);
-    EXPECT_FALSE(converted->sparse());
+    EXPECT_FALSE(converted->is_sparse());
 
     tatami_test::test_simple_row_access(converted.get(), mat.get());
     tatami_test::test_simple_column_access(converted.get(), mat.get());
 
     auto converted2 = tatami::convert_to_dense<int, size_t>(mat.get(), to_row, threads); // works for a different type.
     EXPECT_EQ(converted2->prefer_rows(), to_row);
-    EXPECT_FALSE(converted2->sparse());
+    EXPECT_FALSE(converted2->is_sparse());
 
     auto old = mat->dense_row();
     std::vector<double> buffer(NC);
@@ -55,7 +55,7 @@ TEST_P(ConvertToDenseTest, FromSparse) {
 
     auto converted = tatami::convert_to_dense(&smat, to_row, threads);
     EXPECT_EQ(converted->prefer_rows(), to_row);
-    EXPECT_FALSE(converted->sparse());
+    EXPECT_FALSE(converted->is_sparse());
     tatami_test::test_simple_row_access(converted.get(), &smat);
     tatami_test::test_simple_column_access(converted.get(), &smat);
 }

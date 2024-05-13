@@ -76,8 +76,8 @@ protected:
 TEST_F(DelayedCastTest, Dense) {
     EXPECT_EQ(cast_dense->nrow(), nrow);
     EXPECT_EQ(cast_dense->ncol(), ncol);
-    EXPECT_EQ(cast_dense->sparse(), dense->sparse());
-    EXPECT_EQ(cast_dense->sparse_proportion(), dense->sparse_proportion());
+    EXPECT_EQ(cast_dense->is_sparse(), dense->is_sparse());
+    EXPECT_EQ(cast_dense->is_sparse_proportion(), dense->is_sparse_proportion());
     EXPECT_EQ(cast_dense->prefer_rows(), dense->prefer_rows());
     EXPECT_EQ(cast_dense->prefer_rows_proportion(), dense->prefer_rows_proportion());
 
@@ -87,8 +87,8 @@ TEST_F(DelayedCastTest, Dense) {
 TEST_F(DelayedCastTest, Sparse) {
     EXPECT_EQ(cast_sparse->nrow(), nrow);
     EXPECT_EQ(cast_sparse->ncol(), ncol);
-    EXPECT_EQ(cast_sparse->sparse(), sparse->sparse());
-    EXPECT_EQ(cast_sparse->sparse_proportion(), sparse->sparse_proportion());
+    EXPECT_EQ(cast_sparse->is_sparse(), sparse->is_sparse());
+    EXPECT_EQ(cast_sparse->is_sparse_proportion(), sparse->is_sparse_proportion());
     EXPECT_EQ(cast_sparse->prefer_rows(), sparse->prefer_rows());
     EXPECT_EQ(cast_sparse->prefer_rows_proportion(), sparse->prefer_rows_proportion());
 

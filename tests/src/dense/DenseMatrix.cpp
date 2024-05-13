@@ -14,8 +14,8 @@ TEST(DenseMatrix, Basic) {
 
     tatami::DenseColumnMatrix<double, int> mat(10, 20, contents);
 
-    EXPECT_FALSE(mat.sparse());
-    EXPECT_EQ(mat.sparse_proportion(), 0);
+    EXPECT_FALSE(mat.is_sparse());
+    EXPECT_EQ(mat.is_sparse_proportion(), 0);
     EXPECT_FALSE(mat.prefer_rows());
     EXPECT_EQ(mat.prefer_rows_proportion(), 0);
 
@@ -95,8 +95,8 @@ TEST_F(DenseUtilsTest, Basic) {
     EXPECT_FALSE(dense_column->prefer_rows());
     EXPECT_TRUE(dense_row->prefer_rows());
 
-    EXPECT_FALSE(dense_column->sparse());
-    EXPECT_FALSE(dense_row->sparse());
+    EXPECT_FALSE(dense_column->is_sparse());
+    EXPECT_FALSE(dense_row->is_sparse());
 }
 
 /*************************************

@@ -58,7 +58,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, bool row
             }
         }, primary, threads);
 
-    } else if (incoming->sparse()) {
+    } else if (incoming->is_sparse()) {
         std::fill_n(store, primary * secondary, 0); // already cast to size_t to avoid overflow.
 
         // We iterate over the input matrix's preferred dimension but split

@@ -41,14 +41,14 @@ TEST_P(CompareScalarTest, Equal) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
     EXPECT_EQ(dense->ncol(), ncol);
 
     if (val) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -71,14 +71,14 @@ TEST_P(CompareScalarTest, GreaterThan) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
     EXPECT_EQ(dense->ncol(), ncol);
 
     if (val >= 0) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -101,14 +101,14 @@ TEST_P(CompareScalarTest, LessThan) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
     EXPECT_EQ(dense->ncol(), ncol);
 
     if (val <= 0) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -131,14 +131,14 @@ TEST_P(CompareScalarTest, GreaterThanOrEqual) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
     EXPECT_EQ(dense->ncol(), ncol);
 
     if (val > 0) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -161,14 +161,14 @@ TEST_P(CompareScalarTest, LessThanOrEqual) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
     EXPECT_EQ(dense->ncol(), ncol);
 
     if (val < 0) {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -191,14 +191,14 @@ TEST_P(CompareScalarTest, NotEqual) {
     auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
     auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
 
-    EXPECT_FALSE(dense_mod->sparse());
+    EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
     EXPECT_EQ(dense->ncol(), ncol);
 
     if (val) {
-        EXPECT_FALSE(sparse_mod->sparse());
+        EXPECT_FALSE(sparse_mod->is_sparse());
     } else {
-        EXPECT_TRUE(sparse_mod->sparse());
+        EXPECT_TRUE(sparse_mod->is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
