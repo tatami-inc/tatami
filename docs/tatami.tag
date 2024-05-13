@@ -531,16 +531,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1CompressedSparseMatrix.html</anchorfile>
-      <anchor>a7892240aff15ac1306c8b616a88c6ff3</anchor>
+      <anchor>ada14aaaeb96bafe8d483ed2d3f91bb59</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1CompressedSparseMatrix.html</anchorfile>
-      <anchor>a214eb83197e6997796fdca0dc82eb963</anchor>
+      <anchor>a8cc56caec424be36706baaa824631e9c</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -889,16 +889,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
-      <anchor>a6c917133bab98a7937550bb359037d23</anchor>
+      <anchor>a2148fd4eb5371cc25c5dbc2c5ff873bf</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOp.html</anchorfile>
-      <anchor>a9a1adeab0a859ee84f7af45f213b5d2d</anchor>
+      <anchor>a3def1d40315715b6c8ad179735d70d9f</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1043,16 +1043,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedBind.html</anchorfile>
-      <anchor>af10266a2877bc2e3c805eee8f9bfabbd</anchor>
+      <anchor>a79b7ed57367550ed4c2ddbc4798464f8</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedBind.html</anchorfile>
-      <anchor>a5606c9c896d10de04924e62852114469</anchor>
+      <anchor>a53a04770fdc42a2a906f677b325d7998</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1183,16 +1183,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedCast.html</anchorfile>
-      <anchor>aa0e027b46d8eb69d17ce495e20c48dfc</anchor>
+      <anchor>aa2e8ede032453d49cbfbc98771a3fd6d</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedCast.html</anchorfile>
-      <anchor>aba1c0c2417d64bdf862c67adcf7ab66b</anchor>
+      <anchor>ab5b7952a43d2c1255032b2b671b3b040</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1465,16 +1465,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedSubset.html</anchorfile>
-      <anchor>aa29a94d02e5d9c682f31b8d299b807e7</anchor>
+      <anchor>ad7fb9953b1158dbf3f498fce7ca3aa35</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedSubset.html</anchorfile>
-      <anchor>abf3786970dd0b97e65bbd402bfb09287</anchor>
+      <anchor>abc68a783b742b9c02fb5d411a4d0109f</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1612,16 +1612,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedSubsetBlock.html</anchorfile>
-      <anchor>a76df699230f31bf30bf21a89e2cba3be</anchor>
+      <anchor>a77b5f60160bd1437e5ce142d8cdafab5</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedSubsetBlock.html</anchorfile>
-      <anchor>aa8ea9a751f11fa6cbdd8172c978dcfe9</anchor>
+      <anchor>a4df587f4add88fd84abd461495b78f06</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1760,16 +1760,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedSubsetSorted.html</anchorfile>
-      <anchor>ad74f603cafb120ac471c305c00d2519f</anchor>
+      <anchor>a217ef766f41560aa0a51b6d3c57cdd72</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedSubsetSorted.html</anchorfile>
-      <anchor>a0990d2e5d296b7c864ad17ae7507b0b3</anchor>
+      <anchor>af55b74218794d8247fa85259a01851f4</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -1908,16 +1908,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedSubsetSortedUnique.html</anchorfile>
-      <anchor>a4e5df21b25d76cb26351e188377bece8</anchor>
+      <anchor>a622fd4d858aece682f9fb2e2f84a06e8</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedSubsetSortedUnique.html</anchorfile>
-      <anchor>ad7ec82bec6d6fb4effbd59f3286648fd</anchor>
+      <anchor>a065cd17412f11b8c9c7323fea513ffb1</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -2056,16 +2056,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedSubsetUnique.html</anchorfile>
-      <anchor>ae81e5e375d044231f19c0ed8f8275c4b</anchor>
+      <anchor>a6debe7174c870f271aef94a4eb88e17c</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedSubsetUnique.html</anchorfile>
-      <anchor>a35ab98be6316557cff0cddf3d2d846c3</anchor>
+      <anchor>a58798108d22d24b2c86f9da156749256</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -2213,16 +2213,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedTranspose.html</anchorfile>
-      <anchor>a7e981425a1c2653be11ca4e1b14a2a64</anchor>
+      <anchor>a64df8253602c0e2ad716b154b079c8aa</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedTranspose.html</anchorfile>
-      <anchor>a778b7daddea3238c9aa8efe01b059fea</anchor>
+      <anchor>ae879d7274b0196f18f82ccba86a178ad</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -2465,16 +2465,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
-      <anchor>abf2131b00738a76e81afb260bc3e4ed4</anchor>
+      <anchor>a4b6a9444eeff37ceb1ee9953e0b87a1a</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricOp.html</anchorfile>
-      <anchor>a8975153bf959ef935fb88e0558d0d3e6</anchor>
+      <anchor>aa0ec7f06e69532658bdca9e47c8e8b34</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -2642,16 +2642,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>a850524f1450e40fcda98fb60d11c5304</anchor>
+      <anchor>a4a362f61248baa1f4c13aaeafcd96dbb</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DenseMatrix.html</anchorfile>
-      <anchor>a85e558abb3a9d3d5020c3d48728ba032</anchor>
+      <anchor>a884c8899818f7a8ea6a150c3684048ef</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -2882,16 +2882,16 @@
     </member>
     <member kind="function">
       <type>bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
-      <anchor>a977926c198ee3c0f171714ce5d74dd55</anchor>
+      <anchor>a9c14f99e0ef86e41742aec9d5c086996</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
-      <anchor>a8cee1678e076b1f7bb8076b0d1e9208a</anchor>
+      <anchor>a9190434e706cbb52a9765ff827735f6f</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
@@ -3257,16 +3257,16 @@
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual bool</type>
-      <name>sparse</name>
+      <name>is_sparse</name>
       <anchorfile>classtatami_1_1Matrix.html</anchorfile>
-      <anchor>a9de24a05a6aee62d4ba59799a73242e7</anchor>
+      <anchor>ac57d65707ce22d8c175e43a82b8c6b90</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">
       <type>virtual double</type>
-      <name>sparse_proportion</name>
+      <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1Matrix.html</anchorfile>
-      <anchor>a8a1a29b602b903201fc36ad65f76c78c</anchor>
+      <anchor>aa72c81add2701b7e484a7855b0e62b12</anchor>
       <arglist>() const =0</arglist>
     </member>
     <member kind="function" virtualness="pure">

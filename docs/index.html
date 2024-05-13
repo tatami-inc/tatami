@@ -177,11 +177,11 @@ $(function() {
 </div><!-- fragment --><h2>Handling different access patterns</h2>
 <p>In performance-critical sections, it may be desirable to customize the extraction based on properties of the matrix. This is supported with the following methods:</p>
 <ul>
-<li><code><a class="el" href="classtatami_1_1Matrix.html#a9de24a05a6aee62d4ba59799a73242e7">tatami::Matrix::sparse()</a></code> indicates whether a matrix is sparse.</li>
+<li><code><a class="el" href="classtatami_1_1Matrix.html#ac57d65707ce22d8c175e43a82b8c6b90">tatami::Matrix::is_sparse()</a></code> indicates whether a matrix is sparse.</li>
 <li><code><a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">tatami::Matrix::prefer_rows()</a></code> indicates whether a matrix is more efficiently accessed along its rows (e.g., row-major dense matrices).</li>
 </ul>
 <p>Users can then write dedicated code paths to take advantage of these properties. For example, we might use different algorithms for dense data, where we don't have to look up indices; and for sparse data, if we can avoid the uninteresting zero values. Similarly, if we want to compute a row-wise statistic, but the matrix is more efficiently accessed by column according to <code>prefer_rows()</code>, we could iterate on the columns and attempt to compute the statistic in a "running" manner (see <a href="gallery/src/colsums.cpp"><code>colsums.cpp</code></a> for an example). In the most complex cases, this leads to code like:</p>
-<div class="fragment"><div class="line"><span class="keywordflow">if</span> (mat-&gt;sparse()) {</div>
+<div class="fragment"><div class="line"><span class="keywordflow">if</span> (mat-&gt;is_sparse()) {</div>
 <div class="line">    <span class="keywordflow">if</span> (mat-&gt;prefer_rows()) {</div>
 <div class="line">        <span class="keyword">auto</span> sext = mat-&gt;sparse_row();</div>
 <div class="line">        <span class="comment">// Do compute along sparse rows.</span></div>
