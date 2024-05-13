@@ -18,7 +18,7 @@ namespace tatami {
  * @tparam Value_ Data value type, should be numeric.
  * @tparam Index_ Row/column index type, should be integer.
  *
- * @brief Extract a dimension element in dense form without an oracle.
+ * @brief Extract an element of the target dimension in dense form without an oracle.
  */
 template<typename Value_, typename Index_>
 struct MyopicDenseExtractor {
@@ -26,10 +26,10 @@ struct MyopicDenseExtractor {
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
      *
-     * @param i Index of the desired dimension element, i.e., the row or column index.
+     * @param i Index of the target dimension element, i.e., the row or column index.
      * @param[out] buffer Pointer to an array of length no less than `N`, where `N` is defined as:
-     * - the number of columns, when extracting the full extent of each row.
-     * - the number of rows, when extracting the full extent of each column.
+     * - the number of columns, when extracting each row.
+     * - the number of rows, when extracting each column.
      * - the block length, when extracting a contiguous block from each row/column.
      * - the number of indices, when extracting an indexed subset of each row/column.
      *
@@ -60,7 +60,7 @@ struct MyopicDenseExtractor {
 /**
  * @tparam Value_ Data value type, should be numeric.
  * @tparam Index_ Row/column index type, should be integer.
- * @brief Extract in dense form with an oracle.
+ * @brief Extract an element of the target dimension in dense form with an oracle.
  */
 template<typename Value_, typename Index_>
 struct OracularDenseExtractor {
@@ -71,7 +71,7 @@ struct OracularDenseExtractor {
      * @param[out] buffer Pointer to an array of length no less than `N`,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
-     * @return Pointer to an array containing the contents of the next dimension element,
+     * @return Pointer to an array containing the contents of the next element of the target dimension,
      * as predicted by the `Oracle` used to construct this instance.
      * This is guaranteed to have `N` values.
      */
@@ -122,7 +122,7 @@ struct OracularDenseExtractor {
 /**
  * @tparam Value_ Data value type, should be numeric.
  * @tparam Index_ Row/column index type, should be integer.
- * @brief Extract in sparse form without an oracle.
+ * @brief Extract an element of the target dimension in sparse form without an oracle.
  */
 template<typename Value_, typename Index_>
 struct MyopicSparseExtractor {
@@ -137,7 +137,7 @@ struct MyopicSparseExtractor {
      * Similarly, if `Options::sparse_extract_index` was set to `false` during construction of this instance,
      * `ibuffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
      *
-     * @param i Index of the desired dimension element, i.e., the row or column index.
+     * @param i Index of the target dimension element, i.e., the row or column index.
      * @param[out] vbuffer Pointer to an array with enough space for at least `N` values,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
@@ -169,7 +169,7 @@ struct MyopicSparseExtractor {
 /**
  * @tparam Value_ Data value type, should be numeric.
  * @tparam Index_ Row/column index type, should be integer.
- * @brief Extract in sparse form with an oracle.
+ * @brief Extract an element of the target dimension in sparse form with an oracle.
  */
 template<typename Value_, typename Index_>
 struct OracularSparseExtractor {
@@ -189,7 +189,7 @@ struct OracularSparseExtractor {
      * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
-     * @return A `SparseRange` object describing the contents of the next dimension element,
+     * @return A `SparseRange` object describing the contents of the next element of the target dimension, 
      * as predicted by the `Oracle` used to construct this instance.
      */
     SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
