@@ -49,5 +49,8 @@ var searchData=
   ['delayedunaryadvancedmockhelper_46',['DelayedUnaryAdvancedMockHelper',['../structtatami_1_1DelayedUnaryAdvancedMockHelper.html',1,'tatami']]],
   ['delayedunarybasicmockhelper_47',['DelayedUnaryBasicMockHelper',['../structtatami_1_1DelayedUnaryBasicMockHelper.html',1,'tatami']]],
   ['delayedunaryisometricop_48',['DelayedUnaryIsometricOp',['../classtatami_1_1DelayedUnaryIsometricOp.html',1,'tatami']]],
-  ['densematrix_49',['DenseMatrix',['../classtatami_1_1DenseMatrix.html',1,'tatami']]]
+  ['densecolumnmatrix_49',['DenseColumnMatrix',['../classtatami_1_1DenseColumnMatrix.html',1,'tatami']]],
+  ['densematrix_50',['DenseMatrix',['../classtatami_1_1DenseMatrix.html',1,'tatami']]],
+  ['densematrix_3c_20value_5f_2c_20index_5f_2c_20std_3a_3avector_3c_20value_5f_20_3e_20_3e_51',['DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;',['../classtatami_1_1DenseMatrix.html',1,'tatami']]],
+  ['denserowmatrix_52',['DenseRowMatrix',['../classtatami_1_1DenseRowMatrix.html',1,'tatami']]]
 ];

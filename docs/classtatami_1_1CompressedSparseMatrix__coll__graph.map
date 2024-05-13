@@ -1,5 +1,5 @@
-<map id="tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;" name="tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;">
-<area shape="rect" id="Node000001" title="Compressed sparse matrix representation." alt="" coords="5,94,224,165"/>
-<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="43,5,186,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,62,117,93,112,93,112,62"/>
+<map id="tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;" name="tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;">
+<area shape="rect" id="Node000001" title="Compressed sparse matrix representation." alt="" coords="5,94,209,165"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="36,5,178,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="110,62,110,93,104,93,104,62"/>
 </map>

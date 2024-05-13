@@ -1,5 +1,5 @@
-<map id="tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;" name="tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;">
-<area shape="rect" id="Node000001" title="Delayed combining of a matrix." alt="" coords="5,94,187,135"/>
-<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="25,5,167,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="99,62,99,94,93,94,93,62"/>
+<map id="tatami::DelayedBind&lt; Value_, Index_ &gt;" name="tatami::DelayedBind&lt; Value_, Index_ &gt;">
+<area shape="rect" id="Node000001" title="Delayed combining of a matrix." alt="" coords="9,94,144,135"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="5,5,148,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="79,62,79,94,74,94,74,62"/>
 </map>

@@ -83,7 +83,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Virtual class for a matrix with a defined type.  
+<p>Virtual class for a matrix.  
  <a href="classtatami_1_1Matrix.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Matrix_8hpp_source.html">Matrix.hpp</a>&gt;</code></p>
@@ -266,7 +266,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a> = int&gt;<br />
-class tatami::Matrix&lt; Value_, Index_ &gt;</div><p>Virtual class for a matrix with a defined type. </p>
+class tatami::Matrix&lt; Value_, Index_ &gt;</div><p>Virtual class for a matrix. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value</td><td>Data value type, should be numeric. </td></tr>
@@ -336,7 +336,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Number of rows. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a108c3fffbcdd9ca44cde3c5e2ec8ce9a">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#ae948f15be02f19e00dd61056ea958a83">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a27526af79dcb3b5a3b9460733355137e">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#ad4b4b14a53e79294bb3c51e2d03edb54">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#a6669aa5ef922006a2c36b2a7d6770b80">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#ae861c999ade80dfaab4e00ea0a3c9f89">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a3e67d6e54117433851d7c9453439f759">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a713230b7d55a09d472e09e8363654183">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a363f65ce5c29b4a4b9c8e49037559f69">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ad464fba67568e017244f1a5378262b1f">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a4244a48118361e58e3b8dcf26384df45">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#ae01ccb17c3afde476f89dfe6b6312b45">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a8cd3203978e03fc049acdb5c30609204">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#ab18c5c9611a0d989391b511d2430a1a4">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#ab18c5c9611a0d989391b511d2430a1a4">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#ae948f15be02f19e00dd61056ea958a83">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a27526af79dcb3b5a3b9460733355137e">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a64f90b7152def0f1a53aadbac1901687">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#a6669aa5ef922006a2c36b2a7d6770b80">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#ae861c999ade80dfaab4e00ea0a3c9f89">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a3365d94d7ad16f89d780ba27deffa45a">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a3365d94d7ad16f89d780ba27deffa45a">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a9632369fd9488210695dbd05b13a8ab5">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a9632369fd9488210695dbd05b13a8ab5">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#abc3051f952d1f8ca79b2558183477c00">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a1f09481f1564fe050f515ab893ab3cb7">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a0990b0042c6e09b843e7c73b46f63124">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#ab5dc1edede193463699fdc466e1c8838">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a3c73e20b55828b68de1e396da713dcab">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -366,7 +366,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Number of columns. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#ae025690fa69ae5acc9c2c25931c30efb">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a28043844566505282c396dfa00b15881">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a57d5be64d07b2ca81dc232cbac702ea2">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#af3e218d269c0dd0bf61358a2df462def">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#aa83b0cdd9395331151d8292e786deeb7">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a495080ac6d15551d6816adf85ab2d481">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#aa3869e4e92e47566b5d238c2ac87526c">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a6b302efc9d37ff270780579781f259e5">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#acf487dcd36c8612f8014bbe3b0362f4a">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#aeb6512ab3d6b70fa3ead75fd47995a60">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#abffcd6776a07da8f14fa4ca2b3410e8d">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#ad37c87845de22fd19218b32672f0a32f">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#abc7eb3bb7c9f4024489deae9c1d3a78d">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#ae43ef7c94906bc7eb73f39dc720171f6">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#ae43ef7c94906bc7eb73f39dc720171f6">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a28043844566505282c396dfa00b15881">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a57d5be64d07b2ca81dc232cbac702ea2">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#acb743be5663d4fb13624ba0502448bd8">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#aa83b0cdd9395331151d8292e786deeb7">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a495080ac6d15551d6816adf85ab2d481">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#ae7a25c967b851a667885a2052ad6a45f">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#ae7a25c967b851a667885a2052ad6a45f">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a427e1a6ab4a1eded1374b30c3d6f05ae">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a427e1a6ab4a1eded1374b30c3d6f05ae">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a74fcc25c68621f55b0779ed62db3cec8">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a397f04132c63c97c39afa68e2bc2f600">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#ad93ab7786a1384949ba18874b75992b4">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a391fa3e61a8070e388eee35364570817">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a0107c824547d26ee65af06f984127785">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -397,7 +397,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 <dl class="section return"><dt>Returns</dt><dd>Boolean indicating whether this matrix is sparse.</dd></dl>
 <p>This can be used to choose between <code><a class="el" href="classtatami_1_1Matrix.html#aedecd4c23762ff43f49cfb0d2c687056">sparse_row()</a></code> and <code><a class="el" href="classtatami_1_1Matrix.html#a4d572f319b614a7e74d426cac94194de">dense_row()</a></code> when iterating over the rows (similarly so for the columns). </p>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#ada5ea448c637035ce62ed94d2744f7de">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a6c917133bab98a7937550bb359037d23">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#abf2131b00738a76e81afb260bc3e4ed4">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a015cdac3de086438b5305195b84a2eee">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#aa0e027b46d8eb69d17ce495e20c48dfc">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a7e981425a1c2653be11ca4e1b14a2a64">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a96666f952ad63ede2f7920ce72fdaf37">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a93dad37ca355923e02f5fa346dfd74c6">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a2738d02a23fad9f5dca3125905533067">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#afbbdf9fe3282eb0e157020b44812daf1">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#ad3de98a3b6a0bd33081544b4757d014f">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a964965ffd2dbb46be8c2e43e43fe7021">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#ab89df61da7d2dbda82198df41961f02d">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a850524f1450e40fcda98fb60d11c5304">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a850524f1450e40fcda98fb60d11c5304">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a6c917133bab98a7937550bb359037d23">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#abf2131b00738a76e81afb260bc3e4ed4">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#af10266a2877bc2e3c805eee8f9bfabbd">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#aa0e027b46d8eb69d17ce495e20c48dfc">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a7e981425a1c2653be11ca4e1b14a2a64">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a7892240aff15ac1306c8b616a88c6ff3">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a7892240aff15ac1306c8b616a88c6ff3">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a977926c198ee3c0f171714ce5d74dd55">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a977926c198ee3c0f171714ce5d74dd55">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#aa29a94d02e5d9c682f31b8d299b807e7">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a76df699230f31bf30bf21a89e2cba3be">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#ad74f603cafb120ac471c305c00d2519f">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a4e5df21b25d76cb26351e188377bece8">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#ae81e5e375d044231f19c0ed8f8275c4b">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -426,9 +426,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that is sparse.</dd></dl>
-<p>This is defined as the proportion of matrix elements that lie within sparse submatrices. It is intended for use in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> representations that consist of combinations of multiple submatrices (e.g., <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code>), allowing them to derive a suitable value for <code><a class="el" href="classtatami_1_1Matrix.html#a9de24a05a6aee62d4ba59799a73242e7">sparse()</a></code> based on whether most of its submatrices are sparse. (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.) </p>
+<p>This is defined as the proportion of matrix elements that lie within sparse submatrices. It is intended for use in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> representations that consist of combinations of multiple submatrices (e.g., <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code>), allowing them to derive a suitable value for <code><a class="el" href="classtatami_1_1Matrix.html#a9de24a05a6aee62d4ba59799a73242e7">sparse()</a></code> based on whether most of its submatrices are sparse. (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.) </p>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a7ff5d90fa485d0cd388695bb90a4d9d9">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a9a1adeab0a859ee84f7af45f213b5d2d">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a8975153bf959ef935fb88e0558d0d3e6">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a34cf182a2f93e85e8d408c25e01a5ac6">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#aba1c0c2417d64bdf862c67adcf7ab66b">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a778b7daddea3238c9aa8efe01b059fea">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a4f86d32bb4e4e74e3e20b60b02c45795">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#ab1e3895c3ef0e0decf14fd05ec26b9bf">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#acd7dfd1edbf3022c5140f5bc17330887">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a6d5db7efb0567a2447c82f1cefad7997">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a75b68a4d28ecc0073a81e6c407cb8930">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#acc91dead096884f86ef77b76a20dd775">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a54c985af221be5d60b406f61e741691c">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a85e558abb3a9d3d5020c3d48728ba032">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a85e558abb3a9d3d5020c3d48728ba032">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a9a1adeab0a859ee84f7af45f213b5d2d">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a8975153bf959ef935fb88e0558d0d3e6">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a5606c9c896d10de04924e62852114469">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#aba1c0c2417d64bdf862c67adcf7ab66b">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a778b7daddea3238c9aa8efe01b059fea">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a214eb83197e6997796fdca0dc82eb963">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a214eb83197e6997796fdca0dc82eb963">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a8cee1678e076b1f7bb8076b0d1e9208a">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a8cee1678e076b1f7bb8076b0d1e9208a">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#abf3786970dd0b97e65bbd402bfb09287">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#aa8ea9a751f11fa6cbdd8172c978dcfe9">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a0990d2e5d296b7c864ad17ae7507b0b3">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#ad7ec82bec6d6fb4effbd59f3286648fd">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a35ab98be6316557cff0cddf3d2d846c3">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -458,7 +458,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>The preferred dimension for extracting values. If <code>true</code>, row-wise extraction is preferred; if <code>false</code>, column-wise extraction is preferred. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#ab2dad56ac067668f2b845b7bcacf2f94">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a98ef4a94d64a2055688b9c736823a7d0">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#af5b5d90d807777c8ee966416b2fe44b8">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a29672009babe2d5bea7a95ab94a827df">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#acd15dc4d42f79dcf6e8f100f59b17a9b">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a8d386b8a0d05d6bcdbc1dd80c7d8118e">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a615e4caecc2e69d0adf16458908603e9">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#ace970c2637bf0070cae8f85e65845fc9">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#ad7d937bb28815076108cf1d2cb7eb9ac">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a00ebfc270ed722fad12d9ca3349cbd33">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a685fbba599f884a4cf95a44e4fc4c7b9">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#abc50ddffc07bfe1075abcd7b4cc41e02">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a8d030a0b68a377bc30962b0662acd856">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a47eade967a5c180ff4a8c8644e57947b">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a47eade967a5c180ff4a8c8644e57947b">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a98ef4a94d64a2055688b9c736823a7d0">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#af5b5d90d807777c8ee966416b2fe44b8">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#adeedfaa0423b0e7c6f12c3d524e0319d">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#acd15dc4d42f79dcf6e8f100f59b17a9b">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a8d386b8a0d05d6bcdbc1dd80c7d8118e">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a45a108841635187e7428cbc6f1969a28">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a45a108841635187e7428cbc6f1969a28">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#ab8415def9c366ffa6ec1713210b518b6">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#ab8415def9c366ffa6ec1713210b518b6">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a199c086a09a7bf2cac401e5f881cc9de">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#aeb7911f1048e29196a24fa0da8093b1a">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#af3f83f7e5c38e66e2dc8de780743adff">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#afa8367d6e5074796799a72d5bca665cb">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#afb98aaad90e62e62bfc50d1888b01298">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -489,7 +489,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 <dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that prefers row-level access.</dd></dl>
 <p>This is defined as the proportion of matrix elements that lie within submatrices that prefer row-level access. It is useful for determining the return value of <code><a class="el" href="classtatami_1_1Matrix.html#a69382d2a4e66cda1a9eb48dc25ab113a">prefer_rows()</a></code> in combined matrices consisting of both row- and column-preferred submatrices. In such cases, the net preference can be determined based on the combined size of the submatrices for each preference. (A more granular approach would be to report the iteration cost on each dimension, but this is difficult to estimate.) </p>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a6e2b959fc2b6f7de296d244cbba5cfa8">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a5963ab48765408c1ac25dd56d038ba41">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a228ccbff3b0bd609ada680f2ed419224">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#ab225a92ca17c09b1eed5d4086cb1e33d">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#a5bbd6fe49cfca5995289950abcf18856">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#af218bfcac74f403cc9d5bd6be84cc7a5">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#acbe930f2e78252b1631d7657bbda2455">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a55f6ca0df7adae11d5a194749803fb18">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a86417eb7b4ea08c49a03b91098b50568">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a9de5fba27b120ec0a07c008ab964524a">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#aa643b08f0d8443d1611665205fd0bfe1">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#ad55e79fa2702133b64af71e5b93a41e3">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#af303be4a8cf50222b93bd126a69920d7">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a44486a7d66661eada08c22a64547e937">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a44486a7d66661eada08c22a64547e937">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a5963ab48765408c1ac25dd56d038ba41">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a228ccbff3b0bd609ada680f2ed419224">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#af6fe54f29461d429362f0b8fec0da84e">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#a5bbd6fe49cfca5995289950abcf18856">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#af218bfcac74f403cc9d5bd6be84cc7a5">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a51bc0d7358afec17953fca1d37eab439">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a51bc0d7358afec17953fca1d37eab439">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a5bc5cb7ee33045f37312445007f487f0">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a5bc5cb7ee33045f37312445007f487f0">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a56e60cdb956ba41eaeabfb79eed5faee">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a33461de6d39962ab1dd23dfd3d574d72">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a44da3045e809379eda8af80981c1d284">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a31e1454717272c017b49d8367d16ca75">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a6ec54d13c3da7bc80859855fc25c95b7">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -527,7 +527,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 <dl class="section return"><dt>Returns</dt><dd>Whether this matrix's <code><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::Extractor</a></code> classes make use of oracle predictions for row (if <code>row = true</code>) or column access (otherwise).</dd></dl>
 <p>The output of this method indicates whether callers should construct an oracle for use in <code>ExtractorBase::set_oracle()</code>. If <code>false</code>, callers should not bother to pass an oracle as it will be ignored. </p>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a7b09379690fd41d786df93427ffc816d">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a9cbdbefdafe60b00f400fac148339566">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#abd1a1ba10e6bd17707cd70852119e38c">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#aa6cbd8349c561942b5989590354c35ad">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a6e814addfd1b93d7999a5383d0e69104">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a3d6296d55f02ba1f39b5b9d66e50386c">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ac989b4ed58351821d0b4e995db3ab658">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a810f2bab68978a1297e44fd6015dcb31">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#afd0685e407df2d3c0c08419f06d08802">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#af9d1f0ab74ed37b79696f6fc993014f4">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a9b62638264c912ecb06cd8cf66bbe967">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a3cb93a9b9f549f26eb847e29d8fa61e2">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#ae712803cedf2672f33d46fb952c99d4a">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a7b09379690fd41d786df93427ffc816d">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a9cbdbefdafe60b00f400fac148339566">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#afb08188ae6e0e681f948ce39c74807ee">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#aa6cbd8349c561942b5989590354c35ad">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a6e814addfd1b93d7999a5383d0e69104">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#aa3ca05a0e63cddc02dbf0c5e61040c94">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ac30ebebd3c8293ca6c4bc86c05a47a71">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a88097141121ba1c8bc4fbb48d024fcf5">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a25b30de526e585a4819b9359ec6507eb">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a50e1037cb7d9dd1f49ebe72175ea28a0">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a829360901235a4f1a0c954c7bba15a36">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a829360901235a4f1a0c954c7bba15a36">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a7fc491a14be516c9321f90c71c877cb7">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a7fc491a14be516c9321f90c71c877cb7">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a880db70dfb5c2827045fb6ef3c34e680">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a880db70dfb5c2827045fb6ef3c34e680">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>.</p>
 
 </div>
 </div>
@@ -573,9 +573,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a469092d6a8fb7333bc6f12992172f2a9">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a79ff5be26506fc4ec284c5cb5ab19c74">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a0eabf41275ca51996147207a77209969">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a6db129773e655cc9149d77fe917fb3d2">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a6f3ea3d4f9c7987045d9c84e4ac8e9c7">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#ac4b9a0bafe2014027e9068a3a076ef01">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a46086fee8ed3a7c1bc3bd52a22a63c45">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a7c52a40fb53203cc74ffab379553ed8a">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a978bdfa2d2dba9953ef9a6e36f83ff0f">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#aff28f07ff91ee530b5b64235d7265b75">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a86536aecc07410ee1a11bd17230060ef">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a8f076854132dc44df3e541f161cb5846">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a00cf78c7ac6f8632fa8c6dfc4c348b6c">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a00cf78c7ac6f8632fa8c6dfc4c348b6c">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#afee13e537eed87d5608c841b124544fa">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#afee13e537eed87d5608c841b124544fa">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a0eabf41275ca51996147207a77209969">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a6db129773e655cc9149d77fe917fb3d2">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a2501986079d0301b8a8ceec0a9353549">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#ac4b9a0bafe2014027e9068a3a076ef01">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a46086fee8ed3a7c1bc3bd52a22a63c45">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a609088739b6ea5d2ee34e1e44ed69a71">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a3b18c892e717c1a1167a5b2028e1110f">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a1125206f4db72a068c1aed9e48fbdf98">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a62078d76745cbc171f3385f421df1273">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a84317ee8e94f5cba6e586f20dcb28c65">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -635,9 +635,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a2ddecab528c5c874f0c9be4632b96187">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#aa592f39abc882422b86d26f9f06cfa6b">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a934ed81b355856d2fde461fa2ad247cd">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a1eb9956e6f905dd4bf004f2657542215">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#af65d583f6d5009eb495a6a54df894705">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a3b44b07b7bbfcd6e0d1f9129c1e04fe5">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a63db647c8c0d66241d4924d18de0128a">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a4ed9165bad1850bcbdb34c2000190c3c">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#aba80427be23d5917054b4fd69bfbad7d">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a0f40b4122d6451a8d662b4ace0a85c0d">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#ad9c702a428584211a40044037153822b">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a0af1b7a669b244fd0af79ecdbb51e234">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a8f4f83eb19ba3d9d69ec31552935923e">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a8f4f83eb19ba3d9d69ec31552935923e">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#ab756a390f2edb4ac4e33b4dace0ddee4">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#ab756a390f2edb4ac4e33b4dace0ddee4">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a934ed81b355856d2fde461fa2ad247cd">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a1eb9956e6f905dd4bf004f2657542215">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#ae83495a67dea2dc2d9a9c58112f09fa0">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a3b44b07b7bbfcd6e0d1f9129c1e04fe5">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#ad2825d1b864c1e1d2b6af641f750f2f9">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a2d186a597674c603ce5b899a6ebcc8e3">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#aaab8c221bf08536e79505919a0aa777f">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a6ff862a22099799d2a3eb87fdf593515">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a289a9d3a53778f003aba572a93a3a34c">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a0af1b7a669b244fd0af79ecdbb51e234">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -690,9 +690,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a8d41b3ea1856c8644aeb36b981891170">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#ae4b196346e32016937eaf314024a3cc7">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a144aab0d3ee6101b16f0d8bfddb9e782">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a35c05c5797a1eeaf0dd07ac14ae82446">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a215e5aec143bf866b34e1ac91a40c16c">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a1482ed2c810e3d21b9f25653e20e5e89">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#af4f427c6d121ef8762e3127ef9349cef">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#ac29830795bc5ce269a3391c7a4582fe4">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#ab00091cac4f71891e2c65e070851f49e">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a329af1e22a819bb1bf33f8f40eed240d">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#ae341c07e10f1130fff80d4eeb2971290">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a596b4b85d2931230f0591703dc6872db">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a26bd48cae35fb51e760b097ae6446aa1">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a26bd48cae35fb51e760b097ae6446aa1">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#ae4b196346e32016937eaf314024a3cc7">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a144aab0d3ee6101b16f0d8bfddb9e782">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a53fff70bf26c7308145a03b06d006e89">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a215e5aec143bf866b34e1ac91a40c16c">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#aad15970b7f0f88abcf4ed312f1e44a8e">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a842a5dece24524235cc408212ff356af">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a6e5269575b9a5e18109031148b058571">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#af30b9dc2c8dc6ea6ad3355f2e8f62ef5">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#ac23fab1a8317410ba8d1aac18d9a118f">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a09d04e0c9ffcb6ab5b3b8bfd4f18df96">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a09d04e0c9ffcb6ab5b3b8bfd4f18df96">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a596b4b85d2931230f0591703dc6872db">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -727,7 +727,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -780,7 +780,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -826,7 +826,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -872,7 +872,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -907,7 +907,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -960,7 +960,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1006,7 +1006,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1052,7 +1052,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1080,7 +1080,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Overload of <code><a class="el" href="classtatami_1_1Matrix.html#a4d572f319b614a7e74d426cac94194de">dense_row()</a></code> that uses the default options. </p><dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<p>Overload of <code><a class="el" href="classtatami_1_1Matrix.html#a4d572f319b614a7e74d426cac94194de">dense_row()</a></code> that uses the default options. </p><dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1126,7 +1126,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1161,7 +1161,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1196,7 +1196,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1224,7 +1224,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Overload of <code><a class="el" href="classtatami_1_1Matrix.html#aa2dad77430f29f277f73028c7c2636e2">dense_column()</a></code> that uses the default options. </p><dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<p>Overload of <code><a class="el" href="classtatami_1_1Matrix.html#aa2dad77430f29f277f73028c7c2636e2">dense_column()</a></code> that uses the default options. </p><dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1270,7 +1270,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1305,7 +1305,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Obejct for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Obejct for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1340,7 +1340,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Obejct for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Obejct for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1386,9 +1386,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#aae4dea73effc740e73649a85b107dfbb">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a1c0760c17a483e8ee9d1609905c7942f">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a21b851d7e50075b8d29cbf572c24c003">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#a1dea29fac0c463402c7ec8793cb351a6">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a75b9d1b19e9d97da9e6303c4c76d9238">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#ae62e5ec5a36a500877bf1ba24b188c89">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a7176434182dc05335728037c33f4051b">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#aed1d065c83b94d93ed5edce6e43aadef">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a93a7e214ef18ed024654d3d188a82e21">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#ab31b543d4627c5dbe6ab10aff2a5a571">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a39ef950a6e7cdc7025d2abeb2d35c002">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a14731efb8e8dd41e23211510ba64fab5">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a14731efb8e8dd41e23211510ba64fab5">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a1c0760c17a483e8ee9d1609905c7942f">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a21b851d7e50075b8d29cbf572c24c003">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedCast.html#a1dea29fac0c463402c7ec8793cb351a6">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a75b9d1b19e9d97da9e6303c4c76d9238">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a1a380cb8f55f8c5ae9334b1bfaaa6876">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a1a380cb8f55f8c5ae9334b1bfaaa6876">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a3aa160a2135a253c77d41fe34ef84b64">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a97908a89a4b76a92c25b8b041794e643">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a07e5f4e07aa4c7be22564a2350c1f178">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a72a56b7b6b2d779182d714d4ed4b69c6">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#ab82888461a18e44f9477c4e44b31af82">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -1448,9 +1448,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a5b2837497831934b1e75f89e131fb71b">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#aaa3876c4d68b9e93dde1cead9f1b7eda">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a0237cad93a7fd28c55fad70ae659c83e">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a027da1b8333def8b4f66cc1a2320ad62">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a1f42007d5ca11c0f2588a57330a7c556">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#afff1189571cb8acb7010d29428598567">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a7e3cd8c770919017a5c88f5a0889d9ed">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a0a576f39da9f66680031f1a14a1dea73">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a14baab96792fb829272a49f333125228">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a52bfca0538a86e32482fd113897ae714">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a8464e48c09743cab8ae45fd8f7de190e">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a76725ab1293975137e2ed2ec3c188464">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a76725ab1293975137e2ed2ec3c188464">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#ac06116b91a9b811f3253f31f11f7bfcb">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#ac06116b91a9b811f3253f31f11f7bfcb">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a0237cad93a7fd28c55fad70ae659c83e">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a027da1b8333def8b4f66cc1a2320ad62">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a1f42007d5ca11c0f2588a57330a7c556">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#aaf70ac46b720f9fd8c2be78a72a9e4fa">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ad5ac39b6671feb1389e0b3fdabe25e4c">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#ad000a08b082d835260bdb3cbf22f44dd">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#acdaf88349be2858d81bad0e74140c94b">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a7c676f767c48e1bea2f1edcb686524ee">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a8464e48c09743cab8ae45fd8f7de190e">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -1503,9 +1503,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a681e4e0cd2cdac8901a7eb9e21790de2">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#aae161b340fb9adec67e5319684016adb">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a988488d3aa69b846a05bc1fcf7c2120d">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#aadaeb7b15958c3cd66616a89b098d2e1">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a63f8ce1ffedcc671a36ead8fed6bf205">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a0139ef80d08238d0bf2cf2fd8b7f2c2e">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a745d71fe7ab4f037166951d476da3f84">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a76c8141c938f3c3776bb77c83edec1b9">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#abeb33869ee39d34b8628e57d394e4ab3">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a4075b7c2db284a71175e24bf6c57d616">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#aee3192a2bab277ca0e6420d86bd49bbd">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a02bd5381ee7ef01f44c22b207f350209">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a7a757cea83161373e48b0d2a506931e3">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a7a757cea83161373e48b0d2a506931e3">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a988488d3aa69b846a05bc1fcf7c2120d">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#aadaeb7b15958c3cd66616a89b098d2e1">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a63f8ce1ffedcc671a36ead8fed6bf205">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a1ac7c97578e91c0727477d7fb6396d9d">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a483af25e42c6b48ce752516b63ff561e">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a866618bc1e79d6035157904d31954a70">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#ad38a60ca8b73d02b0e82aa21dff6a0b7">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a6e8a09a45058548d7d55958e0a4d243e">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a6e8a09a45058548d7d55958e0a4d243e">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#aee3192a2bab277ca0e6420d86bd49bbd">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -1540,7 +1540,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1593,7 +1593,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1639,7 +1639,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1685,7 +1685,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1720,7 +1720,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1773,7 +1773,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1819,7 +1819,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1865,7 +1865,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1893,7 +1893,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Overload of <code><a class="el" href="classtatami_1_1Matrix.html#aedecd4c23762ff43f49cfb0d2c687056">sparse_row()</a></code> that uses the default options. </p><dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<p>Overload of <code><a class="el" href="classtatami_1_1Matrix.html#aedecd4c23762ff43f49cfb0d2c687056">sparse_row()</a></code> that uses the default options. </p><dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1939,7 +1939,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -1974,7 +1974,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2009,7 +2009,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2037,7 +2037,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Overload of <code><a class="el" href="classtatami_1_1Matrix.html#ab0efad968be5f4b9a36bb50beb8460f8">sparse_column()</a></code> that uses the default options. </p><dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<p>Overload of <code><a class="el" href="classtatami_1_1Matrix.html#ab0efad968be5f4b9a36bb50beb8460f8">sparse_column()</a></code> that uses the default options. </p><dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2083,7 +2083,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2118,7 +2118,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2153,7 +2153,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2206,9 +2206,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#acb9d73e30cea955c80ee53239a73ed11">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a569b08abd821a1b59a1f64afb9927784">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#aa5297b3fa389324b2ed7cf275cb60a3c">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#adbaa7cd891ff8a858169df2559c2de12">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#accbbe64970c4396d590833c1a7195adf">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a40aad7010bb8968d2ae811a4471a552f">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#ae14a9d1caa5d50e1231dcf46013954bd">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a32aa6736cc5cc294ce9ec4a622a632db">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ad5c132a47d0148969b45d0d77d952773">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#aa0b680e9d24bf5aa2dcba0bfa26e6fc9">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#adcf9042097bc69980de4c694db01acd0">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a749367fe4321b20ccdb8574f7f54f8b8">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a40d489e15dd088b4fa1a4a36bddf1ca6">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a14937508d3eaed557eb9100cc9398371">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a14937508d3eaed557eb9100cc9398371">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a569b08abd821a1b59a1f64afb9927784">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#aa5297b3fa389324b2ed7cf275cb60a3c">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a5996a26ad8168a073447402e5b1cc980">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#accbbe64970c4396d590833c1a7195adf">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a99ab5dda78086432c4f164c9d1a59825">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a99ab5dda78086432c4f164c9d1a59825">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a0714419818f4550a8535969eb1fe8236">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a0714419818f4550a8535969eb1fe8236">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#acb580a4d37f81b47b17296f608bb8519">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a849e1982154ebcc308131ef526d4b322">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a155dbdfe9fd517a0c0e85c62f7e31d87">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a5c7886eac29454f2e516bc07f9b43e72">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#aa3f56e036e7992b4987b5deeade19119">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a40d489e15dd088b4fa1a4a36bddf1ca6">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -2275,9 +2275,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a77074ecda3fc05f2b765d12d1fc11a27">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#ae66578c05361955bc5394747de83e44d">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a022006950d0e1e39fe45fb33df042a92">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#ad6bd08128f7701397f1e08627955039f">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a0a183ee56947ce28c7b597d1983057ad">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#aeda12ebeffd4012bac0e3e6d3072437d">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a64e5ebbc0364936474af1667e2e6a66c">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#af64e345d5011406a54c2f8a5f8eecc51">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a6845e788a0401c354640f69b69326edd">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a9bd5b095dd7e67033f1120e4de57c274">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a2bb62a5ca451f74fe6180bb34a13f380">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a98c834fb5c704519eb0482f6648d8fe8">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a0506809d80eaa439f9c7c7a66ab530c3">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#ad6920bef1b2f39a507d3e5f8e922daa8">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#ad6920bef1b2f39a507d3e5f8e922daa8">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#aba826b0ac6300d36ca226e0ab0b6dc22">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#aba826b0ac6300d36ca226e0ab0b6dc22">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a363af30fbd351a27cc7231f074ef7874">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a363af30fbd351a27cc7231f074ef7874">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#ad6bd08128f7701397f1e08627955039f">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a0a183ee56947ce28c7b597d1983057ad">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#aa2069d84db3b6907e187b177c7befab4">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a64e5ebbc0364936474af1667e2e6a66c">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a74d14f13a25a6e6b03f28f48e58c0e9a">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#aca14e61cf151b970681fa1a2124feff9">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a06687d4a1bdb8a4dfb0fb00530e8c7fa">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#aa900b241cf2395a56637f80953332427">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a2a53c100279347b2b591712b10f3d001">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a0506809d80eaa439f9c7c7a66ab530c3">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -2337,9 +2337,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#af75b6ab60c403f7696ee48aa392cbdc2">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#ac175990a9bd9bf4848530ef67aa1a151">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a7716e2579e44afb51c97389662772023">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a041c004bb685ba7893aa0dc7b42d96cd">tatami::DelayedBind&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#adad4b60fc18324d0195da3405581e47d">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a9abad9aa51cd505400001450957fc1f0">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a7b8cb229b46f3201b5a599f492c8eb01">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a896eabc508b2cb3984e05ff07e7c2620">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#af854a6218270dcd663db123b5428cfbd">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a3fe8608d1ba996bc7876b3f8d4d05041">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a4c4cada79a06400f1686fc07590a6731">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#abbb1004b32606dfd024bf90f208669f7">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a02a6367903e9be1311c25a14e743ef10">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a2bda92623f1a91d9e6da8473e91b2159">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a2bda92623f1a91d9e6da8473e91b2159">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#ac175990a9bd9bf4848530ef67aa1a151">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a7716e2579e44afb51c97389662772023">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBind.html#a1aae5576005dc08ed6d62fedde194884">tatami::DelayedBind&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#adad4b60fc18324d0195da3405581e47d">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#affbf0bae310fcdb9522aa2c5edd30afc">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#affbf0bae310fcdb9522aa2c5edd30afc">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#abad94e2051230c7d440f8e409f0ab7d9">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a2abd9c3da5613f4af78db1a77c249182">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a341cbbd5f93a37a7e2dc6420ef823a1b">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#ac576bf4bccf3186a14fa79334deccbea">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a5513955ba651a48571e82d9b52dc19ad">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#aa0308a4a8e9494bed030c51eba41811a">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#aa0308a4a8e9494bed030c51eba41811a">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a02a6367903e9be1311c25a14e743ef10">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -2385,7 +2385,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2445,7 +2445,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2498,7 +2498,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2551,7 +2551,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2597,7 +2597,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2657,7 +2657,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2710,7 +2710,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2763,7 +2763,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2798,7 +2798,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2851,7 +2851,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2897,7 +2897,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2943,7 +2943,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -2978,7 +2978,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3031,7 +3031,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3077,7 +3077,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3123,7 +3123,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3176,9 +3176,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#ad95c8263e74b4f355169611afbb98c7d">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a41c8f740445b52764e9199ba004f429c">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a11a81a813efe81e3ed418c579895cd6e">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a9e432929eb5b907baff964410dd35caf">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#ad4c5213e2e279e7a8a1881a0f9c3b5b7">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#abdd3b838fde27a447c4bbee862ba8fee">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a318aa7172308039003e6e605c4173795">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#ae9f113a00d4d1e47758677ff7a53bb10">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#ae4aeb282fcaa95927be0291823405c11">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#aa6b5d5096e80809256891d9c0aab8fdb">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a853a8cb0de4c0084445893b1d59d5423">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#af2eb799fb84aaacee5c7c1eebb3463fd">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#ae8b40e14802cdad7312caf3e8248489a">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#ae8b40e14802cdad7312caf3e8248489a">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a41c8f740445b52764e9199ba004f429c">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a11a81a813efe81e3ed418c579895cd6e">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a9e432929eb5b907baff964410dd35caf">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a021c20b362a86fd64620f712f9995f0e">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a021c20b362a86fd64620f712f9995f0e">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a28e0ad8828c1e93e329fbf676dd5f582">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a28e0ad8828c1e93e329fbf676dd5f582">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#af215a2985049fc04f1d5c912672804fc">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a383ec95c99cfbd8787b69fab35e2e5ce">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a8cacaea9570300a3f4f34412dc2071a5">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#adbb19d843779a867e7d45ff46d9bfd63">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a2369e8312245435a5b906870a6a28b65">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#af2eb799fb84aaacee5c7c1eebb3463fd">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -3245,9 +3245,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a654739ab911d92a332f1271769911011">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a6b1cc37e0e40286fd81f0374a12b0654">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#affa9a0fe265566c2802753df248461e1">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a838508085cd7cba5f75f3e7b3603971f">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a4df36728071613a35df08fb13948ec01">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a4bc7241dd0cbcba64844ff98b0f3c219">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a2b0aa10cacb30ce73a1723ff01767c0d">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a292c782a0fd1ac8aaf22d77fd06cfece">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a309affe0745fa56d6b9ff1e9ba863ff2">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a93f070e5a44271076ab5eff93ea00f95">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#af168b6d0ec92bf45bb60fb8576975030">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a69d08b80168e508dd42b321b742e825d">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DenseMatrix.html#a076632321ee3a36f1b7f306ffafe0150">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a076632321ee3a36f1b7f306ffafe0150">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a9d7c4763266aacc9dd8e8bf18cd6bdf5">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a9d7c4763266aacc9dd8e8bf18cd6bdf5">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a307940f3bbba99d017184a938833fe0a">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a307940f3bbba99d017184a938833fe0a">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a838508085cd7cba5f75f3e7b3603971f">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a4df36728071613a35df08fb13948ec01">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedTranspose.html#a4bc7241dd0cbcba64844ff98b0f3c219">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#af9387c8af9cc8b7ce371b74e3bce9acb">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a7fd46b6f3a4cefb5709db879fe85287e">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#afbbcc960db85019ad9c377517e014311">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a4f2c396e829cf41d2a5bc72aa2218f3c">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#aa2a589bcb668b82358301991dd65eb85">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a69d08b80168e508dd42b321b742e825d">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -3307,9 +3307,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
-<p>Implemented in <a class="el" href="classtatami_1_1DelayedTranspose.html#acae831b9ba93460af968b319a924a17a">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#ab8ef79c17d0bbbb510f4d1d54b52af10">tatami::DenseMatrix&lt; row_, Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a161020535c5052af1154a8d578ed585a">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a2acae9be5a86585c021899b755531a4a">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a2decc09ff4148337885c51e193fcb29c">tatami::CompressedSparseMatrix&lt; row_, Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a0e8a4ae481dac35670eef191da004eda">tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a78a79c6557f13c6f64230c6c482008c9">tatami::DelayedSubsetBlock&lt; margin_, Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a9a0dd5ac946bfd7c0a971f08c6d53d71">tatami::DelayedSubsetSorted&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#a95b04638e56df65357732d565a6fd958">tatami::DelayedSubsetSortedUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a9ce614baa259d4983ed37c9999ecd6ea">tatami::DelayedSubsetUnique&lt; margin_, Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#ac9b6b559295dfcd71b42ab1e8101c3d7">tatami::FragmentedSparseMatrix&lt; row_, Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a269a645ac529416d11e1b3b3d115184f">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classtatami_1_1DelayedTranspose.html#acae831b9ba93460af968b319a924a17a">tatami::DelayedTranspose&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a5eb5622d0bf742933efc4a5712337504">tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</a>, <a class="el" href="classtatami_1_1DenseMatrix.html#a5eb5622d0bf742933efc4a5712337504">tatami::DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedBinaryIsometricOp.html#a161020535c5052af1154a8d578ed585a">tatami::DelayedBinaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html#a2acae9be5a86585c021899b755531a4a">tatami::DelayedUnaryIsometricOp&lt; Value_, Index_, Operation_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a9421a1eae11ef1b96dd827e5cac93422">tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</a>, <a class="el" href="classtatami_1_1CompressedSparseMatrix.html#a9421a1eae11ef1b96dd827e5cac93422">tatami::CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubset.html#a8e4dc8a870a15531390fa8aad1d5b91c">tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetBlock.html#a4c0f79b67346db6cfc40f0658b761f76">tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSorted.html#a781562965f77a996db79a96993013540">tatami::DelayedSubsetSorted&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetSortedUnique.html#ab692a3a4f46718854f7455ee55e55b2e">tatami::DelayedSubsetSortedUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1DelayedSubsetUnique.html#a347e927ce1e90d7675d4420d8cd06b16">tatami::DelayedSubsetUnique&lt; Value_, Index_, IndexStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a26ebfcf4c5f6ea5d4d4364991be2e9ce">tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</a>, <a class="el" href="classtatami_1_1FragmentedSparseMatrix.html#a26ebfcf4c5f6ea5d4d4364991be2e9ce">tatami::FragmentedSparseMatrix&lt; Value_, Index_, std::vector&lt; std::vector&lt; Value_ &gt; &gt;, std::vector&lt; std::vector&lt; Index_ &gt; &gt; &gt;</a>, and <a class="el" href="classtatami_1_1DelayedCast.html#a269a645ac529416d11e1b3b3d115184f">tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</a>.</p>
 
 </div>
 </div>
@@ -3355,7 +3355,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3415,7 +3415,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3468,7 +3468,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3521,7 +3521,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3567,7 +3567,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3627,7 +3627,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3680,7 +3680,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3733,7 +3733,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3768,7 +3768,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3821,7 +3821,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3867,7 +3867,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3913,7 +3913,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -3948,7 +3948,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -4001,7 +4001,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -4047,7 +4047,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>
@@ -4093,7 +4093,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each column in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 </div>
 </div>

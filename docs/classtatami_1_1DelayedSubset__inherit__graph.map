@@ -1,5 +1,5 @@
-<map id="tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;" name="tatami::DelayedSubset&lt; margin_, Value_, Index_, IndexStorage_ &gt;">
-<area shape="rect" id="Node000001" title="delayed subsetting of a matrix with general indices." alt="" coords="5,94,169,150"/>
-<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="16,5,158,46"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="90,61,90,93,84,93,84,61"/>
+<map id="tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;" name="tatami::DelayedSubset&lt; Value_, Index_, IndexStorage_ &gt;">
+<area shape="rect" id="Node000001" title="delayed subsetting of a matrix with general indices." alt="" coords="5,94,224,135"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="43,5,186,46"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="117,62,117,94,112,94,112,62"/>
 </map>

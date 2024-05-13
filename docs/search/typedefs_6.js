@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['numericmatrix_0',['NumericMatrix',['../namespacetatami.html#a35c670894994f1d620abb55953f98441',1,'tatami']]]
+  ['reference_0',['reference',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#ab83a68ab47e92b1265fd043bc4351be9',1,'tatami::SomeNumericArray::Iterator']]]
 ];

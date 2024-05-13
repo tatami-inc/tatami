@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['elementtype_0',['ElementType',['../namespacetatami.html#a58a028d23a7be58854b2e60dfae1b04b',1,'tatami']]]
+  ['index_5ftype_0',['index_type',['../classtatami_1_1Matrix.html#adebf536caf3a3c1751eefc6e10f0b16e',1,'tatami::Matrix']]],
+  ['iterator_5fcategory_1',['iterator_category',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#aaf0075ceb671a85fc42404298baeed07',1,'tatami::SomeNumericArray::Iterator']]]
 ];

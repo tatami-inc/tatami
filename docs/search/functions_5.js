@@ -4,6 +4,8 @@ var searchData=
   ['fill_1',['fill',['../structtatami_1_1DelayedBinaryAdvancedMockHelper.html#a6a12e19e5693e899c84f0e8d890894fc',1,'tatami::DelayedBinaryAdvancedMockHelper::fill()'],['../structtatami_1_1DelayedUnaryAdvancedMockHelper.html#a055072152c604036d39142453fa1acc8',1,'tatami::DelayedUnaryAdvancedMockHelper::fill()']]],
   ['fixedvectororacle_2',['FixedVectorOracle',['../structtatami_1_1FixedVectorOracle.html#a73346c2ff9eb3151be4012b4ad7cfcbb',1,'tatami::FixedVectorOracle']]],
   ['fixedvieworacle_3',['FixedViewOracle',['../structtatami_1_1FixedViewOracle.html#a9c80806935afbdff25729a74cf894f89',1,'tatami::FixedViewOracle']]],
-  ['fragmentedsparsematrix_4',['FragmentedSparseMatrix',['../classtatami_1_1FragmentedSparseMatrix.html#a75a66fd646bab027ff762cd824e52fb0',1,'tatami::FragmentedSparseMatrix']]],
-  ['fullsparsifiedwrapper_5',['FullSparsifiedWrapper',['../structtatami_1_1FullSparsifiedWrapper.html#aefba3b01b135e72e321b37d807c07127',1,'tatami::FullSparsifiedWrapper']]]
+  ['fragmentedsparsecolumnmatrix_4',['FragmentedSparseColumnMatrix',['../classtatami_1_1FragmentedSparseColumnMatrix.html#acd2a2cd7aa1bfcfda2aa535eb263c834',1,'tatami::FragmentedSparseColumnMatrix']]],
+  ['fragmentedsparsematrix_5',['FragmentedSparseMatrix',['../classtatami_1_1FragmentedSparseMatrix.html#a5566680c8452d1d468bc702b68ddb3d6',1,'tatami::FragmentedSparseMatrix']]],
+  ['fragmentedsparserowmatrix_6',['FragmentedSparseRowMatrix',['../classtatami_1_1FragmentedSparseRowMatrix.html#a18d61375b311bb4f4cedd78eb7d2b485',1,'tatami::FragmentedSparseRowMatrix']]],
+  ['fullsparsifiedwrapper_7',['FullSparsifiedWrapper',['../structtatami_1_1FullSparsifiedWrapper.html#aefba3b01b135e72e321b37d807c07127',1,'tatami::FullSparsifiedWrapper']]]
 ];

@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Recast a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> to a different interface type.  
+<p>Recast a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> to a different interface type.  
  <a href="classtatami_1_1DelayedCast.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="DelayedCast_8hpp_source.html">DelayedCast.hpp</a>&gt;</code></p>
@@ -289,8 +289,8 @@ Additional Inherited Members</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">ValueOut_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">IndexOut_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">ValueIn_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">IndexIn_</a>&gt;<br />
-class tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</div><p>Recast a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> to a different interface type. </p>
-<p>This performs a delayed cast from one interface type to another. It is useful as a compatibility layer between functions that require <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> objects of different types. Casting is achieved by extracting the requested row/column from the input <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> and transforming it to the output types. Note that this is only done per row/column - the entirety of the original matrix is not copied to the new type.</p>
+class tatami::DelayedCast&lt; ValueOut_, IndexOut_, ValueIn_, IndexIn_ &gt;</div><p>Recast a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> to a different interface type. </p>
+<p>This performs a delayed cast from one interface type to another. It is useful as a compatibility layer between functions that require <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> objects of different types. Casting is achieved by extracting the requested row/column from the input <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> and transforming it to the output types. Note that this is only done per row/column - the entirety of the original matrix is not copied to the new type.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">ValueOut_</td><td>Data type to cast to. </td></tr>
@@ -328,7 +328,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">p</td><td>Pointer to the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> instance to cast from. </td></tr>
+    <tr><td class="paramname">p</td><td>Pointer to the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> instance to cast from. </td></tr>
   </table>
   </dd>
 </dl>
@@ -452,7 +452,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Approximate proportion of the matrix that is sparse.</dd></dl>
-<p>This is defined as the proportion of matrix elements that lie within sparse submatrices. It is intended for use in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> representations that consist of combinations of multiple submatrices (e.g., <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code>), allowing them to derive a suitable value for <code><a class="el" href="classtatami_1_1DelayedCast.html#aa0e027b46d8eb69d17ce495e20c48dfc">sparse()</a></code> based on whether most of its submatrices are sparse. (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.) </p>
+<p>This is defined as the proportion of matrix elements that lie within sparse submatrices. It is intended for use in <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> representations that consist of combinations of multiple submatrices (e.g., <code><a class="el" href="classtatami_1_1DelayedBind.html" title="Delayed combining of a matrix.">DelayedBind</a></code>), allowing them to derive a suitable value for <code><a class="el" href="classtatami_1_1DelayedCast.html#aa0e027b46d8eb69d17ce495e20c48dfc">sparse()</a></code> based on whether most of its submatrices are sparse. (A more granular approach would be to report the density of structural non-zero elements, but this may not be known by all representations at construction time.) </p>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a8a1a29b602b903201fc36ad65f76c78c">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -599,7 +599,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a0b6b1ae7819fad55cf7bf5587b7e5a4b">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -661,7 +661,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a51bb7a480d2fd0cc0337577ca98840dc">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -716,7 +716,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a06803687627cc35e5ef41a887f5e5fad">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -764,7 +764,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -826,7 +826,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#af802c74c510eff3316ce0eea99c08810">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -881,7 +881,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a59d055aed809a2036c10c1fce92bd036">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -936,7 +936,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a6502fdebcaeea40490c1780ab6e92b19">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -1005,7 +1005,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a48b24fe319289ca76f2b366a2ffe798d">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -1067,7 +1067,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a4aecaa5038554d2c92c2ab7083497cb6">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -1122,7 +1122,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a5605c18620abdab0f82015b959e9813a">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -1191,7 +1191,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting a contiguous block from each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#aacfcf54358970874051e5cc700730707">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
@@ -1253,7 +1253,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix with a defined type.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting an indexed subset from each row (if <code>row = true</code>) or column (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#abe7557a27bbb09f8453a3e6848ad910e">tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</a>.</p>
 
