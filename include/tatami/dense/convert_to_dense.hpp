@@ -170,29 +170,6 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<In
 }
 
 /**
- * This overload makes it easier to control the desired output order when it is not known at compile time.
- *
- * @tparam Value_ Type of data values in the output interface.
- * @tparam Index Integer type for the indices in the output interface.
- * @tparam StoredValue_ Type of data values to be stored in the output.
- * @tparam Matrix_ Input matrix class, most typically a `tatami::Matrix`.
- *
- * @param incoming Pointer to a `tatami::Matrix`.
- * @param order Ordering of values in the output dense matrix - row-major (0) or column-major (1).
- * If set to -1, the ordering is chosen based on `tatami::Matrix::prefer_rows()`. 
- * @param threads Number of threads to use.
- *
- * @return A pointer to a new `tatami::DenseMatrix` with the same dimensions and type as the matrix referenced by `incoming`.
- */
-template<typename Value_, typename Index_, typename StoredValue_ = Value_, typename InputValue_, typename InputIndex_>
-std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, int order, int threads = 1) {
-    if (order < 0) {
-        order = static_cast<int>(incoming->prefer_rows()); 
-    }
-    return convert_to_dense<Value_, Index_, StoredValue_>(incoming, order == 0, threads);
-}
-
-/**
  * @cond
  */
 // Backwards compatbility.

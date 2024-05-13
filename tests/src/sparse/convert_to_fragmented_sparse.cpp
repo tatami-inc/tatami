@@ -86,20 +86,3 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(1, 3)         // number of threads
     )
 );
-
-TEST(ConvertToFragmentedSparseTest, Automatic) {
-    size_t NR = 70, NC = 50;
-    auto vec = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.23);
-
-    {
-        tatami::DenseMatrix<double, int> mat(NR, NC, vec, false);
-        auto converted = tatami::convert_to_fragmented_sparse<double, int>(&mat, -1);
-        EXPECT_FALSE(converted->prefer_rows());
-    }
-
-    {
-        tatami::DenseMatrix<double, int> mat(NR, NC, vec, true);
-        auto converted = tatami::convert_to_fragmented_sparse<double, int>(&mat, -1);
-        EXPECT_TRUE(converted->prefer_rows());
-    }
-}

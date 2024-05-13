@@ -71,22 +71,3 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(1, 3)         // number of threads
     )
 );
-
-TEST(ConvertToDenseTest, Automatic) {
-    size_t NR = 50, NC = 20;
-    auto vec = tatami_test::simulate_dense_vector<double>(NR * NC);
-
-    {
-        tatami::DenseMatrix<double, int> mat(NR, NC, vec, true);
-        auto converted = tatami::convert_to_dense(&mat, -1);
-        EXPECT_TRUE(converted->prefer_rows());
-        tatami_test::test_simple_row_access(converted.get(), &mat);
-    }
-    
-    {
-        tatami::DenseMatrix<double, int> mat(NR, NC, vec, false);
-        auto converted = tatami::convert_to_dense(&mat, -1);
-        EXPECT_FALSE(converted->prefer_rows());
-        tatami_test::test_simple_column_access(converted.get(), &mat);
-    }
-}
