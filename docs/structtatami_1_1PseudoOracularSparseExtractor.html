@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Mimic the <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle.">OracularSparseExtractor</a></code> interface.  
+<p>Mimic the <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle.">OracularSparseExtractor</a></code> interface.  
  <a href="structtatami_1_1PseudoOracularSparseExtractor.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="PseudoOracularExtractor_8hpp_source.html">PseudoOracularExtractor.hpp</a>&gt;</code></p>
@@ -92,7 +92,7 @@ Inheritance diagram for tatami::PseudoOracularSparseExtractor&lt; Value_, Index_
 <div class="center"><img src="structtatami_1_1PseudoOracularSparseExtractor__inherit__graph.png" border="0" usemap="#atatami_1_1PseudoOracularSparseExtractor_3_01Value___00_01Index___01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="atatami_1_1PseudoOracularSparseExtractor_3_01Value___00_01Index___01_4_inherit__map" id="atatami_1_1PseudoOracularSparseExtractor_3_01Value___00_01Index___01_4_inherit__map">
 <area shape="rect" title="Mimic the OracularSparseExtractor interface." alt="" coords="9,94,206,135"/>
-<area shape="rect" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle." alt="" coords="5,5,210,46"/>
+<area shape="rect" href="structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle." alt="" coords="5,5,210,46"/>
 <area shape="poly" title=" " alt="" coords="110,62,110,94,105,94,105,62"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -102,7 +102,7 @@ Collaboration diagram for tatami::PseudoOracularSparseExtractor&lt; Value_, Inde
 <div class="center"><img src="structtatami_1_1PseudoOracularSparseExtractor__coll__graph.png" border="0" usemap="#atatami_1_1PseudoOracularSparseExtractor_3_01Value___00_01Index___01_4_coll__map" alt="Collaboration graph"/></div>
 <map name="atatami_1_1PseudoOracularSparseExtractor_3_01Value___00_01Index___01_4_coll__map" id="atatami_1_1PseudoOracularSparseExtractor_3_01Value___00_01Index___01_4_coll__map">
 <area shape="rect" title="Mimic the OracularSparseExtractor interface." alt="" coords="9,94,206,135"/>
-<area shape="rect" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle." alt="" coords="5,5,210,46"/>
+<area shape="rect" href="structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle." alt="" coords="5,5,210,46"/>
 <area shape="poly" title=" " alt="" coords="110,62,110,94,105,94,105,62"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -119,7 +119,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a>&gt;<br />
-struct tatami::PseudoOracularSparseExtractor&lt; Value_, Index_ &gt;</div><p>Mimic the <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle.">OracularSparseExtractor</a></code> interface. </p>
+struct tatami::PseudoOracularSparseExtractor&lt; Value_, Index_ &gt;</div><p>Mimic the <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle.">OracularSparseExtractor</a></code> interface. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Data value type, should be numeric. </td></tr>
@@ -127,7 +127,7 @@ struct tatami::PseudoOracularSparseExtractor&lt; Value_, Index_ &gt;</div><p>Mim
   </table>
   </dd>
 </dl>
-<p>This is used to quickly implement the sparse extraction methods for a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclass that does not benefit from an <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests.">Oracle</a></code>. Specifically, the oracle is used to generate a prediction that is passed to an oracle-unaware <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html" title="Extract in sparse form without an oracle.">MyopicSparseExtractor</a></code>. This allows <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclasses to satisfy the sparse oracle-aware extraction interface without much effort. </p>
+<p>This is used to quickly implement the sparse extraction methods for a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclass that does not benefit from an <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code>. Specifically, the oracle is used to generate a prediction that is passed to an oracle-unaware <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code>. This allows <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclasses to satisfy the sparse oracle-aware extraction interface without much effort. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ad0c4d6cea2811e5d90cbcc67bfc2a995" name="ad0c4d6cea2811e5d90cbcc67bfc2a995"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ad0c4d6cea2811e5d90cbcc67bfc2a995">&#9670;&#160;</a></span>PseudoOracularSparseExtractor()</h2>
@@ -216,7 +216,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This overload is intended for developers only. It introduces the <code>i</code> argument so that the signature is the same as that of <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html#a0641369e8d195d57e681632a199bc462">MyopicSparseExtractor::fetch()</a></code>. This makes it easier to define <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html" title="Extract in sparse form without an oracle.">MyopicSparseExtractor</a></code> and <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle.">OracularSparseExtractor</a></code> subclasses from a single template, avoiding code duplication that would otherwise occur when defining methods with and without <code>i</code>. Of course, implementations are expected to ignore <code>i</code> in oracle-aware extraction.</p>
+<p>This overload is intended for developers only. It introduces the <code>i</code> argument so that the signature is the same as that of <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html#a0641369e8d195d57e681632a199bc462">MyopicSparseExtractor::fetch()</a></code>. This makes it easier to define <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code> and <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle.">OracularSparseExtractor</a></code> subclasses from a single template, avoiding code duplication that would otherwise occur when defining methods with and without <code>i</code>. Of course, implementations are expected to ignore <code>i</code> in oracle-aware extraction.</p>
 <p>Other than the extra <code>i</code> argument, all other behaviors of the two overloads are the same. To avoid confusion, most users should just use the <code><a class="el" href="structtatami_1_1PseudoOracularSparseExtractor.html#aad17f80d38dc16353c134d944fdc9640">fetch()</a></code> overload that does not accept <code>i</code>, given that the value of <code>i</code> is never actually used.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -226,7 +226,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of the next dimension element, as predicted by the <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests.">Oracle</a></code> used to construct this instance. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>A <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> object describing the contents of the next dimension element, as predicted by the <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code> used to construct this instance. </dd></dl>
 
 <p>Implements <a class="el" href="structtatami_1_1OracularSparseExtractor.html#a47ca669e5d10803df3a8a828a03765ee">tatami::OracularSparseExtractor&lt; Value_, Index_ &gt;</a>.</p>
 

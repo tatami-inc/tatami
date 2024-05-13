@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Extract in sparse form without an oracle.  
+<p>Extract an element of the target dimension in sparse form without an oracle.  
  <a href="structtatami_1_1MyopicSparseExtractor.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Extractor_8hpp_source.html">Extractor.hpp</a>&gt;</code></p>
@@ -94,7 +94,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a>&gt;<br />
-struct tatami::MyopicSparseExtractor&lt; Value_, Index_ &gt;</div><p>Extract in sparse form without an oracle. </p>
+struct tatami::MyopicSparseExtractor&lt; Value_, Index_ &gt;</div><p>Extract an element of the target dimension in sparse form without an oracle. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Data value type, should be numeric. </td></tr>
@@ -148,7 +148,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 <p>If <code><a class="el" href="structtatami_1_1Options.html#abe1ec7b8bfc82728742ca4a496e59548">Options::sparse_extract_value</a></code> was set to <code>false</code> during construction of this instance, <code>vbuffer</code> is ignored and <code><a class="el" href="structtatami_1_1SparseRange.html#a6bd0dcad11850847dd8dd336e1932732">SparseRange::value</a></code> is set to <code>NULL</code> in the output. Similarly, if <code><a class="el" href="structtatami_1_1Options.html#a192a47606233c7f5c76bb1e7a62867a5">Options::sparse_extract_index</a></code> was set to <code>false</code> during construction of this instance, <code>ibuffer</code> is ignored and <code><a class="el" href="structtatami_1_1SparseRange.html#ae187f7d169bbdc0701fe7414dd051717">SparseRange::index</a></code> is set to <code>NULL</code> in the output.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the desired dimension element, i.e., the row or column index. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the target dimension element, i.e., the row or column index. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">vbuffer</td><td>Pointer to an array with enough space for at least <code>N</code> values, where <code>N</code> is defined as described for <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code>. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">ibuffer</td><td>Pointer to an array with enough space for at least <code>N</code> indices, where <code>N</code> is defined as described for <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code>.</td></tr>
   </table>

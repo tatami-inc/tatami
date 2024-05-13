@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Mimic the <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle.">OracularDenseExtractor</a></code> interface.  
+<p>Mimic the <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code> interface.  
  <a href="structtatami_1_1PseudoOracularDenseExtractor.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="PseudoOracularExtractor_8hpp_source.html">PseudoOracularExtractor.hpp</a>&gt;</code></p>
@@ -92,7 +92,7 @@ Inheritance diagram for tatami::PseudoOracularDenseExtractor&lt; Value_, Index_ 
 <div class="center"><img src="structtatami_1_1PseudoOracularDenseExtractor__inherit__graph.png" border="0" usemap="#atatami_1_1PseudoOracularDenseExtractor_3_01Value___00_01Index___01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="atatami_1_1PseudoOracularDenseExtractor_3_01Value___00_01Index___01_4_inherit__map" id="atatami_1_1PseudoOracularDenseExtractor_3_01Value___00_01Index___01_4_inherit__map">
 <area shape="rect" title="Mimic the OracularDenseExtractor interface." alt="" coords="9,94,202,135"/>
-<area shape="rect" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle." alt="" coords="5,5,206,46"/>
+<area shape="rect" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle." alt="" coords="5,5,206,46"/>
 <area shape="poly" title=" " alt="" coords="108,62,108,94,103,94,103,62"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -102,7 +102,7 @@ Collaboration diagram for tatami::PseudoOracularDenseExtractor&lt; Value_, Index
 <div class="center"><img src="structtatami_1_1PseudoOracularDenseExtractor__coll__graph.png" border="0" usemap="#atatami_1_1PseudoOracularDenseExtractor_3_01Value___00_01Index___01_4_coll__map" alt="Collaboration graph"/></div>
 <map name="atatami_1_1PseudoOracularDenseExtractor_3_01Value___00_01Index___01_4_coll__map" id="atatami_1_1PseudoOracularDenseExtractor_3_01Value___00_01Index___01_4_coll__map">
 <area shape="rect" title="Mimic the OracularDenseExtractor interface." alt="" coords="9,94,202,135"/>
-<area shape="rect" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle." alt="" coords="5,5,206,46"/>
+<area shape="rect" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle." alt="" coords="5,5,206,46"/>
 <area shape="poly" title=" " alt="" coords="108,62,108,94,103,94,103,62"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -119,7 +119,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a>&gt;<br />
-struct tatami::PseudoOracularDenseExtractor&lt; Value_, Index_ &gt;</div><p>Mimic the <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle.">OracularDenseExtractor</a></code> interface. </p>
+struct tatami::PseudoOracularDenseExtractor&lt; Value_, Index_ &gt;</div><p>Mimic the <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code> interface. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Data value type, should be numeric. </td></tr>
@@ -127,7 +127,7 @@ struct tatami::PseudoOracularDenseExtractor&lt; Value_, Index_ &gt;</div><p>Mimi
   </table>
   </dd>
 </dl>
-<p>This is used to quickly implement the dense extraction methods for a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclass that does not benefit from an <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests.">Oracle</a></code>. Specifically, the oracle is used to generate a prediction that is passed to an oracle-unaware <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract a dimension element in dense form without an oracle.">MyopicDenseExtractor</a></code>. This allows <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclasses to satisfy the dense oracle-aware extraction interface. </p>
+<p>This is used to quickly implement the dense extraction methods for a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclass that does not benefit from an <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code>. Specifically, the oracle is used to generate a prediction that is passed to an oracle-unaware <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract an element of the target dimension in dense form without an oracle.">MyopicDenseExtractor</a></code>. This allows <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclasses to satisfy the dense oracle-aware extraction interface. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a9aea43ea3531075292f62f4ffb51641d" name="a9aea43ea3531075292f62f4ffb51641d"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9aea43ea3531075292f62f4ffb51641d">&#9670;&#160;</a></span>PseudoOracularDenseExtractor()</h2>
@@ -210,7 +210,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This overload is intended for developers only. It introduces the <code>i</code> argument so that the signature is the same as that of <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code>. This makes it easier to define <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract a dimension element in dense form without an oracle.">MyopicDenseExtractor</a></code> and <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle.">OracularDenseExtractor</a></code> subclasses from a single template, avoiding code duplication that would otherwise occur when defining methods with and without <code>i</code>. Of course, implementations are expected to ignore <code>i</code> in oracle-aware extraction.</p>
+<p>This overload is intended for developers only. It introduces the <code>i</code> argument so that the signature is the same as that of <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">MyopicDenseExtractor::fetch()</a></code>. This makes it easier to define <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract an element of the target dimension in dense form without an oracle.">MyopicDenseExtractor</a></code> and <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code> subclasses from a single template, avoiding code duplication that would otherwise occur when defining methods with and without <code>i</code>. Of course, implementations are expected to ignore <code>i</code> in oracle-aware extraction.</p>
 <p>Other than the extra <code>i</code> argument, all other behaviors of the two overloads are the same. To avoid confusion, most users should just use the <code><a class="el" href="structtatami_1_1PseudoOracularDenseExtractor.html#a4964662d29114e2f9fa9d8aeb548def6">fetch()</a></code> overload that does not accept <code>i</code>, given that the value of <code>i</code> is never actually used.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
@@ -219,7 +219,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the contents of the next dimension element, as predicted by the <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests.">Oracle</a></code> used to construct this instance. This is guaranteed to have <code>N</code> values. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Pointer to an array containing the contents of the next dimension element, as predicted by the <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code> used to construct this instance. This is guaranteed to have <code>N</code> values. </dd></dl>
 
 <p>Implements <a class="el" href="structtatami_1_1OracularDenseExtractor.html#a1cb8d80d4ae4f4e2e29fb68a903ff686">tatami::OracularDenseExtractor&lt; Value_, Index_ &gt;</a>.</p>
 

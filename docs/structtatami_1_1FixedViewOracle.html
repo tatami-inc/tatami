@@ -92,7 +92,7 @@ Inheritance diagram for tatami::FixedViewOracle&lt; Index_ &gt;:</div>
 <div class="center"><img src="structtatami_1_1FixedViewOracle__inherit__graph.png" border="0" usemap="#atatami_1_1FixedViewOracle_3_01Index___01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="atatami_1_1FixedViewOracle_3_01Index___01_4_inherit__map" id="atatami_1_1FixedViewOracle_3_01Index___01_4_inherit__map">
 <area shape="rect" title="Predict future accesses from a view on a fixed sequence." alt="" coords="5,79,167,120"/>
-<area shape="rect" href="structtatami_1_1Oracle.html" title="Predict future access requests." alt="" coords="5,5,167,31"/>
+<area shape="rect" href="structtatami_1_1Oracle.html" title="Predict future access requests on the target dimension." alt="" coords="5,5,167,31"/>
 <area shape="poly" title=" " alt="" coords="89,46,89,79,83,79,83,46"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -102,7 +102,7 @@ Collaboration diagram for tatami::FixedViewOracle&lt; Index_ &gt;:</div>
 <div class="center"><img src="structtatami_1_1FixedViewOracle__coll__graph.png" border="0" usemap="#atatami_1_1FixedViewOracle_3_01Index___01_4_coll__map" alt="Collaboration graph"/></div>
 <map name="atatami_1_1FixedViewOracle_3_01Index___01_4_coll__map" id="atatami_1_1FixedViewOracle_3_01Index___01_4_coll__map">
 <area shape="rect" title="Predict future accesses from a view on a fixed sequence." alt="" coords="5,79,167,120"/>
-<area shape="rect" href="structtatami_1_1Oracle.html" title="Predict future access requests." alt="" coords="5,5,167,31"/>
+<area shape="rect" href="structtatami_1_1Oracle.html" title="Predict future access requests on the target dimension." alt="" coords="5,5,167,31"/>
 <area shape="poly" title=" " alt="" coords="89,46,89,79,83,79,83,46"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -163,7 +163,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">r</td><td>Pointer to a constant array of indices. The underlying array should be valid for the lifetime of this <code>FixedOracle</code> instance. </td></tr>
+    <tr><td class="paramname">r</td><td>Pointer to a constant array of indices on the target dimension. The underlying array should be valid for the lifetime of this <code>FixedOracle</code> instance. </td></tr>
     <tr><td class="paramname">n</td><td>Length of the array at <code>r</code>. </td></tr>
   </table>
   </dd>
@@ -233,7 +233,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The index of the <code>i</code>-th prediction. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The <code>i</code>-th prediction, to be interpreted as an index on the target dimension. </dd></dl>
 
 <p>Implements <a class="el" href="structtatami_1_1Oracle.html#a852153ae7d04d12fdea97ebb7b11f357">tatami::Oracle&lt; Index_ &gt;</a>.</p>
 

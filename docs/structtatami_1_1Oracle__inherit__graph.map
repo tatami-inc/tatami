@@ -1,8 +1,8 @@
 <map id="tatami::Oracle&lt; Index_ &gt;" name="tatami::Oracle&lt; Index_ &gt;">
-<area shape="rect" id="Node000001" title="Predict future access requests." alt="" coords="5,78,167,104"/>
-<area shape="rect" id="Node000002" href="$structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses of a consecutive sequence." alt="" coords="215,5,388,46"/>
+<area shape="rect" id="Node000001" title="Predict future access requests on the target dimension." alt="" coords="5,78,167,104"/>
+<area shape="rect" id="Node000002" href="$structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses along a consecutive sequence." alt="" coords="215,5,388,46"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="145,71,231,44,233,49,146,76"/>
-<area shape="rect" id="Node000003" href="$structtatami_1_1FixedVectorOracle.html" title="Predict future accesses from a fixed sequence in a vector." alt="" coords="216,71,387,111"/>
+<area shape="rect" id="Node000003" href="$structtatami_1_1FixedVectorOracle.html" title="Predict future accesses from a vector containing a fixed sequence." alt="" coords="216,71,387,111"/>
 <area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="182,88,216,88,216,94,182,94"/>
 <area shape="rect" id="Node000004" href="$structtatami_1_1FixedViewOracle.html" title="Predict future accesses from a view on a fixed sequence." alt="" coords="221,136,382,177"/>
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="146,106,233,133,231,138,145,111"/>

@@ -102,7 +102,7 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1CompressedSparseRowMatrix.html">CompressedSparseRowMatrix</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1ConsecutiveOracle.html">ConsecutiveOracle</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predict future accesses of a consecutive sequence.  <a href="structtatami_1_1ConsecutiveOracle.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predict future accesses along a consecutive sequence.  <a href="structtatami_1_1ConsecutiveOracle.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1DelayedAbsHelper.html">DelayedAbsHelper</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Take the absolute value of a matrix entry.  <a href="structtatami_1_1DelayedAbsHelper.html#details">More...</a><br /></td></tr>
@@ -259,7 +259,7 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DenseRowMatrix.html">DenseRowMatrix</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1FixedVectorOracle.html">FixedVectorOracle</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predict future accesses from a fixed sequence in a vector.  <a href="structtatami_1_1FixedVectorOracle.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predict future accesses from a vector containing a fixed sequence.  <a href="structtatami_1_1FixedVectorOracle.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1FixedViewOracle.html">FixedViewOracle</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predict future accesses from a view on a fixed sequence.  <a href="structtatami_1_1FixedViewOracle.html#details">More...</a><br /></td></tr>
@@ -290,37 +290,34 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Virtual class for a matrix.  <a href="classtatami_1_1Matrix.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1MyopicDenseExtractor.html">MyopicDenseExtractor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract a dimension element in dense form without an oracle.  <a href="structtatami_1_1MyopicDenseExtractor.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract an element of the target dimension in dense form without an oracle.  <a href="structtatami_1_1MyopicDenseExtractor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1MyopicSparseExtractor.html">MyopicSparseExtractor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract in sparse form without an oracle.  <a href="structtatami_1_1MyopicSparseExtractor.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract an element of the target dimension in sparse form without an oracle.  <a href="structtatami_1_1MyopicSparseExtractor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1Options.html">Options</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for iteration and extraction.  <a href="structtatami_1_1Options.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for accessing data from a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> instance.  <a href="structtatami_1_1Options.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1Oracle.html">Oracle</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predict future access requests.  <a href="structtatami_1_1Oracle.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Predict future access requests on the target dimension.  <a href="structtatami_1_1Oracle.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1OracularDenseExtractor.html">OracularDenseExtractor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract in dense form with an oracle.  <a href="structtatami_1_1OracularDenseExtractor.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract an element of the target dimension in dense form with an oracle.  <a href="structtatami_1_1OracularDenseExtractor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1OracularSparseExtractor.html">OracularSparseExtractor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract in sparse form with an oracle.  <a href="structtatami_1_1OracularSparseExtractor.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Extract an element of the target dimension in sparse form with an oracle.  <a href="structtatami_1_1OracularSparseExtractor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1PseudoOracularDenseExtractor.html">PseudoOracularDenseExtractor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mimic the <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle.">OracularDenseExtractor</a></code> interface.  <a href="structtatami_1_1PseudoOracularDenseExtractor.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mimic the <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code> interface.  <a href="structtatami_1_1PseudoOracularDenseExtractor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1PseudoOracularSparseExtractor.html">PseudoOracularSparseExtractor</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mimic the <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle.">OracularSparseExtractor</a></code> interface.  <a href="structtatami_1_1PseudoOracularSparseExtractor.html#details">More...</a><br /></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mimic the <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle.">OracularSparseExtractor</a></code> interface.  <a href="structtatami_1_1PseudoOracularSparseExtractor.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SomeNumericArray.html">SomeNumericArray</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array of some numeric type, determined at runtime.  <a href="structtatami_1_1SomeNumericArray.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SparseRange.html">SparseRange</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A range of a sparse vector.  <a href="structtatami_1_1SparseRange.html#details">More...</a><br /></td></tr>
-<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structtatami_1_1SparseRangeCopy.html">SparseRangeCopy</a></td></tr>
-<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A range of a sparse vector with copying.  <a href="structtatami_1_1SparseRangeCopy.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="typedef-members" name="typedef-members"></a>
@@ -612,7 +609,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<p>Type alias that switches between <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle.">OracularDenseExtractor</a></code> and <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract a dimension element in dense form without an oracle.">MyopicDenseExtractor</a></code> depending on <code>oracle_</code>. Intended for templated class definitions, where setting <code>oracle_</code> can define subclasses for both interfaces. </p>
+<p>Type alias that switches between <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code> and <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract an element of the target dimension in dense form without an oracle.">MyopicDenseExtractor</a></code> depending on <code>oracle_</code>. Intended for templated class definitions, where setting <code>oracle_</code> can define subclasses for both interfaces. </p>
 
 </div>
 </div>
@@ -637,7 +634,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<p>Type alias that switches between <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle.">OracularSparseExtractor</a></code> and <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html" title="Extract in sparse form without an oracle.">MyopicSparseExtractor</a></code> depending on <code>oracle_</code>. Intended for templated class definitions, where setting <code>oracle_</code> can define subclasses for both interfaces. </p>
+<p>Type alias that switches between <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle.">OracularSparseExtractor</a></code> and <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code> depending on <code>oracle_</code>. Intended for templated class definitions, where setting <code>oracle_</code> can define subclasses for both interfaces. </p>
 
 </div>
 </div>
@@ -722,7 +719,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<p>Maybe an <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests.">Oracle</a></code>, maybe a placeholder boolean, depending on <code>oracle_</code>. </p>
+<p>Maybe an <code><a class="el" href="structtatami_1_1Oracle.html" title="Predict future access requests on the target dimension.">Oracle</a></code>, maybe a placeholder boolean, depending on <code>oracle_</code>. </p>
 
 </div>
 </div>
@@ -746,12 +743,13 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Type of selection along a dimension, typically the extraction dimension:</p>
+<p>Selection of dimension elements:</p>
 <ul>
-<li><code>FULL</code>: selects the full extent of the dimension, i.e., all elements in the dimension.</li>
+<li><code>FULL</code>: selects the full extent of the dimension, i.e., all elements.</li>
 <li><code>BLOCK</code>: selects a contiguous block of elements in the dimension.</li>
-<li><code>INDEX</code>: selects a sorted and unique array of indices of dimension elements. </li>
+<li><code>INDEX</code>: selects a sorted and unique array of indices of dimension elements.</li>
 </ul>
+<p>This corresponds to the various overloads of <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> methods (e.g., <code><a class="el" href="classtatami_1_1Matrix.html#a168f0e932b5503c9bfc5dbd42754a7a5">Matrix::dense_row()</a></code>), each of which extracts a different selection of elements from the non-target dimension. </p>
 
 </div>
 </div>
@@ -874,18 +872,8 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code>. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="tparams"><dt>Template Parameters</dt><dd>
-  <table class="tparams">
-    <tr><td class="paramname">row</td><td>Whether to return a row-major matrix. </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
+    <tr><td class="paramdir"></td><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether to store the output as a row-major matrix. </td></tr>
     <tr><td class="paramdir">[out]</td><td class="paramname">store</td><td>Pointer to an array of length equal to the product of the dimensions of <code>incoming</code>. On output, this is filled with values from <code>incoming</code> in row- or column-major format depending on <code>row</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">threads</td><td>Number of threads to use. </td></tr>
   </table>
@@ -937,7 +925,6 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">row</td><td>Whether to return a row-major matrix. </td></tr>
     <tr><td class="paramname">Value_</td><td>Type of data values in the output interface. </td></tr>
     <tr><td class="paramname">Index_</td><td>Integer type for the indices in the output interface. </td></tr>
     <tr><td class="paramname">StoredValue_</td><td>Type of data values to be stored in the output. </td></tr>
@@ -949,6 +936,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">incoming</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code>. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to return a row-major matrix. </td></tr>
     <tr><td class="paramname">threads</td><td>Number of threads to use.</td></tr>
   </table>
   </dd>
@@ -2833,7 +2821,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Instance of a <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html" title="Delayed isometric operations on a single matrix.">DelayedUnaryIsometricOp</a></code> clas. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Instance of a <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOp.html" title="Delayed isometric operations on a single matrix.">DelayedUnaryIsometricOp</a></code> class. </dd></dl>
 
 </div>
 </div>
@@ -2937,7 +2925,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
         </tr>
       </table>
 </div><div class="memdoc">
-<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types.</p>
+<p>A <code>make_*</code> helper function to enable partial template deduction of supplied types during delayed transposition.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
@@ -3417,6 +3405,7 @@ template&lt;bool sparse_, typename Value_ , typename Index_ , typename ... Args_
         </tr>
       </table>
 </div><div class="memdoc">
+<p>This function creates an extractor object with a <code><a class="el" href="structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses along a consecutive sequence.">ConsecutiveOracle</a></code> instance spanning a range of rows or columns. <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> implementations that are oracle-aware can then perform pre-fetching of future accesses for greater performance.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">sparse_</td><td>Whether to perform sparse retrieval. </td></tr>
@@ -3429,15 +3418,14 @@ template&lt;bool sparse_, typename Value_ , typename Index_ , typename ... Args_
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">mat</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a> to iterate over. </td></tr>
-    <tr><td class="paramname">row</td><td>Whether to perform extraction on rows. </td></tr>
-    <tr><td class="paramname">iter_start</td><td>Index of the first row/column of the iteration range. </td></tr>
-    <tr><td class="paramname">iter_length</td><td>Number of rows/columns in the iteration range. </td></tr>
-    <tr><td class="paramname">args</td><td>Further arguments to pass to <code><a class="el" href="classtatami_1_1Matrix.html#a168f0e932b5503c9bfc5dbd42754a7a5">Matrix::dense_row</a></code> or <code><a class="el" href="classtatami_1_1Matrix.html#a48300b3739f26bb10732c572ea9e5c57">Matrix::dense_column</a></code>.</td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">iter_start</td><td>Index of the first row (if <code>row = true</code>) or column (otherwise) of the iteration range. </td></tr>
+    <tr><td class="paramname">iter_length</td><td>Number of rows (if <code>row = true</code>) or columns (otherwise) in the iteration range. </td></tr>
+    <tr><td class="paramname">args</td><td>Further arguments to pass to <code><a class="el" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An extractor for iteration over consecutive rows/columns in <code>[iter_start, iter_start + iter_length)</code>. This may be either an <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle.">OracularDenseExtractor</a></code> or <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle.">OracularSparseExtractor</a></code> depending on <code>sparse_</code>.</dd></dl>
-<p>This function creates an extractor object with a <code><a class="el" href="structtatami_1_1ConsecutiveOracle.html" title="Predict future accesses of a consecutive sequence.">ConsecutiveOracle</a></code> instance spanning a range of rows or columns. <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> implementations that are oracle-aware can then perform pre-fetching of future accesses for greater performance. </p>
+<dl class="section return"><dt>Returns</dt><dd>An extractor for iteration over consecutive rows/columns in <code>[iter_start, iter_start + iter_length)</code>. This may be either an <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code> or <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle.">OracularSparseExtractor</a></code> depending on <code>sparse_</code>. </dd></dl>
 
 </div>
 </div>
@@ -3546,13 +3534,13 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir">[in]</td><td class="paramname">ptr</td><td>Pointer to a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> object to iterate over. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">oracle</td><td>Pointer to an oracle if <code>oracle_ = true</code>, otherwise a placeholder boolean that is ignored. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">args</td><td>Zero or more additional arguments to pass to methods like <code><a class="el" href="classtatami_1_1Matrix.html#a168f0e932b5503c9bfc5dbd42754a7a5">Matrix::dense_row()</a></code>.</td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>An extractor to access elements of the requested dimension of <code>ptr</code>. This may be any of <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract a dimension element in dense form without an oracle.">MyopicDenseExtractor</a></code>, <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html" title="Extract in sparse form without an oracle.">MyopicSparseExtractor</a></code>, <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle.">OracularDenseExtractor</a></code> or <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle.">OracularSparseExtractor</a></code>, depending on <code>sparse_</code> and <code>oracle_</code>. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>An extractor to access elements of the requested dimension of <code>ptr</code>. This may be any of <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract an element of the target dimension in dense form without an oracle.">MyopicDenseExtractor</a></code>, <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html" title="Extract an element of the target dimension in sparse form without an oracle.">MyopicSparseExtractor</a></code>, <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code> or <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle.">OracularSparseExtractor</a></code>, depending on <code>sparse_</code> and <code>oracle_</code>. </dd></dl>
 
 </div>
 </div>

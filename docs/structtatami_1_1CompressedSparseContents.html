@@ -106,7 +106,7 @@ struct tatami::CompressedSparseContents&lt; Value_, Index_ &gt;</div><p>Compress
   </table>
   </dd>
 </dl>
-<p>Check out <code><a class="el" href="classtatami_1_1CompressedSparseMatrix.html" title="Compressed sparse matrix representation.">CompressedSparseMatrix</a></code> for more details. </p>
+<p>The "primary" dimension is the one that is used to create the pointers for the compressed sparse format, while the other dimension is defined as the "secondary" dimension. For example, the rows would be the primary dimension in a compressed sparse row matrix. </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a42f014b8d8da15e6c49511db087bebf7" name="a42f014b8d8da15e6c49511db087bebf7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a42f014b8d8da15e6c49511db087bebf7">&#9670;&#160;</a></span>value</h2>
@@ -121,7 +121,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Vector containing values for the structural non-zero elements in a compressed sparse format. </p>
+<p>Vector containing values of the structural non-zero elements in a compressed sparse format. </p>
 
 </div>
 </div>
@@ -138,7 +138,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Vector containing the secondary dimension indices for the structural non-zero elements in a compressed sparse format. </p>
+<p>Vector containing the secondary dimension indices of the structural non-zero elements in a compressed sparse format. </p>
 
 </div>
 </div>

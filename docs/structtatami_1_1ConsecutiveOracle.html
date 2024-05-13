@@ -82,7 +82,7 @@ $(function() {
 </div><!--header-->
 <div class="contents">
 
-<p>Predict future accesses of a consecutive sequence.  
+<p>Predict future accesses along a consecutive sequence.  
  <a href="structtatami_1_1ConsecutiveOracle.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="ConsecutiveOracle_8hpp_source.html">ConsecutiveOracle.hpp</a>&gt;</code></p>
@@ -91,8 +91,8 @@ Inheritance diagram for tatami::ConsecutiveOracle&lt; Index_ &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="structtatami_1_1ConsecutiveOracle__inherit__graph.png" border="0" usemap="#atatami_1_1ConsecutiveOracle_3_01Index___01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="atatami_1_1ConsecutiveOracle_3_01Index___01_4_inherit__map" id="atatami_1_1ConsecutiveOracle_3_01Index___01_4_inherit__map">
-<area shape="rect" title="Predict future accesses of a consecutive sequence." alt="" coords="5,79,179,120"/>
-<area shape="rect" href="structtatami_1_1Oracle.html" title="Predict future access requests." alt="" coords="11,5,173,31"/>
+<area shape="rect" title="Predict future accesses along a consecutive sequence." alt="" coords="5,79,179,120"/>
+<area shape="rect" href="structtatami_1_1Oracle.html" title="Predict future access requests on the target dimension." alt="" coords="11,5,173,31"/>
 <area shape="poly" title=" " alt="" coords="95,46,95,79,89,79,89,46"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -101,8 +101,8 @@ Collaboration diagram for tatami::ConsecutiveOracle&lt; Index_ &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="structtatami_1_1ConsecutiveOracle__coll__graph.png" border="0" usemap="#atatami_1_1ConsecutiveOracle_3_01Index___01_4_coll__map" alt="Collaboration graph"/></div>
 <map name="atatami_1_1ConsecutiveOracle_3_01Index___01_4_coll__map" id="atatami_1_1ConsecutiveOracle_3_01Index___01_4_coll__map">
-<area shape="rect" title="Predict future accesses of a consecutive sequence." alt="" coords="5,79,179,120"/>
-<area shape="rect" href="structtatami_1_1Oracle.html" title="Predict future access requests." alt="" coords="11,5,173,31"/>
+<area shape="rect" title="Predict future accesses along a consecutive sequence." alt="" coords="5,79,179,120"/>
+<area shape="rect" href="structtatami_1_1Oracle.html" title="Predict future access requests on the target dimension." alt="" coords="11,5,173,31"/>
 <area shape="poly" title=" " alt="" coords="95,46,95,79,89,79,89,46"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
@@ -118,7 +118,7 @@ Public Member Functions</h2></td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a>&gt;<br />
-struct tatami::ConsecutiveOracle&lt; Index_ &gt;</div><p>Predict future accesses of a consecutive sequence. </p>
+struct tatami::ConsecutiveOracle&lt; Index_ &gt;</div><p>Predict future accesses along a consecutive sequence. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Index_</td><td>Integer type of the row/column indices. </td></tr>
@@ -163,7 +163,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">s</td><td>Start index of the consecutive sequence. </td></tr>
+    <tr><td class="paramname">s</td><td>Start index of the consecutive sequence on the target dimension. </td></tr>
     <tr><td class="paramname">l</td><td>Length of the sequence. </td></tr>
   </table>
   </dd>
@@ -233,7 +233,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The index of the <code>i</code>-th prediction. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>The <code>i</code>-th prediction, to be interpreted as an index on the target dimension. </dd></dl>
 
 <p>Implements <a class="el" href="structtatami_1_1Oracle.html#a852153ae7d04d12fdea97ebb7b11f357">tatami::Oracle&lt; Index_ &gt;</a>.</p>
 

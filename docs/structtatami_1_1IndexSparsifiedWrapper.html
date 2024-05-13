@@ -152,9 +152,9 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">d</td><td>Instance of a dense extractor for a block of the row/column. If <code>oracle_ = true</code>, this should be an instance of a <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract a dimension element in dense form without an oracle.">MyopicDenseExtractor</a></code> subclass; otherwise it should be an <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract in dense form with an oracle.">OracularDenseExtractor</a></code> instance. </td></tr>
-    <tr><td class="paramname">ip</td><td>Pointer to a vector of sorted and unique row/column indices to extract. Should be the same as that used to construct <code>d</code>. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">d</td><td>Instance of a dense extractor for an indexed subset of the non-target dimension. If <code>oracle_ = true</code>, this should be an instance of a <code><a class="el" href="structtatami_1_1MyopicDenseExtractor.html" title="Extract an element of the target dimension in dense form without an oracle.">MyopicDenseExtractor</a></code> subclass; otherwise it should be an <code><a class="el" href="structtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">OracularDenseExtractor</a></code> instance. </td></tr>
+    <tr><td class="paramname">ip</td><td>Pointer to a vector of sorted and unique indices for the non-target dimension. Should be the same as that used to construct <code>d</code>. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
@@ -205,7 +205,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the element to extract, ignored if <code>oracle_ = true</code>. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the element to extract on the target dimension, ignored if <code>oracle_ = true</code>. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">vbuffer</td><td>See <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html#a0641369e8d195d57e681632a199bc462">MyopicSparseExtractor::fetch()</a></code> or <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html#a28c7c5f5e8467153baeffe74bd83cea7">OracularSparseExtractor::fetch()</a></code>. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">ibuffer</td><td>See <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html#a0641369e8d195d57e681632a199bc462">MyopicSparseExtractor::fetch()</a></code> or <code><a class="el" href="structtatami_1_1OracularSparseExtractor.html#a28c7c5f5e8467153baeffe74bd83cea7">OracularSparseExtractor::fetch()</a></code>. </td></tr>
   </table>

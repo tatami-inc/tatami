@@ -107,8 +107,9 @@ Public Attributes</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index</a>&gt;<br />
 struct tatami::SparseRange&lt; Value, Index &gt;</div><p>A range of a sparse vector. </p>
-<p>This class defines a range along a sparse vector. It records the number of structural "non-zero" elements within this range, and contains pointers to their values and row/column indices.</p>
-<dl class="section note"><dt>Note</dt><dd>Note that the elements in <code>value</code> are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying structure, they will be reported here. However, one can safely assume that all indices <em>not</em> reported in <code>index</code> have values of zero.</dd></dl>
+<p>This class defines a range along a sparse vector. It records the number of structural "non-zero" elements within this range, and contains pointers to their values and indices.</p>
+<p>When a <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">SparseRange</a></code> is created by methods like <code><a class="el" href="structtatami_1_1MyopicSparseExtractor.html#a0641369e8d195d57e681632a199bc462">MyopicSparseExtractor::fetch()</a></code>, each of its indices refers to a position on the non-target dimension of the original <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code>. For example, when iterating over the rows, the indices would correspond to the columns.</p>
+<p>Note that the elements in <code>value</code> are not guaranteed to be non-zero. If zeroes are explicitly initialized in the underlying structure, they will be reported here. However, one can safely assume that all indices <em>not</em> reported in <code>index</code> have values of zero.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value</td><td>Data value type, should be numeric. </td></tr>
@@ -228,7 +229,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to the values of the structural non-zeros. Has at least <code>number</code> addressible entries. </p>
+<p>Pointer to an array containing the values of the structural non-zeros. If non-<code>NULL</code>, this has at least <code>number</code> addressible entries. </p>
 
 </div>
 </div>
@@ -245,7 +246,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Pointer to the (row/column) indices of the structural non-zeros. Has at least <code>number</code> addressible entries. </p>
+<p>Pointer to an array containing the indices of the structural non-zeros. If non-<code>NULL</code>, this has at least <code>number</code> addressible entries. </p>
 
 </div>
 </div>

@@ -290,7 +290,7 @@ Additional Inherited Members</h2></td></tr>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a>&gt;<br />
 class tatami::DelayedSubsetBlock&lt; Value_, Index_ &gt;</div><p>Delayed subsetting to a contiguous block. </p>
-<p>Implements delayed subsetting (i.e., slicing) of a matrix to a single contiguous block of rows or columns. This is a specialized implementation that is more efficient than the <code><a class="el" href="classtatami_1_1DelayedSubset.html" title="delayed subsetting of a matrix with general indices.">tatami::DelayedSubset</a></code> class. This operation is "delayed" in that it is only evaluated on request, e.g., with <code><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">row()</a></code> or friends.</p>
+<p>Implements delayed subsetting (i.e., slicing) of a matrix to a single contiguous block of rows or columns. This is a specialized implementation that is more efficient than the <code><a class="el" href="classtatami_1_1DelayedSubset.html" title="delayed subsetting of a matrix with general indices.">tatami::DelayedSubset</a></code> class. This operation is "delayed" in that it is only evaluated when data is extracted from the matrix.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
@@ -444,7 +444,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </table>
 </div><div class="memdoc">
 <dl class="section return"><dt>Returns</dt><dd>Boolean indicating whether this matrix is sparse.</dd></dl>
-<p>This can be used to choose between <code><a class="el" href="classtatami_1_1Matrix.html#aedecd4c23762ff43f49cfb0d2c687056">sparse_row()</a></code> and <code><a class="el" href="classtatami_1_1Matrix.html#a4d572f319b614a7e74d426cac94194de">dense_row()</a></code> when iterating over the rows (similarly so for the columns). </p>
+<p>This can be used to choose between dense and sparse outputs. </p>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a9de24a05a6aee62d4ba59799a73242e7">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -615,14 +615,14 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an extractor that retrieves the full extent of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true</code>) or column (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a0b6b1ae7819fad55cf7bf5587b7e5a4b">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -675,12 +675,12 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an extractor that retrieves a contiguous block of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
     <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
@@ -731,11 +731,11 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an extractor that retrieves an indexed subset of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should be non-NULL. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
@@ -780,14 +780,14 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an extractor that retrieves the full extent of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true</code>) or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true</code>) or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#af84772cc4e911a87948d45a1edcabbd0">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -840,12 +840,12 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an extractor that retrieves a contiguous block of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
     <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
@@ -896,11 +896,11 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an extractor that retrieves an indexed subset of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should be non-NULL. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
@@ -951,15 +951,15 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an oracle-aware extractor that retrieves the full extent of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true)</code> or columns (otherwise) in dense form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a6502fdebcaeea40490c1780ab6e92b19">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -1018,13 +1018,13 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an oracle-aware extractor that retrieves a contiguous block of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
     <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1081,12 +1081,12 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an oracle-aware extractor that retrieves an indexed subset of the non-target dimension in dense form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should not be NULL. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1137,15 +1137,15 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an oracle-aware extractor that retrieves the full extent of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Object for extracting the full extent of each row (if <code>row = true)</code> or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Object for extracting each row (if <code>row = true)</code> or columns (otherwise) in sparse form. This should not outlive the parent <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> from which it was created. </dd></dl>
 
 <p>Implements <a class="el" href="classtatami_1_1Matrix.html#a5605c18620abdab0f82015b959e9813a">tatami::Matrix&lt; Value_, Index_ &gt;</a>.</p>
 
@@ -1204,13 +1204,13 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an oracle-aware extractor that retrieves a contiguous block of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramname">block_start</td><td>Index of the column (if <code>row = true</code>) or row (otherwise) at the start of the block. </td></tr>
     <tr><td class="paramname">block_length</td><td>Number of columns (if <code>row = true</code>) or rows (otherwise) in the block. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1267,12 +1267,12 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<dl class="params"><dt>Parameters</dt><dd>
+<p>Create an oracle-aware extractor that retrieves an indexed subset of the non-target dimension in sparse form. </p><dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor. </td></tr>
+    <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">oracle</td><td>An oracle supplying predictions of the next requested row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramname">indices_ptr</td><td>Pointer to a vector of sorted and unique column indices (if <code>row = true</code>) or row indices (otherwise). This should not be NULL. </td></tr>
-    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for iteration and extraction.">Options</a> for extraction. </td></tr>
+    <tr><td class="paramname">opt</td><td><a class="el" href="structtatami_1_1Options.html" title="Options for accessing data from a Matrix instance.">Options</a> for extraction. </td></tr>
   </table>
   </dd>
 </dl>

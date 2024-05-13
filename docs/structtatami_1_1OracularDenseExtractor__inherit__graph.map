@@ -1,5 +1,5 @@
 <map id="tatami::OracularDenseExtractor&lt; Value_, Index_ &gt;" name="tatami::OracularDenseExtractor&lt; Value_, Index_ &gt;">
-<area shape="rect" id="Node000001" title="Extract in dense form with an oracle." alt="" coords="5,5,206,46"/>
+<area shape="rect" id="Node000001" title="Extract an element of the target dimension in dense form with an oracle." alt="" coords="5,5,206,46"/>
 <area shape="rect" id="Node000002" href="$structtatami_1_1PseudoOracularDenseExtractor.html" title="Mimic the OracularDenseExtractor interface." alt="" coords="9,94,202,135"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="108,62,108,94,103,94,103,62"/>
 </map>

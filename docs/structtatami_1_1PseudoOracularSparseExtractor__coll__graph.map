@@ -1,5 +1,5 @@
 <map id="tatami::PseudoOracularSparseExtractor&lt; Value_, Index_ &gt;" name="tatami::PseudoOracularSparseExtractor&lt; Value_, Index_ &gt;">
 <area shape="rect" id="Node000001" title="Mimic the OracularSparseExtractor interface." alt="" coords="9,94,206,135"/>
-<area shape="rect" id="Node000002" href="$structtatami_1_1OracularSparseExtractor.html" title="Extract in sparse form with an oracle." alt="" coords="5,5,210,46"/>
+<area shape="rect" id="Node000002" href="$structtatami_1_1OracularSparseExtractor.html" title="Extract an element of the target dimension in sparse form with an oracle." alt="" coords="5,5,210,46"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="110,62,110,94,105,94,105,62"/>
 </map>

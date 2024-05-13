@@ -219,7 +219,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This method should apply the operation to corresponding values of <code>left_buffer</code> and <code>right_buffer</code>, representing the dense contents of the same row/column from the left and right matrices respectively.</p>
+<p>This method should apply the operation to corresponding values of <code>left_buffer</code> and <code>right_buffer</code>. These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form. Each buffer holds values from a contiguous block of the non-target dimension.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
@@ -229,7 +229,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether <code>left_buffer</code> and <code>right_buffer</code> contain the row contents. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether the rows are the target dimension. If true, <code>left_buffer</code> and <code>right_buffer</code> hold the contents of the <code>i</code>-th row from both matrices; otherwise, they hold the contents of the <code>i</code>-th column. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">start</td><td>Start of the contiguous block of columns (if <code>row = true</code>) or rows (otherwise) extracted from <code>i</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">length</td><td>Length of the contiguous block. </td></tr>
@@ -295,7 +295,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This method should apply the operation to corresponding values of <code>left_buffer</code> and <code>right_buffer</code>, representing the dense contents of the same row/column from the left and right matrices respectively.</p>
+<p>This method should apply the operation to corresponding values of <code>left_buffer</code> and <code>right_buffer</code>, These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form. Each buffer holds values from an indexed subset of the non-target dimension.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
@@ -305,7 +305,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether <code>left_buffer</code> and <code>right_buffer</code> contain the row contents. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether the rows are the target dimension. If true, <code>left_buffer</code> and <code>right_buffer</code> hold the contents of the <code>i</code>-th row from both matrices; otherwise, they hold the contents of the <code>i</code>-th column. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">indices</td><td>Sorted and unique indices of columns (if <code>row = true</code>) or rows (otherwise) extracted from <code>i</code>. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">left_buffer</td><td>Contents of the row/column extracted from the left matrix. This has <code>length</code> addressable elements, and the result of the operation should be stored here. </td></tr>
@@ -388,7 +388,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This method applies the operation to the sparse ranges in <code>left</code> and <code>right</code>, representing the contents of the same row/column from the left and right matrices respectively. Specifically, the operation only needs to be applied to the structural non-zeros, and results of the operation should be stored in the <code>output_*</code> buffers. Structural zeros are either ignored for sparsity-preserving operations, or the result of the operation on zeros will be populated by <code><a class="el" href="structtatami_1_1DelayedBinaryAdvancedMockHelper.html#a6a12e19e5693e899c84f0e8d890894fc">fill()</a></code>.</p>
+<p>This method applies the operation to the sparse ranges in <code>left</code> and <code>right</code>, containing values from the same element of the target dimension from the left and right matrices, respectively. Specifically, the operation only needs to be applied to the structural non-zeros, and results of the operation should be stored in the <code>output_*</code> buffers. Structural zeros are either ignored for sparsity-preserving operations, or the result of the operation on zeros will be populated by <code><a class="el" href="structtatami_1_1DelayedBinaryAdvancedMockHelper.html#a6a12e19e5693e899c84f0e8d890894fc">fill()</a></code>.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
@@ -398,7 +398,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether <code>left_buffer</code> and <code>right_buffer</code> contain the row contents. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether the rows are the target dimension. If true, <code>left_buffer</code> and <code>right_buffer</code> hold the contents of the <code>i</code>-th row from both matrices; otherwise, they hold the contents of the <code>i</code>-th column. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">left</td><td>Contents of row/column <code>i</code> extracted from the left matrix. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">right</td><td>Contents of row/column <code>i</code> extracted from the right matrix. </td></tr>

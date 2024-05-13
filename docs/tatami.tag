@@ -36,7 +36,6 @@
     <path>tatami/base/</path>
     <filename>SparseRange_8hpp.html</filename>
     <class kind="struct">tatami::SparseRange</class>
-    <class kind="struct">tatami::SparseRangeCopy</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -4135,40 +4134,6 @@
       <arglist></arglist>
     </member>
   </compound>
-  <compound kind="struct">
-    <name>tatami::SparseRangeCopy</name>
-    <filename>structtatami_1_1SparseRangeCopy.html</filename>
-    <templarg>typename Value</templarg>
-    <templarg>typename Index</templarg>
-    <member kind="function">
-      <type></type>
-      <name>SparseRangeCopy</name>
-      <anchorfile>structtatami_1_1SparseRangeCopy.html</anchorfile>
-      <anchor>a3ddd45e45bb70ea81655a5a5c55de4e7</anchor>
-      <arglist>(Index n)</arglist>
-    </member>
-    <member kind="variable">
-      <type>Index</type>
-      <name>number</name>
-      <anchorfile>structtatami_1_1SparseRangeCopy.html</anchorfile>
-      <anchor>adab7f22070406ccdf552d15c60d88f7b</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>std::vector&lt; Value &gt;</type>
-      <name>value</name>
-      <anchorfile>structtatami_1_1SparseRangeCopy.html</anchorfile>
-      <anchor>a6f924c14d5830aedf2d175b850099b45</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable">
-      <type>std::vector&lt; Index &gt;</type>
-      <name>index</name>
-      <anchorfile>structtatami_1_1SparseRangeCopy.html</anchorfile>
-      <anchor>a62432f2387296b4070ce917e3c2eaac8</anchor>
-      <arglist></arglist>
-    </member>
-  </compound>
   <compound kind="namespace">
     <name>tatami</name>
     <filename>namespacetatami.html</filename>
@@ -4252,7 +4217,6 @@
     <class kind="struct">tatami::PseudoOracularSparseExtractor</class>
     <class kind="struct">tatami::SomeNumericArray</class>
     <class kind="struct">tatami::SparseRange</class>
-    <class kind="struct">tatami::SparseRangeCopy</class>
     <member kind="typedef">
       <type>typename std::conditional&lt; oracle_, OracularDenseExtractor&lt; Value_, Index_ &gt;, MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;::type</type>
       <name>DenseExtractor</name>

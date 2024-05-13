@@ -174,7 +174,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This method should apply the operation to values in <code>buffer</code>, representing a contiguous block of values from a row/column.</p>
+<p>This method should apply the operation to values in <code>buffer</code>. This buffer represents an element of the target dimension from the underlying matrix, and contains values from a contiguous block of the non-target dimension.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
@@ -184,7 +184,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether <code>buffer</code> contains the row contents. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether the rows are the target dimension. If true, <code>buffer</code> contains row <code>i</code>, otherwise it contains column <code>i</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">start</td><td>Start of the contiguous block of columns (if <code>row = true</code>) or rows (otherwise) extracted from <code>i</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">length</td><td>Length of the contiguous block. </td></tr>
@@ -243,7 +243,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This method should apply the operation to values in <code>buffer</code>, representing an indexed subset of values from a row/column.</p>
+<p>This method should apply the operation to values in <code>buffer</code>. This buffer represents an element of the target dimension from the underlying matrix, and contains values from an indexed subset of the non-target dimension.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
@@ -253,7 +253,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether <code>buffer</code> contains the row contents. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether the rows are the target dimension. If true, <code>buffer</code> contains row <code>i</code>, otherwise it contains column <code>i</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">indices</td><td>Sorted and unique indices of columns (if <code>row = true</code>) or rows (otherwise) extracted from <code>i</code>. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">buffer</td><td>Contents of the row/column extracted from the matrix. This has <code>length</code> addressable elements, and the result of the operation should be stored here.</td></tr>
@@ -317,7 +317,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>This method applies the operation to a sparse range representing the contents of a row/column from the underyling matrix. Specifically, the operation only needs to be applied to the structural non-zeros; structural zeros are either ignored for sparsity-preserving operations, or the result of the operation on zeros will be populated by <code><a class="el" href="structtatami_1_1DelayedUnaryAdvancedMockHelper.html#a055072152c604036d39142453fa1acc8">fill()</a></code>.</p>
+<p>This method applies the operation to a sparse range representing an element of the target dimension from the underlying matrix. Specifically, the operation only needs to be applied to the structural non-zeros; structural zeros are either ignored for sparsity-preserving operations, or the result of the operation on zeros will be populated by <code><a class="el" href="structtatami_1_1DelayedUnaryAdvancedMockHelper.html#a055072152c604036d39142453fa1acc8">fill()</a></code>.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">Value_</td><td>Type of matrix value. </td></tr>
@@ -327,7 +327,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether <code>buffer</code> contains the row contents. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether the rows are the target dimension. If true, <code>buffer</code> contains row <code>i</code>, otherwise it contains column <code>i</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">num</td><td>Number of non-zero elements for row/column <code>i</code>. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">value</td><td>Pointer to an array of values of the non-zero elements. This is guaranteed to have <code>num</code> addressable elements. </td></tr>

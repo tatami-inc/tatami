@@ -104,7 +104,7 @@ struct tatami::FragmentedSparseContents&lt; Value_, Index_ &gt;</div><p>Fragment
   </table>
   </dd>
 </dl>
-<p>Check out <code><a class="el" href="classtatami_1_1FragmentedSparseMatrix.html" title="Fragmented sparse matrix representation.">FragmentedSparseMatrix</a></code> for more details. </p>
+<p>The "primary" dimension is the one that is used to organize non-zero elements into vectors, while the other dimension is defined as the "secondary" dimension. For example, the rows would be the primary dimension in a fragmented sparse row matrix. (Check out <code><a class="el" href="classtatami_1_1FragmentedSparseMatrix.html" title="Fragmented sparse matrix representation.">FragmentedSparseMatrix</a></code> for more details.) </p>
 </div><h2 class="groupheader">Member Data Documentation</h2>
 <a id="a24193eb145792effdc67d3e1425f1cd2" name="a24193eb145792effdc67d3e1425f1cd2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a24193eb145792effdc67d3e1425f1cd2">&#9670;&#160;</a></span>value</h2>
@@ -119,7 +119,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Vector of vectors containing the values for the structural non-zero elements. Each inner vector corresponds to an element of the primary dimension and contains all values for that element. </p>
+<p>Vector of vectors containing the values of the structural non-zero elements. Each inner vector corresponds to an element of the primary dimension and contains all values for that element. </p>
 
 </div>
 </div>
@@ -136,7 +136,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
         </tr>
       </table>
 </div><div class="memdoc">
-<p>Vector of vectors containing the secondary dimension indices for the structural non-zero elements. Each inner vector corresponds to an element of the primary dimension and contains all indices for that element. Each inner vector is of length equal to the corresponding entry of <code>values</code> and is guaranteed to be strictly increasing. </p>
+<p>Vector of vectors containing the secondary dimension indices of the structural non-zero elements. Each inner vector corresponds to an element of the primary dimension and contains all indices for that element. Each inner vector is of length equal to the corresponding entry of <code>values</code> and is guaranteed to be strictly increasing. </p>
 
 </div>
 </div>
