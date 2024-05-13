@@ -21,13 +21,16 @@ namespace tatami {
  */
 struct DelayedBinaryBasicMockHelper {
     /**
-     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`,
-     * representing the dense contents of the same row/column from the left and right matrices respectively.
+     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
+     * These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form.
+     * Each buffer holds values from a contiguous block of the non-target dimension.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `left_buffer` and `right_buffer` contain the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
+     * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
@@ -53,13 +56,16 @@ struct DelayedBinaryBasicMockHelper {
     }
 
     /**
-     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`,
-     * representing the dense contents of the same row/column from the left and right matrices respectively.
+     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
+     * These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form.
+     * Each buffer holds values from an indexed subset of the non-target dimension.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `left_buffer` and `right_buffer` contain the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
+     * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
@@ -149,13 +155,16 @@ struct DelayedBinaryAdvancedMockHelper {
     static constexpr bool zero_depends_on_column = false;
 
     /**
-     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`,
-     * representing the dense contents of the same row/column from the left and right matrices respectively.
+     * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
+     * These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form.
+     * Each buffer holds values from a contiguous block of the non-target dimension.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `left_buffer` and `right_buffer` contain the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
+     * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
@@ -182,12 +191,15 @@ struct DelayedBinaryAdvancedMockHelper {
 
     /**
      * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`,
-     * representing the dense contents of the same row/column from the left and right matrices respectively.
+     * These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form.
+     * Each buffer holds values from an indexed subset of the non-target dimension.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `left_buffer` and `right_buffer` contain the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
+     * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
@@ -211,7 +223,7 @@ struct DelayedBinaryAdvancedMockHelper {
 
     /**
      * This method applies the operation to the sparse ranges in `left` and `right`, 
-     * representing the contents of the same row/column from the left and right matrices respectively.
+     * containing values from the same element of the target dimension from the left and right matrices, respectively.
      * Specifically, the operation only needs to be applied to the structural non-zeros,
      * and results of the operation should be stored in the `output_*` buffers.
      * Structural zeros are either ignored for sparsity-preserving operations,
@@ -220,7 +232,9 @@ struct DelayedBinaryAdvancedMockHelper {
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `left_buffer` and `right_buffer` contain the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
+     * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param left Contents of row/column `i` extracted from the left matrix.
      * @param right Contents of row/column `i` extracted from the right matrix.

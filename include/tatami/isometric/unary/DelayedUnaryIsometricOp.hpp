@@ -533,7 +533,7 @@ public:
  * @brief Delayed isometric operations on a single matrix.
  *
  * Implements any operation that preserves the shape of the matrix and operates on each matrix value independently.
- * This operation is "delayed" in that it is only evaluated on request, e.g., with `DenseExtractor::fetch()` or friends.
+ * This operation is "delayed" in that it is only evaluated during data extraction, e.g., with `MyopicDenseExtractor::fetch()` or friends.
  * We only consider "unary" operations that involve a single `Matrix` - see `DelayedBinaryIsometricOp` for operations between two `Matrix` instances.
  * 
  * @tparam Value_ Type of matrix value.
@@ -772,7 +772,7 @@ public:
  * @param p Pointer to a (possibly `const`) `Matrix`.
  * @param op Instance of the operation helper class.
  *
- * @return Instance of a `DelayedUnaryIsometricOp` clas.
+ * @return Instance of a `DelayedUnaryIsometricOp` class.
  */
 template<typename Value_, typename Index_, class Operation_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedUnaryIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > p, Operation_ op) {

@@ -22,12 +22,14 @@ namespace tatami {
 struct DelayedUnaryBasicMockHelper {
     /**
      * This method should apply the operation to values in `buffer`,
-     * representing a contiguous block of values from a row/column.
+     * This buffer represents an element of the target dimension from the underlying matrix,
+     * and contains values from a contiguous block of the non-target dimension.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `buffer` contains the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
@@ -50,13 +52,15 @@ struct DelayedUnaryBasicMockHelper {
     }
 
     /**
-     * This method should apply the operation to values in `buffer`,
-     * representing an indexed subset of values from a row/column.
+     * This method should apply the operation to values in `buffer`.
+     * This buffer represents an element of the target dimension from the underlying matrix,
+     * and contains values from an indexed subset of the non-target dimension.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `buffer` contains the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in,out] buffer Contents of the row/column extracted from the matrix.
@@ -110,13 +114,15 @@ struct DelayedUnaryBasicMockHelper {
  */
 struct DelayedUnaryAdvancedMockHelper {
     /**
-     * This method should apply the operation to values in `buffer`,
-     * representing a contiguous block of values from a row/column.
+     * This method should apply the operation to values in `buffer`.
+     * This buffer represents an element of the target dimension from the underlying matrix,
+     * and contains values from a contiguous block of the non-target dimension.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `buffer` contains the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
@@ -139,13 +145,15 @@ struct DelayedUnaryAdvancedMockHelper {
     }
 
     /**
-     * This method should apply the operation to values in `buffer`,
-     * representing an indexed subset of values from a row/column.
+     * This method should apply the operation to values in `buffer`.
+     * This buffer represents an element of the target dimension from the underlying matrix,
+     * and contains values from an indexed subset of the non-target dimension.
      *
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `buffer` contains the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in,out] buffer Contents of the row/column extracted from the matrix.
@@ -165,7 +173,7 @@ struct DelayedUnaryAdvancedMockHelper {
     }
 
     /**
-     * This method applies the operation to a sparse range representing the contents of a row/column from the underyling matrix.
+     * This method applies the operation to a sparse range representing an element of the target dimension from the underlying matrix.
      * Specifically, the operation only needs to be applied to the structural non-zeros;
      * structural zeros are either ignored for sparsity-preserving operations,
      * or the result of the operation on zeros will be populated by `fill()`.
@@ -173,7 +181,8 @@ struct DelayedUnaryAdvancedMockHelper {
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param row Whether `buffer` contains the row contents.
+     * @param row Whether the rows are the target dimension.
+     * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * @param num Number of non-zero elements for row/column `i`.
      * @param[in,out] value Pointer to an array of values of the non-zero elements.
