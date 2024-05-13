@@ -227,7 +227,7 @@ private:
  * @brief Delayed subsetting of a matrix with unique indices.
  *
  * Implements delayed subsetting (i.e., slicing) on the rows or columns of a matrix, given a vector of unique indices.
- * This operation is "delayed" in that it is only evaluated when rows or columns are requested from the matrix.
+ * This operation is "delayed" in that it is only evaluated when data is extracted from the matrix.
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Integer type of index value.

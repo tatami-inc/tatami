@@ -544,7 +544,7 @@ private:
  * @brief Delayed combining of a matrix.
  *
  * Implements delayed combining by rows or columns of a matrix.
- * This operation is "delayed" in that it is only performed on a row-by-row or column-by-column basis during extraction.
+ * This operation is "delayed" in that it is only performed on a row-by-row or column-by-column basis during data extraction.
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.

@@ -155,7 +155,7 @@ private:
  *
  * Implements delayed subsetting (i.e., slicing) of a matrix to a single contiguous block of rows or columns.
  * This is a specialized implementation that is more efficient than the `tatami::DelayedSubset` class.
- * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
+ * This operation is "delayed" in that it is only evaluated when data is extracted from the matrix.
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Integer type for the row/column indices.

@@ -18,7 +18,7 @@ namespace tatami {
  * @brief Delayed transposition of a matrix.
  *
  * Implements delayed transposition of a matrix.
- * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
+ * This operation is "delayed" in that it is only evaluated during data extraction.
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
@@ -137,7 +137,7 @@ public:
 };
 
 /**
- * A `make_*` helper function to enable partial template deduction of supplied types.
+ * A `make_*` helper function to enable partial template deduction of supplied types during delayed transposition.
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.

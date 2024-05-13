@@ -7,7 +7,7 @@
 /**
  * @file FixedOracle.hpp
  *
- * @brief Iterate across a fixed sequence of elements in a dimension.
+ * @brief Iterate across a fixed sequence of elements on the target dimension.
  */
 
 namespace tatami {
@@ -20,7 +20,7 @@ namespace tatami {
 template<typename Index_>
 struct FixedViewOracle : public Oracle<Index_> {
     /**
-     * @param r Pointer to a constant array of indices.
+     * @param r Pointer to a constant array of indices on the target dimension.
      * The underlying array should be valid for the lifetime of this `FixedOracle` instance.
      * @param n Length of the array at `r`.
      */
@@ -42,12 +42,12 @@ private:
 /**
  * @tparam Index_ Integer type of the row/column indices.
  *
- * @brief Predict future accesses from a fixed sequence in a vector.
+ * @brief Predict future accesses from a vector containing a fixed sequence.
  */
 template<typename Index_>
 struct FixedVectorOracle : public Oracle<Index_> {
     /**
-     * @param v Vector containing a fixed sequence of indices.
+     * @param v Vector containing a fixed sequence of indices on the target dimension.
      */
     FixedVectorOracle(std::vector<Index_> v) : sequence(std::move(v)) {}
 
