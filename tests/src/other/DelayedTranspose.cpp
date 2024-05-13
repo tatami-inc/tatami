@@ -20,8 +20,8 @@ protected:
         }
 
         auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05);
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column-major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
         tdense = tatami::make_DelayedTranspose(dense);
         tsparse = tatami::make_DelayedTranspose(sparse);
 
@@ -31,7 +31,7 @@ protected:
                 refvec[c * nrow + r] = simulated[r * ncol + c];
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(ncol, nrow, refvec));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(ncol, nrow, refvec));
     }
 };
 

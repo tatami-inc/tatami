@@ -18,8 +18,8 @@ protected:
 
     static void SetUpTestSuite() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -3, 3);
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
     }
 
     static void fill_default_vector(std::vector<char>& vec) {
@@ -70,7 +70,7 @@ TEST_P(BooleanVectorTest, AND) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -116,7 +116,7 @@ TEST_P(BooleanVectorTest, OR) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -162,7 +162,7 @@ TEST_P(BooleanVectorTest, XOR) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -210,7 +210,7 @@ TEST_P(BooleanVectorTest, EQUAL) {
         }
     }
     
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }

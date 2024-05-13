@@ -30,8 +30,8 @@ protected:
         }
 
         auto sparse_matrix = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.08);
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, sparse_matrix));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column-major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, sparse_matrix));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
 
         // Both the value and indices are changed in type.
         std::vector<float> fsparse_matrix(sparse_matrix.begin(), sparse_matrix.end());
@@ -41,8 +41,8 @@ protected:
         // Reference with reduced precision, for comparison with double->float->double casts.
         {
             std::vector<double> dsparse_matrix(fsparse_matrix.begin(), fsparse_matrix.end());
-            fdense_ref = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(dsparse_matrix)));
-            fsparse_ref = tatami::convert_to_compressed_sparse<false>(fdense_ref.get()); // column-major.
+            fdense_ref = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(dsparse_matrix)));
+            fsparse_ref = tatami::convert_to_compressed_sparse<false, double, int>(fdense_ref.get()); // column-major.
         }
 
         // Only the value is changed in type.

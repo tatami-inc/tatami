@@ -166,63 +166,19 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<In
     auto NC = incoming->ncol();
     std::vector<StoredValue_> buffer(static_cast<size_t>(NR) * static_cast<size_t>(NC));
     convert_to_dense(incoming, row, buffer.data(), threads);
-    if (row) {
-        return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<true, Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer)));
-    } else {
-        return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<false, Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer)));
-    }
-}
-
-/**
- * This overload makes it easier to control the desired output order when it is not known at compile time.
- *
- * @tparam Value_ Type of data values in the output interface.
- * @tparam Index Integer type for the indices in the output interface.
- * @tparam StoredValue_ Type of data values to be stored in the output.
- * @tparam Matrix_ Input matrix class, most typically a `tatami::Matrix`.
- *
- * @param incoming Pointer to a `tatami::Matrix`.
- * @param order Ordering of values in the output dense matrix - row-major (0) or column-major (1).
- * If set to -1, the ordering is chosen based on `tatami::Matrix::prefer_rows()`. 
- * @param threads Number of threads to use.
- *
- * @return A pointer to a new `tatami::DenseMatrix` with the same dimensions and type as the matrix referenced by `incoming`.
- */
-template <
-    typename Value_ = double,
-    typename Index_ = int,
-    typename StoredValue_ = Value_,
-    typename InputValue_,
-    typename InputIndex_
->
-std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, int order, int threads = 1) {
-    if (order < 0) {
-        order = static_cast<int>(!incoming->prefer_rows()); 
-    }
-    if (order == 0) {
-        return convert_to_dense<true, Value_, Index_, StoredValue_>(incoming, threads);
-    } else {
-        return convert_to_dense<false, Value_, Index_, StoredValue_>(incoming, threads);
-    }
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer), row));
 }
 
 /**
  * @cond
  */
 // Backwards compatbility.
-template <bool row_, typename StoredValue_, typename InputValue_, typename InputIndex_>
+template<bool row_, typename StoredValue_, typename InputValue_, typename InputIndex_>
 void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, StoredValue_* store, int threads = 1) {
     convert_to_dense(incoming, row_, store, threads);
 }
 
-template <
-    bool row_,
-    typename Value_ = double, 
-    typename Index_ = int, 
-    typename StoredValue_ = Value_, 
-    typename InputValue_,
-    typename InputIndex_
->
+template<bool row_, typename Value_, typename Index_, typename StoredValue_ = Value_, typename InputValue_, typename InputIndex_>
 inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, int threads = 1) {
     return convert_to_dense<Value_, Index_, StoredValue_>(incoming, row_, threads);
 }

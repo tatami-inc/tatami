@@ -14,7 +14,7 @@
 TEST(DelayedUnaryIsometricOp, ConstOverload) {
     int nrow = 23, ncol = 42;
     auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
 
     auto vec = std::vector<double>(nrow);
     auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
@@ -33,12 +33,12 @@ protected:
 
     static void SetUpTestSuite() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
-        dense.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(simulated)));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); 
+        dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(simulated)));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); 
 
         udense = tatami::make_DelayedUnaryIsometricOp(dense, tatami::DelayedUnaryBasicMockHelper());
         usparse = tatami::make_DelayedUnaryIsometricOp(sparse, tatami::DelayedUnaryAdvancedMockHelper());
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::vector<double>(nrow * ncol)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
     }
 };
 

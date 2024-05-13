@@ -21,8 +21,8 @@ protected:
             return;
         }
         simulated = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.2);
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column-major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, simulated));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
     }
 
 public:
@@ -61,7 +61,7 @@ protected:
 
         if (bind_rows) {
             std::vector<double> sub(simulated.data() + first * NC, simulated.data() + last * NC);
-            ref.reset(new tatami::DenseRowMatrix<double>(block_length, NC, std::move(sub)));
+            ref.reset(new tatami::DenseRowMatrix<double, int>(block_length, NC, std::move(sub)));
             dense_block = tatami::make_DelayedSubsetBlock<0>(dense, first, block_length);
             sparse_block = tatami::make_DelayedSubsetBlock<0>(sparse, first, block_length);
         } else {
@@ -71,7 +71,7 @@ protected:
                 auto row = simulated.data() + r * NC;
                 sub.insert(sub.end(), row + first, row + last);
             }
-            ref.reset(new tatami::DenseRowMatrix<double>(NR, block_length, std::move(sub)));
+            ref.reset(new tatami::DenseRowMatrix<double, int>(NR, block_length, std::move(sub)));
             dense_block = tatami::make_DelayedSubsetBlock<1>(dense, first, block_length);
             sparse_block = tatami::make_DelayedSubsetBlock<1>(sparse, first, block_length);
         }
@@ -229,7 +229,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 TEST(DelayedSubsetBlock, ConstOverload) {
     int NR = 9, NC = 7;
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
     auto sub = tatami::make_DelayedSubsetBlock<1>(dense, static_cast<int>(5), static_cast<int>(3));
     EXPECT_EQ(sub->ncol(), 3);
     EXPECT_EQ(sub->nrow(), NR);
@@ -237,7 +237,7 @@ TEST(DelayedSubsetBlock, ConstOverload) {
 
 TEST(DelayedSubsetBlock, CorrectMaker) {
     int NR = 90, NC = 50;
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(NR, NC, tatami_test::simulate_dense_vector<double>(NR * NC)));
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_dense_vector<double>(NR * NC)));
 
     // Checking that the make function dispatches correctly to the block subset class.
     {

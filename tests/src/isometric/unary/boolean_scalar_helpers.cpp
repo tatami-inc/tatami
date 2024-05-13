@@ -22,8 +22,8 @@ protected:
             return;
         }
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -2, 2);
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
     }
 };
 
@@ -53,7 +53,7 @@ TEST_P(BooleanScalarTest, AND) {
     for (auto& r : refvec) {
         r = r && other;
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -83,7 +83,7 @@ TEST_P(BooleanScalarTest, OR) {
     for (auto& r : refvec) {
         r = r || other;
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -113,7 +113,7 @@ TEST_P(BooleanScalarTest, XOR) {
     for (auto& r : refvec) {
         r = static_cast<bool>(r) != other;
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -143,7 +143,7 @@ TEST_P(BooleanScalarTest, EQUAL) {
     for (auto& r : refvec) {
         r = static_cast<bool>(r) == other;
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -179,7 +179,7 @@ TEST_F(BooleanNotTest, Basic) {
     for (auto& r : refvec) {
         r = !static_cast<bool>(r);
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);

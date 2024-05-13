@@ -23,8 +23,8 @@ protected:
             return;
         }
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
     }
 };
 
@@ -63,7 +63,7 @@ TEST_P(ArithCommutativeScalarTest, Addition) {
     for (auto& r : refvec) {
         r += val;
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -83,7 +83,7 @@ TEST_P(ArithCommutativeScalarTest, Multiplication) {
     for (auto& r : refvec) {
         r *= val;
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
@@ -140,7 +140,7 @@ TEST_P(ArithNonCommutativeScalarTest, Subtraction) {
             r = val - r;
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -179,7 +179,7 @@ TEST_P(ArithNonCommutativeScalarTest, Division) {
             r = careful_division(val, r);
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ (val == 0));
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ (val == 0));
@@ -224,7 +224,7 @@ TEST_P(ArithNonCommutativeScalarTest, Power) {
             r = std::pow(val, std::abs(r));
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
@@ -264,7 +264,7 @@ TEST_P(ArithNonCommutativeScalarTest, Modulo) {
             r = std::fmod(val, r);
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ !(on_right && val));
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ !(on_right && val));
@@ -305,7 +305,7 @@ TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
             r = std::floor(careful_division(val, r));
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ !(on_right && val));
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ !(on_right && val));

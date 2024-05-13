@@ -22,8 +22,8 @@ protected:
             return;
         }
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false>(dense.get()); // column major.
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
+        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
         return;
     }
 
@@ -214,7 +214,7 @@ protected:
                 refvec[r * ncol + c] += vec[row ? r : c];
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -337,7 +337,7 @@ protected:
                 }
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -386,7 +386,7 @@ TEST_P(ArithVectorSubtractionZeroedTest, Basic) {
         for (auto& x : copy) {
             x *= -1;
         }
-        tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
         tatami_test::test_simple_column_access(dense_z.get(), &ref);
         tatami_test::test_simple_column_access(sparse_z.get(), &ref);
@@ -451,7 +451,7 @@ protected:
                 refvec[r * ncol + c] *= vec[row ? r : c];
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -487,7 +487,7 @@ TEST_P(ArithVectorMultiplicationZeroedTest, Basic) {
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
     ArithVectorMultiplicationUtils::apply_operation(row, zeroed, dense_z, sparse_z);
 
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::vector<double>(nrow * ncol));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::vector<double>(nrow * ncol));
 
     tatami_test::test_simple_column_access(dense_z.get(), &ref);
     tatami_test::test_simple_column_access(sparse_z.get(), &ref);
@@ -578,7 +578,7 @@ protected:
                 }
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -630,7 +630,7 @@ TEST_P(ArithVectorDivisionZeroedTest, AllZero) {
             x = careful_division(0.0, x);
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
     EXPECT_FALSE(dense_z->sparse());
     EXPECT_FALSE(sparse_z->sparse());
@@ -682,7 +682,7 @@ TEST_P(ArithVectorDivisionZeroedTest, OneZero) {
             }
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
     EXPECT_FALSE(dense_z->sparse());
     EXPECT_FALSE(sparse_z->sparse());
@@ -775,7 +775,7 @@ protected:
                 }
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -827,7 +827,7 @@ TEST_P(ArithVectorPowerZeroedTest, AllZero) {
             x = std::pow(0.0, std::abs(x));
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
     EXPECT_FALSE(dense_z->sparse());
     EXPECT_FALSE(sparse_z->sparse());
@@ -882,7 +882,7 @@ TEST_P(ArithVectorPowerZeroedTest, OneZero) {
             }
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
     EXPECT_FALSE(dense_z->sparse());
     EXPECT_FALSE(sparse_z->sparse());
@@ -1068,7 +1068,7 @@ protected:
                 }
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -1120,7 +1120,7 @@ TEST_P(ArithVectorModuloZeroedTest, AllZero) {
             x = std::fmod(0.0, x);
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
     EXPECT_FALSE(dense_z->sparse());
     EXPECT_FALSE(sparse_z->sparse());
@@ -1210,7 +1210,7 @@ protected:
                 }
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }
 };
 
@@ -1263,7 +1263,7 @@ TEST_P(ArithVectorIntegerDivisionZeroedTest, AllZero) {
             x = std::floor(careful_division(0.0, x));
         }
     }
-    tatami::DenseRowMatrix<double> ref(nrow, ncol, std::move(copy));
+    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
     EXPECT_FALSE(dense_z->sparse());
     EXPECT_FALSE(sparse_z->sparse());

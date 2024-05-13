@@ -8,8 +8,6 @@
  * @file boolean_helpers.hpp
  *
  * @brief Helper classes for delayed unary boolean operations.
- * 
- * Classes defined here should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
 
 namespace tatami {
@@ -37,7 +35,7 @@ bool delayed_boolean_actual_sparse(bool scalar) {
 /**
  * @brief Delayed scalar boolean operation.
  *
- * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam op_ The boolean operation.
  * @tparam Value_ Type of the data value.
@@ -107,7 +105,7 @@ public:
 /**
  * @brief Delayed boolean NOT operation.
  *
- * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam Value_ Type of the data value.
  */
@@ -170,7 +168,7 @@ public:
 /**
  * @brief Delayed vector boolean operations.
  *
- * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam op_ The boolean operation.
  * @tparam margin_ Matrix dimension along which the operation is to occur.

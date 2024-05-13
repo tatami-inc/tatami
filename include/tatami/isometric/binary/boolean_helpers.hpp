@@ -8,8 +8,6 @@
  * @file boolean_helpers.hpp
  *
  * @brief Helper classes for binary boolean operations.
- * 
- * Classes defined here should be used as the `OP` in the `DelayedBinaryIsometricOp` class.
  */
 
 namespace tatami {
@@ -17,7 +15,7 @@ namespace tatami {
 /**
  * @brief Delayed binary boolean operations.
  *
- * This should be used as the `OP` in the `DelayedBinaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedBinaryIsometricOp` class.
  *
  * @tparam op_ The boolean operation.
  */

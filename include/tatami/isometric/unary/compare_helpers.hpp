@@ -8,8 +8,6 @@
  * @file compare_helpers.hpp
  *
  * @brief Helper classes for delayed unary comparison operations.
- * 
- * Classes defined here should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
 
 namespace tatami {
@@ -37,7 +35,7 @@ bool delayed_compare_actual_sparse(Scalar_ scalar) {
 /**
  * @brief Delayed scalar comparison.
  *
- * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam op_ The comparison operation.
  * @tparam Value_ Type of the data value.
@@ -108,7 +106,7 @@ public:
 /**
  * @brief Delayed vector comparisons.
  *
- * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam op_ The comparison operation.
  * @tparam margin_ Matrix dimension along which the operation is to occur.

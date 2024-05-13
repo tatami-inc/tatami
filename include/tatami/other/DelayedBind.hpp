@@ -544,26 +544,28 @@ private:
  * @brief Delayed combining of a matrix.
  *
  * Implements delayed combining by rows or columns of a matrix.
- * This operation is "delayed" in that it is only evaluated on request, e.g., with `row()` or friends.
+ * This operation is "delayed" in that it is only performed on a row-by-row or column-by-column basis during extraction.
  *
- * @tparam margin_ Dimension along which the combining is to occur.
- * If 0, the matrices are combined along the rows; if 1, the combining is applied along the columns.
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
  */
-template<int margin_, typename Value_, typename Index_>
+template<typename Value_, typename Index_>
 class DelayedBind : public Matrix<Value_, Index_> {
 public:
     /**
      * @param ps Pointers to the matrices to be combined.
-     * All matrices to be combined should have the same number of columns (if `margin_ == 0`) or rows (otherwise).
+     * All matrices to be combined should have the same number of columns (if `row = true`) or rows (otherwise).
+     * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `ps`).
+     * If false, combining is applied by the columns.
      */
-    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps) : mats(std::move(ps)), cumulative(mats.size()+1) {
+    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps, bool row) : 
+        mats(std::move(ps)), by_row(row), cumulative(mats.size()+1) 
+    {
         size_t sofar = 0;
         for (size_t i = 0, nmats = mats.size(); i < nmats; ++i) {
             auto& current = mats[i];
             Index_ primary, secondary;
-            if constexpr(margin_ == 0) {
+            if (by_row) {
                 primary = current->nrow();
                 secondary = current->ncol();
             } else {
@@ -574,7 +576,7 @@ public:
             if (i == 0) {
                 otherdim = secondary;
             } else if (otherdim != secondary) {
-                throw std::runtime_error("all 'mats' should have the same number of " + (margin_ == 0 ? std::string("columns") : std::string("rows")));
+                throw std::runtime_error("all 'mats' should have the same number of " + (by_row ? std::string("columns") : std::string("rows")));
             }
 
             // Removing the matrices that don't contribute anything,
@@ -597,7 +599,7 @@ public:
         // hence, using Index_ for the mapping should not overflow.
         mapping.reserve(cumulative.back());
         for (Index_ i = 0, nmats = mats.size(); i < nmats; ++i) {
-            mapping.insert(mapping.end(), (margin_ == 0 ? mats[i]->nrow() : mats[i]->ncol()), i);
+            mapping.insert(mapping.end(), (by_row ? mats[i]->nrow() : mats[i]->ncol()), i);
         }
 
         double denom = 0;
@@ -625,12 +627,17 @@ public:
 
     /**
      * @param ps Pointers to the matrices to be combined.
-     * All matrices to be combined should have the same number of columns (if `margin_ == 0`) or rows (otherwise).
+     * All matrices to be combined should have the same number of columns (if `row = true`) or rows (otherwise).
+     * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `ps`).
+     * If false, combining is applied by the columns.
      */
-    DelayedBind(const std::vector<std::shared_ptr<Matrix<Value_, Index_> > >& ps) : DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(ps.begin(), ps.end())) {}
+    DelayedBind(const std::vector<std::shared_ptr<Matrix<Value_, Index_> > >& ps, bool row) : 
+        DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(ps.begin(), ps.end()), row) {}
 
 private:
     std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > mats;
+    bool by_row;
+
     Index_ otherdim = 0;
     std::vector<Index_> cumulative;
     std::vector<Index_> mapping;
@@ -640,7 +647,7 @@ private:
 
 public:
     Index_ nrow() const {
-        if constexpr(margin_==0) {
+        if (by_row) {
             return cumulative.back();
         } else {
             return otherdim;
@@ -648,7 +655,7 @@ public:
     }
 
     Index_ ncol() const {
-        if constexpr(margin_==0) {
+        if (by_row) {
             return otherdim;
         } else {
             return cumulative.back();
@@ -690,7 +697,7 @@ public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, const Options& opt) const {
         if (mats.size() == 1) {
             return mats[0]->dense(row, opt);
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(cumulative, mapping, mats, row, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(cumulative, mapping, mats, row, false, opt);
@@ -700,7 +707,7 @@ public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_length, const Options& opt) const {
         if (mats.size() == 1) {
             return mats[0]->dense(row, block_start, block_length, opt);
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(cumulative, mapping, mats, row, block_start, block_length, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(cumulative, mapping, mats, row, false, block_start, block_length, opt);
@@ -710,7 +717,7 @@ public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         if (mats.size() == 1) {
             return mats[0]->dense(row, std::move(indices_ptr), opt);
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularDense<Value_, Index_> >(cumulative, mapping, mats, row, std::move(indices_ptr), opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<false, Value_, Index_> >(cumulative, mapping, mats, row, false, std::move(indices_ptr), opt);
@@ -724,7 +731,7 @@ private:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const Options& opt) const {
         if (mats.size() == 1) {
             return mats[0]->sparse(row, opt);
-        } else  if (row == (margin_ == 0)) {
+        } else  if (row == by_row) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(cumulative, mapping, mats, row, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelFullSparse<false, Value_, Index_> >(cumulative, mapping, mats, row, false, opt);
@@ -734,7 +741,7 @@ private:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_length, const Options& opt) const {
         if (mats.size() == 1) {
             return mats[0]->sparse(row, block_start, block_length, opt);
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(cumulative, mapping, mats, row, block_start, block_length, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelBlockSparse<false, Value_, Index_> >(cumulative, mapping, mats, row, false, block_start, block_length, opt);
@@ -744,7 +751,7 @@ private:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         if (mats.size() == 1) {
             return mats[0]->sparse(row, std::move(indices_ptr), opt);
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::MyopicPerpendicularSparse<Value_, Index_> >(cumulative, mapping, mats, row, std::move(indices_ptr), opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelIndexSparse<false, Value_, Index_> >(cumulative, mapping, mats, row, false, std::move(indices_ptr), opt);
@@ -760,7 +767,7 @@ public:
             return mats[0]->dense(row, std::move(oracle), opt);
         } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, opt));
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), opt);
@@ -772,7 +779,7 @@ public:
             return mats[0]->dense(row, std::move(oracle), block_start, block_length, opt);
         } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, block_start, block_length, opt));
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), block_start, block_length, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), block_start, block_length, opt);
@@ -784,7 +791,7 @@ public:
             return mats[0]->dense(row, std::move(oracle), std::move(indices_ptr), opt);
         } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularDenseExtractor<Value_, Index_> >(std::move(oracle), dense(row, std::move(indices_ptr), opt));
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularDense<Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), std::move(indices_ptr), opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelDense<true, Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), std::move(indices_ptr), opt);
@@ -800,7 +807,7 @@ private:
             return mats[0]->sparse(row, std::move(oracle), opt);
         } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, opt));
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelFullSparse<true, Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), opt);
@@ -812,7 +819,7 @@ private:
             return mats[0]->sparse(row, std::move(oracle), block_start, block_length, opt);
         } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, block_start, block_length, opt));
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), block_start, block_length, opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelBlockSparse<true, Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), block_start, block_length, opt);
@@ -824,7 +831,7 @@ private:
             return mats[0]->sparse(row, std::move(oracle), std::move(indices_ptr), opt);
         } else if (!stored_uses_oracle[row]) {
             return std::make_unique<PseudoOracularSparseExtractor<Value_, Index_> >(std::move(oracle), sparse(row, std::move(indices_ptr), opt));
-        } else if (row == (margin_ == 0)) {
+        } else if (row == by_row) {
             return std::make_unique<DelayedBind_internal::OracularPerpendicularSparse<Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), std::move(indices_ptr), opt);
         } else {
             return std::make_unique<DelayedBind_internal::ParallelIndexSparse<true, Value_, Index_> >(cumulative, mapping, mats, row, std::move(oracle), std::move(indices_ptr), opt);
@@ -835,26 +842,43 @@ private:
 /**
  * A `make_*` helper function to enable partial template deduction of supplied types.
  *
- * @tparam margin_ Dimension along which the combining is to occur.
- * If 0, matrices are combined along the rows; if 1, matrices are combined to the columns.
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
  *
  * @param ps Pointers to `Matrix` objects.
+ * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `ps`).
+ * If false, combining is applied by the columns.
  *
  * @return A pointer to a `DelayedBind` instance.
  */
-template<int margin_, typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps) {
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<margin_, Value_, Index_>(std::move(ps)));
+template<typename Value_, typename Index_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps, bool row) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<Value_, Index_>(std::move(ps), row));
 }
 
 /**
  * @cond
  */
+template<typename Value_, typename Index_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > ps, bool row) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<Value_, Index_>(std::move(ps), row));
+}
+/**
+ * @endcond
+ */
+
+/**
+ * @cond
+ */
+// Back-compatibility.
+template<int margin_, typename Value_, typename Index_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps) {
+    return make_DelayedBind(std::move(ps), margin_ == 0);
+}
+
 template<int margin_, typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > ps) {
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<margin_, Value_, Index_>(std::move(ps)));
+    return make_DelayedBind(std::move(ps), margin_ == 0);
 }
 /**
  * @endcond

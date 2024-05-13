@@ -9,8 +9,6 @@
  * @file arith_helpers.hpp
  *
  * @brief Helper classes for delayed unary arithmetic operations.
- * 
- * Classes defined here should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
  */
 
 namespace tatami {
@@ -66,7 +64,7 @@ Value_ delayed_arith_zero(Scalar_ scalar) {
 /**
  * @brief Delayed scalar arithmetic.
  *
- * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam op_ The arithmetic operation.
  * @tparam right_ Whether the scalar should be on the right hand side of the arithmetic operation.
@@ -138,7 +136,7 @@ public:
 /**
  * @brief Delayed vector arithmetic.
  *
- * This should be used as the `OP` in the `DelayedUnaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedUnaryIsometricOp` class.
  *
  * @tparam op_ The arithmetic operation.
  * @tparam right_ Whether the vector's values should be on the right hand side of the arithmetic operation.

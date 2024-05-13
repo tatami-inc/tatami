@@ -12,7 +12,7 @@ TEST(DenseMatrix, Basic) {
     double counter = -105;
     for (auto& i : contents) { i = counter++; }
 
-    tatami::DenseColumnMatrix<double> mat(10, 20, contents);
+    tatami::DenseColumnMatrix<double, int> mat(10, 20, contents);
 
     EXPECT_FALSE(mat.sparse());
     EXPECT_EQ(mat.sparse_proportion(), 0);
@@ -50,7 +50,7 @@ TEST(DenseMatrix, Basic) {
 TEST(DenseMatrix, Errors) {
     std::vector<double> contents;
     tatami_test::throws_error([&]() {
-        tatami::DenseColumnMatrix<double> mat(10, 20, contents);
+        tatami::DenseColumnMatrix<double, int> mat(10, 20, contents);
     }, "length of 'values' should be equal");
 }
 
@@ -208,7 +208,7 @@ TEST(DenseMatrix, IndexTypeOverflow) {
     double counter = -105;
     for (auto& i : contents) { i = counter++; }
 
-    tatami::DenseColumnMatrix<double> ref(100, 200, contents);
+    tatami::DenseColumnMatrix<double, int> ref(100, 200, contents);
     tatami::DenseColumnMatrix<double, unsigned char> limited(100, 200, contents);
 
     EXPECT_EQ(limited.nrow(), 100);
@@ -287,7 +287,7 @@ TEST(DenseMatrix, DifferentValueType) {
     double counter = -105;
     for (auto& i : contents) { i = counter++; }
 
-    tatami::DenseColumnMatrix<double> ref(100, 200, std::vector<double>(contents.begin(), contents.end()));
+    tatami::DenseColumnMatrix<double, int> ref(100, 200, std::vector<double>(contents.begin(), contents.end()));
     tatami::DenseColumnMatrix<double, int, decltype(contents)> vstore(100, 200, contents);
 
     EXPECT_EQ(vstore.nrow(), 100);
