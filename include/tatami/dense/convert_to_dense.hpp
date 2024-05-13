@@ -26,7 +26,7 @@ namespace tatami {
  * @tparam InputIndex_ Integer type for the indices in the input.
  *
  * @param incoming Pointer to a `tatami::Matrix`.
- * @tparam row Whether to return a row-major matrix.
+ * @param row Whether to store the output as a row-major matrix.
  * @param[out] store Pointer to an array of length equal to the product of the dimensions of `incoming`.
  * On output, this is filled with values from `incoming` in row- or column-major format depending on `row`.
  * @param threads Number of threads to use.
@@ -141,7 +141,6 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, bool row
 }
 
 /**
- * @tparam row Whether to return a row-major matrix.
  * @tparam Value_ Type of data values in the output interface.
  * @tparam Index_ Integer type for the indices in the output interface.
  * @tparam StoredValue_ Type of data values to be stored in the output.
@@ -149,6 +148,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, bool row
  * @tparam InputIndex_ Integer type for the indices in the input.
  *
  * @param incoming Pointer to a `tatami::Matrix`.
+ * @param row Whether to return a row-major matrix.
  * @param threads Number of threads to use.
  *
  * @return A pointer to a new `tatami::DenseMatrix` with the same dimensions and type as the matrix referenced by `incoming`.

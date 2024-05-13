@@ -23,17 +23,18 @@ namespace tatami {
  * @tparam Value_ Type of value in the matrix.
  * @tparam Index_ Type of row/column index.
  *
- * Check out `CompressedSparseMatrix` for more details.
+ * The "primary" dimension is the one that is used to create the pointers for the compressed sparse format, while the other dimension is defined as the "secondary" dimension.
+ * For example, the rows would be the primary dimension in a compressed sparse row matrix.
  */
 template<typename Value_, typename Index_>
 struct CompressedSparseContents {
     /**
-     * Vector containing values for the structural non-zero elements in a compressed sparse format.
+     * Vector containing values of the structural non-zero elements in a compressed sparse format.
      */
     std::vector<Value_> value;
 
     /**
-     * Vector containing the secondary dimension indices for the structural non-zero elements in a compressed sparse format.
+     * Vector containing the secondary dimension indices of the structural non-zero elements in a compressed sparse format.
      */
     std::vector<Index_> index;
 

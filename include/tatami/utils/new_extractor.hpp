@@ -30,7 +30,7 @@ using MaybeOracle = typename std::conditional<oracle_, std::shared_ptr<const Ora
  * @tparam Args_ Further arguments.
  *
  * @param[in] ptr Pointer to a `Matrix` object to iterate over.
- * @param row Whether to create a row-wise extractor.
+ * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
  * @param oracle Pointer to an oracle if `oracle_ = true`, otherwise a placeholder boolean that is ignored.
  * @param args Zero or more additional arguments to pass to methods like `Matrix::dense_row()`.
  *

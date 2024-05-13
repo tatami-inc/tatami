@@ -13,21 +13,24 @@
 namespace tatami {
 
 /**
- * Type of selection along a dimension, typically the extraction dimension:
+ * Selection of dimension elements: 
  *
- * - `FULL`: selects the full extent of the dimension, i.e., all elements in the dimension.
+ * - `FULL`: selects the full extent of the dimension, i.e., all elements. 
  * - `BLOCK`: selects a contiguous block of elements in the dimension.
  * - `INDEX`: selects a sorted and unique array of indices of dimension elements.
+ *
+ * This corresponds to the various overloads of `Matrix` methods (e.g., `Matrix::dense_row()`),
+ * each of which extracts a different selection of elements from the non-target dimension.
  */
 enum class DimensionSelectionType : char { FULL, BLOCK, INDEX };
 
 /**
- * @brief Options for iteration and extraction.
+ * @brief Options for accessing data from a `Matrix` instance. 
  */
 struct Options {
     /** 
-     * Whether to extract the indices in `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
-     * If set to `false`, this can be used to avoid unnecessary computation and copying in `Matrix` methods.
+     * Whether to extract the indices of structural non-zero elements in `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * If set to `false`, this can be used to avoid unnecessary computation and copying. 
      * 
      * Note that the number of structural non-zeros reported by `fetch()` should be independent of this setting. 
      * This means that `Matrix` implementations should not try to do something overly clever that might cause the results to change depending on whether the indices are extracted -
@@ -37,8 +40,8 @@ struct Options {
     bool sparse_extract_index = true;
 
     /** 
-     * Whether to extract the values in `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
-     * If set to `false`, this can be used to avoid unnecessary computation and copying in `Matrix` methods.
+     * Whether to extract the values of structural non-zero elements in `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * If set to `false`, this can be used to avoid unnecessary computation and copying. 
      * 
      * Note that the number of structural non-zeros reported by `fetch()` should be independent of this setting. 
      * This means that `Matrix` implementations should not try to do something overly clever when reporting results,

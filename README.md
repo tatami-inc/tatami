@@ -21,7 +21,7 @@ Many applications involve looping over rows or columns to compute some statistic
 ```cpp
 #include "tatami/tatami.hpp"
 
-std::shared_ptr<tatami::NumericMatrix> mat(new tatami::DenseRowMatrix<double>(nrows, ncols, vals));
+std::shared_ptr<tatami::NumericMatrix> mat(new tatami::DenseRowMatrix<double, int>(nrows, ncols, vals));
 
 // Get the dimensions:
 int NR = mat->nrow(), NC = mat->ncol();
@@ -65,7 +65,7 @@ For example, to create a compressed sparse matrix from sparse triplet data, we c
 
 int NROW = 10, NCOL = 20;
 auto indptrs = tatami::compress_sparse_triplets<false>(NR, NC, x, i, j);
-auto raw_ptr = new tatami::CompressedSparseColumnMatrix(
+auto raw_ptr = new tatami::CompressedSparseColumnMatrix<double, int>(
     NR, 
     NC, 
     std::move(x), 

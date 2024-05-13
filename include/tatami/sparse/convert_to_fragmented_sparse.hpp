@@ -22,7 +22,9 @@ namespace tatami {
  * @tparam Value_ Type of value in the matrix.
  * @tparam Index_ Type of row/column index.
  *
- * Check out `FragmentedSparseMatrix` for more details.
+ * The "primary" dimension is the one that is used to organize non-zero elements into vectors, while the other dimension is defined as the "secondary" dimension.
+ * For example, the rows would be the primary dimension in a fragmented sparse row matrix.
+ * (Check out `FragmentedSparseMatrix` for more details.)
  */
 template<typename Value_, typename Index_>
 struct FragmentedSparseContents {
@@ -35,13 +37,13 @@ struct FragmentedSparseContents {
      */
 
     /**
-     * Vector of vectors containing the values for the structural non-zero elements.
+     * Vector of vectors containing the values of the structural non-zero elements.
      * Each inner vector corresponds to an element of the primary dimension and contains all values for that element.
      */
     std::vector<std::vector<Value_> > value;
 
     /**
-     * Vector of vectors containing the secondary dimension indices for the structural non-zero elements.
+     * Vector of vectors containing the secondary dimension indices of the structural non-zero elements.
      * Each inner vector corresponds to an element of the primary dimension and contains all indices for that element.
      * Each inner vector is of length equal to the corresponding entry of `values` and is guaranteed to be strictly increasing.
      */

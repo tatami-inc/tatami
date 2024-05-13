@@ -10,7 +10,7 @@
 /**
  * @file SparsifiedWrapper.hpp
  *
- * @brief Wrapper class for sparse extraction from a dense `tatami::Matrix`.
+ * @brief Wrapper classes for sparse extraction from a dense `tatami::Matrix`.
  */
 
 namespace tatami {
@@ -29,7 +29,7 @@ namespace tatami {
 template<bool oracle_, typename Value_, typename Index_>
 struct FullSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
     /**
-     * @param d Instance of a dense extractor for the full extent of the row/column.
+     * @param d Instance of a dense extractor that retrieves the full extent of the non-target dimension.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
      * otherwise it should be an `OracularDenseExtractor` instance.
      * @param ex Extent of the row/column extracted by `d`.
@@ -43,7 +43,7 @@ struct FullSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
     {}
 
     /**
-     * @param i Index of the element to extract, ignored if `oracle_ = true`.
+     * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
      * @param[in, out] vbuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @param[in, out] ibuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
@@ -81,7 +81,7 @@ private:
 template<bool oracle_, typename Value_, typename Index_>
 struct BlockSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
     /**
-     * @param d Instance of a dense extractor for a block of the row/column.
+     * @param d Instance of a dense extractor for a contiguous block of the non-target dimension.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
      * otherwise it should be an `OracularDenseExtractor` instance.
      * @param bs Start of the block extracted by `d`.
@@ -99,7 +99,7 @@ struct BlockSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> 
     {}
 
     /**
-     * @param i Index of the element to extract, ignored if `oracle_ = true`.
+     * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
      * @param[in, out] vbuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @param[in, out] ibuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
@@ -137,10 +137,10 @@ private:
 template<bool oracle_, typename Value_, typename Index_>
 struct IndexSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
     /**
-     * @param d Instance of a dense extractor for a block of the row/column.
+     * @param d Instance of a dense extractor for an indexed subset of the non-target dimension.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
      * otherwise it should be an `OracularDenseExtractor` instance.
-     * @param ip Pointer to a vector of sorted and unique row/column indices to extract.
+     * @param ip Pointer to a vector of sorted and unique indices for the non-target dimension.
      * Should be the same as that used to construct `d`.
      * @param opt Options for extraction.
      */
@@ -152,7 +152,7 @@ struct IndexSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> 
     {}
 
     /**
-     * @param i Index of the element to extract, ignored if `oracle_ = true`.
+     * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
      * @param[in, out] vbuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @param[in, out] ibuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
