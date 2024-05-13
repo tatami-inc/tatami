@@ -187,7 +187,7 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<In
 template<typename Value_, typename Index_, typename StoredValue_ = Value_, typename InputValue_, typename InputIndex_>
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* incoming, int order, int threads = 1) {
     if (order < 0) {
-        order = static_cast<int>(!incoming->prefer_rows()); 
+        order = static_cast<int>(incoming->prefer_rows()); 
     }
     return convert_to_dense<Value_, Index_, StoredValue_>(incoming, order == 0, threads);
 }

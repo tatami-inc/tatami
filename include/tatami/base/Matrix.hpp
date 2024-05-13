@@ -26,7 +26,7 @@ template<typename Index_>
 using VectorPtr = std::shared_ptr<const std::vector<Index_> >;
 
 /**
- * @brief Virtual class for a matrix with a defined type.
+ * @brief Virtual class for a matrix. 
  * 
  * @tparam Value Data value type, should be numeric.
  * @tparam Index Row/column index type, should be integer.

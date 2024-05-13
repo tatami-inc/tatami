@@ -38,17 +38,19 @@ TEST_P(ConvertToDenseTest, FromDense) {
     EXPECT_EQ(converted2->prefer_rows(), to_row);
     EXPECT_FALSE(converted2->sparse());
 
+    auto old = mat->dense_row();
+    std::vector<double> buffer(NC);
     auto wrk2 = converted2->dense_row();
     for (size_t i = 0; i < NR; ++i) {
-        auto start = vec.begin() + i * NC;
-        std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i, NC), expected2);
+        auto ptr = old->fetch(i, buffer.data());
+        std::vector<int> expected(ptr, ptr + NC);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i, NC), expected);
     }
 }
 
 TEST_P(ConvertToDenseTest, FromSparse) {
     assemble(GetParam());
-    auto vec = tatami_test::simulate_sparse_compressed<double>(NR, NC, 0.2);
+    auto vec = tatami_test::simulate_sparse_compressed<double>((from_row ? NR : NC), (from_row ? NC : NR), 0.2);
     tatami::CompressedSparseMatrix<double, int> smat(NR, NC, std::move(vec.value), std::move(vec.index), std::move(vec.ptr), from_row);
 
     auto converted = tatami::convert_to_dense(&smat, to_row, threads);

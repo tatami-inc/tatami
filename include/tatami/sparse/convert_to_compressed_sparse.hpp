@@ -338,7 +338,7 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matr
 template <typename Value_, typename Index_, typename StoredValue_ = Value_, typename StoredIndex_ = Index_, typename InputValue_, typename InputIndex_>
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>* incoming, int order, bool two_pass = false, int threads = 1) {
     if (order < 0) {
-        order = static_cast<int>(!incoming->prefer_rows());
+        order = static_cast<int>(incoming->prefer_rows());
     }
     return convert_to_compressed_sparse<Value_, Index_, StoredValue_, StoredIndex_>(incoming, order == 0, two_pass, threads);
 }

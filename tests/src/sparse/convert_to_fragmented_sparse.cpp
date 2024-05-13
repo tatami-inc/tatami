@@ -37,19 +37,21 @@ TEST_P(ConvertToFragmentedSparseTest, FromDense) {
 
     auto converted2 = tatami::convert_to_fragmented_sparse<int, size_t>(mat.get(), to_row, nthreads); // works for a different type.
     EXPECT_TRUE(converted2->sparse());
-    EXPECT_TRUE(converted2->prefer_rows());
+    EXPECT_EQ(converted2->prefer_rows(), to_row);
 
+    auto old = mat->dense_row();
+    std::vector<double> buffer(NC);
     auto wrk2 = converted2->dense_row();
     for (size_t i = 0; i < NR; ++i) {
-        auto start = vec.begin() + i * NC;
-        std::vector<int> expected2(start, start + NC);
-        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i, NC), expected2);
+        auto ptr = old->fetch(i, buffer.data());
+        std::vector<int> expected(ptr, ptr + NC);
+        EXPECT_EQ(tatami_test::fetch(wrk2.get(), i, NC), expected);
     }
 }
 
 TEST_P(ConvertToFragmentedSparseTest, ColumnToColumn) {
     assemble(GetParam());
-    auto trip = tatami_test::simulate_sparse_compressed<double>(NC, NR, 0.1); // check sparse->sparse conversion with matching preferred dimension.
+    auto trip = tatami_test::simulate_sparse_compressed<double>((from_row ? NR : NC), (from_row ? NC : NR), 0.1); 
     auto mat = std::make_shared<tatami::CompressedSparseMatrix<double, int> >(NR, NC, trip.value, trip.index, trip.ptr, from_row);
 
     auto converted = tatami::convert_to_fragmented_sparse<double, int>(mat.get(), to_row, nthreads);

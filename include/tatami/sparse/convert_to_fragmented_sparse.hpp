@@ -215,7 +215,7 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matr
 template<typename Value_, typename Index_, typename StoredValue_ = Value_, typename StoredIndex_ = Index_, typename InputValue_, typename InputIndex_>
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matrix<InputValue_, InputIndex_>* incoming, int order, int threads = 1) {
     if (order < 0) {
-        order = static_cast<int>(!incoming->prefer_rows());
+        order = static_cast<int>(incoming->prefer_rows());
     }
     return convert_to_fragmented_sparse<Value_, Index_, StoredValue_, StoredIndex_, InputValue_, InputIndex_>(incoming, order == 0, threads);
 }
