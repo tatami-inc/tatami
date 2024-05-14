@@ -41,6 +41,11 @@ struct MyopicDenseExtractor {
     /**
      * @cond
      */
+    MyopicDenseExtractor() = default;
+    MyopicDenseExtractor(const MyopicDenseExtractor&) = default;
+    MyopicDenseExtractor& operator=(const MyopicDenseExtractor&) = default;
+    MyopicDenseExtractor(MyopicDenseExtractor&&) = default;
+    MyopicDenseExtractor& operator=(MyopicDenseExtractor&&) = default;
     virtual ~MyopicDenseExtractor() = default;
     /**
      * @endcond
@@ -103,6 +108,11 @@ struct OracularDenseExtractor {
     /**
      * @cond
      */
+    OracularDenseExtractor() = default;
+    OracularDenseExtractor(const OracularDenseExtractor&) = default;
+    OracularDenseExtractor& operator=(const OracularDenseExtractor&) = default;
+    OracularDenseExtractor(OracularDenseExtractor&&) = default;
+    OracularDenseExtractor& operator=(OracularDenseExtractor&&) = default;
     virtual ~OracularDenseExtractor() = default;
     /**
      * @endcond
@@ -150,6 +160,11 @@ struct MyopicSparseExtractor {
     /**
      * @cond
      */
+    MyopicSparseExtractor() = default;
+    MyopicSparseExtractor(const MyopicSparseExtractor&) = default;
+    MyopicSparseExtractor& operator=(const MyopicSparseExtractor&) = default;
+    MyopicSparseExtractor(MyopicSparseExtractor&&) = default;
+    MyopicSparseExtractor& operator=(MyopicSparseExtractor&&) = default;
     virtual ~MyopicSparseExtractor() = default;
     /**
      * @endcond
@@ -221,6 +236,11 @@ struct OracularSparseExtractor {
     /**
      * @cond
      */
+    OracularSparseExtractor() = default;
+    OracularSparseExtractor(const OracularSparseExtractor&) = default;
+    OracularSparseExtractor& operator=(const OracularSparseExtractor&) = default;
+    OracularSparseExtractor(OracularSparseExtractor&&) = default;
+    OracularSparseExtractor& operator=(OracularSparseExtractor&&) = default;
     virtual ~OracularSparseExtractor() = default;
     /**
      * @endcond

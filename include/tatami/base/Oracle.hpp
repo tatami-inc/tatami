@@ -22,6 +22,11 @@ struct Oracle {
     /**
      * @cond
      */
+    Oracle() = default;
+    Oracle(const Oracle&) = default;
+    Oracle& operator=(const Oracle&) = default;
+    Oracle(Oracle&&) = default;
+    Oracle& operator=(Oracle&&) = default;
     virtual ~Oracle() = default;
     /**
      * @endcond

@@ -62,6 +62,10 @@ public:
      * @cond
      */
     Matrix() = default;
+    Matrix(const Matrix&) = default;
+    Matrix& operator=(const Matrix&) = default;
+    Matrix(Matrix&&) = default;
+    Matrix& operator=(Matrix&&) = default;
     virtual ~Matrix() = default;
     /**
      * @endcond

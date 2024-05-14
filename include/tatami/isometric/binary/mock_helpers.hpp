@@ -98,14 +98,6 @@ struct DelayedBinaryBasicMockHelper {
      * This should be `true`, otherwise an advanced operation is expected (see `DelayedBinaryAdvancedMockHelper`).
      */
     static constexpr bool zero_depends_on_column = true;
-
-    /**
-     * @cond
-     */
-    virtual ~DelayedBinaryBasicMockHelper() = default;
-    /**
-     * @endcond
-     */
 };
 
 /**

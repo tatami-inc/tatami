@@ -90,14 +90,6 @@ struct DelayedUnaryBasicMockHelper {
      * This should be true, otherwise an advanced operation interface is expected (see `DelayedUnaryAdvancedMockHelper`).
      */
     static constexpr bool zero_depends_on_column = true;
-
-    /**
-     * @cond
-     */
-    virtual ~DelayedUnaryBasicMockHelper() = default;
-    /**
-     * @endcond
-     */
 };
 
 /**
