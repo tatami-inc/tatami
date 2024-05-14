@@ -109,6 +109,10 @@ public:
     bool sparse() const {
         return is_sparse();
     }
+
+    bool sparse_proportion() const {
+        return is_sparse_proportion();
+    }
     /**
      * @endcond
      */
