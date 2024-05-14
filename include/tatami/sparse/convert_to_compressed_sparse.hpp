@@ -324,7 +324,7 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matr
 // Backwards compatbility.
 template <bool row_, typename Value_, typename Index_, typename InputValue_, typename InputIndex_>
 CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* incoming, bool two_pass, int threads = 1) {
-    return retrieve_compressed_sparse_contents(incoming, row_, two_pass, threads);
+    return retrieve_compressed_sparse_contents<Value_, Index_>(incoming, row_, two_pass, threads);
 }
 
 template <bool row_, typename Value_, typename Index_, typename StoredValue_ = Value_, typename StoredIndex_ = Index_, typename InputValue_, typename InputIndex_>

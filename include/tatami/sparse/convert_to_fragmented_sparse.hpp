@@ -203,7 +203,7 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matr
 // Backwards compatbility.
 template <bool row_, typename StoredValue_, typename StoredIndex_, typename InputValue_, typename InputIndex_>
 FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_contents(const Matrix<InputValue_, InputIndex_>* incoming, int threads = 1) {
-    return retrieve_fragmented_sparse_contents(incoming, row_, threads);
+    return retrieve_fragmented_sparse_contents<StoredValue_, StoredIndex_>(incoming, row_, threads);
 }
 
 template <bool row_, typename Value_, typename Index_, typename StoredValue_ = Value_, typename StoredIndex_ = Index_, typename InputValue_, typename InputIndex_>
