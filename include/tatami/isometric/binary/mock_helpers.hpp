@@ -19,7 +19,7 @@ namespace tatami {
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-struct DelayedBinaryBasicMockHelper {
+struct DelayedBinaryIsometricOpMockBasicHelper {
     /**
      * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
      * These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form.
@@ -112,7 +112,7 @@ struct DelayedBinaryBasicMockHelper {
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-struct DelayedBinaryAdvancedMockHelper {
+struct DelayedBinaryIsometricOpMockAdvancedHelper {
     /**
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.

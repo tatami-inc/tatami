@@ -29,7 +29,7 @@ TEST(DelayedBinaryIsometricOp, Misshappen) {
     auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(10, 20, src));
     auto dense2 = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(20, 10, src));
     tatami_test::throws_error([&]() {
-        tatami::make_DelayedBinaryIsometricOp(dense, dense2, tatami::DelayedBinaryBasicMockHelper());
+        tatami::make_DelayedBinaryIsometricOp(dense, dense2, tatami::DelayedBinaryIsometricOpMockBasicHelper());
     }, "should be the same");
 }
 
@@ -44,8 +44,8 @@ protected:
         dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(simulated)));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); 
 
-        bdense = tatami::make_DelayedBinaryIsometricOp(dense, dense, tatami::DelayedBinaryBasicMockHelper());
-        bsparse = tatami::make_DelayedBinaryIsometricOp(sparse, sparse, tatami::DelayedBinaryAdvancedMockHelper());
+        bdense = tatami::make_DelayedBinaryIsometricOp(dense, dense, tatami::DelayedBinaryIsometricOpMockBasicHelper());
+        bsparse = tatami::make_DelayedBinaryIsometricOp(sparse, sparse, tatami::DelayedBinaryIsometricOpMockAdvancedHelper());
         ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
     }
 };
