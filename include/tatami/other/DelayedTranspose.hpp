@@ -63,13 +63,9 @@ public:
         return my_matrix->uses_oracle(!row);
     }
 
-    using Matrix<Value_, Index_>::dense_row;
+    using Matrix<Value_, Index_>::dense;
 
-    using Matrix<Value_, Index_>::dense_column;
-
-    using Matrix<Value_, Index_>::sparse_row;
-
-    using Matrix<Value_, Index_>::sparse_column;
+    using Matrix<Value_, Index_>::sparse;
 
     /********************
      *** Myopic dense ***
