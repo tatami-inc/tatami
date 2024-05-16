@@ -25,7 +25,8 @@ namespace tatami {
 namespace DelayedUnaryIsometricOp_internal {
 
 template<class Operation_, bool oracle_, typename Index_>
-struct MaybeOracleDepends {
+class MaybeOracleDepends {
+public:
     MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& ora, bool row) {
         if constexpr(oracle_) {
             if constexpr(Operation_::zero_depends_on_row && Operation_::zero_depends_on_column) {
@@ -60,6 +61,7 @@ struct MaybeOracleDepends {
         return i;
     }
 
+private:
     MaybeOracle<oracle_, Index_> oracle;
     size_t used = 0;
 };

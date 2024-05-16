@@ -305,7 +305,8 @@ public:
 };
 
 /**
- * Column-major matrix.
+ * @brief Dense column-major matrix.
+ *
  * See `tatami::DenseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
@@ -320,7 +321,8 @@ public:
 };
 
 /**
- * Row-major matrix.
+ * @brief Dense row-major matrix.
+ **(
  * See `tatami::DenseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
