@@ -19,7 +19,8 @@ namespace tatami {
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-struct DelayedUnaryBasicMockHelper {
+class DelayedUnaryBasicMockHelper {
+public:
     /**
      * This method should apply the operation to values in `buffer`,
      * This buffer represents an element of the target dimension from the underlying matrix,
@@ -104,7 +105,8 @@ struct DelayedUnaryBasicMockHelper {
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-struct DelayedUnaryAdvancedMockHelper {
+class DelayedUnaryAdvancedMockHelper {
+public:
     /**
      * This method should apply the operation to values in `buffer`.
      * This buffer represents an element of the target dimension from the underlying matrix,

@@ -73,17 +73,18 @@ Value_ delayed_arith_zero(Scalar_ scalar) {
  * @tparam Scalar_ Type of the scalar value.
  */
 template<DelayedArithOp op_, bool right_, typename Value_ = double, typename Scalar_ = Value_>
-struct DelayedArithScalarHelper {
+class DelayedArithScalarHelper {
+public:
     /**
-     * @param s Scalar value to be added.
+     * @param scalar Scalar value to be added.
      */
-    DelayedArithScalarHelper(Scalar_ s) : scalar(s) {
-        still_sparse = delayed_arith_actual_sparse<op_, right_, Value_>(scalar);
+    DelayedArithScalarHelper(Scalar_ scalar) : my_scalar(scalar) {
+        my_sparse = delayed_arith_actual_sparse<op_, right_, Value_>(my_scalar);
     }
 
 private:
-    const Scalar_ scalar;
-    bool still_sparse;
+    const Scalar_ my_scalar;
+    bool my_sparse;
 
 public:
     /**
@@ -98,7 +99,7 @@ public:
     static constexpr bool non_zero_depends_on_column = false;
 
     bool is_sparse() const {
-        return still_sparse;
+        return my_sparse;
     }
     /**
      * @endcond
@@ -110,23 +111,23 @@ public:
      */
     template<typename Index_>
     void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        delayed_arith_run_simple<op_, right_>(scalar, length, buffer);
+        delayed_arith_run_simple<op_, right_>(my_scalar, length, buffer);
     }
 
     template<typename Index_>
     void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        delayed_arith_run_simple<op_, right_>(scalar, indices.size(), buffer);
+        delayed_arith_run_simple<op_, right_>(my_scalar, indices.size(), buffer);
     }
 
 
     template<typename Index_>
     void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        delayed_arith_run_simple<op_, right_>(scalar, number, buffer);
+        delayed_arith_run_simple<op_, right_>(my_scalar, number, buffer);
     }
 
     template<typename Index_>
     Value_ fill(Index_) const {
-        return delayed_arith_zero<op_, right_, Value_>(scalar);
+        return delayed_arith_zero<op_, right_, Value_>(my_scalar);
     }
     /**
      * @endcond
@@ -148,23 +149,24 @@ public:
  * @tparam Vector_ Type of the vector.
  */
 template<DelayedArithOp op_, bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
-struct DelayedArithVectorHelper {
+class DelayedArithVectorHelper {
+public:
     /**
-     * @param v Vector of values to use in the operation. 
-     * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number of columns.
+     * @param vector Vector of values to use in the operation. 
+     * This should be of length equal to the number of rows if `margin_ = 0`, otherwise it should be of length equal to the number of columns.
      */
-    DelayedArithVectorHelper(Vector_ v) : vec(std::move(v)) {
-        for (auto x : vec) {
+    DelayedArithVectorHelper(Vector_ vector) : my_vector(std::move(vector)) {
+        for (auto x : my_vector) {
             if (!delayed_arith_actual_sparse<op_, right_, Value_>(x)) {
-                still_sparse = false;
+                my_sparse = false;
                 break;
             }
         }
     }
 
 private:
-    const Vector_ vec;
-    bool still_sparse = true;
+    const Vector_ my_vector;
+    bool my_sparse = true;
 
 public:
     /**
@@ -179,7 +181,7 @@ public:
     static constexpr bool non_zero_depends_on_column = (margin_ == 1);
 
     bool is_sparse() const {
-        return still_sparse;
+        return my_sparse;
     }
     /**
      * @endcond
@@ -192,10 +194,10 @@ public:
     template<typename Index_>
     void dense(bool row, Index_ idx, Index_ start, Index_ length, Value_* buffer) const {
         if (row == (margin_ == 0)) {
-            delayed_arith_run_simple<op_, right_>(vec[idx], length, buffer);
+            delayed_arith_run_simple<op_, right_>(my_vector[idx], length, buffer);
         } else {
             for (Index_ i = 0; i < length; ++i) {
-                delayed_arith_run<op_, right_>(buffer[i], vec[i + start]);
+                delayed_arith_run<op_, right_>(buffer[i], my_vector[i + start]);
             }
         }
     }
@@ -203,10 +205,10 @@ public:
     template<typename Index_>
     void dense(bool row, Index_ idx, const std::vector<Index_>& indices, Value_* buffer) const {
         if (row == (margin_ == 0)) {
-            delayed_arith_run_simple<op_, right_>(vec[idx], indices.size(), buffer);
+            delayed_arith_run_simple<op_, right_>(my_vector[idx], indices.size(), buffer);
         } else {
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
-                delayed_arith_run<op_, right_>(buffer[i], vec[indices[i]]);
+                delayed_arith_run<op_, right_>(buffer[i], my_vector[indices[i]]);
             }
         }
     }
@@ -214,17 +216,17 @@ public:
     template<typename Index_>
     void sparse(bool row, Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
         if (row == (margin_ == 0)) {
-            delayed_arith_run_simple<op_, right_>(vec[idx], number, buffer);
+            delayed_arith_run_simple<op_, right_>(my_vector[idx], number, buffer);
         } else {
             for (Index_ i = 0; i < number; ++i) {
-                delayed_arith_run<op_, right_>(buffer[i], vec[indices[i]]);
+                delayed_arith_run<op_, right_>(buffer[i], my_vector[indices[i]]);
             }
         }
     }
 
     template<typename Index_>
     Value_ fill(Index_ idx) const {
-        return delayed_arith_zero<op_, right_, Value_>(vec[idx]);
+        return delayed_arith_zero<op_, right_, Value_>(my_vector[idx]);
     }
     /**
      * @endcond
@@ -234,83 +236,83 @@ public:
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be added.
+ * @param scalar Scalar value to be added.
  * @return A helper class for delayed scalar addition.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedArithScalarHelper<DelayedArithOp::ADD, true, Value_, Scalar_> make_DelayedAddScalarHelper(Scalar_ s) {
-    return DelayedArithScalarHelper<DelayedArithOp::ADD, true, Value_, Scalar_>(std::move(s));
+DelayedArithScalarHelper<DelayedArithOp::ADD, true, Value_, Scalar_> make_DelayedAddScalarHelper(Scalar_ scalar) {
+    return DelayedArithScalarHelper<DelayedArithOp::ADD, true, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the subtraction.
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be subtracted.
+ * @param scalar Scalar value to be subtracted.
  * @return A helper class for delayed scalar subtraction.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedArithScalarHelper<DelayedArithOp::SUBTRACT, right_, Value_, Scalar_> make_DelayedSubtractScalarHelper(Scalar_ s) {
-    return DelayedArithScalarHelper<DelayedArithOp::SUBTRACT, right_, Value_, Scalar_>(std::move(s));
+DelayedArithScalarHelper<DelayedArithOp::SUBTRACT, right_, Value_, Scalar_> make_DelayedSubtractScalarHelper(Scalar_ scalar) {
+    return DelayedArithScalarHelper<DelayedArithOp::SUBTRACT, right_, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be multiplied.
+ * @param scalar Scalar value to be multiplied.
  * @return A helper class for delayed scalar multiplication.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedArithScalarHelper<DelayedArithOp::MULTIPLY, true, Value_, Scalar_> make_DelayedMultiplyScalarHelper(Scalar_ s) {
-    return DelayedArithScalarHelper<DelayedArithOp::MULTIPLY, true, Value_, Scalar_>(std::move(s));
+DelayedArithScalarHelper<DelayedArithOp::MULTIPLY, true, Value_, Scalar_> make_DelayedMultiplyScalarHelper(Scalar_ scalar) {
+    return DelayedArithScalarHelper<DelayedArithOp::MULTIPLY, true, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the division.
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be divided.
+ * @param scalar Scalar value to be divided.
  * @return A helper class for delayed scalar division.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedArithScalarHelper<DelayedArithOp::DIVIDE, right_, Value_, Scalar_> make_DelayedDivideScalarHelper(Scalar_ s) {
-    return DelayedArithScalarHelper<DelayedArithOp::DIVIDE, right_, Value_, Scalar_>(std::move(s));
+DelayedArithScalarHelper<DelayedArithOp::DIVIDE, right_, Value_, Scalar_> make_DelayedDivideScalarHelper(Scalar_ scalar) {
+    return DelayedArithScalarHelper<DelayedArithOp::DIVIDE, right_, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be power transformed.
+ * @param scalar Scalar value to be power transformed.
  * @return A helper class for delayed scalar power transformation.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedArithScalarHelper<DelayedArithOp::POWER, right_, Value_, Scalar_> make_DelayedPowerScalarHelper(Scalar_ s) {
-    return DelayedArithScalarHelper<DelayedArithOp::POWER, right_, Value_, Scalar_>(std::move(s));
+DelayedArithScalarHelper<DelayedArithOp::POWER, right_, Value_, Scalar_> make_DelayedPowerScalarHelper(Scalar_ scalar) {
+    return DelayedArithScalarHelper<DelayedArithOp::POWER, right_, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be modulo transformed.
+ * @param scalar Scalar value to be modulo transformed.
  * @return A helper class for delayed scalar modulus.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedArithScalarHelper<DelayedArithOp::MODULO, right_, Value_, Scalar_> make_DelayedModuloScalarHelper(Scalar_ s) {
-    return DelayedArithScalarHelper<DelayedArithOp::MODULO, right_, Value_, Scalar_>(std::move(s));
+DelayedArithScalarHelper<DelayedArithOp::MODULO, right_, Value_, Scalar_> make_DelayedModuloScalarHelper(Scalar_ scalar) {
+    return DelayedArithScalarHelper<DelayedArithOp::MODULO, right_, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be integer divided.
+ * @param scalar Scalar value to be integer divided.
  * @return A helper class for delayed scalar integer division.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedArithScalarHelper<DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_> make_DelayedIntegerDivideScalarHelper(Scalar_ s) {
-    return DelayedArithScalarHelper<DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_>(std::move(s));
+DelayedArithScalarHelper<DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_> make_DelayedIntegerDivideScalarHelper(Scalar_ scalar) {
+    return DelayedArithScalarHelper<DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
@@ -318,12 +320,12 @@ DelayedArithScalarHelper<DelayedArithOp::INTEGER_DIVIDE, right_, Value_, Scalar_
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  *
- * @param v Vector to be added to the rows/columns.
+ * @param vector Vector to be added to the rows/columns.
  * @return A helper class for delayed vector addition.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedArithVectorHelper<DelayedArithOp::ADD, true, margin_, Value_, Vector_> make_DelayedAddVectorHelper(Vector_ v) {
-    return DelayedArithVectorHelper<DelayedArithOp::ADD, true, margin_, Value_, Vector_>(std::move(v));
+DelayedArithVectorHelper<DelayedArithOp::ADD, true, margin_, Value_, Vector_> make_DelayedAddVectorHelper(Vector_ vector) {
+    return DelayedArithVectorHelper<DelayedArithOp::ADD, true, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
@@ -332,12 +334,12 @@ DelayedArithVectorHelper<DelayedArithOp::ADD, true, margin_, Value_, Vector_> ma
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  *
- * @param v Vector to subtract from (or be subtracted by) the rows/columns.
+ * @param vector Vector to subtract from (or be subtracted by) the rows/columns.
  * @return A helper class for delayed vector subtraction.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedArithVectorHelper<DelayedArithOp::SUBTRACT, right_, margin_, Value_, Vector_> make_DelayedSubtractVectorHelper(Vector_ v) {
-    return DelayedArithVectorHelper<DelayedArithOp::SUBTRACT, right_, margin_, Value_, Vector_>(std::move(v));
+DelayedArithVectorHelper<DelayedArithOp::SUBTRACT, right_, margin_, Value_, Vector_> make_DelayedSubtractVectorHelper(Vector_ vector) {
+    return DelayedArithVectorHelper<DelayedArithOp::SUBTRACT, right_, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
@@ -345,12 +347,12 @@ DelayedArithVectorHelper<DelayedArithOp::SUBTRACT, right_, margin_, Value_, Vect
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  *
- * @param v Vector to multiply the rows/columns.
+ * @param vector Vector to multiply the rows/columns.
  * @return A helper class for delayed vector multiplication.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedArithVectorHelper<DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector_> make_DelayedMultiplyVectorHelper(Vector_ v) {
-    return DelayedArithVectorHelper<DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector_>(std::move(v));
+DelayedArithVectorHelper<DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector_> make_DelayedMultiplyVectorHelper(Vector_ vector) {
+    return DelayedArithVectorHelper<DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
@@ -359,12 +361,12 @@ DelayedArithVectorHelper<DelayedArithOp::MULTIPLY, true, margin_, Value_, Vector
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  *
- * @param v Vector to divide (or be divided by) the rows/columns.
+ * @param vector Vector to divide (or be divided by) the rows/columns.
  * @return A helper class for delayed vector division.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_> make_DelayedDivideVectorHelper(Vector_ v) {
-    return DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_>(std::move(v));
+DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_> make_DelayedDivideVectorHelper(Vector_ vector) {
+    return DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
@@ -373,12 +375,12 @@ DelayedArithVectorHelper<DelayedArithOp::DIVIDE, right_, margin_, Value_, Vector
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  *
- * @param v Vector to use in the power transformation of the rows/columns.
+ * @param vector Vector to use in the power transformation of the rows/columns.
  * @return A helper class for delayed vector power transformation.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_> make_DelayedPowerVectorHelper(Vector_ v) {
-    return DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_>(std::move(v));
+DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_> make_DelayedPowerVectorHelper(Vector_ vector) {
+    return DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
@@ -387,12 +389,12 @@ DelayedArithVectorHelper<DelayedArithOp::POWER, right_, margin_, Value_, Vector_
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  *
- * @param v Vector to use in the modulus of the rows/columns.
+ * @param vector Vector to use in the modulus of the rows/columns.
  * @return A helper class for delayed vector modulus.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_> make_DelayedModuloVectorHelper(Vector_ v) {
-    return DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_>(std::move(v));
+DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_> make_DelayedModuloVectorHelper(Vector_ vector) {
+    return DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
@@ -401,12 +403,12 @@ DelayedArithVectorHelper<DelayedArithOp::MODULO, right_, margin_, Value_, Vector
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  *
- * @param v Vector to integer divide (or be integer divided by) the rows/columns.
+ * @param vector Vector to integer divide (or be integer divided by) the rows/columns.
  * @return A helper class for delayed vector division.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedArithVectorHelper<DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_> make_DelayedIntegerDivideVectorHelper(Vector_ v) {
-    return DelayedArithVectorHelper<DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_>(std::move(v));
+DelayedArithVectorHelper<DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_> make_DelayedIntegerDivideVectorHelper(Vector_ vector) {
+    return DelayedArithVectorHelper<DelayedArithOp::INTEGER_DIVIDE, right_, margin_, Value_, Vector_>(std::move(vector));
 }
 
 }
