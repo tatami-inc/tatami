@@ -21,42 +21,43 @@ template<typename T>
 class ArrayView {
 public:
     /**
-     * @param[in] p Pointer to the start of the array.
+     * @param[in] ptr Pointer to the start of the array.
      * The lifetime of the array is assumed to exceed that of the constructed `ArrayView` instance.
-     * @param n Number of array elements.
+     * @param number Number of array elements.
      */
-    ArrayView(const T* p, size_t n) : ptr(p), num(n) {}
+    ArrayView(const T* ptr, size_t number) : my_ptr(ptr), my_number(number) {}
 
     /**
      * @return Number of array elements.
      */
-    size_t size() const { return num; }
+    size_t size() const { return my_number; }
 
     /**
      * @return Pointer to the start of the array.
      */
-    const T* data() const { return ptr; }
+    const T* data() const { return my_ptr; }
 
     /**
      * @return Pointer to the start of the array, for use in templated functions expecting a `std::vector`.
      */
-    const T* begin() const { return ptr; }
+    const T* begin() const { return my_ptr; }
 
     /**
      * @return Pointer to the end of the array, for use in templated functions expecting a `std::vector`.
      */
-    const T* end() const { return ptr + num; }
+    const T* end() const { return my_ptr + my_number; }
 
     /**
      * @param i Index of the array.
      * @return Value of the array at element `i`.
      */
     T operator[](size_t i) const {
-        return ptr[i];
+        return my_ptr[i];
     }
+
 private:
-    const T* ptr;
-    size_t num;
+    const T* my_ptr;
+    size_t my_number;
 };
 
 }
