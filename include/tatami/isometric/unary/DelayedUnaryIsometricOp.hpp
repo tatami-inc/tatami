@@ -792,7 +792,7 @@ public:
  * @tparam Index_ Type of index value.
  * @tparam Operation_ Helper class defining the operation.
  *
- * @param mat Pointer to a (possibly `const`) `Matrix`.
+ * @param matrix Pointer to a (possibly `const`) `Matrix`.
  * @param operation Instance of the operation helper class.
  *
  * @return Instance of a `DelayedUnaryIsometricOp` class.

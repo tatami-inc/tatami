@@ -140,11 +140,11 @@ template<bool oracle_, typename Value_, typename Index_>
 class IndexSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     /**
-     * @param d Instance of a dense extractor for an indexed subset of the non-target dimension.
+     * @param dense Instance of a dense extractor for an indexed subset of the non-target dimension.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
      * otherwise it should be an `OracularDenseExtractor` instance.
-     * @param ip Pointer to a vector of sorted and unique indices for the non-target dimension.
-     * Should be the same as that used to construct `d`.
+     * @param indices_ptr Pointer to a vector of sorted and unique indices for the non-target dimension.
+     * Should be the same as that used to construct `dense`.
      * @param opt Options for extraction.
      */
     IndexSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense, VectorPtr<Index_> indices_ptr, const Options& opt) :

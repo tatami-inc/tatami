@@ -44,7 +44,7 @@ template<DelayedBooleanOp op_, typename Value_ = double>
 class DelayedBooleanScalarHelper {
 public:
     /**
-     * @param s Scalar value.
+     * @param scalar Scalar value.
      */
     DelayedBooleanScalarHelper(bool scalar) : my_scalar(scalar) {
         my_sparse = delayed_boolean_actual_sparse<op_, Value_>(my_scalar);
@@ -277,7 +277,7 @@ DelayedBooleanNotHelper<Value_> make_DelayedBooleanNotHelper() {
 
 /**
  * @tparam Value_ Type of the data value.
- * @param s Scalar value to use in the operation.
+ * @param scalar Scalar value to use in the operation.
  * @return A helper class for a delayed AND operation with a scalar.
  */
 template<typename Value_ = double>
@@ -287,7 +287,7 @@ DelayedBooleanScalarHelper<DelayedBooleanOp::AND, Value_> make_DelayedBooleanAnd
 
 /**
  * @tparam Value_ Type of the data value.
- * @param s Scalar value to use in the operation.
+ * @param scalar Scalar value to use in the operation.
  * @return A helper class for a delayed OR operation with a scalar.
  */
 template<typename Value_ = double>
@@ -297,7 +297,7 @@ DelayedBooleanScalarHelper<DelayedBooleanOp::OR> make_DelayedBooleanOrScalarHelp
 
 /**
  * @tparam Value_ Type of the data value.
- * @param s Scalar value to be used in the operation.
+ * @param scalar Scalar value to be used in the operation.
  * @return A helper class for a delayed XOR operation with a scalar.
  */
 template<typename Value_ = double>
@@ -307,7 +307,7 @@ DelayedBooleanScalarHelper<DelayedBooleanOp::XOR> make_DelayedBooleanXorScalarHe
 
 /**
  * @tparam Value_ Type of the data value.
- * @param s Scalar value to be used in the operation.
+ * @param scalar Scalar value to be used in the operation.
  * @return A helper class for a delayed boolean equality operation with a scalar.
  */
 template<typename Value_ = double>

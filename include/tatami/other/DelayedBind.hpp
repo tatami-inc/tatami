@@ -561,13 +561,13 @@ template<typename Value_, typename Index_>
 class DelayedBind : public Matrix<Value_, Index_> {
 public:
     /**
-     * @param ps Pointers to the matrices to be combined.
+     * @param matrices Pointers to the matrices to be combined.
      * All matrices to be combined should have the same number of columns (if `row = true`) or rows (otherwise).
-     * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `ps`).
+     * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
      * If false, combining is applied by the columns.
      */
-    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps, bool row) : 
-        my_matrices(std::move(ps)), my_row(row), my_cumulative(my_matrices.size()+1) 
+    DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, bool row) : 
+        my_matrices(std::move(matrices)), my_row(row), my_cumulative(my_matrices.size()+1) 
     {
         size_t sofar = 0;
         for (size_t i = 0, nmats = my_matrices.size(); i < nmats; ++i) {
@@ -634,13 +634,13 @@ public:
     }
 
     /**
-     * @param ps Pointers to the matrices to be combined.
+     * @param matrices Pointers to the matrices to be combined.
      * All matrices to be combined should have the same number of columns (if `row = true`) or rows (otherwise).
-     * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `ps`).
+     * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
      * If false, combining is applied by the columns.
      */
-    DelayedBind(const std::vector<std::shared_ptr<Matrix<Value_, Index_> > >& ps, bool row) : 
-        DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(ps.begin(), ps.end()), row) {}
+    DelayedBind(const std::vector<std::shared_ptr<Matrix<Value_, Index_> > >& matrices, bool row) : 
+        DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > >(matrices.begin(), matrices.end()), row) {}
 
 private:
     std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > my_matrices;
@@ -849,23 +849,23 @@ private:
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
  *
- * @param ps Pointers to `Matrix` objects.
- * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `ps`).
+ * @param matrices Pointers to `Matrix` objects.
+ * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
  * If false, combining is applied by the columns.
  *
  * @return A pointer to a `DelayedBind` instance.
  */
 template<typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps, bool row) {
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<Value_, Index_>(std::move(ps), row));
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, bool row) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<Value_, Index_>(std::move(matrices), row));
 }
 
 /**
  * @cond
  */
 template<typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > ps, bool row) {
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<Value_, Index_>(std::move(ps), row));
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > matrices, bool row) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<Value_, Index_>(std::move(matrices), row));
 }
 /**
  * @endcond
@@ -876,13 +876,13 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::share
  */
 // Back-compatibility.
 template<int margin_, typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > ps) {
-    return make_DelayedBind(std::move(ps), margin_ == 0);
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices) {
+    return make_DelayedBind(std::move(matrices), margin_ == 0);
 }
 
 template<int margin_, typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > ps) {
-    return make_DelayedBind(std::move(ps), margin_ == 0);
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > matrices) {
+    return make_DelayedBind(std::move(matrices), margin_ == 0);
 }
 /**
  * @endcond

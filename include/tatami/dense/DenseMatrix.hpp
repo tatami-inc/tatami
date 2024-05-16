@@ -173,10 +173,10 @@ template<typename Value_, typename Index_, class Storage_ = std::vector<Value_> 
 class DenseMatrix : public Matrix<Value_, Index_> {
 public: 
     /**
-     * @param nr Number of rows.
-     * @param nc Number of columns.
-     * @param vals Vector of values of length equal to the product of `nr` and `nc`.
-     * @param row Whether `vals` stores the matrix contents in a row-major representation.
+     * @param nrow Number of rows.
+     * @param ncol Number of columns.
+     * @param values Vector of values of length equal to the product of `nrow` and `ncol`.
+     * @param row Whether `values` stores the matrix contents in a row-major representation.
      * If `false`, a column-major representation is assumed instead.
      */
     DenseMatrix(Index_ nrow, Index_ ncol, Storage_ values, bool row) : my_nrow(nrow), my_ncol(ncol), my_values(std::move(values)), my_row(row) {
