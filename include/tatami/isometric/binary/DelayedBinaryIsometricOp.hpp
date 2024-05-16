@@ -493,7 +493,7 @@ private:
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
  * @tparam Operation_ Class implementing the operation.
- * This should implement the same methods as `DelayedBinaryIsometricOpMockBasicHelper` or `DelayedBinaryIsometricOpMockAdvancedHelper`,
+ * This should implement the same methods as `DelayedBinaryBasicMockHelper` or `DelayedBinaryAdvancedMockHelper`,
  * depending on whether it can take advantage of matrix sparsity.
  */
 template<typename Value_, typename Index_, class Operation_>
