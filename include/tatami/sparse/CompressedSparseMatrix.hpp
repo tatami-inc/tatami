@@ -501,39 +501,39 @@ public:
 
             if (my_row) {
                 if (my_pointers.size() != static_cast<size_t>(my_nrow) + 1){
-                    throw std::runtime_error("length of 'my_pointers' should be equal to 'my_nrow + 1'");
+                    throw std::runtime_error("length of 'pointers' should be equal to 'nrow + 1'");
                 }
             } else {
                 if (my_pointers.size() != static_cast<size_t>(my_ncols) + 1){
-                    throw std::runtime_error("length of 'my_pointers' should be equal to 'my_ncols + 1'");
+                    throw std::runtime_error("length of 'pointers' should be equal to 'ncols + 1'");
                 }
             }
 
             if (my_pointers[0] != 0) {
-                throw std::runtime_error("first element of 'my_pointers' should be zero");
+                throw std::runtime_error("first element of 'pointers' should be zero");
             }
 
             auto last = my_pointers[my_pointers.size() - 1]; // don't use back() as this is not guaranteed to be available for arbitrary PointerStorage_.
             if (static_cast<size_t>(last) != my_indices.size()) {
-                throw std::runtime_error("last element of 'my_pointers' should be equal to length of 'my_indices'");
+                throw std::runtime_error("last element of 'pointers' should be equal to length of 'indices'");
             }
 
             ElementType<IndexStorage_> max_index = (my_row ? my_ncols : my_nrow);
             for (size_t i = 1; i < my_pointers.size(); ++i) {
                 auto start = my_pointers[i- 1], end = my_pointers[i];
                 if (end < start || end > last) {
-                    throw std::runtime_error("'my_pointers' should be in non-decreasing order");
+                    throw std::runtime_error("'pointers' should be in non-decreasing order");
                 }
 
                 for (auto x = start; x < end; ++x) {
                     if (my_indices[x] < 0 || my_indices[x] >= max_index) {
-                        throw std::runtime_error("'my_indices' should contain non-negative integers less than the number of " + (my_row ? std::string("columns") : std::string("rows")));
+                        throw std::runtime_error("'indices' should contain non-negative integers less than the number of " + (my_row ? std::string("columns") : std::string("rows")));
                     }
                 }
 
                 for (size_t j = start + 1; j < end; ++j) {
                     if (my_indices[j] <= my_indices[j - 1]) {
-                        throw std::runtime_error("'my_indices' should be strictly increasing within each " + (my_row ? std::string("row") : std::string("column")));
+                        throw std::runtime_error("'indices' should be strictly increasing within each " + (my_row ? std::string("row") : std::string("column")));
                     }
                 }
             }

@@ -447,16 +447,16 @@ public:
     {
         if (check) {
             if (my_values.size() != my_indices.size()) {
-                throw std::runtime_error("'my_values' and 'my_indices' should be of the same length");
+                throw std::runtime_error("'values' and 'indices' should be of the same length");
             }
 
             if (my_row) {
                 if (my_indices.size() != static_cast<size_t>(my_nrow)) {
-                    throw std::runtime_error("length of 'my_indices' should be equal to number of rows'");
+                    throw std::runtime_error("length of 'indices' should be equal to number of rows'");
                 }
             } else {
                 if (my_indices.size() != static_cast<size_t>(my_ncol)) {
-                    throw std::runtime_error("length of 'my_indices' should be equal to number of columns");
+                    throw std::runtime_error("length of 'indices' should be equal to number of columns");
                 }
             }
 
@@ -465,18 +465,18 @@ public:
                 const auto& curv = my_values[i];
                 const auto& curi = my_indices[i];
                 if (curv.size() != curi.size()) {
-                    throw std::runtime_error("corresponding elements of 'my_values' and 'my_indices' should have the same length");
+                    throw std::runtime_error("corresponding elements of 'values' and 'indices' should have the same length");
                 }
 
                 for (auto x : curi) {
                     if (x < 0 || x >= max_index) {
-                        throw std::runtime_error("'my_indices' should contain non-negative integers less than the number of " + (my_row ? std::string("columns") : std::string("rows")));
+                        throw std::runtime_error("'indices' should contain non-negative integers less than the number of " + (my_row ? std::string("columns") : std::string("rows")));
                     }
                 }
 
                 for (size_t j = 1, jend = curi.size(); j < jend; ++j) {
                     if (curi[j] <= curi[j - 1]) {
-                        throw std::runtime_error("my_indices should be strictly increasing within each element of 'my_indices'");
+                        throw std::runtime_error("my_indices should be strictly increasing within each element of 'indices'");
                     }
                 }
             }
