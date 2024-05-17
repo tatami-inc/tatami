@@ -14,8 +14,6 @@
  * @file DelayedBinaryIsometricOp.hpp
  *
  * @brief Delayed binary isometric operations.
- *
- * This is equivalent to the `DelayedNaryIsoOp` class in the **DelayedArray** package.
  */
 
 namespace tatami {
@@ -489,6 +487,8 @@ private:
  * Implements any operation that takes two matrices of the same shape and returns another matrix of that shape.
  * Each entry of the output matrix is a function of the corresponding values in the two input matrices.
  * This operation is "delayed" in that it is only evaluated during data extraction, e.g., with `MyopicDenseExtractor::fetch()` or friends.
+ *
+ * This class is inspired by the `DelayedNaryIsoOp` class in the **DelayedArray** Bioconductor package.
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.

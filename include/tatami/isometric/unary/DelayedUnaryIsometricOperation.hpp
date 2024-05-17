@@ -13,8 +13,6 @@
  * @file DelayedUnaryIsometricOperation.hpp
  *
  * @brief Delayed unary isometric operations.
- *
- * This is equivalent to the class of the same name in the **DelayedArray** package.
  */
 
 namespace tatami {
@@ -546,6 +544,8 @@ public:
  * Implements any operation that preserves the shape of the matrix and operates on each matrix value independently.
  * This operation is "delayed" in that it is only evaluated during data extraction, e.g., with `MyopicDenseExtractor::fetch()` or friends.
  * We only consider "unary" operations that involve a single `Matrix` - see `DelayedBinaryIsometricOperation` for operations between two `Matrix` instances.
+ *
+ * This class is inspired by the `DelayedUnaryIsoOp` classes from the **DelayedArray** Bioconductor package.
  * 
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
