@@ -10,9 +10,9 @@
 namespace tatami {
 
 /**
- * Type of the delayed boolean operation.
+ * Type of boolean operation.
  */
-enum class DelayedBooleanOp : char {
+enum class BooleanOperation : char {
     AND,
     OR,
     XOR,
@@ -22,13 +22,13 @@ enum class DelayedBooleanOp : char {
 /**
  * @cond
  */
-template<DelayedBooleanOp op_, typename Value_>
+template<BooleanOperation op_, typename Value_>
 void delayed_boolean_run(Value_& val, bool scalar) {
-    if constexpr(op_ == DelayedBooleanOp::AND) {
+    if constexpr(op_ == BooleanOperation::AND) {
         val = val && scalar;
-    } else if constexpr(op_ == DelayedBooleanOp::OR) {
+    } else if constexpr(op_ == BooleanOperation::OR) {
         val = val || scalar;
-    } else if constexpr(op_ == DelayedBooleanOp::XOR) {
+    } else if constexpr(op_ == BooleanOperation::XOR) {
         val = static_cast<bool>(val) != scalar;
     } else { // EQUAL.
         val = static_cast<bool>(val) == scalar;

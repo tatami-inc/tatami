@@ -5,13 +5,13 @@
 #include <vector>
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
+#include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class ArithVectorUtils {
+class DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     inline static size_t nrow = 291, ncol = 188;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
@@ -67,7 +67,7 @@ protected:
     }; \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        ArithVector, \
+        DelayedUnaryIsometricArithmeticVector, \
         name, \
         base::simulation_parameter_combinations() \
     );
@@ -89,7 +89,7 @@ protected:
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        ArithVector, \
+        DelayedUnaryIsometricArithmeticVector, \
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
@@ -118,7 +118,7 @@ protected:
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        ArithVector, \
+        DelayedUnaryIsometricArithmeticVector, \
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
@@ -152,7 +152,7 @@ protected:
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        ArithVector, \
+        DelayedUnaryIsometricArithmeticVector, \
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
@@ -169,7 +169,7 @@ protected:
  ********* ADDITION *********
  ****************************/
 
-class ArithVectorAdditionUtils : public ArithVectorUtils {
+class DelayedUnaryIsometricAddVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
     typedef std::tuple<bool> SimulationParameters;
 
@@ -186,13 +186,13 @@ public:
         std::shared_ptr<tatami::NumericMatrix>& sparse_ptr) 
     {
         if (row) {
-            auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
-            dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-            sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+            auto op = tatami::make_DelayedUnaryIsometricAddVector<0>(vec);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         } else {
-            auto op = tatami::make_DelayedAddVectorHelper<1>(vec);
-            dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-            sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+            auto op = tatami::make_DelayedUnaryIsometricAddVector<1>(vec);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         }
     }
 
@@ -202,7 +202,7 @@ protected:
 
     static void assemble(SimulationParameters sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
-        ArithVectorUtils::assemble();
+        DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
         auto row = std::get<0>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, 5, 0.5);
@@ -218,8 +218,8 @@ protected:
     }
 };
 
-ARITH_VECTOR_BASIC_SETUP(ArithVectorAdditionTest, ArithVectorAdditionUtils)
-TEST_P(ArithVectorAdditionTest, Basic) {
+ARITH_VECTOR_BASIC_SETUP(DelayedUnaryIsometricAddVectorTest, DelayedUnaryIsometricAddVectorUtils)
+TEST_P(DelayedUnaryIsometricAddVectorTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense_mod->is_sparse_proportion(), 0);
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -233,24 +233,24 @@ TEST_P(ArithVectorAdditionTest, Basic) {
     EXPECT_EQ(sparse_mod->prefer_rows_proportion(), 0);
 }
 
-ARITH_VECTOR_FULL_TEST(ArithVectorAdditionFullTest, ArithVectorAdditionUtils)
-ARITH_VECTOR_BLOCK_TEST(ArithVectorAdditionBlockTest, ArithVectorAdditionUtils)
-ARITH_VECTOR_INDEX_TEST(ArithVectorAdditionIndexTest, ArithVectorAdditionUtils)
+ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricAddVectorFullTest, DelayedUnaryIsometricAddVectorUtils)
+ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricAddVectorBlockTest, DelayedUnaryIsometricAddVectorUtils)
+ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricAddVectorIndexTest, DelayedUnaryIsometricAddVectorUtils)
 
-class ArithVectorAdditionZeroedTest : public ::testing::TestWithParam<typename ArithVectorAdditionUtils::SimulationParameters>, public ArithVectorUtils {
+class DelayedUnaryIsometricAddVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricAddVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(ArithVectorAdditionZeroedTest, Basic) {
+TEST_P(DelayedUnaryIsometricAddVectorZeroedTest, Basic) {
     auto sim_params = GetParam();
     auto row = std::get<0>(sim_params);
 
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    ArithVectorAdditionUtils::apply_operation(row, zeroed, dense_z, sparse_z);
+    DelayedUnaryIsometricAddVectorUtils::apply_operation(row, zeroed, dense_z, sparse_z);
 
     EXPECT_FALSE(dense_z->is_sparse());
     EXPECT_TRUE(sparse_z->is_sparse());
@@ -263,16 +263,16 @@ TEST_P(ArithVectorAdditionZeroedTest, Basic) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ArithVector, 
-    ArithVectorAdditionZeroedTest, 
-    ArithVectorAdditionUtils::simulation_parameter_combinations()
+    DelayedUnaryIsometricArithmeticVector, 
+    DelayedUnaryIsometricAddVectorZeroedTest, 
+    DelayedUnaryIsometricAddVectorUtils::simulation_parameter_combinations()
 );
 
 /*******************************
  ********* SUBTRACTION *********
  *******************************/
 
-class ArithVectorSubtractionUtils : public ArithVectorUtils {
+class DelayedUnaryIsometricSubtractVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
     typedef std::tuple<bool, bool> SimulationParameters;
 
@@ -292,23 +292,23 @@ public:
     {
         if (row) {
             if (right) {
-                auto op = tatami::make_DelayedSubtractVectorHelper<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricSubtractVector<true, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             } else {
-                auto op = tatami::make_DelayedSubtractVectorHelper<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricSubtractVector<false, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             }
         } else {
             if (right) {
-                auto op = tatami::make_DelayedSubtractVectorHelper<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricSubtractVector<true, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             } else {
-                auto op = tatami::make_DelayedSubtractVectorHelper<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricSubtractVector<false, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             }
         }
     }
@@ -319,7 +319,7 @@ protected:
 
     static void assemble(SimulationParameters sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
-        ArithVectorUtils::assemble();
+        DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
         auto row = std::get<0>(sim_params);
         auto right = std::get<1>(sim_params);
@@ -341,8 +341,8 @@ protected:
     }
 };
 
-ARITH_VECTOR_BASIC_SETUP(ArithVectorSubtractionTest, ArithVectorSubtractionUtils)
-TEST_P(ArithVectorSubtractionTest, Basic) {
+ARITH_VECTOR_BASIC_SETUP(DelayedUnaryIsometricSubtractVectorTest, DelayedUnaryIsometricSubtractVectorUtils)
+TEST_P(DelayedUnaryIsometricSubtractVectorTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -352,25 +352,25 @@ TEST_P(ArithVectorSubtractionTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-ARITH_VECTOR_FULL_TEST(ArithVectorSubtractionFullTest, ArithVectorSubtractionUtils)
-ARITH_VECTOR_BLOCK_TEST(ArithVectorSubtractionBlockTest, ArithVectorSubtractionUtils)
-ARITH_VECTOR_INDEX_TEST(ArithVectorSubtractionIndexTest, ArithVectorSubtractionUtils)
+ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricSubtractVectorFullTest, DelayedUnaryIsometricSubtractVectorUtils)
+ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricSubtractVectorBlockTest, DelayedUnaryIsometricSubtractVectorUtils)
+ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricSubtractVectorIndexTest, DelayedUnaryIsometricSubtractVectorUtils)
 
-class ArithVectorSubtractionZeroedTest : public ::testing::TestWithParam<typename ArithVectorSubtractionUtils::SimulationParameters>, public ArithVectorUtils {
+class DelayedUnaryIsometricSubtractVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricSubtractVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(ArithVectorSubtractionZeroedTest, Basic) {
+TEST_P(DelayedUnaryIsometricSubtractVectorZeroedTest, Basic) {
     auto sim_params = GetParam();
     auto row = std::get<0>(sim_params);
     auto right = std::get<1>(sim_params);
 
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    ArithVectorSubtractionUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
+    DelayedUnaryIsometricSubtractVectorUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     EXPECT_FALSE(dense_z->is_sparse());
     EXPECT_TRUE(sparse_z->is_sparse());
@@ -397,16 +397,16 @@ TEST_P(ArithVectorSubtractionZeroedTest, Basic) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ArithVector, 
-    ArithVectorSubtractionZeroedTest, 
-    ArithVectorSubtractionUtils::simulation_parameter_combinations()
+    DelayedUnaryIsometricArithmeticVector, 
+    DelayedUnaryIsometricSubtractVectorZeroedTest, 
+    DelayedUnaryIsometricSubtractVectorUtils::simulation_parameter_combinations()
 );
 
 /**********************************
  ********* MULTIPLICATION *********
  **********************************/
 
-class ArithVectorMultiplicationUtils : public ArithVectorUtils {
+class DelayedUnaryIsometricMultiplyVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
     typedef std::tuple<bool> SimulationParameters;
 
@@ -423,13 +423,13 @@ public:
         std::shared_ptr<tatami::NumericMatrix>& sparse_ptr)
     {
         if (row) {
-            auto op = tatami::make_DelayedMultiplyVectorHelper<0>(vec);
-            dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-            sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+            auto op = tatami::make_DelayedUnaryIsometricMultiplyVector<0>(vec);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         } else {
-            auto op = tatami::make_DelayedMultiplyVectorHelper<1>(vec);
-            dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-            sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+            auto op = tatami::make_DelayedUnaryIsometricMultiplyVector<1>(vec);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         }
     }
 
@@ -439,7 +439,7 @@ protected:
 
     static void assemble(SimulationParameters sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
-        ArithVectorUtils::assemble();
+        DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
         auto row = std::get<0>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, 99, -2.5);
@@ -455,8 +455,8 @@ protected:
     }
 };
 
-ARITH_VECTOR_BASIC_SETUP(ArithVectorMultiplicationTest, ArithVectorMultiplicationUtils)
-TEST_P(ArithVectorMultiplicationTest, Basic) {
+ARITH_VECTOR_BASIC_SETUP(DelayedUnaryIsometricMultiplyVectorTest, DelayedUnaryIsometricMultiplyVectorUtils)
+TEST_P(DelayedUnaryIsometricMultiplyVectorTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense_mod->is_sparse_proportion(), 0);
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -468,24 +468,24 @@ TEST_P(ArithVectorMultiplicationTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-ARITH_VECTOR_FULL_TEST(ArithVectorMultiplicationFullTest, ArithVectorMultiplicationUtils)
-ARITH_VECTOR_BLOCK_TEST(ArithVectorMultiplicationBlockTest, ArithVectorMultiplicationUtils)
-ARITH_VECTOR_INDEX_TEST(ArithVectorMultiplicationIndexTest, ArithVectorMultiplicationUtils)
+ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricMultiplyVectorFullTest, DelayedUnaryIsometricMultiplyVectorUtils)
+ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricMultiplyVectorBlockTest, DelayedUnaryIsometricMultiplyVectorUtils)
+ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricMultiplyVectorIndexTest, DelayedUnaryIsometricMultiplyVectorUtils)
 
-class ArithVectorMultiplicationZeroedTest : public ::testing::TestWithParam<typename ArithVectorMultiplicationUtils::SimulationParameters>, public ArithVectorUtils {
+class DelayedUnaryIsometricMultiplyVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricMultiplyVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(ArithVectorMultiplicationZeroedTest, Basic) {
+TEST_P(DelayedUnaryIsometricMultiplyVectorZeroedTest, Basic) {
     auto sim_params = GetParam();
     auto row = std::get<0>(sim_params);
 
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    ArithVectorMultiplicationUtils::apply_operation(row, zeroed, dense_z, sparse_z);
+    DelayedUnaryIsometricMultiplyVectorUtils::apply_operation(row, zeroed, dense_z, sparse_z);
 
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::vector<double>(nrow * ncol));
 
@@ -497,16 +497,16 @@ TEST_P(ArithVectorMultiplicationZeroedTest, Basic) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ArithVector, 
-    ArithVectorMultiplicationZeroedTest, 
-    ArithVectorMultiplicationUtils::simulation_parameter_combinations()
+    DelayedUnaryIsometricArithmeticVector, 
+    DelayedUnaryIsometricMultiplyVectorZeroedTest, 
+    DelayedUnaryIsometricMultiplyVectorUtils::simulation_parameter_combinations()
 );
 
 /****************************
  ********* DIVISION *********
  ****************************/
 
-class ArithVectorDivisionUtils : public ArithVectorUtils {
+class DelayedUnaryIsometricDivideVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
     typedef std::tuple<bool, bool> SimulationParameters;
 
@@ -526,23 +526,23 @@ public:
     {
         if (row) {
             if (right) {
-                auto op = tatami::make_DelayedDivideVectorHelper<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricDivideVector<true, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             } else {
-                auto op = tatami::make_DelayedDivideVectorHelper<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricDivideVector<false, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             }
         } else {
             if (right) {
-                auto op = tatami::make_DelayedDivideVectorHelper<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricDivideVector<true, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             } else {
-                auto op = tatami::make_DelayedDivideVectorHelper<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricDivideVector<false, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             }
         }
     }
@@ -553,7 +553,7 @@ protected:
 
     static void assemble(SimulationParameters sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
-        ArithVectorUtils::assemble();
+        DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
         auto row = std::get<0>(sim_params);
         auto right = std::get<1>(sim_params);
@@ -582,8 +582,8 @@ protected:
     }
 };
 
-ARITH_VECTOR_BASIC_SETUP(ArithVectorDivisionTest, ArithVectorDivisionUtils)
-TEST_P(ArithVectorDivisionTest, Basic) {
+ARITH_VECTOR_BASIC_SETUP(DelayedUnaryIsometricDivideVectorTest, DelayedUnaryIsometricDivideVectorUtils)
+TEST_P(DelayedUnaryIsometricDivideVectorTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
 
     auto right = std::get<1>(last_params);
@@ -600,25 +600,25 @@ TEST_P(ArithVectorDivisionTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-ARITH_VECTOR_FULL_TEST(ArithVectorDivisionFullTest, ArithVectorDivisionUtils);
-ARITH_VECTOR_BLOCK_TEST(ArithVectorDivisionBlockTest, ArithVectorDivisionUtils);
-ARITH_VECTOR_INDEX_TEST(ArithVectorDivisionIndexTest, ArithVectorDivisionUtils);
+ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricDivideVectorFullTest, DelayedUnaryIsometricDivideVectorUtils);
+ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricDivideVectorBlockTest, DelayedUnaryIsometricDivideVectorUtils);
+ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricDivideVectorIndexTest, DelayedUnaryIsometricDivideVectorUtils);
 
-class ArithVectorDivisionZeroedTest : public ::testing::TestWithParam<typename ArithVectorDivisionUtils::SimulationParameters>, public ArithVectorUtils {
+class DelayedUnaryIsometricDivideVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricDivideVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(ArithVectorDivisionZeroedTest, AllZero) {
+TEST_P(DelayedUnaryIsometricDivideVectorZeroedTest, AllZero) {
     auto sim_params = GetParam();
     auto row = std::get<0>(sim_params);
     auto right = std::get<1>(sim_params);
 
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    ArithVectorDivisionUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
+    DelayedUnaryIsometricDivideVectorUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     auto copy = simulated;
     if (right) {
@@ -643,7 +643,7 @@ TEST_P(ArithVectorDivisionZeroedTest, AllZero) {
     test_simple_row_access_wt_nan(sparse_z.get(), &ref);
 }
 
-TEST_P(ArithVectorDivisionZeroedTest, OneZero) {
+TEST_P(DelayedUnaryIsometricDivideVectorZeroedTest, OneZero) {
     auto sim_params = GetParam();
     auto row = std::get<0>(sim_params);
     auto right = std::get<1>(sim_params);
@@ -652,7 +652,7 @@ TEST_P(ArithVectorDivisionZeroedTest, OneZero) {
     std::vector<double> solo_zero(row ? nrow : ncol, 1);
     solo_zero[0] = 0;
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    ArithVectorDivisionUtils::apply_operation(row, right, solo_zero, dense_z, sparse_z);
+    DelayedUnaryIsometricDivideVectorUtils::apply_operation(row, right, solo_zero, dense_z, sparse_z);
 
     auto copy = simulated;
     if (row) {
@@ -696,16 +696,16 @@ TEST_P(ArithVectorDivisionZeroedTest, OneZero) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ArithVector, 
-    ArithVectorDivisionZeroedTest, 
-    ArithVectorDivisionUtils::simulation_parameter_combinations()
+    DelayedUnaryIsometricArithmeticVector, 
+    DelayedUnaryIsometricDivideVectorZeroedTest, 
+    DelayedUnaryIsometricDivideVectorUtils::simulation_parameter_combinations()
 );
 
 /****************************
  ********** POWER ***********
  ****************************/
 
-class ArithVectorPowerUtils : public ArithVectorUtils {
+class DelayedUnaryIsometricPowerVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
     typedef std::tuple<bool, bool> SimulationParameters;
 
@@ -723,29 +723,29 @@ public:
         std::shared_ptr<tatami::NumericMatrix>& dense_ptr, 
         std::shared_ptr<tatami::NumericMatrix>& sparse_ptr)
     {
-        tatami::DelayedAbsHelper op0;
-        auto dense_tmp = tatami::make_DelayedUnaryIsometricOp(dense, op0);
-        auto sparse_tmp = tatami::make_DelayedUnaryIsometricOp(sparse, op0);
+        tatami::DelayedUnaryIsometricAbs op0;
+        auto dense_tmp = tatami::make_DelayedUnaryIsometricOperation(dense, op0);
+        auto sparse_tmp = tatami::make_DelayedUnaryIsometricOperation(sparse, op0);
 
         if (row) {
             if (right) {
-                auto op = tatami::make_DelayedPowerVectorHelper<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense_tmp, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse_tmp, op);
+                auto op = tatami::make_DelayedUnaryIsometricPowerVector<true, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
             } else {
-                auto op = tatami::make_DelayedPowerVectorHelper<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense_tmp, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse_tmp, op);
+                auto op = tatami::make_DelayedUnaryIsometricPowerVector<false, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
             }
         } else {
             if (right) {
-                auto op = tatami::make_DelayedPowerVectorHelper<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense_tmp, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse_tmp, op);
+                auto op = tatami::make_DelayedUnaryIsometricPowerVector<true, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
             } else {
-                auto op = tatami::make_DelayedPowerVectorHelper<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense_tmp, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse_tmp, op);
+                auto op = tatami::make_DelayedUnaryIsometricPowerVector<false, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
             }
         }
     }
@@ -756,7 +756,7 @@ protected:
 
     static void assemble(SimulationParameters sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
-        ArithVectorUtils::assemble();
+        DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
         auto row = std::get<0>(sim_params);
         auto right = std::get<1>(sim_params);
@@ -779,8 +779,8 @@ protected:
     }
 };
 
-ARITH_VECTOR_BASIC_SETUP(ArithVectorPowerTest, ArithVectorPowerUtils)
-TEST_P(ArithVectorPowerTest, Basic) {
+ARITH_VECTOR_BASIC_SETUP(DelayedUnaryIsometricPowerVectorTest, DelayedUnaryIsometricPowerVectorUtils)
+TEST_P(DelayedUnaryIsometricPowerVectorTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
 
     auto right = std::get<1>(last_params);
@@ -797,25 +797,25 @@ TEST_P(ArithVectorPowerTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-ARITH_VECTOR_FULL_TEST(ArithVectorPowerFullTest, ArithVectorPowerUtils);
-ARITH_VECTOR_BLOCK_TEST(ArithVectorPowerBlockTest, ArithVectorPowerUtils);
-ARITH_VECTOR_INDEX_TEST(ArithVectorPowerIndexTest, ArithVectorPowerUtils);
+ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricPowerVectorFullTest, DelayedUnaryIsometricPowerVectorUtils);
+ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricPowerVectorBlockTest, DelayedUnaryIsometricPowerVectorUtils);
+ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricPowerVectorIndexTest, DelayedUnaryIsometricPowerVectorUtils);
 
-class ArithVectorPowerZeroedTest : public ::testing::TestWithParam<typename ArithVectorPowerUtils::SimulationParameters>, public ArithVectorUtils {
+class DelayedUnaryIsometricPowerVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricPowerVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(ArithVectorPowerZeroedTest, AllZero) {
+TEST_P(DelayedUnaryIsometricPowerVectorZeroedTest, AllZero) {
     auto sim_params = GetParam();
     auto row = std::get<0>(sim_params);
     auto right = std::get<1>(sim_params);
 
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    ArithVectorPowerUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
+    DelayedUnaryIsometricPowerVectorUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     auto copy = simulated;
     if (right) {
@@ -840,7 +840,7 @@ TEST_P(ArithVectorPowerZeroedTest, AllZero) {
     test_simple_row_access_wt_nan(sparse_z.get(), &ref);
 }
 
-TEST_P(ArithVectorPowerZeroedTest, OneZero) {
+TEST_P(DelayedUnaryIsometricPowerVectorZeroedTest, OneZero) {
     // But actually, even 1 zero is enough to break sparsity.
     auto sim_params = GetParam();
     auto row = std::get<0>(sim_params);
@@ -849,7 +849,7 @@ TEST_P(ArithVectorPowerZeroedTest, OneZero) {
     std::vector<double> solo_zero(row ? nrow : ncol, 1);
     solo_zero[0] = 0;
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    ArithVectorPowerUtils::apply_operation(row, right, solo_zero, dense_z, sparse_z);
+    DelayedUnaryIsometricPowerVectorUtils::apply_operation(row, right, solo_zero, dense_z, sparse_z);
 
     auto copy = simulated;
     for (auto& x : copy) {
@@ -896,9 +896,9 @@ TEST_P(ArithVectorPowerZeroedTest, OneZero) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ArithVector, 
-    ArithVectorPowerZeroedTest, 
-    ArithVectorPowerUtils::simulation_parameter_combinations()
+    DelayedUnaryIsometricArithmeticVector, 
+    DelayedUnaryIsometricPowerVectorZeroedTest, 
+    DelayedUnaryIsometricPowerVectorUtils::simulation_parameter_combinations()
 );
 
 /****************************
@@ -923,7 +923,7 @@ INSTANTIATE_TEST_SUITE_P(
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        ArithVector, \
+        DelayedUnaryIsometricArithmeticVector, \
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
@@ -953,7 +953,7 @@ INSTANTIATE_TEST_SUITE_P(
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        ArithVector, \
+        DelayedUnaryIsometricArithmeticVector, \
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
@@ -988,7 +988,7 @@ INSTANTIATE_TEST_SUITE_P(
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        ArithVector, \
+        DelayedUnaryIsometricArithmeticVector, \
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
@@ -1002,7 +1002,7 @@ INSTANTIATE_TEST_SUITE_P(
     );
 
 
-class ArithVectorModuloUtils : public ArithVectorUtils {
+class DelayedUnaryIsometricModuloVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
     typedef std::tuple<bool, bool> SimulationParameters;
 
@@ -1022,23 +1022,23 @@ public:
     {
         if (row) {
             if (right) {
-                auto op = tatami::make_DelayedModuloVectorHelper<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricModuloVector<true, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             } else {
-                auto op = tatami::make_DelayedModuloVectorHelper<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricModuloVector<false, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             }
         } else {
             if (right) {
-                auto op = tatami::make_DelayedModuloVectorHelper<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricModuloVector<true, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             } else {
-                auto op = tatami::make_DelayedModuloVectorHelper<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricModuloVector<false, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             }
         }
     }
@@ -1049,7 +1049,7 @@ protected:
 
     static void assemble(SimulationParameters sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
-        ArithVectorUtils::assemble();
+        DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
         auto row = std::get<0>(sim_params);
         auto right = std::get<1>(sim_params);
@@ -1072,8 +1072,8 @@ protected:
     }
 };
 
-ARITH_VECTOR_BASIC_SETUP(ArithVectorModuloTest, ArithVectorModuloUtils);
-TEST_P(ArithVectorModuloTest, Basic) {
+ARITH_VECTOR_BASIC_SETUP(DelayedUnaryIsometricModuloVectorTest, DelayedUnaryIsometricModuloVectorUtils);
+TEST_P(DelayedUnaryIsometricModuloVectorTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
 
     auto right = std::get<1>(last_params);
@@ -1090,25 +1090,25 @@ TEST_P(ArithVectorModuloTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-ARITH_VECTOR_FULL_TEST_WITH_NAN(ArithVectorModuloFullTest, ArithVectorModuloUtils);
-ARITH_VECTOR_BLOCK_TEST_WITH_NAN(ArithVectorModuloBlockTest, ArithVectorModuloUtils);
-ARITH_VECTOR_INDEX_TEST_WITH_NAN(ArithVectorModuloIndexTest, ArithVectorModuloUtils);
+ARITH_VECTOR_FULL_TEST_WITH_NAN(DelayedUnaryIsometricModuloVectorFullTest, DelayedUnaryIsometricModuloVectorUtils);
+ARITH_VECTOR_BLOCK_TEST_WITH_NAN(DelayedUnaryIsometricModuloVectorBlockTest, DelayedUnaryIsometricModuloVectorUtils);
+ARITH_VECTOR_INDEX_TEST_WITH_NAN(DelayedUnaryIsometricModuloVectorIndexTest, DelayedUnaryIsometricModuloVectorUtils);
 
-class ArithVectorModuloZeroedTest : public ::testing::TestWithParam<typename ArithVectorModuloUtils::SimulationParameters>, public ArithVectorUtils {
+class DelayedUnaryIsometricModuloVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricModuloVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(ArithVectorModuloZeroedTest, AllZero) {
+TEST_P(DelayedUnaryIsometricModuloVectorZeroedTest, AllZero) {
     auto sim_params = GetParam();
     auto row = std::get<0>(sim_params);
     auto right = std::get<1>(sim_params);
 
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    ArithVectorModuloUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
+    DelayedUnaryIsometricModuloVectorUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     auto copy = simulated;
     if (right) {
@@ -1134,16 +1134,16 @@ TEST_P(ArithVectorModuloZeroedTest, AllZero) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ArithVector, 
-    ArithVectorModuloZeroedTest, 
-    ArithVectorModuloUtils::simulation_parameter_combinations()
+    DelayedUnaryIsometricArithmeticVector, 
+    DelayedUnaryIsometricModuloVectorZeroedTest, 
+    DelayedUnaryIsometricModuloVectorUtils::simulation_parameter_combinations()
 );
 
 /****************************
  ***** INTEGER DIVISION *****
  ****************************/
 
-class ArithVectorIntegerDivisionUtils : public ArithVectorUtils {
+class DelayedUnaryIsometricIntegerDivideVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
     typedef std::tuple<bool, bool> SimulationParameters;
 
@@ -1163,23 +1163,23 @@ public:
     {
         if (row) {
             if (right) {
-                auto op = tatami::make_DelayedIntegerDivideVectorHelper<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<true, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             } else {
-                auto op = tatami::make_DelayedIntegerDivideVectorHelper<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<false, 0>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             }
         } else {
             if (right) {
-                auto op = tatami::make_DelayedIntegerDivideVectorHelper<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<true, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             } else {
-                auto op = tatami::make_DelayedIntegerDivideVectorHelper<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOp(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+                auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<false, 1>(vec);
+                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
             }
         }
     }
@@ -1190,7 +1190,7 @@ protected:
 
     void assemble(SimulationParameters sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
-        ArithVectorUtils::assemble();
+        DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
         auto row = std::get<0>(sim_params);
         auto right = std::get<1>(sim_params);
@@ -1214,8 +1214,8 @@ protected:
     }
 };
 
-ARITH_VECTOR_BASIC_SETUP(ArithVectorIntegerDivisionTest, ArithVectorIntegerDivisionUtils);
-TEST_P(ArithVectorIntegerDivisionTest, Basic) {
+ARITH_VECTOR_BASIC_SETUP(DelayedUnaryIsometricIntegerDivideVectorTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
+TEST_P(DelayedUnaryIsometricIntegerDivideVectorTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
 
     auto right = std::get<1>(last_params);
@@ -1232,25 +1232,25 @@ TEST_P(ArithVectorIntegerDivisionTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-ARITH_VECTOR_FULL_TEST_WITH_NAN(ArithVectorIntegerDivisionFullTest, ArithVectorIntegerDivisionUtils);
-ARITH_VECTOR_BLOCK_TEST_WITH_NAN(ArithVectorIntegerDivisionBlockTest, ArithVectorIntegerDivisionUtils);
-ARITH_VECTOR_INDEX_TEST_WITH_NAN(ArithVectorIntegerDivisionIndexTest, ArithVectorIntegerDivisionUtils);
+ARITH_VECTOR_FULL_TEST_WITH_NAN(DelayedUnaryIsometricIntegerDivideVectorFullTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
+ARITH_VECTOR_BLOCK_TEST_WITH_NAN(DelayedUnaryIsometricIntegerDivideVectorBlockTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
+ARITH_VECTOR_INDEX_TEST_WITH_NAN(DelayedUnaryIsometricIntegerDivideVectorIndexTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
 
-class ArithVectorIntegerDivisionZeroedTest : public ::testing::TestWithParam<typename ArithVectorIntegerDivisionUtils::SimulationParameters>, public ArithVectorUtils {
+class DelayedUnaryIsometricIntegerDivideVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricIntegerDivideVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(ArithVectorIntegerDivisionZeroedTest, AllZero) {
+TEST_P(DelayedUnaryIsometricIntegerDivideVectorZeroedTest, AllZero) {
     auto sim_params = GetParam();
     auto row = std::get<0>(sim_params);
     auto right = std::get<1>(sim_params);
 
     std::vector<double> zeroed(row ? nrow : ncol);
     std::shared_ptr<tatami::NumericMatrix> dense_z, sparse_z;
-    ArithVectorIntegerDivisionUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
+    DelayedUnaryIsometricIntegerDivideVectorUtils::apply_operation(row, right, zeroed, dense_z, sparse_z);
 
     auto copy = simulated;
     if (right) {
@@ -1277,7 +1277,7 @@ TEST_P(ArithVectorIntegerDivisionZeroedTest, AllZero) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ArithVector,
-    ArithVectorIntegerDivisionZeroedTest,
-    ArithVectorIntegerDivisionUtils::simulation_parameter_combinations()
+    DelayedUnaryIsometricArithmeticVector,
+    DelayedUnaryIsometricIntegerDivideVectorZeroedTest,
+    DelayedUnaryIsometricIntegerDivideVectorUtils::simulation_parameter_combinations()
 );

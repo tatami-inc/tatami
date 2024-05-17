@@ -1,10 +1,10 @@
-#ifndef TATAMI_ARITH_UTILS_HPP
-#define TATAMI_ARITH_UTILS_HPP
+#ifndef TATAMI_ARITHMETIC_UTILS_HPP
+#define TATAMI_ARITHMETIC_UTILS_HPP
 
 #include <cmath>
 
 /**
- * @file arith_utils.hpp
+ * @file arithmetic_utils.hpp
  *
  * @brief Utilities for delayed arithmetic operations.
  */
@@ -12,9 +12,9 @@
 namespace tatami {
 
 /**
- * Type of the delayed arithmetic operation.
+ * Type of arithmetic operation.
  */
-enum class DelayedArithOp : char { 
+enum class ArithmeticOperation : char { 
     ADD, 
     SUBTRACT,
     MULTIPLY,
@@ -27,19 +27,19 @@ enum class DelayedArithOp : char {
 /**
  * @cond
  */
-template<DelayedArithOp op_, bool right_, typename Scalar_, typename Value_>
-void delayed_arith_run(Value_& val, Scalar_ scalar) {
-    if constexpr(op_ == DelayedArithOp::ADD) {
+template<ArithmeticOperation op_, bool right_, typename Scalar_, typename Value_>
+void delayed_arithmetic_run(Value_& val, Scalar_ scalar) {
+    if constexpr(op_ == ArithmeticOperation::ADD) {
         val += scalar;
-    } else if constexpr(op_ == DelayedArithOp::MULTIPLY) {
+    } else if constexpr(op_ == ArithmeticOperation::MULTIPLY) {
         val *= scalar;
-    } else if constexpr(op_ == DelayedArithOp::SUBTRACT) {
+    } else if constexpr(op_ == ArithmeticOperation::SUBTRACT) {
         if constexpr(right_) {
             val -= scalar;
         } else {
             val = scalar - val;
         }
-    } else if constexpr(op_ == DelayedArithOp::DIVIDE) {
+    } else if constexpr(op_ == ArithmeticOperation::DIVIDE) {
         // Assume that either Value_ is an IEEE-754 float, or that division by
         // zero is impossible in this context. We don't apply manual checks
         // here to avoid performance degradation; we also don't check that the
@@ -50,19 +50,19 @@ void delayed_arith_run(Value_& val, Scalar_ scalar) {
         } else {
             val = scalar / val;
         }
-    } else if constexpr(op_ == DelayedArithOp::POWER) {
+    } else if constexpr(op_ == ArithmeticOperation::POWER) {
         if constexpr(right_) {
             val = std::pow(val, scalar);
         } else {
             val = std::pow(scalar, val);
         }
-    } else if constexpr(op_ == DelayedArithOp::MODULO) {
+    } else if constexpr(op_ == ArithmeticOperation::MODULO) {
         if constexpr(right_) {
             val = std::fmod(val, scalar);
         } else {
             val = std::fmod(scalar, val);
         }
-    } else if constexpr(op_ == DelayedArithOp::INTEGER_DIVIDE) {
+    } else if constexpr(op_ == ArithmeticOperation::INTEGER_DIVIDE) {
         if constexpr(right_) {
             val = std::floor(val / scalar);
         } else {

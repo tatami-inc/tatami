@@ -16,7 +16,7 @@ namespace tatami {
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedAbsHelper {
+class DelayedUnaryIsometricAbs {
 public:
     /**
      * @cond
@@ -78,7 +78,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedSignHelper {
+class DelayedUnaryIsometricSign {
 public:
     /**
      * @cond
@@ -143,17 +143,17 @@ public:
  * @tparam Base_ Numeric type for the log base.
  */
 template<typename Value_ = double, typename Base_ = Value_>
-class DelayedLogHelper {
+class DelayedUnaryIsometricLog {
 public:
     /**
      * Defaults to the natural log.
      */
-    DelayedLogHelper() : my_base(1) {}
+    DelayedUnaryIsometricLog() : my_base(1) {}
 
     /**
      * @param base Base of the logarithm.
      */
-    DelayedLogHelper(Base_ base) : my_base(std::log(base)) {}
+    DelayedUnaryIsometricLog(Base_ base) : my_base(std::log(base)) {}
 
 public:
     /**
@@ -218,7 +218,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedSqrtHelper {
+class DelayedUnaryIsometricSqrt {
 public:
     /**
      * @cond
@@ -279,7 +279,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedCeilingHelper {
+class DelayedUnaryIsometricCeiling {
 public:
     /**
      * @cond
@@ -340,7 +340,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedFloorHelper {
+class DelayedUnaryIsometricFloor {
 public:
     /**
      * @cond
@@ -401,7 +401,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedTruncHelper {
+class DelayedUnaryIsometricTrunc {
 public:
     /**
      * @cond
@@ -464,17 +464,17 @@ public:
  * @tparam Base_ Numeric type for the log base.
  */
 template<typename Value_ = double, typename Base_ = Value_>
-class DelayedLog1pHelper {
+class DelayedUnaryIsometricLog1p {
 public:
     /**
      * Defaults to the natural log.
      */
-    DelayedLog1pHelper() : my_base(1) {}
+    DelayedUnaryIsometricLog1p() : my_base(1) {}
 
     /**
      * @param base Base of the logarithm.
      */
-    DelayedLog1pHelper(Base_ base) : my_base(std::log(base)) {}
+    DelayedUnaryIsometricLog1p(Base_ base) : my_base(std::log(base)) {}
 
 public:
     /**
@@ -538,7 +538,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedRoundHelper {
+class DelayedUnaryIsometricRound {
 public:
     /**
      * @cond
@@ -599,7 +599,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedExpHelper {
+class DelayedUnaryIsometricExp {
 public:
     /**
      * @cond
@@ -660,7 +660,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedExpm1Helper {
+class DelayedUnaryIsometricExpm1 {
 public:
     /**
      * @cond
@@ -721,7 +721,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedAcosHelper {
+class DelayedUnaryIsometricAcos {
 public:
     /**
      * @cond
@@ -783,7 +783,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedAcoshHelper {
+class DelayedUnaryIsometricAcosh {
 public:
     /**
      * @cond
@@ -845,7 +845,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedAsinHelper {
+class DelayedUnaryIsometricAsin {
 public:
     /**
      * @cond
@@ -906,7 +906,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedAsinhHelper {
+class DelayedUnaryIsometricAsinh {
 public:
     /**
      * @cond
@@ -967,7 +967,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedAtanHelper {
+class DelayedUnaryIsometricAtan {
 public:
     /**
      * @cond
@@ -1028,7 +1028,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedAtanhHelper {
+class DelayedUnaryIsometricAtanh {
 public:
     /**
      * @cond
@@ -1089,7 +1089,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedCosHelper {
+class DelayedUnaryIsometricCos {
 public:
     /**
      * @cond
@@ -1150,7 +1150,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedCoshHelper {
+class DelayedUnaryIsometricCosh {
 public:
     /**
      * @cond
@@ -1211,7 +1211,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedSinHelper {
+class DelayedUnaryIsometricSin {
 public:
     /**
      * @cond
@@ -1272,7 +1272,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedSinhHelper {
+class DelayedUnaryIsometricSinh {
 public:
     /**
      * @cond
@@ -1333,7 +1333,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedTanHelper {
+class DelayedUnaryIsometricTan {
 public:
     /**
      * @cond
@@ -1394,7 +1394,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedTanhHelper {
+class DelayedUnaryIsometricTanh {
 public:
     /**
      * @cond
@@ -1455,7 +1455,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedGammaHelper {
+class DelayedUnaryIsometricGamma {
 public:
     /**
      * @cond
@@ -1517,7 +1517,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedLgammaHelper {
+class DelayedUnaryIsometricLgamma {
 public:
     /**
      * @cond

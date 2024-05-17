@@ -6,13 +6,13 @@
 #include <vector>
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
+#include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class ArithScalarUtils { 
+class DelayedUnaryIsometricUtilsScalar { 
 protected:
     inline static size_t nrow = 123, ncol = 89;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
@@ -32,19 +32,19 @@ protected:
  ********* COMMUTATIVE *********
  *******************************/
 
-class ArithCommutativeScalarTest : public ::testing::TestWithParam<double>, public ArithScalarUtils {
+class DelayedUnaryIsometricArithmeticCommutativeScalarTest : public ::testing::TestWithParam<double>, public DelayedUnaryIsometricUtilsScalar {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(ArithCommutativeScalarTest, Addition) {
+TEST_P(DelayedUnaryIsometricArithmeticCommutativeScalarTest, Add) {
     double val = GetParam();
-    auto op = tatami::make_DelayedAddScalarHelper(val);
+    auto op = tatami::make_DelayedUnaryIsometricAddScalar(val);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -68,11 +68,11 @@ TEST_P(ArithCommutativeScalarTest, Addition) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(ArithCommutativeScalarTest, Multiplication) {
+TEST_P(DelayedUnaryIsometricArithmeticCommutativeScalarTest, Multiply) {
     double val = GetParam();
-    auto op = tatami::make_DelayedMultiplyScalarHelper(val);
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto op = tatami::make_DelayedUnaryIsometricMultiplyScalar(val);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
     EXPECT_EQ(dense->ncol(), dense_mod->ncol());
@@ -89,8 +89,8 @@ TEST_P(ArithCommutativeScalarTest, Multiplication) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ArithScalar,
-    ArithCommutativeScalarTest,
+    DelayedUnaryIsometricArithmeticScalar,
+    DelayedUnaryIsometricArithmeticCommutativeScalarTest,
     ::testing::Values(5, 0.1, -0.7, 0)
 );
 
@@ -98,27 +98,27 @@ INSTANTIATE_TEST_SUITE_P(
  ********* NON-COMMUTATIVE *********
  ***********************************/
 
-class ArithNonCommutativeScalarTest : public ::testing::TestWithParam<std::tuple<double, bool> >, public ArithScalarUtils {
+class DelayedUnaryIsometricArithmeticNonCommutativeScalarTest : public ::testing::TestWithParam<std::tuple<double, bool> >, public DelayedUnaryIsometricUtilsScalar {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(ArithNonCommutativeScalarTest, Subtraction) {
+TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Subtract) {
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
 
     auto my_param = GetParam();
     double val = std::get<0>(my_param);
     bool on_right = std::get<1>(my_param);
     if (on_right) {
-        auto op = tatami::make_DelayedSubtractScalarHelper<true>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        auto op = tatami::make_DelayedUnaryIsometricSubtractScalar<true>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     } else {
-        auto op = tatami::make_DelayedSubtractScalarHelper<false>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        auto op = tatami::make_DelayedUnaryIsometricSubtractScalar<false>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     }
 
     EXPECT_FALSE(dense_mod->is_sparse());
@@ -146,20 +146,20 @@ TEST_P(ArithNonCommutativeScalarTest, Subtraction) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(ArithNonCommutativeScalarTest, Division) {
+TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Divide) {
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
 
     auto my_param = GetParam();
     double val = std::get<0>(my_param);
     bool on_right = std::get<1>(my_param);
     if (on_right) {
-        auto op = tatami::make_DelayedDivideScalarHelper<true>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        auto op = tatami::make_DelayedUnaryIsometricDivideScalar<true>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     } else {
-        auto op = tatami::make_DelayedDivideScalarHelper<false>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        auto op = tatami::make_DelayedUnaryIsometricDivideScalar<false>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     }
 
     EXPECT_FALSE(dense_mod->is_sparse());
@@ -185,24 +185,24 @@ TEST_P(ArithNonCommutativeScalarTest, Division) {
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ (val == 0));
 }
 
-TEST_P(ArithNonCommutativeScalarTest, Power) {
+TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Power) {
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
 
-    tatami::DelayedAbsHelper op0;
-    dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op0);
-    sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op0);
+    tatami::DelayedUnaryIsometricAbs op0;
+    dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op0);
+    sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op0);
 
     auto my_param = GetParam();
     double val = std::abs(std::get<0>(my_param));
     bool on_right = std::get<1>(my_param);
     if (on_right) {
-        auto op = tatami::make_DelayedPowerScalarHelper<true>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_mod, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_mod, op);
+        auto op = tatami::make_DelayedUnaryIsometricPowerScalar<true>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense_mod, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse_mod, op);
     } else {
-        auto op = tatami::make_DelayedPowerScalarHelper<false>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_mod, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_mod, op);
+        auto op = tatami::make_DelayedUnaryIsometricPowerScalar<false>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense_mod, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse_mod, op);
     }
 
     EXPECT_FALSE(dense_mod->is_sparse());
@@ -230,20 +230,20 @@ TEST_P(ArithNonCommutativeScalarTest, Power) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(ArithNonCommutativeScalarTest, Modulo) {
+TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Modulo) {
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
 
     auto my_param = GetParam();
     double val = std::get<0>(my_param);
     bool on_right = std::get<1>(my_param);
     if (on_right) {
-        auto op = tatami::make_DelayedModuloScalarHelper<true>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        auto op = tatami::make_DelayedUnaryIsometricModuloScalar<true>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     } else {
-        auto op = tatami::make_DelayedModuloScalarHelper<false>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        auto op = tatami::make_DelayedUnaryIsometricModuloScalar<false>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     }
 
     EXPECT_FALSE(dense_mod->is_sparse());
@@ -270,20 +270,20 @@ TEST_P(ArithNonCommutativeScalarTest, Modulo) {
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ !(on_right && val));
 }
 
-TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
+TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, IntegerDivide) {
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
 
     auto my_param = GetParam();
     double val = std::get<0>(my_param);
     bool on_right = std::get<1>(my_param);
     if (on_right) {
-        auto op = tatami::make_DelayedIntegerDivideScalarHelper<true>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        auto op = tatami::make_DelayedUnaryIsometricIntegerDivideScalar<true>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     } else {
-        auto op = tatami::make_DelayedIntegerDivideScalarHelper<false>(val);
-        dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        auto op = tatami::make_DelayedUnaryIsometricIntegerDivideScalar<false>(val);
+        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     }
 
     EXPECT_FALSE(dense_mod->is_sparse());
@@ -312,8 +312,8 @@ TEST_P(ArithNonCommutativeScalarTest, IntegerDivision) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    ArithScalar,
-    ArithNonCommutativeScalarTest,
+    DelayedUnaryIsometricArithmeticScalar,
+    DelayedUnaryIsometricArithmeticNonCommutativeScalarTest,
     ::testing::Combine(
         ::testing::Values(5, 0.1, -0.7, 0),
         ::testing::Values(true, false)
@@ -324,19 +324,19 @@ INSTANTIATE_TEST_SUITE_P(
  ********* SPECIAL VALUES *********
  **********************************/
 
-TEST(ArithScalarTest, NonIeee754Multiply) {
+TEST(DelayedUnaryIsometricArithmeticScalar, NonIeee754Multiply) {
     int scalar = 5;
-    auto op = tatami::make_DelayedMultiplyScalarHelper(scalar);
+    auto op = tatami::make_DelayedUnaryIsometricMultiplyScalar(scalar);
     EXPECT_TRUE(op.is_sparse());
 }
 
-TEST(ArithScalarTest, NonFiniteMultiply) {
+TEST(DelayedUnaryIsometricArithmeticScalar, NonFiniteMultiply) {
     double scalar = std::numeric_limits<double>::infinity();
-    auto op = tatami::make_DelayedMultiplyScalarHelper(scalar);
+    auto op = tatami::make_DelayedUnaryIsometricMultiplyScalar(scalar);
     EXPECT_FALSE(op.is_sparse());
 }
 
-TEST(ArithScalarTest, NonIeee754Divide) {
-    auto op = tatami::make_DelayedDivideScalarHelper<false, int>(5.0);
+TEST(DelayedUnaryIsometricArithmeticScalar, NonIeee754Divide) {
+    auto op = tatami::make_DelayedUnaryIsometricDivideScalar<false, int>(5.0);
     tatami_test::throws_error([&]() { op.template fill<double>(5); }, "IEEE-754");
 }

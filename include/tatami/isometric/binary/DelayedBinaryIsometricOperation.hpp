@@ -1,5 +1,5 @@
-#ifndef TATAMI_DELAYED_BINARY_ISOMETRIC_OP_H
-#define TATAMI_DELAYED_BINARY_ISOMETRIC_OP_H
+#ifndef TATAMI_DELAYED_BINARY_ISOMETRIC_OPERATION_H
+#define TATAMI_DELAYED_BINARY_ISOMETRIC_OPERATION_H
 
 #include "../../base/Matrix.hpp"
 #include "../../utils/new_extractor.hpp"
@@ -15,7 +15,7 @@
  *
  * @brief Delayed binary isometric operations.
  *
- * This is equivalent to the class of the same name in the **DelayedArray** package.
+ * This is equivalent to the `DelayedNaryIsoOp` class in the **DelayedArray** package.
  */
 
 namespace tatami {
@@ -23,7 +23,7 @@ namespace tatami {
 /**
  * @cond
  */
-namespace DelayedBinaryIsometricOp_internal {
+namespace DelayedBinaryIsometricOperation_internal {
 
 template<class Operation_, bool oracle_, typename Index_>
 class MaybeOracleDepends {
@@ -488,23 +488,23 @@ private:
  *
  * Implements any operation that takes two matrices of the same shape and returns another matrix of that shape.
  * Each entry of the output matrix is a function of the corresponding values in the two input matrices.
- * This operation is "delayed" in that it is only evaluated on request, e.g., with `DenseExtractor::fetch()` or friends.
+ * This operation is "delayed" in that it is only evaluated during data extraction, e.g., with `MyopicDenseExtractor::fetch()` or friends.
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
- * @tparam Operation_ Class implementing the operation.
- * This should implement the same methods as `DelayedBinaryBasicMockHelper` or `DelayedBinaryAdvancedMockHelper`,
+ * @tparam Operation_ Helper class implementing the operation.
+ * This should implement the same methods as `DelayedBinaryIsometricMockBasic` or `DelayedBinaryIsometricMockAdvanced`,
  * depending on whether it can take advantage of matrix sparsity.
  */
 template<typename Value_, typename Index_, class Operation_>
-class DelayedBinaryIsometricOp : public Matrix<Value_, Index_> {
+class DelayedBinaryIsometricOperation : public Matrix<Value_, Index_> {
 public:
     /**
      * @param left Pointer to the left matrix.
      * @param right Pointer to the right matrix.
      * @param operation Instance of the functor class.
      */
-    DelayedBinaryIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > left, std::shared_ptr<const Matrix<Value_, Index_> > right, Operation_ operation) : 
+    DelayedBinaryIsometricOperation(std::shared_ptr<const Matrix<Value_, Index_> > left, std::shared_ptr<const Matrix<Value_, Index_> > right, Operation_ operation) : 
         my_left(std::move(left)), my_right(std::move(right)), my_operation(std::move(operation)) 
     {
         if (my_left->nrow() != my_right->nrow() || my_left->ncol() != my_right->ncol()) {
@@ -572,7 +572,7 @@ public:
 private:
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_simple_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
-        return std::make_unique<DelayedBinaryIsometricOp_internal::DenseSimpleFull<oracle_, Value_, Index_, Operation_> >(
+        return std::make_unique<DelayedBinaryIsometricOperation_internal::DenseSimpleFull<oracle_, Value_, Index_, Operation_> >(
             my_left.get(),
             my_right.get(),
             my_operation,
@@ -584,7 +584,7 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_simple_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        return std::make_unique<DelayedBinaryIsometricOp_internal::DenseSimpleBlock<oracle_, Value_, Index_, Operation_> >(
+        return std::make_unique<DelayedBinaryIsometricOperation_internal::DenseSimpleBlock<oracle_, Value_, Index_, Operation_> >(
             my_left.get(),
             my_right.get(),
             my_operation,
@@ -598,7 +598,7 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_simple_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return std::make_unique<DelayedBinaryIsometricOp_internal::DenseSimpleIndex<oracle_, Value_, Index_, Operation_> >(
+        return std::make_unique<DelayedBinaryIsometricOperation_internal::DenseSimpleIndex<oracle_, Value_, Index_, Operation_> >(
             my_left.get(),
             my_right.get(),
             my_operation,
@@ -611,7 +611,7 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_expanded_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
-        return std::make_unique<DelayedBinaryIsometricOp_internal::DenseExpandedFull<oracle_, Value_, Index_, Operation_> >(
+        return std::make_unique<DelayedBinaryIsometricOperation_internal::DenseExpandedFull<oracle_, Value_, Index_, Operation_> >(
             my_left.get(),
             my_right.get(),
             my_operation,
@@ -623,7 +623,7 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_expanded_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        return std::make_unique<DelayedBinaryIsometricOp_internal::DenseExpandedBlock<oracle_, Value_, Index_, Operation_> >(
+        return std::make_unique<DelayedBinaryIsometricOperation_internal::DenseExpandedBlock<oracle_, Value_, Index_, Operation_> >(
             my_left.get(),
             my_right.get(),
             my_operation,
@@ -637,7 +637,7 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_expanded_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return std::make_unique<DelayedBinaryIsometricOp_internal::DenseExpandedIndex<oracle_, Value_, Index_, Operation_> >(
+        return std::make_unique<DelayedBinaryIsometricOperation_internal::DenseExpandedIndex<oracle_, Value_, Index_, Operation_> >(
             my_left.get(),
             my_right.get(),
             my_operation,
@@ -684,7 +684,7 @@ private:
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
         if constexpr(is_advanced) {
             if (my_is_sparse) {
-                return std::make_unique<DelayedBinaryIsometricOp_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
+                return std::make_unique<DelayedBinaryIsometricOperation_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
                     my_left.get(),
                     my_right.get(),
                     my_operation,
@@ -706,7 +706,7 @@ private:
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         if constexpr(is_advanced) {
             if (my_is_sparse) {
-                return std::make_unique<DelayedBinaryIsometricOp_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
+                return std::make_unique<DelayedBinaryIsometricOperation_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
                     my_left.get(),
                     my_right.get(),
                     my_operation,
@@ -731,7 +731,7 @@ private:
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         if constexpr(is_advanced) {
             if (my_is_sparse) {
-                return std::make_unique<DelayedBinaryIsometricOp_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
+                return std::make_unique<DelayedBinaryIsometricOperation_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
                     my_left.get(),
                     my_right.get(),
                     my_operation,
@@ -810,9 +810,9 @@ public:
  * @return Instance of a `DelayedBinaryIsometricOp` clas.
  */
 template<typename Value_, typename Index_, class Operation_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shared_ptr<const Matrix<Value_, Index_> > left, std::shared_ptr<const Matrix<Value_, Index_> > right, Operation_ op) {
-    typedef typename std::remove_reference<Operation_>::type Op_;
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBinaryIsometricOp<Value_, Index_, Op_>(std::move(left), std::move(right), std::move(op)));
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOperation(std::shared_ptr<const Matrix<Value_, Index_> > left, std::shared_ptr<const Matrix<Value_, Index_> > right, Operation_ op) {
+    typedef typename std::remove_reference<Operation_>::type Operation2_;
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBinaryIsometricOperation<Value_, Index_, Operation2_>(std::move(left), std::move(right), std::move(op)));
 }
 
 /**
@@ -820,9 +820,9 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shar
  */
 // For automatic template deduction with non-const pointers.
 template<typename Value_, typename Index_, class Operation_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shared_ptr<Matrix<Value_, Index_> > left, std::shared_ptr<Matrix<Value_, Index_> > right, Operation_ op) {
-    typedef typename std::remove_reference<Operation_>::type Op_;
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBinaryIsometricOp<Value_, Index_, Op_>(std::move(left), std::move(right), std::move(op)));
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOperation(std::shared_ptr<Matrix<Value_, Index_> > left, std::shared_ptr<Matrix<Value_, Index_> > right, Operation_ op) {
+    typedef typename std::remove_reference<Operation_>::type Operation2_;
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBinaryIsometricOperation<Value_, Index_, Operation2_>(std::move(left), std::move(right), std::move(op)));
 }
 /**
  * @endcond
@@ -830,7 +830,7 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOp(std::shar
 
 }
 
-#include "arith_helpers.hpp"
+#include "arithmetic_helpers.hpp"
 
 #include "compare_helpers.hpp"
 

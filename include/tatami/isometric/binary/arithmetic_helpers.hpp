@@ -1,13 +1,13 @@
-#ifndef TATAMI_BINARY_ARITH_HELPERS_H
-#define TATAMI_BINARY_ARITH_HELPERS_H
+#ifndef TATAMI_ISOMETRIC_BINARY_ARITHMETIC_HELPERS_H
+#define TATAMI_ISOMETRIC_BINARY_ARITHMETIC_HELPERS_H
 
-#include "../arith_utils.hpp"
+#include "../arithmetic_utils.hpp"
 #include "utils.hpp"
 #include <limits>
 #include <vector>
 
 /**
- * @file arith_helpers.hpp
+ * @file arithmetic_helpers.hpp
  *
  * @brief Helper classes for binary arithmetic operations.
  */
@@ -15,21 +15,21 @@
 namespace tatami {
 
 /**
- * @brief Delayed binary arithmetic.
+ * @brief Delayed binary isometric arithmetic. 
  *
- * This should be used as the `Operation_` in the `DelayedBinaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedBinaryIsometricOperation` class.
  *
  * @tparam op_ The arithmetic operation.
  */
-template<DelayedArithOp op_>
-class DelayedBinaryArithHelper {
+template<ArithmeticOperation op_>
+class DelayedBinaryIsometricArithmetic {
 public:
     /**
      * @cond
      */
-    static constexpr bool known_sparse = (op_ == DelayedArithOp::ADD ||
-                                          op_ == DelayedArithOp::SUBTRACT ||
-                                          op_ == DelayedArithOp::MULTIPLY);
+    static constexpr bool known_sparse = (op_ == ArithmeticOperation::ADD ||
+                                          op_ == ArithmeticOperation::SUBTRACT ||
+                                          op_ == ArithmeticOperation::MULTIPLY);
 
     static constexpr bool zero_depends_on_row = false;
 
@@ -45,21 +45,21 @@ public:
     template<typename Value_, typename Index_>
     void dense(bool, Index_, Index_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
         for (Index_ i = 0; i < length; ++i) {
-            delayed_arith_run<op_, true>(left_buffer[i], right_buffer[i]);
+            delayed_arithmetic_run<op_, true>(left_buffer[i], right_buffer[i]);
         }
     }
 
     template<typename Value_, typename Index_>
     void dense(bool, Index_, const std::vector<Index_>& indices, Value_* left_buffer, const Value_* right_buffer) const {
         for (Index_ i = 0, length = indices.size(); i < length; ++i) {
-            delayed_arith_run<op_, true>(left_buffer[i], right_buffer[i]);
+            delayed_arithmetic_run<op_, true>(left_buffer[i], right_buffer[i]);
         }
     }
 
     template<typename Value_, typename Index_>
     Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
         // Don't bother storing an explicit zero for MULTIPLY operations when either entry is zero.
-        constexpr bool must_have_both = (op_ == DelayedArithOp::MULTIPLY);
+        constexpr bool must_have_both = (op_ == ArithmeticOperation::MULTIPLY);
         return delayed_binary_isometric_sparse_operation<must_have_both>(
             left, 
             right, 
@@ -67,7 +67,7 @@ public:
             index_buffer, 
             needs_value,
             needs_index,
-            [](Value_& l, Value_ r) { delayed_arith_run<op_, true>(l, r); }
+            [](Value_& l, Value_ r) { delayed_arithmetic_run<op_, true>(l, r); }
         );
     }
 
@@ -75,7 +75,7 @@ public:
     Value_ fill(Index_) const {
         if constexpr(known_sparse) {
             return 0;
-        } else if constexpr(op_ == DelayedArithOp::POWER) {
+        } else if constexpr(op_ == ArithmeticOperation::POWER) {
             return 1;
         } else {
             // Zero divided/modulo by zero gives NaN.
@@ -94,50 +94,50 @@ public:
 /**
  * @return A helper class for delayed binary addition.
  */
-inline DelayedBinaryArithHelper<DelayedArithOp::ADD> make_DelayedBinaryAddHelper() {
-    return DelayedBinaryArithHelper<DelayedArithOp::ADD>();
+inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::ADD> make_DelayedBinaryIsometricAdd() {
+    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::ADD>();
 }
 
 /**
  * @return A helper class for delayed binary subtraction.
  */
-inline DelayedBinaryArithHelper<DelayedArithOp::SUBTRACT> make_DelayedBinarySubtractHelper() {
-    return DelayedBinaryArithHelper<DelayedArithOp::SUBTRACT>();
+inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::SUBTRACT> make_DelayedBinaryIsometricSubtract() {
+    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::SUBTRACT>();
 }
 
 /**
  * @return A helper class for delayed binary multiplication.
  */
-inline DelayedBinaryArithHelper<DelayedArithOp::MULTIPLY> make_DelayedBinaryMultiplyHelper() {
-    return DelayedBinaryArithHelper<DelayedArithOp::MULTIPLY>();
+inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::MULTIPLY> make_DelayedBinaryIsometricMultiply() {
+    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::MULTIPLY>();
 }
 
 /**
  * @return A helper class for delayed binary division.
  */
-inline DelayedBinaryArithHelper<DelayedArithOp::DIVIDE> make_DelayedBinaryDivideHelper() {
-    return DelayedBinaryArithHelper<DelayedArithOp::DIVIDE>();
+inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::DIVIDE> make_DelayedBinaryIsometricDivide() {
+    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::DIVIDE>();
 }
 
 /**
  * @return A helper class for delayed binary power.
  */
-inline DelayedBinaryArithHelper<DelayedArithOp::POWER> make_DelayedBinaryPowerHelper() {
-    return DelayedBinaryArithHelper<DelayedArithOp::POWER>();
+inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::POWER> make_DelayedBinaryIsometricPower() {
+    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::POWER>();
 }
 
 /**
  * @return A helper class for delayed binary modulo.
  */
-inline DelayedBinaryArithHelper<DelayedArithOp::MODULO> make_DelayedBinaryModuloHelper() {
-    return DelayedBinaryArithHelper<DelayedArithOp::MODULO>();
+inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::MODULO> make_DelayedBinaryIsometricModulo() {
+    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::MODULO>();
 }
 
 /**
  * @return A helper class for delayed binary integer division.
  */
-inline DelayedBinaryArithHelper<DelayedArithOp::INTEGER_DIVIDE> make_DelayedBinaryIntegerDivideHelper() {
-    return DelayedBinaryArithHelper<DelayedArithOp::INTEGER_DIVIDE>();
+inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::INTEGER_DIVIDE> make_DelayedBinaryIsometricIntegerDivide() {
+    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::INTEGER_DIVIDE>();
 }
 
 }

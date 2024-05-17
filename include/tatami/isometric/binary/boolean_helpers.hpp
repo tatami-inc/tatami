@@ -1,5 +1,5 @@
-#ifndef TATAMI_BINARY_BOOLEAN_HELPERS_H
-#define TATAMI_BINARY_BOOLEAN_HELPERS_H
+#ifndef TATAMI_ISOMETRIC_BINARY_BOOLEAN_HELPERS_H
+#define TATAMI_ISOMETRIC_BINARY_BOOLEAN_HELPERS_H
 
 #include "../boolean_utils.hpp"
 #include "utils.hpp"
@@ -13,20 +13,20 @@
 namespace tatami {
 
 /**
- * @brief Delayed binary boolean operations.
+ * @brief Delayed binary isometric boolean operations.
  *
- * This should be used as the `Operation_` in the `DelayedBinaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedBinaryIsometricOperation` class.
  *
  * @tparam op_ The boolean operation.
  */
-template<DelayedBooleanOp op_>
-struct DelayedBinaryBooleanHelper {
+template<BooleanOperation op_>
+struct DelayedBinaryIsometricBoolean {
 public:
     /**
      * @cond
      */
     // It's sparse if f(0, 0) == 0.
-    static constexpr bool known_sparse = (op_ != DelayedBooleanOp::EQUAL);
+    static constexpr bool known_sparse = (op_ != BooleanOperation::EQUAL);
 
     static constexpr bool zero_depends_on_row = false;
 
@@ -56,7 +56,7 @@ public:
     template<typename Value_, typename Index_>
     Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
         // Don't bother storing an explicit zero for AND operations when either entry is zero.
-        constexpr bool must_have_both = (op_ == DelayedBooleanOp::AND);
+        constexpr bool must_have_both = (op_ == BooleanOperation::AND);
         return delayed_binary_isometric_sparse_operation<must_have_both>(
             left, 
             right, 
@@ -88,29 +88,29 @@ public:
 /**
  * @return A helper class for a delayed binary boolean equivalence operation.
  */
-inline DelayedBinaryBooleanHelper<DelayedBooleanOp::EQUAL> make_DelayedBinaryBooleanEqualHelper() {
-    return DelayedBinaryBooleanHelper<DelayedBooleanOp::EQUAL>();
+inline DelayedBinaryIsometricBoolean<BooleanOperation::EQUAL> make_DelayedBinaryIsometricBooleanEqual() {
+    return DelayedBinaryIsometricBoolean<BooleanOperation::EQUAL>();
 }
 
 /**
  * @return A helper class for a delayed binary AND comparison.
  */
-inline DelayedBinaryBooleanHelper<DelayedBooleanOp::AND> make_DelayedBinaryBooleanAndHelper() {
-    return DelayedBinaryBooleanHelper<DelayedBooleanOp::AND>();
+inline DelayedBinaryIsometricBoolean<BooleanOperation::AND> make_DelayedBinaryIsometricBooleanAnd() {
+    return DelayedBinaryIsometricBoolean<BooleanOperation::AND>();
 }
 
 /**
  * @return A helper class for a delayed binary OR comparison.
  */
-inline DelayedBinaryBooleanHelper<DelayedBooleanOp::OR> make_DelayedBinaryBooleanOrHelper() {
-    return DelayedBinaryBooleanHelper<DelayedBooleanOp::OR>();
+inline DelayedBinaryIsometricBoolean<BooleanOperation::OR> make_DelayedBinaryIsometricBooleanOr() {
+    return DelayedBinaryIsometricBoolean<BooleanOperation::OR>();
 }
 
 /**
  * @return A helper class for a delayed binary XOR comparison.
  */
-inline DelayedBinaryBooleanHelper<DelayedBooleanOp::XOR> make_DelayedBinaryBooleanXorHelper() {
-    return DelayedBinaryBooleanHelper<DelayedBooleanOp::XOR>();
+inline DelayedBinaryIsometricBoolean<BooleanOperation::XOR> make_DelayedBinaryIsometricBooleanXor() {
+    return DelayedBinaryIsometricBoolean<BooleanOperation::XOR>();
 }
 
 }

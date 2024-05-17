@@ -1,5 +1,5 @@
-#ifndef TATAMI_BINARY_COMPARE_HELPERS_H
-#define TATAMI_BINARY_COMPARE_HELPERS_H
+#ifndef TATAMI_ISOMETRIC_BINARY_COMPARE_HELPERS_H
+#define TATAMI_ISOMETRIC_BINARY_COMPARE_HELPERS_H
 
 #include "../compare_utils.hpp"
 #include "utils.hpp"
@@ -13,22 +13,22 @@
 namespace tatami {
 
 /**
- * @brief Delayed binary comparison.
+ * @brief Delayed binary isometric comparison.
  *
- * This should be used as the `Operation_` in the `DelayedBinaryIsometricOp` class.
+ * This should be used as the `Operation_` in the `DelayedBinaryIsometricOperation` class.
  *
  * @tparam op_ The comparison operation.
  */
-template<DelayedCompareOp op_>
-struct DelayedBinaryCompareHelper {
+template<CompareOperation op_>
+struct DelayedBinaryIsometricCompare {
 public:
     /**
      * @cond
      */
     // It's sparse if f(0, 0) == 0.
-    static constexpr bool known_sparse = (op_ != DelayedCompareOp::EQUAL && 
-                                          op_ != DelayedCompareOp::GREATER_THAN_OR_EQUAL && 
-                                          op_ != DelayedCompareOp::LESS_THAN_OR_EQUAL);
+    static constexpr bool known_sparse = (op_ != CompareOperation::EQUAL && 
+                                          op_ != CompareOperation::GREATER_THAN_OR_EQUAL && 
+                                          op_ != CompareOperation::LESS_THAN_OR_EQUAL);
 
     static constexpr bool zero_depends_on_row = false;
 
@@ -95,43 +95,43 @@ public:
 /**
  * @return A helper class for a delayed binary equality comparison.
  */
-inline DelayedBinaryCompareHelper<DelayedCompareOp::EQUAL> make_DelayedBinaryEqualHelper() {
-    return DelayedBinaryCompareHelper<DelayedCompareOp::EQUAL>();
+inline DelayedBinaryIsometricCompare<CompareOperation::EQUAL> make_DelayedBinaryIsometricEqual() {
+    return DelayedBinaryIsometricCompare<CompareOperation::EQUAL>();
 }
 
 /**
  * @return A helper class for a delayed binary greater-than comparison.
  */
-inline DelayedBinaryCompareHelper<DelayedCompareOp::GREATER_THAN> make_DelayedBinaryGreaterThanHelper() {
-    return DelayedBinaryCompareHelper<DelayedCompareOp::GREATER_THAN>();
+inline DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN> make_DelayedBinaryIsometricGreaterThan() {
+    return DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN>();
 }
 
 /**
  * @return A helper class for a delayed binary less-than comparison.
  */
-inline DelayedBinaryCompareHelper<DelayedCompareOp::LESS_THAN> make_DelayedBinaryLessThanHelper() {
-    return DelayedBinaryCompareHelper<DelayedCompareOp::LESS_THAN>();
+inline DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN> make_DelayedBinaryIsometricLessThan() {
+    return DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN>();
 }
 
 /**
  * @return A helper class for a delayed binary greater-than-or-equal comparison.
  */
-inline DelayedBinaryCompareHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL> make_DelayedBinaryGreaterThanOrEqualHelper() {
-    return DelayedBinaryCompareHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL>();
+inline DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN_OR_EQUAL> make_DelayedBinaryIsometricGreaterThanOrEqual() {
+    return DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN_OR_EQUAL>();
 }
 
 /**
  * @return A helper class for a delayed binary less-than-or-equal comparison.
  */
-inline DelayedBinaryCompareHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL> make_DelayedBinaryLessThanOrEqualHelper() {
-    return DelayedBinaryCompareHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL>();
+inline DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN_OR_EQUAL> make_DelayedBinaryIsometricLessThanOrEqual() {
+    return DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN_OR_EQUAL>();
 }
 
 /**
  * @return A helper class for a delayed binary non-equality comparison to a scalar.
  */
-inline DelayedBinaryCompareHelper<DelayedCompareOp::NOT_EQUAL> make_DelayedBinaryNotEqualHelper() {
-    return DelayedBinaryCompareHelper<DelayedCompareOp::NOT_EQUAL>();
+inline DelayedBinaryIsometricCompare<CompareOperation::NOT_EQUAL> make_DelayedBinaryIsometricNotEqual() {
+    return DelayedBinaryIsometricCompare<CompareOperation::NOT_EQUAL>();
 }
 
 }

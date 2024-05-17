@@ -5,35 +5,35 @@
 #include <vector>
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/isometric/binary/DelayedBinaryIsometricOp.hpp"
+#include "tatami/isometric/binary/DelayedBinaryIsometricOperation.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-TEST(DelayedBinaryIsometricOp, ConstOverload) {
+TEST(DelayedBinaryIsometricOperation, ConstOverload) {
     int nrow = 23, ncol = 42;
     auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
     auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(simulated)));
 
-    auto op = tatami::make_DelayedBinaryAddHelper();
-    auto mat = tatami::make_DelayedBinaryIsometricOp(dense, dense, std::move(op));
+    auto op = tatami::make_DelayedBinaryIsometricAdd();
+    auto mat = tatami::make_DelayedBinaryIsometricOperation(dense, dense, std::move(op));
 
     // cursory checks.
     EXPECT_EQ(mat->nrow(), nrow);
     EXPECT_EQ(mat->ncol(), ncol);
 }
 
-TEST(DelayedBinaryIsometricOp, Misshappen) {
+TEST(DelayedBinaryIsometricOperation, Misshappen) {
     std::vector<double> src(200);
     auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(10, 20, src));
     auto dense2 = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(20, 10, src));
     tatami_test::throws_error([&]() {
-        tatami::make_DelayedBinaryIsometricOp(dense, dense2, tatami::DelayedBinaryBasicMockHelper());
+        tatami::make_DelayedBinaryIsometricOperation(dense, dense2, tatami::DelayedBinaryIsometricMockBasic());
     }, "should be the same");
 }
 
-class DelayedBinaryIsometricOpMockTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
+class DelayedBinaryIsometricOperationTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
 protected:
     inline static int nrow = 23, ncol = 42;
     inline static std::vector<double> simulated;
@@ -44,13 +44,13 @@ protected:
         dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(simulated)));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); 
 
-        bdense = tatami::make_DelayedBinaryIsometricOp(dense, dense, tatami::DelayedBinaryBasicMockHelper());
-        bsparse = tatami::make_DelayedBinaryIsometricOp(sparse, sparse, tatami::DelayedBinaryAdvancedMockHelper());
+        bdense = tatami::make_DelayedBinaryIsometricOperation(dense, dense, tatami::DelayedBinaryIsometricMockBasic());
+        bsparse = tatami::make_DelayedBinaryIsometricOperation(sparse, sparse, tatami::DelayedBinaryIsometricMockAdvanced());
         ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
     }
 };
 
-TEST_P(DelayedBinaryIsometricOpMockTest, Basic) {
+TEST_P(DelayedBinaryIsometricOperationTest, Mock) {
     EXPECT_FALSE(bdense->is_sparse());
     EXPECT_EQ(bdense->is_sparse_proportion(), 0);
     EXPECT_TRUE(bsparse->is_sparse());
@@ -72,8 +72,8 @@ TEST_P(DelayedBinaryIsometricOpMockTest, Basic) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    DelayedBinary,
-    DelayedBinaryIsometricOpMockTest,
+    DelayedBinaryIsometricOperation,
+    DelayedBinaryIsometricOperationTest,
     ::testing::Combine(
         ::testing::Values(true, false), // row access
         ::testing::Values(true, false)  // oracle usage
