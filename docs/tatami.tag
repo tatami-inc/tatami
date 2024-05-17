@@ -3050,168 +3050,168 @@
       <type>std::random_access_iterator_tag</type>
       <name>iterator_category</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>aaf0075ceb671a85fc42404298baeed07</anchor>
+      <anchor>a238f3650db5dcdbeda260dd12522ada0</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>std::ptrdiff_t</type>
       <name>difference_type</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>ae2439d56ee9c796afae3b07f70e1c3b1</anchor>
+      <anchor>aefb9a8cadab1f35ebe83a01e76c2520f</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>T</type>
+      <type>Value_</type>
       <name>value_type</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a452df712534d47fdb8543805affd038b</anchor>
+      <anchor>a693024f83ad1ce62afd12619ff455815</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>const T *</type>
+      <type>const Value_ *</type>
       <name>pointer</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>adfb70cf5c5bbfdfdebe7f20244fc5f30</anchor>
+      <anchor>a613940ff1968b36ce461efb2cb6b7d25</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
-      <type>const T &amp;</type>
+      <type>const Value_ &amp;</type>
       <name>reference</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>ab83a68ab47e92b1265fd043bc4351be9</anchor>
+      <anchor>a4bf2843ca912061c3cc0400bbb75abe6</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>Iterator</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>aaec76c06dc4b04937e4c0e16233a7fdb</anchor>
+      <anchor>aed0fd34b54ecb2e8a2c83bf235123138</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>Iterator</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>ac12cdfa2efd7a66b0d4d9b70d694fa93</anchor>
+      <anchor>a2d745a37ba547a547724d23e4745e965</anchor>
       <arglist>(const SomeNumericArray *parent, size_t index)</arglist>
     </member>
     <member kind="function">
       <type>value_type</type>
       <name>operator*</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>adadc4fec22839e1d7f826594eb605fc1</anchor>
+      <anchor>a0e050c233fb9f338c44326cda7efd2f9</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>value_type</type>
       <name>operator[]</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a220df2018efe0af029200950bf8f2656</anchor>
+      <anchor>ac984e87144d5d955bb0d9b84ae4aced5</anchor>
       <arglist>(size_t i) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>operator==</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>afd39145d4998f6c0fc3d2cdc1f0ecd64</anchor>
+      <anchor>ab5644dc6c84a7387fc31053628b51b49</anchor>
       <arglist>(const Iterator &amp;right) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>operator!=</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>acab7e46b690f81ad367780bd6cb33ebd</anchor>
+      <anchor>aceaacc0688f277a597e180db6763402f</anchor>
       <arglist>(const Iterator &amp;right) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>operator&lt;</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a3a0271b552cbd873c9598740d472e00e</anchor>
+      <anchor>af2b68028f35827b3057ce1445cc01899</anchor>
       <arglist>(const Iterator &amp;right) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>operator&gt;=</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a82077d04886a5a0088372b03707d2fca</anchor>
+      <anchor>a33f67ff4aafa6db886aa6ecb473e7bd8</anchor>
       <arglist>(const Iterator &amp;right) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>operator&gt;</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a4296f53f8ed91bb3324e9a681b2d3c35</anchor>
+      <anchor>a20c3fd6b57d98a39215693bab2c696ed</anchor>
       <arglist>(const Iterator &amp;right) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>operator&lt;=</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>aed25f7d5d5e8252746cac7c2ad2fccd6</anchor>
+      <anchor>a2153b062075985485e8adeacd912f923</anchor>
       <arglist>(const Iterator &amp;right) const</arglist>
     </member>
     <member kind="function">
       <type>Iterator &amp;</type>
       <name>operator+=</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a631fc3c3234a2229f01944127ec58988</anchor>
+      <anchor>aa275bd0c414ca54a8cc2464229a21fbd</anchor>
       <arglist>(size_t n)</arglist>
     </member>
     <member kind="function">
       <type>Iterator &amp;</type>
       <name>operator++</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>ad7fcc6f55aa2b723c4f9b6b3505f27a9</anchor>
+      <anchor>ab4cf9637585ffcd96cc7a189762745e5</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>Iterator</type>
       <name>operator++</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a28163076266a7b4987d8ff0fbfbaf4c2</anchor>
+      <anchor>aaccfd440a98d175bf0b7862d527aba14</anchor>
       <arglist>(int)</arglist>
     </member>
     <member kind="function">
       <type>Iterator &amp;</type>
       <name>operator-=</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a45ee8f9680f7184067f58cf8835ea0ce</anchor>
+      <anchor>a9ac7d3ad35ae95b2f6b0dc2b4eebaed4</anchor>
       <arglist>(size_t n)</arglist>
     </member>
     <member kind="function">
       <type>Iterator &amp;</type>
       <name>operator--</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a259cf6cdfcfb7c89cf6a64262ae3af4c</anchor>
+      <anchor>a2f568887f0fa17e8cfc7c3746b0b6ef9</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
       <type>Iterator</type>
       <name>operator--</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a41dbc8abc6e9a4c5bc2493d549ee862c</anchor>
+      <anchor>adc2835d8c8d9025b850da46c54b2e5e8</anchor>
       <arglist>(int)</arglist>
     </member>
     <member kind="function">
       <type>Iterator</type>
       <name>operator+</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>af692b5785cec55d153341dfabe197bc3</anchor>
+      <anchor>af0d534fb6c5fd6e9121ae2c4c61e5848</anchor>
       <arglist>(size_t n) const</arglist>
     </member>
     <member kind="function">
       <type>Iterator</type>
       <name>operator-</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>acfb66b80475de1ad9aa1233ccf224691</anchor>
+      <anchor>ae100fbb36753c9b666d7e1f70aea8b44</anchor>
       <arglist>(size_t n) const</arglist>
     </member>
     <member kind="function">
       <type>std::ptrdiff_t</type>
       <name>operator-</name>
       <anchorfile>structtatami_1_1SomeNumericArray_1_1Iterator.html</anchorfile>
-      <anchor>a87e797f6c5fc8e7433ba17eb89c6d18b</anchor>
+      <anchor>a452e72594e8314d7e0c3dbe027ec5df5</anchor>
       <arglist>(const Iterator &amp;right) const</arglist>
     </member>
     <member kind="friend">
@@ -3978,111 +3978,111 @@
   <compound kind="class">
     <name>tatami::SomeNumericArray</name>
     <filename>classtatami_1_1SomeNumericArray.html</filename>
-    <templarg>typename T</templarg>
+    <templarg>typename Value_</templarg>
     <class kind="struct">tatami::SomeNumericArray::Iterator</class>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a4841570bb8d6f307f322e70a8420f976</anchor>
-      <arglist>(void *ptr, size_t number, SomeNumericArrayType type)</arglist>
+      <anchor>a34316bc03b9b9c873c4c3c3d87d51bc3</anchor>
+      <arglist>(void *ptr, size_t number, SomeNumericType type)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a369ffa306a6bef73410105c60beab6a3</anchor>
+      <anchor>a72480d4ee601d6e4b53079c3c9d778b6</anchor>
       <arglist>(const int8_t *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a1e237ae183b7328a07c7359dc27bf745</anchor>
+      <anchor>ad98452abd9d16187b9a3f47f4382a03b</anchor>
       <arglist>(const uint8_t *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a404263da0062b2f9fd257b58ceecef69</anchor>
+      <anchor>aa426e3d15474854e6a9ed83340a9b186</anchor>
       <arglist>(const int16_t *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a5db512eb1a2cbac7a4a7fad86f1c9c15</anchor>
+      <anchor>a73bbe62be2b580fcb089681614d54db3</anchor>
       <arglist>(const uint16_t *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a8500cfa901e6f7723e0c7dec5e96ec17</anchor>
+      <anchor>a014ed5da5ed50927b16a7809d79090a2</anchor>
       <arglist>(const int32_t *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a10f3da3843ea5a38ce6bbf225413ffd3</anchor>
+      <anchor>addaf5c43710c1b5c24d0044142059c3b</anchor>
       <arglist>(const uint32_t *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>af9e39df95ae41cf8ec8fbfc67d03405e</anchor>
+      <anchor>a3841d7a193e4c3a943ef37c457b1f7b0</anchor>
       <arglist>(const int64_t *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a2d68a5434b24f7c8ddc110d8ce13401b</anchor>
+      <anchor>a45580fc9b26e1b4b51196ea00355fa6b</anchor>
       <arglist>(const uint64_t *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a02752813419ab643cb661e0f38b8f5bc</anchor>
+      <anchor>a04746b0ed1a52c1f1b07ea9268e6e710</anchor>
       <arglist>(const float *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>aabdb49a37263d7380c1dc254b986caec</anchor>
+      <anchor>a3188a107ac6731af5c1afaef1964946c</anchor>
       <arglist>(const double *ptr, size_t number)</arglist>
     </member>
     <member kind="function">
-      <type>T</type>
+      <type>Value_</type>
       <name>operator[]</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>ac40db52de47708abb156ad33f24619a4</anchor>
+      <anchor>a9db3207e514ed5dd645bdb6c14bf89f9</anchor>
       <arglist>(size_t i) const</arglist>
     </member>
     <member kind="function">
       <type>size_t</type>
       <name>size</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a6b23cda3aa1555f3605bdc425985e161</anchor>
+      <anchor>ada2335bab3c287700c1888ae1cb1d73f</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Iterator</type>
       <name>begin</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a5b7999f71425029d4b4de32c2025fdd9</anchor>
+      <anchor>ae4964abc1bb340edb08b3bb4bede8d92</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Iterator</type>
       <name>end</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>aaf5d7921f2356a9a3aca745723611d71</anchor>
+      <anchor>add771080790c65d2943c54a0615ee136</anchor>
       <arglist>() const</arglist>
     </member>
   </compound>
@@ -4302,9 +4302,9 @@
     </member>
     <member kind="enumeration">
       <type></type>
-      <name>SomeNumericArrayType</name>
+      <name>SomeNumericType</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>adf5f4769d2b07188e9e9522928468f2a</anchor>
+      <anchor>a6c4e0b21d1826723cc5ea81d889a73e5</anchor>
       <arglist></arglist>
     </member>
     <member kind="function">

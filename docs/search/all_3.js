@@ -72,6 +72,6 @@ var searchData=
   ['densematrix_2ehpp_69',['DenseMatrix.hpp',['../DenseMatrix_8hpp.html',1,'']]],
   ['densematrix_3c_20value_5f_2c_20index_5f_2c_20std_3a_3avector_3c_20value_5f_20_3e_20_3e_70',['DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;',['../classtatami_1_1DenseMatrix.html',1,'tatami']]],
   ['denserowmatrix_71',['denserowmatrix',['../classtatami_1_1DenseRowMatrix.html#a249316f41906d670e13221bb12e8c8fb',1,'tatami::DenseRowMatrix::DenseRowMatrix()'],['../classtatami_1_1DenseRowMatrix.html',1,'tatami::DenseRowMatrix&lt; Value_, Index_, Storage_ &gt;']]],
-  ['difference_5ftype_72',['difference_type',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#ae2439d56ee9c796afae3b07f70e1c3b1',1,'tatami::SomeNumericArray::Iterator']]],
+  ['difference_5ftype_72',['difference_type',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#aefb9a8cadab1f35ebe83a01e76c2520f',1,'tatami::SomeNumericArray::Iterator']]],
   ['dimensionselectiontype_73',['DimensionSelectionType',['../namespacetatami.html#a0a2ecaf58e2b69bb4a808e814aeb16a1',1,'tatami']]]
 ];
