@@ -16,7 +16,7 @@ namespace tatami {
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedAbsHelper {
+class DelayedAbsHelper {
 public:
     /**
      * @cond
@@ -78,7 +78,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedSignHelper {
+class DelayedSignHelper {
 public:
     /**
      * @cond
@@ -143,16 +143,17 @@ public:
  * @tparam Base_ Numeric type for the log base.
  */
 template<typename Value_ = double, typename Base_ = Value_>
-struct DelayedLogHelper {
+class DelayedLogHelper {
+public:
     /**
      * Defaults to the natural log.
      */
-    DelayedLogHelper() : log_base(1) {}
+    DelayedLogHelper() : my_base(1) {}
 
     /**
      * @param base Base of the logarithm.
      */
-    DelayedLogHelper(Base_ base) : log_base(std::log(base)) {}
+    DelayedLogHelper(Base_ base) : my_base(std::log(base)) {}
 
 public:
     /**
@@ -174,12 +175,12 @@ public:
      */
 
 private:
-    const Base_ log_base;
+    const Base_ my_base;
 
     template<typename Index_>
     void core(Index_ length, Value_* buffer) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::log(buffer[i]) / log_base;
+            buffer[i] = std::log(buffer[i]) / my_base;
         }
     }
 
@@ -217,7 +218,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedSqrtHelper {
+class DelayedSqrtHelper {
 public:
     /**
      * @cond
@@ -278,7 +279,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedCeilingHelper {
+class DelayedCeilingHelper {
 public:
     /**
      * @cond
@@ -339,7 +340,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedFloorHelper {
+class DelayedFloorHelper {
 public:
     /**
      * @cond
@@ -400,7 +401,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedTruncHelper {
+class DelayedTruncHelper {
 public:
     /**
      * @cond
@@ -463,16 +464,17 @@ public:
  * @tparam Base_ Numeric type for the log base.
  */
 template<typename Value_ = double, typename Base_ = Value_>
-struct DelayedLog1pHelper {
+class DelayedLog1pHelper {
+public:
     /**
      * Defaults to the natural log.
      */
-    DelayedLog1pHelper() : log_base(1) {}
+    DelayedLog1pHelper() : my_base(1) {}
 
     /**
      * @param base Base of the logarithm.
      */
-    DelayedLog1pHelper(Base_ base) : log_base(std::log(base)) {}
+    DelayedLog1pHelper(Base_ base) : my_base(std::log(base)) {}
 
 public:
     /**
@@ -497,11 +499,11 @@ private:
     template<typename Index_>
     void core(Index_ length, Value_* buffer) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::log1p(buffer[i]) / log_base;
+            buffer[i] = std::log1p(buffer[i]) / my_base;
         }
     }
 
-    const Base_ log_base;
+    const Base_ my_base;
 
 public:
     /**
@@ -536,7 +538,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedRoundHelper {
+class DelayedRoundHelper {
 public:
     /**
      * @cond
@@ -597,7 +599,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedExpHelper {
+class DelayedExpHelper {
 public:
     /**
      * @cond
@@ -658,7 +660,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedExpm1Helper {
+class DelayedExpm1Helper {
 public:
     /**
      * @cond
@@ -719,7 +721,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedAcosHelper {
+class DelayedAcosHelper {
 public:
     /**
      * @cond
@@ -781,7 +783,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedAcoshHelper {
+class DelayedAcoshHelper {
 public:
     /**
      * @cond
@@ -843,7 +845,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedAsinHelper {
+class DelayedAsinHelper {
 public:
     /**
      * @cond
@@ -904,7 +906,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedAsinhHelper {
+class DelayedAsinhHelper {
 public:
     /**
      * @cond
@@ -965,7 +967,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedAtanHelper {
+class DelayedAtanHelper {
 public:
     /**
      * @cond
@@ -1026,7 +1028,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedAtanhHelper {
+class DelayedAtanhHelper {
 public:
     /**
      * @cond
@@ -1087,7 +1089,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedCosHelper {
+class DelayedCosHelper {
 public:
     /**
      * @cond
@@ -1148,7 +1150,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedCoshHelper {
+class DelayedCoshHelper {
 public:
     /**
      * @cond
@@ -1209,7 +1211,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedSinHelper {
+class DelayedSinHelper {
 public:
     /**
      * @cond
@@ -1270,7 +1272,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedSinhHelper {
+class DelayedSinhHelper {
 public:
     /**
      * @cond
@@ -1331,7 +1333,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedTanHelper {
+class DelayedTanHelper {
 public:
     /**
      * @cond
@@ -1392,7 +1394,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedTanhHelper {
+class DelayedTanhHelper {
 public:
     /**
      * @cond
@@ -1453,7 +1455,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedGammaHelper {
+class DelayedGammaHelper {
 public:
     /**
      * @cond
@@ -1515,7 +1517,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedLgammaHelper {
+class DelayedLgammaHelper {
 public:
     /**
      * @cond

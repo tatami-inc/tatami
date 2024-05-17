@@ -75,36 +75,37 @@ void order(int status, std::vector<size_t>& indices, const Primary& primary, con
 }
 
 /**
- * @tparam ROW Whether to create a compressed sparse row format.
+ * @tparam Values_ Random-access container for the values.
+ * @tparam RowIndices_ Random access container for the row indices.
+ * @tparam ColumnIndices_ Random access container for the column indices.
+ * @tparam row_ Whether to create a compressed sparse row format.
  * If `false`, the compressed sparse column format is used instead.
- * @tparam U Random-access container for the values.
- * @tparam V Random access container for the row indices.
- * @tparam W Random access container for the column indices.
  *
- * @param nr Number of rows.
- * @param nc Number of columns.
- * @param rows Row indices. Values must be non-negative integers less than `nr`.
- * @param cols Column indices. Values must be non-negative integers less than `nc`.
- * @param values Non-zero values.
+ * @param nrow Number of rows.
+ * @param ncol Number of columns.
+ * @param row_indices Row indices of the structural non-zeros.
+ * Values must be non-negative integers less than `nrow`.
+ * @param column_indices Column indices of the structural non-zeros.
+ * This must be of the same length as `row_indices`, where corresponding entries contain data for a single structural non-zero.
+ * Values must be non-negative integers less than `ncol`.
+ * @param values Values of the structural non-zeros.
+ * This must be of the same length as `row_indices` and `column_indices`, where corresponding entries contain data for a single structural non-zero.
  * 
- * `rows`, `cols` and `values` must be of the same length.
- * Corresponding entries across these vectors are assumed to contain data for a single non-zero element.
- *
- * @return `rows`, `cols` and `values` are sorted in-place by the row and column indices (if `ROW = true`) or by the column and row indices (if `ROW = false`).
- * A vector of index pointers is returned with length `nr + 1` (if `ROW = true`) or `nc + 1` (if `ROW = false`).
+ * @return `row_indices`, `column_indices` and `values` are sorted in-place by the row and column indices (if `row_ = true`) or by the column and row indices (if `row_ = false`).
+ * A vector of index pointers is returned with length `nrow + 1` (if `row_ = true`) or `ncol + 1` (if `row_ = false`).
  */
-template <bool ROW, class U, class V, class W>
-std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V& rows, W& cols) {
-    const size_t N = rows.size();
-    if (N != cols.size() || values.size() != N) { 
-        throw std::runtime_error("'rows', 'cols' and 'values' should have the same length");
+template<bool row_, class Values_, class RowIndices_, class ColumnIndices_>
+std::vector<size_t> compress_sparse_triplets(size_t nrow, size_t ncol, Values_& values, RowIndices_& row_indices, ColumnIndices_& column_indices) {
+    const size_t N = row_indices.size();
+    if (N != column_indices.size() || values.size() != N) { 
+        throw std::runtime_error("'row_indices', 'column_indices' and 'values' should have the same length");
     }
 
     int order_status = 0;
-    if constexpr(ROW) {
-        order_status = compress_triplets::is_ordered(rows, cols);
+    if constexpr(row_) {
+        order_status = compress_triplets::is_ordered(row_indices, column_indices);
     } else {
-        order_status = compress_triplets::is_ordered(cols, rows);
+        order_status = compress_triplets::is_ordered(column_indices, row_indices);
     }
 
     if (order_status != 0) {
@@ -114,14 +115,14 @@ std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V&
         }
 
         // Sorting without duplicating the data.
-        if constexpr(ROW) {
-            compress_triplets::order(order_status, indices, rows, cols);
+        if constexpr(row_) {
+            compress_triplets::order(order_status, indices, row_indices, column_indices);
         } else {
-            compress_triplets::order(order_status, indices, cols, rows);
+            compress_triplets::order(order_status, indices, column_indices, row_indices);
         }
 
         // Reordering values in place. This (i) saves memory, and (ii) allows
-        // us to work with classes U and V that may not have well-defined copy
+        // us to work with Values_, RowIndices_, etc. that may not have well-defined copy
         // constructors (e.g., if they refer to external memory).
         for (size_t i = 0; i < indices.size(); ++i) {
             if (indices[i] == static_cast<size_t>(-1)) {
@@ -132,8 +133,8 @@ std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V&
             indices[i] = -1;
 
             while (replacement != i) {
-                std::swap(rows[current], rows[replacement]);
-                std::swap(cols[current], cols[replacement]);
+                std::swap(row_indices[current], row_indices[replacement]);
+                std::swap(column_indices[current], column_indices[replacement]);
                 std::swap(values[current], values[replacement]);
 
                 current = replacement;
@@ -145,13 +146,13 @@ std::vector<size_t> compress_sparse_triplets(size_t nr, size_t nc, U& values, V&
     }
 
     // Collating the indices.
-    std::vector<size_t> output(ROW ? nr + 1 : nc + 1);
-    if constexpr(ROW) {
-        for (auto t : rows) {
+    std::vector<size_t> output(row_ ? nrow + 1 : ncol + 1);
+    if constexpr(row_) {
+        for (auto t : row_indices) {
             ++(output[t+1]);
         } 
     } else {
-        for (auto t : cols) {
+        for (auto t : column_indices) {
             ++(output[t+1]);
         }
     }

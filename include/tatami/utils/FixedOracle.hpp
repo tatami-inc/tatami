@@ -18,25 +18,26 @@ namespace tatami {
  * @brief Predict future accesses from a view on a fixed sequence.
  */
 template<typename Index_>
-struct FixedViewOracle : public Oracle<Index_> {
+class FixedViewOracle : public Oracle<Index_> {
+public:
     /**
-     * @param r Pointer to a constant array of indices on the target dimension.
-     * The underlying array should be valid for the lifetime of this `FixedOracle` instance.
-     * @param n Length of the array at `r`.
+     * @param ptr Pointer to a constant array of indices on the target dimension.
+     * The underlying array should be valid for the lifetime of this `FixedViewOracle` instance.
+     * @param number Length of the array at `ptr`.
      */
-    FixedViewOracle(const Index_* r, size_t n) : reference(r), length(n) {}
+    FixedViewOracle(const Index_* ptr, size_t number) : my_reference(ptr), my_length(number) {}
 
     size_t total() const {
-        return length;
+        return my_length;
     }
 
     Index_ get(size_t i) const {
-        return reference[i];
+        return my_reference[i];
     }
 
 private:
-    const Index_* reference;
-    size_t length;
+    const Index_* my_reference;
+    size_t my_length;
 };
 
 /**
@@ -45,22 +46,23 @@ private:
  * @brief Predict future accesses from a vector containing a fixed sequence.
  */
 template<typename Index_>
-struct FixedVectorOracle : public Oracle<Index_> {
+class FixedVectorOracle : public Oracle<Index_> {
+public:
     /**
-     * @param v Vector containing a fixed sequence of indices on the target dimension.
+     * @param vector Vector containing a fixed sequence of indices on the target dimension.
      */
-    FixedVectorOracle(std::vector<Index_> v) : sequence(std::move(v)) {}
+    FixedVectorOracle(std::vector<Index_> vector) : my_sequence(std::move(vector)) {}
 
     size_t total() const {
-        return sequence.size();
+        return my_sequence.size();
     }
 
     Index_ get(size_t i) const {
-        return sequence[i];
+        return my_sequence[i];
     }
 
 private:
-    std::vector<Index_> sequence;
+    std::vector<Index_> my_sequence;
 };
 
 }

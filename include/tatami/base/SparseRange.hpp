@@ -25,39 +25,41 @@ namespace tatami {
  * If zeroes are explicitly initialized in the underlying structure, they will be reported here.
  * However, one can safely assume that all indices _not_ reported in `index` have values of zero.
  *
- * @tparam Value Data value type, should be numeric.
- * @tparam Index Row/column index type, should be integer.
+ * @tparam Value_ Data value type, should be numeric.
+ * @tparam Index_ Row/column index type, should be integer.
  */
-template <typename Value, typename Index>
+template <typename Value_, typename Index_>
 struct SparseRange {
     /**
-     * @param n Number of structural non-zero values.
-     * @param v Pointer to the values. This should have at least `n` addressible elements.
-     * @param i Pointer to the indices. This should have at least `n` addressible elements.
+     * @param number Number of structural non-zero values.
+     * @param value Pointer to the values.
+     * This should have at least `number` addressible elements.
+     * @param index Pointer to the indices.
+     * This should have at least `number` addressible elements.
      */ 
-    SparseRange(Index n, const Value* v=NULL, const Index* i=NULL) : number(n), value(v), index(i) {}
+    SparseRange(Index_ number, const Value_* value = NULL, const Index_* index = NULL) : number(number), value(value), index(index) {}
 
     /**
      * Default constructor.
      */
-    SparseRange() {}
+    SparseRange() = default;
 
     /**
      * Number of structural non-zero elements.
      */
-    Index number = 0;
+    Index_ number = 0;
 
     /**
      * Pointer to an array containing the values of the structural non-zeros.
      * If non-`NULL`, this has at least `number` addressible entries. 
      */
-    const Value* value = NULL;
+    const Value_* value = NULL;
 
     /**
      * Pointer to an array containing the indices of the structural non-zeros.
      * If non-`NULL`, this has at least `number` addressible entries. 
      */
-    const Index* index = NULL;
+    const Index_* index = NULL;
 };
 
 }

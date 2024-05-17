@@ -27,44 +27,45 @@ namespace tatami {
  * @tparam Index_ Type of the row/column indices.
  */
 template<bool oracle_, typename Value_, typename Index_>
-struct FullSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
+class FullSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
+public:
     /**
-     * @param d Instance of a dense extractor that retrieves the full extent of the non-target dimension.
+     * @param dense Instance of a dense extractor that retrieves the full extent of the non-target dimension.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
      * otherwise it should be an `OracularDenseExtractor` instance.
-     * @param ex Extent of the row/column extracted by `d`.
+     * @param extent Extent of the row/column extracted by `d`.
      * @param opt Options for extraction.
      */
-    FullSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > d, Index_ ex, const Options& opt) :
-        raw(std::move(d)), 
-        extent(ex), 
-        needs_value(opt.sparse_extract_value), 
-        needs_index(opt.sparse_extract_index) 
+    FullSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense, Index_ extent, const Options& opt) :
+        my_dense(std::move(dense)), 
+        my_extent(extent), 
+        my_needs_value(opt.sparse_extract_value), 
+        my_needs_index(opt.sparse_extract_index) 
     {}
 
     /**
      * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
-     * @param[in, out] vbuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
-     * @param[in, out] ibuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @param[in, out] value_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      */
-    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        SparseRange<Value_, Index_> output(extent, NULL, NULL);
-        if (needs_value) {
-            output.value = raw->fetch(i, vbuffer);
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
+        SparseRange<Value_, Index_> output(my_extent);
+        if (my_needs_value) {
+            output.value = my_dense->fetch(i, value_buffer);
         }
-        if (needs_index) {
-            std::iota(ibuffer, ibuffer + extent, static_cast<Index_>(0));
-            output.index = ibuffer;
+        if (my_needs_index) {
+            std::iota(index_buffer, index_buffer + my_extent, static_cast<Index_>(0));
+            output.index = index_buffer;
         }
         return output;
     }
 
 private:
-    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > raw;
-    Index_ extent;
-    bool needs_value;
-    bool needs_index;
+    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_dense;
+    Index_ my_extent;
+    bool my_needs_value;
+    bool my_needs_index;
 };
 
 /**
@@ -79,48 +80,49 @@ private:
  * @tparam Index_ Type of the row/column indices.
  */
 template<bool oracle_, typename Value_, typename Index_>
-struct BlockSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
+class BlockSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
+public:
     /**
-     * @param d Instance of a dense extractor for a contiguous block of the non-target dimension.
+     * @param dense Instance of a dense extractor for a contiguous block of the non-target dimension.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
      * otherwise it should be an `OracularDenseExtractor` instance.
-     * @param bs Start of the block extracted by `d`.
-     * Should be the same as that used to construct `d`.
-     * @param bl Length of the block extracted by `d`.
-     * Should be the same as that used to construct `d`.
+     * @param block_start Start of the block extracted by `dense`.
+     * Should be the same as that used to construct `dense`.
+     * @param block_length Length of the block extracted by `dense`.
+     * Should be the same as that used to construct `dense`.
      * @param opt Options for extraction.
      */
-    BlockSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > d, Index_ bs, Index_ bl, const Options& opt) :
-        raw(std::move(d)), 
-        block_start(bs), 
-        block_length(bl), 
-        needs_value(opt.sparse_extract_value), 
-        needs_index(opt.sparse_extract_index) 
+    BlockSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense, Index_ block_start, Index_ block_length, const Options& opt) :
+        my_dense(std::move(dense)), 
+        my_block_start(block_start), 
+        my_block_length(block_length), 
+        my_needs_value(opt.sparse_extract_value), 
+        my_needs_index(opt.sparse_extract_index) 
     {}
 
     /**
      * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
-     * @param[in, out] vbuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
-     * @param[in, out] ibuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @param[in, out] value_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      */
-    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        SparseRange<Value_, Index_> output(block_length, NULL, NULL);
-        if (needs_value) {
-            output.value = raw->fetch(i, vbuffer);
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
+        SparseRange<Value_, Index_> output(my_block_length, NULL, NULL);
+        if (my_needs_value) {
+            output.value = my_dense->fetch(i, value_buffer);
         }
-        if (needs_index) {
-            std::iota(ibuffer, ibuffer + block_length, block_start);
-            output.index = ibuffer;
+        if (my_needs_index) {
+            std::iota(index_buffer, index_buffer + my_block_length, my_block_start);
+            output.index = index_buffer;
         }
         return output;
     }
 
 private:
-    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > raw;
-    Index_ block_start, block_length;
-    bool needs_value;
-    bool needs_index;
+    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_dense;
+    Index_ my_block_start, my_block_length;
+    bool my_needs_value;
+    bool my_needs_index;
 };
 
 /**
@@ -135,46 +137,47 @@ private:
  * @tparam Index_ Type of the row/column indices.
  */
 template<bool oracle_, typename Value_, typename Index_>
-struct IndexSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
+class IndexSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
+public:
     /**
-     * @param d Instance of a dense extractor for an indexed subset of the non-target dimension.
+     * @param dense Instance of a dense extractor for an indexed subset of the non-target dimension.
      * If `oracle_ = true`, this should be an instance of a `MyopicDenseExtractor` subclass;
      * otherwise it should be an `OracularDenseExtractor` instance.
-     * @param ip Pointer to a vector of sorted and unique indices for the non-target dimension.
-     * Should be the same as that used to construct `d`.
+     * @param indices_ptr Pointer to a vector of sorted and unique indices for the non-target dimension.
+     * Should be the same as that used to construct `dense`.
      * @param opt Options for extraction.
      */
-    IndexSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > d, VectorPtr<Index_> ip, const Options& opt) :
-        raw(std::move(d)), 
-        indices_ptr(std::move(ip)), 
-        needs_value(opt.sparse_extract_value), 
-        needs_index(opt.sparse_extract_index) 
+    IndexSparsifiedWrapper(std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense, VectorPtr<Index_> indices_ptr, const Options& opt) :
+        my_dense(std::move(dense)), 
+        my_indices_ptr(std::move(indices_ptr)), 
+        my_needs_value(opt.sparse_extract_value), 
+        my_needs_index(opt.sparse_extract_index) 
     {}
 
     /**
      * @param i Index of the element to extract on the target dimension, ignored if `oracle_ = true`.
-     * @param[in, out] vbuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
-     * @param[in, out] ibuffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @param[in, out] value_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
+     * @param[in, out] index_buffer See `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      * @return Sparse output, see `MyopicSparseExtractor::fetch()` or `OracularSparseExtractor::fetch()`.
      */
-    SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        const auto& ix = *indices_ptr;
-        SparseRange<Value_, Index_> output(ix.size(), NULL, NULL);
-        if (needs_value) {
-            output.value = raw->fetch(i, vbuffer);
+    SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
+        const auto& ix = *my_indices_ptr;
+        SparseRange<Value_, Index_> output(ix.size());
+        if (my_needs_value) {
+            output.value = my_dense->fetch(i, value_buffer);
         }
-        if (needs_index) {
-            std::copy(ix.begin(), ix.end(), ibuffer);
-            output.index = ibuffer;
+        if (my_needs_index) {
+            std::copy(ix.begin(), ix.end(), index_buffer);
+            output.index = index_buffer;
         }
         return output;
     }
 
 private:
-    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > raw;
-    VectorPtr<Index_> indices_ptr;
-    bool needs_value;
-    bool needs_index;
+    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_dense;
+    VectorPtr<Index_> my_indices_ptr;
+    bool my_needs_value;
+    bool my_needs_index;
 };
 
 }

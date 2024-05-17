@@ -41,17 +41,18 @@ bool delayed_boolean_actual_sparse(bool scalar) {
  * @tparam Value_ Type of the data value.
  */
 template<DelayedBooleanOp op_, typename Value_ = double>
-struct DelayedBooleanScalarHelper {
+class DelayedBooleanScalarHelper {
+public:
     /**
-     * @param s Scalar value.
+     * @param scalar Scalar value.
      */
-    DelayedBooleanScalarHelper(bool s) : scalar(s) {
-        still_sparse = delayed_boolean_actual_sparse<op_, Value_>(scalar);
+    DelayedBooleanScalarHelper(bool scalar) : my_scalar(scalar) {
+        my_sparse = delayed_boolean_actual_sparse<op_, Value_>(my_scalar);
     }
 
 private:
-    const bool scalar;
-    bool still_sparse;
+    const bool my_scalar;
+    bool my_sparse;
 
 public:
     /**
@@ -66,7 +67,7 @@ public:
     static constexpr bool non_zero_depends_on_column = false;
 
     bool is_sparse() const {
-        return still_sparse;
+        return my_sparse;
     }
     /**
      * @endcond
@@ -78,23 +79,23 @@ public:
      */
     template<typename Index_> 
     void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        delayed_boolean_run_simple<op_>(scalar, length, buffer);
+        delayed_boolean_run_simple<op_>(my_scalar, length, buffer);
     }
 
     template<typename Index_> 
     void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        delayed_boolean_run_simple<op_>(scalar, indices.size(), buffer);
+        delayed_boolean_run_simple<op_>(my_scalar, indices.size(), buffer);
     }
 
     template<typename Index_>
     void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        delayed_boolean_run_simple<op_>(scalar, number, buffer);
+        delayed_boolean_run_simple<op_>(my_scalar, number, buffer);
     }
 
     template<typename Index_>
     Value_ fill(Index_) const {
         Value_ output = 0;
-        delayed_boolean_run<op_>(output, scalar);
+        delayed_boolean_run<op_>(output, my_scalar);
         return output;
     }
     /**
@@ -110,7 +111,8 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-struct DelayedBooleanNotHelper {
+class DelayedBooleanNotHelper {
+public:
     /**
      * @cond
      */
@@ -178,23 +180,24 @@ public:
  * @tparam Vector_ Type of the vector.
  */
 template<DelayedBooleanOp op_, int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-struct DelayedBooleanVectorHelper {
+class DelayedBooleanVectorHelper {
+public:
     /**
-     * @param v Vector of values to use in the operation. 
+     * @param vector Vector of values to use in the operation. 
      * This should be of length equal to the number of rows if `margin_ = 0`, otherwise it should be of length equal to the number of columns.
      */
-    DelayedBooleanVectorHelper(Vector_ v) : vec(std::move(v)) {
-        for (auto x : vec) {
+    DelayedBooleanVectorHelper(Vector_ vector) : my_vector(std::move(vector)) {
+        for (auto x : my_vector) {
              if (!delayed_boolean_actual_sparse<op_, Value_>(x)) {
-                 still_sparse = false;
+                 my_sparse = false;
                  break;
              }
         }
     }
 
 private:
-    const Vector_ vec;
-    bool still_sparse = true;
+    const Vector_ my_vector;
+    bool my_sparse = true;
 
 public:
     /**
@@ -209,7 +212,7 @@ public:
     static constexpr bool non_zero_depends_on_column = (margin_ == 1);
 
     bool is_sparse() const {
-        return still_sparse;
+        return my_sparse;
     }
     /**
      * @endcond
@@ -222,10 +225,10 @@ public:
     template<typename Index_>
     void dense(bool row, Index_ idx, Index_ start, Index_ length, Value_* buffer) const {
         if (row == (margin_ == 0)) {
-            delayed_boolean_run_simple<op_>(vec[idx], length, buffer);
+            delayed_boolean_run_simple<op_>(my_vector[idx], length, buffer);
         } else {
             for (Index_ i = 0; i < length; ++i) {
-                delayed_boolean_run<op_>(buffer[i], vec[i + start]);
+                delayed_boolean_run<op_>(buffer[i], my_vector[i + start]);
             }
         }
     }
@@ -233,10 +236,10 @@ public:
     template<typename Index_>
     void dense(bool row, Index_ idx, const std::vector<Index_>& indices, Value_* buffer) const {
         if (row == (margin_ == 0)) {
-            delayed_boolean_run_simple<op_>(vec[idx], indices.size(), buffer);
+            delayed_boolean_run_simple<op_>(my_vector[idx], indices.size(), buffer);
         } else {
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
-                delayed_boolean_run<op_>(buffer[i], vec[indices[i]]);
+                delayed_boolean_run<op_>(buffer[i], my_vector[indices[i]]);
             }
         }
     }
@@ -244,10 +247,10 @@ public:
     template<typename Index_>
     void sparse(bool row, Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
         if (row == (margin_ == 0)) {
-            delayed_boolean_run_simple<op_>(vec[idx], number, buffer);
+            delayed_boolean_run_simple<op_>(my_vector[idx], number, buffer);
         } else {
             for (Index_ i = 0; i < number; ++i) {
-                delayed_boolean_run<op_>(buffer[i], vec[indices[i]]);
+                delayed_boolean_run<op_>(buffer[i], my_vector[indices[i]]);
             }
         }
     }
@@ -255,7 +258,7 @@ public:
     template<typename Index_>
     Value_ fill(Index_ idx) const {
         Value_ output = 0;
-        delayed_boolean_run<op_>(output, vec[idx]);
+        delayed_boolean_run<op_>(output, my_vector[idx]);
         return output;
     }
     /**
@@ -274,90 +277,90 @@ DelayedBooleanNotHelper<Value_> make_DelayedBooleanNotHelper() {
 
 /**
  * @tparam Value_ Type of the data value.
- * @param s Scalar value to use in the operation.
+ * @param scalar Scalar value to use in the operation.
  * @return A helper class for a delayed AND operation with a scalar.
  */
 template<typename Value_ = double>
-DelayedBooleanScalarHelper<DelayedBooleanOp::AND, Value_> make_DelayedBooleanAndScalarHelper(bool s) {
-    return DelayedBooleanScalarHelper<DelayedBooleanOp::AND, Value_>(s);
+DelayedBooleanScalarHelper<DelayedBooleanOp::AND, Value_> make_DelayedBooleanAndScalarHelper(bool scalar) {
+    return DelayedBooleanScalarHelper<DelayedBooleanOp::AND, Value_>(scalar);
 }
 
 /**
  * @tparam Value_ Type of the data value.
- * @param s Scalar value to use in the operation.
+ * @param scalar Scalar value to use in the operation.
  * @return A helper class for a delayed OR operation with a scalar.
  */
 template<typename Value_ = double>
-DelayedBooleanScalarHelper<DelayedBooleanOp::OR> make_DelayedBooleanOrScalarHelper(bool s) {
-    return DelayedBooleanScalarHelper<DelayedBooleanOp::OR, Value_>(s);
+DelayedBooleanScalarHelper<DelayedBooleanOp::OR> make_DelayedBooleanOrScalarHelper(bool scalar) {
+    return DelayedBooleanScalarHelper<DelayedBooleanOp::OR, Value_>(scalar);
 }
 
 /**
  * @tparam Value_ Type of the data value.
- * @param s Scalar value to be used in the operation.
+ * @param scalar Scalar value to be used in the operation.
  * @return A helper class for a delayed XOR operation with a scalar.
  */
 template<typename Value_ = double>
-DelayedBooleanScalarHelper<DelayedBooleanOp::XOR> make_DelayedBooleanXorScalarHelper(bool s) {
-    return DelayedBooleanScalarHelper<DelayedBooleanOp::XOR, Value_>(s);
+DelayedBooleanScalarHelper<DelayedBooleanOp::XOR> make_DelayedBooleanXorScalarHelper(bool scalar) {
+    return DelayedBooleanScalarHelper<DelayedBooleanOp::XOR, Value_>(scalar);
 }
 
 /**
  * @tparam Value_ Type of the data value.
- * @param s Scalar value to be used in the operation.
+ * @param scalar Scalar value to be used in the operation.
  * @return A helper class for a delayed boolean equality operation with a scalar.
  */
 template<typename Value_ = double>
-DelayedBooleanScalarHelper<DelayedBooleanOp::EQUAL> make_DelayedBooleanEqualScalarHelper(bool s) {
-    return DelayedBooleanScalarHelper<DelayedBooleanOp::EQUAL, Value_>(s);
+DelayedBooleanScalarHelper<DelayedBooleanOp::EQUAL> make_DelayedBooleanEqualScalarHelper(bool scalar) {
+    return DelayedBooleanScalarHelper<DelayedBooleanOp::EQUAL, Value_>(scalar);
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedBooleanVectorHelper`.
- * @param v Vector of values to be used in the operation.
+ * @param vector Vector of values to be used in the operation.
  * @return A helper class for a delayed AND operation with a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedBooleanVectorHelper<DelayedBooleanOp::AND, margin_, Value_, Vector_> make_DelayedBooleanAndVectorHelper(Vector_ v) {
-    return DelayedBooleanVectorHelper<DelayedBooleanOp::AND, margin_, Value_, Vector_>(std::move(v));
+DelayedBooleanVectorHelper<DelayedBooleanOp::AND, margin_, Value_, Vector_> make_DelayedBooleanAndVectorHelper(Vector_ vector) {
+    return DelayedBooleanVectorHelper<DelayedBooleanOp::AND, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedBooleanVectorHelper`.
- * @param v Vector of values to be used in the operation.
+ * @param vector Vector of values to be used in the operation.
  * @return A helper class for a delayed OR operation with a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedBooleanVectorHelper<DelayedBooleanOp::OR, margin_, Value_, Vector_> make_DelayedBooleanOrVectorHelper(Vector_ v) {
-    return DelayedBooleanVectorHelper<DelayedBooleanOp::OR, margin_, Value_, Vector_>(std::move(v));
+DelayedBooleanVectorHelper<DelayedBooleanOp::OR, margin_, Value_, Vector_> make_DelayedBooleanOrVectorHelper(Vector_ vector) {
+    return DelayedBooleanVectorHelper<DelayedBooleanOp::OR, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedBooleanVectorHelper`.
- * @param v Vector of values to be used in the operation.
+ * @param vector Vector of values to be used in the operation.
  * @return A helper class for a delayed XOR operation with a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedBooleanVectorHelper<DelayedBooleanOp::XOR, margin_, Value_, Vector_> make_DelayedBooleanXorVectorHelper(Vector_ v) {
-    return DelayedBooleanVectorHelper<DelayedBooleanOp::XOR, margin_, Value_, Vector_>(std::move(v));
+DelayedBooleanVectorHelper<DelayedBooleanOp::XOR, margin_, Value_, Vector_> make_DelayedBooleanXorVectorHelper(Vector_ vector) {
+    return DelayedBooleanVectorHelper<DelayedBooleanOp::XOR, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedBooleanVectorHelper`.
- * @param v Vector of values to be used in the operation.
+ * @param vector Vector of values to be used in the operation.
  * @return A helper class for a delayed boolean equality operation with a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedBooleanVectorHelper<DelayedBooleanOp::EQUAL, margin_, Value_, Vector_> make_DelayedBooleanEqualVectorHelper(Vector_ v) {
-    return DelayedBooleanVectorHelper<DelayedBooleanOp::EQUAL, margin_, Value_, Vector_>(std::move(v));
+DelayedBooleanVectorHelper<DelayedBooleanOp::EQUAL, margin_, Value_, Vector_> make_DelayedBooleanEqualVectorHelper(Vector_ vector) {
+    return DelayedBooleanVectorHelper<DelayedBooleanOp::EQUAL, margin_, Value_, Vector_>(std::move(vector));
 }
 
 }

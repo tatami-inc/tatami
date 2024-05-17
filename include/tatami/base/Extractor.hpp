@@ -21,7 +21,8 @@ namespace tatami {
  * @brief Extract an element of the target dimension in dense form without an oracle.
  */
 template<typename Value_, typename Index_>
-struct MyopicDenseExtractor {
+class MyopicDenseExtractor {
+public:
     /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
@@ -68,7 +69,8 @@ struct MyopicDenseExtractor {
  * @brief Extract an element of the target dimension in dense form with an oracle.
  */
 template<typename Value_, typename Index_>
-struct OracularDenseExtractor {
+class OracularDenseExtractor {
+public:
     /**
      * `buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
      * This can be checked by comparing the returned pointer to `buffer`; if they are the same, `buffer` has been filled.
@@ -135,27 +137,28 @@ struct OracularDenseExtractor {
  * @brief Extract an element of the target dimension in sparse form without an oracle.
  */
 template<typename Value_, typename Index_>
-struct MyopicSparseExtractor {
+class MyopicSparseExtractor {
+public:
     /**
-     * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
-     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`;
-     * if they are the same, `vbuffer` has been filled with `SparseRange::number` values.
-     * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
+     * `value_buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
+     * This be checked by comparing the returned `SparseRange::value` pointer to `value_buffer`;
+     * if they are the same, `value_buffer` has been filled with `SparseRange::number` values.
+     * The same applies for `index_buffer` and the returned `SparseRange::index` pointer.
      *
      * If `Options::sparse_extract_value` was set to `false` during construction of this instance,
-     * `vbuffer` is ignored and `SparseRange::value` is set to `NULL` in the output.
+     * `value_buffer` is ignored and `SparseRange::value` is set to `NULL` in the output.
      * Similarly, if `Options::sparse_extract_index` was set to `false` during construction of this instance,
-     * `ibuffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
+     * `index_buffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
      *
      * @param i Index of the target dimension element, i.e., the row or column index.
-     * @param[out] vbuffer Pointer to an array with enough space for at least `N` values,
+     * @param[out] value_buffer Pointer to an array with enough space for at least `N` values,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
-     * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
+     * @param[out] index_buffer Pointer to an array with enough space for at least `N` indices,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
      * @return A `SparseRange` object describing the contents of the `i`-th dimension element.
      */
-    virtual SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) = 0;
+    virtual SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) = 0;
 
     /**
      * @cond
@@ -187,28 +190,29 @@ struct MyopicSparseExtractor {
  * @brief Extract an element of the target dimension in sparse form with an oracle.
  */
 template<typename Value_, typename Index_>
-struct OracularSparseExtractor {
+class OracularSparseExtractor {
+public:
     /**
-     * `vbuffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
-     * This be checked by comparing the returned `SparseRange::value` pointer to `vbuffer`; 
-     * if they are the same, `vbuffer` has been filled with `SparseRange::number` values.
-     * The same applies for `ibuffer` and the returned `SparseRange::index` pointer.
+     * `value_buffer` may not necessarily be filled upon extraction if a pointer can be returned to the underlying data store.
+     * This be checked by comparing the returned `SparseRange::value` pointer to `value_buffer`; 
+     * if they are the same, `value_buffer` has been filled with `SparseRange::number` values.
+     * The same applies for `index_buffer` and the returned `SparseRange::index` pointer.
      *
      * If `Options::sparse_extract_value` was set to `false` during construction of this instance,
-     * `vbuffer` is ignored and `SparseRange::value` is set to `NULL` in the output.
+     * `value_buffer` is ignored and `SparseRange::value` is set to `NULL` in the output.
      * Similarly, if `Options::sparse_extract_index` was set to `false` during construction of this instance,
-     * `ibuffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
+     * `index_buffer` is ignored and `SparseRange::index` is set to `NULL` in the output.
      *
-     * @param[out] vbuffer Pointer to an array with enough space for at least `N` values,
+     * @param[out] value_buffer Pointer to an array with enough space for at least `N` values,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
-     * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
+     * @param[out] index_buffer Pointer to an array with enough space for at least `N` indices,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
      * @return A `SparseRange` object describing the contents of the next element of the target dimension, 
      * as predicted by the `Oracle` used to construct this instance.
      */
-    SparseRange<Value_, Index_> fetch(Value_* vbuffer, Index_* ibuffer) {
-        return fetch(0, vbuffer, ibuffer);
+    SparseRange<Value_, Index_> fetch(Value_* value_buffer, Index_* index_buffer) {
+        return fetch(0, value_buffer, index_buffer);
     }
 
     /**
@@ -223,15 +227,15 @@ struct OracularSparseExtractor {
      * given that the value of `i` is never actually used.
      *
      * @param i Ignored, only provided for consistency with `MyopicSparseExtractor::fetch()`.
-     * @param[out] vbuffer Pointer to an array with enough space for at least `N` values,
+     * @param[out] value_buffer Pointer to an array with enough space for at least `N` values,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
-     * @param[out] ibuffer Pointer to an array with enough space for at least `N` indices,
+     * @param[out] index_buffer Pointer to an array with enough space for at least `N` indices,
      * where `N` is defined as described for `MyopicDenseExtractor::fetch()`.
      *
      * @return A `SparseRange` object describing the contents of the next dimension element,
      * as predicted by the `Oracle` used to construct this instance.
      */
-    virtual SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) = 0;
+    virtual SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) = 0;
 
     /**
      * @cond

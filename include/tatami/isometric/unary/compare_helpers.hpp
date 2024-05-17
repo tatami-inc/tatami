@@ -42,17 +42,18 @@ bool delayed_compare_actual_sparse(Scalar_ scalar) {
  * @tparam Scalar_ Type of the scalar value.
  */
 template<DelayedCompareOp op_, typename Value_ = double, typename Scalar_ = Value_>
-struct DelayedCompareScalarHelper {
+class DelayedCompareScalarHelper {
+public:
     /**
-     * @param s Scalar value to be added.
+     * @param scalar Scalar value to be added.
      */
-    DelayedCompareScalarHelper(Scalar_ s) : scalar(s) {
-        still_sparse = delayed_compare_actual_sparse<op_, Value_>(scalar);
+    DelayedCompareScalarHelper(Scalar_ scalar) : my_scalar(scalar) {
+        my_sparse = delayed_compare_actual_sparse<op_, Value_>(my_scalar);
     }
 
 private:
-    const Scalar_ scalar;
-    bool still_sparse;
+    const Scalar_ my_scalar;
+    bool my_sparse;
 
 public:
     /**
@@ -67,7 +68,7 @@ public:
     static constexpr bool non_zero_depends_on_column = false;
 
     bool is_sparse() const {
-        return still_sparse;
+        return my_sparse;
     }
     /**
      * @endcond
@@ -79,23 +80,23 @@ public:
      */
     template<typename Index_>
     void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        delayed_compare_run_simple<op_>(scalar, length, buffer);
+        delayed_compare_run_simple<op_>(my_scalar, length, buffer);
     }
 
     template<typename Index_>
     void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        delayed_compare_run_simple<op_>(scalar, indices.size(), buffer);
+        delayed_compare_run_simple<op_>(my_scalar, indices.size(), buffer);
     }
 
     template<typename Index_>
     void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        delayed_compare_run_simple<op_>(scalar, number, buffer);
+        delayed_compare_run_simple<op_>(my_scalar, number, buffer);
     }
 
     template<typename Index_>
     Value_ fill(Index_) const {
         Value_ output = 0;
-        delayed_compare_run<op_>(output, scalar);
+        delayed_compare_run<op_>(output, my_scalar);
         return output;
     }
     /**
@@ -116,23 +117,24 @@ public:
  * @tparam Vector_ Type of the vector.
  */
 template<DelayedCompareOp op_, int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-struct DelayedCompareVectorHelper {
+class DelayedCompareVectorHelper {
+public:
     /**
-     * @param v Vector of values to use in the operation. 
+     * @param vector Vector of values to use in the operation. 
      * This should be of length equal to the number of rows if `MARGIN = 0`, otherwise it should be of length equal to the number of columns.
      */
-    DelayedCompareVectorHelper(Vector_ v) : vec(std::move(v)) {
-        for (auto x : vec) {
+    DelayedCompareVectorHelper(Vector_ vector) : my_vector(std::move(vector)) {
+        for (auto x : my_vector) {
              if (!delayed_compare_actual_sparse<op_, Value_>(x)) {
-                 still_sparse = false;
+                 my_sparse = false;
                  break;
              }
         }
     }
 
 private:
-    const Vector_ vec;
-    bool still_sparse = true;
+    const Vector_ my_vector;
+    bool my_sparse = true;
 
 public:
     /**
@@ -147,7 +149,7 @@ public:
     static constexpr bool non_zero_depends_on_column = (margin_ == 1);
 
     bool is_sparse() const {
-        return still_sparse;
+        return my_sparse;
     }
     /**
      * @endcond
@@ -160,10 +162,10 @@ public:
     template<typename Index_>
     void dense(bool row, Index_ idx, Index_ start, Index_ length, Value_* buffer) const {
         if (row == (margin_ == 0)) {
-            delayed_compare_run_simple<op_>(vec[idx], length, buffer);
+            delayed_compare_run_simple<op_>(my_vector[idx], length, buffer);
         } else {
             for (Index_ i = 0; i < length; ++i) {
-                delayed_compare_run<op_>(buffer[i], vec[i + start]);
+                delayed_compare_run<op_>(buffer[i], my_vector[i + start]);
             }
         }
     }
@@ -171,10 +173,10 @@ public:
     template<typename Index_>
     void dense(bool row, Index_ idx, const std::vector<Index_>& indices, Value_* buffer) const {
         if (row == (margin_ == 0)) {
-            delayed_compare_run_simple<op_>(vec[idx], indices.size(), buffer);
+            delayed_compare_run_simple<op_>(my_vector[idx], indices.size(), buffer);
         } else {
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
-                delayed_compare_run<op_>(buffer[i], vec[indices[i]]);
+                delayed_compare_run<op_>(buffer[i], my_vector[indices[i]]);
             }
         }
     }
@@ -182,10 +184,10 @@ public:
     template<typename Index_>
     void sparse(bool row, Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
         if (row == (margin_ == 0)) {
-            delayed_compare_run_simple<op_>(vec[idx], number, buffer);
+            delayed_compare_run_simple<op_>(my_vector[idx], number, buffer);
         } else {
             for (Index_ i = 0; i < number; ++i) {
-                delayed_compare_run<op_>(buffer[i], vec[indices[i]]);
+                delayed_compare_run<op_>(buffer[i], my_vector[indices[i]]);
             }
         }
     }
@@ -193,7 +195,7 @@ public:
     template<typename Index_>
     Value_ fill(Index_ idx) const {
         Value_ output = 0;
-        delayed_compare_run<op_>(output, vec[idx]);
+        delayed_compare_run<op_>(output, my_vector[idx]);
         return output;
     }
     /**
@@ -204,139 +206,139 @@ public:
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be compared.
+ * @param scalar Scalar value to be compared.
  * @return A helper class for a delayed equality comparison to a scalar.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedCompareScalarHelper<DelayedCompareOp::EQUAL, Value_, Scalar_> make_DelayedEqualScalarHelper(Scalar_ s) {
-    return DelayedCompareScalarHelper<DelayedCompareOp::EQUAL, Value_, Scalar_>(std::move(s));
+DelayedCompareScalarHelper<DelayedCompareOp::EQUAL, Value_, Scalar_> make_DelayedEqualScalarHelper(Scalar_ scalar) {
+    return DelayedCompareScalarHelper<DelayedCompareOp::EQUAL, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be compared.
+ * @param scalar Scalar value to be compared.
  * @return A helper class for a delayed greater-than comparison to a scalar.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN, Value_, Scalar_> make_DelayedGreaterThanScalarHelper(Scalar_ s) {
-    return DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN, Value_, Scalar_>(std::move(s));
+DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN, Value_, Scalar_> make_DelayedGreaterThanScalarHelper(Scalar_ scalar) {
+    return DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be compared.
+ * @param scalar Scalar value to be compared.
  * @return A helper class for a delayed less-than comparison to a scalar.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN, Value_, Scalar_> make_DelayedLessThanScalarHelper(Scalar_ s) {
-    return DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN, Value_, Scalar_>(std::move(s));
+DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN, Value_, Scalar_> make_DelayedLessThanScalarHelper(Scalar_ scalar) {
+    return DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be compared.
+ * @param scalar Scalar value to be compared.
  * @return A helper class for a delayed greater-than-or-equal comparison to a scalar.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, Value_, Scalar_> make_DelayedGreaterThanOrEqualScalarHelper(Scalar_ s) {
-    return DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, Value_, Scalar_>(std::move(s));
+DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, Value_, Scalar_> make_DelayedGreaterThanOrEqualScalarHelper(Scalar_ scalar) {
+    return DelayedCompareScalarHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be compared.
+ * @param scalar Scalar value to be compared.
  * @return A helper class for a delayed less-than-or-equal comparison to a scalar.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, Value_, Scalar_> make_DelayedLessThanOrEqualScalarHelper(Scalar_ s) {
-    return DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, Value_, Scalar_>(std::move(s));
+DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, Value_, Scalar_> make_DelayedLessThanOrEqualScalarHelper(Scalar_ scalar) {
+    return DelayedCompareScalarHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
- * @param s Scalar value to be compared.
+ * @param scalar Scalar value to be compared.
  * @return A helper class for a delayed non-equality comparison to a scalar.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedCompareScalarHelper<DelayedCompareOp::NOT_EQUAL, Value_, Scalar_> make_DelayedNotEqualScalarHelper(Scalar_ s) {
-    return DelayedCompareScalarHelper<DelayedCompareOp::NOT_EQUAL, Value_, Scalar_>(std::move(s));
+DelayedCompareScalarHelper<DelayedCompareOp::NOT_EQUAL, Value_, Scalar_> make_DelayedNotEqualScalarHelper(Scalar_ scalar) {
+    return DelayedCompareScalarHelper<DelayedCompareOp::NOT_EQUAL, Value_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @param v Vector of values to be compared.
+ * @param vector Vector of values to be compared.
  * @return A helper class for a delayed equality comparison to a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedCompareVectorHelper<DelayedCompareOp::EQUAL, margin_, Value_, Vector_> make_DelayedEqualVectorHelper(Vector_ v) {
-    return DelayedCompareVectorHelper<DelayedCompareOp::EQUAL, margin_, Value_, Vector_>(std::move(v));
+DelayedCompareVectorHelper<DelayedCompareOp::EQUAL, margin_, Value_, Vector_> make_DelayedEqualVectorHelper(Vector_ vector) {
+    return DelayedCompareVectorHelper<DelayedCompareOp::EQUAL, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @param v Vector of values to be compared.
+ * @param vector Vector of values to be compared.
  * @return A helper class for a delayed greater-than comparison to a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN, margin_, Value_, Vector_> make_DelayedGreaterThanVectorHelper(Vector_ v) {
-    return DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN, margin_, Value_, Vector_>(std::move(v));
+DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN, margin_, Value_, Vector_> make_DelayedGreaterThanVectorHelper(Vector_ vector) {
+    return DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @param v Vector of values to be compared.
+ * @param vector Vector of values to be compared.
  * @return A helper class for a delayed less-than comparison to a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN, margin_, Value_, Vector_> make_DelayedLessThanVectorHelper(Vector_ v) {
-    return DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN, margin_, Value_, Vector_>(std::move(v));
+DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN, margin_, Value_, Vector_> make_DelayedLessThanVectorHelper(Vector_ vector) {
+    return DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @param v Vector of values to be compared.
+ * @param vector Vector of values to be compared.
  * @return A helper class for a delayed greater-than-or-equal comparison to a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Value_, Vector_> make_DelayedGreaterThanOrEqualVectorHelper(Vector_ v) {
-    return DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Value_, Vector_>(std::move(v));
+DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Value_, Vector_> make_DelayedGreaterThanOrEqualVectorHelper(Vector_ vector) {
+    return DelayedCompareVectorHelper<DelayedCompareOp::GREATER_THAN_OR_EQUAL, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @param v Vector of values to be compared.
+ * @param vector Vector of values to be compared.
  * @return A helper class for a delayed less-than-or-equal comparison to a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Value_, Vector_> make_DelayedLessThanOrEqualVectorHelper(Vector_ v) {
-    return DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Value_, Vector_>(std::move(v));
+DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Value_, Vector_> make_DelayedLessThanOrEqualVectorHelper(Vector_ vector) {
+    return DelayedCompareVectorHelper<DelayedCompareOp::LESS_THAN_OR_EQUAL, margin_, Value_, Vector_>(std::move(vector));
 }
 
 /**
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedCompareVectorHelper`.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @param v Vector of values to be compared.
+ * @param vector Vector of values to be compared.
  * @return A helper class for a delayed non-equality comparison to a vector.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedCompareVectorHelper<DelayedCompareOp::NOT_EQUAL, margin_, Value_, Vector_> make_DelayedNotEqualVectorHelper(Vector_ v) {
-    return DelayedCompareVectorHelper<DelayedCompareOp::NOT_EQUAL, margin_, Value_, Vector_>(std::move(v));
+DelayedCompareVectorHelper<DelayedCompareOp::NOT_EQUAL, margin_, Value_, Vector_> make_DelayedNotEqualVectorHelper(Vector_ vector) {
+    return DelayedCompareVectorHelper<DelayedCompareOp::NOT_EQUAL, margin_, Value_, Vector_>(std::move(vector));
 }
 
 }

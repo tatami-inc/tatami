@@ -18,7 +18,8 @@ namespace tatami {
  * Check out `ConsecutiveOracle` and `FixedVectorOracle` for some examples of concrete subclasses.
  */
 template<typename Index_>
-struct Oracle {
+class Oracle {
+public:
     /**
      * @cond
      */

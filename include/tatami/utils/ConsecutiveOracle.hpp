@@ -18,23 +18,25 @@ namespace tatami {
  * @brief Predict future accesses along a consecutive sequence. 
  */
 template<typename Index_>
-struct ConsecutiveOracle : public Oracle<Index_> {
+class ConsecutiveOracle : public Oracle<Index_> {
+public:
     /**
-     * @param s Start index of the consecutive sequence on the target dimension.
-     * @param l Length of the sequence.
+     * @param start Start index of the consecutive sequence on the target dimension.
+     * @param length Length of the sequence.
      */
-    ConsecutiveOracle(Index_ s, Index_ l) : offset(s), length(l) {}
+    ConsecutiveOracle(Index_ start, Index_ length) : my_offset(start), my_length(length) {}
 
     size_t total() const {
-        return length;
+        return my_length;
     }
 
     Index_ get(size_t i) const {
-        return offset + i;
+        return my_offset + i;
     }
 
 private:
-    Index_ offset, length;
+    Index_ my_offset;
+    size_t my_length;
 };
 
 }

@@ -26,12 +26,12 @@ struct DenseParallelResults {
     std::vector<Index_> reindex;
 };
 
-template<typename Index_, class IndexStorage_, class ToIndex_>
-DenseParallelResults<Index_> format_dense_parallel_base(const IndexStorage_& indices, Index_ len, ToIndex_ to_index) {
+template<typename Index_, class SubsetStorage_, class ToIndex_>
+DenseParallelResults<Index_> format_dense_parallel_base(const SubsetStorage_& subset, Index_ len, ToIndex_ to_index) {
     std::vector<std::pair<Index_, Index_> > collected;
     collected.reserve(len);
     for (Index_ i = 0; i < len; ++i) {
-        collected.emplace_back(indices[to_index(i)], i);
+        collected.emplace_back(subset[to_index(i)], i);
     }
     std::sort(collected.begin(), collected.end());
 
@@ -60,40 +60,41 @@ DenseParallelResults<Index_> format_dense_parallel_base(const IndexStorage_& ind
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-struct ParallelDense : public DenseExtractor<oracle_, Value_, Index_> {
-    template<class IndexStorage_>
-    ParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
-        auto processed = format_dense_parallel_base<Index_>(indices, indices.size(), [&](Index_ i) -> Index_ { return i; });
-        initialize(mat, std::move(processed), row, std::move(oracle), opt);
+class ParallelDense : public DenseExtractor<oracle_, Value_, Index_> {
+public:
+    template<class SubsetStorage_>
+    ParallelDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
+        auto processed = format_dense_parallel_base<Index_>(subset, subset.size(), [&](Index_ i) -> Index_ { return i; });
+        initialize(matrix, std::move(processed), row, std::move(oracle), opt);
     }
 
-    template<class IndexStorage_>
-    ParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) {
-        auto processed = format_dense_parallel_base<Index_>(indices, block_length, [&](Index_ i) -> Index_ { return i + block_start; });
-        initialize(mat, std::move(processed), row, std::move(oracle), opt);
+    template<class SubsetStorage_>
+    ParallelDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) {
+        auto processed = format_dense_parallel_base<Index_>(subset, block_length, [&](Index_ i) -> Index_ { return i + block_start; });
+        initialize(matrix, std::move(processed), row, std::move(oracle), opt);
     }
 
-    template<class IndexStorage_>
-    ParallelDense(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> subset_ptr, const Options& opt) {
-        const auto& subset = *subset_ptr;
-        auto processed = format_dense_parallel_base<Index_>(indices, subset.size(), [&](Index_ i) -> Index_ { return subset[i]; });
-        initialize(mat, std::move(processed), row, std::move(oracle), opt);
+    template<class SubsetStorage_>
+    ParallelDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) {
+        const auto& indices = *indices_ptr;
+        auto processed = format_dense_parallel_base<Index_>(subset, indices.size(), [&](Index_ i) -> Index_ { return indices[i]; });
+        initialize(matrix, std::move(processed), row, std::move(oracle), opt);
     }
 
 private:
-    void initialize(const Matrix<Value_, Index_>* mat, DenseParallelResults<Index_> processed, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
-        vholding.resize(processed.collapsed.size());
-        internal = new_extractor<false, oracle_>(mat, row, std::move(oracle), std::move(processed.collapsed), opt);
-        reindex = std::move(processed.reindex);
+    void initialize(const Matrix<Value_, Index_>* matrix, DenseParallelResults<Index_> processed, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
+        my_holding_vbuffer.resize(processed.collapsed.size());
+        my_ext = new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(processed.collapsed), opt);
+        my_reindex.swap(processed.reindex);
     }
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto src = internal->fetch(i, vholding.data());
+        auto src = my_ext->fetch(i, my_holding_vbuffer.data());
 
         // 'src' and 'buffer' should not point to the same array.
         auto copy = buffer;
-        for (auto p : reindex) {
+        for (auto p : my_reindex) {
             *copy= src[p];
             ++copy;
         }
@@ -102,9 +103,9 @@ public:
     }
 
 private:
-    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > internal;
-    std::vector<Value_> vholding;
-    std::vector<Index_> reindex;
+    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_ext;
+    std::vector<Value_> my_holding_vbuffer;
+    std::vector<Index_> my_reindex;
 };
 
 template<typename Index_>
@@ -126,8 +127,8 @@ struct SparseParallelResults {
     SparseParallelReindex<Index_> reindex;
 };
 
-template<typename Index_, class IndexStorage_, class ToIndex_>
-SparseParallelResults<Index_> format_sparse_parallel_base(const IndexStorage_& indices, Index_ len, ToIndex_ to_index) {
+template<typename Index_, class SubsetStorage_, class ToIndex_>
+SparseParallelResults<Index_> format_sparse_parallel_base(const SubsetStorage_& indices, Index_ len, ToIndex_ to_index) {
     std::vector<std::pair<Index_, Index_> > collected;
     collected.reserve(len);
     for (Index_ i = 0; i < len; ++i) {
@@ -186,56 +187,57 @@ SparseParallelResults<Index_> format_sparse_parallel_base(const IndexStorage_& i
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-struct ParallelSparse : public SparseExtractor<oracle_, Value_, Index_> {
-    template<class IndexStorage_>
-    ParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
-        auto processed = format_sparse_parallel_base<Index_>(indices, indices.size(), [](Index_ i) -> Index_ { return i; });
-        initialize(mat, std::move(processed), indices.size(), row, std::move(oracle), opt);
+class ParallelSparse : public SparseExtractor<oracle_, Value_, Index_> {
+public:
+    template<class SubsetStorage_>
+    ParallelSparse(const Matrix<Value_, Index_>* mat, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
+        auto processed = format_sparse_parallel_base<Index_>(subset, subset.size(), [](Index_ i) -> Index_ { return i; });
+        initialize(mat, std::move(processed), subset.size(), row, std::move(oracle), opt);
     }
 
-    template<class IndexStorage_>
-    ParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) {
-        auto processed = format_sparse_parallel_base<Index_>(indices, block_length, [&](Index_ i) -> Index_ { return i + block_start; });
+    template<class SubsetStorage_>
+    ParallelSparse(const Matrix<Value_, Index_>* mat, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) {
+        auto processed = format_sparse_parallel_base<Index_>(subset, block_length, [&](Index_ i) -> Index_ { return i + block_start; });
         initialize(mat, std::move(processed), block_length, row, std::move(oracle), opt);
     }
 
-    template<class IndexStorage_>
-    ParallelSparse(const Matrix<Value_, Index_>* mat, const IndexStorage_& indices, bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> subset_ptr, const Options& opt) {
-        const auto& subset = *subset_ptr;
-        auto processed = format_sparse_parallel_base<Index_>(indices, subset.size(), [&](Index_ i) -> Index_ { return subset[i]; });
-        initialize(mat, std::move(processed), subset.size(), row, std::move(oracle), opt);
+    template<class SubsetStorage_>
+    ParallelSparse(const Matrix<Value_, Index_>* mat, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) {
+        const auto& indices = *indices_ptr;
+        auto processed = format_sparse_parallel_base<Index_>(subset, indices.size(), [&](Index_ i) -> Index_ { return indices[i]; });
+        initialize(mat, std::move(processed), indices.size(), row, std::move(oracle), opt);
     }
 
 private:
     void initialize(const Matrix<Value_, Index_>* mat, SparseParallelResults<Index_> processed, size_t extent, bool row, MaybeOracle<oracle_, Index_> oracle, Options opt) {
-        shift = extent - processed.collapsed.size();
+        my_shift = extent - processed.collapsed.size();
 
-        needs_value = opt.sparse_extract_value;
-        needs_index = opt.sparse_extract_index;
-        needs_sort = opt.sparse_ordered_index;
+        my_needs_value = opt.sparse_extract_value;
+        my_needs_index = opt.sparse_extract_index;
+        my_needs_sort = opt.sparse_ordered_index;
 
-        if (needs_sort && needs_value) {
-            sortspace.reserve(extent);
+        if (my_needs_sort && my_needs_value) {
+            my_sortspace.reserve(extent);
         } 
 
         // We need to extract indices for sorting and expansion purposes, even
         // if they weren't actually requested.
         opt.sparse_extract_index = true;
-        if (!needs_index) {
-            iholding.resize(processed.collapsed.size());
+        if (!my_needs_index) {
+            my_holding_ibuffer.resize(processed.collapsed.size());
         }
 
-        internal = new_extractor<true, oracle_>(mat, row, std::move(oracle), std::move(processed.collapsed), opt);
-        reindex = std::move(processed.reindex);
+        my_ext = new_extractor<true, oracle_>(mat, row, std::move(oracle), std::move(processed.collapsed), opt);
+        my_reindex = std::move(processed.reindex);
     }
 
 public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* vbuffer, Index_* ibuffer) {
-        auto vinit = (needs_value ? vbuffer + shift : NULL);
-        auto iinit = (needs_index ? ibuffer + shift : iholding.data());
-        auto input = internal->fetch(i, vinit, iinit);
+        auto vinit = (my_needs_value ? vbuffer + my_shift : NULL);
+        auto iinit = (my_needs_index ? ibuffer + my_shift : my_holding_ibuffer.data());
+        auto input = my_ext->fetch(i, vinit, iinit);
 
-        if (!needs_sort) {
+        if (!my_needs_sort) {
             // Pointers in 'input' and the two 'buffer' pointers may optionally point
             // to overlapping arrays as long as each 'buffer' pointer precedes its
             // corresponding pointer in 'input'.  The idea is that the expansion of
@@ -248,12 +250,12 @@ public:
             auto icopy = ibuffer;
 
             auto vsrc = input.value;
-            bool replace_value = needs_value && vsrc != vcopy;
+            bool replace_value = my_needs_value && vsrc != vcopy;
 
             for (Index_ i = 0; i < input.number; ++i) {
-                auto lookup = input.index[i] - reindex.offset;
-                auto start = reindex.pool_ptrs[lookup];
-                auto num = reindex.pool_ptrs[lookup + 1] - start;
+                auto lookup = input.index[i] - my_reindex.offset;
+                auto start = my_reindex.pool_ptrs[lookup];
+                auto num = my_reindex.pool_ptrs[lookup + 1] - start;
                 count += num;
 
                 if (replace_value) {
@@ -264,53 +266,53 @@ public:
                     replace_value = (vcopy != vsrc); // if we've caught up, there no need to do this replacement.
                 }
 
-                if (needs_index) {
+                if (my_needs_index) {
                     // Again, 'icopy' will eventually catch up to 'input.index' if
                     // they point to overlapping arrays. But we still need to
                     // replace values once we've managed to catch up, so we can't
                     // short-circuit like we did with 'replace_value'.
-                    std::copy_n(reindex.pool_indices.begin() + start, num, icopy);
+                    std::copy_n(my_reindex.pool_indices.begin() + start, num, icopy);
                     icopy += num;
                 }
             }
 
             input.number = count;
-            if (needs_value) {
+            if (my_needs_value) {
                 input.value = vbuffer;
             }
-            if (needs_index) {
+            if (my_needs_index) {
                 input.index = ibuffer;
             } else {
                 input.index = NULL;
             }
 
-        } else if (needs_value) {
+        } else if (my_needs_value) {
             // This does not require any careful consideration of the overlaps
             // between 'input' and 'buffers', as we're copying things into
-            // 'sortspace' anyway before copying them back into 'buffer'.
-            sortspace.clear();
+            // 'my_sortspace' anyway before copying them back into 'buffer'.
+            my_sortspace.clear();
             for (Index_ i = 0; i < input.number; ++i) {
                 auto val = input.value[i];
-                auto lookup = input.index[i] - reindex.offset;
-                auto start = reindex.pool_ptrs[lookup];
-                auto end = reindex.pool_ptrs[lookup + 1];
+                auto lookup = input.index[i] - my_reindex.offset;
+                auto start = my_reindex.pool_ptrs[lookup];
+                auto end = my_reindex.pool_ptrs[lookup + 1];
                 for (Index_ j = start; j < end; ++j) {
-                    sortspace.emplace_back(reindex.pool_indices[j], val);
+                    my_sortspace.emplace_back(my_reindex.pool_indices[j], val);
                 }
             }
-            std::sort(sortspace.begin(), sortspace.end());
-            input.number = sortspace.size();
+            std::sort(my_sortspace.begin(), my_sortspace.end());
+            input.number = my_sortspace.size();
 
             auto vcopy = vbuffer;
-            for (const auto& ss : sortspace) {
+            for (const auto& ss : my_sortspace) {
                 *vcopy = ss.second;
                 ++vcopy;
             }
             input.value = vbuffer;
 
-            if (needs_index) {
+            if (my_needs_index) {
                 auto icopy = ibuffer;
-                for (const auto& ss : sortspace) {
+                for (const auto& ss : my_sortspace) {
                     *icopy = ss.first;
                     ++icopy;
                 }
@@ -328,19 +330,19 @@ public:
             auto icopy = ibuffer;
 
             for (Index_ i = 0; i < input.number; ++i) {
-                auto lookup = input.index[i] - reindex.offset;
-                auto start = reindex.pool_ptrs[lookup];
-                auto num = reindex.pool_ptrs[lookup + 1] - start;
+                auto lookup = input.index[i] - my_reindex.offset;
+                auto start = my_reindex.pool_ptrs[lookup];
+                auto num = my_reindex.pool_ptrs[lookup + 1] - start;
                 count += num;
 
-                if (needs_index) {
-                    std::copy_n(reindex.pool_indices.begin() + start, num, icopy);
+                if (my_needs_index) {
+                    std::copy_n(my_reindex.pool_indices.begin() + start, num, icopy);
                     icopy += num;
                 }
             }
 
             input.number = count;
-            if (needs_index) {
+            if (my_needs_index) {
                 std::sort(ibuffer, ibuffer + count);
                 input.index = ibuffer;
             } else {
@@ -352,12 +354,12 @@ public:
     }
 
 private:
-    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > internal;
-    bool needs_value, needs_index, needs_sort;
-    SparseParallelReindex<Index_> reindex;
-    std::vector<std::pair<Index_, Value_> > sortspace;
-    std::vector<Index_> iholding;
-    size_t shift;
+    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
+    bool my_needs_value, my_needs_index, my_needs_sort;
+    SparseParallelReindex<Index_> my_reindex;
+    std::vector<std::pair<Index_, Value_> > my_sortspace;
+    std::vector<Index_> my_holding_ibuffer;
+    size_t my_shift;
 };
 
 }
@@ -366,78 +368,74 @@ private:
  */
 
 /**
- * @brief delayed subsetting of a matrix with general indices.
+ * @brief Delayed subsetting of a matrix with general indices.
  *
  * Implements delayed subsetting (i.e., slicing) on the rows or columns of a matrix, given a vector of arbitrary indices.
  * This operation is "delayed" in that it is only evaluated when data is extracted from the matrix.
  *
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
- * @tparam IndexStorage_ Vector containing the subset indices.
+ * @tparam SubsetStorage_ Vector containing the subset indices.
  * Any class implementing `[`, `size()`, `begin()` and `end()` can be used here.
  */
-template<typename Value_, typename Index_, class IndexStorage_>
+template<typename Value_, typename Index_, class SubsetStorage_>
 class DelayedSubset : public Matrix<Value_, Index_> {
 public:
     /**
-     * @param p Pointer to the underlying (pre-subset) matrix.
-     * @param idx Vector of 0-based indices to use for subsetting on the rows (if `row = true`) or columns (otherwise).
+     * @param matrix Pointer to the underlying (pre-subset) matrix.
+     * @param subset Vector of 0-based indices to use for subsetting on the rows (if `by_row = true`) or columns (otherwise).
      * These may be duplicated and/or unsorted.
-     * @param row Whether to apply the subset to the rows.
+     * @param by_row Whether to apply the subset to the rows.
      * If false, the subset is applied to the columns.
      */
-    DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > p, IndexStorage_ idx, bool row) : 
-        mat(std::move(p)), indices(std::move(idx)), by_row(row) {}
+    DelayedSubset(std::shared_ptr<const Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, bool by_row) : 
+        my_matrix(std::move(matrix)), my_subset(std::move(subset)), my_by_row(by_row) {}
 
 private:
-    std::shared_ptr<const Matrix<Value_, Index_> > mat;
-    IndexStorage_ indices;
-    bool by_row;
+    std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
+    SubsetStorage_ my_subset;
+    bool my_by_row;
 
 public:
     Index_ nrow() const {
-        if (by_row) {
-            return indices.size();
+        if (my_by_row) {
+            return my_subset.size();
         } else {
-            return mat->nrow();
+            return my_matrix->nrow();
         }
     }
 
     Index_ ncol() const {
-        if (by_row) {
-            return mat->ncol();
+        if (my_by_row) {
+            return my_matrix->ncol();
         } else {
-            return indices.size();
+            return my_subset.size();
         }
     }
 
     bool is_sparse() const {
-        return mat->is_sparse();
+        return my_matrix->is_sparse();
     }
 
     double is_sparse_proportion() const {
-        return mat->is_sparse_proportion();
+        return my_matrix->is_sparse_proportion();
     }
 
     bool prefer_rows() const {
-        return mat->prefer_rows();
+        return my_matrix->prefer_rows();
     }
 
     double prefer_rows_proportion() const {
-        return mat->prefer_rows_proportion();
+        return my_matrix->prefer_rows_proportion();
     }
 
     bool uses_oracle(bool row) const {
-        return mat->uses_oracle(row);
+        return my_matrix->uses_oracle(row);
     }
 
-    using Matrix<Value_, Index_>::dense_column;
+    using Matrix<Value_, Index_>::dense;
 
-    using Matrix<Value_, Index_>::dense_row;
-
-    using Matrix<Value_, Index_>::sparse_column;
-
-    using Matrix<Value_, Index_>::sparse_row;
+    using Matrix<Value_, Index_>::sparse;
 
     /********************
      *** Myopic dense ***
@@ -445,10 +443,10 @@ public:
 private:
     template<typename ... Args_>
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > populate_myopic_dense(bool row, Args_&& ... args) const {
-        if (row == by_row) {
-            return std::make_unique<subset_utils::MyopicPerpendicularDense<Value_, Index_, IndexStorage_> >(mat.get(), indices, row, std::forward<Args_>(args)...); 
+        if (row == my_by_row) {
+            return std::make_unique<subset_utils::MyopicPerpendicularDense<Value_, Index_, SubsetStorage_> >(my_matrix.get(), my_subset, row, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubset_internal::ParallelDense<false, Value_, Index_> >(mat.get(), indices, row, false, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubset_internal::ParallelDense<false, Value_, Index_> >(my_matrix.get(), my_subset, row, false, std::forward<Args_>(args)...);
         }
     }
 
@@ -461,8 +459,8 @@ public:
         return populate_myopic_dense(row, block_start, block_length, opt);
     }
 
-    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return populate_myopic_dense(row, std::move(indices_ptr), opt);
+    std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> my_subset_ptr, const Options& opt) const {
+        return populate_myopic_dense(row, std::move(my_subset_ptr), opt);
     }
 
     /*********************
@@ -471,10 +469,10 @@ public:
 private:
     template<typename ... Args_>
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > populate_myopic_sparse(bool row, Args_&& ... args) const {
-        if (row == by_row) {
-            return std::make_unique<subset_utils::MyopicPerpendicularSparse<Value_, Index_, IndexStorage_> >(mat.get(), indices, row, std::forward<Args_>(args)...); 
+        if (row == my_by_row) {
+            return std::make_unique<subset_utils::MyopicPerpendicularSparse<Value_, Index_, SubsetStorage_> >(my_matrix.get(), my_subset, row, std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubset_internal::ParallelSparse<false, Value_, Index_> >(mat.get(), indices, row, false, std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubset_internal::ParallelSparse<false, Value_, Index_> >(my_matrix.get(), my_subset, row, false, std::forward<Args_>(args)...);
         }
     }
 
@@ -487,8 +485,8 @@ public:
         return populate_myopic_sparse(row, block_start, block_length, opt);
     }
 
-    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return populate_myopic_sparse(row, std::move(indices_ptr), opt);
+    std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, VectorPtr<Index_> my_subset_ptr, const Options& opt) const {
+        return populate_myopic_sparse(row, std::move(my_subset_ptr), opt);
     }
 
     /**********************
@@ -497,10 +495,10 @@ public:
 private:
     template<typename ... Args_>
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > populate_oracular_dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Args_&& ... args) const {
-        if (row == by_row) {
-            return std::make_unique<subset_utils::OracularPerpendicularDense<Value_, Index_> >(mat.get(), indices, row, std::move(oracle), std::forward<Args_>(args)...); 
+        if (row == my_by_row) {
+            return std::make_unique<subset_utils::OracularPerpendicularDense<Value_, Index_> >(my_matrix.get(), my_subset, row, std::move(oracle), std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubset_internal::ParallelDense<true, Value_, Index_> >(mat.get(), indices, row, std::move(oracle), std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubset_internal::ParallelDense<true, Value_, Index_> >(my_matrix.get(), my_subset, row, std::move(oracle), std::forward<Args_>(args)...);
         }
     }
 
@@ -513,8 +511,8 @@ public:
         return populate_oracular_dense(row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return populate_oracular_dense(row, std::move(oracle), std::move(indices_ptr), opt);
+    std::unique_ptr<OracularDenseExtractor<Value_, Index_> > dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> my_subset_ptr, const Options& opt) const {
+        return populate_oracular_dense(row, std::move(oracle), std::move(my_subset_ptr), opt);
     }
 
     /***********************
@@ -523,10 +521,10 @@ public:
 private:
     template<typename ... Args_>
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > populate_oracular_sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Args_&& ... args) const {
-        if (row == by_row) {
-            return std::make_unique<subset_utils::OracularPerpendicularSparse<Value_, Index_> >(mat.get(), indices, row, std::move(oracle), std::forward<Args_>(args)...); 
+        if (row == my_by_row) {
+            return std::make_unique<subset_utils::OracularPerpendicularSparse<Value_, Index_> >(my_matrix.get(), my_subset, row, std::move(oracle), std::forward<Args_>(args)...); 
         } else {
-            return std::make_unique<DelayedSubset_internal::ParallelSparse<true, Value_, Index_> >(mat.get(), indices, row, std::move(oracle), std::forward<Args_>(args)...);
+            return std::make_unique<DelayedSubset_internal::ParallelSparse<true, Value_, Index_> >(my_matrix.get(), my_subset, row, std::move(oracle), std::forward<Args_>(args)...);
         }
     }
 
@@ -539,8 +537,8 @@ public:
         return populate_oracular_sparse(row, std::move(oracle), block_start, block_length, opt);
     }
 
-    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return populate_oracular_sparse(row, std::move(oracle), std::move(indices_ptr), opt);
+    std::unique_ptr<OracularSparseExtractor<Value_, Index_> > sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, VectorPtr<Index_> my_subset_ptr, const Options& opt) const {
+        return populate_oracular_sparse(row, std::move(oracle), std::move(my_subset_ptr), opt);
     }
 };
 

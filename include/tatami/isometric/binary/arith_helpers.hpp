@@ -22,7 +22,7 @@ namespace tatami {
  * @tparam op_ The arithmetic operation.
  */
 template<DelayedArithOp op_>
-struct DelayedBinaryArithHelper {
+class DelayedBinaryArithHelper {
 public:
     /**
      * @cond
