@@ -433,24 +433,24 @@ public:
      * @param nrow Number of rows.
      * @param ncol Number of columns.
      * @param values Vector of vectors of non-zero elements.
-     * @param indices Vector of vectors of row indices (if `row = false`) or column indices (if `row = true`) for the non-zero elements.
-     * @param row Whether this is a row sparse representation.
+     * @param indices Vector of vectors of row indices (if `row_sparse = false`) or column indices (if `row_sparse = true`) for the non-zero elements.
+     * @param row_sparse Whether this is a row sparse representation.
      * If `false`, a column sparse representation is assumed instead.
      * @param check Should the input vectors be checked for validity?
      *
-     * If `check=true`, the constructor will check that `values` and `indices` have the same length that is equal to the number of rows (for `row = true`) or columns (otherwise);
+     * If `check=true`, the constructor will check that `values` and `indices` have the same length that is equal to the number of rows (for `row_sparse = true`) or columns (otherwise);
      * that corresponding elements of `values` and `indices` also have the same length;
-     * and that each element of `indices` is ordered and contains non-negative values less than `ncol` (for `row = true`) or `nrow` (for `row = false`).
+     * and that each element of `indices` is ordered and contains non-negative values less than `ncol` (for `row_sparse = true`) or `nrow` (otherwise).
      */
-    FragmentedSparseMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool row, bool check = true) : 
-        my_nrow(nrow), my_ncol(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_row(row)
+    FragmentedSparseMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool row_sparse, bool check = true) : 
+        my_nrow(nrow), my_ncol(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_row_sparse(row_sparse)
     {
         if (check) {
             if (my_values.size() != my_indices.size()) {
                 throw std::runtime_error("'values' and 'indices' should be of the same length");
             }
 
-            if (my_row) {
+            if (my_row_sparse) {
                 if (my_indices.size() != static_cast<size_t>(my_nrow)) {
                     throw std::runtime_error("length of 'indices' should be equal to number of rows'");
                 }
@@ -460,7 +460,7 @@ public:
                 }
             }
 
-            ElementType<ElementType<IndexVectorStorage_> > max_index = (my_row ? my_ncol : my_nrow);
+            ElementType<ElementType<IndexVectorStorage_> > max_index = (my_row_sparse ? my_ncol : my_nrow);
             for (size_t i = 0, end = my_indices.size(); i < end; ++i) {
                 const auto& curv = my_values[i];
                 const auto& curi = my_indices[i];
@@ -470,7 +470,7 @@ public:
 
                 for (auto x : curi) {
                     if (x < 0 || x >= max_index) {
-                        throw std::runtime_error("'indices' should contain non-negative integers less than the number of " + (my_row ? std::string("columns") : std::string("rows")));
+                        throw std::runtime_error("'indices' should contain non-negative integers less than the number of " + (my_row_sparse ? std::string("columns") : std::string("rows")));
                     }
                 }
 
@@ -487,7 +487,7 @@ private:
     Index_ my_nrow, my_ncol;
     ValueVectorStorage_ my_values;
     IndexVectorStorage_ my_indices;
-    bool my_row;
+    bool my_row_sparse;
 
 public:
     Index_ nrow() const { return my_nrow; }
@@ -498,9 +498,9 @@ public:
 
     double is_sparse_proportion() const { return 1; }
 
-    bool prefer_rows() const { return my_row; }
+    bool prefer_rows() const { return my_row_sparse; }
 
-    double prefer_rows_proportion() const { return static_cast<double>(my_row); }
+    double prefer_rows_proportion() const { return static_cast<double>(my_row_sparse); }
 
     bool uses_oracle(bool) const { return false; }
 
@@ -510,7 +510,7 @@ public:
 
 private:
     Index_ secondary() const {
-        if (my_row) {
+        if (my_row_sparse) {
             return my_ncol;
         } else {
             return my_nrow;
@@ -522,7 +522,7 @@ private:
      *****************************/
 private:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, const Options&) const {
-        if (my_row == row) {
+        if (my_row_sparse == row) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicFullDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
                 my_values, my_indices, secondary()
             );
@@ -534,7 +534,7 @@ private:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_end, const Options&) const {
-        if (my_row == row) {
+        if (my_row_sparse == row) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicBlockDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
                 my_values, my_indices, secondary(), block_start, block_end
             );
@@ -546,7 +546,7 @@ private:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> subset_ptr, const Options&) const {
-        if (my_row == row) {
+        if (my_row_sparse == row) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicIndexDense<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
                 my_values, my_indices, secondary(), std::move(subset_ptr)
             );
@@ -562,7 +562,7 @@ private:
      ******************************/
 private:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const Options& opt) const {
-        if (my_row == row) {
+        if (my_row_sparse == row) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicFullSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
                 my_values, my_indices, secondary(), opt
             );
@@ -574,7 +574,7 @@ private:
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_end, const Options& opt) const {
-        if (my_row == row) {
+        if (my_row_sparse == row) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicBlockSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
                 my_values, my_indices, secondary(), block_start, block_end, opt
             );
@@ -586,7 +586,7 @@ private:
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, VectorPtr<Index_> subset_ptr, const Options& opt) const {
-        if (my_row == row) {
+        if (my_row_sparse == row) {
             return std::make_unique<FragmentedSparseMatrix_internal::PrimaryMyopicIndexSparse<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> >(
                 my_values, my_indices, secondary(), std::move(subset_ptr), opt
             );

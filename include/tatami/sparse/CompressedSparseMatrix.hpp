@@ -480,26 +480,26 @@ public:
      * @param nrow Number of rows.
      * @param ncol Number of columns.
      * @param values Vector of non-zero elements.
-     * @param indices Vector of row indices (if `row = false`) or column indices (if `row = true`) for the non-zero elements.
+     * @param indices Vector of row indices (if `csr = false`) or column indices (if `csr = true`) for the non-zero elements.
      * @param pointers Vector of index pointers.
-     * @param row Whether this is a compressed sparse row representation.
+     * @param csr Whether this is a compressed sparse row representation.
      * @param check Should the input vectors be checked for validity?
      *
      * If `check=true`, the constructor will check that `values` and `indices` have the same length, equal to the number of structural non-zero elements;
-     * `pointers` has length equal to the number of rows (if `row = true`) or columns (otherwise) plus one;
+     * `pointers` has length equal to the number of rows (if `csr = true`) or columns (otherwise) plus one;
      * `pointers` is non-decreasing with first and last values set to 0 and the number of structural non-zeroes, respectively;
      * `indices` is strictly increasing within each interval defined by successive elements of `pointers`;
-     * and all values of `indices` are non-negative and less than the number of columns (if `row = true`) or rows (otherwise).
+     * and all values of `indices` are non-negative and less than the number of columns (if `csr = true`) or rows (otherwise).
      */
-    CompressedSparseMatrix(Index_ nrow, Index_ ncol, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool row, bool check = true) : 
-        my_nrow(nrow), my_ncols(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_pointers(std::move(pointers)), my_row(row)
+    CompressedSparseMatrix(Index_ nrow, Index_ ncol, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool csr, bool check = true) : 
+        my_nrow(nrow), my_ncols(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_pointers(std::move(pointers)), my_csr(csr)
     {
         if (check) {
             if (my_values.size() != my_indices.size()) {
                 throw std::runtime_error("'my_values' and 'my_indices' should be of the same length");
             }
 
-            if (my_row) {
+            if (my_csr) {
                 if (my_pointers.size() != static_cast<size_t>(my_nrow) + 1){
                     throw std::runtime_error("length of 'pointers' should be equal to 'nrow + 1'");
                 }
@@ -518,7 +518,7 @@ public:
                 throw std::runtime_error("last element of 'pointers' should be equal to length of 'indices'");
             }
 
-            ElementType<IndexStorage_> max_index = (my_row ? my_ncols : my_nrow);
+            ElementType<IndexStorage_> max_index = (my_csr ? my_ncols : my_nrow);
             for (size_t i = 1; i < my_pointers.size(); ++i) {
                 auto start = my_pointers[i- 1], end = my_pointers[i];
                 if (end < start || end > last) {
@@ -527,13 +527,13 @@ public:
 
                 for (auto x = start; x < end; ++x) {
                     if (my_indices[x] < 0 || my_indices[x] >= max_index) {
-                        throw std::runtime_error("'indices' should contain non-negative integers less than the number of " + (my_row ? std::string("columns") : std::string("rows")));
+                        throw std::runtime_error("'indices' should contain non-negative integers less than the number of " + (my_csr ? std::string("columns") : std::string("rows")));
                     }
                 }
 
                 for (size_t j = start + 1; j < end; ++j) {
                     if (my_indices[j] <= my_indices[j - 1]) {
-                        throw std::runtime_error("'indices' should be strictly increasing within each " + (my_row ? std::string("row") : std::string("column")));
+                        throw std::runtime_error("'indices' should be strictly increasing within each " + (my_csr ? std::string("row") : std::string("column")));
                     }
                 }
             }
@@ -545,7 +545,7 @@ private:
     ValueStorage_ my_values;
     IndexStorage_ my_indices;
     PointerStorage_ my_pointers;
-    bool my_row;
+    bool my_csr;
 
 public:
     Index_ nrow() const { return my_nrow; }
@@ -556,9 +556,9 @@ public:
 
     double is_sparse_proportion() const { return 1; }
 
-    bool prefer_rows() const { return my_row; }
+    bool prefer_rows() const { return my_csr; }
 
-    double prefer_rows_proportion() const { return static_cast<double>(my_row); }
+    double prefer_rows_proportion() const { return static_cast<double>(my_csr); }
 
     bool uses_oracle(bool) const { return false; }
 
@@ -572,7 +572,7 @@ public:
 
 private:
     Index_ secondary() const {
-        if (my_row) {
+        if (my_csr) {
             return my_ncols;
         } else {
             return my_nrow;
@@ -584,7 +584,7 @@ private:
      *****************************/
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, const Options&) const {
-        if (my_row == row) {
+        if (my_csr == row) {
             return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicFullDense<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(
                 my_values, my_indices, my_pointers, secondary()
             );
@@ -596,7 +596,7 @@ public:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_end, const Options&) const {
-        if (my_row == row) {
+        if (my_csr == row) {
             return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicBlockDense<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(
                 my_values, my_indices, my_pointers, secondary(), block_start, block_end
             );
@@ -608,7 +608,7 @@ public:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> indices_ptr, const Options&) const {
-        if (my_row == row) {
+        if (my_csr == row) {
             return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicIndexDense<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(
                 my_values, my_indices, my_pointers, secondary(), std::move(indices_ptr)
             );
@@ -624,7 +624,7 @@ public:
      ******************************/
 public:
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, const Options& opt) const {
-        if (my_row == row) {
+        if (my_csr == row) {
             return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicFullSparse<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(
                 my_values, my_indices, my_pointers, secondary(), opt
             );
@@ -636,7 +636,7 @@ public:
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, Index_ block_start, Index_ block_end, const Options& opt) const {
-        if (my_row == row) {
+        if (my_csr == row) {
             return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicBlockSparse<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(
                 my_values, my_indices, my_pointers, secondary(), block_start, block_end, opt
             );
@@ -648,7 +648,7 @@ public:
     }
 
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > sparse(bool row, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        if (my_row == row) {
+        if (my_csr == row) {
             return std::make_unique<CompressedSparseMatrix_internal::PrimaryMyopicIndexSparse<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> >(
                 my_values, my_indices, my_pointers, secondary(), std::move(indices_ptr), opt
             );
@@ -693,7 +693,8 @@ public:
 };
 
 /**
- * Compressed sparse column matrix.
+ * @brief Compressed sparse column matrix.
+ *
  * See `tatami::CompressedSparseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class ValueStorage_ = std::vector<Value_>, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >
@@ -712,7 +713,8 @@ public:
 };
 
 /**
- * Compressed sparse row matrix.
+ * @brief Compressed sparse row matrix.
+ *
  * See `tatami::CompressedSparseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class ValueStorage_ = std::vector<Value_>, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >

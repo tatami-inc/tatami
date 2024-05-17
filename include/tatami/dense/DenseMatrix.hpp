@@ -176,10 +176,10 @@ public:
      * @param nrow Number of rows.
      * @param ncol Number of columns.
      * @param values Vector of values of length equal to the product of `nrow` and `ncol`.
-     * @param row Whether `values` stores the matrix contents in a row-major representation.
+     * @param row_major Whether `values` stores the matrix contents in a row-major representation.
      * If `false`, a column-major representation is assumed instead.
      */
-    DenseMatrix(Index_ nrow, Index_ ncol, Storage_ values, bool row) : my_nrow(nrow), my_ncol(ncol), my_values(std::move(values)), my_row(row) {
+    DenseMatrix(Index_ nrow, Index_ ncol, Storage_ values, bool row_major) : my_nrow(nrow), my_ncol(ncol), my_values(std::move(values)), my_row_major(row_major) {
         if (static_cast<size_t>(my_nrow) * static_cast<size_t>(my_ncol) != my_values.size()) { // cast to size_t is deliberate to avoid overflow on Index_ on product.
             throw std::runtime_error("length of 'values' should be equal to product of 'nrows' and 'ncols'");
         }
@@ -188,14 +188,14 @@ public:
 private: 
     Index_ my_nrow, my_ncol;
     Storage_ my_values;
-    bool my_row;
+    bool my_row_major;
 
 public:
     Index_ nrow() const { return my_nrow; }
 
     Index_ ncol() const { return my_ncol; }
 
-    bool prefer_rows() const { return my_row; }
+    bool prefer_rows() const { return my_row_major; }
 
     bool uses_oracle(bool) const { return false; }
 
@@ -203,7 +203,7 @@ public:
 
     double is_sparse_proportion() const { return 0; }
 
-    double prefer_rows_proportion() const { return static_cast<double>(my_row); }
+    double prefer_rows_proportion() const { return static_cast<double>(my_row_major); }
 
     using Matrix<Value_, Index_>::dense;
 
@@ -211,7 +211,7 @@ public:
 
 private:
     Index_ primary() const {
-        if (my_row) {
+        if (my_row_major) {
             return my_nrow;
         } else {
             return my_ncol;
@@ -219,7 +219,7 @@ private:
     }
 
     Index_ secondary() const {
-        if (my_row) {
+        if (my_row_major) {
             return my_ncol;
         } else {
             return my_nrow;
@@ -231,7 +231,7 @@ private:
      *****************************/
 public:
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, const Options&) const {
-        if (my_row == row) {
+        if (my_row_major == row) {
             return std::make_unique<DenseMatrix_internals::PrimaryMyopicFullDense<Value_, Index_, Storage_> >(my_values, secondary());
         } else {
             return std::make_unique<DenseMatrix_internals::SecondaryMyopicFullDense<Value_, Index_, Storage_> >(my_values, secondary(), primary()); 
@@ -239,7 +239,7 @@ public:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, Index_ block_start, Index_ block_length, const Options&) const {
-        if (my_row == row) { 
+        if (my_row_major == row) { 
             return std::make_unique<DenseMatrix_internals::PrimaryMyopicBlockDense<Value_, Index_, Storage_> >(my_values, secondary(), block_start, block_length);
         } else {
             return std::make_unique<DenseMatrix_internals::SecondaryMyopicBlockDense<Value_, Index_, Storage_> >(my_values, secondary(), block_start, block_length);
@@ -247,7 +247,7 @@ public:
     }
 
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > dense(bool row, VectorPtr<Index_> indices_ptr, const Options&) const {
-        if (my_row == row) {
+        if (my_row_major == row) {
             return std::make_unique<DenseMatrix_internals::PrimaryMyopicIndexDense<Value_, Index_, Storage_> >(my_values, secondary(), std::move(indices_ptr));
         } else {
             return std::make_unique<DenseMatrix_internals::SecondaryMyopicIndexDense<Value_, Index_, Storage_> >(my_values, secondary(), std::move(indices_ptr));

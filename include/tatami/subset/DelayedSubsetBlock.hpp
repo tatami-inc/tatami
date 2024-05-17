@@ -168,22 +168,22 @@ class DelayedSubsetBlock : public Matrix<Value_, Index_> {
 public:
     /**
      * @param matrix Pointer to the underlying (pre-subset) matrix.
-     * @param subset_start Index of the start of the block. This should be a row index if `row = true` and a column index otherwise.
-     * @param subset_length Length of the block, in terms of the number of rows (if `row = true`) or columns (otherwise).
-     * @param row Whether to apply the subset to the rows.
+     * @param subset_start Index of the start of the block. This should be a row index if `by_row = true` and a column index otherwise.
+     * @param subset_length Length of the block, in terms of the number of rows (if `by_row = true`) or columns (otherwise).
+     * @param by_row Whether to apply the subset to the rows.
      * If false, the subset is applied to the columns.
      */
-    DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length, bool row) : 
-        my_matrix(std::move(matrix)), my_subset_start(subset_start), my_subset_length(subset_length), my_row(row) {}
+    DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length, bool by_row) : 
+        my_matrix(std::move(matrix)), my_subset_start(subset_start), my_subset_length(subset_length), my_by_row(by_row) {}
 
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
     Index_ my_subset_start, my_subset_length;
-    bool my_row;
+    bool my_by_row;
 
 public:
     Index_ nrow() const {
-        if (my_row) {
+        if (my_by_row) {
             return my_subset_length;
         } else {
             return my_matrix->nrow();
@@ -191,7 +191,7 @@ public:
     }
 
     Index_ ncol() const {
-        if (my_row) {
+        if (my_by_row) {
             return my_matrix->ncol();
         } else {
             return my_subset_length;
@@ -232,7 +232,7 @@ public:
 private:
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, Args_&&... args) const {
-        if (row != my_row) {
+        if (row != my_by_row) {
             return std::make_unique<DelayedSubsetBlock_internal::AlongDense<oracle_, Value_, Index_> >(my_matrix.get(), my_subset_start, my_subset_length, row, std::forward<Args_>(args)...);
         } else {
             return std::make_unique<DelayedSubsetBlock_internal::AcrossDense<oracle_, Value_, Index_> >(my_matrix.get(), my_subset_start, row, std::forward<Args_>(args)...);
@@ -258,7 +258,7 @@ public:
 private:
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, Args_&&... args) const {
-        if (row != my_row) {
+        if (row != my_by_row) {
             return std::make_unique<DelayedSubsetBlock_internal::AlongSparse<oracle_, Value_, Index_> >(my_matrix.get(), my_subset_start, my_subset_length, row, std::forward<Args_>(args)...);
         } else {
             return std::make_unique<DelayedSubsetBlock_internal::AcrossSparse<oracle_, Value_, Index_> >(my_matrix.get(), my_subset_start, row, std::forward<Args_>(args)...);
@@ -318,24 +318,24 @@ public:
  * @tparam Index_ Integer type for the row/column indices.
  *
  * @param matrix Pointer to the underlying (pre-subset) `Matrix`.
- * @param subset_start Index of the start of the block. This should be a row index if `r = true` and a column index otherwise.
+ * @param subset_start Index of the start of the block. This should be a row index if `by_row = true` and a column index otherwise.
  * @param subset_length Index of the one-past-the-end of the block.
- * @param row Whether to apply the subset to the rows.
+ * @param by_row Whether to apply the subset to the rows.
  * If false, the subset is applied to the columns.
  *
  * @return A pointer to a `DelayedSubsetBlock` instance.
  */
 template<typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length, bool row) {
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), subset_start, subset_length, row));
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<const Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length, bool by_row) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), subset_start, subset_length, by_row));
 }
 
 /**
  * @cond
  */
 template<typename Value_, typename Index_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length, bool row) {
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), subset_start, subset_length, row));
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedSubsetBlock(std::shared_ptr<Matrix<Value_, Index_> > matrix, Index_ subset_start, Index_ subset_length, bool by_row) {
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedSubsetBlock<Value_, Index_>(std::move(matrix), subset_start, subset_length, by_row));
 }
 /**
  * @endcond

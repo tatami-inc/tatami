@@ -335,14 +335,14 @@ class DelayedSubsetSorted : public Matrix<Value_, Index_> {
 public:
     /**
      * @param matrix Pointer to the underlying (pre-subset) matrix.
-     * @param subset Vector of 0-based indices to use for subsetting on the rows (if `row = true`) or columns (otherwise).
+     * @param subset Vector of 0-based indices to use for subsetting on the rows (if `by_row = true`) or columns (otherwise).
      * This should be sorted, but may be duplicated.
-     * @param row Whether to apply the subset to the rows.
+     * @param by_row Whether to apply the subset to the rows.
      * If false, the subset is applied to the columns.
-     * @param check Whether to check `idx` for sorted values.
+     * @param check Whether to check `subset` for sorted values.
      */
-    DelayedSubsetSorted(std::shared_ptr<const Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, bool row, bool check = true) : 
-        my_matrix(std::move(matrix)), my_subset(std::move(subset)), my_row(row) 
+    DelayedSubsetSorted(std::shared_ptr<const Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, bool by_row, bool check = true) : 
+        my_matrix(std::move(matrix)), my_subset(std::move(subset)), my_by_row(by_row) 
     {
         if (check) {
             for (Index_ i = 1, end = my_subset.size(); i < end; ++i) {
@@ -356,10 +356,10 @@ public:
 private:
     std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
     SubsetStorage_ my_subset;
-    bool my_row;
+    bool my_by_row;
 
     Index_ get_mapping_dim() const {
-        if (my_row) {
+        if (my_by_row) {
             return my_matrix->nrow();
         } else {
             return my_matrix->ncol();
@@ -368,7 +368,7 @@ private:
 
 public:
     Index_ nrow() const {
-        if (my_row) {
+        if (my_by_row) {
             return my_subset.size();
         } else {
             return my_matrix->nrow();
@@ -376,7 +376,7 @@ public:
     }
 
     Index_ ncol() const {
-        if (my_row) {
+        if (my_by_row) {
             return my_matrix->ncol();
         } else {
             return my_subset.size();
@@ -417,7 +417,7 @@ public:
 private:
     template<typename ... Args_>
     std::unique_ptr<MyopicDenseExtractor<Value_, Index_> > populate_myopic_dense(bool row, Args_&& ... args) const {
-        if (row == my_row) {
+        if (row == my_by_row) {
             return std::make_unique<subset_utils::MyopicPerpendicularDense<Value_, Index_, SubsetStorage_> >(my_matrix.get(), my_subset, row, std::forward<Args_>(args)...); 
         } else {
             return std::make_unique<DelayedSubsetSorted_internal::ParallelDense<false, Value_, Index_> >(my_matrix.get(), my_subset, row, false, std::forward<Args_>(args)...);
@@ -454,7 +454,7 @@ private:
 
     template<DimensionSelectionType selection_, typename ... Args_>
     std::unique_ptr<MyopicSparseExtractor<Value_, Index_> > populate_myopic_sparse(bool row, Args_&& ... args) const {
-        if (row == my_row) {
+        if (row == my_by_row) {
             return std::make_unique<subset_utils::MyopicPerpendicularSparse<Value_, Index_, SubsetStorage_> >(my_matrix.get(), my_subset, row, std::forward<Args_>(args)...); 
         } else {
             return populate_sparse<selection_, false>(row, false, std::forward<Args_>(args)...);
@@ -480,7 +480,7 @@ public:
 private:
     template<typename ... Args_>
     std::unique_ptr<OracularDenseExtractor<Value_, Index_> > populate_oracular_dense(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Args_&& ... args) const {
-        if (row == my_row) {
+        if (row == my_by_row) {
             return std::make_unique<subset_utils::OracularPerpendicularDense<Value_, Index_> >(my_matrix.get(), my_subset, row, std::move(oracle), std::forward<Args_>(args)...); 
         } else {
             return std::make_unique<DelayedSubsetSorted_internal::ParallelDense<true, Value_, Index_> >(my_matrix.get(), my_subset, row, std::move(oracle), std::forward<Args_>(args)...);
@@ -506,7 +506,7 @@ public:
 private:
     template<DimensionSelectionType selection_, typename ... Args_>
     std::unique_ptr<OracularSparseExtractor<Value_, Index_> > populate_oracular_sparse(bool row, std::shared_ptr<const Oracle<Index_> > oracle, Args_&& ... args) const {
-        if (row == my_row) {
+        if (row == my_by_row) {
             return std::make_unique<subset_utils::OracularPerpendicularSparse<Value_, Index_> >(my_matrix.get(), my_subset, row, std::move(oracle), std::forward<Args_>(args)...); 
         } else {
             return populate_sparse<selection_, true>(row, std::move(oracle), std::forward<Args_>(args)...);
