@@ -277,8 +277,8 @@ public:
      * If false, the subset is applied to the columns.
      * @param check Whether to check `subset` for unique values.
      */
-    DelayedSubsetUnique(std::shared_ptr<const Matrix<Value_, Index_> > p, SubsetStorage_ subset, bool row, bool check = true) : 
-        my_matrix(std::move(p)), my_subset(std::move(subset)), my_row(row)
+    DelayedSubsetUnique(std::shared_ptr<const Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, bool row, bool check = true) : 
+        my_matrix(std::move(matrix)), my_subset(std::move(subset)), my_row(row)
     {
         Index_ fulldim = my_row ? my_matrix->nrow() : my_matrix->ncol();
 
