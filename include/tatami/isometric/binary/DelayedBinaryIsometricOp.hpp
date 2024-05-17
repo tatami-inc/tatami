@@ -196,7 +196,7 @@ public:
         my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, opt);
         my_right_ext = new_extractor<true, oracle_>(right, my_row, std::move(oracle), opt);
 
-        my_extent = my_row ? left->ncol() : right->nrow();
+        my_extent = my_row ? left->ncol() : left->nrow();
         my_left_vbuffer.resize(my_extent);
         my_right_vbuffer.resize(my_extent);
         my_output_vbuffer.resize(my_extent);
