@@ -117,7 +117,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>}</div>
 <div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span> </div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span><span class="keyword">template</span>&lt;<span class="keyword">class</span> Primary, <span class="keyword">class</span> Secondary&gt;</div>
-<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">order</a>(<span class="keywordtype">int</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">status</a>, std::vector&lt;size_t&gt;&amp; indices, <span class="keyword">const</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Primary</a>&amp; primary, <span class="keyword">const</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Secondary</a>&amp; secondary) {</div>
+<div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">order</a>(<span class="keywordtype">int</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">status</a>, std::vector&lt;size_t&gt;&amp; <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">indices</a>, <span class="keyword">const</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Primary</a>&amp; primary, <span class="keyword">const</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Secondary</a>&amp; secondary) {</div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>    <span class="keywordflow">if</span> (<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">status</a> == 1) {</div>
 <div class="line"><a id="l00046" name="l00046"></a><span class="lineno">   46</span>        <span class="keywordtype">size_t</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">start</a> = 0;</div>
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        <span class="keywordflow">while</span> (<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">start</a> &lt; primary.size()) {</div>
@@ -128,7 +128,7 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span> </div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            <span class="comment">// Checking if this particular run can be skipped.</span></div>
 <div class="line"><a id="l00054" name="l00054"></a><span class="lineno">   54</span>            <span class="keywordflow">if</span> (!std::is_sorted(secondary.begin() + <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">start</a>, secondary.begin() + end)) {</div>
-<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                std::sort(indices.begin() + <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">start</a>, indices.begin() + end, [&amp;](<span class="keywordtype">size_t</span> left, <span class="keywordtype">size_t</span> right) -&gt; <span class="keywordtype">bool</span> { </div>
+<div class="line"><a id="l00055" name="l00055"></a><span class="lineno">   55</span>                std::sort(<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">indices</a>.begin() + <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">start</a>, <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">indices</a>.begin() + end, [&amp;](<span class="keywordtype">size_t</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">left</a>, <span class="keywordtype">size_t</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">right</a>) -&gt; <span class="keywordtype">bool</span> { </div>
 <div class="line"><a id="l00056" name="l00056"></a><span class="lineno">   56</span>                    return secondary[left] &lt; secondary[right];</div>
 <div class="line"><a id="l00057" name="l00057"></a><span class="lineno">   57</span>                });</div>
 <div class="line"><a id="l00058" name="l00058"></a><span class="lineno">   58</span>            }</div>
@@ -136,90 +136,90 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span>        }</div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span> </div>
 <div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span>    } <span class="keywordflow">else</span> <span class="keywordflow">if</span> (<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">status</a> == 2) {</div>
-<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        std::sort(indices.begin(), indices.end(), [&amp;](<span class="keywordtype">size_t</span> left, <span class="keywordtype">size_t</span> right) -&gt; <span class="keywordtype">bool</span> {</div>
+<div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span>        std::sort(<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">indices</a>.begin(), <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">indices</a>.end(), [&amp;](<span class="keywordtype">size_t</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">left</a>, <span class="keywordtype">size_t</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">right</a>) -&gt; <span class="keywordtype">bool</span> {</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>            if (primary[left] == primary[right]) {</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>                return (secondary[left] &lt; secondary[right]);</div>
 <div class="line"><a id="l00066" name="l00066"></a><span class="lineno">   66</span>            }</div>
-<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">return</a> (primary[left] &lt; primary[right]);</div>
+<div class="line"><a id="l00067" name="l00067"></a><span class="lineno">   67</span>            <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">return</a> (primary[<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">left</a>] &lt; primary[<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">right</a>]);</div>
 <div class="line"><a id="l00068" name="l00068"></a><span class="lineno">   68</span>        });</div>
 <div class="line"><a id="l00069" name="l00069"></a><span class="lineno">   69</span>    }</div>
 <div class="line"><a id="l00070" name="l00070"></a><span class="lineno">   70</span>}</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span>}</div>
 <div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span> </div>
-<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span><span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> ROW, <span class="keyword">class</span> U, <span class="keyword">class</span> V, <span class="keyword">class</span> W&gt;</div>
-<div class="foldopen" id="foldopen00097" data-start="{" data-end="}">
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno"><a class="line" href="namespacetatami.html#ab17e92414b0bff60f7b7a6431ac8a330">   97</a></span>std::vector&lt;size_t&gt; <a class="code hl_function" href="namespacetatami.html#ab17e92414b0bff60f7b7a6431ac8a330">compress_sparse_triplets</a>(<span class="keywordtype">size_t</span> nr, <span class="keywordtype">size_t</span> nc, U&amp; values, V&amp; rows, W&amp; cols) {</div>
-<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> N = rows.size();</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keywordflow">if</span> (N != cols.size() || values.size() != N) { </div>
-<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;&#39;rows&#39;, &#39;cols&#39; and &#39;values&#39; should have the same length&quot;</span>);</div>
-<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>    }</div>
-<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
-<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>    <span class="keywordtype">int</span> order_status = 0;</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(ROW) {</div>
-<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>        order_status = compress_triplets::is_ordered(rows, cols);</div>
-<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        order_status = compress_triplets::is_ordered(cols, rows);</div>
-<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>    }</div>
-<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span> </div>
-<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    <span class="keywordflow">if</span> (order_status != 0) {</div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        std::vector&lt;size_t&gt; indices(N);</div>
-<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; N; ++i) {</div>
-<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>            indices[i] = i;</div>
-<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>        }</div>
-<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span> </div>
-<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>        <span class="comment">// Sorting without duplicating the data.</span></div>
-<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(ROW) {</div>
-<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>            compress_triplets::order(order_status, indices, rows, cols);</div>
-<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>        } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>            compress_triplets::order(order_status, indices, cols, rows);</div>
-<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>        }</div>
-<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span> </div>
-<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        <span class="comment">// Reordering values in place. This (i) saves memory, and (ii) allows</span></div>
-<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        <span class="comment">// us to work with classes U and V that may not have well-defined copy</span></div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <span class="comment">// constructors (e.g., if they refer to external memory).</span></div>
-<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; indices.size(); ++i) {</div>
-<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>            <span class="keywordflow">if</span> (indices[i] == <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1)) {</div>
-<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>                <span class="keywordflow">continue</span>;</div>
-<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>            }</div>
-<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span> </div>
-<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span>            <span class="keywordtype">size_t</span> current = i, replacement = indices[i];</div>
-<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>            indices[i] = -1;</div>
-<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span> </div>
-<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span>            <span class="keywordflow">while</span> (replacement != i) {</div>
-<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>                std::swap(rows[current], rows[replacement]);</div>
-<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                std::swap(cols[current], cols[replacement]);</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                std::swap(values[current], values[replacement]);</div>
-<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span> </div>
-<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>                current = replacement;</div>
-<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                <span class="keyword">auto</span> next_replacement = indices[replacement]; </div>
-<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                indices[replacement] = -1;</div>
-<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>                replacement = next_replacement;</div>
-<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>            } </div>
-<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        }</div>
-<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>    }</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span> </div>
-<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    <span class="comment">// Collating the indices.</span></div>
-<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    std::vector&lt;size_t&gt; output(ROW ? nr + 1 : nc + 1);</div>
-<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(ROW) {</div>
-<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span> t : rows) {</div>
-<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>            ++(output[t+1]);</div>
-<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>        } </div>
-<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>    } <span class="keywordflow">else</span> {</div>
-<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span> t : cols) {</div>
-<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>            ++(output[t+1]);</div>
-<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>        }</div>
-<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>    }</div>
-<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    std::partial_sum(output.begin(), output.end(), output.begin());</div>
-<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span> </div>
-<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span>    <span class="keywordflow">return</span> output;</div>
-<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>}</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> row_, <span class="keyword">class</span> Values_, <span class="keyword">class</span> RowIndices_, <span class="keyword">class</span> ColumnIndices_&gt;</div>
+<div class="foldopen" id="foldopen00098" data-start="{" data-end="}">
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno"><a class="line" href="namespacetatami.html#a8ca5561774457a3d481a0af16ee67fef">   98</a></span>std::vector&lt;size_t&gt; <a class="code hl_function" href="namespacetatami.html#a8ca5561774457a3d481a0af16ee67fef">compress_sparse_triplets</a>(<span class="keywordtype">size_t</span> nrow, <span class="keywordtype">size_t</span> ncol, Values_&amp; values, RowIndices_&amp; row_indices, ColumnIndices_&amp; column_indices) {</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    <span class="keyword">const</span> <span class="keywordtype">size_t</span> N = row_indices.size();</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    <span class="keywordflow">if</span> (N != column_indices.size() || values.size() != N) { </div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;&#39;row_indices&#39;, &#39;column_indices&#39; and &#39;values&#39; should have the same length&quot;</span>);</div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    }</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span> </div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span>    <span class="keywordtype">int</span> order_status = 0;</div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(row_) {</div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>        order_status = compress_triplets::is_ordered(row_indices, column_indices);</div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        order_status = compress_triplets::is_ordered(column_indices, row_indices);</div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>    }</div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span> </div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>    <span class="keywordflow">if</span> (order_status != 0) {</div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        std::vector&lt;size_t&gt; indices(N);</div>
+<div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; N; ++i) {</div>
+<div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span>            indices[i] = i;</div>
+<div class="line"><a id="l00115" name="l00115"></a><span class="lineno">  115</span>        }</div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span> </div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span>        <span class="comment">// Sorting without duplicating the data.</span></div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(row_) {</div>
+<div class="line"><a id="l00119" name="l00119"></a><span class="lineno">  119</span>            compress_triplets::order(order_status, indices, row_indices, column_indices);</div>
+<div class="line"><a id="l00120" name="l00120"></a><span class="lineno">  120</span>        } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00121" name="l00121"></a><span class="lineno">  121</span>            compress_triplets::order(order_status, indices, column_indices, row_indices);</div>
+<div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        }</div>
+<div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span> </div>
+<div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>        <span class="comment">// Reordering values in place. This (i) saves memory, and (ii) allows</span></div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        <span class="comment">// us to work with Values_, RowIndices_, etc. that may not have well-defined copy</span></div>
+<div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        <span class="comment">// constructors (e.g., if they refer to external memory).</span></div>
+<div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>        <span class="keywordflow">for</span> (<span class="keywordtype">size_t</span> i = 0; i &lt; indices.size(); ++i) {</div>
+<div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span>            <span class="keywordflow">if</span> (indices[i] == <span class="keyword">static_cast&lt;</span><span class="keywordtype">size_t</span><span class="keyword">&gt;</span>(-1)) {</div>
+<div class="line"><a id="l00129" name="l00129"></a><span class="lineno">  129</span>                <span class="keywordflow">continue</span>;</div>
+<div class="line"><a id="l00130" name="l00130"></a><span class="lineno">  130</span>            }</div>
+<div class="line"><a id="l00131" name="l00131"></a><span class="lineno">  131</span> </div>
+<div class="line"><a id="l00132" name="l00132"></a><span class="lineno">  132</span>            <span class="keywordtype">size_t</span> current = i, replacement = indices[i];</div>
+<div class="line"><a id="l00133" name="l00133"></a><span class="lineno">  133</span>            indices[i] = -1;</div>
+<div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span> </div>
+<div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span>            <span class="keywordflow">while</span> (replacement != i) {</div>
+<div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>                std::swap(row_indices[current], row_indices[replacement]);</div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>                std::swap(column_indices[current], column_indices[replacement]);</div>
+<div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>                std::swap(values[current], values[replacement]);</div>
+<div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span> </div>
+<div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>                current = replacement;</div>
+<div class="line"><a id="l00141" name="l00141"></a><span class="lineno">  141</span>                <span class="keyword">auto</span> next_replacement = indices[replacement]; </div>
+<div class="line"><a id="l00142" name="l00142"></a><span class="lineno">  142</span>                indices[replacement] = -1;</div>
+<div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>                replacement = next_replacement;</div>
+<div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>            } </div>
+<div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        }</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>    }</div>
+<div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span> </div>
+<div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>    <span class="comment">// Collating the indices.</span></div>
+<div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>    std::vector&lt;size_t&gt; output(row_ ? nrow + 1 : ncol + 1);</div>
+<div class="line"><a id="l00150" name="l00150"></a><span class="lineno">  150</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(row_) {</div>
+<div class="line"><a id="l00151" name="l00151"></a><span class="lineno">  151</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span> t : row_indices) {</div>
+<div class="line"><a id="l00152" name="l00152"></a><span class="lineno">  152</span>            ++(output[t+1]);</div>
+<div class="line"><a id="l00153" name="l00153"></a><span class="lineno">  153</span>        } </div>
+<div class="line"><a id="l00154" name="l00154"></a><span class="lineno">  154</span>    } <span class="keywordflow">else</span> {</div>
+<div class="line"><a id="l00155" name="l00155"></a><span class="lineno">  155</span>        <span class="keywordflow">for</span> (<span class="keyword">auto</span> t : column_indices) {</div>
+<div class="line"><a id="l00156" name="l00156"></a><span class="lineno">  156</span>            ++(output[t+1]);</div>
+<div class="line"><a id="l00157" name="l00157"></a><span class="lineno">  157</span>        }</div>
+<div class="line"><a id="l00158" name="l00158"></a><span class="lineno">  158</span>    }</div>
+<div class="line"><a id="l00159" name="l00159"></a><span class="lineno">  159</span>    std::partial_sum(output.begin(), output.end(), output.begin());</div>
+<div class="line"><a id="l00160" name="l00160"></a><span class="lineno">  160</span> </div>
+<div class="line"><a id="l00161" name="l00161"></a><span class="lineno">  161</span>    <span class="keywordflow">return</span> output;</div>
+<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span>}</div>
 </div>
-<div class="line"><a id="l00162" name="l00162"></a><span class="lineno">  162</span> </div>
-<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span>}</div>
-<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span> </div>
-<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00163" name="l00163"></a><span class="lineno">  163</span> </div>
+<div class="line"><a id="l00164" name="l00164"></a><span class="lineno">  164</span>}</div>
+<div class="line"><a id="l00165" name="l00165"></a><span class="lineno">  165</span> </div>
+<div class="line"><a id="l00166" name="l00166"></a><span class="lineno">  166</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
-<div class="ttc" id="anamespacetatami_html_ab17e92414b0bff60f7b7a6431ac8a330"><div class="ttname"><a href="namespacetatami.html#ab17e92414b0bff60f7b7a6431ac8a330">tatami::compress_sparse_triplets</a></div><div class="ttdeci">std::vector&lt; size_t &gt; compress_sparse_triplets(size_t nr, size_t nc, U &amp;values, V &amp;rows, W &amp;cols)</div><div class="ttdef"><b>Definition</b> compress_sparse_triplets.hpp:97</div></div>
+<div class="ttc" id="anamespacetatami_html_a8ca5561774457a3d481a0af16ee67fef"><div class="ttname"><a href="namespacetatami.html#a8ca5561774457a3d481a0af16ee67fef">tatami::compress_sparse_triplets</a></div><div class="ttdeci">std::vector&lt; size_t &gt; compress_sparse_triplets(size_t nrow, size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices)</div><div class="ttdef"><b>Definition</b> compress_sparse_triplets.hpp:98</div></div>
 <div class="ttc" id="anamespacetatami_html_af05590455e558621c8ffc1b98c4fd454"><div class="ttname"><a href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor</a></div><div class="ttdeci">auto consecutive_extractor(const Matrix&lt; Value_, Index_ &gt; *mat, bool row, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> consecutive_extractor.hpp:35</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

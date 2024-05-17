@@ -13,5 +13,5 @@ var searchData=
   ['operator_3d_3d_10',['operator==',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#afd39145d4998f6c0fc3d2cdc1f0ecd64',1,'tatami::SomeNumericArray::Iterator']]],
   ['operator_3e_11',['operator&gt;',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a4296f53f8ed91bb3324e9a681b2d3c35',1,'tatami::SomeNumericArray::Iterator']]],
   ['operator_3e_3d_12',['operator&gt;=',['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a82077d04886a5a0088372b03707d2fca',1,'tatami::SomeNumericArray::Iterator']]],
-  ['operator_5b_5d_13',['operator[]',['../classtatami_1_1ArrayView.html#a329bcfebf2ebc7ca73d559836170722c',1,'tatami::ArrayView::operator[]()'],['../structtatami_1_1SomeNumericArray.html#ac40db52de47708abb156ad33f24619a4',1,'tatami::SomeNumericArray::operator[]()'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a220df2018efe0af029200950bf8f2656',1,'tatami::SomeNumericArray::Iterator::operator[]()']]]
+  ['operator_5b_5d_13',['operator[]',['../classtatami_1_1ArrayView.html#a329bcfebf2ebc7ca73d559836170722c',1,'tatami::ArrayView::operator[]()'],['../classtatami_1_1SomeNumericArray.html#ac40db52de47708abb156ad33f24619a4',1,'tatami::SomeNumericArray::operator[]()'],['../structtatami_1_1SomeNumericArray_1_1Iterator.html#a220df2018efe0af029200950bf8f2656',1,'tatami::SomeNumericArray::Iterator::operator[]()']]]
 ];

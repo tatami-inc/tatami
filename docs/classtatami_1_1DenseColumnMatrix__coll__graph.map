@@ -1,5 +1,5 @@
 <map id="tatami::DenseColumnMatrix&lt; Value_, Index_, Storage_ &gt;" name="tatami::DenseColumnMatrix&lt; Value_, Index_, Storage_ &gt;">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,183,193,223"/>
+<area shape="rect" id="Node000001" title="Dense column&#45;major matrix." alt="" coords="5,183,193,223"/>
 <area shape="rect" id="Node000002" href="$classtatami_1_1DenseMatrix.html" title="Dense matrix representation." alt="" coords="5,94,193,135"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="102,150,102,182,96,182,96,150"/>
 <area shape="rect" id="Node000003" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="28,5,170,46"/>
