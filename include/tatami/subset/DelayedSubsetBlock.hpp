@@ -128,7 +128,8 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-struct AcrossSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class AcrossSparse : public SparseExtractor<oracle_, Value_, Index_> {
+public:
     template<typename ... Args_>
     AcrossSparse(const Matrix<Value_, Index_>* matrix, Index_ subset_start, bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) : my_shift(subset_start) {
         if constexpr(oracle_) {

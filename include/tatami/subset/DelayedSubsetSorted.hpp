@@ -56,7 +56,7 @@ DenseParallelResults<Index_> format_dense_parallel(const SubsetStorage_& indices
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelDense : DenseExtractor<oracle_, Value_, Index_> {
+class ParallelDense : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     template<class SubsetStorage_>
     ParallelDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
@@ -201,7 +201,7 @@ public:
         }
 
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(processed.collapsed), opt);
-        my_expansion = std::move(processed.my_expansion);
+        my_expansion = std::move(processed.expansion);
     }
 
     template<class ToIndex_>
@@ -278,10 +278,11 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-struct ParallelBlockSparse : public SparseExtractor<oracle_, Value_, Index_>, public ParallelSparseBase<oracle_, Value_, Index_> {
+class ParallelBlockSparse : public SparseExtractor<oracle_, Value_, Index_> {
+public:
     template<class SubsetStorage_>
     ParallelBlockSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) : 
-        my_core(matrix, subset, block_length, row, std::move(oracle), opt, [&](Index_ i) -> Index_ { return i + block_start; });
+        my_core(matrix, subset, block_length, row, std::move(oracle), opt, [&](Index_ i) -> Index_ { return i + block_start; }),
         my_block_start(block_start)
     {}
 
@@ -295,10 +296,11 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-struct ParallelIndexSparse : public SparseExtractor<oracle_, Value_, Index_>, public ParallelSparseBase<oracle_, Value_, Index_> {
+class ParallelIndexSparse : public SparseExtractor<oracle_, Value_, Index_> {
+public:
     template<class SubsetStorage_>
-    ParallelIndexSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> sub_ptr, const Options& opt) : 
-        core(matrix, subset, indices->size(), row, std::move(oracle), opt, [&](Index_ i) -> Index_ { return indices_ptr->operator[](i); });
+    ParallelIndexSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) : 
+        my_core(matrix, subset, indices_ptr->size(), row, std::move(oracle), opt, [&](Index_ i) -> Index_ { return indices_ptr->operator[](i); }),
         my_indices_ptr(std::move(indices_ptr))
     {}
 
@@ -308,6 +310,7 @@ struct ParallelIndexSparse : public SparseExtractor<oracle_, Value_, Index_>, pu
     }
 
 private:
+    ParallelSparseCore<oracle_, Value_, Index_> my_core;
     VectorPtr<Index_> my_indices_ptr;
 };
 
@@ -339,7 +342,7 @@ public:
      * @param check Whether to check `idx` for sorted values.
      */
     DelayedSubsetSorted(std::shared_ptr<const Matrix<Value_, Index_> > matrix, SubsetStorage_ subset, bool row, bool check = true) : 
-        my_matrix(std::move(matrix)), my_subset(std::move(subset)), by_row(row) 
+        my_matrix(std::move(matrix)), my_subset(std::move(subset)), my_row(row) 
     {
         if (check) {
             for (Index_ i = 1, end = my_subset.size(); i < end; ++i) {
