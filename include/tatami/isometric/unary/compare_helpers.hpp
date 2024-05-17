@@ -207,7 +207,8 @@ public:
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be compared.
- * @return A helper class for a delayed equality comparison to a scalar.
+ * @return A helper class for a delayed equality comparison to a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricCompareScalar<CompareOperation::EQUAL, Value_, Scalar_> make_DelayedUnaryIsometricEqualScalar(Scalar_ scalar) {
@@ -218,7 +219,8 @@ DelayedUnaryIsometricCompareScalar<CompareOperation::EQUAL, Value_, Scalar_> mak
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be compared.
- * @return A helper class for a delayed greater-than comparison to a scalar.
+ * @return A helper class for a delayed greater-than comparison to a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricCompareScalar<CompareOperation::GREATER_THAN, Value_, Scalar_> make_DelayedUnaryIsometricGreaterThanScalar(Scalar_ scalar) {
@@ -229,7 +231,8 @@ DelayedUnaryIsometricCompareScalar<CompareOperation::GREATER_THAN, Value_, Scala
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be compared.
- * @return A helper class for a delayed less-than comparison to a scalar.
+ * @return A helper class for a delayed less-than comparison to a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricCompareScalar<CompareOperation::LESS_THAN, Value_, Scalar_> make_DelayedUnaryIsometricLessThanScalar(Scalar_ scalar) {
@@ -240,7 +243,8 @@ DelayedUnaryIsometricCompareScalar<CompareOperation::LESS_THAN, Value_, Scalar_>
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be compared.
- * @return A helper class for a delayed greater-than-or-equal comparison to a scalar.
+ * @return A helper class for a delayed greater-than-or-equal comparison to a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricCompareScalar<CompareOperation::GREATER_THAN_OR_EQUAL, Value_, Scalar_> make_DelayedUnaryIsometricGreaterThanOrEqualScalar(Scalar_ scalar) {
@@ -251,7 +255,8 @@ DelayedUnaryIsometricCompareScalar<CompareOperation::GREATER_THAN_OR_EQUAL, Valu
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be compared.
- * @return A helper class for a delayed less-than-or-equal comparison to a scalar.
+ * @return A helper class for a delayed less-than-or-equal comparison to a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricCompareScalar<CompareOperation::LESS_THAN_OR_EQUAL, Value_, Scalar_> make_DelayedUnaryIsometricLessThanOrEqualScalar(Scalar_ scalar) {
@@ -262,7 +267,8 @@ DelayedUnaryIsometricCompareScalar<CompareOperation::LESS_THAN_OR_EQUAL, Value_,
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be compared.
- * @return A helper class for a delayed non-equality comparison to a scalar.
+ * @return A helper class for a delayed non-equality comparison to a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricCompareScalar<CompareOperation::NOT_EQUAL, Value_, Scalar_> make_DelayedUnaryIsometricNotEqualScalar(Scalar_ scalar) {
@@ -274,7 +280,8 @@ DelayedUnaryIsometricCompareScalar<CompareOperation::NOT_EQUAL, Value_, Scalar_>
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be compared.
- * @return A helper class for a delayed equality comparison to a vector.
+ * @return A helper class for a delayed equality comparison to a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricCompareVector<CompareOperation::EQUAL, margin_, Value_, Vector_> make_DelayedUnaryIsometricEqualVector(Vector_ vector) {
@@ -286,7 +293,8 @@ DelayedUnaryIsometricCompareVector<CompareOperation::EQUAL, margin_, Value_, Vec
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be compared.
- * @return A helper class for a delayed greater-than comparison to a vector.
+ * @return A helper class for a delayed greater-than comparison to a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricCompareVector<CompareOperation::GREATER_THAN, margin_, Value_, Vector_> make_DelayedUnaryIsometricGreaterThanVector(Vector_ vector) {
@@ -298,7 +306,8 @@ DelayedUnaryIsometricCompareVector<CompareOperation::GREATER_THAN, margin_, Valu
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be compared.
- * @return A helper class for a delayed less-than comparison to a vector.
+ * @return A helper class for a delayed less-than comparison to a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricCompareVector<CompareOperation::LESS_THAN, margin_, Value_, Vector_> make_DelayedUnaryIsometricLessThanVector(Vector_ vector) {
@@ -310,7 +319,8 @@ DelayedUnaryIsometricCompareVector<CompareOperation::LESS_THAN, margin_, Value_,
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be compared.
- * @return A helper class for a delayed greater-than-or-equal comparison to a vector.
+ * @return A helper class for a delayed greater-than-or-equal comparison to a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricCompareVector<CompareOperation::GREATER_THAN_OR_EQUAL, margin_, Value_, Vector_> make_DelayedUnaryIsometricGreaterThanOrEqualVector(Vector_ vector) {
@@ -322,7 +332,8 @@ DelayedUnaryIsometricCompareVector<CompareOperation::GREATER_THAN_OR_EQUAL, marg
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be compared.
- * @return A helper class for a delayed less-than-or-equal comparison to a vector.
+ * @return A helper class for a delayed less-than-or-equal comparison to a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricCompareVector<CompareOperation::LESS_THAN_OR_EQUAL, margin_, Value_, Vector_> make_DelayedUnaryIsometricLessThanOrEqualVector(Vector_ vector) {
@@ -334,7 +345,8 @@ DelayedUnaryIsometricCompareVector<CompareOperation::LESS_THAN_OR_EQUAL, margin_
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be compared.
- * @return A helper class for a delayed non-equality comparison to a vector.
+ * @return A helper class for a delayed non-equality comparison to a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricCompareVector<CompareOperation::NOT_EQUAL, margin_, Value_, Vector_> make_DelayedUnaryIsometricNotEqualVector(Vector_ vector) {

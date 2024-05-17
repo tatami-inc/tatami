@@ -93,42 +93,48 @@ public:
 };
 
 /**
- * @return A helper class for a delayed binary equality comparison.
+ * @return A helper class for a delayed binary equality comparison,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricCompare<CompareOperation::EQUAL> make_DelayedBinaryIsometricEqual() {
     return DelayedBinaryIsometricCompare<CompareOperation::EQUAL>();
 }
 
 /**
- * @return A helper class for a delayed binary greater-than comparison.
+ * @return A helper class for a delayed binary greater-than comparison,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN> make_DelayedBinaryIsometricGreaterThan() {
     return DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN>();
 }
 
 /**
- * @return A helper class for a delayed binary less-than comparison.
+ * @return A helper class for a delayed binary less-than comparison,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN> make_DelayedBinaryIsometricLessThan() {
     return DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN>();
 }
 
 /**
- * @return A helper class for a delayed binary greater-than-or-equal comparison.
+ * @return A helper class for a delayed binary greater-than-or-equal comparison,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN_OR_EQUAL> make_DelayedBinaryIsometricGreaterThanOrEqual() {
     return DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN_OR_EQUAL>();
 }
 
 /**
- * @return A helper class for a delayed binary less-than-or-equal comparison.
+ * @return A helper class for a delayed binary less-than-or-equal comparison,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN_OR_EQUAL> make_DelayedBinaryIsometricLessThanOrEqual() {
     return DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN_OR_EQUAL>();
 }
 
 /**
- * @return A helper class for a delayed binary non-equality comparison to a scalar.
+ * @return A helper class for a delayed binary non-equality comparison to a scalar,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricCompare<CompareOperation::NOT_EQUAL> make_DelayedBinaryIsometricNotEqual() {
     return DelayedBinaryIsometricCompare<CompareOperation::NOT_EQUAL>();

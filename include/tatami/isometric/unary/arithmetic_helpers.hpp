@@ -76,7 +76,7 @@ template<ArithmeticOperation op_, bool right_, typename Value_ = double, typenam
 class DelayedUnaryIsometricArithmeticScalar {
 public:
     /**
-     * @param scalar Scalar value to be added.
+     * @param scalar Scalar value to be used in the operation.
      */
     DelayedUnaryIsometricArithmeticScalar(Scalar_ scalar) : my_scalar(scalar) {
         my_sparse = delayed_arithmetic_actual_sparse<op_, right_, Value_>(my_scalar);
@@ -237,7 +237,8 @@ public:
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be added.
- * @return A helper class for delayed scalar addition.
+ * @return A helper class for delayed scalar addition,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::ADD, true, Value_, Scalar_> make_DelayedUnaryIsometricAddScalar(Scalar_ scalar) {
@@ -249,7 +250,8 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::ADD, true, Value_, Sc
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be subtracted.
- * @return A helper class for delayed scalar subtraction.
+ * @return A helper class for delayed scalar subtraction,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::SUBTRACT, right_, Value_, Scalar_> make_DelayedUnaryIsometricSubtractScalar(Scalar_ scalar) {
@@ -260,7 +262,8 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::SUBTRACT, right_, Val
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be multiplied.
- * @return A helper class for delayed scalar multiplication.
+ * @return A helper class for delayed scalar multiplication,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MULTIPLY, true, Value_, Scalar_> make_DelayedUnaryIsometricMultiplyScalar(Scalar_ scalar) {
@@ -272,7 +275,8 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MULTIPLY, true, Value
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be divided.
- * @return A helper class for delayed scalar division.
+ * @return A helper class for delayed scalar division,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::DIVIDE, right_, Value_, Scalar_> make_DelayedUnaryIsometricDivideScalar(Scalar_ scalar) {
@@ -284,7 +288,8 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::DIVIDE, right_, Value
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be power transformed.
- * @return A helper class for delayed scalar power transformation.
+ * @return A helper class for delayed scalar power transformation,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::POWER, right_, Value_, Scalar_> make_DelayedUnaryIsometricPowerScalar(Scalar_ scalar) {
@@ -296,7 +301,8 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::POWER, right_, Value_
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be modulo transformed.
- * @return A helper class for delayed scalar modulus.
+ * @return A helper class for delayed scalar modulus,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MODULO, right_, Value_, Scalar_> make_DelayedUnaryIsometricModuloScalar(Scalar_ scalar) {
@@ -308,7 +314,8 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MODULO, right_, Value
  * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be integer divided.
- * @return A helper class for delayed scalar integer division.
+ * @return A helper class for delayed scalar integer division,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
 DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::INTEGER_DIVIDE, right_, Value_, Scalar_> make_DelayedUnaryIsometricIntegerDivideScalar(Scalar_ scalar) {
@@ -321,7 +328,8 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::INTEGER_DIVIDE, right
  * @tparam Vector_ Type of the vector.
  *
  * @param vector Vector to be added to the rows/columns.
- * @return A helper class for delayed vector addition.
+ * @return A helper class for delayed vector addition,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::ADD, true, margin_, Value_, Vector_> make_DelayedUnaryIsometricAddVector(Vector_ vector) {
@@ -335,7 +343,8 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::ADD, true, margin_, V
  * @tparam Vector_ Type of the vector.
  *
  * @param vector Vector to subtract from (or be subtracted by) the rows/columns.
- * @return A helper class for delayed vector subtraction.
+ * @return A helper class for delayed vector subtraction,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::SUBTRACT, right_, margin_, Value_, Vector_> make_DelayedUnaryIsometricSubtractVector(Vector_ vector) {
@@ -348,7 +357,8 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::SUBTRACT, right_, mar
  * @tparam Vector_ Type of the vector.
  *
  * @param vector Vector to multiply the rows/columns.
- * @return A helper class for delayed vector multiplication.
+ * @return A helper class for delayed vector multiplication,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MULTIPLY, true, margin_, Value_, Vector_> make_DelayedUnaryIsometricMultiplyVector(Vector_ vector) {
@@ -362,7 +372,8 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MULTIPLY, true, margi
  * @tparam Vector_ Type of the vector.
  *
  * @param vector Vector to divide (or be divided by) the rows/columns.
- * @return A helper class for delayed vector division.
+ * @return A helper class for delayed vector division,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::DIVIDE, right_, margin_, Value_, Vector_> make_DelayedUnaryIsometricDivideVector(Vector_ vector) {
@@ -376,7 +387,8 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::DIVIDE, right_, margi
  * @tparam Vector_ Type of the vector.
  *
  * @param vector Vector to use in the power transformation of the rows/columns.
- * @return A helper class for delayed vector power transformation.
+ * @return A helper class for delayed vector power transformation,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::POWER, right_, margin_, Value_, Vector_> make_DelayedUnaryIsometricPowerVector(Vector_ vector) {
@@ -390,7 +402,8 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::POWER, right_, margin
  * @tparam Vector_ Type of the vector.
  *
  * @param vector Vector to use in the modulus of the rows/columns.
- * @return A helper class for delayed vector modulus.
+ * @return A helper class for delayed vector modulus,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MODULO, right_, margin_, Value_, Vector_> make_DelayedUnaryIsometricModuloVector(Vector_ vector) {
@@ -404,7 +417,8 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MODULO, right_, margi
  * @tparam Vector_ Type of the vector.
  *
  * @param vector Vector to integer divide (or be integer divided by) the rows/columns.
- * @return A helper class for delayed vector division.
+ * @return A helper class for delayed vector division,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<bool right_, int margin_, typename Value_ = double, typename Vector_ = std::vector<double> >
 DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::INTEGER_DIVIDE, right_, margin_, Value_, Vector_> make_DelayedUnaryIsometricIntegerDivideVector(Vector_ vector) {

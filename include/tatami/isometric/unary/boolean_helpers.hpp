@@ -268,7 +268,8 @@ public:
 
 /**
  * @tparam Value_ Type of the data value.
- * @return A helper class for a delayed NOT operation.
+ * @return A helper class for a delayed NOT operation,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double>
 DelayedUnaryIsometricBooleanNotOperation<Value_> make_DelayedUnaryIsometricBooleanNot() {
@@ -278,7 +279,8 @@ DelayedUnaryIsometricBooleanNotOperation<Value_> make_DelayedUnaryIsometricBoole
 /**
  * @tparam Value_ Type of the data value.
  * @param scalar Scalar value to use in the operation.
- * @return A helper class for a delayed AND operation with a scalar.
+ * @return A helper class for a delayed AND operation with a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double>
 DelayedUnaryIsometricBooleanScalar<BooleanOperation::AND, Value_> make_DelayedUnaryIsometricBooleanAndScalar(bool scalar) {
@@ -288,7 +290,8 @@ DelayedUnaryIsometricBooleanScalar<BooleanOperation::AND, Value_> make_DelayedUn
 /**
  * @tparam Value_ Type of the data value.
  * @param scalar Scalar value to use in the operation.
- * @return A helper class for a delayed OR operation with a scalar.
+ * @return A helper class for a delayed OR operation with a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double>
 DelayedUnaryIsometricBooleanScalar<BooleanOperation::OR> make_DelayedUnaryIsometricBooleanOrScalar(bool scalar) {
@@ -298,7 +301,8 @@ DelayedUnaryIsometricBooleanScalar<BooleanOperation::OR> make_DelayedUnaryIsomet
 /**
  * @tparam Value_ Type of the data value.
  * @param scalar Scalar value to be used in the operation.
- * @return A helper class for a delayed XOR operation with a scalar.
+ * @return A helper class for a delayed XOR operation with a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double>
 DelayedUnaryIsometricBooleanScalar<BooleanOperation::XOR> make_DelayedUnaryIsometricBooleanXorScalar(bool scalar) {
@@ -308,7 +312,8 @@ DelayedUnaryIsometricBooleanScalar<BooleanOperation::XOR> make_DelayedUnaryIsome
 /**
  * @tparam Value_ Type of the data value.
  * @param scalar Scalar value to be used in the operation.
- * @return A helper class for a delayed boolean equality operation with a scalar.
+ * @return A helper class for a delayed boolean equality operation with a scalar,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double>
 DelayedUnaryIsometricBooleanScalar<BooleanOperation::EQUAL> make_DelayedUnaryIsometricBooleanEqualScalar(bool scalar) {
@@ -320,7 +325,8 @@ DelayedUnaryIsometricBooleanScalar<BooleanOperation::EQUAL> make_DelayedUnaryIso
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedUnaryIsometricBooleanVector`.
  * @param vector Vector of values to be used in the operation.
- * @return A helper class for a delayed AND operation with a vector.
+ * @return A helper class for a delayed AND operation with a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, margin_, Value_, Vector_> make_DelayedUnaryIsometricBooleanAndVector(Vector_ vector) {
@@ -332,7 +338,8 @@ DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, margin_, Value_, Vecto
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedUnaryIsometricBooleanVector`.
  * @param vector Vector of values to be used in the operation.
- * @return A helper class for a delayed OR operation with a vector.
+ * @return A helper class for a delayed OR operation with a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, margin_, Value_, Vector_> make_DelayedUnaryIsometricBooleanOrVector(Vector_ vector) {
@@ -344,7 +351,8 @@ DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, margin_, Value_, Vector
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedUnaryIsometricBooleanVector`.
  * @param vector Vector of values to be used in the operation.
- * @return A helper class for a delayed XOR operation with a vector.
+ * @return A helper class for a delayed XOR operation with a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, margin_, Value_, Vector_> make_DelayedUnaryIsometricBooleanXorVector(Vector_ vector) {
@@ -356,7 +364,8 @@ DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, margin_, Value_, Vecto
  * @tparam Vector_ Type of the vector.
  * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedUnaryIsometricBooleanVector`.
  * @param vector Vector of values to be used in the operation.
- * @return A helper class for a delayed boolean equality operation with a vector.
+ * @return A helper class for a delayed boolean equality operation with a vector,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 DelayedUnaryIsometricBooleanVector<BooleanOperation::EQUAL, margin_, Value_, Vector_> make_DelayedUnaryIsometricBooleanEqualVector(Vector_ vector) {

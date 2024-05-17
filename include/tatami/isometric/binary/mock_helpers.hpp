@@ -138,6 +138,8 @@ public:
      * Conversion of zeros to non-zero values is not dependent on rows.
      * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_column = false`;
      * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryIsometricMockBasic`).
+     *
+     * This value is only used when `is_sparse()` returns false.
      */
     static constexpr bool zero_depends_on_row = false;
 
@@ -145,6 +147,8 @@ public:
      * Conversion of zeros to non-zero values is not dependent on columns.
      * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_row = false`;
      * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryIsometricMockBasic`).
+     *
+     * This value is only used when `is_sparse()` returns false.
      */
     static constexpr bool zero_depends_on_column = false;
 

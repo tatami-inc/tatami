@@ -92,35 +92,40 @@ public:
 };
 
 /**
- * @return A helper class for delayed binary addition.
+ * @return A helper class for delayed binary addition,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::ADD> make_DelayedBinaryIsometricAdd() {
     return DelayedBinaryIsometricArithmetic<ArithmeticOperation::ADD>();
 }
 
 /**
- * @return A helper class for delayed binary subtraction.
+ * @return A helper class for delayed binary subtraction,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::SUBTRACT> make_DelayedBinaryIsometricSubtract() {
     return DelayedBinaryIsometricArithmetic<ArithmeticOperation::SUBTRACT>();
 }
 
 /**
- * @return A helper class for delayed binary multiplication.
+ * @return A helper class for delayed binary multiplication,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::MULTIPLY> make_DelayedBinaryIsometricMultiply() {
     return DelayedBinaryIsometricArithmetic<ArithmeticOperation::MULTIPLY>();
 }
 
 /**
- * @return A helper class for delayed binary division.
+ * @return A helper class for delayed binary division,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::DIVIDE> make_DelayedBinaryIsometricDivide() {
     return DelayedBinaryIsometricArithmetic<ArithmeticOperation::DIVIDE>();
 }
 
 /**
- * @return A helper class for delayed binary power.
+ * @return A helper class for delayed binary power,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::POWER> make_DelayedBinaryIsometricPower() {
     return DelayedBinaryIsometricArithmetic<ArithmeticOperation::POWER>();

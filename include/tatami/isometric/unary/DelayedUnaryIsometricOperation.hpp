@@ -550,7 +550,8 @@ public:
  * @tparam Value_ Type of matrix value.
  * @tparam Index_ Type of index value.
  * @tparam Operation_ Helper class implementing the operation.
- * A non-sparsity-preserving operation should implement the same methods as `DelayedUnaryIsometricMockBasic` or `DelayedUnaryIsometricMockAdvanced`.
+ * This should implement the same methods as `DelayedUnaryIsometricMockBasic` or `DelayedUnaryIsometricMockAdvanced`,
+ * depending on whether it can take advantage of matrix sparsity.
  */
 template<typename Value_, typename Index_, class Operation_>
 class DelayedUnaryIsometricOperation : public Matrix<Value_, Index_> {

@@ -228,6 +228,8 @@ public:
      * Conversion of zeros to non-zero values is not dependent on the row of origin.
      * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_column = false`;
      * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedUnaryIsometricMockBasic`).
+     *
+     * This value is only used if `is_sparse()` returns false.
      */
     static constexpr bool zero_depends_on_row = false;
 
@@ -235,6 +237,8 @@ public:
      * Conversion of zeros to non-zero values is not dependent on the column of origin.
      * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_row = false`.
      * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedUnaryIsometricMockBasic`).
+     *
+     * This value is only used if `is_sparse()` returns false.
      */
     static constexpr bool zero_depends_on_column = false;
 

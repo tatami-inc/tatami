@@ -86,28 +86,32 @@ public:
 };
 
 /**
- * @return A helper class for a delayed binary boolean equivalence operation.
+ * @return A helper class for a delayed binary boolean equivalence operation,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricBoolean<BooleanOperation::EQUAL> make_DelayedBinaryIsometricBooleanEqual() {
     return DelayedBinaryIsometricBoolean<BooleanOperation::EQUAL>();
 }
 
 /**
- * @return A helper class for a delayed binary AND comparison.
+ * @return A helper class for a delayed binary AND comparison,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricBoolean<BooleanOperation::AND> make_DelayedBinaryIsometricBooleanAnd() {
     return DelayedBinaryIsometricBoolean<BooleanOperation::AND>();
 }
 
 /**
- * @return A helper class for a delayed binary OR comparison.
+ * @return A helper class for a delayed binary OR comparison,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricBoolean<BooleanOperation::OR> make_DelayedBinaryIsometricBooleanOr() {
     return DelayedBinaryIsometricBoolean<BooleanOperation::OR>();
 }
 
 /**
- * @return A helper class for a delayed binary XOR comparison.
+ * @return A helper class for a delayed binary XOR comparison,
+ * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
  */
 inline DelayedBinaryIsometricBoolean<BooleanOperation::XOR> make_DelayedBinaryIsometricBooleanXor() {
     return DelayedBinaryIsometricBoolean<BooleanOperation::XOR>();

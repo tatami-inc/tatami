@@ -13,6 +13,9 @@ namespace tatami {
 
 /**
  * @brief Take the absolute value of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ *
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -75,6 +78,9 @@ public:
 
 /**
  * @brief Take the sign of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ *
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -138,6 +144,8 @@ public:
 
 /**
  * @brief Take the logarithm of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
  * 
  * @tparam Value_ Type of the data value.
  * @tparam Base_ Numeric type for the log base.
@@ -215,6 +223,9 @@ public:
 
 /**
  * @brief Take the square root of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -276,6 +287,9 @@ public:
 
 /**
  * @brief Take the ceiling of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -337,6 +351,9 @@ public:
 
 /**
  * @brief Take the floor of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -398,6 +415,9 @@ public:
 
 /**
  * @brief Take the trunc of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -460,6 +480,8 @@ public:
 /**
  * @brief Take the logarithm of a matrix entry plus 1.
  *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  * @tparam Base_ Numeric type for the log base.
  */
@@ -535,6 +557,9 @@ public:
 
 /**
  * @brief Round a matrix entry to the nearest integer.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -596,6 +621,9 @@ public:
 
 /**
  * @brief Use a matrix entry as an exponent.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -657,6 +685,9 @@ public:
 
 /**
  * @brief Use a matrix entry as an exponent minus 1.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -718,6 +749,9 @@ public:
 
 /**
  * @brief Take the arc cosine of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -780,6 +814,9 @@ public:
 
 /**
  * @brief Take the inverse hyperbolic cosine of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -842,6 +879,9 @@ public:
 
 /**
  * @brief Take the arc sine of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -903,6 +943,9 @@ public:
 
 /**
  * @brief Take the inverse hyperbolic sine of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -964,6 +1007,9 @@ public:
 
 /**
  * @brief Take the arc tangent of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -1025,6 +1071,9 @@ public:
 
 /**
  * @brief Take the inverse hyperbolic tangent of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -1086,6 +1135,9 @@ public:
 
 /**
  * @brief Take the cosine of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -1147,6 +1199,9 @@ public:
 
 /**
  * @brief Take the hyperbolic cosine of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -1208,6 +1263,9 @@ public:
 
 /**
  * @brief Take the sine of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -1269,6 +1327,9 @@ public:
 
 /**
  * @brief Take the hyperbolic sine of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -1330,6 +1391,9 @@ public:
 
 /**
  * @brief Take the tangent of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -1391,6 +1455,9 @@ public:
 
 /**
  * @brief Take the hyperbolic tangent of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -1452,6 +1519,9 @@ public:
 
 /**
  * @brief Take the gamma of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
@@ -1514,6 +1584,9 @@ public:
 
 /**
  * @brief Take the logarithm of the gamma of a matrix entry.
+ *
+ * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * 
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
