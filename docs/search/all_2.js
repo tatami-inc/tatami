@@ -3,7 +3,7 @@ var searchData=
   ['c_20api_20for_20all_20sorts_20of_20matrices_0',['A C++ API for all sorts of matrices',['../index.html',1,'']]],
   ['compare_5fhelpers_2ehpp_1',['compare_helpers.hpp',['../unary_2compare__helpers_8hpp.html',1,'(Global Namespace)'],['../binary_2compare__helpers_8hpp.html',1,'(Global Namespace)']]],
   ['compare_5futils_2ehpp_2',['compare_utils.hpp',['../compare__utils_8hpp.html',1,'']]],
-  ['compress_5fsparse_5ftriplets_3',['compress_sparse_triplets',['../namespacetatami.html#a8ca5561774457a3d481a0af16ee67fef',1,'tatami']]],
+  ['compress_5fsparse_5ftriplets_3',['compress_sparse_triplets',['../namespacetatami.html#a3b2756af73514cbf89b42f5abd7997cc',1,'tatami']]],
   ['compress_5fsparse_5ftriplets_2ehpp_4',['compress_sparse_triplets.hpp',['../compress__sparse__triplets_8hpp.html',1,'']]],
   ['compressedsparsecolumnmatrix_5',['compressedsparsecolumnmatrix',['../classtatami_1_1CompressedSparseColumnMatrix.html',1,'tatami::CompressedSparseColumnMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;'],['../classtatami_1_1CompressedSparseColumnMatrix.html#a4a7d2c1c47bbab5e0bdde48ad9ba9ec7',1,'tatami::CompressedSparseColumnMatrix::CompressedSparseColumnMatrix()']]],
   ['compressedsparsecontents_6',['CompressedSparseContents',['../structtatami_1_1CompressedSparseContents.html',1,'tatami']]],

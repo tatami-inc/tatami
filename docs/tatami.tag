@@ -3980,19 +3980,12 @@
     <filename>classtatami_1_1SomeNumericArray.html</filename>
     <templarg>typename T</templarg>
     <class kind="struct">tatami::SomeNumericArray::Iterator</class>
-    <member kind="enumeration">
-      <type></type>
-      <name>Type</name>
-      <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>a6e23ba528d0302095fd423e7777455bd</anchor>
-      <arglist></arglist>
-    </member>
     <member kind="function">
       <type></type>
       <name>SomeNumericArray</name>
       <anchorfile>classtatami_1_1SomeNumericArray.html</anchorfile>
-      <anchor>abea2855a6aff3857554dd1cc9556ac66</anchor>
-      <arglist>(void *ptr, size_t number, Type type)</arglist>
+      <anchor>a4841570bb8d6f307f322e70a8420f976</anchor>
+      <arglist>(void *ptr, size_t number, SomeNumericArrayType type)</arglist>
     </member>
     <member kind="function">
       <type></type>
@@ -4306,6 +4299,13 @@
       <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708aa6eac69202c3dc2978176801a84e4d1d">GREATER_THAN_OR_EQUAL</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a8397780541b6289d2a0b991d1c28c432">LESS_THAN_OR_EQUAL</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="ac4fc175a57ace709941b5ca7ddb19708a4ea2d378cdec20f59330f113297bc1ce">NOT_EQUAL</enumvalue>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>SomeNumericArrayType</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>adf5f4769d2b07188e9e9522928468f2a</anchor>
+      <arglist></arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -4738,8 +4738,8 @@
       <type>std::vector&lt; size_t &gt;</type>
       <name>compress_sparse_triplets</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8ca5561774457a3d481a0af16ee67fef</anchor>
-      <arglist>(size_t nrow, size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices)</arglist>
+      <anchor>a3b2756af73514cbf89b42f5abd7997cc</anchor>
+      <arglist>(size_t nrow, size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</arglist>
     </member>
     <member kind="function">
       <type>CompressedSparseContents&lt; StoredValue_, StoredIndex_ &gt;</type>

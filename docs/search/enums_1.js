@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['type_0',['Type',['../classtatami_1_1SomeNumericArray.html#a6e23ba528d0302095fd423e7777455bd',1,'tatami::SomeNumericArray']]]
+  ['somenumericarraytype_0',['SomeNumericArrayType',['../namespacetatami.html#adf5f4769d2b07188e9e9522928468f2a',1,'tatami']]]
 ];
