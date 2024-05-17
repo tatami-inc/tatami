@@ -5,27 +5,27 @@
 #include <vector>
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
+#include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-TEST(DelayedUnaryIsometricOp, ConstOverload) {
+TEST(DelayedUnaryIsometricOperation, ConstOverload) {
     int nrow = 23, ncol = 42;
     auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
     auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
 
     auto vec = std::vector<double>(nrow);
-    auto op = tatami::make_DelayedAddVectorHelper<0>(vec);
-    auto mat = tatami::make_DelayedUnaryIsometricOp(dense, std::move(op));
+    auto op = tatami::make_DelayedUnaryIsometricAddVector<0>(vec);
+    auto mat = tatami::make_DelayedUnaryIsometricOperation(dense, std::move(op));
 
     // cursory checks.
     EXPECT_EQ(mat->nrow(), dense->nrow());
     EXPECT_EQ(mat->ncol(), dense->ncol());
 }
 
-class DelayedUnaryIsometricOpMockTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
+class DelayedUnaryIsometricOperationTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
 protected:
     inline static int nrow = 57, ncol = 37;
     inline static std::vector<double> simulated;
@@ -36,13 +36,13 @@ protected:
         dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(simulated)));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); 
 
-        udense = tatami::make_DelayedUnaryIsometricOp(dense, tatami::DelayedUnaryBasicMockHelper());
-        usparse = tatami::make_DelayedUnaryIsometricOp(sparse, tatami::DelayedUnaryAdvancedMockHelper());
+        udense = tatami::make_DelayedUnaryIsometricOperation(dense, tatami::DelayedUnaryIsometricMockBasic());
+        usparse = tatami::make_DelayedUnaryIsometricOperation(sparse, tatami::DelayedUnaryIsometricMockAdvanced());
         ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
     }
 };
 
-TEST_P(DelayedUnaryIsometricOpMockTest, Mock) {
+TEST_P(DelayedUnaryIsometricOperationTest, Mock) {
     EXPECT_FALSE(udense->is_sparse());
     EXPECT_EQ(udense->is_sparse_proportion(), 0);
 
@@ -65,8 +65,8 @@ TEST_P(DelayedUnaryIsometricOpMockTest, Mock) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    DelayedUnary,
-    DelayedUnaryIsometricOpMockTest,
+    DelayedUnaryIsometricOperation,
+    DelayedUnaryIsometricOperationTest,
     ::testing::Combine(
         ::testing::Values(true, false), // row access
         ::testing::Values(true, false)  // oracle usage

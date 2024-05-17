@@ -5,13 +5,13 @@
 #include <tuple>
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
+#include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class BooleanScalarUtils {
+class DelayedUnaryIsometricBooleanScalarUtils {
 protected:
     inline static size_t nrow = 83, ncol = 111;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
@@ -27,19 +27,19 @@ protected:
     }
 };
 
-class BooleanScalarTest : public ::testing::TestWithParam<bool>, public BooleanScalarUtils { 
+class DelayedUnaryIsometricBooleanScalarTest : public ::testing::TestWithParam<bool>, public DelayedUnaryIsometricBooleanScalarUtils { 
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(BooleanScalarTest, AND) {
+TEST_P(DelayedUnaryIsometricBooleanScalarTest, AND) {
     bool other = GetParam();
-    auto op = tatami::make_DelayedBooleanAndScalarHelper(other);
+    auto op = tatami::make_DelayedUnaryIsometricBooleanAndScalar(other);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -59,12 +59,12 @@ TEST_P(BooleanScalarTest, AND) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(BooleanScalarTest, OR) {
+TEST_P(DelayedUnaryIsometricBooleanScalarTest, OR) {
     bool other = GetParam();
-    auto op = tatami::make_DelayedBooleanOrScalarHelper(other);
+    auto op = tatami::make_DelayedUnaryIsometricBooleanOrScalar(other);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -89,12 +89,12 @@ TEST_P(BooleanScalarTest, OR) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(BooleanScalarTest, XOR) {
+TEST_P(DelayedUnaryIsometricBooleanScalarTest, XOR) {
     bool other = GetParam();
-    auto op = tatami::make_DelayedBooleanXorScalarHelper(other);
+    auto op = tatami::make_DelayedUnaryIsometricBooleanXorScalar(other);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -119,12 +119,12 @@ TEST_P(BooleanScalarTest, XOR) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(BooleanScalarTest, EQUAL) {
+TEST_P(DelayedUnaryIsometricBooleanScalarTest, EQUAL) {
     bool other = GetParam();
-    auto op = tatami::make_DelayedBooleanEqualScalarHelper(other);
+    auto op = tatami::make_DelayedUnaryIsometricBooleanEqualScalar(other);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -150,22 +150,22 @@ TEST_P(BooleanScalarTest, EQUAL) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    BooleanScalar,
-    BooleanScalarTest,
+    DelayedUnaryIsometricBooleanScalar,
+    DelayedUnaryIsometricBooleanScalarTest,
     ::testing::Values(true, false)
 );
 
-class BooleanNotTest : public ::testing::Test, public BooleanScalarUtils { 
+class DelayedUnaryIsometricBooleanNotTest : public ::testing::Test, public DelayedUnaryIsometricBooleanScalarUtils { 
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_F(BooleanNotTest, Basic) {
-    auto op = tatami::make_DelayedBooleanNotHelper();
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricBooleanNotTest, Basic) {
+    auto op = tatami::make_DelayedUnaryIsometricBooleanNot();
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);

@@ -11,8 +11,8 @@
 #include "sparse/convert_to_fragmented_sparse.hpp"
 #include "sparse/compress_sparse_triplets.hpp"
 
-#include "isometric/unary/DelayedUnaryIsometricOp.hpp"
-#include "isometric/binary/DelayedBinaryIsometricOp.hpp"
+#include "isometric/unary/DelayedUnaryIsometricOperation.hpp"
+#include "isometric/binary/DelayedBinaryIsometricOperation.hpp"
 
 #include "other/DelayedBind.hpp"
 #include "other/DelayedCast.hpp"

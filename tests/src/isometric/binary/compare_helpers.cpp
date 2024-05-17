@@ -5,13 +5,13 @@
 #include <tuple>
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/isometric/binary/DelayedBinaryIsometricOp.hpp"
+#include "tatami/isometric/binary/DelayedBinaryIsometricOperation.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class BinaryCompareTest : public ::testing::Test {
+class DelayedBinaryIsometricCompareTest : public ::testing::Test {
 protected:
     inline static size_t nrow = 151, ncol = 71;
     inline static std::shared_ptr<tatami::NumericMatrix> dense_left, sparse_left, dense_right, sparse_right;
@@ -31,10 +31,10 @@ protected:
     }
 };
 
-TEST_F(BinaryCompareTest, Equal) {
-    auto op = tatami::make_DelayedBinaryEqualHelper();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
+TEST_F(DelayedBinaryIsometricCompareTest, Equal) {
+    auto op = tatami::make_DelayedBinaryIsometricEqual();
+    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -52,10 +52,10 @@ TEST_F(BinaryCompareTest, Equal) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(BinaryCompareTest, GreaterThan) {
-    auto op = tatami::make_DelayedBinaryGreaterThanHelper();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
+TEST_F(DelayedBinaryIsometricCompareTest, GreaterThan) {
+    auto op = tatami::make_DelayedBinaryIsometricGreaterThan();
+    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -73,10 +73,10 @@ TEST_F(BinaryCompareTest, GreaterThan) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(BinaryCompareTest, LessThan) {
-    auto op = tatami::make_DelayedBinaryLessThanHelper();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
+TEST_F(DelayedBinaryIsometricCompareTest, LessThan) {
+    auto op = tatami::make_DelayedBinaryIsometricLessThan();
+    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -94,10 +94,10 @@ TEST_F(BinaryCompareTest, LessThan) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(BinaryCompareTest, GreaterThanOrEqual) {
-    auto op = tatami::make_DelayedBinaryGreaterThanOrEqualHelper();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
+TEST_F(DelayedBinaryIsometricCompareTest, GreaterThanOrEqual) {
+    auto op = tatami::make_DelayedBinaryIsometricGreaterThanOrEqual();
+    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -115,10 +115,10 @@ TEST_F(BinaryCompareTest, GreaterThanOrEqual) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(BinaryCompareTest, LessThanOrEqual) {
-    auto op = tatami::make_DelayedBinaryLessThanOrEqualHelper();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
+TEST_F(DelayedBinaryIsometricCompareTest, LessThanOrEqual) {
+    auto op = tatami::make_DelayedBinaryIsometricLessThanOrEqual();
+    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -136,10 +136,10 @@ TEST_F(BinaryCompareTest, LessThanOrEqual) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(BinaryCompareTest, NotEqual) {
-    auto op = tatami::make_DelayedBinaryNotEqualHelper();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
+TEST_F(DelayedBinaryIsometricCompareTest, NotEqual) {
+    auto op = tatami::make_DelayedBinaryIsometricNotEqual();
+    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());

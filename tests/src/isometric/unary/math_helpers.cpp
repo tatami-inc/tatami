@@ -4,13 +4,13 @@
 #include <memory>
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
+#include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class MathTest : public ::testing::Test {
+class DelayedUnaryIsometricMathTest : public ::testing::Test {
 protected:
     inline static size_t nrow = 82, ncol = 51;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
@@ -32,10 +32,10 @@ protected:
     }
 };
 
-TEST_F(MathTest, Abs) {
-    tatami::DelayedAbsHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Abs) {
+    tatami::DelayedUnaryIsometricAbs op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -55,10 +55,10 @@ TEST_F(MathTest, Abs) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Sign) {
-    tatami::DelayedSignHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Sign) {
+    tatami::DelayedUnaryIsometricSign op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -76,10 +76,10 @@ TEST_F(MathTest, Sign) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Sqrt) {
-    tatami::DelayedSqrtHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Sqrt) {
+    tatami::DelayedUnaryIsometricSqrt op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -97,12 +97,12 @@ TEST_F(MathTest, Sqrt) {
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
 }
 
-TEST_F(MathTest, Log) {
+TEST_F(DelayedUnaryIsometricMathTest, Log) {
     // Trying with the natural base.
     {
-        tatami::DelayedLogHelper op;
-        auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        tatami::DelayedUnaryIsometricLog op;
+        auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
         EXPECT_FALSE(dense_mod->is_sparse());
         EXPECT_FALSE(sparse_mod->is_sparse());
@@ -122,9 +122,9 @@ TEST_F(MathTest, Log) {
 
     // Trying with another base.
     {
-        tatami::DelayedLogHelper op(2.0);
-        auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        tatami::DelayedUnaryIsometricLog op(2.0);
+        auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
         EXPECT_FALSE(dense_mod->is_sparse());
         EXPECT_FALSE(sparse_mod->is_sparse());
@@ -143,12 +143,12 @@ TEST_F(MathTest, Log) {
     }
 }
 
-TEST_F(MathTest, Log1pBy) {
+TEST_F(DelayedUnaryIsometricMathTest, Log1pBy) {
     // Trying with the natural base.
     {
-        tatami::DelayedLog1pHelper op;
-        auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        tatami::DelayedUnaryIsometricLog1p op;
+        auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
         EXPECT_FALSE(dense_mod->is_sparse());
         EXPECT_TRUE(sparse_mod->is_sparse());
@@ -168,9 +168,9 @@ TEST_F(MathTest, Log1pBy) {
 
     // Trying with another base.
     {
-        tatami::DelayedLog1pHelper op(2.0);
-        auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-        auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+        tatami::DelayedUnaryIsometricLog1p op(2.0);
+        auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
         EXPECT_FALSE(dense_mod->is_sparse());
         EXPECT_TRUE(sparse_mod->is_sparse());
@@ -189,10 +189,10 @@ TEST_F(MathTest, Log1pBy) {
     }
 }
 
-TEST_F(MathTest, Exp) {
-    tatami::DelayedExpHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Exp) {
+    tatami::DelayedUnaryIsometricExp op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -210,10 +210,10 @@ TEST_F(MathTest, Exp) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Expm1) {
-    tatami::DelayedExpm1Helper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Expm1) {
+    tatami::DelayedUnaryIsometricExpm1 op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -231,10 +231,10 @@ TEST_F(MathTest, Expm1) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Round) {
-    tatami::DelayedRoundHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Round) {
+    tatami::DelayedUnaryIsometricRound op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -252,10 +252,10 @@ TEST_F(MathTest, Round) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Ceiling) {
-    tatami::DelayedCeilingHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Ceiling) {
+    tatami::DelayedUnaryIsometricCeiling op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -273,10 +273,10 @@ TEST_F(MathTest, Ceiling) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Floor) {
-    tatami::DelayedFloorHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Floor) {
+    tatami::DelayedUnaryIsometricFloor op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -294,10 +294,10 @@ TEST_F(MathTest, Floor) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Trunc) {
-    tatami::DelayedTruncHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Trunc) {
+    tatami::DelayedUnaryIsometricTrunc op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -315,10 +315,10 @@ TEST_F(MathTest, Trunc) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Sin) {
-    tatami::DelayedSinHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Sin) {
+    tatami::DelayedUnaryIsometricSin op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -336,10 +336,10 @@ TEST_F(MathTest, Sin) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Cos) {
-    tatami::DelayedCosHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Cos) {
+    tatami::DelayedUnaryIsometricCos op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -357,10 +357,10 @@ TEST_F(MathTest, Cos) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Tan) {
-    tatami::DelayedTanHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Tan) {
+    tatami::DelayedUnaryIsometricTan op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -378,11 +378,11 @@ TEST_F(MathTest, Tan) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Asin) {
+TEST_F(DelayedUnaryIsometricMathTest, Asin) {
     // Use a tighter range to get most values inside the domain of [-1, 1].
-    tatami::DelayedAsinHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_unit, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_unit, op);
+    tatami::DelayedUnaryIsometricAsin op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense_unit, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse_unit, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -400,10 +400,10 @@ TEST_F(MathTest, Asin) {
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
 }
 
-TEST_F(MathTest, Acos) {
-    tatami::DelayedAcosHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_unit, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_unit, op);
+TEST_F(DelayedUnaryIsometricMathTest, Acos) {
+    tatami::DelayedUnaryIsometricAcos op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense_unit, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse_unit, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -421,10 +421,10 @@ TEST_F(MathTest, Acos) {
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
 }
 
-TEST_F(MathTest, Atan) {
-    tatami::DelayedAtanHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Atan) {
+    tatami::DelayedUnaryIsometricAtan op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -442,10 +442,10 @@ TEST_F(MathTest, Atan) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Sinh) {
-    tatami::DelayedSinhHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Sinh) {
+    tatami::DelayedUnaryIsometricSinh op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -463,10 +463,10 @@ TEST_F(MathTest, Sinh) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Cosh) {
-    tatami::DelayedCoshHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Cosh) {
+    tatami::DelayedUnaryIsometricCosh op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -484,10 +484,10 @@ TEST_F(MathTest, Cosh) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Tanh) {
-    tatami::DelayedTanhHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Tanh) {
+    tatami::DelayedUnaryIsometricTanh op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -505,10 +505,10 @@ TEST_F(MathTest, Tanh) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Asinh) {
-    tatami::DelayedAsinhHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Asinh) {
+    tatami::DelayedUnaryIsometricAsinh op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -526,10 +526,10 @@ TEST_F(MathTest, Asinh) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_F(MathTest, Acosh) {
-    tatami::DelayedAcoshHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Acosh) {
+    tatami::DelayedUnaryIsometricAcosh op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -547,10 +547,10 @@ TEST_F(MathTest, Acosh) {
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
 }
 
-TEST_F(MathTest, Atanh) {
-    tatami::DelayedAtanhHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense_unit, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse_unit, op);
+TEST_F(DelayedUnaryIsometricMathTest, Atanh) {
+    tatami::DelayedUnaryIsometricAtanh op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense_unit, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse_unit, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -568,10 +568,10 @@ TEST_F(MathTest, Atanh) {
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
 }
 
-TEST_F(MathTest, Gamma) {
-    tatami::DelayedGammaHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Gamma) {
+    tatami::DelayedUnaryIsometricGamma op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
@@ -589,10 +589,10 @@ TEST_F(MathTest, Gamma) {
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
 }
 
-TEST_F(MathTest, Lgamma) {
-    tatami::DelayedLgammaHelper op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+TEST_F(DelayedUnaryIsometricMathTest, Lgamma) {
+    tatami::DelayedUnaryIsometricLgamma op;
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());

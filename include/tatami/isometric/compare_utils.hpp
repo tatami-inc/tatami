@@ -10,9 +10,9 @@
 namespace tatami {
 
 /**
- * Type of the delayed comparison operation.
+ * Type of comparison operation.
  */
-enum class DelayedCompareOp : char { 
+enum class CompareOperation : char { 
     EQUAL, 
     GREATER_THAN, 
     LESS_THAN, 
@@ -24,17 +24,17 @@ enum class DelayedCompareOp : char {
 /**
  * @cond
  */
-template<DelayedCompareOp op_, typename Scalar_, typename Value_>
+template<CompareOperation op_, typename Scalar_, typename Value_>
 void delayed_compare_run(Value_& val, Scalar_ scalar) {
-    if constexpr(op_ == DelayedCompareOp::EQUAL) {
+    if constexpr(op_ == CompareOperation::EQUAL) {
         val = val == scalar;
-    } else if constexpr(op_ == DelayedCompareOp::GREATER_THAN) {
+    } else if constexpr(op_ == CompareOperation::GREATER_THAN) {
         val = val > scalar;
-    } else if constexpr(op_ == DelayedCompareOp::LESS_THAN) {
+    } else if constexpr(op_ == CompareOperation::LESS_THAN) {
         val = val < scalar;
-    } else if constexpr(op_ == DelayedCompareOp::GREATER_THAN_OR_EQUAL) {
+    } else if constexpr(op_ == CompareOperation::GREATER_THAN_OR_EQUAL) {
         val = val >= scalar;
-    } else if constexpr(op_ == DelayedCompareOp::LESS_THAN_OR_EQUAL) {
+    } else if constexpr(op_ == CompareOperation::LESS_THAN_OR_EQUAL) {
         val = val <= scalar;
     } else { // NOT EQUAL.
         val = val != scalar;

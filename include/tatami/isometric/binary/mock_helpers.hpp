@@ -1,25 +1,25 @@
-#ifndef TATAMI_DELAYED_BINARY_ISOMETRIC_OP_HELPER_INTERFACE_H
-#define TATAMI_DELAYED_BINARY_ISOMETRIC_OP_HELPER_INTERFACE_H
+#ifndef TATAMI_ISOMETRIC_BINARY_MOCK_HELPERS_H
+#define TATAMI_ISOMETRIC_BINARY_MOCK_HELPERS_H
 
 #include <vector>
 #include "../../base/SparseRange.hpp"
 
 /** 
  * @file mock_helpers.hpp
- * @brief Expectations for `tatami::DelayedBinaryIsometricOp` helpers.
+ * @brief Expectations for `tatami::DelayedBinaryIsometricOperation` helpers.
  */
 
 namespace tatami {
 
 /**
- * @brief Basic mock operation for `DelayedBinaryIsometricOp`.
+ * @brief Basic mock operation for `DelayedBinaryIsometricOperation`.
  *
- * This class defines the basic expectations for an operation in `DelayedBinaryIsometricOp`.
+ * This class defines the basic expectations for an operation in `DelayedBinaryIsometricOperation`.
  * Actual operations aren't expected to inherit from this class;
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-class DelayedBinaryBasicMockHelper {
+class DelayedBinaryIsometricMockBasic {
 public:
     /**
      * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
@@ -90,21 +90,21 @@ public:
 
     /**
      * Conversion of zeros to non-zero values is dependent on rows.
-     * This should be `true`, otherwise an advanced operation is expected (see `DelayedBinaryAdvancedMockHelper`).
+     * This should be `true`, otherwise an advanced operation is expected (see `DelayedBinaryIsometricMockAdvanced`).
      */
     static constexpr bool zero_depends_on_row = true;
 
     /**
      * Conversion of zeros to non-zero values is dependent on columns.
-     * This should be `true`, otherwise an advanced operation is expected (see `DelayedBinaryAdvancedMockHelper`).
+     * This should be `true`, otherwise an advanced operation is expected (see `DelayedBinaryIsometricMockAdvanced`).
      */
     static constexpr bool zero_depends_on_column = true;
 };
 
 /**
- * @brief Advanced mock operation for `DelayedBinaryIsometricOp`.
+ * @brief Advanced mock operation for `DelayedBinaryIsometricOperation`.
  *
- * This class defines the advanced expectations for an operation in `DelayedBinaryIsometricOp`,
+ * This class defines the advanced expectations for an operation in `DelayedBinaryIsometricOperation`,
  * which improves efficiency by taking advantage of any sparsity in the underlying matrices.
  * Either the operation itself preserves sparsity, or any loss of sparsity is predictable,
  * i.e., zeros are transformed into a constant non-zero value that does not depend on its position in the `Matrix`.
@@ -113,7 +113,7 @@ public:
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-class DelayedBinaryAdvancedMockHelper {
+class DelayedBinaryIsometricMockAdvanced {
 public:
     /**
      * @tparam Value_ Type of matrix value.
@@ -137,14 +137,18 @@ public:
     /**
      * Conversion of zeros to non-zero values is not dependent on rows.
      * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_column = false`;
-     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryBasicMockHelper`).
+     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryIsometricMockBasic`).
+     *
+     * This value is only used when `is_sparse()` returns false.
      */
     static constexpr bool zero_depends_on_row = false;
 
     /**
      * Conversion of zeros to non-zero values is not dependent on columns.
      * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_row = false`;
-     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryBasicMockHelper`).
+     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryIsometricMockBasic`).
+     *
+     * This value is only used when `is_sparse()` returns false.
      */
     static constexpr bool zero_depends_on_column = false;
 

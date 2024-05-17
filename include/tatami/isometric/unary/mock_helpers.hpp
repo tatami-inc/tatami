@@ -6,20 +6,20 @@
 
 /** 
  * @file mock_helpers.hpp
- * @brief Expectations for `tatami::DelayedUnaryIsometricOp` helpers.
+ * @brief Expectations for `tatami::DelayedUnaryIsometricOperation` helpers.
  */
 
 namespace tatami {
 
 /**
- * @brief Basic mock operation for a `DelayedUnaryIsometricOp`. 
+ * @brief Basic mock operation for a `DelayedUnaryIsometricOperation`. 
  *
- * This defines the basic expectations for an operation to use in `DelayedUnaryIsometricOp`.
+ * This defines the basic expectations for an operation to use in `DelayedUnaryIsometricOperation`.
  * Actual operations aren't expected to inherit from this class;
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-class DelayedUnaryBasicMockHelper {
+class DelayedUnaryIsometricMockBasic {
 public:
     /**
      * This method should apply the operation to values in `buffer`,
@@ -82,21 +82,21 @@ public:
 
     /**
      * Conversion of zeros to non-zero values is dependent on the row of origin.
-     * This should be true, otherwise an advanced operation interface is expected (see `DelayedUnaryAdvancedMockHelper`).
+     * This should be true, otherwise an advanced operation interface is expected (see `DelayedUnaryIsometricMockAdvanced`).
      */
     static constexpr bool zero_depends_on_row = true;
 
     /**
      * Conversion of zeros to non-zero values is dependent on the column of origin.
-     * This should be true, otherwise an advanced operation interface is expected (see `DelayedUnaryAdvancedMockHelper`).
+     * This should be true, otherwise an advanced operation interface is expected (see `DelayedUnaryIsometricMockAdvanced`).
      */
     static constexpr bool zero_depends_on_column = true;
 };
 
 /**
- * @brief Advanced mock operation for `DelayedUnaryIsometricOp`.
+ * @brief Advanced mock operation for `DelayedUnaryIsometricOperation`.
  *
- * This class defines the advanced expectations for an operation in `DelayedUnaryIsometricOp`,
+ * This class defines the advanced expectations for an operation in `DelayedUnaryIsometricOperation`,
  * which improves efficiency by taking advantage of any sparsity in the underlying matrix.
  * Either the operation itself preserves sparsity, or any loss of sparsity is predictable,
  * i.e., zeros are transformed into a constant non-zero value that does not depend on its position in the `Matrix`.
@@ -105,7 +105,7 @@ public:
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
  */
-class DelayedUnaryAdvancedMockHelper {
+class DelayedUnaryIsometricMockAdvanced {
 public:
     /**
      * This method should apply the operation to values in `buffer`.
@@ -227,14 +227,18 @@ public:
     /**
      * Conversion of zeros to non-zero values is not dependent on the row of origin.
      * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_column = false`;
-     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedUnaryBasicMockHelper`).
+     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedUnaryIsometricMockBasic`).
+     *
+     * This value is only used if `is_sparse()` returns false.
      */
     static constexpr bool zero_depends_on_row = false;
 
     /**
      * Conversion of zeros to non-zero values is not dependent on the column of origin.
      * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_row = false`.
-     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedUnaryBasicMockHelper`).
+     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedUnaryIsometricMockBasic`).
+     *
+     * This value is only used if `is_sparse()` returns false.
      */
     static constexpr bool zero_depends_on_column = false;
 

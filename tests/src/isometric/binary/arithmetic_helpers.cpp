@@ -5,14 +5,14 @@
 #include <vector>
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/isometric/binary/DelayedBinaryIsometricOp.hpp"
-#include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
+#include "tatami/isometric/binary/DelayedBinaryIsometricOperation.hpp"
+#include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class BinaryArithUtils {
+class DelayedBinaryIsometricArithmeticUtils {
 protected:
     inline static size_t nrow = 91, ncol = 121;
     inline static std::shared_ptr<tatami::NumericMatrix> dense_left, sparse_left, dense_right, sparse_right;
@@ -62,7 +62,7 @@ protected:
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        BinaryArith, \
+        DelayedBinaryIsometricArithmetic, \
         name, \
         tatami_test::standard_test_access_parameter_combinations() \
     );
@@ -89,7 +89,7 @@ protected:
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        BinaryArith, \
+        DelayedBinaryIsometricArithmetic, \
         name, \
         ::testing::Combine( \
             tatami_test::standard_test_access_parameter_combinations(), \
@@ -123,7 +123,7 @@ protected:
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        BinaryArith, \
+        DelayedBinaryIsometricArithmetic, \
         name, \
         ::testing::Combine( \
             tatami_test::standard_test_access_parameter_combinations(), \
@@ -139,7 +139,7 @@ protected:
  ********* ADDITION *********
  ****************************/
 
-class BinaryArithAdditionUtils : public BinaryArithUtils {
+class DelayedBinaryIsometricAddUtils : public DelayedBinaryIsometricArithmeticUtils {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, sparse_uns, ref;
 
@@ -148,11 +148,11 @@ protected:
             return;
         }
 
-        BinaryArithUtils::assemble();
-        auto op = tatami::make_DelayedBinaryAddHelper();
-        dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOp(
+        DelayedBinaryIsometricArithmeticUtils::assemble();
+        auto op = tatami::make_DelayedBinaryIsometricAdd();
+        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)),
             op
@@ -166,8 +166,8 @@ protected:
     }
 };
 
-BINARY_ARITH_BASIC_SETUP(BinaryArithAdditionTest, BinaryArithAdditionUtils)
-TEST_F(BinaryArithAdditionTest, Basic) {
+BINARY_ARITH_BASIC_SETUP(DelayedBinaryIsometricAddTest, DelayedBinaryIsometricAddUtils)
+TEST_F(DelayedBinaryIsometricAddTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense_mod->is_sparse_proportion(), 0);
     EXPECT_TRUE(sparse_mod->is_sparse());
@@ -180,21 +180,21 @@ TEST_F(BinaryArithAdditionTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
     EXPECT_EQ(sparse_mod->prefer_rows_proportion(), 0);
 
-    auto mixed_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, dense_right, tatami::make_DelayedBinaryAddHelper());
+    auto mixed_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, dense_right, tatami::make_DelayedBinaryIsometricAdd());
     EXPECT_FALSE(mixed_mod->is_sparse());
     EXPECT_EQ(mixed_mod->prefer_rows_proportion(), 0.5);
     EXPECT_EQ(mixed_mod->is_sparse_proportion(), 0.5);
 }
 
-BINARY_ARITH_FULL_TEST(BinaryArithAdditionFullTest, BinaryArithAdditionUtils)
-BINARY_ARITH_BLOCK_TEST(BinaryArithAdditionBlockTest, BinaryArithAdditionUtils)
-BINARY_ARITH_INDEX_TEST(BinaryArithAdditionIndexTest, BinaryArithAdditionUtils)
+BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricAddFullTest, DelayedBinaryIsometricAddUtils)
+BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricAddBlockTest, DelayedBinaryIsometricAddUtils)
+BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricAddIndexTest, DelayedBinaryIsometricAddUtils)
 
 /*******************************
  ********* SUBTRACTION *********
  *******************************/
 
-class BinaryArithSubtractionUtils : public BinaryArithUtils {
+class DelayedBinaryIsometricSubtractUtils : public DelayedBinaryIsometricArithmeticUtils {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, sparse_uns, ref;
 
@@ -203,11 +203,11 @@ protected:
             return;
         }
 
-        BinaryArithUtils::assemble();
-        auto op = tatami::make_DelayedBinarySubtractHelper();
-        dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOp(
+        DelayedBinaryIsometricArithmeticUtils::assemble();
+        auto op = tatami::make_DelayedBinaryIsometricSubtract();
+        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
             op
@@ -221,24 +221,24 @@ protected:
     }
 };
 
-BINARY_ARITH_BASIC_SETUP(BinaryArithSubtractionTest, BinaryArithSubtractionUtils)
-TEST_F(BinaryArithSubtractionTest, Basic) {
+BINARY_ARITH_BASIC_SETUP(DelayedBinaryIsometricSubtractTest, DelayedBinaryIsometricSubtractUtils)
+TEST_F(DelayedBinaryIsometricSubtractTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
 
-    auto mixed_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, dense_right, tatami::make_DelayedBinarySubtractHelper());
+    auto mixed_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, dense_right, tatami::make_DelayedBinaryIsometricSubtract());
     EXPECT_FALSE(mixed_mod->is_sparse());
 }
 
-BINARY_ARITH_FULL_TEST(BinaryArithSubtractionFullTest, BinaryArithSubtractionUtils)
-BINARY_ARITH_BLOCK_TEST(BinaryArithSubtractionBlockTest, BinaryArithSubtractionUtils)
-BINARY_ARITH_INDEX_TEST(BinaryArithSubtractionIndexTest, BinaryArithSubtractionUtils)
+BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricSubtractFullTest, DelayedBinaryIsometricSubtractUtils)
+BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricSubtractBlockTest, DelayedBinaryIsometricSubtractUtils)
+BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricSubtractIndexTest, DelayedBinaryIsometricSubtractUtils)
 
 /**********************************
  ********* MULTIPLICATION *********
  **********************************/
 
-class BinaryArithMultiplicationUtils : public BinaryArithUtils {
+class DelayedBinaryIsometricMultiplyUtils : public DelayedBinaryIsometricArithmeticUtils {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, sparse_uns, ref;
 
@@ -247,12 +247,12 @@ protected:
             return;
         }
 
-        BinaryArithUtils::assemble();
+        DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        auto op = tatami::make_DelayedBinaryMultiplyHelper();
-        dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOp(
+        auto op = tatami::make_DelayedBinaryIsometricMultiply();
+        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
             op
@@ -266,15 +266,15 @@ protected:
     }
 };
 
-BINARY_ARITH_BASIC_SETUP(BinaryArithMultiplicationTest, BinaryArithMultiplicationUtils)
-TEST_F(BinaryArithMultiplicationTest, Basic) {
+BINARY_ARITH_BASIC_SETUP(DelayedBinaryIsometricMultiplyTest, DelayedBinaryIsometricMultiplyUtils)
+TEST_F(DelayedBinaryIsometricMultiplyTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
 }
 
-BINARY_ARITH_FULL_TEST(BinaryArithMultiplicationFullTest, BinaryArithMultiplicationUtils)
-BINARY_ARITH_BLOCK_TEST(BinaryArithMultiplicationBlockTest, BinaryArithMultiplicationUtils)
-BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplicationUtils)
+BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricMultiplyFullTest, DelayedBinaryIsometricMultiplyUtils)
+BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricMultiplyBlockTest, DelayedBinaryIsometricMultiplyUtils)
+BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricMultiplyIndexTest, DelayedBinaryIsometricMultiplyUtils)
 
 /****************************
  ********* DIVISION *********
@@ -299,7 +299,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        BinaryArith, \
+        DelayedBinaryIsometricArithmetic, \
         name, \
         tatami_test::standard_test_access_parameter_combinations() \
     );
@@ -327,7 +327,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        BinaryArith, \
+        DelayedBinaryIsometricArithmetic, \
         name, \
         ::testing::Combine( \
             tatami_test::standard_test_access_parameter_combinations(), \
@@ -362,7 +362,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
-        BinaryArith, \
+        DelayedBinaryIsometricArithmetic, \
         name, \
         ::testing::Combine( \
             tatami_test::standard_test_access_parameter_combinations(), \
@@ -375,7 +375,7 @@ BINARY_ARITH_INDEX_TEST(BinaryArithMultiplicationIndexTest, BinaryArithMultiplic
     );
 
 
-class BinaryArithDivisionUtils : public BinaryArithUtils {
+class DelayedBinaryIsometricDivideUtils : public DelayedBinaryIsometricArithmeticUtils {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, sparse_uns, ref;
 
@@ -384,12 +384,12 @@ protected:
             return;
         }
 
-        BinaryArithUtils::assemble();
+        DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        auto op = tatami::make_DelayedBinaryDivideHelper();
-        dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOp(
+        auto op = tatami::make_DelayedBinaryIsometricDivide();
+        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
             op
@@ -403,23 +403,23 @@ protected:
     }
 };
 
-BINARY_ARITH_BASIC_SETUP(BinaryArithDivisionTest, BinaryArithDivisionUtils)
-TEST_F(BinaryArithDivisionTest, Basic) {
+BINARY_ARITH_BASIC_SETUP(DelayedBinaryIsometricDivideTest, DelayedBinaryIsometricDivideUtils)
+TEST_F(DelayedBinaryIsometricDivideTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-BINARY_ARITH_FULL_TEST_WITH_NAN(BinaryArithDivisionFullTest, BinaryArithDivisionUtils)
-BINARY_ARITH_BLOCK_TEST_WITH_NAN(BinaryArithDivisionBlockTest, BinaryArithDivisionUtils)
-BINARY_ARITH_INDEX_TEST_WITH_NAN(BinaryArithDivisionIndexTest, BinaryArithDivisionUtils)
+BINARY_ARITH_FULL_TEST_WITH_NAN(DelayedBinaryIsometricDivideFullTest, DelayedBinaryIsometricDivideUtils)
+BINARY_ARITH_BLOCK_TEST_WITH_NAN(DelayedBinaryIsometricDivideBlockTest, DelayedBinaryIsometricDivideUtils)
+BINARY_ARITH_INDEX_TEST_WITH_NAN(DelayedBinaryIsometricDivideIndexTest, DelayedBinaryIsometricDivideUtils)
 
 /*******************************
  ************ POWER ************
  *******************************/
 
-class BinaryArithPowerUtils : public BinaryArithUtils {
+class DelayedBinaryIsometricPowerUtils : public DelayedBinaryIsometricArithmeticUtils {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, sparse_uns, ref;
 
@@ -428,18 +428,18 @@ protected:
             return;
         }
 
-        BinaryArithUtils::assemble();
+        DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        tatami::DelayedAbsHelper op0;
-        auto dense_left0 = tatami::make_DelayedUnaryIsometricOp(dense_left, op0);
-        auto sparse_left0 = tatami::make_DelayedUnaryIsometricOp(sparse_left, op0);
-        auto dense_right0 = tatami::make_DelayedUnaryIsometricOp(dense_right, op0);
-        auto sparse_right0 = tatami::make_DelayedUnaryIsometricOp(sparse_right, op0);
+        tatami::DelayedUnaryIsometricAbs op0;
+        auto dense_left0 = tatami::make_DelayedUnaryIsometricOperation(dense_left, op0);
+        auto sparse_left0 = tatami::make_DelayedUnaryIsometricOperation(sparse_left, op0);
+        auto dense_right0 = tatami::make_DelayedUnaryIsometricOperation(dense_right, op0);
+        auto sparse_right0 = tatami::make_DelayedUnaryIsometricOperation(sparse_right, op0);
 
-        auto op = tatami::make_DelayedBinaryPowerHelper();
-        dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left0, dense_right0, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left0, sparse_right0, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOp(
+        auto op = tatami::make_DelayedBinaryIsometricPower();
+        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left0, dense_right0, op);
+        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left0, sparse_right0, op);
+        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left0)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right0)), 
             op
@@ -453,21 +453,21 @@ protected:
     }
 };
 
-BINARY_ARITH_BASIC_SETUP(BinaryArithPowerTest, BinaryArithPowerUtils)
-TEST_F(BinaryArithPowerTest, Basic) {
+BINARY_ARITH_BASIC_SETUP(DelayedBinaryIsometricPowerTest, DelayedBinaryIsometricPowerUtils)
+TEST_F(DelayedBinaryIsometricPowerTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
 }
 
-BINARY_ARITH_FULL_TEST(BinaryArithPowerFullTest, BinaryArithPowerUtils)
-BINARY_ARITH_BLOCK_TEST(BinaryArithPowerBlockTest, BinaryArithPowerUtils)
-BINARY_ARITH_INDEX_TEST(BinaryArithPowerIndexTest, BinaryArithPowerUtils)
+BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricPowerFullTest, DelayedBinaryIsometricPowerUtils)
+BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricPowerBlockTest, DelayedBinaryIsometricPowerUtils)
+BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricPowerIndexTest, DelayedBinaryIsometricPowerUtils)
 
 /****************************
  ********** MODULO **********
  ****************************/
 
-class BinaryArithModuloUtils : public BinaryArithUtils {
+class DelayedBinaryIsometricModuloUtils : public DelayedBinaryIsometricArithmeticUtils {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, sparse_uns, ref;
 
@@ -476,12 +476,12 @@ protected:
             return;
         }
 
-        BinaryArithUtils::assemble();
+        DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        auto op = tatami::make_DelayedBinaryModuloHelper();
-        dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOp(
+        auto op = tatami::make_DelayedBinaryIsometricModulo();
+        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
             op
@@ -495,23 +495,23 @@ protected:
     }
 };
 
-BINARY_ARITH_BASIC_SETUP(BinaryArithModuloTest, BinaryArithModuloUtils)
-TEST_F(BinaryArithModuloTest, Basic) {
+BINARY_ARITH_BASIC_SETUP(DelayedBinaryIsometricModuloTest, DelayedBinaryIsometricModuloUtils)
+TEST_F(DelayedBinaryIsometricModuloTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-BINARY_ARITH_FULL_TEST_WITH_NAN(BinaryArithModuloFullTest, BinaryArithModuloUtils)
-BINARY_ARITH_BLOCK_TEST_WITH_NAN(BinaryArithModuloBlockTest, BinaryArithModuloUtils)
-BINARY_ARITH_INDEX_TEST_WITH_NAN(BinaryArithModuloIndexTest, BinaryArithModuloUtils)
+BINARY_ARITH_FULL_TEST_WITH_NAN(DelayedBinaryIsometricModuloFullTest, DelayedBinaryIsometricModuloUtils)
+BINARY_ARITH_BLOCK_TEST_WITH_NAN(DelayedBinaryIsometricModuloBlockTest, DelayedBinaryIsometricModuloUtils)
+BINARY_ARITH_INDEX_TEST_WITH_NAN(DelayedBinaryIsometricModuloIndexTest, DelayedBinaryIsometricModuloUtils)
 
 /****************************
  ***** INTEGER DIVISION *****
  ****************************/
 
-class BinaryArithIntegerDivisionUtils : public BinaryArithUtils {
+class DelayedBinaryIsometricIntegerDivideUtils : public DelayedBinaryIsometricArithmeticUtils {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, sparse_uns, ref;
 
@@ -520,12 +520,12 @@ protected:
             return;
         }
 
-        BinaryArithUtils::assemble();
+        DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        auto op = tatami::make_DelayedBinaryIntegerDivideHelper();
-        dense_mod = tatami::make_DelayedBinaryIsometricOp(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOp(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOp(
+        auto op = tatami::make_DelayedBinaryIsometricIntegerDivide();
+        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
+        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
             op
@@ -540,14 +540,14 @@ protected:
     }
 };
 
-BINARY_ARITH_BASIC_SETUP(BinaryArithIntegerDivisionTest, BinaryArithIntegerDivisionUtils)
-TEST_F(BinaryArithIntegerDivisionTest, Basic) {
+BINARY_ARITH_BASIC_SETUP(DelayedBinaryIsometricIntegerDivideTest, DelayedBinaryIsometricIntegerDivideUtils)
+TEST_F(DelayedBinaryIsometricIntegerDivideTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_FALSE(sparse_mod->is_sparse());
     EXPECT_TRUE(dense_mod->prefer_rows());
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-BINARY_ARITH_FULL_TEST_WITH_NAN(BinaryArithIntegerDivisionFullTest, BinaryArithIntegerDivisionUtils)
-BINARY_ARITH_BLOCK_TEST_WITH_NAN(BinaryArithIntegerDivisionBlockTest, BinaryArithIntegerDivisionUtils)
-BINARY_ARITH_INDEX_TEST_WITH_NAN(BinaryArithIntegerDivisionIndexTest, BinaryArithIntegerDivisionUtils)
+BINARY_ARITH_FULL_TEST_WITH_NAN(DelayedBinaryIsometricIntegerDivideFullTest, DelayedBinaryIsometricIntegerDivideUtils)
+BINARY_ARITH_BLOCK_TEST_WITH_NAN(DelayedBinaryIsometricIntegerDivideBlockTest, DelayedBinaryIsometricIntegerDivideUtils)
+BINARY_ARITH_INDEX_TEST_WITH_NAN(DelayedBinaryIsometricIntegerDivideIndexTest, DelayedBinaryIsometricIntegerDivideUtils)

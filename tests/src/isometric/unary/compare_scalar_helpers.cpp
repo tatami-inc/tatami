@@ -5,13 +5,13 @@
 #include <tuple>
 
 #include "tatami/dense/DenseMatrix.hpp"
-#include "tatami/isometric/unary/DelayedUnaryIsometricOp.hpp"
+#include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-class CompareScalarTest : public ::testing::TestWithParam<int> {
+class DelayedUnaryIsometricCompareScalarTest : public ::testing::TestWithParam<int> {
 protected:
     inline static size_t nrow = 123, ncol = 89;
     inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse;
@@ -34,12 +34,12 @@ protected:
     }
 };
 
-TEST_P(CompareScalarTest, Equal) {
+TEST_P(DelayedUnaryIsometricCompareScalarTest, Equal) {
     double val = GetParam();
-    auto op = tatami::make_DelayedEqualScalarHelper(val);
+    auto op = tatami::make_DelayedUnaryIsometricEqualScalar(val);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -64,12 +64,12 @@ TEST_P(CompareScalarTest, Equal) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(CompareScalarTest, GreaterThan) {
+TEST_P(DelayedUnaryIsometricCompareScalarTest, GreaterThan) {
     double val = GetParam();
-    auto op = tatami::make_DelayedGreaterThanScalarHelper(val);
+    auto op = tatami::make_DelayedUnaryIsometricGreaterThanScalar(val);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -94,12 +94,12 @@ TEST_P(CompareScalarTest, GreaterThan) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(CompareScalarTest, LessThan) {
+TEST_P(DelayedUnaryIsometricCompareScalarTest, LessThan) {
     double val = GetParam();
-    auto op = tatami::make_DelayedLessThanScalarHelper(val);
+    auto op = tatami::make_DelayedUnaryIsometricLessThanScalar(val);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -124,12 +124,12 @@ TEST_P(CompareScalarTest, LessThan) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(CompareScalarTest, GreaterThanOrEqual) {
+TEST_P(DelayedUnaryIsometricCompareScalarTest, GreaterThanOrEqual) {
     double val = GetParam();
-    auto op = tatami::make_DelayedGreaterThanOrEqualScalarHelper(val);
+    auto op = tatami::make_DelayedUnaryIsometricGreaterThanOrEqualScalar(val);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -154,12 +154,12 @@ TEST_P(CompareScalarTest, GreaterThanOrEqual) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(CompareScalarTest, LessThanOrEqual) {
+TEST_P(DelayedUnaryIsometricCompareScalarTest, LessThanOrEqual) {
     double val = GetParam();
-    auto op = tatami::make_DelayedLessThanOrEqualScalarHelper(val);
+    auto op = tatami::make_DelayedUnaryIsometricLessThanOrEqualScalar(val);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -184,12 +184,12 @@ TEST_P(CompareScalarTest, LessThanOrEqual) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
-TEST_P(CompareScalarTest, NotEqual) {
+TEST_P(DelayedUnaryIsometricCompareScalarTest, NotEqual) {
     double val = GetParam();
-    auto op = tatami::make_DelayedNotEqualScalarHelper(val);
+    auto op = tatami::make_DelayedUnaryIsometricNotEqualScalar(val);
 
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOp(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOp(sparse, op);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), nrow);
@@ -215,7 +215,7 @@ TEST_P(CompareScalarTest, NotEqual) {
 }
 
 INSTANTIATE_TEST_SUITE_P(
-    CompareScalar,
-    CompareScalarTest,
+    DelayedUnaryIsometricCompareScalar,
+    DelayedUnaryIsometricCompareScalarTest,
     ::testing::Values(0, -1, 1)
 );
