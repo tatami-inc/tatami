@@ -9,7 +9,7 @@
 #include <numeric>
 
 template<typename T, typename O>
-void check_getters(typename tatami::SomeNumericArray<O>::Type t) {
+void check_getters(typename tatami::SomeNumericType t) {
     std::vector<T> stuff(100);
     std::iota(stuff.begin(), stuff.end(), 0);
 
@@ -81,29 +81,29 @@ void check_getters(typename tatami::SomeNumericArray<O>::Type t) {
 }
 
 TEST(SomeNumericArray, Integer) {
-    check_getters<uint8_t, int>(tatami::SomeNumericArray<int>::U8);
-    check_getters<int8_t, int>(tatami::SomeNumericArray<int>::I8);
-    check_getters<uint16_t, int>(tatami::SomeNumericArray<int>::U16);
-    check_getters<int16_t, int>(tatami::SomeNumericArray<int>::I16);
-    check_getters<uint32_t, int>(tatami::SomeNumericArray<int>::U32);
-    check_getters<int32_t, int>(tatami::SomeNumericArray<int>::I32);
-    check_getters<uint64_t, int>(tatami::SomeNumericArray<int>::U64);
-    check_getters<int64_t, int>(tatami::SomeNumericArray<int>::I64);
-    check_getters<float, int>(tatami::SomeNumericArray<int>::F32);
-    check_getters<double, int>(tatami::SomeNumericArray<int>::F64);
+    check_getters<uint8_t, int>(tatami::SomeNumericType::U8);
+    check_getters<int8_t, int>(tatami::SomeNumericType::I8);
+    check_getters<uint16_t, int>(tatami::SomeNumericType::U16);
+    check_getters<int16_t, int>(tatami::SomeNumericType::I16);
+    check_getters<uint32_t, int>(tatami::SomeNumericType::U32);
+    check_getters<int32_t, int>(tatami::SomeNumericType::I32);
+    check_getters<uint64_t, int>(tatami::SomeNumericType::U64);
+    check_getters<int64_t, int>(tatami::SomeNumericType::I64);
+    check_getters<float, int>(tatami::SomeNumericType::F32);
+    check_getters<double, int>(tatami::SomeNumericType::F64);
 }
 
 TEST(SomeNumericArray, Double) {
-    check_getters<uint8_t, double>(tatami::SomeNumericArray<double>::U8);
-    check_getters<int8_t, double>(tatami::SomeNumericArray<double>::I8);
-    check_getters<uint16_t, double>(tatami::SomeNumericArray<double>::U16);
-    check_getters<int16_t, double>(tatami::SomeNumericArray<double>::I16);
-    check_getters<uint32_t, double>(tatami::SomeNumericArray<double>::U32);
-    check_getters<int32_t, double>(tatami::SomeNumericArray<double>::I32);
-    check_getters<uint64_t, double>(tatami::SomeNumericArray<double>::U64);
-    check_getters<int64_t, double>(tatami::SomeNumericArray<double>::I64);
-    check_getters<float, double>(tatami::SomeNumericArray<double>::F32);
-    check_getters<double, double>(tatami::SomeNumericArray<double>::F64);
+    check_getters<uint8_t, double>(tatami::SomeNumericType::U8);
+    check_getters<int8_t, double>(tatami::SomeNumericType::I8);
+    check_getters<uint16_t, double>(tatami::SomeNumericType::U16);
+    check_getters<int16_t, double>(tatami::SomeNumericType::I16);
+    check_getters<uint32_t, double>(tatami::SomeNumericType::U32);
+    check_getters<int32_t, double>(tatami::SomeNumericType::I32);
+    check_getters<uint64_t, double>(tatami::SomeNumericType::U64);
+    check_getters<int64_t, double>(tatami::SomeNumericType::I64);
+    check_getters<float, double>(tatami::SomeNumericType::F32);
+    check_getters<double, double>(tatami::SomeNumericType::F64);
 }
 
 TEST(SomeNumericArray, DenseMatrix) {

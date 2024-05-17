@@ -14,35 +14,35 @@
 namespace tatami {
 
 /**
+ * Types supported in `SomeNumericArray`.
+ * The letters indicate whether it is an integer (I), unsigned integer (U) or a float,
+ * while the numbers specify the number of bits for the type.
+ * So, for example, `U16` is an unsigned 16-bit integer, while `F64` is a `double`.
+ */
+enum SomeNumericType { I8, U8, I16, U16, I32, U32, I64, U64, F32, F64 };
+
+/**
  * @brief Array of some numeric type, determined at runtime.
  *
  * This holds a pointer to an existing array of some numeric type,
- * mimicking the behavior of `std::vector<T>` for **tatami** use cases. 
+ * mimicking the behavior of `std::vector<Value_>` for **tatami** use cases. 
  * The aim is to support inputs of variable types without multiple template specializations,
  * especially in cases where there are combinations of such arrays (e.g., `CompressedSparseMatrix`).
  * Of course, this comes with a mild performance penalty as the type must be checked upon extracting any value.
  *
- * @tparam T Type to return when values are extracted.
+ * @tparam Value_ Type to return when values are extracted.
  * This is allowed to differ from the internal storage type. 
  */
-template<typename T = double>
+template<typename Value_ = double>
 class SomeNumericArray {
 public:
     /**
-     * Types supported in `SomeNumericArray`.
-     * The letters indicate whether it is an integer (I), unsigned integer (U) or a float,
-     * while the numbers specify the number of bits for the type.
-     * So, for example, `U16` is an unsigned 16-bit integer, while `F64` is a `double`.
-     */
-    enum Type { I8, U8, I16, U16, I32, U32, I64, U64, F32, F64 };
-
-    /**
-     * @param[in] ptr Pointer to the array of interest, of run-time type specified by `t`.
+     * @param[in] ptr Pointer to the array of interest, of run-time type specified by `type`.
      * The lifetime of the array should exceed that of the constructed `SomeNumericArray` and any of its copies.
      * @param number Length of the array pointed to by `ptr`.
      * @param type Type of the array. 
      */
-    SomeNumericArray(void* ptr, size_t number, Type type) : my_number(number), my_type(type) {
+    SomeNumericArray(void* ptr, size_t number, SomeNumericType type) : my_number(number), my_type(type) {
         switch(my_type) {
             case I8:
                 my_i8 = static_cast<const int8_t*>(ptr);
@@ -150,14 +150,14 @@ private:
     const double* my_f64 = NULL;
 
     size_t my_number;
-    Type my_type;
+    SomeNumericType my_type;
 
 public:
     /**
      * @param i Positional index on the array.
-     * @return Value of the `i`-th element as a `T`.
+     * @return Value of the `i`-th element as a `Value_`.
      */
-    T operator[](size_t i) const {
+    Value_ operator[](size_t i) const {
         switch (my_type) {
             case I8:
                 return my_i8[i];
@@ -227,17 +227,17 @@ public:
         /**
          * Value type.
          */
-        using value_type = T;
+        using value_type = Value_;
 
         /**
          * Pointer type, note the `const`.
          */
-        using pointer = const T*;  
+        using pointer = const Value_*;  
 
         /**
          * Reference type, note the `const`.
          */
-        using reference = const T&; 
+        using reference = const Value_&; 
 
     private:
         const SomeNumericArray* my_parent;
