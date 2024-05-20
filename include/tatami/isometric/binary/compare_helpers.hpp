@@ -30,9 +30,7 @@ public:
                                           op_ != CompareOperation::GREATER_THAN_OR_EQUAL && 
                                           op_ != CompareOperation::LESS_THAN_OR_EQUAL);
 
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
     /**
      * @endcond
      */
@@ -76,7 +74,7 @@ public:
     }
 
     template<typename Value_, typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         if constexpr(known_sparse) {
             return 0;
         } else {

@@ -58,16 +58,9 @@ TEST_P(DelayedUnaryIsometricCompareVectorTest, Equal) {
         fill_default_vector(vec);
     }
 
-    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricEqualVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricEqualVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricEqualVector(vec, row);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -110,16 +103,9 @@ TEST_P(DelayedUnaryIsometricCompareVectorTest, GreaterThan) {
         fill_default_vector(vec);
     }
 
-    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricGreaterThanVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricGreaterThanVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricGreaterThanVector(vec, row);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -163,15 +149,9 @@ TEST_P(DelayedUnaryIsometricCompareVectorTest, LessThan) {
     }
 
     std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricLessThanVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricLessThanVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricLessThanVector(vec, row);
+    dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
+    sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -214,16 +194,9 @@ TEST_P(DelayedUnaryIsometricCompareVectorTest, GreaterThanOrEqual) {
         fill_default_vector(vec);
     }
 
-    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricGreaterThanOrEqualVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricGreaterThanOrEqualVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricGreaterThanOrEqualVector(vec, row);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -266,16 +239,9 @@ TEST_P(DelayedUnaryIsometricCompareVectorTest, LessThanOrEqual) {
         fill_default_vector(vec);
     }
 
-    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricLessThanOrEqualVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricLessThanOrEqualVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricLessThanOrEqualVector(vec, row);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -312,16 +278,9 @@ TEST_P(DelayedUnaryIsometricCompareVectorTest, NotEqual) {
         fill_default_vector(vec);
     }
 
-    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricNotEqualVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricNotEqualVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricNotEqualVector(vec, row);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(this->dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(this->sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());

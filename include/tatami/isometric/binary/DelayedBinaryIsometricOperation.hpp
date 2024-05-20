@@ -23,18 +23,72 @@ namespace tatami {
  */
 namespace DelayedBinaryIsometricOperation_internal {
 
-template<class Operation_, bool oracle_, typename Index_>
+// Some SFINAE shenanigans for checking if zero->non-zero conversion depends on the row ID of the zero value.
+template<class Operation_, typename = int>
+struct has_zero_to_non_zero_depends_on_row {
+    static constexpr bool value = false;
+};
+
+template<class Operation_>
+struct has_zero_to_non_zero_depends_on_row<Operation_, decltype((void) std::declval<Operation_>().zero_to_non_zero_depends_on_row(), 0)> {
+    static constexpr bool value = true;
+};
+
+template<class Operation_>
+bool zero_to_non_zero_depends_on_row(const Operation_& op) {
+    if constexpr(!has_zero_to_non_zero_depends_on_row<Operation_>::value) {
+        return false;
+    } else {
+        return op.zero_to_non_zero_depends_on_row();
+    }
+}
+
+// Some SFINAE shenanigans for checking if zero->non-zero conversion depends on the column ID of the zero value.
+template<class Operation_, typename = int>
+struct has_zero_to_non_zero_depends_on_column {
+    static constexpr bool value = false;
+};
+
+template<class Operation_>
+struct has_zero_to_non_zero_depends_on_column<Operation_, decltype((void) std::declval<Operation_>().zero_to_non_zero_depends_on_column(), 0)> {
+    static constexpr bool value = true;
+};
+
+template<class Operation_>
+bool zero_to_non_zero_depends_on_column(const Operation_& op) {
+    if constexpr(!has_zero_to_non_zero_depends_on_column<Operation_>::value) {
+        return false;
+    } else {
+        return op.zero_to_non_zero_depends_on_column();
+    }
+}
+
+template<bool oracle_, class Operation_, typename Index_>
 class MaybeOracleDepends {
 public:
-    MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& oracle, bool row) {
-        if ((row  && Operation_::zero_depends_on_row) || (!row && Operation_::zero_depends_on_column)) {
-            my_oracle = oracle;
+    MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& oracle, const Operation_& op, bool row) {
+        if constexpr(oracle_) {
+            if constexpr(Operation_::is_basic) {
+                my_oracle = oracle;
+            } else if (
+                // Figuring out whether we need to get the index of the target
+                // dimension when processing each element of that dimension.
+                ( row && zero_to_non_zero_depends_on_row(op)) || 
+                (!row && zero_to_non_zero_depends_on_column(op))) 
+            {
+                my_oracle = oracle;
+            }
         }
     }
 
     Index_ get(Index_ i) {
         if constexpr(oracle_) {
-            if constexpr(Operation_::zero_depends_on_row || Operation_::zero_depends_on_column) {
+            if constexpr(Operation_::is_basic) {
+                return my_oracle->get(my_used++);
+            } else if constexpr(
+                has_zero_to_non_zero_depends_on_row<Operation_>::value || 
+                has_zero_to_non_zero_depends_on_column<Operation_>::value) 
+            {
                 if (my_oracle) {
                     return my_oracle->get(my_used++);
                 }
@@ -64,7 +118,7 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row)
+        my_oracle(oracle, my_operation, row)
     {
         my_left_ext = new_extractor<false, oracle_>(left, my_row, oracle, opt);
         my_right_ext = new_extractor<false, oracle_>(right, my_row, std::move(oracle), opt);
@@ -83,7 +137,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
     Index_ my_extent;
@@ -104,7 +158,7 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_block_start(block_start),
         my_block_length(block_length)
     {
@@ -124,7 +178,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     Index_ my_block_start, my_block_length;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
@@ -144,7 +198,7 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_indices_ptr(std::move(indices_ptr))
     {
         my_left_ext = new_extractor<false, oracle_>(left, my_row, oracle, my_indices_ptr, opt);
@@ -163,7 +217,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     VectorPtr<Index_> my_indices_ptr;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
@@ -186,7 +240,7 @@ public:
         Options opt) :
         my_operation(op),
         my_row(row),
-        my_oracle(oracle, row)
+        my_oracle(oracle, my_operation, row)
     {
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
@@ -210,9 +264,10 @@ public:
         i = my_oracle.get(i);
         auto num = my_operation.sparse(my_row, i, lres, rres, my_output_vbuffer.data(), my_output_ibuffer.data(), true, true);
 
-        // Avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
+        // Avoid calling my_operation.fill() if possible, as this might throw
+        // zero-related errors in non-IEEE platforms.
         if (num < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(i));
+            std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(my_row, i));
         }
 
         for (Index_ j = 0; j < num; ++j) {
@@ -224,7 +279,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
     Index_ my_extent;
@@ -246,7 +301,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_block_start(block_start),
         my_block_length(block_length)
     {
@@ -271,9 +326,10 @@ public:
         i = my_oracle.get(i);
         auto num = my_operation.sparse(my_row, i, lres, rres, my_output_vbuffer.data(), my_output_ibuffer.data(), true, true);
 
-        // Avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
+        // Avoid calling my_operation.fill() if possible, as this might throw
+        // zero-related errors in non-IEEE platforms.
         if (num < my_block_length) { 
-            std::fill_n(buffer, my_block_length, my_operation.template fill<Value_>(i));
+            std::fill_n(buffer, my_block_length, my_operation.template fill<Value_>(my_row, i));
         }
 
         for (Index_ j = 0; j < num; ++j) {
@@ -285,7 +341,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     Index_ my_block_start, my_block_length;
 
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
@@ -306,7 +362,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_extent(indices_ptr->size())
     {
         // Create a remapping vector to map the extracted indices back to the
@@ -342,9 +398,10 @@ public:
         i = my_oracle.get(i);
         auto num = my_operation.sparse(my_row, i, lres, rres, my_output_vbuffer.data(), my_output_ibuffer.data(), true, true);
 
-        // Avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
+        // Avoid calling my_operation.fill() if possible, as this might throw
+        // zero-related errors in non-IEEE platforms.
         if (num < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(i));
+            std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(my_row, i));
         }
 
         for (Index_ j = 0; j < num; ++j) {
@@ -356,7 +413,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     Index_ my_extent;
 
     std::vector<Index_> my_remapping;
@@ -383,7 +440,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row)
+        my_oracle(oracle, my_operation, row)
     {
         initialize(my_row ? left->ncol() : left->nrow(), opt);
         my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, opt);
@@ -401,7 +458,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row)
+        my_oracle(oracle, my_operation, row)
     {
         initialize(block_length, opt);
         my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, block_start, block_length, opt);
@@ -418,7 +475,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row)
+        my_oracle(oracle, my_operation, row)
     {
         initialize(indices_ptr->size(), opt); // do this before the move.
         my_left_ext = new_extractor<true, oracle_>(left, my_row, oracle, indices_ptr, opt);
@@ -466,7 +523,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
     std::vector<Value_> my_left_vbuffer, my_right_vbuffer;
@@ -513,7 +570,7 @@ public:
 
         my_prefer_rows_proportion = (my_left->prefer_rows_proportion() + my_right->prefer_rows_proportion()) / 2;
 
-        if constexpr(is_advanced) {
+        if constexpr(!Operation_::is_basic) {
             if (my_operation.is_sparse()) {
                 my_is_sparse = my_left->is_sparse() && my_right->is_sparse();
 
@@ -530,8 +587,6 @@ private:
     double my_prefer_rows_proportion;
     double my_is_sparse_proportion = 0;
     bool my_is_sparse = false;
-
-    static constexpr bool is_advanced = (!Operation_::zero_depends_on_row || !Operation_::zero_depends_on_column);
 
 public:
     Index_ nrow() const {
@@ -650,11 +705,19 @@ private:
 
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, Args_&& ... args) const {
-        if constexpr(is_advanced) {
+        if constexpr(!Operation_::is_basic) {
             if (my_left->is_sparse() && my_right->is_sparse()) {
-                // If we don't depend on the rows, then we don't need row indices when 'row = false'.
-                // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.
-                if ((!Operation_::zero_depends_on_row && !row) || (!Operation_::zero_depends_on_column && row)) {
+                if (
+                    // If zero processing doesn't depend on the row identity,
+                    // then during column extraction, we can use a constant
+                    // value to fill in the zero values across rows. 
+                    (!row && !DelayedBinaryIsometricOperation_internal::zero_to_non_zero_depends_on_row(my_operation)) || 
+
+                    // Conversely, if zero processing doesn't depend on
+                    // columns, then during row extraction, we can fill in the
+                    // zero values across columns with a constant value.
+                    ( row && !DelayedBinaryIsometricOperation_internal::zero_to_non_zero_depends_on_column(my_operation))) 
+                {
                     return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
                 }
             }
@@ -682,7 +745,7 @@ public:
 private:
     template<bool oracle_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
-        if constexpr(is_advanced) {
+        if constexpr(!Operation_::is_basic) {
             if (my_is_sparse) {
                 return std::make_unique<DelayedBinaryIsometricOperation_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
                     my_left.get(),
@@ -704,7 +767,7 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        if constexpr(is_advanced) {
+        if constexpr(!Operation_::is_basic) {
             if (my_is_sparse) {
                 return std::make_unique<DelayedBinaryIsometricOperation_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
                     my_left.get(),
@@ -729,7 +792,7 @@ private:
 
     template<bool oracle_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        if constexpr(is_advanced) {
+        if constexpr(!Operation_::is_basic) {
             if (my_is_sparse) {
                 return std::make_unique<DelayedBinaryIsometricOperation_internal::Sparse<oracle_, Value_, Index_, Operation_> >(
                     my_left.get(),

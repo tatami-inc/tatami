@@ -17,7 +17,7 @@ TEST(DelayedUnaryIsometricOperation, ConstOverload) {
     auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
 
     auto vec = std::vector<double>(nrow);
-    auto op = tatami::make_DelayedUnaryIsometricAddVector<0>(vec);
+    auto op = tatami::make_DelayedUnaryIsometricAddVector(vec, true);
     auto mat = tatami::make_DelayedUnaryIsometricOperation(dense, std::move(op));
 
     // cursory checks.

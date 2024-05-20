@@ -24,13 +24,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -89,13 +83,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -167,13 +155,7 @@ public:
     /**
      * @cond
      */
-    static const bool zero_depends_on_row = false;
-
-    static const bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -234,13 +216,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -298,13 +274,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -362,13 +332,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -426,13 +390,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -502,13 +460,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -568,13 +520,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -632,13 +578,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -696,13 +636,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -760,13 +694,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -825,13 +753,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -890,13 +812,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -954,13 +870,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1018,13 +928,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1082,13 +986,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1146,13 +1044,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -1210,13 +1102,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -1274,13 +1160,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1338,13 +1218,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1402,13 +1276,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1466,13 +1334,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1530,13 +1392,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -1595,13 +1451,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;

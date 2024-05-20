@@ -33,6 +33,61 @@ TEST(DelayedBinaryIsometricOperation, Misshappen) {
     }, "should be the same");
 }
 
+struct BinaryMockMissing {
+    static constexpr bool is_basic = false;
+};
+
+struct BinaryMockDerived : public tatami::DelayedBinaryIsometricMockAdvanced {
+    static constexpr bool is_basic = false;
+    bool zero_to_non_zero_depends_on_row() const { return true; }
+    bool zero_to_non_zero_depends_on_column() const { return true; }
+};
+
+TEST(DelayedBinaryIsometricOperation, AdvancedSfinae) {
+    auto optr = std::make_shared<const tatami::ConsecutiveOracle<int> >(10, 20);
+
+    {
+        EXPECT_FALSE(tatami::DelayedBinaryIsometricOperation_internal::zero_to_non_zero_depends_on_row(tatami::DelayedBinaryIsometricMockAdvanced()));
+        EXPECT_FALSE(tatami::DelayedBinaryIsometricOperation_internal::zero_to_non_zero_depends_on_column(tatami::DelayedBinaryIsometricMockAdvanced()));
+
+        // Check that the oracle is correctly ignored.
+        tatami::DelayedBinaryIsometricOperation_internal::MaybeOracleDepends<true, tatami::DelayedBinaryIsometricMockAdvanced, int> oracle1(optr, {}, true);
+        EXPECT_EQ(oracle1.get(0), 0);
+        tatami::DelayedBinaryIsometricOperation_internal::MaybeOracleDepends<true, tatami::DelayedBinaryIsometricMockAdvanced, int> oracle2(optr, {}, false);
+        EXPECT_EQ(oracle2.get(0), 0);
+    }
+
+    {
+        EXPECT_FALSE(tatami::DelayedBinaryIsometricOperation_internal::zero_to_non_zero_depends_on_row(BinaryMockMissing()));
+        EXPECT_FALSE(tatami::DelayedBinaryIsometricOperation_internal::zero_to_non_zero_depends_on_column(BinaryMockMissing()));
+
+        // Check that the oracle is correctly ignored.
+        tatami::DelayedBinaryIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockMissing, int> oracle1(optr, {}, true);
+        EXPECT_EQ(oracle1.get(0), 0);
+        tatami::DelayedBinaryIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockMissing, int> oracle2(optr, {}, false);
+        EXPECT_EQ(oracle2.get(0), 0);
+    }
+
+    { 
+        EXPECT_TRUE(tatami::DelayedBinaryIsometricOperation_internal::zero_to_non_zero_depends_on_row(BinaryMockDerived()));
+        EXPECT_TRUE(tatami::DelayedBinaryIsometricOperation_internal::zero_to_non_zero_depends_on_column(BinaryMockDerived()));
+
+        // Check that the oracle is correctly used.
+        tatami::DelayedBinaryIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle1(optr, {}, true);
+        EXPECT_EQ(oracle1.get(0), 10);
+        tatami::DelayedBinaryIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle2(optr, {}, false);
+        EXPECT_EQ(oracle2.get(0), 10);
+    }
+
+    {
+        // Check that the oracle is respected.
+        tatami::DelayedBinaryIsometricOperation_internal::MaybeOracleDepends<true, tatami::DelayedBinaryIsometricMockBasic, int> oracle1(optr, {}, true);
+        EXPECT_EQ(oracle1.get(0), 10);
+        tatami::DelayedBinaryIsometricOperation_internal::MaybeOracleDepends<true, tatami::DelayedBinaryIsometricMockBasic, int> oracle2(optr, {}, false);
+        EXPECT_EQ(oracle2.get(0), 10);
+    }
+}
+
 class DelayedBinaryIsometricOperationTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
 protected:
     inline static int nrow = 23, ncol = 42;

@@ -81,16 +81,10 @@ public:
     }
 
     /**
-     * Conversion of zeros to non-zero values is dependent on the row of origin.
+     * Whether this is a basic operation.
      * This should be true, otherwise an advanced operation interface is expected (see `DelayedUnaryIsometricMockAdvanced`).
      */
-    static constexpr bool zero_depends_on_row = true;
-
-    /**
-     * Conversion of zeros to non-zero values is dependent on the column of origin.
-     * This should be true, otherwise an advanced operation interface is expected (see `DelayedUnaryIsometricMockAdvanced`).
-     */
-    static constexpr bool zero_depends_on_column = true;
+    static constexpr bool is_basic = true;
 };
 
 /**
@@ -187,7 +181,7 @@ public:
      * This method is expected to iterate over `value` and modify it in place,
      * i.e., replace each value with the result of the operation on that value.
      *
-     * If `non_zero_depends_on_row && !row` or `non_zero_depends_on_column && row`, `index` is guaranteed to be non-NULL.
+     * If `non_zero_depends_on_row() && !row` or `non_zero_depends_on_column() && row`, `index` is guaranteed to be non-NULL.
      * Otherwise, it may be NULL and should be ignored.
      * Even if non-NULL, indices are not guaranteed to be sorted.
      *
@@ -225,36 +219,50 @@ public:
     }
 
     /**
-     * Conversion of zeros to non-zero values is not dependent on the row of origin.
-     * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_column = false`;
-     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedUnaryIsometricMockBasic`).
+     * Whether this is a basic operation.
+     * This should be false, otherwise a basic operation interface is expected (see `DelayedUnaryIsometricMockBasic`).
+     */
+    static constexpr bool is_basic = false;
+
+    /**
+     * @return Whether a structural zero can be converted to a non-zero value,
+     * in a manner that depends on the identity of the column in which the structural zero occurs.
      *
-     * This value is only used if `is_sparse()` returns false.
+     * This method may be omitted from the class definition, in which case it is assumed to always return false. 
+     * In general, either this or `zero_to_non_zero_depends_on_column()` should return false, otherwise a `DelayedUnaryIsometricMockBasic` interface may be more appropriate.
      */
-    static constexpr bool zero_depends_on_row = false;
+    bool zero_to_non_zero_depends_on_row() const {
+        return false;
+    }
 
     /**
-     * Conversion of zeros to non-zero values is not dependent on the column of origin.
-     * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_row = false`.
-     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedUnaryIsometricMockBasic`).
+     * @return Whether a structural zero can be converted to a non-zero value,
+     * in a manner that depends on the identity of the column in which the structural zero occurs.
      *
-     * This value is only used if `is_sparse()` returns false.
+     * This method may be omitted from the class definition, in which case it is assumed to always return false. 
+     * In general, either this or `zero_to_non_zero_depends_on_row()` should return false, otherwise a `DelayedUnaryIsometricMockBasic` interface may be more appropriate.
      */
-    static constexpr bool zero_depends_on_column = false;
+    bool zero_to_non_zero_depends_on_column() const {
+        return false;
+    }
 
     /**
-     * Whether the operation requires the identity of the row of origin.
-     * This only determines whether `index = NULL` in `sparse()`.
-     * May be true or false.
+     * @return Whether the processing of a structural non-zero needs the identity of the column in which the structural non-zero occurs.
+     *
+     * This method may be omitted from the class definition, in which case it is assumed to always return false. 
      */
-    static constexpr bool non_zero_depends_on_row = false;
+    bool non_zero_depends_on_row() const {
+        return false;
+    }
 
     /**
-     * Whether the operation requires the identity of the column of origin.
-     * This only determines whether `index = NULL` in `sparse()`.
-     * May be true or false.
+     * @return Whether the processing of a structural non-zero needs the identity of the row in which the structural non-zero occurs.
+     *
+     * This method may also omitted from the class definition, in which case it is assumed to always return false. 
      */
-    static constexpr bool non_zero_depends_on_column = false;
+    bool non_zero_depends_on_column() const {
+        return false;
+    }
 
     /** 
      * @return Does this operation preserve sparsity?

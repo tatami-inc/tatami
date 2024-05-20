@@ -28,9 +28,7 @@ public:
     // It's sparse if f(0, 0) == 0.
     static constexpr bool known_sparse = (op_ != BooleanOperation::EQUAL);
 
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
     /**
      * @endcond
      */
@@ -69,7 +67,7 @@ public:
     }
 
     template<typename Value_, typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         if constexpr(known_sparse) {
             return 0;
         } else {
