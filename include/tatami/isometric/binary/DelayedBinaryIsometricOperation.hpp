@@ -12,7 +12,7 @@
 #include <type_traits>
 
 /**
- * @file DelayedBinaryIsometricOp.hpp
+ * @file DelayedBinaryIsometricOperation.hpp
  *
  * @brief Delayed binary isometric operations.
  */

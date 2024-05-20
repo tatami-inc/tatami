@@ -147,8 +147,8 @@ public:
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
-     * This argument should be ignored if the operation does not depend on the row/column, 
-     * e.g., based on `zero_depends_on_row()` and friends returning false.
+     * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
+     * in which case an arbitrary placeholder may be supplied. 
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in,out] buffer Contents of the row/column extracted from the matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.
