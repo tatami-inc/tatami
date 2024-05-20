@@ -135,24 +135,28 @@ public:
     static constexpr bool is_basic = false;
 
     /**
-     * @return Whether a structural zero can be converted to a non-zero value,
-     * in a manner that depends on the identity of the column in which the structural zero occurs.
+     * @return Whether applying the operation to a pair of structural zeros (one from each matrix)
+     * yields a value that depends on the identity of the row containing those zeros.
      *
      * This method may be omitted from the class definition, in which case it is assumed to always return false. 
-     * In general, either this or `zero_to_non_zero_depends_on_column()` should return false, otherwise a `DelayedBinaryIsometricMockBasic` interface may be more appropriate.
+     * In general, either this or `zero_depends_on_column()` should return false, otherwise a `DelayedBinaryIsometricMockBasic` interface may be more appropriate.
+     *
+     * The return value of this method should always be false if `is_sparse()` returns true, as the result of the operation is always zero (and thus not dependent on the row identity).
      */
-    bool zero_to_non_zero_depends_on_row() const {
+    bool zero_depends_on_row() const {
         return false;
     }
 
     /**
-     * @return Whether a structural zero can be converted to a non-zero value,
-     * in a manner that depends on the identity of the column in which the structural zero occurs.
+     * @return Whether applying the operation to a pair of structural zeros (one from each matrix)
+     * yields a value that depends on the identity of the column containing those zeros.
      *
      * This method may be omitted from the class definition, in which case it is assumed to always return false. 
-     * In general, either this or `zero_to_non_zero_depends_on_row()` should return false, otherwise a `DelayedBinaryIsometricMockBasic` interface may be more appropriate.
+     * In general, either this or `zero_depends_on_row()` should return false, otherwise a `DelayedBinaryIsometricMockBasic` interface may be more appropriate.
+     *
+     * The return value of this method should always be false if `is_sparse()` returns true, as the result of the operation is always zero (and thus not dependent on the column identity).
      */
-    bool zero_to_non_zero_depends_on_column() const {
+    bool zero_depends_on_column() const {
         return false;
     }
 

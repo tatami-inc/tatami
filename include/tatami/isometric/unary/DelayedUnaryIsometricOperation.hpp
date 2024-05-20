@@ -24,41 +24,41 @@ namespace DelayedUnaryIsometricOperation_internal {
 
 // Some SFINAE shenanigans for checking if zero->non-zero conversion depends on the row ID of the zero value.
 template<class Operation_, typename = int>
-struct has_zero_to_non_zero_depends_on_row {
+struct has_zero_depends_on_row {
     static constexpr bool value = false;
 };
 
 template<class Operation_>
-struct has_zero_to_non_zero_depends_on_row<Operation_, decltype((void) std::declval<Operation_>().zero_to_non_zero_depends_on_row(), 0)> {
+struct has_zero_depends_on_row<Operation_, decltype((void) std::declval<Operation_>().zero_depends_on_row(), 0)> {
     static constexpr bool value = true;
 };
 
 template<class Operation_>
-bool zero_to_non_zero_depends_on_row(const Operation_& op) {
-    if constexpr(!has_zero_to_non_zero_depends_on_row<Operation_>::value) {
+bool zero_depends_on_row(const Operation_& op) {
+    if constexpr(!has_zero_depends_on_row<Operation_>::value) {
         return false;
     } else {
-        return op.zero_to_non_zero_depends_on_row();
+        return op.zero_depends_on_row();
     }
 }
 
 // Some SFINAE shenanigans for checking if zero->non-zero conversion depends on the column ID of the zero value.
 template<class Operation_, typename = int>
-struct has_zero_to_non_zero_depends_on_column {
+struct has_zero_depends_on_column {
     static constexpr bool value = false;
 };
 
 template<class Operation_>
-struct has_zero_to_non_zero_depends_on_column<Operation_, decltype((void) std::declval<Operation_>().zero_to_non_zero_depends_on_column(), 0)> {
+struct has_zero_depends_on_column<Operation_, decltype((void) std::declval<Operation_>().zero_depends_on_column(), 0)> {
     static constexpr bool value = true;
 };
 
 template<class Operation_>
-bool zero_to_non_zero_depends_on_column(const Operation_& op) {
-    if constexpr(!has_zero_to_non_zero_depends_on_column<Operation_>::value) {
+bool zero_depends_on_column(const Operation_& op) {
+    if constexpr(!has_zero_depends_on_column<Operation_>::value) {
         return false;
     } else {
-        return op.zero_to_non_zero_depends_on_column();
+        return op.zero_depends_on_column();
     }
 }
 
@@ -112,8 +112,8 @@ public:
             } else if (
                 // Figuring out whether we need to get the index of the target
                 // dimension when processing each element of that dimension.
-                (row  && (zero_to_non_zero_depends_on_row(op)    || non_zero_depends_on_row(op))) || 
-                (!row && (zero_to_non_zero_depends_on_column(op) || non_zero_depends_on_column(op)))
+                (row  && (zero_depends_on_row(op)    || non_zero_depends_on_row(op))) || 
+                (!row && (zero_depends_on_column(op) || non_zero_depends_on_column(op)))
             ) {
                 my_oracle = oracle;
             }
@@ -125,8 +125,8 @@ public:
             if constexpr(Operation_::is_basic) {
                 return my_oracle->get(my_used++);
             } else if constexpr(
-                has_zero_to_non_zero_depends_on_row<Operation_>::value || 
-                has_zero_to_non_zero_depends_on_column<Operation_>::value || 
+                has_zero_depends_on_row<Operation_>::value || 
+                has_zero_depends_on_column<Operation_>::value || 
                 has_non_zero_depends_on_row<Operation_>::value ||
                 has_non_zero_depends_on_column<Operation_>::value)
             {
@@ -730,12 +730,12 @@ private:
                     // If zero processing doesn't depend on the row identity,
                     // then during column extraction, we can use a constant
                     // value to fill in the zero values across rows. 
-                    (!row && !DelayedUnaryIsometricOperation_internal::zero_to_non_zero_depends_on_row(my_operation)) ||
+                    (!row && !DelayedUnaryIsometricOperation_internal::zero_depends_on_row(my_operation)) ||
 
                     // Conversely, if zero processing doesn't depend on
                     // columns, then during row extraction, we can fill in the
                     // zero values across columns with a constant value.
-                    ( row && !DelayedUnaryIsometricOperation_internal::zero_to_non_zero_depends_on_column(my_operation)))
+                    ( row && !DelayedUnaryIsometricOperation_internal::zero_depends_on_column(my_operation)))
                 {
                     return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
                 }
