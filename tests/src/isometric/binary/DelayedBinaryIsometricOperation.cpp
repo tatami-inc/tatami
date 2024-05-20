@@ -33,6 +33,147 @@ TEST(DelayedBinaryIsometricOperation, Misshappen) {
     }, "should be the same");
 }
 
+class BinaryMockMissing {
+public:
+    static constexpr bool is_basic = false;
+
+    bool is_sparse() const { return false; }
+};
+
+class BinaryMockDerived : public tatami::DelayedBinaryIsometricMockAdvanced {
+public:
+    BinaryMockDerived(bool sparse = false, bool zero_row = true, bool zero_col = true, bool non_zero_row = true, bool non_zero_col = true) : 
+        my_sparse(sparse), my_zero_row(zero_row), my_zero_col(zero_col), my_non_zero_row(non_zero_row), my_non_zero_col(non_zero_col) {}
+
+private:
+    bool my_sparse, my_zero_row, my_zero_col, my_non_zero_row, my_non_zero_col;
+
+public:
+    static constexpr bool is_basic = false;
+    bool is_sparse() const { return my_sparse; }
+    bool zero_depends_on_row() const { return my_zero_row; }
+    bool zero_depends_on_column() const { return my_zero_col; }
+    bool non_zero_depends_on_row() const { return my_non_zero_row; }
+    bool non_zero_depends_on_column() const { return my_non_zero_col; }
+};
+
+TEST(DelayedBinaryIsometricOperation, DependsChecks) {
+    auto optr = std::make_shared<const tatami::ConsecutiveOracle<int> >(10, 20);
+
+    {
+        // Check that the oracle is correctly ignored.
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, tatami::DelayedBinaryIsometricMockAdvanced, int> oracle1(optr, {}, true);
+        EXPECT_EQ(oracle1.get(0), 0);
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, tatami::DelayedBinaryIsometricMockAdvanced, int> oracle2(optr, {}, false);
+        EXPECT_EQ(oracle2.get(0), 0);
+
+        EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(tatami::DelayedBinaryIsometricMockAdvanced(), true));
+        EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(tatami::DelayedBinaryIsometricMockAdvanced(), false));
+    }
+
+    {
+        // Check that the oracle is correctly ignored.
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockMissing, int> oracle1(optr, {}, true);
+        EXPECT_EQ(oracle1.get(0), 0);
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockMissing, int> oracle2(optr, {}, false);
+        EXPECT_EQ(oracle2.get(0), 0);
+
+        EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(BinaryMockMissing(), true));
+        EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(BinaryMockMissing(), false));
+    }
+
+    { 
+        // Check that the oracle is correctly used.
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle1(optr, {}, true);
+        EXPECT_EQ(oracle1.get(0), 10);
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle2(optr, {}, false);
+        EXPECT_EQ(oracle2.get(0), 10);
+
+        EXPECT_FALSE(tatami::DelayedIsometricOperation_internal::can_dense_expand(BinaryMockDerived(), true));
+        EXPECT_FALSE(tatami::DelayedIsometricOperation_internal::can_dense_expand(BinaryMockDerived(), false));
+    }
+
+    { 
+        // Check that the oracle is correctly used for rows.
+        {
+            BinaryMockDerived mock(false, true, false, false, false); // zero-dependency for non-sparse operation.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle1(optr, mock, true);
+            EXPECT_EQ(oracle1.get(0), 10);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle2(optr, mock, false);
+            EXPECT_EQ(oracle2.get(0), 0);
+
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
+            EXPECT_FALSE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, false));
+        }
+
+        {
+            BinaryMockDerived mock(false, false, false, true, false); // non-zero dependency.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle1(optr, mock, true);
+            EXPECT_EQ(oracle1.get(0), 10);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle2(optr, mock, false);
+            EXPECT_EQ(oracle2.get(0), 0);
+
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, false));
+        }
+
+        {
+            BinaryMockDerived mock(true, true, false, false, false); // zero dependency ignored for sparse operations.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle1(optr, mock, true);
+            EXPECT_EQ(oracle1.get(0), 0);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle2(optr, mock, false);
+            EXPECT_EQ(oracle2.get(0), 0);
+
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, false));
+        }
+    }
+
+    { 
+        // Check that the oracle is correctly used for columns.
+        {
+            BinaryMockDerived mock(false, false, true, false, false); // zero-dependency for non-sparse operation.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle1(optr, mock, true);
+            EXPECT_EQ(oracle1.get(0), 0);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle2(optr, mock, false);
+            EXPECT_EQ(oracle2.get(0), 10);
+
+            EXPECT_FALSE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, false));
+        }
+
+        {
+            BinaryMockDerived mock(false, false, false, false, true); // non-zero dependency.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle1(optr, mock, true);
+            EXPECT_EQ(oracle1.get(0), 0);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle2(optr, mock, false);
+            EXPECT_EQ(oracle2.get(0), 10);
+
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, false));
+        }
+
+        {
+            BinaryMockDerived mock(true, false, true, false, false); // zero dependency ignored for sparse operations.
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle1(optr, mock, true);
+            EXPECT_EQ(oracle1.get(0), 0);
+            tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, BinaryMockDerived, int> oracle2(optr, mock, false);
+            EXPECT_EQ(oracle2.get(0), 0);
+
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, true));
+            EXPECT_TRUE(tatami::DelayedIsometricOperation_internal::can_dense_expand(mock, false));
+        }
+    }
+
+    {
+        // Check that the oracle is respected in the basic case.
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, tatami::DelayedBinaryIsometricMockBasic, int> oracle1(optr, {}, true);
+        EXPECT_EQ(oracle1.get(0), 10);
+        tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, tatami::DelayedBinaryIsometricMockBasic, int> oracle2(optr, {}, false);
+        EXPECT_EQ(oracle2.get(0), 10);
+    }
+}
+
 class DelayedBinaryIsometricOperationTest : public ::testing::TestWithParam<std::tuple<bool, bool> > {
 protected:
     inline static int nrow = 23, ncol = 42;

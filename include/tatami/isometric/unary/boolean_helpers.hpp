@@ -58,13 +58,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return my_sparse;
@@ -93,7 +87,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         Value_ output = 0;
         delayed_boolean_run<op_>(output, my_scalar);
         return output;
@@ -116,13 +110,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -159,7 +147,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 1;
     }
     /**
@@ -173,20 +161,20 @@ public:
  * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
  *
  * @tparam op_ The boolean operation.
- * @tparam margin_ Matrix dimension along which the operation is to occur.
- * If 0, each element of the vector is assumed to correspond to a row, and that value is subtracted from all entries in the same row of the matrix.
- * If 1, each element of the vector is assumed to correspond to a column instead.
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
  */
-template<BooleanOperation op_, int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
+template<BooleanOperation op_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
 class DelayedUnaryIsometricBooleanVector {
 public:
     /**
      * @param vector Vector of values to use in the operation. 
-     * This should be of length equal to the number of rows if `margin_ = 0`, otherwise it should be of length equal to the number of columns.
+     * This should be of length equal to the number of rows if `by_row = true`, otherwise it should be of length equal to the number of columns.
+     * @param by_row Whether `vector` corresponds to the rows.
+     * If true, each element of the vector is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix.
+     * If false, each element of the vector is assumed to correspond to a column instead.
      */
-    DelayedUnaryIsometricBooleanVector(Vector_ vector) : my_vector(std::move(vector)) {
+    DelayedUnaryIsometricBooleanVector(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
         for (auto x : my_vector) {
              if (!delayed_boolean_actual_sparse<op_, Value_>(x)) {
                  my_sparse = false;
@@ -197,19 +185,30 @@ public:
 
 private:
     const Vector_ my_vector;
+    bool my_by_row;
     bool my_sparse = true;
 
 public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = (margin_ == 0);
+    static constexpr bool is_basic = false;
 
-    static constexpr bool zero_depends_on_column = (margin_ == 1);
+    bool zero_depends_on_row() const {
+        return my_by_row;
+    }
 
-    static constexpr bool non_zero_depends_on_row = (margin_ == 0);
+    bool zero_depends_on_column() const {
+        return !my_by_row;
+    }
 
-    static constexpr bool non_zero_depends_on_column = (margin_ == 1);
+    bool non_zero_depends_on_row() const {
+        return my_by_row;
+    }
+
+    bool non_zero_depends_on_column() const {
+        return !my_by_row;
+    }
 
     bool is_sparse() const {
         return my_sparse;
@@ -224,7 +223,7 @@ public:
      */
     template<typename Index_>
     void dense(bool row, Index_ idx, Index_ start, Index_ length, Value_* buffer) const {
-        if (row == (margin_ == 0)) {
+        if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(my_vector[idx], length, buffer);
         } else {
             for (Index_ i = 0; i < length; ++i) {
@@ -235,7 +234,7 @@ public:
 
     template<typename Index_>
     void dense(bool row, Index_ idx, const std::vector<Index_>& indices, Value_* buffer) const {
-        if (row == (margin_ == 0)) {
+        if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(my_vector[idx], indices.size(), buffer);
         } else {
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
@@ -246,7 +245,7 @@ public:
 
     template<typename Index_>
     void sparse(bool row, Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
-        if (row == (margin_ == 0)) {
+        if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(my_vector[idx], number, buffer);
         } else {
             for (Index_ i = 0; i < number; ++i) {
@@ -256,10 +255,16 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_ idx) const {
-        Value_ output = 0;
-        delayed_boolean_run<op_>(output, my_vector[idx]);
-        return output;
+    Value_ fill(bool row, Index_ idx) const {
+        if (row == my_by_row) {
+            Value_ output = 0;
+            delayed_boolean_run<op_>(output, my_vector[idx]);
+            return output;
+        } else {
+            // We should only get to this point if it's sparse, otherwise no
+            // single fill value would work across the length of my_vector.
+            return 0;
+        }
     }
     /**
      * @endcond
@@ -323,53 +328,53 @@ DelayedUnaryIsometricBooleanScalar<BooleanOperation::EQUAL> make_DelayedUnaryIso
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedUnaryIsometricBooleanVector`.
  * @param vector Vector of values to be used in the operation.
+ * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
  * @return A helper class for a delayed AND operation with a vector,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, margin_, Value_, Vector_> make_DelayedUnaryIsometricBooleanAndVector(Vector_ vector) {
-    return DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, margin_, Value_, Vector_>(std::move(vector));
+template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
+DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, Value_, Vector_> make_DelayedUnaryIsometricBooleanAndVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, Value_, Vector_>(std::move(vector), by_row);
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedUnaryIsometricBooleanVector`.
  * @param vector Vector of values to be used in the operation.
+ * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
  * @return A helper class for a delayed OR operation with a vector,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, margin_, Value_, Vector_> make_DelayedUnaryIsometricBooleanOrVector(Vector_ vector) {
-    return DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, margin_, Value_, Vector_>(std::move(vector));
+template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
+DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, Value_, Vector_> make_DelayedUnaryIsometricBooleanOrVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, Value_, Vector_>(std::move(vector), by_row);
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedUnaryIsometricBooleanVector`.
  * @param vector Vector of values to be used in the operation.
+ * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
  * @return A helper class for a delayed XOR operation with a vector,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, margin_, Value_, Vector_> make_DelayedUnaryIsometricBooleanXorVector(Vector_ vector) {
-    return DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, margin_, Value_, Vector_>(std::move(vector));
+template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
+DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, Value_, Vector_> make_DelayedUnaryIsometricBooleanXorVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, Value_, Vector_>(std::move(vector), by_row);
 }
 
 /**
  * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- * @tparam margin_ Matrix dimension along which the comparison is to occur, see `DelayedUnaryIsometricBooleanVector`.
  * @param vector Vector of values to be used in the operation.
+ * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
  * @return A helper class for a delayed boolean equality operation with a vector,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<int margin_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricBooleanVector<BooleanOperation::EQUAL, margin_, Value_, Vector_> make_DelayedUnaryIsometricBooleanEqualVector(Vector_ vector) {
-    return DelayedUnaryIsometricBooleanVector<BooleanOperation::EQUAL, margin_, Value_, Vector_>(std::move(vector));
+template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
+DelayedUnaryIsometricBooleanVector<BooleanOperation::EQUAL, Value_, Vector_> make_DelayedUnaryIsometricBooleanEqualVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricBooleanVector<BooleanOperation::EQUAL, Value_, Vector_>(std::move(vector), by_row);
 }
 
 }

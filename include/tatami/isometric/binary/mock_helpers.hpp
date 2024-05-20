@@ -33,6 +33,7 @@ public:
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
      * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * Unlike `DelayedBinaryIsometricMockAdvanced::dense()`, this is always guaranteed to be the actual index and not a placeholder.
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
@@ -68,6 +69,7 @@ public:
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
      * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * Unlike `DelayedBinaryIsometricMockAdvanced::dense()`, this is always guaranteed to be the actual index and not a placeholder.
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.
@@ -89,16 +91,10 @@ public:
     }
 
     /**
-     * Conversion of zeros to non-zero values is dependent on rows.
-     * This should be `true`, otherwise an advanced operation is expected (see `DelayedBinaryIsometricMockAdvanced`).
+     * Whether this is a basic operation.
+     * This should be true, otherwise an advanced operation is expected (see `DelayedBinaryIsometricMockAdvanced`).
      */
-    static constexpr bool zero_depends_on_row = true;
-
-    /**
-     * Conversion of zeros to non-zero values is dependent on columns.
-     * This should be `true`, otherwise an advanced operation is expected (see `DelayedBinaryIsometricMockAdvanced`).
-     */
-    static constexpr bool zero_depends_on_column = true;
+    static constexpr bool is_basic = true;
 };
 
 /**
@@ -119,38 +115,76 @@ public:
      * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
      *
-     * @param i The index of the row containing the zero, if `zero_depends_on_row = true`;
-     * the index of the column containing the zero, if `zero_depends_on_column = true`;
-     * or ignored, if neither are true.
+     * @param row Whether `i` refers to the row or column index.
+     * @param i The index of the row (if `row = true`) or column (otherwise) containing the zeros.
+     * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
+     * in which case an arbitrary placeholder may be supplied. 
      *
-     * @return The result of the operation being applied on zeros from both the left and right matrices.
-     * This should be constant for all elements in the row/column/matrix, depending on the interpretation of `i`.
+     * @return The result of `OP(lz, rz)` where `OP` is the operation,
+     * `lz` is a structural zero from the `i`-th row/column of the left matrix,
+     * and `rz` is a structural zero from the `i`-th row/column of the left matrix,
      *
      * This method will be called with an explicit `Value_` template parameter.
      * Implementations of this method should either ensure that `Index_` is deducible or use a fixed integer type in the method signature.
      */
     template<typename Value_, typename Index_>
-    Value_ fill([[maybe_unused]] Index_ i) const { 
+    Value_ fill([[maybe_unused]] bool row, [[maybe_unused]] Index_ i) const { 
         return 0;
     }
 
     /**
-     * Conversion of zeros to non-zero values is not dependent on rows.
-     * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_column = false`;
-     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryIsometricMockBasic`).
-     *
-     * This value is only used when `is_sparse()` returns false.
+     * Whether this is a basic operation.
+     * This should be false, otherwise a basic operation interface is expected (see `DelayedBinaryIsometricMockBasic`).
      */
-    static constexpr bool zero_depends_on_row = false;
+    static constexpr bool is_basic = false;
 
     /**
-     * Conversion of zeros to non-zero values is not dependent on columns.
-     * Implementations of the advanced operation interface may set this to `true` provided that `zero_depends_on_row = false`;
-     * at least one of these must be false, otherwise a basic operation interface is expected (see `DelayedBinaryIsometricMockBasic`).
+     * @return Whether applying the operation to a pair of structural zeros (one from each matrix)
+     * yields a value that depends on the identity of the row containing those zeros.
      *
-     * This value is only used when `is_sparse()` returns false.
+     * This method is only called when `is_sparse()` returns false.
+     * It is not necessary to explicitly return `false` here for sparsity-preserving operations,
+     * as `DelayedBinaryIsometricOperation` will automatically recognize such operations as being row-independent.
+     *
+     * This method may be omitted from the class definition, in which case it is assumed to always return false. 
      */
-    static constexpr bool zero_depends_on_column = false;
+    bool zero_depends_on_row() const {
+        return false;
+    }
+
+    /**
+     * @return Whether applying the operation to a pair of structural zeros (one from each matrix)
+     * yields a value that depends on the identity of the column containing those zeros.
+     *
+     * This method is only called when `is_sparse()` returns false.
+     * It is not necessary to explicitly return `false` here for sparsity-preserving operations,
+     * as `DelayedBinaryIsometricOperation` will automatically recognize such operations as being row-independent.
+     *
+     * This method may be omitted from the class definition, in which case it is assumed to always return false. 
+     */
+    bool zero_depends_on_column() const {
+        return false;
+    }
+
+    /**
+     * @return Whether the result of the operation depends on the identity of the row containing the operands,
+     * where at least one of the operands is non-zero.
+     * 
+     * This method may be omitted from the class definition, in which case it is assumed to always return false. 
+     */
+    bool non_zero_depends_on_row() const {
+        return false;
+    }
+
+    /**
+     * @return Whether the result of the operation depends on the identity of the column containing the operands,
+     * where at least one of the operands is non-zero.
+     *
+     * This method may be omitted from the class definition, in which case it is assumed to always return false. 
+     */
+    bool non_zero_depends_on_column() const {
+        return false;
+    }
 
     /**
      * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
@@ -164,6 +198,8 @@ public:
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
      * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
+     * in which case an arbitrary placeholder may be supplied. 
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
@@ -199,6 +235,8 @@ public:
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
      * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
+     * in which case an arbitrary placeholder may be supplied. 
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.
@@ -234,6 +272,8 @@ public:
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
      * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
+     * in which case an arbitrary placeholder may be supplied. 
      * @param left Contents of row/column `i` extracted from the left matrix.
      * @param right Contents of row/column `i` extracted from the right matrix.
      * @param[out] output_value Pointer to an array for storing output values of the operation.
@@ -279,8 +319,7 @@ public:
     }
 
     /** 
-     * @return Does this operation preserve sparsity?
-     * This may return false.
+     * @return Whether this operation preserves sparsity.
      */
     bool is_sparse() const {
         return true;

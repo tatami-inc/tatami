@@ -4,6 +4,7 @@
 #include "../../base/Matrix.hpp"
 #include "../../utils/copy.hpp"
 #include "../../utils/new_extractor.hpp"
+#include "../depends_utils.hpp"
 
 #include <memory>
 #include <algorithm>
@@ -21,48 +22,6 @@ namespace tatami {
  * @cond
  */
 namespace DelayedUnaryIsometricOperation_internal {
-
-template<class Operation_, bool oracle_, typename Index_>
-class MaybeOracleDepends {
-public:
-    MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& oracle, bool row) {
-        if constexpr(oracle_) {
-            if constexpr(Operation_::zero_depends_on_row && Operation_::zero_depends_on_column) {
-                // Put this in a constexpr in case Operation_ only satisfies the basic interface,
-                // in which case it won't have the non_zero_depends_* members.
-                my_oracle = oracle;
-            } else if (
-                (row  && (Operation_::zero_depends_on_row || Operation_::non_zero_depends_on_row)) || 
-                (!row && (Operation_::zero_depends_on_column || Operation_::non_zero_depends_on_column))
-            ) {
-                my_oracle = oracle;
-            }
-        }
-    }
-
-    Index_ get(Index_ i) {
-        if constexpr(oracle_) {
-            if constexpr(Operation_::zero_depends_on_row && Operation_::zero_depends_on_column) {
-                // Put this in a constexpr in case Operation_ only satisfies the basic interface,
-                // in which case it won't have the non_zero_depends_* members.
-                return my_oracle->get(my_used++);
-            } else if constexpr(Operation_::zero_depends_on_row || 
-                 Operation_::non_zero_depends_on_row ||
-                 Operation_::zero_depends_on_column || 
-                 Operation_::non_zero_depends_on_column)
-            {
-                if (my_oracle) {
-                    return my_oracle->get(my_used++);
-                }
-            }
-        }
-        return i;
-    }
-
-private:
-    MaybeOracle<oracle_, Index_> my_oracle;
-    typename std::conditional<oracle_, size_t, bool>::type my_used = 0;
-};
 
 /**
  * DenseBasic is used if:
@@ -85,7 +44,7 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_extent(row ? matrix->ncol() : matrix->nrow()),
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), opt))
     {}
@@ -93,7 +52,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     Index_ my_extent;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_ext;
 
@@ -119,7 +78,7 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_block_start(block_start),
         my_block_length(block_length),
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt))
@@ -128,7 +87,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     Index_ my_block_start, my_block_length;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_ext;
 
@@ -153,7 +112,7 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_indices_ptr(indices_ptr),
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt))
     {}
@@ -161,7 +120,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     VectorPtr<Index_> my_indices_ptr;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_ext;
 
@@ -197,7 +156,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_extent(row ? matrix->ncol() : matrix->nrow()),
         my_vbuffer(my_extent),
         my_ibuffer(my_extent)
@@ -210,7 +169,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     Index_ my_extent;
     std::vector<Value_> my_vbuffer;
@@ -228,7 +187,7 @@ public:
 
         // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (range.number < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(i));
+            std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(my_row, i));
         }
 
         for (Index_ i = 0; i < range.number; ++i) {
@@ -252,7 +211,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_block_start(block_start),
         my_block_length(block_length),
         my_vbuffer(block_length),
@@ -266,7 +225,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     Index_ my_block_start, my_block_length;
     std::vector<Value_> my_vbuffer;
@@ -284,7 +243,7 @@ public:
 
         // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (range.number < my_block_length) { 
-            std::fill_n(buffer, my_block_length, my_operation.template fill<Value_>(i));
+            std::fill_n(buffer, my_block_length, my_operation.template fill<Value_>(my_row, i));
         }
 
         for (Index_ i = 0; i < range.number; ++i) {
@@ -307,7 +266,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row)
+        my_oracle(oracle, my_operation, row)
     {
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
@@ -334,7 +293,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     Index_ my_extent;
     std::vector<Value_> my_vbuffer;
@@ -355,7 +314,7 @@ public:
 
         // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (range.number < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(i));
+            std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(my_row, i));
         }
 
         for (Index_ i = 0; i < range.number; ++i) {
@@ -384,7 +343,7 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), opt)) 
     {}
 
@@ -398,7 +357,7 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt)) 
     {}
 
@@ -411,14 +370,14 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row),
+        my_oracle(oracle, my_operation, row),
         my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt)) 
     {}
 
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
 
 public:
@@ -451,7 +410,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row)
+        my_oracle(oracle, my_operation, row)
     {
         initialize(opt, row ? matrix->ncol() : matrix->nrow());
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), opt);
@@ -467,7 +426,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row)
+        my_oracle(oracle, my_operation, row)
     {
         initialize(opt, block_length);
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt);
@@ -482,7 +441,7 @@ public:
         Options opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, row)
+        my_oracle(oracle, my_operation, row)
     {
         initialize(opt, indices_ptr->size());
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
@@ -511,7 +470,7 @@ private:
     const Operation_& my_operation;
     bool my_row;
     bool my_report_value, my_report_index;
-    MaybeOracleDepends<Operation_, oracle_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     std::vector<Index_> my_ibuffer;
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
 
@@ -566,8 +525,6 @@ private:
     std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
     Operation_ my_operation;
 
-    static constexpr bool is_advanced = (!Operation_::zero_depends_on_row || !Operation_::zero_depends_on_column);
-
 public:
     Index_ nrow() const {
         return my_matrix->nrow();
@@ -578,7 +535,7 @@ public:
     }
 
     bool is_sparse() const {
-        if constexpr(is_advanced) {
+        if constexpr(!Operation_::is_basic) {
             if (my_operation.is_sparse()) {
                 return my_matrix->is_sparse();
             }
@@ -587,7 +544,7 @@ public:
     }
 
     double is_sparse_proportion() const {
-        if constexpr(is_advanced) {
+        if constexpr(!Operation_::is_basic) {
             if (my_operation.is_sparse()) {
                 return my_matrix->is_sparse_proportion();
             }
@@ -647,11 +604,9 @@ private:
 
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, Args_&& ... args) const {
-        if constexpr(is_advanced) {
+        if constexpr(!Operation_::is_basic) {
             if (my_matrix->is_sparse()) {
-                // If we don't depend on the rows, then we don't need row indices when 'row = false'.
-                // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.
-                if ((!Operation_::zero_depends_on_row && !row) || (!Operation_::zero_depends_on_column && row)) {
+                if (DelayedIsometricOperation_internal::can_dense_expand(my_operation, row)) {
                     return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
                 }
             }
@@ -707,24 +662,23 @@ private:
 
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) const {
-        if constexpr(is_advanced) {
+        if constexpr(!Operation_::is_basic) {
             if (my_operation.is_sparse() && my_matrix->is_sparse()) { 
-                if ((!Operation_::non_zero_depends_on_row && !row) || (!Operation_::non_zero_depends_on_column && row)) {
-                    // If we don't depend on the rows, then we don't need row indices when 'row = false'.
-                    // Similarly, if we don't depend on columns, then we don't column row indices when 'row = true'.
-                    return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseSimple<oracle_, Value_, Index_, Operation_> >(
-                        my_matrix.get(),
-                        my_operation, 
-                        row, 
-                        std::move(oracle), 
-                        std::forward<Args_>(args)...
-                    );
-                } else {
+                if (DelayedIsometricOperation_internal::needs_sparse_indices(my_operation, row)) {
                     return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseNeedsIndices<oracle_, Value_, Index_, Operation_> >(
                         my_matrix.get(),
                         my_operation,
                         row, 
                         std::move(oracle),
+                        std::forward<Args_>(args)...
+                    );
+
+                } else {
+                    return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseSimple<oracle_, Value_, Index_, Operation_> >(
+                        my_matrix.get(),
+                        my_operation, 
+                        row, 
+                        std::move(oracle), 
                         std::forward<Args_>(args)...
                     );
                 }

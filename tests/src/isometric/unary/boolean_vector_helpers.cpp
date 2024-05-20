@@ -43,16 +43,9 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, AND) {
         fill_default_vector(vec);
     }
 
-    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricBooleanAndVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricBooleanAndVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricBooleanAndVector(vec, row);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -85,16 +78,9 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, OR) {
         fill_default_vector(vec);
     }
 
-    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricBooleanOrVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricBooleanOrVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricBooleanOrVector(vec, row);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -131,16 +117,9 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, XOR) {
         fill_default_vector(vec);
     }
 
-    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricBooleanXorVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricBooleanXorVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricBooleanXorVector(vec, row);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());
@@ -179,16 +158,9 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, EQUAL) {
         fill_default_vector(vec);
     }
 
-    std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod;
-    if (row) {
-        auto op = tatami::make_DelayedUnaryIsometricBooleanEqualVector<0>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-    } else {
-        auto op = tatami::make_DelayedUnaryIsometricBooleanEqualVector<1>(vec);
-        dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-    }
+    auto op = tatami::make_DelayedUnaryIsometricBooleanEqualVector(vec, row);
+    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
 
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_EQ(dense->nrow(), dense_mod->nrow());

@@ -185,15 +185,9 @@ public:
         std::shared_ptr<tatami::NumericMatrix>& dense_ptr, 
         std::shared_ptr<tatami::NumericMatrix>& sparse_ptr) 
     {
-        if (row) {
-            auto op = tatami::make_DelayedUnaryIsometricAddVector<0>(vec);
-            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-        } else {
-            auto op = tatami::make_DelayedUnaryIsometricAddVector<1>(vec);
-            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-        }
+        auto op = tatami::make_DelayedUnaryIsometricAddVector(vec, row);
+        dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     }
 
 protected:
@@ -290,26 +284,14 @@ public:
         std::shared_ptr<tatami::NumericMatrix>& dense_ptr, 
         std::shared_ptr<tatami::NumericMatrix>& sparse_ptr)
     {
-        if (row) {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricSubtractVector<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricSubtractVector<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            }
+        if (right) {
+            auto op = tatami::make_DelayedUnaryIsometricSubtractVector<true>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         } else {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricSubtractVector<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricSubtractVector<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            }
+            auto op = tatami::make_DelayedUnaryIsometricSubtractVector<false>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         }
     }
 
@@ -422,15 +404,9 @@ public:
         std::shared_ptr<tatami::NumericMatrix>& dense_ptr, 
         std::shared_ptr<tatami::NumericMatrix>& sparse_ptr)
     {
-        if (row) {
-            auto op = tatami::make_DelayedUnaryIsometricMultiplyVector<0>(vec);
-            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-        } else {
-            auto op = tatami::make_DelayedUnaryIsometricMultiplyVector<1>(vec);
-            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-        }
+        auto op = tatami::make_DelayedUnaryIsometricMultiplyVector(vec, row);
+        dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+        sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
     }
 
 protected:
@@ -524,26 +500,14 @@ public:
         std::shared_ptr<tatami::NumericMatrix>& dense_ptr,
         std::shared_ptr<tatami::NumericMatrix>& sparse_ptr)
     {
-        if (row) {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricDivideVector<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricDivideVector<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            }
+        if (right) {
+            auto op = tatami::make_DelayedUnaryIsometricDivideVector<true>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         } else {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricDivideVector<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricDivideVector<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            }
+            auto op = tatami::make_DelayedUnaryIsometricDivideVector<false>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         }
     }
 
@@ -727,26 +691,14 @@ public:
         auto dense_tmp = tatami::make_DelayedUnaryIsometricOperation(dense, op0);
         auto sparse_tmp = tatami::make_DelayedUnaryIsometricOperation(sparse, op0);
 
-        if (row) {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricPowerVector<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricPowerVector<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
-            }
+        if (right) {
+            auto op = tatami::make_DelayedUnaryIsometricPowerVector<true>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
         } else {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricPowerVector<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricPowerVector<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
-            }
+            auto op = tatami::make_DelayedUnaryIsometricPowerVector<false>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense_tmp, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse_tmp, op);
         }
     }
 
@@ -1020,26 +972,14 @@ public:
         std::shared_ptr<tatami::NumericMatrix>& dense_ptr, 
         std::shared_ptr<tatami::NumericMatrix>& sparse_ptr)
     {
-        if (row) {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricModuloVector<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricModuloVector<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            }
+        if (right) {
+            auto op = tatami::make_DelayedUnaryIsometricModuloVector<true>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         } else {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricModuloVector<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricModuloVector<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            }
+            auto op = tatami::make_DelayedUnaryIsometricModuloVector<false>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         }
     }
 
@@ -1161,26 +1101,14 @@ public:
         std::shared_ptr<tatami::NumericMatrix>& dense_ptr,
         std::shared_ptr<tatami::NumericMatrix>& sparse_ptr)
     {
-        if (row) {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<true, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<false, 0>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            }
+        if (right) {
+            auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<true>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         } else {
-            if (right) {
-                auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<true, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            } else {
-                auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<false, 1>(vec);
-                dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-                sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
-            }
+            auto op = tatami::make_DelayedUnaryIsometricIntegerDivideVector<false>(vec, row);
+            dense_ptr = tatami::make_DelayedUnaryIsometricOperation(dense, op);
+            sparse_ptr = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
         }
     }
 

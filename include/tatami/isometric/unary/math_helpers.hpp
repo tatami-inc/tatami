@@ -24,13 +24,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -68,7 +62,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -89,13 +83,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -134,7 +122,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -167,13 +155,7 @@ public:
     /**
      * @cond
      */
-    static const bool zero_depends_on_row = false;
-
-    static const bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -212,7 +194,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined value.
         return std::log(static_cast<Value_>(0));
     }
@@ -234,13 +216,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -277,7 +253,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -298,13 +274,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -341,7 +311,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -362,13 +332,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -405,7 +369,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -426,13 +390,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -469,7 +427,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -502,13 +460,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -547,7 +499,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -568,13 +520,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -611,7 +557,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -632,13 +578,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -675,7 +615,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 1.0;
     }
     /**
@@ -696,13 +636,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -739,7 +673,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -760,13 +694,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -803,7 +731,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
         return std::acos(0);
     }
@@ -825,13 +753,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -868,7 +790,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
         return std::acosh(static_cast<Value_>(0));
     }
@@ -890,13 +812,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -933,7 +849,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -954,13 +870,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -997,7 +907,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1018,13 +928,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1061,7 +965,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1082,13 +986,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1125,7 +1023,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1146,13 +1044,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -1189,7 +1081,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 1.0;
     }
     /**
@@ -1210,13 +1102,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -1253,7 +1139,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 1.0;
     }
     /**
@@ -1274,13 +1160,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1317,7 +1197,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1338,13 +1218,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1381,7 +1255,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1402,13 +1276,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1445,7 +1313,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1466,13 +1334,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return true;
@@ -1509,7 +1371,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1530,13 +1392,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -1573,7 +1429,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
         return std::tgamma(static_cast<Value_>(0));
     }
@@ -1595,13 +1451,7 @@ public:
     /**
      * @cond
      */
-    static constexpr bool zero_depends_on_row = false;
-
-    static constexpr bool zero_depends_on_column = false;
-
-    static constexpr bool non_zero_depends_on_row = false;
-
-    static constexpr bool non_zero_depends_on_column = false;
+    static constexpr bool is_basic = false;
 
     bool is_sparse() const {
         return false;
@@ -1638,7 +1488,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
         return std::lgamma(static_cast<Value_>(0));
     }

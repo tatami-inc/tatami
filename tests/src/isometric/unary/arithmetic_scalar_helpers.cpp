@@ -338,5 +338,5 @@ TEST(DelayedUnaryIsometricArithmeticScalar, NonFiniteMultiply) {
 
 TEST(DelayedUnaryIsometricArithmeticScalar, NonIeee754Divide) {
     auto op = tatami::make_DelayedUnaryIsometricDivideScalar<false, int>(5.0);
-    tatami_test::throws_error([&]() { op.template fill<double>(5); }, "IEEE-754");
+    tatami_test::throws_error([&]() { op.template fill<double>(true, 5); }, "IEEE-754");
 }
