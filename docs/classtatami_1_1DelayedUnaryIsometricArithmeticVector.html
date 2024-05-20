@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::DelayedUnaryIsometricArithmeticVector&lt; op_, right_, margin_, Value_, Vector_ &gt; Class Template Reference</title>
+<title>tatami: tatami::DelayedUnaryIsometricArithmeticVector&lt; op_, right_, Value_, Vector_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -78,7 +78,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classtatami_1_1DelayedUnaryIsometricArithmeticVector-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami::DelayedUnaryIsometricArithmeticVector&lt; op_, right_, margin_, Value_, Vector_ &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">tatami::DelayedUnaryIsometricArithmeticVector&lt; op_, right_, Value_, Vector_ &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -89,41 +89,50 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ab2583fbe5cbea5a9a26b76ab381039f6" id="r_ab2583fbe5cbea5a9a26b76ab381039f6"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricArithmeticVector.html#ab2583fbe5cbea5a9a26b76ab381039f6">DelayedUnaryIsometricArithmeticVector</a> (<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">vector</a>)</td></tr>
-<tr class="separator:ab2583fbe5cbea5a9a26b76ab381039f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2285257a316f237c180cba351e93bf37" id="r_a2285257a316f237c180cba351e93bf37"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricArithmeticVector.html#a2285257a316f237c180cba351e93bf37">DelayedUnaryIsometricArithmeticVector</a> (<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">vector</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">by_row</a>)</td></tr>
+<tr class="separator:a2285257a316f237c180cba351e93bf37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> right_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">int</a> margin_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a> = double, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> = std::vector&lt;double&gt;&gt;<br />
-class tatami::DelayedUnaryIsometricArithmeticVector&lt; op_, right_, margin_, Value_, Vector_ &gt;</div><p>Delayed unary isometric vector arithmetic. </p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> right_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a> = double, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> = std::vector&lt;double&gt;&gt;<br />
+class tatami::DelayedUnaryIsometricArithmeticVector&lt; op_, right_, Value_, Vector_ &gt;</div><p>Delayed unary isometric vector arithmetic. </p>
 <p>This should be used as the <code>Operation_</code> in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> class.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">op_</td><td>The arithmetic operation. </td></tr>
     <tr><td class="paramname">right_</td><td>Whether the vector's values should be on the right hand side of the arithmetic operation. Ignored for some <code>op_</code>. </td></tr>
-    <tr><td class="paramname">margin_</td><td><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a> dimension along which the operation is to occur. If 0, each element of the vector is assumed to correspond to a row, and that value is subtracted from all entries in the same row of the matrix. If 1, each element of the vector is assumed to correspond to a column instead. </td></tr>
     <tr><td class="paramname">Value_</td><td>Type of the data value. </td></tr>
     <tr><td class="paramname">Vector_</td><td>Type of the vector. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="ab2583fbe5cbea5a9a26b76ab381039f6" name="ab2583fbe5cbea5a9a26b76ab381039f6"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab2583fbe5cbea5a9a26b76ab381039f6">&#9670;&#160;</a></span>DelayedUnaryIsometricArithmeticVector()</h2>
+<a id="a2285257a316f237c180cba351e93bf37" name="a2285257a316f237c180cba351e93bf37"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2285257a316f237c180cba351e93bf37">&#9670;&#160;</a></span>DelayedUnaryIsometricArithmeticVector()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> right_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">int</a> margin_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>  = double, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a>  = std::vector&lt;double&gt;&gt; </div>
+template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> right_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>  = double, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a>  = std::vector&lt;double&gt;&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedUnaryIsometricArithmeticVector.html">tatami::DelayedUnaryIsometricArithmeticVector</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">op_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">right_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">margin_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> &gt;::DelayedUnaryIsometricArithmeticVector </td>
+          <td class="memname"><a class="el" href="classtatami_1_1DelayedUnaryIsometricArithmeticVector.html">tatami::DelayedUnaryIsometricArithmeticVector</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">op_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">right_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> &gt;::DelayedUnaryIsometricArithmeticVector </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a>&#160;</td>
-          <td class="paramname"><em>vector</em></td><td>)</td>
+          <td class="paramname"><em>vector</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a>&#160;</td>
+          <td class="paramname"><em>by_row</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -134,7 +143,8 @@ template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">vector</td><td>Vector of values to use in the operation. This should be of length equal to the number of rows if <code>margin_ = 0</code>, otherwise it should be of length equal to the number of columns. </td></tr>
+    <tr><td class="paramname">vector</td><td>Vector of values to use in the operation. This should be of length equal to the number of rows if <code>by_row = true</code>, otherwise it should be of length equal to the number of columns. </td></tr>
+    <tr><td class="paramname">by_row</td><td>Whether <code>vector</code> corresponds to the rows. If true, each element of the vector is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix. If false, each element of the vector is assumed to correspond to a column instead. </td></tr>
   </table>
   </dd>
 </dl>

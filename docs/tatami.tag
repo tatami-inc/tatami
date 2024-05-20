@@ -75,6 +75,13 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>DelayedBinaryIsometricOperation.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>DelayedBinaryIsometricOperation_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>boolean_utils.hpp</name>
     <path>tatami/isometric/</path>
     <filename>boolean__utils_8hpp.html</filename>
@@ -708,8 +715,36 @@
       <type>Value_</type>
       <name>fill</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>af8f29fcd4a44b151b81179113b79099d</anchor>
-      <arglist>(Index_ i) const</arglist>
+      <anchor>a0bc3ec527f1a4f00219b249c5a2eef88</anchor>
+      <arglist>(bool row, Index_ i) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
+      <anchor>affe8f8bb0a012e8b5cbe94c0119b304b</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
+      <anchor>adcfab3a4cb10a89a842a1cbc30935d88</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
+      <anchor>ad2dcc2934324bdcbbaa894448da0f9ef</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
+      <anchor>a460c92223fd0f55a402ff4504146e61f</anchor>
+      <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -741,16 +776,9 @@
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
-      <name>zero_depends_on_row</name>
+      <name>is_basic</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a97c925e22033a5ef690c70f360ae070c</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a2cbb9934ab85aed9490f484a96e29713</anchor>
+      <anchor>a2ca2a93a291efa4af6e19782ea16dea9</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -773,16 +801,9 @@
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
-      <name>zero_depends_on_row</name>
+      <name>is_basic</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricMockBasic.html</anchorfile>
-      <anchor>aa63633a654280d0b0b71993857124ded</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedBinaryIsometricMockBasic.html</anchorfile>
-      <anchor>ae1b9d8dbf5a0907e3f61aa660716b2e2</anchor>
+      <anchor>a106cb2d03c2ab7fa0a6a2a7d10c5e0ea</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -2116,15 +2137,14 @@
     <filename>classtatami_1_1DelayedUnaryIsometricArithmeticVector.html</filename>
     <templarg>ArithmeticOperation op_</templarg>
     <templarg>bool right_</templarg>
-    <templarg>int margin_</templarg>
     <templarg>typename Value_</templarg>
     <templarg>typename Vector_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedUnaryIsometricArithmeticVector</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricArithmeticVector.html</anchorfile>
-      <anchor>ab2583fbe5cbea5a9a26b76ab381039f6</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a2285257a316f237c180cba351e93bf37</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2169,15 +2189,14 @@
     <name>tatami::DelayedUnaryIsometricBooleanVector</name>
     <filename>classtatami_1_1DelayedUnaryIsometricBooleanVector.html</filename>
     <templarg>BooleanOperation op_</templarg>
-    <templarg>int margin_</templarg>
     <templarg>typename Value_</templarg>
     <templarg>typename Vector_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedUnaryIsometricBooleanVector</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricBooleanVector.html</anchorfile>
-      <anchor>a44b34771b2bc832c3f76fde864ae453e</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a1bc09b7db9508b21784f202ab4ec5b4e</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2203,15 +2222,14 @@
     <name>tatami::DelayedUnaryIsometricCompareVector</name>
     <filename>classtatami_1_1DelayedUnaryIsometricCompareVector.html</filename>
     <templarg>CompareOperation op_</templarg>
-    <templarg>int margin_</templarg>
     <templarg>typename Value_</templarg>
     <templarg>typename Vector_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedUnaryIsometricCompareVector</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareVector.html</anchorfile>
-      <anchor>a2014302f5f39cab2625a4fa4571998a0</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>af48d3d69dccb830f41c4b9b85819e2a9</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2317,8 +2335,36 @@
       <type>Value_</type>
       <name>fill</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a1efab90c27e31d9eb743bea790ae88a2</anchor>
-      <arglist>(Index_ i) const</arglist>
+      <anchor>a4f042ff192a54478fb284880326bf53e</anchor>
+      <arglist>(bool row, Index_ i) const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
+      <anchor>aecaacba2933b651a7332bb0606f8285f</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
+      <anchor>a4e6f6dc2ce03c242813f56c7e3f12e84</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_row</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
+      <anchor>a007536cd7ed1abc5411ba1e3526e200a</anchor>
+      <arglist>() const</arglist>
+    </member>
+    <member kind="function">
+      <type>bool</type>
+      <name>non_zero_depends_on_column</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
+      <anchor>a975c8c1eb8914048d2c03586241240a3</anchor>
+      <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -2329,30 +2375,9 @@
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
-      <name>zero_depends_on_row</name>
+      <name>is_basic</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a5f970e06772c150fdcd8d54ecce1eece</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a97342f55ec8039ac8f57a69d4155b802</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>non_zero_depends_on_row</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a20f3d96ca169707b18519854f9c83a7e</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>non_zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a87b2ce05b1929f85ee1ae629511ede5e</anchor>
+      <anchor>a2f82879f68e6672d7c33d0d3afdf831a</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -2375,16 +2400,9 @@
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
-      <name>zero_depends_on_row</name>
+      <name>is_basic</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricMockBasic.html</anchorfile>
-      <anchor>a9d6594bc976ab9190d009aba9d1de897</anchor>
-      <arglist></arglist>
-    </member>
-    <member kind="variable" static="yes">
-      <type>static constexpr bool</type>
-      <name>zero_depends_on_column</name>
-      <anchorfile>classtatami_1_1DelayedUnaryIsometricMockBasic.html</anchorfile>
-      <anchor>a9e7a3d793df8ca6524dbb6c4759035dc</anchor>
+      <anchor>af5af229c77cd59875fe2cd3f31079c45</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -4504,53 +4522,53 @@
       <arglist>(Scalar_ scalar)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::ADD, true, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::ADD, true, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricAddVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a5bcc935bd8a554f3f1a5520510cc0e22</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>ac0c59df00935f3583f6895d02653a217</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::SUBTRACT, right_, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::SUBTRACT, right_, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricSubtractVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a960395551aa48f69d6650c4ac8be2db9</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a77249c1b8c9a5d24a8219d8404ad3756</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::MULTIPLY, true, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::MULTIPLY, true, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricMultiplyVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae20e3ea688080d69083eb9979d202ba3</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>af2f8a8ae00d9e88fe56109fcf053342c</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::DIVIDE, right_, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::DIVIDE, right_, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricDivideVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a18b594965ef7b4c4384a611c9a5ca7ef</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a1ccf3cef786ad8278bb92361897acf57</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::POWER, right_, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::POWER, right_, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricPowerVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aacc9d6cc38f53679f83da674a5e70ccf</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>ad14885f05335a4243df6dda3ea2e693c</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::MODULO, right_, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::MODULO, right_, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricModuloVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a85a7dbcfc3820a37c8730179ddaaa65e</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a685a5aaf7e5d59a7c365772c87d71cd2</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::INTEGER_DIVIDE, right_, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricArithmeticVector&lt; ArithmeticOperation::INTEGER_DIVIDE, right_, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricIntegerDivideVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac5ecd8cca890a0e77ba33d751838419c</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a94260151e30a05e24513492890981d78</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
       <type>DelayedUnaryIsometricBooleanNotOperation&lt; Value_ &gt;</type>
@@ -4588,32 +4606,32 @@
       <arglist>(bool scalar)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::AND, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::AND, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricBooleanAndVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4eebdf97a8f05cd5c14f6a8ba9869a63</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a7249dac28e169c5744d01f14d54e0798</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::OR, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::OR, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricBooleanOrVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aef0979f42981fad1f1a15580a848e3d9</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a5699ed463d3aa1eb0673ab221c4f5698</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::XOR, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::XOR, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricBooleanXorVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a70e55b2eed41fb4008536c185e156ca2</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>ad3b6b5986d40690ca16001876a8ef1e2</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::EQUAL, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricBooleanVector&lt; BooleanOperation::EQUAL, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricBooleanEqualVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abe4d18f6c7eca243d8536b0f0fb3781a</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>af437a84cffd1a2777c1bd3f30e90a50e</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
       <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::EQUAL, Value_, Scalar_ &gt;</type>
@@ -4658,46 +4676,46 @@
       <arglist>(Scalar_ scalar)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::EQUAL, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::EQUAL, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricEqualVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8236f910cf8962e472751d8b6c6c8d43</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>ab160ffec6b0b337c6a059b668b49a226</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::GREATER_THAN, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::GREATER_THAN, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricGreaterThanVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae6d5999c3fa719a3ff5ab865adf7e2ef</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>abb513c6cd47768d43709bb8be0b2999f</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::LESS_THAN, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::LESS_THAN, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricLessThanVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a58175e49c393dbbe60d91fd40d11627a</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a9abe7095c8ea33de4b8788b0d5e574a9</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::GREATER_THAN_OR_EQUAL, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::GREATER_THAN_OR_EQUAL, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricGreaterThanOrEqualVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac979b8bc0a958b921cc65b4579cb6955</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>ac3f5d443825db5c49499d73f09c695b3</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::LESS_THAN_OR_EQUAL, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::LESS_THAN_OR_EQUAL, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricLessThanOrEqualVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a10e2c098691a597c585b7ed6489a26a2</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a9f2b4de2ef5263752390e6df9292651a</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::NOT_EQUAL, margin_, Value_, Vector_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::NOT_EQUAL, Value_, Vector_ &gt;</type>
       <name>make_DelayedUnaryIsometricNotEqualVector</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a3b00064ae52e041cf94958e124cc40b9</anchor>
-      <arglist>(Vector_ vector)</arglist>
+      <anchor>a191db207d66f1c392989fd0b9c4a9db5</anchor>
+      <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>

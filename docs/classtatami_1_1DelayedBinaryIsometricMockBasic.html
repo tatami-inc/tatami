@@ -99,10 +99,8 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-attribs" name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:aa63633a654280d0b0b71993857124ded" id="r_aa63633a654280d0b0b71993857124ded"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">static</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">constexpr</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockBasic.html#aa63633a654280d0b0b71993857124ded">zero_depends_on_row</a> = <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">true</a></td></tr>
-<tr class="separator:aa63633a654280d0b0b71993857124ded"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae1b9d8dbf5a0907e3f61aa660716b2e2" id="r_ae1b9d8dbf5a0907e3f61aa660716b2e2"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">static</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">constexpr</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockBasic.html#ae1b9d8dbf5a0907e3f61aa660716b2e2">zero_depends_on_column</a> = <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">true</a></td></tr>
-<tr class="separator:ae1b9d8dbf5a0907e3f61aa660716b2e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a106cb2d03c2ab7fa0a6a2a7d10c5e0ea" id="r_a106cb2d03c2ab7fa0a6a2a7d10c5e0ea"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">static</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">constexpr</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockBasic.html#a106cb2d03c2ab7fa0a6a2a7d10c5e0ea">is_basic</a> = <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">true</a></td></tr>
+<tr class="separator:a106cb2d03c2ab7fa0a6a2a7d10c5e0ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Basic mock operation for <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricOperation.html" title="Delayed isometric operations on two matrices.">DelayedBinaryIsometricOperation</a></code>. </p>
@@ -178,7 +176,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether the rows are the target dimension. If true, <code>left_buffer</code> and <code>right_buffer</code> hold the contents of the <code>i</code>-th row from both matrices; otherwise, they hold the contents of the <code>i</code>-th column. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). Unlike <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockAdvanced.html#a0e668bdf736a459dbfa17bd26d07380b">DelayedBinaryIsometricMockAdvanced::dense()</a></code>, this is always guaranteed to be the actual index and not a placeholder. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">start</td><td>Start of the contiguous block of columns (if <code>row = true</code>) or rows (otherwise) extracted from <code>i</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">length</td><td>Length of the contiguous block. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">left_buffer</td><td>Contents of the row/column extracted from the left matrix. This has <code>length</code> addressable elements, and the result of the operation should be stored here. </td></tr>
@@ -254,7 +252,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether the rows are the target dimension. If true, <code>left_buffer</code> and <code>right_buffer</code> hold the contents of the <code>i</code>-th row from both matrices; otherwise, they hold the contents of the <code>i</code>-th column. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">i</td><td>Index of the extracted row (if <code>row = true</code>) or column (otherwise). Unlike <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockAdvanced.html#a0e668bdf736a459dbfa17bd26d07380b">DelayedBinaryIsometricMockAdvanced::dense()</a></code>, this is always guaranteed to be the actual index and not a placeholder. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">indices</td><td>Sorted and unique indices of columns (if <code>row = true</code>) or rows (otherwise) extracted from <code>i</code>. </td></tr>
     <tr><td class="paramdir">[in,out]</td><td class="paramname">left_buffer</td><td>Contents of the row/column extracted from the left matrix. This has <code>length</code> addressable elements, and the result of the operation should be stored here. </td></tr>
     <tr><td class="paramdir">[in]</td><td class="paramname">right_buffer</td><td>Contents of the row/column extracted from the right matrix. This has <code>length</code> addressable elements.</td></tr>
@@ -266,8 +264,8 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div>
 </div>
 <h2 class="groupheader">Member Data Documentation</h2>
-<a id="aa63633a654280d0b0b71993857124ded" name="aa63633a654280d0b0b71993857124ded"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa63633a654280d0b0b71993857124ded">&#9670;&#160;</a></span>zero_depends_on_row</h2>
+<a id="a106cb2d03c2ab7fa0a6a2a7d10c5e0ea" name="a106cb2d03c2ab7fa0a6a2a7d10c5e0ea"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a106cb2d03c2ab7fa0a6a2a7d10c5e0ea">&#9670;&#160;</a></span>is_basic</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -276,7 +274,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">constexpr</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> tatami::DelayedBinaryIsometricMockBasic::zero_depends_on_row = <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">true</a></td>
+          <td class="memname"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">constexpr</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> tatami::DelayedBinaryIsometricMockBasic::is_basic = <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">true</a></td>
         </tr>
       </table>
   </td>
@@ -285,30 +283,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
   </tr>
 </table>
 </div><div class="memdoc">
-<p>Conversion of zeros to non-zero values is dependent on rows. This should be <code>true</code>, otherwise an advanced operation is expected (see <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockAdvanced.html" title="Advanced mock operation for DelayedBinaryIsometricOperation.">DelayedBinaryIsometricMockAdvanced</a></code>). </p>
-
-</div>
-</div>
-<a id="ae1b9d8dbf5a0907e3f61aa660716b2e2" name="ae1b9d8dbf5a0907e3f61aa660716b2e2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae1b9d8dbf5a0907e3f61aa660716b2e2">&#9670;&#160;</a></span>zero_depends_on_column</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">constexpr</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> tatami::DelayedBinaryIsometricMockBasic::zero_depends_on_column = <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">true</a></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span><span class="mlabel">constexpr</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-<p>Conversion of zeros to non-zero values is dependent on columns. This should be <code>true</code>, otherwise an advanced operation is expected (see <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockAdvanced.html" title="Advanced mock operation for DelayedBinaryIsometricOperation.">DelayedBinaryIsometricMockAdvanced</a></code>). </p>
+<p>Whether this is a basic operation. This should be true, otherwise an advanced operation is expected (see <code><a class="el" href="classtatami_1_1DelayedBinaryIsometricMockAdvanced.html" title="Advanced mock operation for DelayedBinaryIsometricOperation.">DelayedBinaryIsometricMockAdvanced</a></code>). </p>
 
 </div>
 </div>
