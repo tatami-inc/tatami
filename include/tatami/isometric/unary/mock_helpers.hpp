@@ -32,6 +32,7 @@ public:
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * Unlike `DelayedUnaryIsometricMockAdvanced::dense()`, this is always guaranteed to be available.
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
      * @param[in,out] buffer Contents of the row/column extracted from the matrix.
@@ -63,6 +64,7 @@ public:
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * Unlike `DelayedUnaryIsometricMockAdvanced::dense()`, this is always guaranteed to be available.
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in,out] buffer Contents of the row/column extracted from the matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.

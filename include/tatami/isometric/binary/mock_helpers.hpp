@@ -33,6 +33,7 @@ public:
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
      * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * Unlike `DelayedBinaryIsometricMockAdvanced::dense()`, this is always guaranteed to be the actual index and not a placeholder.
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
@@ -68,6 +69,7 @@ public:
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
      * otherwise, they hold the contents of the `i`-th column.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * Unlike `DelayedBinaryIsometricMockAdvanced::dense()`, this is always guaranteed to be the actual index and not a placeholder.
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.
