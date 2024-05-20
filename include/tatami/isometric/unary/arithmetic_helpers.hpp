@@ -230,8 +230,14 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(bool, Index_ idx) const {
-        return delayed_arithmetic_zero<op_, right_, Value_>(my_vector[idx]);
+    Value_ fill(bool row, Index_ idx) const {
+        if (row == my_by_row) {
+            return delayed_arithmetic_zero<op_, right_, Value_>(my_vector[idx]);
+        } else {
+            // We should only get to this point if it's sparse, otherwise no
+            // single fill value would work across the length of my_vector.
+            return 0;
+        }
     }
     /**
      * @endcond

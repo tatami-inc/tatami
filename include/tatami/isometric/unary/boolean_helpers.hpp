@@ -255,10 +255,16 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(bool, Index_ idx) const {
-        Value_ output = 0;
-        delayed_boolean_run<op_>(output, my_vector[idx]);
-        return output;
+    Value_ fill(bool row, Index_ idx) const {
+        if (row == my_by_row) {
+            Value_ output = 0;
+            delayed_boolean_run<op_>(output, my_vector[idx]);
+            return output;
+        } else {
+            // We should only get to this point if it's sparse, otherwise no
+            // single fill value would work across the length of my_vector.
+            return 0;
+        }
     }
     /**
      * @endcond
