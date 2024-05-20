@@ -62,7 +62,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -122,7 +122,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -194,7 +194,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined value.
         return std::log(static_cast<Value_>(0));
     }
@@ -253,7 +253,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -311,7 +311,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -369,7 +369,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -427,7 +427,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -499,7 +499,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -557,7 +557,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -615,7 +615,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 1.0;
     }
     /**
@@ -673,7 +673,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -731,7 +731,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
         return std::acos(0);
     }
@@ -790,7 +790,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
         return std::acosh(static_cast<Value_>(0));
     }
@@ -849,7 +849,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -907,7 +907,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -965,7 +965,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1023,7 +1023,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1081,7 +1081,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 1.0;
     }
     /**
@@ -1139,7 +1139,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 1.0;
     }
     /**
@@ -1197,7 +1197,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1255,7 +1255,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1313,7 +1313,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1371,7 +1371,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1429,7 +1429,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
         return std::tgamma(static_cast<Value_>(0));
     }
@@ -1488,7 +1488,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
         return std::lgamma(static_cast<Value_>(0));
     }

@@ -5,6 +5,7 @@
 #include "../../utils/new_extractor.hpp"
 #include "../../utils/copy.hpp"
 #include "../../dense/SparsifiedWrapper.hpp"
+#include "../depends_utils.hpp"
 
 #include <memory>
 #include <vector>
@@ -22,85 +23,6 @@ namespace tatami {
  * @cond
  */
 namespace DelayedBinaryIsometricOperation_internal {
-
-// Some SFINAE shenanigans for checking if zero handling depends on the row ID of the zero value.
-template<class Operation_, typename = int>
-struct has_zero_depends_on_row {
-    static constexpr bool value = false;
-};
-
-template<class Operation_>
-struct has_zero_depends_on_row<Operation_, decltype((void) std::declval<Operation_>().zero_depends_on_row(), 0)> {
-    static constexpr bool value = true;
-};
-
-template<class Operation_>
-bool zero_depends_on_row(const Operation_& op) {
-    if constexpr(!has_zero_depends_on_row<Operation_>::value) {
-        return false;
-    } else {
-        return op.zero_depends_on_row();
-    }
-}
-
-// Some SFINAE shenanigans for checking if zero handling depends on the column ID of the zero value.
-template<class Operation_, typename = int>
-struct has_zero_depends_on_column {
-    static constexpr bool value = false;
-};
-
-template<class Operation_>
-struct has_zero_depends_on_column<Operation_, decltype((void) std::declval<Operation_>().zero_depends_on_column(), 0)> {
-    static constexpr bool value = true;
-};
-
-template<class Operation_>
-bool zero_depends_on_column(const Operation_& op) {
-    if constexpr(!has_zero_depends_on_column<Operation_>::value) {
-        return false;
-    } else {
-        return op.zero_depends_on_column();
-    }
-}
-
-template<bool oracle_, class Operation_, typename Index_>
-class MaybeOracleDepends {
-public:
-    MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& oracle, const Operation_& op, bool row) {
-        if constexpr(oracle_) {
-            if constexpr(Operation_::is_basic) {
-                my_oracle = oracle;
-            } else if (
-                // Figuring out whether we need to get the index of the target
-                // dimension when processing each element of that dimension.
-                ( row && zero_depends_on_row(op)) || 
-                (!row && zero_depends_on_column(op))) 
-            {
-                my_oracle = oracle;
-            }
-        }
-    }
-
-    Index_ get(Index_ i) {
-        if constexpr(oracle_) {
-            if constexpr(Operation_::is_basic) {
-                return my_oracle->get(my_used++);
-            } else if constexpr(
-                has_zero_depends_on_row<Operation_>::value || 
-                has_zero_depends_on_column<Operation_>::value) 
-            {
-                if (my_oracle) {
-                    return my_oracle->get(my_used++);
-                }
-            }
-        }
-        return i;
-    }
-
-private:
-    MaybeOracle<oracle_, Index_> my_oracle;
-    typename std::conditional<oracle_, size_t, bool>::type my_used = 0;
-};
 
 /********************
  *** Dense simple ***
@@ -137,7 +59,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
     Index_ my_extent;
@@ -178,7 +100,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     Index_ my_block_start, my_block_length;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
@@ -217,7 +139,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     VectorPtr<Index_> my_indices_ptr;
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
@@ -279,7 +201,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
     Index_ my_extent;
@@ -341,7 +263,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     Index_ my_block_start, my_block_length;
 
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
@@ -413,7 +335,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     Index_ my_extent;
 
     std::vector<Index_> my_remapping;
@@ -523,7 +445,7 @@ public:
 private:
     const Operation_& my_operation;
     bool my_row;
-    MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
+    DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
 
     std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_left_ext, my_right_ext;
     std::vector<Value_> my_left_vbuffer, my_right_vbuffer;
@@ -707,17 +629,7 @@ private:
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_internal(bool row, Args_&& ... args) const {
         if constexpr(!Operation_::is_basic) {
             if (my_left->is_sparse() && my_right->is_sparse()) {
-                if (
-                    // If zero processing doesn't depend on the row identity,
-                    // then during column extraction, we can use a constant
-                    // value to fill in the zero values across rows. 
-                    (!row && !DelayedBinaryIsometricOperation_internal::zero_depends_on_row(my_operation)) || 
-
-                    // Conversely, if zero processing doesn't depend on
-                    // columns, then during row extraction, we can fill in the
-                    // zero values across columns with a constant value.
-                    ( row && !DelayedBinaryIsometricOperation_internal::zero_depends_on_column(my_operation))) 
-                {
+                if (DelayedIsometricOperation_internal::can_dense_expand(my_operation, row)) {
                     return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
                 }
             }

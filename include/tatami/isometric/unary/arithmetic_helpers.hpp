@@ -120,7 +120,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         return delayed_arithmetic_zero<op_, right_, Value_>(my_scalar);
     }
     /**
@@ -169,12 +169,12 @@ public:
      */
     static constexpr bool is_basic = false;
 
-    bool zero_to_non_zero_depends_on_row() const {
-        return !my_sparse && my_by_row;
+    bool zero_depends_on_row() const {
+        return my_by_row;
     }
 
-    bool zero_to_non_zero_depends_on_column() const {
-        return !my_sparse && !my_by_row;
+    bool zero_depends_on_column() const {
+        return !my_by_row;
     }
 
     bool non_zero_depends_on_row() const {
@@ -230,7 +230,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_ idx) const {
+    Value_ fill(bool, Index_ idx) const {
         return delayed_arithmetic_zero<op_, right_, Value_>(my_vector[idx]);
     }
     /**

@@ -88,7 +88,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_) const {
+    Value_ fill(bool, Index_) const {
         Value_ output = 0;
         delayed_compare_run<op_>(output, my_scalar);
         return output;
@@ -137,12 +137,12 @@ public:
      */
     static constexpr bool is_basic = false;
 
-    bool zero_to_non_zero_depends_on_row() const {
-        return !my_sparse && my_by_row;
+    bool zero_depends_on_row() const {
+        return my_by_row;
     }
 
-    bool zero_to_non_zero_depends_on_column() const {
-        return !my_sparse && !my_by_row;
+    bool zero_depends_on_column() const {
+        return !my_by_row;
     }
 
     bool non_zero_depends_on_row() const {
@@ -198,7 +198,7 @@ public:
     }
 
     template<typename Index_>
-    Value_ fill(Index_ idx) const {
+    Value_ fill(bool, Index_ idx) const {
         Value_ output = 0;
         delayed_compare_run<op_>(output, my_vector[idx]);
         return output;
