@@ -81,7 +81,9 @@ $(function() {
 <p><b>tatami</b> is a header-only library, so it can be easily used by just <code>#include</code>ing the relevant source files:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="tatami_8hpp.html">tatami/tatami.hpp</a>&quot;</span></div>
 <div class="line"> </div>
-<div class="line">std::shared_ptr&lt;tatami::NumericMatrix&gt; mat(<span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1DenseRowMatrix.html">tatami::DenseRowMatrix&lt;double, int&gt;</a>(nrows, ncols, vals));</div>
+<div class="line">std::shared_ptr&lt;tatami::NumericMatrix&gt; mat(</div>
+<div class="line">    <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1DenseRowMatrix.html">tatami::DenseRowMatrix&lt;double, int&gt;</a>(nrows, ncols, vals)</div>
+<div class="line">);</div>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Get the dimensions:</span></div>
 <div class="line"><span class="keywordtype">int</span> NR = mat-&gt;nrow(), NC = mat-&gt;ncol();</div>
@@ -111,9 +113,9 @@ $(function() {
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">List of lists sparse matrix   </td><td class="markdownTableBodyNone"><code>FragmentedSparseMatrix</code>    </td></tr>
 <tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">Delayed isometric unary operation   </td><td class="markdownTableBodyNone"><code>make_DelayedUnaryIsometricOp()</code>    </td></tr>
+<td class="markdownTableBodyNone">Delayed isometric unary operation   </td><td class="markdownTableBodyNone"><code>make_DelayedUnaryIsometricOperation()</code>    </td></tr>
 <tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">Delayed isometric binary operation   </td><td class="markdownTableBodyNone"><code>make_DelayedBinaryIsometricOp()</code>    </td></tr>
+<td class="markdownTableBodyNone">Delayed isometric binary operation   </td><td class="markdownTableBodyNone"><code>make_DelayedBinaryIsometricOperation()</code>    </td></tr>
 <tr class="markdownTableRowEven">
 <td class="markdownTableBodyNone">Delayed combination   </td><td class="markdownTableBodyNone"><code>make_DelayedBind()</code>    </td></tr>
 <tr class="markdownTableRowOdd">
@@ -123,7 +125,7 @@ $(function() {
 <tr class="markdownTableRowOdd">
 <td class="markdownTableBodyNone">Delayed cast   </td><td class="markdownTableBodyNone"><code>make_DelayedCast()</code>   </td></tr>
 </table>
-<p>For example, to create a compressed sparse matrix from sparse triplet data, we could do:</p>
+<p>For example, to create a compressed sparse matrix from sparse triplet data (<code>x</code>, <code>i</code>, <code>j</code>), we could do:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &quot;<a class="code" href="tatami_8hpp.html">tatami/tatami.hpp</a>&quot;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> NROW = 10, NCOL = 20;</div>
@@ -156,7 +158,7 @@ $(function() {
 <div class="line">    <span class="keyword">auto</span> current = ext-&gt;fetch(r, buffer.data());</div>
 <div class="line">    <span class="comment">// Do something with the &#39;current&#39; pointer.</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p>The <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">tatami::MyopicDenseExtractor::fetch()</a></code> method returns a pointer to an array of length equal to the number of columns that contains each row's contents. In some matrix representations (e.g., <code>DenseMatrix</code>), the returned pointer directly refers to the matrix's internal data store. However, this is not the case in general so we need to allocate a buffer of appropriate length (<code>buffer</code>) in which the dense contents can be stored; if this buffer is used, the returned pointer refers to the buffer start. Users can also use <code>tatami::MyopicDenseExtractor::fetch_copy()</code> if they want to force a copy of the row contents into the buffer, regardless of the representation.</p>
+</div><!-- fragment --><p>The <code><a class="el" href="classtatami_1_1MyopicDenseExtractor.html#a9f3ee9c959cdefdb45dcbcd607826a49">tatami::MyopicDenseExtractor::fetch()</a></code> method returns a pointer to the row's contents. In some matrix representations (e.g., <code>DenseMatrix</code>), the returned pointer directly refers to the matrix's internal data store. However, this is not the case in general so we need to allocate a buffer of appropriate length (<code>buffer</code>) in which the dense contents can be stored; if this buffer is used, the returned pointer refers to the start of the buffer.</p>
 <p>Alternatively, we could extract sparse columns via <code><a class="el" href="classtatami_1_1MyopicSparseExtractor.html#ae545d22bfe3e3d90bc0ce50410fcfb9c">tatami::MyopicSparseExtractor::fetch()</a></code>, which returns a <code><a class="el" href="structtatami_1_1SparseRange.html" title="A range of a sparse vector.">tatami::SparseRange</a></code> containing pointers to arrays of (structurally non-zero) values and their row indices. This provides some opportunities for optimization in algorithms that only need to operate on non-zero values. The <code>fetch()</code> call requires buffers for both arrays - again, this may not be used for matrix subclasses with contiguous internal storage of the values/indices.</p>
 <div class="fragment"><div class="line"><span class="keyword">auto</span> sext = mat-&gt;sparse_column();</div>
 <div class="line">std::vector&lt;double&gt; vbuffer(NR);</div>
@@ -168,7 +170,7 @@ $(function() {
 <div class="line">    current.value; <span class="comment">// Pointer to the value array</span></div>
 <div class="line">    current.index; <span class="comment">// Pointer to the index array</span></div>
 <div class="line">}</div>
-</div><!-- fragment --><p>In both the dense and sparse cases, we can restrict the values that are extracted by <code>fetch()</code>. This provides some opportunities for optimization by avoiding the unnecessary extraction of uninteresting data. To do so, we define a range of elements or supply a vector containing the indices of the elements of interest during <code>Extractor</code> construction:</p>
+</div><!-- fragment --><p>In both the dense and sparse cases, we can restrict the values that are extracted by <code>fetch()</code>. This provides some opportunities for optimization by avoiding the unnecessary extraction of uninteresting data. To do so, we specify the start and length of a contiguous block of interest, or we supply a vector containing the indices of the elements of interest:</p>
 <div class="fragment"><div class="line"><span class="comment">// Get rows [5, 17) from each column.</span></div>
 <div class="line"><span class="keyword">auto</span> bext = mat-&gt;dense_column(5, 12); </div>
 <div class="line"> </div>
@@ -212,7 +214,7 @@ $(function() {
 <div class="line">        <span class="comment">// Do something in each thread.</span></div>
 <div class="line">    }</div>
 <div class="line">}</div>
-</div><!-- fragment --><p>Users may also consider using the <code><a class="el" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize()</a></code> function, which accepts a function with the range of jobs (in this case, rows) to be processed in each thread. This responds to the <code>TATAMI_CUSTOM_PARALLEL</code> macro, which allows applications to easily change their parallelization scheme. For example, if a toolchain does not support OpenMP, an application can set the macro to switch to <code>&lt;thread&gt;</code> instead.</p>
+</div><!-- fragment --><p>Users may also consider using the <code><a class="el" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize()</a></code> function, which accepts a function with the range of jobs (in this case, rows) to be processed in each thread. By default, this uses the standard <code>&lt;thread&gt;</code> library and so will work in environments without OpenMP. If this is not sufficient, applications can change the parallelization scheme in all <code><a class="el" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize()</a></code> calls by setting the <code>TATAMI_CUSTOM_PARALLEL</code> macro.</p>
 <div class="fragment"><div class="line"><a class="code hl_function" href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a>([&amp;](<span class="keywordtype">int</span> thread, <span class="keywordtype">int</span> start, <span class="keywordtype">int</span> length) -&gt; <span class="keywordtype">void</span> {</div>
 <div class="line">    <span class="keyword">auto</span> wrk = mat-&gt;dense_row();</div>
 <div class="line">    std::vector&lt;double&gt; buffer(NC);</div>
@@ -223,7 +225,7 @@ $(function() {
 <div class="line">}, NR, nthreads);</div>
 <div class="ttc" id="anamespacetatami_html_a41e252422f9959a123ba390a941ae76f"><div class="ttname"><a href="namespacetatami.html#a41e252422f9959a123ba390a941ae76f">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, size_t threads)</div><div class="ttdef"><b>Definition</b> parallelize.hpp:49</div></div>
 </div><!-- fragment --><h2>Defining an oracle</h2>
-<p>When calling the <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> methods, advanced users can supply an <code>Oracle</code> that specifies the sequence of rows/columns to be accessed. Knowledge of the future access pattern enables optimizations in some <code>Matrix</code> implementations, e.g., file-backed matrices can reduce the number of disk reads by pre-fetching the right data for future accesses. The most obvious use case involves accessing consecutive rows/columns:</p>
+<p>When constructing an <code>Extractor</code>, users can supply an <code>Oracle</code> that specifies the sequence of rows/columns to be accessed. Knowledge of the future access pattern enables optimizations in some <code>Matrix</code> implementations, e.g., file-backed matrices can reduce the number of disk reads by pre-fetching the right data for future accesses. The most obvious use case involves accessing consecutive rows/columns:</p>
 <div class="fragment"><div class="line"><span class="keyword">auto</span> o = std::make_shared&lt;tatami::ConsecutiveOracle&lt;int&gt; &gt;(0, NR));</div>
 <div class="line"><span class="keyword">auto</span> wrk = mat-&gt;dense_row(o);</div>
 <div class="line"><span class="keywordflow">for</span> (<span class="keywordtype">int</span> r = 0; r &lt; NR; ++r) {</div>
@@ -234,7 +236,7 @@ $(function() {
 </div><!-- fragment --><p>In fact, this use case is so common that we can just use the <code><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor()</a></code> wrapper to construct the oracle and pass it to <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code>. This will return a <code><a class="el" href="classtatami_1_1OracularDenseExtractor.html" title="Extract an element of the target dimension in dense form with an oracle.">tatami::OracularDenseExtractor</a></code> instance that contains the oracle's predictions.</p>
 <div class="fragment"><div class="line"><span class="comment">// Same as &#39;wrk&#39; above.</span></div>
 <div class="line"><span class="keyword">auto</span> cwrk = <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor&lt;false&gt;</a>(mat.get(), row, 0, NR);</div>
-</div><!-- fragment --><p>Alternatively, we can use the <code>FixedOracle</code> class with an array of row/column indices that are known ahead of time. Advanced users can also define their own <code>Oracle</code> subclasses to provide dynamic custom predictions, e.g., based on PRNG output.</p>
+</div><!-- fragment --><p>Alternatively, we can use the <code>FixedOracle</code> class with an array of row/column indices that are known ahead of time. Advanced users can also define their own <code>Oracle</code> subclasses to generate predictions on the fly.</p>
 <h1>Comments on other operations</h1>
 <p>As previously mentioned, <b>tatami</b> is designed to pull out rows or columns of a matrix, and little else. Some support is provided for basic statistics in the same vein as the <a href="https://github.com/HenrikBengtsson/matrixStats"><b>matrixStats</b></a> R package - see the <a href="https://github.com/tatami-inc/tatami_stats"><b>tatami_stats</b></a> library for more information.</p>
 <p><b>tatami</b> does not directly support matrix algebra or decompositions. If these high-level operations are needed, applications should write their own code, e.g., by using <b>tatami</b>'s extractors to implement matrix multiplication. Alternatively, we can transfer data from <b>tatami</b> into other frameworks like <a href="https://eigen.tuxfamily.org/"><b>Eigen</b></a> for complex matrix operations, effectively trading the diversity of representations for a more comprehensive suite of operations. For example, we often use <b>tatami</b> to represent the input data in a custom format to save memory for large datasets; process it into a much smaller submatrix, e.g., by selecting features of interest in a genome-scale analysis; and then copy this cheaply into an <code>Eigen::MatrixXd</code> or <code>Eigen::SparseMatrix</code> for more computationally intensive work.</p>
@@ -270,6 +272,7 @@ $(function() {
 <h1>Links</h1>
 <p>Check out the <a href="https://tatami-inc.github.io/tatami">reference documentation</a> for more details on each function and class.</p>
 <p>The <a href="gallery/">gallery</a> also contains worked examples for common operations based on row/column traversals.</p>
+<p>The <a href="https://github.com/tatami-inc/tatami_stats"><b>tatami_stats</b></a> repository computes some common statistics on <b>tatami</b> matrices.</p>
 <p>The <a href="https://github.com/tatami-inc/tatami_hdf5"><b>tatami_hdf5</b></a> repository contains <b>tatami</b> bindings for HDF5-backed matrices.</p>
 <p>The <a href="https://github.com/tatami-inc/tatami_r"><b>tatami_r</b></a> repository contains <b>tatami</b> bindings for matrix-like objects in R.</p>
 <p>The <a href="https://github.com/tatami-inc/beachmat"><b>beachmat</b></a> package vendors the <b>tatami</b> headers for easy use by other R packages. </p>

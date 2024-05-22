@@ -33,7 +33,7 @@ var searchData=
   ['delayedunaryisometricasinh_30',['DelayedUnaryIsometricAsinh',['../classtatami_1_1DelayedUnaryIsometricAsinh.html',1,'tatami']]],
   ['delayedunaryisometricatan_31',['DelayedUnaryIsometricAtan',['../classtatami_1_1DelayedUnaryIsometricAtan.html',1,'tatami']]],
   ['delayedunaryisometricatanh_32',['DelayedUnaryIsometricAtanh',['../classtatami_1_1DelayedUnaryIsometricAtanh.html',1,'tatami']]],
-  ['delayedunaryisometricbooleannotoperation_33',['DelayedUnaryIsometricBooleanNotOperation',['../classtatami_1_1DelayedUnaryIsometricBooleanNotOperation.html',1,'tatami']]],
+  ['delayedunaryisometricbooleannot_33',['DelayedUnaryIsometricBooleanNot',['../classtatami_1_1DelayedUnaryIsometricBooleanNot.html',1,'tatami']]],
   ['delayedunaryisometricbooleanscalar_34',['delayedunaryisometricbooleanscalar',['../classtatami_1_1DelayedUnaryIsometricBooleanScalar.html',1,'tatami::DelayedUnaryIsometricBooleanScalar&lt; op_, Value_ &gt;'],['../classtatami_1_1DelayedUnaryIsometricBooleanScalar.html#a1d5009f6235dc67f4b8a4f33d738a48c',1,'tatami::DelayedUnaryIsometricBooleanScalar::DelayedUnaryIsometricBooleanScalar()']]],
   ['delayedunaryisometricbooleanvector_35',['delayedunaryisometricbooleanvector',['../classtatami_1_1DelayedUnaryIsometricBooleanVector.html',1,'tatami::DelayedUnaryIsometricBooleanVector&lt; op_, Value_, Vector_ &gt;'],['../classtatami_1_1DelayedUnaryIsometricBooleanVector.html#a1bc09b7db9508b21784f202ab4ec5b4e',1,'tatami::DelayedUnaryIsometricBooleanVector::DelayedUnaryIsometricBooleanVector()']]],
   ['delayedunaryisometricceiling_36',['DelayedUnaryIsometricCeiling',['../classtatami_1_1DelayedUnaryIsometricCeiling.html',1,'tatami']]],

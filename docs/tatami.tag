@@ -120,7 +120,7 @@
     <path>tatami/isometric/unary/</path>
     <filename>unary_2boolean__helpers_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanScalar</class>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanNotOperation</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanNot</class>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanVector</class>
     <namespace>tatami</namespace>
   </compound>
@@ -2168,8 +2168,8 @@
     <templarg>typename Value_</templarg>
   </compound>
   <compound kind="class">
-    <name>tatami::DelayedUnaryIsometricBooleanNotOperation</name>
-    <filename>classtatami_1_1DelayedUnaryIsometricBooleanNotOperation.html</filename>
+    <name>tatami::DelayedUnaryIsometricBooleanNot</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricBooleanNot.html</filename>
     <templarg>typename Value_</templarg>
   </compound>
   <compound kind="class">
@@ -4171,7 +4171,7 @@
     <class kind="class">tatami::DelayedUnaryIsometricAsinh</class>
     <class kind="class">tatami::DelayedUnaryIsometricAtan</class>
     <class kind="class">tatami::DelayedUnaryIsometricAtanh</class>
-    <class kind="class">tatami::DelayedUnaryIsometricBooleanNotOperation</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanNot</class>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanScalar</class>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanVector</class>
     <class kind="class">tatami::DelayedUnaryIsometricCeiling</class>
@@ -4571,10 +4571,10 @@
       <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricBooleanNotOperation&lt; Value_ &gt;</type>
+      <type>DelayedUnaryIsometricBooleanNot&lt; Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricBooleanNot</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9655f62d815344b8fd12d62e596b811e</anchor>
+      <anchor>a787756e1a676dd151acf3d90de6c08dd</anchor>
       <arglist>()</arglist>
     </member>
     <member kind="function">
