@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.24)
 
 project(tatami
-    VERSION 2.1.2
+    VERSION 3.0.0
     DESCRIPTION "A C++ interface for assorted matrix representations"
     LANGUAGES CXX)
 
@@ -53,5 +53,10 @@ configure_package_config_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/Config.cmake.in
     "${CMAKE_CURRENT_BINARY_DIR}/tatami_tatamiConfig.cmake"
     INSTALL_DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tatami_tatami)
 
+write_basic_package_version_file(
+    ${CMAKE_CURRENT_BINARY_DIR}/tatami_tatamiConfigVersion.cmake
+    COMPATIBILITY SameMajorVersion)
+
 install(FILES "${CMAKE_CURRENT_BINARY_DIR}/tatami_tatamiConfig.cmake"
+    "${CMAKE_CURRENT_BINARY_DIR}/tatami_tatamiConfigVersion.cmake"
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/tatami_tatami)
