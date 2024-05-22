@@ -105,7 +105,7 @@ public:
  * @tparam Value_ Type of the data value.
  */
 template<typename Value_ = double>
-class DelayedUnaryIsometricBooleanNotOperation {
+class DelayedUnaryIsometricBooleanNot {
 public:
     /**
      * @cond
@@ -277,8 +277,8 @@ public:
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
 template<typename Value_ = double>
-DelayedUnaryIsometricBooleanNotOperation<Value_> make_DelayedUnaryIsometricBooleanNot() {
-    return DelayedUnaryIsometricBooleanNotOperation<Value_>();
+DelayedUnaryIsometricBooleanNot<Value_> make_DelayedUnaryIsometricBooleanNot() {
+    return DelayedUnaryIsometricBooleanNot<Value_>();
 }
 
 /**
