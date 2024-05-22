@@ -21,7 +21,9 @@ Many applications involve looping over rows or columns to compute some statistic
 ```cpp
 #include "tatami/tatami.hpp"
 
-std::shared_ptr<tatami::NumericMatrix> mat(new tatami::DenseRowMatrix<double, int>(nrows, ncols, vals));
+std::shared_ptr<tatami::NumericMatrix> mat(
+    new tatami::DenseRowMatrix<double, int>(nrows, ncols, vals)
+);
 
 // Get the dimensions:
 int NR = mat->nrow(), NC = mat->ncol();
@@ -46,19 +48,19 @@ Application developers can write code that works interchangeably with a variety 
 
 Users can create an instance of a concrete `tatami::Matrix` subclass by using one of the constructors or the equivalent `make_*` utility:
 
-| Description                                | Class or function                  |
-|--------------------------------------------|------------------------------------|
-| Dense matrix                               | `DenseMatrix`                      |
-| Compressed sparse matrix                   | `CompressedSparseMatrix`           |
-| List of lists sparse matrix                | `FragmentedSparseMatrix`           |
-| Delayed isometric unary operation          | `make_DelayedUnaryIsometricOp()`   |
-| Delayed isometric binary operation         | `make_DelayedBinaryIsometricOp()`  |
-| Delayed combination                        | `make_DelayedBind()`               |
-| Delayed subset                             | `make_DelayedSubset()`             |
-| Delayed transpose                          | `make_DelayedTranspose()`          |
-| Delayed cast                               | `make_DelayedCast()`               |
+| Description                                | Class or function                        |
+|--------------------------------------------|------------------------------------------|
+| Dense matrix                               | `DenseMatrix`                            |
+| Compressed sparse matrix                   | `CompressedSparseMatrix`                 |
+| List of lists sparse matrix                | `FragmentedSparseMatrix`                 |
+| Delayed isometric unary operation          | `make_DelayedUnaryIsometricOperation()`  |
+| Delayed isometric binary operation         | `make_DelayedBinaryIsometricOperation()` |
+| Delayed combination                        | `make_DelayedBind()`                     |
+| Delayed subset                             | `make_DelayedSubset()`                   |
+| Delayed transpose                          | `make_DelayedTranspose()`                |
+| Delayed cast                               | `make_DelayedCast()`                     |
 
-For example, to create a compressed sparse matrix from sparse triplet data, we could do:
+For example, to create a compressed sparse matrix from sparse triplet data (`x`, `i`, `j`), we could do:
 
 ```cpp
 #include "tatami/tatami.hpp"
@@ -117,11 +119,10 @@ for (int r = 0; r < NR; ++r) {
 }
 ```
 
-The `tatami::MyopicDenseExtractor::fetch()` method returns a pointer to an array of length equal to the number of columns that contains each row's contents.
+The `tatami::MyopicDenseExtractor::fetch()` method returns a pointer to the row's contents.
 In some matrix representations (e.g., `DenseMatrix`), the returned pointer directly refers to the matrix's internal data store.
 However, this is not the case in general so we need to allocate a buffer of appropriate length (`buffer`) in which the dense contents can be stored;
-if this buffer is used, the returned pointer refers to the buffer start.
-Users can also use `tatami::MyopicDenseExtractor::fetch_copy()` if they want to force a copy of the row contents into the buffer, regardless of the representation.
+if this buffer is used, the returned pointer refers to the start of the buffer.
 
 Alternatively, we could extract sparse columns via `tatami::MyopicSparseExtractor::fetch()`, 
 which returns a `tatami::SparseRange` containing pointers to arrays of (structurally non-zero) values and their row indices.
@@ -143,7 +144,7 @@ for (int c = 0; c < NC; ++c) {
 
 In both the dense and sparse cases, we can restrict the values that are extracted by `fetch()`.
 This provides some opportunities for optimization by avoiding the unnecessary extraction of uninteresting data.
-To do so, we define a range of elements or supply a vector containing the indices of the elements of interest during `Extractor` construction:
+To do so, we specify the start and length of a contiguous block of interest, or we supply a vector containing the indices of the elements of interest:
 
 ```cpp
 // Get rows [5, 17) from each column.
@@ -212,8 +213,8 @@ With OpenMP, this looks like:
 ```
 
 Users may also consider using the `tatami::parallelize()` function, which accepts a function with the range of jobs (in this case, rows) to be processed in each thread.
-This responds to the `TATAMI_CUSTOM_PARALLEL` macro, which allows applications to easily change their parallelization scheme.
-For example, if a toolchain does not support OpenMP, an application can set the macro to switch to `<thread>` instead.
+By default, this uses the standard `<thread>` library and so will work in environments without OpenMP. 
+If this is not sufficient, applications can change the parallelization scheme in all `tatami::parallelize()` calls by setting the `TATAMI_CUSTOM_PARALLEL` macro.
 
 ```cpp
 tatami::parallelize([&](int thread, int start, int length) -> void {
@@ -228,7 +229,7 @@ tatami::parallelize([&](int thread, int start, int length) -> void {
 
 ### Defining an oracle
 
-When calling the `tatami::Matrix` methods, advanced users can supply an `Oracle` that specifies the sequence of rows/columns to be accessed.
+When constructing an `Extractor`, users can supply an `Oracle` that specifies the sequence of rows/columns to be accessed.
 Knowledge of the future access pattern enables optimizations in some `Matrix` implementations, 
 e.g., file-backed matrices can reduce the number of disk reads by pre-fetching the right data for future accesses.
 The most obvious use case involves accessing consecutive rows/columns:
@@ -252,7 +253,7 @@ auto cwrk = tatami::consecutive_extractor<false>(mat.get(), row, 0, NR);
 ```
 
 Alternatively, we can use the `FixedOracle` class with an array of row/column indices that are known ahead of time.
-Advanced users can also define their own `Oracle` subclasses to provide dynamic custom predictions, e.g., based on PRNG output.
+Advanced users can also define their own `Oracle` subclasses to generate predictions on the fly.
 
 ## Comments on other operations
 
@@ -328,6 +329,8 @@ either directly or with Git submodules - and include their path during compilati
 Check out the [reference documentation](https://tatami-inc.github.io/tatami) for more details on each function and class.
 
 The [gallery](gallery/) also contains worked examples for common operations based on row/column traversals.
+
+The [**tatami_stats**](https://github.com/tatami-inc/tatami_stats) repository computes some common statistics on **tatami** matrices.
 
 The [**tatami_hdf5**](https://github.com/tatami-inc/tatami_hdf5) repository contains **tatami** bindings for HDF5-backed matrices.
 
