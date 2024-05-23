@@ -55,6 +55,7 @@ add_executable(
     src/other/DelayedBind.cpp
     src/other/DelayedTranspose.cpp
     src/other/DelayedCast.cpp
+    src/other/ConstantMatrix.cpp
 )
 decorate_executable(other_test)
 
