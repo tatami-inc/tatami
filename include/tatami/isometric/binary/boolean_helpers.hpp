@@ -53,7 +53,9 @@ public:
 
     template<typename Value_, typename Index_>
     Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
-        // Don't bother storing an explicit zero for AND operations when either entry is zero.
+        // Don't bother storing an explicit zero for AND operations when either
+        // entry is zero. This should be NaN-safe as NaNs are truthy, so
+        // applying AND on that would just be false anyway.
         constexpr bool must_have_both = (op_ == BooleanOperation::AND);
         return delayed_binary_isometric_sparse_operation<must_have_both>(
             left, 

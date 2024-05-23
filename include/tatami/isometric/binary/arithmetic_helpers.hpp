@@ -56,8 +56,14 @@ public:
 
     template<typename Value_, typename Index_>
     Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
-        // Don't bother storing an explicit zero for MULTIPLY operations when either entry is zero.
-        constexpr bool must_have_both = (op_ == ArithmeticOperation::MULTIPLY);
+        // Technically, MULTIPLY could skip processing if either is a zero.
+        // However, this is not correct if the other value is an NaN/Inf, as
+        // the product would be a NaN, not a zero; so we have to err on the
+        // side of caution of attemping the operation.
+        constexpr bool must_have_both = (op_ == ArithmeticOperation::MULTIPLY && 
+                                         !std::numeric_limits<Value_>::has_quiet_NaN && 
+                                         !std::numeric_limits<Value_>::has_infinity);
+
         return delayed_binary_isometric_sparse_operation<must_have_both>(
             left, 
             right, 
