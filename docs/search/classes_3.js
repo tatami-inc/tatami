@@ -46,11 +46,13 @@ var searchData=
   ['delayedunaryisometricsin_43',['DelayedUnaryIsometricSin',['../classtatami_1_1DelayedUnaryIsometricSin.html',1,'tatami']]],
   ['delayedunaryisometricsinh_44',['DelayedUnaryIsometricSinh',['../classtatami_1_1DelayedUnaryIsometricSinh.html',1,'tatami']]],
   ['delayedunaryisometricsqrt_45',['DelayedUnaryIsometricSqrt',['../classtatami_1_1DelayedUnaryIsometricSqrt.html',1,'tatami']]],
-  ['delayedunaryisometrictan_46',['DelayedUnaryIsometricTan',['../classtatami_1_1DelayedUnaryIsometricTan.html',1,'tatami']]],
-  ['delayedunaryisometrictanh_47',['DelayedUnaryIsometricTanh',['../classtatami_1_1DelayedUnaryIsometricTanh.html',1,'tatami']]],
-  ['delayedunaryisometrictrunc_48',['DelayedUnaryIsometricTrunc',['../classtatami_1_1DelayedUnaryIsometricTrunc.html',1,'tatami']]],
-  ['densecolumnmatrix_49',['DenseColumnMatrix',['../classtatami_1_1DenseColumnMatrix.html',1,'tatami']]],
-  ['densematrix_50',['DenseMatrix',['../classtatami_1_1DenseMatrix.html',1,'tatami']]],
-  ['densematrix_3c_20value_5f_2c_20index_5f_2c_20std_3a_3avector_3c_20value_5f_20_3e_20_3e_51',['DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;',['../classtatami_1_1DenseMatrix.html',1,'tatami']]],
-  ['denserowmatrix_52',['DenseRowMatrix',['../classtatami_1_1DenseRowMatrix.html',1,'tatami']]]
+  ['delayedunaryisometricsubstitutescalar_46',['DelayedUnaryIsometricSubstituteScalar',['../classtatami_1_1DelayedUnaryIsometricSubstituteScalar.html',1,'tatami']]],
+  ['delayedunaryisometricsubstitutevector_47',['DelayedUnaryIsometricSubstituteVector',['../classtatami_1_1DelayedUnaryIsometricSubstituteVector.html',1,'tatami']]],
+  ['delayedunaryisometrictan_48',['DelayedUnaryIsometricTan',['../classtatami_1_1DelayedUnaryIsometricTan.html',1,'tatami']]],
+  ['delayedunaryisometrictanh_49',['DelayedUnaryIsometricTanh',['../classtatami_1_1DelayedUnaryIsometricTanh.html',1,'tatami']]],
+  ['delayedunaryisometrictrunc_50',['DelayedUnaryIsometricTrunc',['../classtatami_1_1DelayedUnaryIsometricTrunc.html',1,'tatami']]],
+  ['densecolumnmatrix_51',['DenseColumnMatrix',['../classtatami_1_1DenseColumnMatrix.html',1,'tatami']]],
+  ['densematrix_52',['DenseMatrix',['../classtatami_1_1DenseMatrix.html',1,'tatami']]],
+  ['densematrix_3c_20value_5f_2c_20index_5f_2c_20std_3a_3avector_3c_20value_5f_20_3e_20_3e_53',['DenseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt; &gt;',['../classtatami_1_1DenseMatrix.html',1,'tatami']]],
+  ['denserowmatrix_54',['DenseRowMatrix',['../classtatami_1_1DenseRowMatrix.html',1,'tatami']]]
 ];

@@ -57,6 +57,18 @@ var searchData=
   ['make_5fdelayedunaryisometricoperation_54',['make_DelayedUnaryIsometricOperation',['../namespacetatami.html#a0e3d9e5070d08b09f669f371b4b30799',1,'tatami']]],
   ['make_5fdelayedunaryisometricpowerscalar_55',['make_DelayedUnaryIsometricPowerScalar',['../namespacetatami.html#add664c63ec4b5cea17e2ae3b23b53bb8',1,'tatami']]],
   ['make_5fdelayedunaryisometricpowervector_56',['make_DelayedUnaryIsometricPowerVector',['../namespacetatami.html#ad14885f05335a4243df6dda3ea2e693c',1,'tatami']]],
-  ['make_5fdelayedunaryisometricsubtractscalar_57',['make_DelayedUnaryIsometricSubtractScalar',['../namespacetatami.html#ac591d05e2986f0164604c6171392cc32',1,'tatami']]],
-  ['make_5fdelayedunaryisometricsubtractvector_58',['make_DelayedUnaryIsometricSubtractVector',['../namespacetatami.html#a77249c1b8c9a5d24a8219d8404ad3756',1,'tatami']]]
+  ['make_5fdelayedunaryisometricsubstituteequalscalar_57',['make_DelayedUnaryIsometricSubstituteEqualScalar',['../namespacetatami.html#a2d151dc7399acec38f5e04ce3a7812dd',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstituteequalvector_58',['make_DelayedUnaryIsometricSubstituteEqualVector',['../namespacetatami.html#a90cd5051271fda51be03670848e17bf4',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutegreaterthanorequalscalar_59',['make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalar',['../namespacetatami.html#ad9ddc7d11f26466bd1c91df6e9d6644f',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutegreaterthanorequalvector_60',['make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualVector',['../namespacetatami.html#adf046b4ba48222d084a4a1cd84b560c7',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutegreaterthanscalar_61',['make_DelayedUnaryIsometricSubstituteGreaterThanScalar',['../namespacetatami.html#ad4d5d40290cbdb3482b431537477f2eb',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutegreaterthanvector_62',['make_DelayedUnaryIsometricSubstituteGreaterThanVector',['../namespacetatami.html#a60163836a688ca8b662affec5f3ac92b',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutelessthanorequalscalar_63',['make_DelayedUnaryIsometricSubstituteLessThanOrEqualScalar',['../namespacetatami.html#a426c86154563bf970cdd336550e52a9f',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutelessthanorequalvector_64',['make_DelayedUnaryIsometricSubstituteLessThanOrEqualVector',['../namespacetatami.html#a11f450e1cbcd4fbd7427dc5d15392cc4',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutelessthanscalar_65',['make_DelayedUnaryIsometricSubstituteLessThanScalar',['../namespacetatami.html#a97f757807a14dfe7edfedfafcb53a6ed',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutelessthanvector_66',['make_DelayedUnaryIsometricSubstituteLessThanVector',['../namespacetatami.html#a0a478db711543357f581bbe2d241421f',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutenotequalscalar_67',['make_DelayedUnaryIsometricSubstituteNotEqualScalar',['../namespacetatami.html#acacdf9cefffe5e02d73a8c2463d3b482',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubstitutenotequalvector_68',['make_DelayedUnaryIsometricSubstituteNotEqualVector',['../namespacetatami.html#ad65490ea8c0ee4d29af2d51d10ba23ca',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubtractscalar_69',['make_DelayedUnaryIsometricSubtractScalar',['../namespacetatami.html#ac591d05e2986f0164604c6171392cc32',1,'tatami']]],
+  ['make_5fdelayedunaryisometricsubtractvector_70',['make_DelayedUnaryIsometricSubtractVector',['../namespacetatami.html#a77249c1b8c9a5d24a8219d8404ad3756',1,'tatami']]]
 ];
