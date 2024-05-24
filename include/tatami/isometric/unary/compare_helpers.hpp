@@ -21,6 +21,13 @@ void delayed_compare_run_simple(Scalar_ scalar, Index_ length, Value_* buffer) {
         delayed_compare_run<op_>(buffer[i], scalar);
     }
 }
+
+template<CompareOperation op_, typename Value_, typename Scalar_>
+bool delayed_compare_actual_sparse(Scalar_ scalar) {
+    Value_ output = 0;
+    delayed_compare_run<op_>(output, scalar);
+    return output == 0;
+}
 /**
  * @endcond
  */
@@ -38,11 +45,10 @@ template<CompareOperation op_, typename Value_ = double, typename Scalar_ = Valu
 class DelayedUnaryIsometricCompareScalar {
 public:
     /**
-     * @param scalar Scalar value to be compared to the matrix values.
-     * The matrix value is assumed to be on the left hand side of the comparison, while `compared` is on the right.
+     * @param scalar Scalar value to be added.
      */
     DelayedUnaryIsometricCompareScalar(Scalar_ scalar) : my_scalar(scalar) {
-        my_sparse = !delayed_compare<op_, Value_>(0, scalar);
+        my_sparse = delayed_compare_actual_sparse<op_, Value_>(my_scalar);
     }
 
 private:
@@ -105,16 +111,15 @@ template<CompareOperation op_, typename Value_ = double, typename Vector_ = std:
 class DelayedUnaryIsometricCompareVector {
 public:
     /**
-     * @param vector Vector to use in the comparison with the matrix values.
+     * @param vector Vector of values to use in the operation. 
      * This should be of length equal to the number of rows if `by_row = true`, otherwise it should be of length equal to the number of columns.
-     * The matrix value from each row/column is assumed to be on the left hand side of the comparison, while the corresponding value of `compared` is on the right.
      * @param by_row Whether `vector` corresponds to the rows.
      * If true, each element of the vector is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix.
      * If false, each element of the vector is assumed to correspond to a column instead.
      */
     DelayedUnaryIsometricCompareVector(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
         for (auto x : my_vector) {
-             if (delayed_compare<op_, Value_>(0, x)) {
+             if (!delayed_compare_actual_sparse<op_, Value_>(x)) {
                  my_sparse = false;
                  break;
              }
