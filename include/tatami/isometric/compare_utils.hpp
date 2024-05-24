@@ -25,20 +25,25 @@ enum class CompareOperation : char {
  * @cond
  */
 template<CompareOperation op_, typename Scalar_, typename Value_>
-void delayed_compare_run(Value_& val, Scalar_ scalar) {
+bool delayed_compare(Value_ val, Scalar_ scalar) {
     if constexpr(op_ == CompareOperation::EQUAL) {
-        val = val == scalar;
+        return val == scalar;
     } else if constexpr(op_ == CompareOperation::GREATER_THAN) {
-        val = val > scalar;
+        return val > scalar;
     } else if constexpr(op_ == CompareOperation::LESS_THAN) {
-        val = val < scalar;
+        return val < scalar;
     } else if constexpr(op_ == CompareOperation::GREATER_THAN_OR_EQUAL) {
-        val = val >= scalar;
+        return val >= scalar;
     } else if constexpr(op_ == CompareOperation::LESS_THAN_OR_EQUAL) {
-        val = val <= scalar;
+        return val <= scalar;
     } else { // NOT EQUAL.
-        val = val != scalar;
+        return val != scalar;
     }
+}
+
+template<CompareOperation op_, typename Scalar_, typename Value_>
+void delayed_compare_run(Value_& val, Scalar_ scalar) {
+    val = delayed_compare<op_>(val, scalar);
 }
 /**
  * @endcond

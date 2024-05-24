@@ -76,6 +76,8 @@ add_executable(
     src/isometric/unary/compare_vector_helpers.cpp
     src/isometric/unary/boolean_scalar_helpers.cpp
     src/isometric/unary/boolean_vector_helpers.cpp
+    src/isometric/unary/substitute_scalar_helpers.cpp
+    src/isometric/unary/substitute_vector_helpers.cpp
 )
 decorate_executable(isometric_unary_test)
 
