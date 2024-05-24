@@ -16,20 +16,20 @@ namespace tatami {
 /**
  * @cond
  */
-template<CompareOperation op_, typename Value_, typename Scalar_>
-bool delayed_substitute_is_sparse(Value_ compared, Scalar_ substitute) {
+template<CompareOperation op_, typename Value_>
+bool delayed_substitute_is_sparse(Value_ compared, Value_ substitute) {
     return !delayed_compare<op_, Value_>(0, compared) || substitute == 0;
 }
 
-template<CompareOperation op_, typename Value_, typename Scalar_>
-void delayed_substitute_run(Value_& val, Value_ compared, Scalar_ substitute) {
+template<CompareOperation op_, typename Value_>
+void delayed_substitute_run(Value_& val, Value_ compared, Value_ substitute) {
     if (delayed_compare<op_, Value_>(val, compared)) {
         val = substitute;
     }
 }
 
-template<CompareOperation op_, typename Value_, typename Index_, typename Scalar_>
-void delayed_substitute_run_simple(Value_* buffer, Index_ length, Value_ compared, Scalar_ substitute) {
+template<CompareOperation op_, typename Value_, typename Index_>
+void delayed_substitute_run_simple(Value_* buffer, Index_ length, Value_ compared, Value_ substitute) {
     for (Index_ i = 0; i < length; ++i) {
         delayed_substitute_run<op_, Value_>(buffer[i], compared, substitute);
     }
@@ -46,22 +46,21 @@ void delayed_substitute_run_simple(Value_* buffer, Index_ length, Value_ compare
  *
  * @tparam op_ The comparison operation.
  * @tparam Value_ Type of the data value.
- * @tparam Scalar_ Type of the scalar value.
  */
-template<CompareOperation op_, typename Value_ = double, typename Scalar_ = Value_>
+template<CompareOperation op_, typename Value_ = double>
 class DelayedUnaryIsometricSubstituteScalar {
 public:
     /**
-     * @param compared Scalar value to be compared to the matrix values.
+     * @param compared Scalar to be compared to the matrix values.
      * The matrix value is assumed to be on the left hand side of the comparison, while `compared` is on the right.
-     * @param substitue Scalar value to substitute into the matrix for every element where the comparison to `compared` is true.
+     * @param substitute Scalar to substitute into the matrix for every element where the comparison to `compared` is true.
      */
-    DelayedUnaryIsometricSubstituteScalar(Scalar_ compared, Scalar_ substitute) : my_compared(compared), my_substitute(substitute) {
+    DelayedUnaryIsometricSubstituteScalar(Value_ compared, Value_ substitute) : my_compared(compared), my_substitute(substitute) {
         my_sparse = delayed_substitute_is_sparse<op_, Value_>(my_compared, my_substitute);
     }
 
 private:
-    Scalar_ my_compared, my_substitute;
+    Value_ my_compared, my_substitute;
     bool my_sparse;
 
 public:
@@ -238,92 +237,86 @@ public:
 
 /**
  * @tparam Value_ Type of the data value.
- * @tparam Scalar_ Type of the scalar.
  * @param compared Scalar to be compared to the matrix values.
- * @param substitute Scalar value to substitute into the matrix when the comparison is true.
+ * @param substitute Scalar to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed equality comparison to a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::EQUAL, Value_, Scalar_> 
-    make_DelayedUnaryIsometricSubstituteEqualScalar(Scalar_ compared, Scalar_ substitute) 
+template<typename Value_ = double>
+DelayedUnaryIsometricSubstituteScalar<CompareOperation::EQUAL, Value_> 
+    make_DelayedUnaryIsometricSubstituteEqualScalar(Value_ compared, Value_ substitute) 
 {
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::EQUAL, Value_, Scalar_>(std::move(compared), std::move(substitute));
+    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::EQUAL, Value_>(std::move(compared), std::move(substitute));
 }
 
 /**
  * @tparam Value_ Type of the data value.
- * @tparam Scalar_ Type of the scalar.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar value to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed greater-than comparison to a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN, Value_, Scalar_> 
-    make_DelayedUnaryIsometricSubstituteGreaterThanScalar(Scalar_ compared, Scalar_ substitute)
+template<typename Value_ = double>
+DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN, Value_> 
+    make_DelayedUnaryIsometricSubstituteGreaterThanScalar(Value_ compared, Value_ substitute)
 {
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN, Value_, Scalar_>(std::move(compared), std::move(substitute));
+    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN, Value_>(std::move(compared), std::move(substitute));
 }
 
 /**
  * @tparam Value_ Type of the data value.
- * @tparam Scalar_ Type of the scalar.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar value to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed less-than comparison to a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN, Value_, Scalar_>
-    make_DelayedUnaryIsometricSubstituteLessThanScalar(Scalar_ compared, Scalar_ substitute)
+template<typename Value_ = double>
+DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN, Value_>
+    make_DelayedUnaryIsometricSubstituteLessThanScalar(Value_ compared, Value_ substitute)
 {
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN, Value_, Scalar_>(std::move(compared), std::move(substitute));
+    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN, Value_>(std::move(compared), std::move(substitute));
 }
 
 /**
  * @tparam Value_ Type of the data value.
- * @tparam Scalar_ Type of the scalar.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar value to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed greater-than-or-equal comparison to a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN_OR_EQUAL, Value_, Scalar_> 
-    make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalar(Scalar_ compared, Scalar_ substitute)
+template<typename Value_ = double>
+DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN_OR_EQUAL, Value_> 
+    make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalar(Value_ compared, Value_ substitute)
 {
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN_OR_EQUAL, Value_, Scalar_>(std::move(compared), std::move(substitute));
+    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN_OR_EQUAL, Value_>(std::move(compared), std::move(substitute));
 }
 
 /**
  * @tparam Value_ Type of the data value.
- * @tparam Scalar_ Type of the scalar.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed less-than-or-equal comparison to a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN_OR_EQUAL, Value_, Scalar_>
-    make_DelayedUnaryIsometricSubstituteLessThanOrEqualScalar(Scalar_ compared, Scalar_ substitute)
+template<typename Value_ = double>
+DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN_OR_EQUAL, Value_>
+    make_DelayedUnaryIsometricSubstituteLessThanOrEqualScalar(Value_ compared, Value_ substitute)
 {
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN_OR_EQUAL, Value_, Scalar_>(std::move(compared), std::move(substitute));
+    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN_OR_EQUAL, Value_>(std::move(compared), std::move(substitute));
 }
 
 /**
  * @tparam Value_ Type of the data value.
- * @tparam Scalar_ Type of the scalar.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar value to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed non-equality comparison to a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::NOT_EQUAL, Value_, Scalar_>
-    make_DelayedUnaryIsometricSubstituteNotEqualScalar(Scalar_ compared, Scalar_ substitute) 
+template<typename Value_ = double>
+DelayedUnaryIsometricSubstituteScalar<CompareOperation::NOT_EQUAL, Value_>
+    make_DelayedUnaryIsometricSubstituteNotEqualScalar(Value_ compared, Value_ substitute) 
 {
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::NOT_EQUAL, Value_, Scalar_>(std::move(compared), std::move(substitute));
+    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::NOT_EQUAL, Value_>(std::move(compared), std::move(substitute));
 }
 
 /**
