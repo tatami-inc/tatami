@@ -142,7 +142,7 @@ template&lt;<a class="el" href="namespacetatami.html#a89475b46f681dd39b9926ced50
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">vector</td><td>Vector of values to use in the operation. This should be of length equal to the number of rows if <code>by_row = true</code>, otherwise it should be of length equal to the number of columns. </td></tr>
+    <tr><td class="paramname">vector</td><td>Vector to use in the comparison with the matrix values. This should be of length equal to the number of rows if <code>by_row = true</code>, otherwise it should be of length equal to the number of columns. The matrix value from each row/column is assumed to be on the left hand side of the comparison, while the corresponding value of <code>vector</code> is on the right. </td></tr>
     <tr><td class="paramname">by_row</td><td>Whether <code>vector</code> corresponds to the rows. If true, each element of the vector is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix. If false, each element of the vector is assumed to correspond to a column instead. </td></tr>
   </table>
   </dd>

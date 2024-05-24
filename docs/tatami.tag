@@ -2371,13 +2371,12 @@
     <filename>classtatami_1_1DelayedUnaryIsometricCompareScalar.html</filename>
     <templarg>CompareOperation op_</templarg>
     <templarg>typename Value_</templarg>
-    <templarg>typename Scalar_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedUnaryIsometricCompareScalar</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricCompareScalar.html</anchorfile>
-      <anchor>a05fdf55dc7af43ea1ca86fed3dc94bcd</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
+      <anchor>ac12d1643b26e16c4193115d60955509c</anchor>
+      <arglist>(Value_ scalar)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -2746,13 +2745,12 @@
     <filename>classtatami_1_1DelayedUnaryIsometricSubstituteScalar.html</filename>
     <templarg>CompareOperation op_</templarg>
     <templarg>typename Value_</templarg>
-    <templarg>typename Scalar_</templarg>
     <member kind="function">
       <type></type>
       <name>DelayedUnaryIsometricSubstituteScalar</name>
       <anchorfile>classtatami_1_1DelayedUnaryIsometricSubstituteScalar.html</anchorfile>
-      <anchor>af351b3956177658e9a4c24a5e1d008c4</anchor>
-      <arglist>(Scalar_ compared, Scalar_ substitute)</arglist>
+      <anchor>a1502475a236d3e1aee0d550d49d970c7</anchor>
+      <arglist>(Value_ compared, Value_ substitute)</arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -4827,46 +4825,46 @@
       <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::EQUAL, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::EQUAL, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricEqualScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a90d40da1414eb485b4a0e0e134730748</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
+      <anchor>a302a0e49a1f1a9a4b54e3a1bf78e1e72</anchor>
+      <arglist>(Value_ scalar)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::GREATER_THAN, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::GREATER_THAN, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricGreaterThanScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad8f664ba2d0bf13f141b19ff3b19d09f</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
+      <anchor>af8ed4ef318a469a76d8deb06c3cc5ea0</anchor>
+      <arglist>(Value_ scalar)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::LESS_THAN, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::LESS_THAN, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricLessThanScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad5a76d9e68bd3bc84157fb7ee616b3cb</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
+      <anchor>a2a765d470fe0e3f044f874a86a4d6cc2</anchor>
+      <arglist>(Value_ scalar)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::GREATER_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::GREATER_THAN_OR_EQUAL, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricGreaterThanOrEqualScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9b51b2cf1a00f06d9cab1bcee5391dcd</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
+      <anchor>a4f3b67b364853dce178cb36eae4d3718</anchor>
+      <arglist>(Value_ scalar)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::LESS_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::LESS_THAN_OR_EQUAL, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricLessThanOrEqualScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ac1cc398824b94692d832209b526cb80e</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
+      <anchor>a168a9856c92b89b731aa86600f036200</anchor>
+      <arglist>(Value_ scalar)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::NOT_EQUAL, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricCompareScalar&lt; CompareOperation::NOT_EQUAL, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricNotEqualScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ab7fd871255325ba36f03c96da6b29f88</anchor>
-      <arglist>(Scalar_ scalar)</arglist>
+      <anchor>a97ac4ee099f32540fa92d0bbf9b6a10a</anchor>
+      <arglist>(Value_ scalar)</arglist>
     </member>
     <member kind="function">
       <type>DelayedUnaryIsometricCompareVector&lt; CompareOperation::EQUAL, Value_, Vector_ &gt;</type>
@@ -4918,46 +4916,46 @@
       <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; matrix, Operation_ operation)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::EQUAL, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::EQUAL, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricSubstituteEqualScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2d151dc7399acec38f5e04ce3a7812dd</anchor>
-      <arglist>(Scalar_ compared, Scalar_ substitute)</arglist>
+      <anchor>a2f4611e96f639b004ffaa1c17c435070</anchor>
+      <arglist>(Value_ compared, Value_ substitute)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::GREATER_THAN, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::GREATER_THAN, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricSubstituteGreaterThanScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad4d5d40290cbdb3482b431537477f2eb</anchor>
-      <arglist>(Scalar_ compared, Scalar_ substitute)</arglist>
+      <anchor>a3ef464e027eeb29e2f82963520c26b0b</anchor>
+      <arglist>(Value_ compared, Value_ substitute)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::LESS_THAN, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::LESS_THAN, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricSubstituteLessThanScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a97f757807a14dfe7edfedfafcb53a6ed</anchor>
-      <arglist>(Scalar_ compared, Scalar_ substitute)</arglist>
+      <anchor>a00d5b011082a2a524f8e9611d07f87a7</anchor>
+      <arglist>(Value_ compared, Value_ substitute)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::GREATER_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::GREATER_THAN_OR_EQUAL, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad9ddc7d11f26466bd1c91df6e9d6644f</anchor>
-      <arglist>(Scalar_ compared, Scalar_ substitute)</arglist>
+      <anchor>ac10a97c1ec31e3a60d68da0a3f544603</anchor>
+      <arglist>(Value_ compared, Value_ substitute)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::LESS_THAN_OR_EQUAL, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::LESS_THAN_OR_EQUAL, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricSubstituteLessThanOrEqualScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a426c86154563bf970cdd336550e52a9f</anchor>
-      <arglist>(Scalar_ compared, Scalar_ substitute)</arglist>
+      <anchor>ab9bb7e872341073b579ab59f99870f23</anchor>
+      <arglist>(Value_ compared, Value_ substitute)</arglist>
     </member>
     <member kind="function">
-      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::NOT_EQUAL, Value_, Scalar_ &gt;</type>
+      <type>DelayedUnaryIsometricSubstituteScalar&lt; CompareOperation::NOT_EQUAL, Value_ &gt;</type>
       <name>make_DelayedUnaryIsometricSubstituteNotEqualScalar</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>acacdf9cefffe5e02d73a8c2463d3b482</anchor>
-      <arglist>(Scalar_ compared, Scalar_ substitute)</arglist>
+      <anchor>a4b9f40dd430934d2693a21d09954b103</anchor>
+      <arglist>(Value_ compared, Value_ substitute)</arglist>
     </member>
     <member kind="function">
       <type>DelayedUnaryIsometricSubstituteVector&lt; CompareOperation::EQUAL, Value_, Vector_ &gt;</type>
