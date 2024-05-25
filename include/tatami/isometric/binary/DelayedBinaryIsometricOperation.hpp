@@ -805,12 +805,4 @@ std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBinaryIsometricOperation(st
 
 }
 
-#include "arithmetic_helpers.hpp"
-
-#include "compare_helpers.hpp"
-
-#include "boolean_helpers.hpp"
-
-#include "mock_helpers.hpp"
-
 #endif
