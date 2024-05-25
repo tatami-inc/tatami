@@ -22,8 +22,8 @@ namespace tatami {
 class DelayedUnaryIsometricMockBasic {
 public:
     /**
-     * This method should apply the operation to values in `buffer`,
-     * This buffer represents an element of the target dimension from the underlying matrix,
+     * This method should apply the operation to values in `buffer`.
+     * The buffer represents an element of the target dimension from the underlying matrix,
      * and contains values from a contiguous block of the non-target dimension.
      *
      * @tparam Value_ Type of matrix value.
@@ -51,6 +51,42 @@ public:
     const {
         // Just filling it with something as a mock.
         std::fill_n(buffer, length, 0);
+    }
+
+    /**
+     * This method should apply the operation to values in `input` and store the result in `output`.
+     * The `input` buffer represents an element of the target dimension from the underlying matrix,
+     * and contains values from a contiguous block of the non-target dimension.
+     * This overload is only used when `Value_ != Output_` in `DelayedIsometricUnaryOperation`.
+     *
+     * @tparam Value_ Type of matrix value.
+     * @tparam Index_ Type of index value.
+     * @tparam Output_ Type of result value.
+     *
+     * @param row Whether the rows are the target dimension.
+     * If true, `buffer` contains row `i`, otherwise it contains column `i`.
+     * @param i Index of the extracted row (if `row = true`) or column (otherwise).
+     * Unlike `DelayedUnaryIsometricMockAdvanced::dense()`, this is always guaranteed to be available.
+     * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
+     * @param length Length of the contiguous block.
+     * @param[in] input Contents of the row/column extracted from the matrix.
+     * This has `length` addressable elements.
+     * @param[out] output Pointer to an array to store the result of the operation.
+     * This has `length` addressable elements.
+     *
+     * Note that implementions of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     */
+    template<typename InputValue_, typename Index_, typename Output_>
+    void dense(
+        [[maybe_unused]] bool row, 
+        [[maybe_unused]] Index_ i, 
+        [[maybe_unused]] Index_ start, 
+        Index_ length, 
+        [[maybe_unused]] const InputValue_* input,
+        const OutputValue_* output)
+    const {
+        std::fill_n(output, length, 0);
     }
 
     /**

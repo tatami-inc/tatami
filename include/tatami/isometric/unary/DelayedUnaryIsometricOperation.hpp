@@ -9,6 +9,7 @@
 #include <memory>
 #include <algorithm>
 #include <vector>
+#include <type_traits>
 
 /**
  * @file DelayedUnaryIsometricOperation.hpp
@@ -512,17 +513,18 @@ public:
  * This should implement the same methods as `DelayedUnaryIsometricMockBasic` or `DelayedUnaryIsometricMockAdvanced`,
  * depending on whether it can take advantage of matrix sparsity.
  */
-template<typename Value_, typename Index_, class Operation_>
+template<typename Value_, typename Index_, class Operation_, typename InputValue_>
 class DelayedUnaryIsometricOperation : public Matrix<Value_, Index_> {
 public:
     /**
      * @param matrix Pointer to the underlying matrix.
      * @param operation Instance of the functor class.
      */
-    DelayedUnaryIsometricOperation(std::shared_ptr<const Matrix<Value_, Index_> > matrix, Operation_ operation) : my_matrix(std::move(matrix)), my_operation(std::move(operation)) {}
+    DelayedUnaryIsometricOperation(std::shared_ptr<const Matrix<InputValue_, Index_> > matrix, Operation_ operation) : 
+        my_matrix(std::move(matrix)), my_operation(std::move(operation)) {}
 
 private:
-    std::shared_ptr<const Matrix<Value_, Index_> > my_matrix;
+    std::shared_ptr<const Matrix<InputValue_, Index_> > my_matrix;
     Operation_ my_operation;
 
 public:
