@@ -49,6 +49,37 @@ void delayed_compare_run(Value_& val, Value_ scalar) {
  * @endcond
  */
 
+/**
+ * Type of comparison operation for special IEEE values.
+ */
+enum class SpecialCompareOperation : char {
+    ISNAN,
+    ISINF,
+    ISFINITE
+};
+
+/**
+ * @cond
+ */
+template<SpecialCompareOperation op_, bool pass_, typename Value_>
+bool delayed_special_compare(Value_ val) {
+    if constexpr(op_ == SpecialCompareOperation::ISNAN) {
+        return pass_ == std::isnan(val);
+    } else if constexpr(op_ == SpecialCompareOperation::ISINF) {
+        return pass_ == std::isinf(val);
+    } else {
+        return pass_ == std::isfinite(val);
+    }
+}
+
+template<SpecialCompareOperation op_, bool pass_, typename Value_>
+void delayed_special_compare_run(Value_& val) {
+    val = delayed_special_compare<op_, pass_, Value_>(val);
+}
+/**
+ * @endcond
+ */
+
 }
 
 #endif
