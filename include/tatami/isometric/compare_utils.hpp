@@ -1,6 +1,8 @@
 #ifndef TATAMI_COMPARE_UTILS_HPP
 #define TATAMI_COMPARE_UTILS_HPP
 
+#include <cmath>
+
 /**
  * @file compare_utils.hpp
  *

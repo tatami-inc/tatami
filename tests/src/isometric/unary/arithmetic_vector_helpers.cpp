@@ -6,6 +6,8 @@
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
+#include "tatami/isometric/unary/arithmetic_helpers.hpp"
+#include "tatami/isometric/unary/math_helpers.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"

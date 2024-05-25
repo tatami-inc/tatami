@@ -1,7 +1,7 @@
 #ifndef TATAMI_ISOMETRIC_UNARY_SUBSTITUTE_HELPERS_H
 #define TATAMI_ISOMETRIC_UNARY_SUBSTITUTE_HELPERS_H
 
-#include "../arithmetic_utils.hpp"
+#include "../compare_utils.hpp"
 #include <vector>
 #include <limits>
 

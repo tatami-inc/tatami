@@ -776,16 +776,4 @@ using DelayedIsometricOperation = DelayedUnaryIsometricOperation<Value_, Index_,
 
 }
 
-#include "arithmetic_helpers.hpp"
-
-#include "math_helpers.hpp"
-
-#include "compare_helpers.hpp"
-
-#include "boolean_helpers.hpp"
-
-#include "substitute_helpers.hpp"
-
-#include "mock_helpers.hpp"
-
 #endif
