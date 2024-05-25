@@ -220,6 +220,9 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Values(0, -1, 1)
 );
 
+/********************************************
+ ********************************************/
+
 class DelayedUnaryIsometricSpecialCompareTest : public ::testing::TestWithParam<bool> {
 protected:
     inline static size_t nrow = 123, ncol = 89;

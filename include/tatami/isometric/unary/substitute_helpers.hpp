@@ -415,6 +415,136 @@ DelayedUnaryIsometricSubstituteVector<CompareOperation::NOT_EQUAL, Value_, Vecto
     return DelayedUnaryIsometricSubstituteVector<CompareOperation::NOT_EQUAL, Value_, Vector_>(std::move(compared), std::move(substitute), by_row);
 }
 
+/**
+ * @cond
+ */
+template<SpecialCompareOperation op_, bool pass_, typename Value_>
+bool delayed_special_substitute_is_sparse(Value_ substitute) {
+    return !delayed_special_compare<op_, pass_, Value_>(0) || substitute == 0;
+}
+
+template<SpecialCompareOperation op_, bool pass_, typename Value_>
+void delayed_special_substitute_run(Value_& val, Value_ substitute) {
+    if (delayed_special_compare<op_, pass_, Value_>(val)) {
+        val = substitute;
+    }
+}
+
+template<SpecialCompareOperation op_, bool pass_, typename Value_, typename Index_>
+void delayed_special_substitute_run_simple(Value_* buffer, Index_ length, Value_ substitute) {
+    for (Index_ i = 0; i < length; ++i) {
+        delayed_special_substitute_run<op_, pass_, Value_>(buffer[i], substitute);
+    }
+}
+/**
+ * @endcond
+ */
+
+/**
+ * @brief Delayed special value substitution.
+ *
+ * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ *
+ * @tparam op_ The special comparison operation.
+ * @tparam pass_ Whether to perform the substitution if the special comparison is true.
+ * Otherwise the substitution is only performed if the comparison is false.
+ * @tparam Value_ Type of the data value.
+ */
+template<SpecialCompareOperation op_, bool pass_, typename Value_ = double>
+class DelayedUnaryIsometricSpecialSubstitute {
+public:
+    /**
+     * @param substitute Scalar to substitute into the matrix for every element where the special comparison is true (if `pass_ = true`) or false (otherwise).
+     */
+    DelayedUnaryIsometricSpecialSubstitute(Value_ substitute) : my_substitute(substitute) {
+        my_sparse = delayed_special_substitute_is_sparse<op_, pass_, Value_>(my_substitute);
+    }
+
+private:
+    Value_ my_substitute;
+    bool my_sparse;
+
+public:
+    /**
+     * @cond
+     */
+    static constexpr bool is_basic = false;
+
+    bool is_sparse() const {
+        return my_sparse;
+    }
+    /**
+     * @endcond
+     */
+
+public:
+    /**
+     * @cond
+     */
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
+        delayed_special_substitute_run_simple<op_, pass_, Value_>(buffer, length, my_substitute);
+    }
+
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        delayed_special_substitute_run_simple<op_, pass_, Value_>(buffer, static_cast<Index_>(indices.size()), my_substitute);
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
+        delayed_special_substitute_run_simple<op_, pass_, Value_>(buffer, number, my_substitute);
+    }
+
+    template<typename Index_>
+    Value_ fill(bool, Index_) const {
+        if (my_sparse) {
+            return 0;
+        } else {
+            return my_substitute;
+        }
+    }
+    /**
+     * @endcond
+     */
+};
+
+/**
+ * @tparam pass_ Whether to perform the substitution if the matrix value is NaN.
+ * If false, the substitution is performed if the matrix value is not NaN.
+ * @tparam Value_ Type of the data value.
+ * @return A helper class for a delayed NaN check,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ */
+template<bool pass_ = true, typename Value_ = double>
+DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISNAN, pass_, Value_> make_DelayedUnaryIsometricSubstituteIsnan(Value_ substitute) {
+    return DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISNAN, pass_, Value_>(substitute);
+}
+
+/**
+ * @tparam pass_ Whether to return truthy if the matrix value is infinite.
+ * If false, the substitution is performed if the matrix value is not infinite.
+ * @tparam Value_ Type of the data value.
+ * @return A helper class for a delayed check for infinity (positive or negative),
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ */
+template<bool pass_ = true, typename Value_ = double>
+DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISINF, pass_, Value_> make_DelayedUnaryIsometricSubstituteIsinf(Value_ substitute) {
+    return DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISINF, pass_, Value_>(substitute);
+}
+
+/**
+ * @tparam pass_ Whether to return truthy if the matrix value is finite.
+ * If false, the substitution is performed if the matrix value is not finite.
+ * @tparam Value_ Type of the data value.
+ * @return A helper class for a delayed check for finite values,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ */
+template<bool pass_ = true, typename Value_ = double>
+DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISFINITE, pass_, Value_> make_DelayedUnaryIsometricSubstituteIsfinite(Value_ substitute) {
+    return DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISFINITE, pass_, Value_>(substitute);
+}
+
 }
 
 #endif
