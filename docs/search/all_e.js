@@ -15,5 +15,6 @@ var searchData=
   ['sparserange_12',['sparserange',['../structtatami_1_1SparseRange.html',1,'tatami::SparseRange&lt; Value_, Index_ &gt;'],['../structtatami_1_1SparseRange.html#a1706d98b8591f939f405e0083588d1b4',1,'tatami::SparseRange::SparseRange()=default'],['../structtatami_1_1SparseRange.html#a9e2b5fe9ddf226166160a2040656114c',1,'tatami::SparseRange::SparseRange(Index_ number, const Value_ *value=NULL, const Index_ *index=NULL)']]],
   ['sparserange_2ehpp_13',['SparseRange.hpp',['../SparseRange_8hpp.html',1,'']]],
   ['sparsifiedwrapper_2ehpp_14',['SparsifiedWrapper.hpp',['../SparsifiedWrapper_8hpp.html',1,'']]],
-  ['substitute_5fhelpers_2ehpp_15',['substitute_helpers.hpp',['../substitute__helpers_8hpp.html',1,'']]]
+  ['specialcompareoperation_15',['SpecialCompareOperation',['../namespacetatami.html#a4ef624db40413dabc3fea554fc936d39',1,'tatami']]],
+  ['substitute_5fhelpers_2ehpp_16',['substitute_helpers.hpp',['../substitute__helpers_8hpp.html',1,'']]]
 ];

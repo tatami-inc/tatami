@@ -137,6 +137,7 @@
     <filename>unary_2compare__helpers_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricCompareScalar</class>
     <class kind="class">tatami::DelayedUnaryIsometricCompareVector</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSpecialCompare</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -199,6 +200,7 @@
     <filename>substitute__helpers_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricSubstituteScalar</class>
     <class kind="class">tatami::DelayedUnaryIsometricSubstituteVector</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSpecialSubstitute</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -2736,6 +2738,27 @@
     <templarg>typename Value_</templarg>
   </compound>
   <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricSpecialCompare</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSpecialCompare.html</filename>
+    <templarg>SpecialCompareOperation op_</templarg>
+    <templarg>bool pass_</templarg>
+    <templarg>typename Value_</templarg>
+  </compound>
+  <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricSpecialSubstitute</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricSpecialSubstitute.html</filename>
+    <templarg>SpecialCompareOperation op_</templarg>
+    <templarg>bool pass_</templarg>
+    <templarg>typename Value_</templarg>
+    <member kind="function">
+      <type></type>
+      <name>DelayedUnaryIsometricSpecialSubstitute</name>
+      <anchorfile>classtatami_1_1DelayedUnaryIsometricSpecialSubstitute.html</anchorfile>
+      <anchor>a9f66f9d3b36171263ecc97dc2ff65624</anchor>
+      <arglist>(Value_ substitute)</arglist>
+    </member>
+  </compound>
+  <compound kind="class">
     <name>tatami::DelayedUnaryIsometricSqrt</name>
     <filename>classtatami_1_1DelayedUnaryIsometricSqrt.html</filename>
     <templarg>typename Value_</templarg>
@@ -4382,6 +4405,8 @@
     <class kind="class">tatami::DelayedUnaryIsometricSign</class>
     <class kind="class">tatami::DelayedUnaryIsometricSin</class>
     <class kind="class">tatami::DelayedUnaryIsometricSinh</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSpecialCompare</class>
+    <class kind="class">tatami::DelayedUnaryIsometricSpecialSubstitute</class>
     <class kind="class">tatami::DelayedUnaryIsometricSqrt</class>
     <class kind="class">tatami::DelayedUnaryIsometricSubstituteScalar</class>
     <class kind="class">tatami::DelayedUnaryIsometricSubstituteVector</class>
@@ -4501,6 +4526,16 @@
       <enumvalue file="namespacetatami.html" anchor="a89475b46f681dd39b9926ced507240ccaa6eac69202c3dc2978176801a84e4d1d">GREATER_THAN_OR_EQUAL</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="a89475b46f681dd39b9926ced507240cca8397780541b6289d2a0b991d1c28c432">LESS_THAN_OR_EQUAL</enumvalue>
       <enumvalue file="namespacetatami.html" anchor="a89475b46f681dd39b9926ced507240cca4ea2d378cdec20f59330f113297bc1ce">NOT_EQUAL</enumvalue>
+    </member>
+    <member kind="enumeration">
+      <type></type>
+      <name>SpecialCompareOperation</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a4ef624db40413dabc3fea554fc936d39</anchor>
+      <arglist></arglist>
+      <enumvalue file="namespacetatami.html" anchor="a4ef624db40413dabc3fea554fc936d39a655287640f3332dbb0adc4db2bebd5f6">ISNAN</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="a4ef624db40413dabc3fea554fc936d39a1d7a943989c551a77912edcb616fac87">ISINF</enumvalue>
+      <enumvalue file="namespacetatami.html" anchor="a4ef624db40413dabc3fea554fc936d39ad98f14ad8261785af815bfc90cb75bbe">ISFINITE</enumvalue>
     </member>
     <member kind="enumeration">
       <type></type>
@@ -4909,6 +4944,27 @@
       <arglist>(Vector_ vector, bool by_row)</arglist>
     </member>
     <member kind="function">
+      <type>DelayedUnaryIsometricSpecialCompare&lt; SpecialCompareOperation::ISNAN, pass_, Value_ &gt;</type>
+      <name>make_DelayedUnaryIsometricIsnan</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aff2033597d07aeca43d0d637163b59c9</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedUnaryIsometricSpecialCompare&lt; SpecialCompareOperation::ISINF, pass_, Value_ &gt;</type>
+      <name>make_DelayedUnaryIsometricIsinf</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a7a3fa7ac09fdd79bda05f4b13f1a3456</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedUnaryIsometricSpecialCompare&lt; SpecialCompareOperation::ISFINITE, pass_, Value_ &gt;</type>
+      <name>make_DelayedUnaryIsometricIsfinite</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a68bd0fae1cf48bdaaa42b492c56697a3</anchor>
+      <arglist>()</arglist>
+    </member>
+    <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>make_DelayedUnaryIsometricOperation</name>
       <anchorfile>namespacetatami.html</anchorfile>
@@ -4998,6 +5054,27 @@
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ad65490ea8c0ee4d29af2d51d10ba23ca</anchor>
       <arglist>(Vector_ compared, Vector_ substitute, bool by_row)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedUnaryIsometricSpecialSubstitute&lt; SpecialCompareOperation::ISNAN, pass_, Value_ &gt;</type>
+      <name>make_DelayedUnaryIsometricSubstituteIsnan</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a42ceae1b11636c213088c6d923fad313</anchor>
+      <arglist>(Value_ substitute)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedUnaryIsometricSpecialSubstitute&lt; SpecialCompareOperation::ISINF, pass_, Value_ &gt;</type>
+      <name>make_DelayedUnaryIsometricSubstituteIsinf</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a9d5ab6b324705fb16662933815c589c9</anchor>
+      <arglist>(Value_ substitute)</arglist>
+    </member>
+    <member kind="function">
+      <type>DelayedUnaryIsometricSpecialSubstitute&lt; SpecialCompareOperation::ISFINITE, pass_, Value_ &gt;</type>
+      <name>make_DelayedUnaryIsometricSubstituteIsfinite</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>a87a1194718021bcd4b97a6c420ffbdfa</anchor>
+      <arglist>(Value_ substitute)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
