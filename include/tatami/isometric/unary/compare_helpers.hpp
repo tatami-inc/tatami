@@ -357,6 +357,117 @@ DelayedUnaryIsometricCompareVector<CompareOperation::NOT_EQUAL, Value_, Vector_>
     return DelayedUnaryIsometricCompareVector<CompareOperation::NOT_EQUAL, Value_, Vector_>(std::move(vector), by_row);
 }
 
+/**
+ * @cond
+ */
+template<SpecialCompareOperation op_, bool pass_, typename Value_, typename Index_>
+void delayed_special_compare_run_simple(Value_* buffer, Index_ length) {
+    for (Index_ i = 0; i < length; ++i) {
+        delayed_special_compare_run<op_, pass_, Value_>(buffer[i]);
+    }
+}
+
+template<SpecialCompareOperation op_, bool pass_, typename Value_>
+bool delayed_special_compare_actual_sparse() {
+    return !delayed_special_compare<op_, pass_, Value_>(0);
+}
+/**
+ * @endcond
+ */
+
+/**
+ * @brief Delayed special value comparison.
+ *
+ * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ *
+ * @tparam op_ The special comparison operation.
+ * @tparam pass_ Whether to return true if the special comparison is true.
+ * @tparam Value_ Floating-point type of the data value.
+ */
+template<SpecialCompareOperation op_, bool pass_, typename Value_ = double>
+class DelayedUnaryIsometricSpecialCompare {
+public:
+    DelayedUnaryIsometricSpecialCompare() {
+        my_sparse = !delayed_special_compare<op_, pass_, Value_>(0);
+    }
+
+private:
+    bool my_sparse;
+
+public:
+    /**
+     * @cond
+     */
+    static constexpr bool is_basic = false;
+
+    bool is_sparse() const {
+        return my_sparse;
+    }
+    /**
+     * @endcond
+     */
+
+public:
+    /**
+     * @cond
+     */
+    template<typename Index_>
+    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
+        delayed_special_compare_run_simple<op_, pass_>(buffer, length);
+    }
+
+    template<typename Index_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
+        delayed_special_compare_run_simple<op_, pass_>(buffer, static_cast<Index_>(indices.size()));
+    }
+
+    template<typename Index_>
+    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
+        delayed_special_compare_run_simple<op_, pass_>(buffer, number);
+    }
+
+    template<typename Index_>
+    Value_ fill(bool, Index_) const {
+        return static_cast<Value_>(!my_sparse);
+    }
+    /**
+     * @endcond
+     */
+};
+
+/**
+ * @tparam pass_ Whether to return truthy if the matrix value is NaN.
+ * @tparam Value_ Type of the data value.
+ * @return A helper class for a delayed NaN check,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ */
+template<bool pass_ = true, typename Value_ = double>
+DelayedUnaryIsometricSpecialCompare<SpecialCompareOperation::ISNAN, pass_, Value_> make_DelayedUnaryIsometricIsnan() {
+    return DelayedUnaryIsometricSpecialCompare<SpecialCompareOperation::ISNAN, pass_, Value_>();
+}
+
+/**
+ * @tparam pass_ Whether to return truthy if the matrix value is infinite.
+ * @tparam Value_ Type of the data value.
+ * @return A helper class for a delayed check for infinity (positive or negative),
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ */
+template<bool pass_ = true, typename Value_ = double>
+DelayedUnaryIsometricSpecialCompare<SpecialCompareOperation::ISINF, pass_, Value_> make_DelayedUnaryIsometricIsinf() {
+    return DelayedUnaryIsometricSpecialCompare<SpecialCompareOperation::ISINF, pass_, Value_>();
+}
+
+/**
+ * @tparam pass_ Whether to return truthy if the matrix value is finite.
+ * @tparam Value_ Type of the data value.
+ * @return A helper class for a delayed check for finite values,
+ * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ */
+template<bool pass_ = true, typename Value_ = double>
+DelayedUnaryIsometricSpecialCompare<SpecialCompareOperation::ISFINITE, pass_, Value_> make_DelayedUnaryIsometricIsfinite() {
+    return DelayedUnaryIsometricSpecialCompare<SpecialCompareOperation::ISFINITE, pass_, Value_>();
+}
+
 }
 
 #endif
