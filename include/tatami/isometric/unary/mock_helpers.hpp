@@ -28,8 +28,8 @@ public:
      * Implementions of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
-     * This particular overload is only used when `Value_ == InputValue_` in `DelayedIsometricUnaryOperation`.
-     * It may be omitted from the operation class's definition if said class is only used when `Value_ != InputValue_`.
+     * This particular overload is only used when `OutputValue_ == InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ != InputValue_`.
      *
      * @tparam Index_ Type of index value.
      * @tparam Value_ Type of matrix value, before and after the operation.
@@ -63,12 +63,12 @@ public:
      * Implementions of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
-     * This particular overload is only used when `Value_ != InputValue_` in `DelayedIsometricUnaryOperation`.
-     * It may be omitted from the operation class's definition if said class is only used when `Value_ == InputValue_`.
+     * This particular overload is only used when `OutputValue_ != InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ == InputValue_`.
      *
      * @tparam Index_ Type of index value.
      * @tparam InputValue_ Type of matrix value before the operation.
-     * @tparam Value_ Type of matrix value after the operation.
+     * @tparam OutputValue_ Type of matrix value after the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -81,14 +81,14 @@ public:
      * @param[out] output Result of the operation applied to elements of `input`. 
      * This has `length` addressable elements. 
      */
-    template<typename Index_, typename InputValue_, typename Value_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         [[maybe_unused]] Index_ start, 
         Index_ length, 
         [[maybe_unused]] const InputValue_* input,
-        Value_* output)
+        OutputValue_* output)
     const {
         std::fill_n(output, length, 0);
     }
@@ -100,8 +100,8 @@ public:
      * Implementions of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
-     * This particular overload is only used when `Value_ == InputValue_` in `DelayedIsometricUnaryOperation`.
-     * It may be omitted from the operation class's definition if said class is only used when `Value_ != InputValue_`.
+     * This particular overload is only used when `OutputValue_ == InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ != InputValue_`.
      *
      * @tparam Index_ Type of index value.
      * @tparam Value_ Type of matrix value.
@@ -132,12 +132,12 @@ public:
      * Implementions of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
-     * This particular overload is only used when `Value_ != InputValue_` in `DelayedIsometricUnaryOperation`.
-     * It may be omitted from the operation class's definition if said class is only used when `Value_ == InputValue_`.
+     * This particular overload is only used when `OutputValue_ != InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ == InputValue_`.
      *
      * @tparam InputValue_ Type of matrix value before the operation.
      * @tparam Index_ Type of index value.
-     * @tparam Value_ Type of matrix value after the operation.
+     * @tparam OutputValue_ Type of matrix value after the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -149,13 +149,13 @@ public:
      * @param[out] output Result of the operation applied to elements of `input`. 
      * This has `length` addressable elements. 
      */
-    template<typename Index_, typename InputValue_, typename Value_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         const std::vector<Index_>& indices, 
         [[maybe_unused]] const InputValue_* input,
-        Value_* output)
+        OutputValue_* output)
     const {
         std::fill_n(output, indices.size(), 0);
     }
@@ -188,8 +188,8 @@ public:
      * Implementions of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
-     * This particular overload is only used when `Value_ == InputValue_` in `DelayedIsometricUnaryOperation`.
-     * It may be omitted from the operation class's definition if said class is only used when `Value_ != InputValue_`.
+     * This particular overload is only used when `OutputValue_ == InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ != InputValue_`.
      *
      * @tparam Index_ Type of index value.
      * @tparam Value_ Type of matrix value, before and after the operation.
@@ -223,12 +223,12 @@ public:
      * Implementions of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
-     * This particular overload is only used when `Value_ != InputValue_` in `DelayedIsometricUnaryOperation`.
-     * It may be omitted from the operation class's definition if said class is only used when `Value_ == InputValue_`.
+     * This particular overload is only used when `OutputValue_ != InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ == InputValue_`.
      *
      * @tparam Index_ Type of index value.
      * @tparam InputValue_ Type of matrix value before the operation.
-     * @tparam Value_ Type of matrix value after the operation.
+     * @tparam OutputValue_ Type of matrix value after the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -241,14 +241,14 @@ public:
      * @param[out] output Result of the operation applied to elements of `input`. 
      * This has `length` addressable elements. 
      */
-    template<typename Index_, typename InputValue_, typename Value_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         [[maybe_unused]] Index_ start, 
         Index_ length, 
         [[maybe_unused]] const InputValue_* input,
-        Value_* output)
+        OutputValue_* output)
     const {
         std::fill_n(output, length, 0);
     }
@@ -260,8 +260,8 @@ public:
      * Implementions of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
-     * This particular overload is only used when `Value_ == InputValue_` in `DelayedIsometricUnaryOperation`.
-     * It may be omitted from the operation class's definition if said class is only used when `Value_ != InputValue_`.
+     * This particular overload is only used when `OutputValue_ == InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ != InputValue_`.
      *
      * @tparam Index_ Type of index value.
      * @tparam Value_ Type of matrix value.
@@ -292,12 +292,12 @@ public:
      * Implementions of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
-     * This particular overload is only used when `Value_ != InputValue_` in `DelayedIsometricUnaryOperation`.
-     * It may be omitted from the operation class's definition if said class is only used when `Value_ == InputValue_`.
+     * This particular overload is only used when `OutputValue_ != InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ == InputValue_`.
      *
      * @tparam InputValue_ Type of matrix value before the operation.
      * @tparam Index_ Type of index value.
-     * @tparam Value_ Type of matrix value after the operation.
+     * @tparam OutputValue_ Type of matrix value after the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -309,13 +309,13 @@ public:
      * @param[out] output Result of the operation applied to elements of `input`. 
      * This has `length` addressable elements. 
      */
-    template<typename Index_, typename InputValue_, typename Value_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         const std::vector<Index_>& indices, 
         [[maybe_unused]] const InputValue_* input,
-        Value_* output)
+        OutputValue_* output)
     const {
         std::fill_n(output, indices.size(), 0);
     }
@@ -332,6 +332,9 @@ public:
      *
      * Implementations of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * 
+     * This particular overload is only used when `OutputValue_ == InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ != InputValue_`.
      *
      * @tparam Index_ Type of index value.
      * @tparam Value_ Type of matrix value.
@@ -372,9 +375,12 @@ public:
      * Implementations of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
+     * This particular overload is only used when `OutputValue_ != InputValue_` in `DelayedIsometricUnaryOperation`.
+     * It may be omitted from the operation class's definition if said class is only used when `OutputValue_ == InputValue_`.
+     *
      * @tparam Index_ Type of index value.
      * @tparam InputValue_ Type of matrix value before the operation.
-     * @tparam Value_ Type of matrix value after the operation.
+     * @tparam OutputValue_ Type of matrix value after the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -389,14 +395,14 @@ public:
      * @param[out] output_value Pointer to an array in which to store the result of the operation.
      * This is guaranteed to have `num` addressable elements.
      */
-    template<typename Index_, typename InputValue_, typename Value_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void sparse(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         Index_ num,
         [[maybe_unused]] const InputValue_* input_value,
         [[maybe_unused]] const Index_* index,
-        Value_* output_value)
+        OutputValue_* output_value)
     const {
         std::fill_n(output_value, num, 0);
     }

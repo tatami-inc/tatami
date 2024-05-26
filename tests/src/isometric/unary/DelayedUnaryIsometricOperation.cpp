@@ -66,7 +66,7 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
     { 
         // Check that the oracle is correctly used for rows.
         {
-            auto mock = tatami::make_DelayedUnaryIsometricAddVector({1.0, 2.0}, true);
+            auto mock = tatami::make_DelayedUnaryIsometricAddVector(std::vector<double>{1.0, 2.0}, true);
             tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, decltype(mock), int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 10);
             tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, decltype(mock), int> oracle2(optr, mock, false);
@@ -77,7 +77,7 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
         }
 
         {
-            auto mock = tatami::make_DelayedUnaryIsometricAddVector({0.0, 0.0}, true);
+            auto mock = tatami::make_DelayedUnaryIsometricAddVector(std::vector<double>{0.0, 0.0}, true);
             tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, decltype(mock), int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 10);
             tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, decltype(mock), int> oracle2(optr, mock, false);
@@ -93,7 +93,7 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
     { 
         // Check that the oracle is correctly used for columns.
         {
-            auto mock = tatami::make_DelayedUnaryIsometricAddVector({1.0, 2.0}, false);
+            auto mock = tatami::make_DelayedUnaryIsometricAddVector(std::vector<double>{1.0, 2.0}, false);
             tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, decltype(mock), int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 0);
             tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, decltype(mock), int> oracle2(optr, mock, false);
@@ -104,7 +104,7 @@ TEST(DelayedUnaryIsometricOperation, DependsChecks) {
         }
 
         {
-            auto mock = tatami::make_DelayedUnaryIsometricAddVector({0.0, 0.0}, false);
+            auto mock = tatami::make_DelayedUnaryIsometricAddVector(std::vector<double>{0.0, 0.0}, false);
             tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, decltype(mock), int> oracle1(optr, mock, true);
             EXPECT_EQ(oracle1.get(0), 0);
             tatami::DelayedIsometricOperation_internal::MaybeOracleDepends<true, decltype(mock), int> oracle2(optr, mock, false);
@@ -142,8 +142,8 @@ protected:
         usparse = tatami::make_DelayedUnaryIsometricOperation(sparse, tatami::DelayedUnaryIsometricMockAdvanced());
         ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
 
-        i_udense = tatami::make_DelayedUnaryIsometricOperation<double, int, tatami::DelayedUnaryIsometricMockBasic, uint8_t>(dense, {});
-        i_usparse = tatami::make_DelayedUnaryIsometricOperation<double, int, tatami::DelayedUnaryIsometricMockAdvanced, uint8_t>(sparse, {});
+        i_udense = tatami::make_DelayedUnaryIsometricOperation<uint8_t>(dense, tatami::DelayedUnaryIsometricMockBasic());
+        i_usparse = tatami::make_DelayedUnaryIsometricOperation<uint8_t>(sparse, tatami::DelayedUnaryIsometricMockAdvanced());
         i_ref.reset(new tatami::DenseRowMatrix<uint8_t, int>(nrow, ncol, std::vector<uint8_t>(nrow * ncol)));
     }
 };

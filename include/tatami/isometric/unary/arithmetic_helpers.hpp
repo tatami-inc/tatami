@@ -17,9 +17,17 @@ namespace tatami {
  * @cond
  */
 template<ArithmeticOperation op_, bool right_, typename Scalar_, typename Value_, typename Index_>
-void delayed_arithmetic_run_simple(Scalar_ scalar, Index_ length, Value_* buffer) {
+void delayed_arithmetic_run_simple(Value_* buffer, Index_ length, Scalar_ scalar) {
     for (Index_ i = 0; i < length; ++i) {
-        delayed_arithmetic_run<op_, right_>(buffer[i], scalar);
+        auto& val = buffer[i];
+        val = delayed_arithmetic<op_, right_>(val, scalar);
+    }
+}
+
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Index_, typename Scalar_, typename Value_>
+void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scalar_ scalar, Value_* output) {
+    for (Index_ i = 0; i < length; ++i) {
+        output[i] = delayed_arithmetic<op_, right_>(input[i], scalar);
     }
 }
 
@@ -39,9 +47,7 @@ bool delayed_arithmetic_actual_sparse(Scalar_ scalar) {
         return false;
     } else {
         // Empirically testing this, to accommodate special values (e.g., NaN, Inf) for scalars.
-        Value_ output = 0;
-        delayed_arithmetic_run<op_, right_>(output, scalar);
-        return output == 0;
+        return delayed_arithmetic<op_, right_, Value_>(0, scalar) == 0;
     }
 }
 
@@ -52,9 +58,7 @@ Value_ delayed_arithmetic_zero(Scalar_ scalar) {
         // at compile time (e.g., resulting in unnecessary compiler warnings).
         throw std::runtime_error("division by zero is not supported with IEEE-754 floats");
     } else {
-        Value_ output = 0;
-        delayed_arithmetic_run<op_, right_>(output, scalar);
-        return output;
+        return delayed_arithmetic<op_, right_, Value_>(0, scalar);
     }
 }
 /**
@@ -69,21 +73,21 @@ Value_ delayed_arithmetic_zero(Scalar_ scalar) {
  * @tparam op_ The arithmetic operation.
  * @tparam right_ Whether the scalar should be on the right hand side of the arithmetic operation.
  * Ignored for commutative operations, e.g., `ADD` and `MULTIPLY`.
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Scalar_ Type of the scalar value.
  */
-template<ArithmeticOperation op_, bool right_, typename Value_ = double, typename Scalar_ = Value_>
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
 class DelayedUnaryIsometricArithmeticScalar {
 public:
     /**
      * @param scalar Scalar value to be used in the operation.
      */
     DelayedUnaryIsometricArithmeticScalar(Scalar_ scalar) : my_scalar(scalar) {
-        my_sparse = delayed_arithmetic_actual_sparse<op_, right_, Value_>(my_scalar);
+        my_sparse = delayed_arithmetic_actual_sparse<op_, right_, InputValue_>(my_scalar);
     }
 
 private:
-    const Scalar_ my_scalar;
+    Scalar_ my_scalar;
     bool my_sparse;
 
 public:
@@ -104,22 +108,36 @@ public:
      * @cond
      */
     template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        delayed_arithmetic_run_simple<op_, right_>(my_scalar, length, buffer);
+    void dense(bool, Index_, Index_, Index_ length, InputValue_* buffer) const {
+        delayed_arithmetic_run_simple<op_, right_>(buffer, length, my_scalar);
+    }
+
+    template<typename Index_, typename Value_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, Value_* output) const {
+        delayed_arithmetic_run_simple<op_, right_>(input, length, my_scalar, output);
     }
 
     template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        delayed_arithmetic_run_simple<op_, right_>(my_scalar, indices.size(), buffer);
+    void dense(bool, Index_, const std::vector<Index_>& indices, InputValue_* buffer) const {
+        delayed_arithmetic_run_simple<op_, right_>(buffer, static_cast<Index_>(indices.size()), my_scalar);
     }
 
-
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        delayed_arithmetic_run_simple<op_, right_>(my_scalar, number, buffer);
+    template<typename Index_, typename Value_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, Value_* output) const {
+        delayed_arithmetic_run_simple<op_, right_>(input, static_cast<Index_>(indices.size()), my_scalar, output);
     }
 
     template<typename Index_>
+    void sparse(bool, Index_, Index_ number, InputValue_* buffer, const Index_*) const {
+        delayed_arithmetic_run_simple<op_, right_>(buffer, number, my_scalar);
+    }
+
+    template<typename Index_, typename Value_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, Value_* output) const {
+        delayed_arithmetic_run_simple<op_, right_>(input, number, my_scalar, output);
+    }
+
+    template<typename Value_, typename Index_>
     Value_ fill(bool, Index_) const {
         return delayed_arithmetic_zero<op_, right_, Value_>(my_scalar);
     }
@@ -136,10 +154,10 @@ public:
  * @tparam op_ The arithmetic operation.
  * @tparam right_ Whether the vector's values should be on the right hand side of the arithmetic operation.
  * Ignored for some `op_`.
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Vector_ Type of the vector.
  */
-template<ArithmeticOperation op_, bool right_, typename Value_ = double, typename Vector_ = std::vector<double> >
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Vector_>
 class DelayedUnaryIsometricArithmeticVector {
 public:
     /**
@@ -151,7 +169,7 @@ public:
      */
     DelayedUnaryIsometricArithmeticVector(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
         for (auto x : my_vector) {
-            if (!delayed_arithmetic_actual_sparse<op_, right_, Value_>(x)) {
+            if (!delayed_arithmetic_actual_sparse<op_, right_, InputValue_>(x)) {
                 my_sparse = false;
                 break;
             }
@@ -159,7 +177,7 @@ public:
     }
 
 private:
-    const Vector_ my_vector;
+    Vector_ my_vector;
     bool my_by_row;
     bool my_sparse = true;
 
@@ -197,39 +215,72 @@ public:
      * @cond
      */
     template<typename Index_>
-    void dense(bool row, Index_ idx, Index_ start, Index_ length, Value_* buffer) const {
+    void dense(bool row, Index_ idx, Index_ start, Index_ length, InputValue_* buffer) const {
         if (row == my_by_row) {
-            delayed_arithmetic_run_simple<op_, right_>(my_vector[idx], length, buffer);
+            delayed_arithmetic_run_simple<op_, right_>(buffer, length, my_vector[idx]);
         } else {
             for (Index_ i = 0; i < length; ++i) {
-                delayed_arithmetic_run<op_, right_>(buffer[i], my_vector[i + start]);
+                buffer[i] = delayed_arithmetic<op_, right_>(buffer[i], my_vector[i + start]);
+            }
+        }
+    }
+
+    template<typename Index_, typename Value_>
+    void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, Value_* output) const {
+        if (row == my_by_row) {
+            delayed_arithmetic_run_simple<op_, right_>(input, length, my_vector[idx], output);
+        } else {
+            for (Index_ i = 0; i < length; ++i) {
+                output[i] = delayed_arithmetic<op_, right_>(input[i], my_vector[i + start]);
             }
         }
     }
 
     template<typename Index_>
-    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, Value_* buffer) const {
+    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, InputValue_* buffer) const {
         if (row == my_by_row) {
-            delayed_arithmetic_run_simple<op_, right_>(my_vector[idx], indices.size(), buffer);
+            delayed_arithmetic_run_simple<op_, right_>(buffer, static_cast<Index_>(indices.size()), my_vector[idx]);
         } else {
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
-                delayed_arithmetic_run<op_, right_>(buffer[i], my_vector[indices[i]]);
+                buffer[i] = delayed_arithmetic<op_, right_>(buffer[i], my_vector[indices[i]]);
+            }
+        }
+    }
+
+    template<typename Index_, typename Value_>
+    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, Value_* output) const {
+        if (row == my_by_row) {
+            delayed_arithmetic_run_simple<op_, right_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
+        } else {
+            for (Index_ i = 0, length = indices.size(); i < length; ++i) {
+                output[i] = delayed_arithmetic<op_, right_>(input[i], my_vector[indices[i]]);
             }
         }
     }
 
     template<typename Index_>
-    void sparse(bool row, Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
+    void sparse(bool row, Index_ idx, Index_ number, InputValue_* buffer, const Index_* indices) const {
         if (row == my_by_row) {
-            delayed_arithmetic_run_simple<op_, right_>(my_vector[idx], number, buffer);
+            delayed_arithmetic_run_simple<op_, right_>(buffer, number, my_vector[idx]);
         } else {
             for (Index_ i = 0; i < number; ++i) {
-                delayed_arithmetic_run<op_, right_>(buffer[i], my_vector[indices[i]]);
+                buffer[i] = delayed_arithmetic<op_, right_>(buffer[i], my_vector[indices[i]]);
             }
         }
     }
 
-    template<typename Index_>
+    template<typename Index_, typename Value_>
+    void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_values, const Index_* indices, Value_* output_values) const {
+        if (row == my_by_row) {
+            delayed_arithmetic_run_simple<op_, right_>(input_values, number, my_vector[idx], output_values);
+        } else {
+            for (Index_ i = 0; i < number; ++i) {
+                output_values[i] = delayed_arithmetic<op_, right_>(input_values[i], my_vector[indices[i]]);
+            }
+        }
+    }
+
+    template<typename Value_, typename Index_>
     Value_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
             return delayed_arithmetic_zero<op_, right_, Value_>(my_vector[idx]);
@@ -245,195 +296,174 @@ public:
 };
 
 /**
- * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be added.
  * @return A helper class for delayed scalar addition,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::ADD, true, Value_, Scalar_> make_DelayedUnaryIsometricAddScalar(Scalar_ scalar) {
-    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::ADD, true, Value_, Scalar_>(std::move(scalar));
+template<typename InputValue_ = double, typename Scalar_>
+DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::ADD, true, InputValue_, Scalar_> make_DelayedUnaryIsometricAddScalar(Scalar_ scalar) {
+    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::ADD, true, InputValue_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the subtraction.
- * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be subtracted.
  * @return A helper class for delayed scalar subtraction,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::SUBTRACT, right_, Value_, Scalar_> make_DelayedUnaryIsometricSubtractScalar(Scalar_ scalar) {
-    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::SUBTRACT, right_, Value_, Scalar_>(std::move(scalar));
+template<bool right_, typename InputValue_ = double, typename Scalar_>
+DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::SUBTRACT, right_, InputValue_, Scalar_> make_DelayedUnaryIsometricSubtractScalar(Scalar_ scalar) {
+    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::SUBTRACT, right_, InputValue_, Scalar_>(std::move(scalar));
 }
 
 /**
- * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be multiplied.
  * @return A helper class for delayed scalar multiplication,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MULTIPLY, true, Value_, Scalar_> make_DelayedUnaryIsometricMultiplyScalar(Scalar_ scalar) {
-    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MULTIPLY, true, Value_, Scalar_>(std::move(scalar));
+template<typename InputValue_ = double, typename Scalar_>
+DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MULTIPLY, true, InputValue_, Scalar_> make_DelayedUnaryIsometricMultiplyScalar(Scalar_ scalar) {
+    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MULTIPLY, true, InputValue_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the division.
- * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be divided.
  * @return A helper class for delayed scalar division,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::DIVIDE, right_, Value_, Scalar_> make_DelayedUnaryIsometricDivideScalar(Scalar_ scalar) {
-    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::DIVIDE, right_, Value_, Scalar_>(std::move(scalar));
+template<bool right_, typename InputValue_ = double, typename Scalar_>
+DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::DIVIDE, right_, InputValue_, Scalar_> make_DelayedUnaryIsometricDivideScalar(Scalar_ scalar) {
+    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::DIVIDE, right_, InputValue_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
- * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be power transformed.
  * @return A helper class for delayed scalar power transformation,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::POWER, right_, Value_, Scalar_> make_DelayedUnaryIsometricPowerScalar(Scalar_ scalar) {
-    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::POWER, right_, Value_, Scalar_>(std::move(scalar));
+template<bool right_, typename InputValue_ = double, typename Scalar_>
+DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::POWER, right_, InputValue_, Scalar_> make_DelayedUnaryIsometricPowerScalar(Scalar_ scalar) {
+    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::POWER, right_, InputValue_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
- * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be modulo transformed.
  * @return A helper class for delayed scalar modulus,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MODULO, right_, Value_, Scalar_> make_DelayedUnaryIsometricModuloScalar(Scalar_ scalar) {
-    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MODULO, right_, Value_, Scalar_>(std::move(scalar));
+template<bool right_, typename InputValue_ = double, typename Scalar_>
+DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MODULO, right_, InputValue_, Scalar_> make_DelayedUnaryIsometricModuloScalar(Scalar_ scalar) {
+    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MODULO, right_, InputValue_, Scalar_>(std::move(scalar));
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
- * @tparam Value_ Type of the data value.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be integer divided.
  * @return A helper class for delayed scalar integer division,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Scalar_ = Value_>
-DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::INTEGER_DIVIDE, right_, Value_, Scalar_> make_DelayedUnaryIsometricIntegerDivideScalar(Scalar_ scalar) {
-    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::INTEGER_DIVIDE, right_, Value_, Scalar_>(std::move(scalar));
+template<bool right_, typename InputValue_ = double, typename Scalar_>
+DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::INTEGER_DIVIDE, right_, InputValue_, Scalar_> make_DelayedUnaryIsometricIntegerDivideScalar(Scalar_ scalar) {
+    return DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::INTEGER_DIVIDE, right_, InputValue_, Scalar_>(std::move(scalar));
 }
 
 /**
- * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- *
  * @param vector Vector to be added to the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
  * @return A helper class for delayed vector addition,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::ADD, true, Value_, Vector_> make_DelayedUnaryIsometricAddVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::ADD, true, Value_, Vector_>(std::move(vector), by_row);
+template<typename InputValue_ = double, typename Vector_>
+DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::ADD, true, InputValue_, Vector_> make_DelayedUnaryIsometricAddVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::ADD, true, InputValue_, Vector_>(std::move(vector), by_row);
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the subtraction.
- * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- *
  * @param vector Vector to subtract from (or be subtracted by) the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
  * @return A helper class for delayed vector subtraction,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::SUBTRACT, right_, Value_, Vector_> make_DelayedUnaryIsometricSubtractVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::SUBTRACT, right_, Value_, Vector_>(std::move(vector), by_row);
+template<bool right_, typename InputValue_ = double, typename Vector_>
+DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::SUBTRACT, right_, InputValue_, Vector_> make_DelayedUnaryIsometricSubtractVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::SUBTRACT, right_, InputValue_, Vector_>(std::move(vector), by_row);
 }
 
 /**
- * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- *
  * @param vector Vector to multiply the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
  * @return A helper class for delayed vector multiplication,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MULTIPLY, true, Value_, Vector_> make_DelayedUnaryIsometricMultiplyVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MULTIPLY, true, Value_, Vector_>(std::move(vector), by_row);
+template<typename InputValue_ = double, typename Vector_>
+DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MULTIPLY, true, InputValue_, Vector_> make_DelayedUnaryIsometricMultiplyVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MULTIPLY, true, InputValue_, Vector_>(std::move(vector), by_row);
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the division.
- * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- *
  * @param vector Vector to divide (or be divided by) the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
  * @return A helper class for delayed vector division,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::DIVIDE, right_, Value_, Vector_> make_DelayedUnaryIsometricDivideVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::DIVIDE, right_, Value_, Vector_>(std::move(vector), by_row);
+template<bool right_, typename InputValue_ = double, typename Vector_>
+DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::DIVIDE, right_, InputValue_, Vector_> make_DelayedUnaryIsometricDivideVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::DIVIDE, right_, InputValue_, Vector_>(std::move(vector), by_row);
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
- * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- *
  * @param vector Vector to use in the power transformation of the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
  * @return A helper class for delayed vector power transformation,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::POWER, right_, Value_, Vector_> make_DelayedUnaryIsometricPowerVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::POWER, right_, Value_, Vector_>(std::move(vector), by_row);
+template<bool right_, typename InputValue_ = double, typename Vector_>
+DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::POWER, right_, InputValue_, Vector_> make_DelayedUnaryIsometricPowerVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::POWER, right_, InputValue_, Vector_>(std::move(vector), by_row);
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
- * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- *
  * @param vector Vector to use in the modulus of the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
  * @return A helper class for delayed vector modulus,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MODULO, right_, Value_, Vector_> make_DelayedUnaryIsometricModuloVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MODULO, right_, Value_, Vector_>(std::move(vector), by_row);
+template<bool right_, typename InputValue_ = double, typename Vector_>
+DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MODULO, right_, InputValue_, Vector_> make_DelayedUnaryIsometricModuloVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MODULO, right_, InputValue_, Vector_>(std::move(vector), by_row);
 }
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
- * @tparam Value_ Type of the data value.
  * @tparam Vector_ Type of the vector.
- *
  * @param vector Vector to integer divide (or be integer divided by) the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
  * @return A helper class for delayed vector division,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<bool right_, typename Value_ = double, typename Vector_ = std::vector<double> >
-DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::INTEGER_DIVIDE, right_, Value_, Vector_> make_DelayedUnaryIsometricIntegerDivideVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::INTEGER_DIVIDE, right_, Value_, Vector_>(std::move(vector), by_row);
+template<bool right_, typename InputValue_ = double, typename Vector_>
+DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::INTEGER_DIVIDE, right_, InputValue_, Vector_> make_DelayedUnaryIsometricIntegerDivideVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::INTEGER_DIVIDE, right_, InputValue_, Vector_>(std::move(vector), by_row);
 }
 
 }
