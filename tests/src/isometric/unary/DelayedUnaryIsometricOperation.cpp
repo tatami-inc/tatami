@@ -131,6 +131,7 @@ protected:
     inline static int nrow = 57, ncol = 37;
     inline static std::vector<double> simulated;
     inline static std::shared_ptr<const tatami::NumericMatrix> dense, sparse, udense, usparse, ref;
+    inline static std::shared_ptr<const tatami::Matrix<uint8_t, int> > i_udense, i_usparse, i_ref;
 
     static void SetUpTestSuite() {
         simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
@@ -140,6 +141,10 @@ protected:
         udense = tatami::make_DelayedUnaryIsometricOperation(dense, tatami::DelayedUnaryIsometricMockBasic());
         usparse = tatami::make_DelayedUnaryIsometricOperation(sparse, tatami::DelayedUnaryIsometricMockAdvanced());
         ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
+
+        i_udense = tatami::make_DelayedUnaryIsometricOperation<double, int, tatami::DelayedUnaryIsometricMockBasic, uint8_t>(dense, {});
+        i_usparse = tatami::make_DelayedUnaryIsometricOperation<double, int, tatami::DelayedUnaryIsometricMockAdvanced, uint8_t>(sparse, {});
+        i_ref.reset(new tatami::DenseRowMatrix<uint8_t, int>(nrow, ncol, std::vector<uint8_t>(nrow * ncol)));
     }
 };
 
@@ -163,6 +168,21 @@ TEST_P(DelayedUnaryIsometricOperationTest, Mock) {
     tatami_test::test_full_access(params, usparse.get(), ref.get());
     tatami_test::test_block_access(params, usparse.get(), ref.get(), 5, 30);
     tatami_test::test_indexed_access(params, usparse.get(), ref.get(), 2, 4);
+}
+
+TEST_P(DelayedUnaryIsometricOperationTest, NewType) {
+    tatami_test::TestAccessParameters params;
+    auto tparam = GetParam();
+    params.use_row = std::get<0>(tparam);
+    params.use_oracle = std::get<1>(tparam);
+
+    tatami_test::test_full_access(params, i_udense.get(), i_ref.get());
+    tatami_test::test_block_access(params, i_udense.get(), i_ref.get(), 5, 30);
+    tatami_test::test_indexed_access(params, i_udense.get(), i_ref.get(), 3, 5);
+
+    tatami_test::test_full_access(params, i_usparse.get(), i_ref.get());
+    tatami_test::test_block_access(params, i_usparse.get(), i_ref.get(), 5, 30);
+    tatami_test::test_indexed_access(params, i_usparse.get(), i_ref.get(), 2, 4);
 }
 
 INSTANTIATE_TEST_SUITE_P(

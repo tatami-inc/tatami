@@ -123,7 +123,7 @@ public:
             my_operation.dense(my_row, my_oracle.get(i), my_block_start, my_block_length, buffer);
         } else {
             auto ptr = my_ext->fetch(i, my_holding_buffer.data());
-            my_operation.dense(my_row, my_oracle.get(i), my_block_start, my_block_length, my_holding_buffer.data(), buffer);
+            my_operation.dense(my_row, my_oracle.get(i), my_block_start, my_block_length, ptr, buffer);
         }
         return buffer;
     }
@@ -171,7 +171,7 @@ public:
             my_operation.dense(my_row, my_oracle.get(i), indices, buffer);
         } else {
             auto ptr = my_ext->fetch(i, my_holding_buffer.data());
-            my_operation.dense(my_row, my_oracle.get(i), indices, my_holding_buffer.data(), buffer);
+            my_operation.dense(my_row, my_oracle.get(i), indices, ptr, buffer);
         }
         return buffer;
     }
@@ -904,29 +904,30 @@ public:
 /**
  * A `make_*` helper function to enable partial template deduction of supplied types.
  *
- * @tparam Value_ Type of matrix value.
+ * @tparam InputValue_ Type of matrix value before the operation.
  * @tparam Index_ Type of index value.
  * @tparam Operation_ Helper class implementing the operation.
+ * @tparam Value_ Type of matrix value after the operation.
  *
  * @param matrix Pointer to a (possibly `const`) `Matrix`.
  * @param operation Instance of the operation helper class.
  *
  * @return Instance of a `DelayedUnaryIsometricOperation` class.
  */
-template<typename Value_, typename Index_, class Operation_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedUnaryIsometricOperation(std::shared_ptr<const Matrix<Value_, Index_> > matrix, Operation_ operation) {
+template<typename InputValue_, typename Index_, class Operation_, typename Value_ = InputValue_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedUnaryIsometricOperation(std::shared_ptr<const Matrix<InputValue_, Index_> > matrix, Operation_ operation) {
     typedef typename std::remove_reference<Operation_>::type Operation2_;
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedUnaryIsometricOperation<Value_, Index_, Operation2_>(std::move(matrix), std::move(operation)));
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedUnaryIsometricOperation<Value_, Index_, Operation2_, InputValue_>(std::move(matrix), std::move(operation)));
 }
 
 /**
  * @cond
  */
 // For automatic template deduction with non-const pointers.
-template<typename Value_, typename Index_, class Operation_>
-std::shared_ptr<Matrix<Value_, Index_> > make_DelayedUnaryIsometricOperation(std::shared_ptr<Matrix<Value_, Index_> > matrix, Operation_ operation) {
+template<typename InputValue_, typename Index_, class Operation_, typename Value_ = InputValue_>
+std::shared_ptr<Matrix<Value_, Index_> > make_DelayedUnaryIsometricOperation(std::shared_ptr<Matrix<InputValue_, Index_> > matrix, Operation_ operation) {
     typedef typename std::remove_reference<Operation_>::type Operation2_;
-    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedUnaryIsometricOperation<Value_, Index_, Operation2_>(std::move(matrix), std::move(operation)));
+    return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedUnaryIsometricOperation<Value_, Index_, Operation2_, InputValue_>(std::move(matrix), std::move(operation)));
 }
 
 // For back-compatibility.

@@ -65,12 +65,14 @@ inline auto standard_test_access_parameter_combinations() {
 namespace internal {
 
 template<typename Value_>
-void sanitize_nan(std::vector<Value_>& values, bool has_nan, Value_ replacement = 1234567890) {
+void sanitize_nan(std::vector<Value_>& values, bool has_nan) {
     if constexpr(std::numeric_limits<Value_>::has_quiet_NaN) {
         if (has_nan) {
             for (auto& x : values) {
                 if (std::isnan(x)) {
-                    x = replacement;
+                    // Using an appropriately silly placeholder that
+                    // should never occur in our test data.
+                    x = 1234567890;
                 }
             }
         }
@@ -189,7 +191,7 @@ void test_access_base(
                 ASSERT_TRUE(is_increasing);
             }
 
-            std::vector<int> indices(extent);
+            std::vector<Index_> indices(extent);
             auto observed_i = [&]() {
                 if constexpr(use_oracle_) {
                     return swork_i->fetch(NULL, indices.data());
@@ -202,7 +204,7 @@ void test_access_base(
             indices.resize(observed_i.number);
             ASSERT_EQ(observed.index, indices);
 
-            std::vector<double> vbuffer(extent);
+            std::vector<Value_> vbuffer(extent);
             auto observed_v = [&]() {
                 if constexpr(use_oracle_) {
                     return swork_v->fetch(vbuffer.data(), NULL);
