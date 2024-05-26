@@ -63,7 +63,7 @@ private:
 
     std::unique_ptr<DenseExtractor<oracle_, InputValue_, Index_> > my_ext;
 
-    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_buffer;
 
 public:
@@ -112,7 +112,7 @@ private:
 
     std::unique_ptr<DenseExtractor<oracle_, InputValue_, Index_> > my_ext;
 
-    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_buffer;
 
 public:
@@ -159,7 +159,7 @@ private:
 
     std::unique_ptr<DenseExtractor<oracle_, InputValue_, Index_> > my_ext;
 
-    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_buffer;
 
 public:
@@ -224,7 +224,7 @@ private:
     std::vector<Index_> my_ibuffer;
     std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
 
-    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<Value_>, bool>::type my_result_vbuffer;
 
 public:
@@ -298,7 +298,7 @@ private:
     std::vector<Index_> my_ibuffer;
     std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
 
-    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<Value_>, bool>::type my_result_vbuffer;
 
 public:
@@ -387,7 +387,7 @@ private:
     Index_ my_remapping_offset = 0;
     std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
 
-    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<Value_>, bool>::type my_result_vbuffer;
 
 public:
@@ -487,7 +487,7 @@ private:
 
     std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
 
-    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_vbuffer;
 
     void initialize(const Options& opt, size_t extent) {
@@ -614,7 +614,7 @@ private:
 
     std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
 
-    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::value;
     typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_vbuffer;
 
 public:
