@@ -25,8 +25,9 @@ public:
      * This method should apply the operation to values in `buffer`.
      * The buffer represents an element of the target dimension from the underlying matrix,
      * and contains values from a contiguous block of the non-target dimension.
+     * This particular overload is only used when `Value_ == InputValue_` in `DelayedIsometricUnaryOperation`.
      *
-     * @tparam Value_ Type of matrix value.
+     * @tparam Value_ Type of matrix value, before and after the operation.
      * @tparam Index_ Type of index value.
      *
      * @param row Whether the rows are the target dimension.
@@ -57,11 +58,11 @@ public:
      * This method should apply the operation to values in `input` and store the result in `output`.
      * The `input` buffer represents an element of the target dimension from the underlying matrix,
      * and contains values from a contiguous block of the non-target dimension.
-     * This overload is only used when `Value_ != Output_` in `DelayedIsometricUnaryOperation`.
+     * This overload is only used when `Value_ != InputValue_` in `DelayedIsometricUnaryOperation`.
      *
-     * @tparam Value_ Type of matrix value.
+     * @tparam InputValue_ Type of matrix value before the operation.
      * @tparam Index_ Type of index value.
-     * @tparam Output_ Type of result value.
+     * @tparam Value_ Type of matrix value after the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -77,14 +78,14 @@ public:
      * Note that implementions of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      */
-    template<typename InputValue_, typename Index_, typename Output_>
+    template<typename InputValue_, typename Index_, typename Value_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         [[maybe_unused]] Index_ start, 
         Index_ length, 
         [[maybe_unused]] const InputValue_* input,
-        const OutputValue_* output)
+        const Value_* output)
     const {
         std::fill_n(output, length, 0);
     }

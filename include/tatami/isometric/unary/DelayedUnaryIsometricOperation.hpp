@@ -34,11 +34,11 @@ namespace DelayedUnaryIsometricOperation_internal {
  * - the underlying matrix is sparse
  * - the operation discards sparsity in a variable manner.
  */
-template<bool oracle_, typename Value_, typename Index_, class Operation_>
+template<bool oracle_, typename Value_, typename Index_, class Operation_, typename InputValue_>
 class DenseBasicFull : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseBasicFull(
-        const Matrix<Value_, Index_>* matrix, 
+        const Matrix<InputValue_, Index_>* matrix, 
         const Operation_& operation, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle, 
@@ -48,29 +48,43 @@ public:
         my_oracle(oracle, my_operation, row),
         my_extent(row ? matrix->ncol() : matrix->nrow()),
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), opt))
-    {}
+    {
+        if constexpr(!same_value) {
+            my_holding_buffer.resize(my_extent);
+        }
+    }
 
 private:
     const Operation_& my_operation;
+
     bool my_row;
     DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     Index_ my_extent;
-    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_ext;
+
+    std::unique_ptr<DenseExtractor<oracle_, InputValue_, Index_> > my_ext;
+
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_buffer;
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto ptr = my_ext->fetch(i, buffer);
-        copy_n(ptr, my_extent, buffer);
-        my_operation.dense(my_row, my_oracle.get(i), static_cast<Index_>(0), my_extent, buffer);
+        if constexpr(same_value) {
+            auto ptr = my_ext->fetch(i, buffer);
+            copy_n(ptr, my_extent, buffer);
+            my_operation.dense(my_row, my_oracle.get(i), static_cast<Index_>(0), my_extent, buffer);
+        } else {
+            auto ptr = my_ext->fetch(i, my_holding_buffer.data());
+            my_operation.dense(my_row, my_oracle.get(i), static_cast<Index_>(0), my_extent, ptr, buffer);
+        }
         return buffer;
     }
 };
 
-template<bool oracle_, typename Value_, typename Index_, class Operation_>
+template<bool oracle_, typename Value_, typename Index_, class Operation_, typename InputValue_>
 class DenseBasicBlock : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseBasicBlock(
-        const Matrix<Value_, Index_>* matrix, 
+        const Matrix<InputValue_, Index_>* matrix, 
         const Operation_& operation, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle, 
@@ -83,29 +97,43 @@ public:
         my_block_start(block_start),
         my_block_length(block_length),
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt))
-    {}
+    {
+        if constexpr(!same_value) {
+            my_holding_buffer.resize(my_block_length);
+        }
+    }
 
 private:
     const Operation_& my_operation;
+
     bool my_row;
     DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     Index_ my_block_start, my_block_length;
-    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_ext;
+
+    std::unique_ptr<DenseExtractor<oracle_, InputValue_, Index_> > my_ext;
+
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_buffer;
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto ptr = my_ext->fetch(i, buffer);
-        copy_n(ptr, my_block_length, buffer);
-        my_operation.dense(my_row, my_oracle.get(i), my_block_start, my_block_length, buffer);
+        if constexpr(same_value) {
+            auto ptr = my_ext->fetch(i, buffer);
+            copy_n(ptr, my_block_length, buffer);
+            my_operation.dense(my_row, my_oracle.get(i), my_block_start, my_block_length, buffer);
+        } else {
+            auto ptr = my_ext->fetch(i, my_holding_buffer.data());
+            my_operation.dense(my_row, my_oracle.get(i), my_block_start, my_block_length, my_holding_buffer.data(), buffer);
+        }
         return buffer;
     }
 };
 
-template<bool oracle_, typename Value_, typename Index_, class Operation_>
+template<bool oracle_, typename Value_, typename Index_, class Operation_, typename InputValue_>
 class DenseBasicIndex : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseBasicIndex(
-        const Matrix<Value_, Index_>* matrix, 
+        const Matrix<InputValue_, Index_>* matrix, 
         const Operation_& operation, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle, 
@@ -116,21 +144,35 @@ public:
         my_oracle(oracle, my_operation, row),
         my_indices_ptr(indices_ptr),
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt))
-    {}
+    {
+        if constexpr(!same_value) {
+            my_holding_buffer.resize(my_indices_ptr->size());
+        }
+    }
 
 private:
     const Operation_& my_operation;
+
     bool my_row;
     DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
     VectorPtr<Index_> my_indices_ptr;
-    std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > my_ext;
+
+    std::unique_ptr<DenseExtractor<oracle_, InputValue_, Index_> > my_ext;
+
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_buffer;
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto ptr = my_ext->fetch(i, buffer);
         const auto& indices = *my_indices_ptr;
-        copy_n(ptr, indices.size(), buffer);
-        my_operation.dense(my_row, my_oracle.get(i), indices, buffer);
+        if constexpr(same_value) {
+            auto ptr = my_ext->fetch(i, buffer);
+            copy_n(ptr, indices.size(), buffer);
+            my_operation.dense(my_row, my_oracle.get(i), indices, buffer);
+        } else {
+            auto ptr = my_ext->fetch(i, my_holding_buffer.data());
+            my_operation.dense(my_row, my_oracle.get(i), indices, my_holding_buffer.data(), buffer);
+        }
         return buffer;
     }
 };
@@ -146,11 +188,11 @@ public:
  * - the underlying matrix is sparse
  * - the operation discards sparsity in a constant manner.
  */
-template<bool oracle_, typename Value_, typename Index_, class Operation_> 
+template<bool oracle_, typename Value_, typename Index_, class Operation_, typename InputValue_>
 class DenseExpandedFull : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseExpandedFull(
-        const Matrix<Value_, Index_>* matrix, 
+        const Matrix<InputValue_, Index_>* matrix, 
         const Operation_& operation,
         bool row,
         MaybeOracle<oracle_, Index_> oracle,
@@ -165,45 +207,63 @@ public:
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
         my_ext = new_extractor<true, oracle_>(matrix, my_row, std::move(oracle), opt);
+
+        if constexpr(!same_value) {
+            my_result_vbuffer.resize(my_extent);
+        }
     }
 
 private:
     const Operation_& my_operation;
+
     bool my_row;
     DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
-
     Index_ my_extent;
-    std::vector<Value_> my_vbuffer;
+
+    std::vector<InputValue_> my_vbuffer;
     std::vector<Index_> my_ibuffer;
-    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
+    std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
+
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    typename std::conditional<!same_value, std::vector<Value_>, bool>::type my_result_vbuffer;
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto vbuffer = my_vbuffer.data();
         auto range = my_ext->fetch(i, vbuffer, my_ibuffer.data());
-        copy_n(range.value, range.number, vbuffer);
 
         i = my_oracle.get(i);
-        my_operation.sparse(my_row, i, range.number, vbuffer, range.index);
+        if constexpr(same_value) {
+            copy_n(range.value, range.number, vbuffer);
+            my_operation.sparse(my_row, i, range.number, vbuffer, range.index);
+        } else {
+            my_operation.sparse(my_row, i, range.number, vbuffer, range.index, my_result_vbuffer.data());
+        }
 
-        // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
+        // avoid calling fill() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (range.number < my_extent) { 
             std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(my_row, i));
         }
 
-        for (Index_ i = 0; i < range.number; ++i) {
-            buffer[range.index[i]] = vbuffer[i];
+        if constexpr(same_value) {
+            for (Index_ i = 0; i < range.number; ++i) {
+                buffer[range.index[i]] = vbuffer[i];
+            }
+        } else {
+            for (Index_ i = 0; i < range.number; ++i) {
+                buffer[range.index[i]] = my_result_vbuffer[i];
+            }
         }
 
         return buffer;
     }
 };
 
-template<bool oracle_, typename Value_, typename Index_, class Operation_> 
+template<bool oracle_, typename Value_, typename Index_, class Operation_, typename InputValue_> 
 class DenseExpandedBlock : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseExpandedBlock(
-        const Matrix<Value_, Index_>* matrix, 
+        const Matrix<InputValue_, Index_>* matrix, 
         const Operation_& operation,
         bool row,
         MaybeOracle<oracle_, Index_> oracle,
@@ -221,45 +281,63 @@ public:
         opt.sparse_extract_value = true;
         opt.sparse_extract_index = true;
         my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt);
+
+        if constexpr(!same_value) {
+            my_result_vbuffer.resize(my_block_length);
+        }
     }
 
 private:
     const Operation_& my_operation;
+
     bool my_row;
     DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
-
     Index_ my_block_start, my_block_length;
-    std::vector<Value_> my_vbuffer;
+
+    std::vector<InputValue_> my_vbuffer;
     std::vector<Index_> my_ibuffer;
-    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
+    std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
+
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    typename std::conditional<!same_value, std::vector<Value_>, bool>::type my_result_vbuffer;
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto vbuffer = my_vbuffer.data();
         auto range = my_ext->fetch(i, vbuffer, my_ibuffer.data());
-        copy_n(range.value, range.number, vbuffer);
 
         i = my_oracle.get(i);
-        my_operation.sparse(my_row, i, range.number, vbuffer, range.index);
+        if constexpr(same_value) {
+            copy_n(range.value, range.number, vbuffer);
+            my_operation.sparse(my_row, i, range.number, vbuffer, range.index);
+        } else {
+            my_operation.sparse(my_row, i, range.number, vbuffer, range.index, my_result_vbuffer.data());
+        }
 
-        // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
+        // avoid calling fill() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (range.number < my_block_length) { 
             std::fill_n(buffer, my_block_length, my_operation.template fill<Value_>(my_row, i));
         }
 
-        for (Index_ i = 0; i < range.number; ++i) {
-            buffer[range.index[i] - my_block_start] = vbuffer[i];
+        if constexpr(same_value) {
+            for (Index_ i = 0; i < range.number; ++i) {
+                buffer[range.index[i] - my_block_start] = vbuffer[i];
+            }
+        } else {
+            for (Index_ i = 0; i < range.number; ++i) {
+                buffer[range.index[i] - my_block_start] = my_result_vbuffer[i];
+            }
         }
 
         return buffer;
     }
 };
 
-template<bool oracle_, typename Value_, typename Index_, class Operation_> 
+template<bool oracle_, typename Value_, typename Index_, class Operation_, typename InputValue_> 
 class DenseExpandedIndex : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseExpandedIndex(
-        const Matrix<Value_, Index_>* matrix, 
+        const Matrix<InputValue_, Index_>* matrix, 
         const Operation_& operation,
         bool row,
         MaybeOracle<oracle_, Index_> oracle,
@@ -289,37 +367,55 @@ public:
         }
 
         my_ext = new_extractor<true, oracle_>(matrix, my_row, std::move(oracle), std::move(indices_ptr), opt);
+
+        if constexpr(!same_value) {
+            my_result_vbuffer.resize(my_extent);
+        }
     }
 
 private:
     const Operation_& my_operation;
+
     bool my_row;
     DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
-
     Index_ my_extent;
-    std::vector<Value_> my_vbuffer;
+
+    std::vector<InputValue_> my_vbuffer;
     std::vector<Index_> my_ibuffer;
 
     std::vector<Index_> my_remapping;
     Index_ my_remapping_offset = 0;
-    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
+    std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
+
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    typename std::conditional<!same_value, std::vector<Value_>, bool>::type my_result_vbuffer;
 
 public:
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto vbuffer = my_vbuffer.data();
         auto range = my_ext->fetch(i, vbuffer, my_ibuffer.data());
-        copy_n(range.value, range.number, vbuffer);
 
         i = my_oracle.get(i);
-        my_operation.sparse(my_row, i, range.number, vbuffer, range.index);
+        if constexpr(same_value) {
+            copy_n(range.value, range.number, vbuffer);
+            my_operation.sparse(my_row, i, range.number, vbuffer, range.index);
+        } else {
+            my_operation.sparse(my_row, i, range.number, vbuffer, range.index, my_result_vbuffer.data());
+        }
 
         // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
         if (range.number < my_extent) { 
             std::fill_n(buffer, my_extent, my_operation.template fill<Value_>(my_row, i));
         }
 
-        for (Index_ i = 0; i < range.number; ++i) {
-            buffer[my_remapping[range.index[i] - my_remapping_offset]] = vbuffer[i];
+        if constexpr(same_value) {
+            for (Index_ i = 0; i < range.number; ++i) {
+                buffer[my_remapping[range.index[i] - my_remapping_offset]] = vbuffer[i];
+            }
+        } else {
+            for (Index_ i = 0; i < range.number; ++i) {
+                buffer[my_remapping[range.index[i] - my_remapping_offset]] = my_result_vbuffer[i];
+            }
         }
 
         return buffer;
@@ -333,11 +429,11 @@ public:
  * - the operation preserves sparsity
  * - indices are not necessary to perform the operation 
  */
-template<bool oracle_, typename Value_, typename Index_, class Operation_>
+template<bool oracle_, typename Value_, typename Index_, class Operation_, typename InputValue_>
 class SparseSimple : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     SparseSimple(
-        const Matrix<Value_, Index_>* matrix, 
+        const Matrix<InputValue_, Index_>* matrix, 
         const Operation_& operation, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle, 
@@ -346,10 +442,12 @@ public:
         my_row(row),
         my_oracle(oracle, my_operation, row),
         my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), opt)) 
-    {}
+    {
+        initialize(opt, row ? matrix->ncol() : matrix->nrow());
+    }
 
     SparseSimple(
-        const Matrix<Value_, Index_>* matrix, 
+        const Matrix<InputValue_, Index_>* matrix, 
         const Operation_& operation, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle, 
@@ -360,10 +458,12 @@ public:
         my_row(row),
         my_oracle(oracle, my_operation, row),
         my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), block_start, block_length, opt)) 
-    {}
+    {
+        initialize(opt, block_length);
+    }
 
     SparseSimple(
-        const Matrix<Value_, Index_>* matrix, 
+        const Matrix<InputValue_, Index_>* matrix, 
         const Operation_& operation, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle, 
@@ -371,25 +471,55 @@ public:
         const Options& opt) :
         my_operation(operation),
         my_row(row),
-        my_oracle(oracle, my_operation, row),
-        my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt)) 
-    {}
+        my_oracle(oracle, my_operation, row)
+    {
+        initialize(opt, indices_ptr->size()); 
+
+        // Need to construct this here so that indices_ptr isn't moved until after calling initialize().
+        my_ext = new_extractor<true, oracle_>(matrix, row, std::move(oracle), std::move(indices_ptr), opt);
+    }
 
 private:
     const Operation_& my_operation;
+
     bool my_row;
     DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
-    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
+
+    std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
+
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_vbuffer;
+
+    void initialize(const Options& opt, size_t extent) {
+        if constexpr(!same_value) {
+            if (opt.sparse_extract_value) {
+                my_holding_vbuffer.resize(extent);
+            }
+        }
+    }
 
 public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
-        auto raw = my_ext->fetch(i, value_buffer, index_buffer);
-        if (raw.value) {
-            copy_n(raw.value, raw.number, value_buffer);
-            my_operation.sparse(my_row, my_oracle.get(i), raw.number, value_buffer, raw.index);
-            raw.value = value_buffer;
+        if constexpr(same_value) {
+            auto raw = my_ext->fetch(i, value_buffer, index_buffer);
+            if (raw.value) {
+                copy_n(raw.value, raw.number, value_buffer);
+                my_operation.sparse(my_row, my_oracle.get(i), raw.number, value_buffer, raw.index);
+                raw.value = value_buffer;
+            }
+            return raw;
+        } else {
+            auto raw = my_ext->fetch(i, my_holding_vbuffer.data(), index_buffer);
+
+            SparseRange<Value_, Index_> output(raw.number);
+            output.index = raw.index;
+            if (raw.value) {
+                my_operation.sparse(my_row, my_oracle.get(i), raw.number, raw.value, raw.index, value_buffer);
+                output.value = value_buffer;
+            }
+
+            return output;
         }
-        return raw;
     }
 };
 
@@ -400,11 +530,11 @@ public:
  * - the operation preserves sparsity
  * - indices are necessary to perform the operation 
  */
-template<bool oracle_, typename Value_, typename Index_, class Operation_>
+template<bool oracle_, typename Value_, typename Index_, class Operation_, typename InputValue_>
 class SparseNeedsIndices : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     SparseNeedsIndices(
-        const Matrix<Value_, Index_>* matrix,
+        const Matrix<InputValue_, Index_>* matrix,
         const Operation_& operation, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle, 
@@ -418,7 +548,7 @@ public:
     }
 
     SparseNeedsIndices(
-        const Matrix<Value_, Index_>* matrix,
+        const Matrix<InputValue_, Index_>* matrix,
         const Operation_& operation, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle, 
@@ -434,7 +564,7 @@ public:
     }
 
     SparseNeedsIndices(
-        const Matrix<Value_, Index_>* matrix,
+        const Matrix<InputValue_, Index_>* matrix,
         const Operation_& operation, 
         bool row, 
         MaybeOracle<oracle_, Index_> oracle, 
@@ -465,31 +595,53 @@ private:
                 my_ibuffer.resize(extent);
             }
         }
+
+        if constexpr(!same_value) {
+            if (my_report_value) {
+                my_holding_vbuffer.resize(extent);
+            }
+        }
     }
 
 private:
     const Operation_& my_operation;
+
     bool my_row;
-    bool my_report_value, my_report_index;
     DelayedIsometricOperation_internal::MaybeOracleDepends<oracle_, Operation_, Index_> my_oracle;
+
+    bool my_report_value, my_report_index;
     std::vector<Index_> my_ibuffer;
-    std::unique_ptr<SparseExtractor<oracle_, Value_, Index_> > my_ext;
+
+    std::unique_ptr<SparseExtractor<oracle_, InputValue_, Index_> > my_ext;
+
+    static constexpr bool same_value = std::is_same<Value_, InputValue_>::type;
+    typename std::conditional<!same_value, std::vector<InputValue_>, bool>::type my_holding_vbuffer;
 
 public:
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
-        auto raw = my_ext->fetch(i, value_buffer, my_report_index ? index_buffer : my_ibuffer.data());
+        auto iptr = my_report_index ? index_buffer : my_ibuffer.data();
 
-        if (my_report_value) {
-            copy_n(raw.value, raw.number, value_buffer);
-            my_operation.sparse(my_row, my_oracle.get(i), raw.number, value_buffer, raw.index);
-            raw.value = value_buffer;
+        if constexpr(same_value) {
+            auto raw = my_ext->fetch(i, value_buffer, iptr);
+            if (my_report_value) {
+                copy_n(raw.value, raw.number, value_buffer);
+                my_operation.sparse(my_row, my_oracle.get(i), raw.number, value_buffer, raw.index);
+                raw.value = value_buffer;
+            }
+            if (!my_report_index) {
+                raw.index = NULL;
+            } 
+            return raw;
+
+        } else {
+            auto raw = my_ext->fetch(i, my_holding_vbuffer.data(), iptr);
+            SparseRange<Value_, Index_> output(raw.number, NULL, (my_report_index ? raw.index : NULL));
+            if (my_report_value) {
+                my_operation.sparse(my_row, my_oracle.get(i), raw.number, raw.value, raw.index, value_buffer);
+                output.value = value_buffer;
+            }
+            return output;
         }
-
-        if (!my_report_index) {
-            raw.index = NULL;
-        } 
-
-        return raw;
     }
 };
 
@@ -507,13 +659,14 @@ public:
  *
  * This class is inspired by the `DelayedUnaryIsoOp` classes from the **DelayedArray** Bioconductor package.
  * 
- * @tparam Value_ Type of matrix value.
+ * @tparam Value_ Type of matrix value after the operation.
  * @tparam Index_ Type of index value.
  * @tparam Operation_ Helper class implementing the operation.
  * This should implement the same methods as `DelayedUnaryIsometricMockBasic` or `DelayedUnaryIsometricMockAdvanced`,
  * depending on whether it can take advantage of matrix sparsity.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  */
-template<typename Value_, typename Index_, class Operation_, typename InputValue_>
+template<typename Value_, typename Index_, class Operation_, typename InputValue_ = Value_>
 class DelayedUnaryIsometricOperation : public Matrix<Value_, Index_> {
 public:
     /**
@@ -576,32 +729,44 @@ public:
 private:
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_basic_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
-        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseBasicFull<oracle_, Value_, Index_, Operation_> >(my_matrix.get(), my_operation, row, std::move(oracle), opt);
+        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseBasicFull<oracle_, Value_, Index_, Operation_, InputValue_> >(
+            my_matrix.get(), my_operation, row, std::move(oracle), opt
+        );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_basic_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseBasicBlock<oracle_, Value_, Index_, Operation_> >(my_matrix.get(), my_operation, row, std::move(oracle), block_start, block_length, opt);
+        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseBasicBlock<oracle_, Value_, Index_, Operation_, InputValue_> >(
+            my_matrix.get(), my_operation, row, std::move(oracle), block_start, block_length, opt
+        );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_basic_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseBasicIndex<oracle_, Value_, Index_, Operation_> >(my_matrix.get(), my_operation, row, std::move(oracle), std::move(indices_ptr), opt);
+        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseBasicIndex<oracle_, Value_, Index_, Operation_, InputValue_> >(
+            my_matrix.get(), my_operation, row, std::move(oracle), std::move(indices_ptr), opt
+        );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_expanded_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
-        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseExpandedFull<oracle_, Value_, Index_, Operation_> >(my_matrix.get(), my_operation, row, std::move(oracle), opt);
+        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseExpandedFull<oracle_, Value_, Index_, Operation_, InputValue_> >(
+            my_matrix.get(), my_operation, row, std::move(oracle), opt
+        );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_expanded_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
-        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseExpandedBlock<oracle_, Value_, Index_, Operation_> >(my_matrix.get(), my_operation, row, std::move(oracle), block_start, block_length, opt);
+        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseExpandedBlock<oracle_, Value_, Index_, Operation_, InputValue_> >(
+            my_matrix.get(), my_operation, row, std::move(oracle), block_start, block_length, opt
+        );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > dense_expanded_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
-        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseExpandedIndex<oracle_, Value_, Index_, Operation_> >(my_matrix.get(), my_operation, row, std::move(oracle), std::move(indices_ptr), opt);
+        return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseExpandedIndex<oracle_, Value_, Index_, Operation_, InputValue_> >(
+            my_matrix.get(), my_operation, row, std::move(oracle), std::move(indices_ptr), opt
+        );
     }
 
     template<bool oracle_, typename ... Args_>
@@ -667,7 +832,7 @@ private:
         if constexpr(!Operation_::is_basic) {
             if (my_operation.is_sparse() && my_matrix->is_sparse()) { 
                 if (DelayedIsometricOperation_internal::needs_sparse_indices(my_operation, row)) {
-                    return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseNeedsIndices<oracle_, Value_, Index_, Operation_> >(
+                    return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseNeedsIndices<oracle_, Value_, Index_, Operation_, InputValue_> >(
                         my_matrix.get(),
                         my_operation,
                         row, 
@@ -676,7 +841,7 @@ private:
                     );
 
                 } else {
-                    return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseSimple<oracle_, Value_, Index_, Operation_> >(
+                    return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseSimple<oracle_, Value_, Index_, Operation_, InputValue_> >(
                         my_matrix.get(),
                         my_operation, 
                         row, 
