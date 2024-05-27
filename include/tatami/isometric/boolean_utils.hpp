@@ -23,16 +23,21 @@ enum class BooleanOperation : char {
  * @cond
  */
 template<BooleanOperation op_, typename Value_>
-void delayed_boolean_run(Value_& val, bool scalar) {
+bool delayed_boolean(Value_ val, bool scalar) {
     if constexpr(op_ == BooleanOperation::AND) {
-        val = val && scalar;
+        return val && scalar;
     } else if constexpr(op_ == BooleanOperation::OR) {
-        val = val || scalar;
+        return val || scalar;
     } else if constexpr(op_ == BooleanOperation::XOR) {
-        val = static_cast<bool>(val) != scalar;
+        return static_cast<bool>(val) != scalar;
     } else { // EQUAL.
-        val = static_cast<bool>(val) == scalar;
+        return static_cast<bool>(val) == scalar;
     }
+}
+
+template<BooleanOperation op_, typename Value_>
+void delayed_boolean_run(Value_& val, bool scalar) {
+    val = delayed_boolean<op_>(val, scalar);
 }
 /**
  * @endcond

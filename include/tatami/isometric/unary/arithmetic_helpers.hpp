@@ -24,8 +24,8 @@ void delayed_arithmetic_run_simple(Value_* buffer, Index_ length, Scalar_ scalar
     }
 }
 
-template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Index_, typename Scalar_, typename Value_>
-void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scalar_ scalar, Value_* output) {
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Index_, typename Scalar_, typename OutputValue_>
+void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scalar_ scalar, OutputValue_* output) {
     for (Index_ i = 0; i < length; ++i) {
         output[i] = delayed_arithmetic<op_, right_>(input[i], scalar);
     }
@@ -112,8 +112,8 @@ public:
         delayed_arithmetic_run_simple<op_, right_>(buffer, length, my_scalar);
     }
 
-    template<typename Index_, typename Value_>
-    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, Value_* output) const {
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
         delayed_arithmetic_run_simple<op_, right_>(input, length, my_scalar, output);
     }
 
@@ -122,24 +122,28 @@ public:
         delayed_arithmetic_run_simple<op_, right_>(buffer, static_cast<Index_>(indices.size()), my_scalar);
     }
 
-    template<typename Index_, typename Value_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, Value_* output) const {
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         delayed_arithmetic_run_simple<op_, right_>(input, static_cast<Index_>(indices.size()), my_scalar, output);
     }
 
     template<typename Index_>
-    void sparse(bool, Index_, Index_ number, InputValue_* buffer, const Index_*) const {
-        delayed_arithmetic_run_simple<op_, right_>(buffer, number, my_scalar);
+    void sparse(bool, Index_, Index_ number, InputValue_* value, const Index_*) const {
+        delayed_arithmetic_run_simple<op_, right_>(value, number, my_scalar);
     }
 
-    template<typename Index_, typename Value_>
-    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, Value_* output) const {
-        delayed_arithmetic_run_simple<op_, right_>(input, number, my_scalar, output);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+        delayed_arithmetic_run_simple<op_, right_>(input_value, number, my_scalar, output_value);
     }
 
-    template<typename Value_, typename Index_>
-    Value_ fill(bool, Index_) const {
-        return delayed_arithmetic_zero<op_, right_, Value_>(my_scalar);
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
+        // We perform the operation with the InputValue_ before casting it to
+        // the OutputValue_, which is consistent with the behavior of all other
+        // methods. This has some interesting implications if only one or the
+        // other supports, e.g., division by zero, but that's not my problem.
+        return delayed_arithmetic_zero<op_, right_, InputValue_>(my_scalar);
     }
     /**
      * @endcond
@@ -220,13 +224,14 @@ public:
             delayed_arithmetic_run_simple<op_, right_>(buffer, length, my_vector[idx]);
         } else {
             for (Index_ i = 0; i < length; ++i) {
-                buffer[i] = delayed_arithmetic<op_, right_>(buffer[i], my_vector[i + start]);
+                auto& val = buffer[i];
+                val = delayed_arithmetic<op_, right_>(val, my_vector[i + start]);
             }
         }
     }
 
-    template<typename Index_, typename Value_>
-    void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, Value_* output) const {
+    template<typename Index_, typename OutputValue_>
+    void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const {
         if (row == my_by_row) {
             delayed_arithmetic_run_simple<op_, right_>(input, length, my_vector[idx], output);
         } else {
@@ -242,13 +247,14 @@ public:
             delayed_arithmetic_run_simple<op_, right_>(buffer, static_cast<Index_>(indices.size()), my_vector[idx]);
         } else {
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
-                buffer[i] = delayed_arithmetic<op_, right_>(buffer[i], my_vector[indices[i]]);
+                auto& val = buffer[i];
+                val = delayed_arithmetic<op_, right_>(val, my_vector[indices[i]]);
             }
         }
     }
 
-    template<typename Index_, typename Value_>
-    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, Value_* output) const {
+    template<typename Index_, typename OutputValue_>
+    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         if (row == my_by_row) {
             delayed_arithmetic_run_simple<op_, right_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
         } else {
@@ -259,31 +265,32 @@ public:
     }
 
     template<typename Index_>
-    void sparse(bool row, Index_ idx, Index_ number, InputValue_* buffer, const Index_* indices) const {
+    void sparse(bool row, Index_ idx, Index_ number, InputValue_* value, const Index_* indices) const {
         if (row == my_by_row) {
-            delayed_arithmetic_run_simple<op_, right_>(buffer, number, my_vector[idx]);
+            delayed_arithmetic_run_simple<op_, right_>(value, number, my_vector[idx]);
         } else {
             for (Index_ i = 0; i < number; ++i) {
-                buffer[i] = delayed_arithmetic<op_, right_>(buffer[i], my_vector[indices[i]]);
+                auto& val = value[i];
+                val = delayed_arithmetic<op_, right_>(val, my_vector[indices[i]]);
             }
         }
     }
 
-    template<typename Index_, typename Value_>
-    void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_values, const Index_* indices, Value_* output_values) const {
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_value, const Index_* indices, OutputValue_* output_value) const {
         if (row == my_by_row) {
-            delayed_arithmetic_run_simple<op_, right_>(input_values, number, my_vector[idx], output_values);
+            delayed_arithmetic_run_simple<op_, right_>(input_value, number, my_vector[idx], output_value);
         } else {
             for (Index_ i = 0; i < number; ++i) {
-                output_values[i] = delayed_arithmetic<op_, right_>(input_values[i], my_vector[indices[i]]);
+                output_value[i] = delayed_arithmetic<op_, right_>(input_value[i], my_vector[indices[i]]);
             }
         }
     }
 
-    template<typename Value_, typename Index_>
-    Value_ fill(bool row, Index_ idx) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
-            return delayed_arithmetic_zero<op_, right_, Value_>(my_vector[idx]);
+            return delayed_arithmetic_zero<op_, right_, InputValue_>(my_vector[idx]);
         } else {
             // We should only get to this point if it's sparse, otherwise no
             // single fill value would work across the length of my_vector.
@@ -296,6 +303,7 @@ public:
 };
 
 /**
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be added.
  * @return A helper class for delayed scalar addition,
@@ -308,6 +316,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::ADD, true, InputValue
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the subtraction.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be subtracted.
  * @return A helper class for delayed scalar subtraction,
@@ -319,6 +328,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::SUBTRACT, right_, Inp
 }
 
 /**
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be multiplied.
  * @return A helper class for delayed scalar multiplication,
@@ -331,6 +341,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MULTIPLY, true, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the division.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be divided.
  * @return A helper class for delayed scalar division,
@@ -343,6 +354,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::DIVIDE, right_, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be power transformed.
  * @return A helper class for delayed scalar power transformation,
@@ -355,6 +367,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::POWER, right_, InputV
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be modulo transformed.
  * @return A helper class for delayed scalar modulus,
@@ -367,6 +380,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MODULO, right_, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be integer divided.
  * @return A helper class for delayed scalar integer division,
@@ -378,6 +392,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::INTEGER_DIVIDE, right
 }
 
 /**
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to be added to the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -391,6 +406,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::ADD, true, InputValue
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the subtraction.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to subtract from (or be subtracted by) the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -403,6 +419,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::SUBTRACT, right_, Inp
 }
 
 /**
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to multiply the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -416,6 +433,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MULTIPLY, true, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the division.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to divide (or be divided by) the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -429,6 +447,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::DIVIDE, right_, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to use in the power transformation of the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -442,6 +461,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::POWER, right_, InputV
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to use in the modulus of the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -455,6 +475,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MODULO, right_, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
+ * @tparam InputValue_ Type of the matrix value before the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to integer divide (or be integer divided by) the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
