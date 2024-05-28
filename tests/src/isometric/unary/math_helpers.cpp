@@ -127,8 +127,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sign) {
         }
         tatami::DenseRowMatrix<double, int> ref_nan(nrow, ncol, refvec);
 
-        quick_test_all(dense_nan.get(), &ref_nan, /* has_nan = */ true);
-        quick_test_all(sparse_nan.get(), &ref_nan, /* has_nan = */ true);
+        quick_test_all(dense_fmod.get(), &ref_nan, /* has_nan = */ true);
+        quick_test_all(sparse_fmod.get(), &ref_nan, /* has_nan = */ true);
 
         // Checking that it works for a different output type that supports NaNs.
         {
