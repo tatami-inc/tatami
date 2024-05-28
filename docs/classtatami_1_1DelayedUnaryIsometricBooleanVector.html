@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::DelayedUnaryIsometricBooleanVector&lt; op_, Value_, Vector_ &gt; Class Template Reference</title>
+<title>tatami: tatami::DelayedUnaryIsometricBooleanVector&lt; op_, InputValue_, Vector_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -78,7 +78,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classtatami_1_1DelayedUnaryIsometricBooleanVector-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami::DelayedUnaryIsometricBooleanVector&lt; op_, Value_, Vector_ &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">tatami::DelayedUnaryIsometricBooleanVector&lt; op_, InputValue_, Vector_ &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -89,35 +89,35 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a1bc09b7db9508b21784f202ab4ec5b4e" id="r_a1bc09b7db9508b21784f202ab4ec5b4e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanVector.html#a1bc09b7db9508b21784f202ab4ec5b4e">DelayedUnaryIsometricBooleanVector</a> (<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">vector</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">by_row</a>)</td></tr>
-<tr class="separator:a1bc09b7db9508b21784f202ab4ec5b4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7eec2e76ab6293a0c3f4891ff5cd562b" id="r_a7eec2e76ab6293a0c3f4891ff5cd562b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanVector.html#a7eec2e76ab6293a0c3f4891ff5cd562b">DelayedUnaryIsometricBooleanVector</a> (<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">vector</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">by_row</a>)</td></tr>
+<tr class="separator:a7eec2e76ab6293a0c3f4891ff5cd562b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f184118be28a">BooleanOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a> = double, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> = std::vector&lt;Value_&gt;&gt;<br />
-class tatami::DelayedUnaryIsometricBooleanVector&lt; op_, Value_, Vector_ &gt;</div><p>Delayed unary isometric vector boolean operations. </p>
-<p>This should be used as the <code>Operation_</code> in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> class.</p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f184118be28a">BooleanOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">InputValue_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a>&gt;<br />
+class tatami::DelayedUnaryIsometricBooleanVector&lt; op_, InputValue_, Vector_ &gt;</div><p>Delayed unary isometric vector boolean operations. </p>
+<p>This class applies the specified boolean operation to each element of a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> where the other operand is a row/column-specific value. This should be used as the <code>Operation_</code> in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> class. It may be used regardless of whether <code>InputValue_</code> and <code>OutputValue_</code> are equal (or not).</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">op_</td><td>The boolean operation. </td></tr>
-    <tr><td class="paramname">Value_</td><td>Type of the data value. </td></tr>
+    <tr><td class="paramname">InputValue_</td><td>Type of the matrix value to use in the operation. </td></tr>
     <tr><td class="paramname">Vector_</td><td>Type of the vector. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a1bc09b7db9508b21784f202ab4ec5b4e" name="a1bc09b7db9508b21784f202ab4ec5b4e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bc09b7db9508b21784f202ab4ec5b4e">&#9670;&#160;</a></span>DelayedUnaryIsometricBooleanVector()</h2>
+<a id="a7eec2e76ab6293a0c3f4891ff5cd562b" name="a7eec2e76ab6293a0c3f4891ff5cd562b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7eec2e76ab6293a0c3f4891ff5cd562b">&#9670;&#160;</a></span>DelayedUnaryIsometricBooleanVector()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f184118be28a">BooleanOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>  = double, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a>  = std::vector&lt;Value_&gt;&gt; </div>
+template&lt;<a class="el" href="namespacetatami.html#a4e5eea599200bfb6bc42f184118be28a">BooleanOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">InputValue_</a> , <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanVector.html">tatami::DelayedUnaryIsometricBooleanVector</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">op_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> &gt;::DelayedUnaryIsometricBooleanVector </td>
+          <td class="memname"><a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanVector.html">tatami::DelayedUnaryIsometricBooleanVector</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">op_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">InputValue_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a> &gt;::DelayedUnaryIsometricBooleanVector </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Vector_</a>&#160;</td>
           <td class="paramname"><em>vector</em>, </td>

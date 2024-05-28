@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>tatami: tatami::DelayedUnaryIsometricArithmeticScalar&lt; op_, right_, Value_, Scalar_ &gt; Class Template Reference</title>
+<title>tatami: tatami::DelayedUnaryIsometricArithmeticScalar&lt; op_, right_, InputValue_, Scalar_ &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -78,7 +78,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classtatami_1_1DelayedUnaryIsometricArithmeticScalar-members.html">List of all members</a>  </div>
-  <div class="headertitle"><div class="title">tatami::DelayedUnaryIsometricArithmeticScalar&lt; op_, right_, Value_, Scalar_ &gt; Class Template Reference</div></div>
+  <div class="headertitle"><div class="title">tatami::DelayedUnaryIsometricArithmeticScalar&lt; op_, right_, InputValue_, Scalar_ &gt; Class Template Reference</div></div>
 </div><!--header-->
 <div class="contents">
 
@@ -89,36 +89,36 @@ $(function() {
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a451a4c5209d218b9351be8604aaf28c1" id="r_a451a4c5209d218b9351be8604aaf28c1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricArithmeticScalar.html#a451a4c5209d218b9351be8604aaf28c1">DelayedUnaryIsometricArithmeticScalar</a> (<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">scalar</a>)</td></tr>
-<tr class="separator:a451a4c5209d218b9351be8604aaf28c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abeff0d039b6cd0d8fb0b2e7659519137" id="r_abeff0d039b6cd0d8fb0b2e7659519137"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedUnaryIsometricArithmeticScalar.html#abeff0d039b6cd0d8fb0b2e7659519137">DelayedUnaryIsometricArithmeticScalar</a> (<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">scalar</a>)</td></tr>
+<tr class="separator:abeff0d039b6cd0d8fb0b2e7659519137"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> right_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a> = double, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a> = Value_&gt;<br />
-class tatami::DelayedUnaryIsometricArithmeticScalar&lt; op_, right_, Value_, Scalar_ &gt;</div><p>Delayed unary isometric scalar arithmetic. </p>
-<p>This should be used as the <code>Operation_</code> in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> class.</p>
+<div class="textblock"><div class="compoundTemplParams">template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> right_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">InputValue_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a>&gt;<br />
+class tatami::DelayedUnaryIsometricArithmeticScalar&lt; op_, right_, InputValue_, Scalar_ &gt;</div><p>Delayed unary isometric scalar arithmetic. </p>
+<p>This class applies the specified arithmetic operation to each element of a <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> where the other operand is a scalar. It should be used as the <code>Operation_</code> in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> class. It may be used regardless of whether <code>InputValue_</code> and <code>OutputValue_</code> are equal (or not).</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
     <tr><td class="paramname">op_</td><td>The arithmetic operation. </td></tr>
     <tr><td class="paramname">right_</td><td>Whether the scalar should be on the right hand side of the arithmetic operation. Ignored for commutative operations, e.g., <code>ADD</code> and <code>MULTIPLY</code>. </td></tr>
-    <tr><td class="paramname">Value_</td><td>Type of the data value. </td></tr>
+    <tr><td class="paramname">InputValue_</td><td>Type of the matrix value to use in the operation. </td></tr>
     <tr><td class="paramname">Scalar_</td><td>Type of the scalar value. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a451a4c5209d218b9351be8604aaf28c1" name="a451a4c5209d218b9351be8604aaf28c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a451a4c5209d218b9351be8604aaf28c1">&#9670;&#160;</a></span>DelayedUnaryIsometricArithmeticScalar()</h2>
+<a id="abeff0d039b6cd0d8fb0b2e7659519137" name="abeff0d039b6cd0d8fb0b2e7659519137"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abeff0d039b6cd0d8fb0b2e7659519137">&#9670;&#160;</a></span>DelayedUnaryIsometricArithmeticScalar()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> right_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>  = double, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a>  = Value_&gt; </div>
+template&lt;<a class="el" href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">ArithmeticOperation</a> op_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">bool</a> right_, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">InputValue_</a> , <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a> &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classtatami_1_1DelayedUnaryIsometricArithmeticScalar.html">tatami::DelayedUnaryIsometricArithmeticScalar</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">op_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">right_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a> &gt;::DelayedUnaryIsometricArithmeticScalar </td>
+          <td class="memname"><a class="el" href="classtatami_1_1DelayedUnaryIsometricArithmeticScalar.html">tatami::DelayedUnaryIsometricArithmeticScalar</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">op_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">right_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">InputValue_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a> &gt;::DelayedUnaryIsometricArithmeticScalar </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a>&#160;</td>
           <td class="paramname"><em>scalar</em></td><td>)</td>
