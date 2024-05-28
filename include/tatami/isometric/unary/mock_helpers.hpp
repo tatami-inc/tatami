@@ -14,7 +14,7 @@ namespace tatami {
 /**
  * @brief Basic mock operation for a `DelayedUnaryIsometricOperation`. 
  *
- * This defines the basic expectations for an operation to use in `DelayedUnaryIsometricOperation`.
+ * This defines the basic expectations for an operation to be used as `Operation_` in `DelayedUnaryIsometricOperation`.
  * Actual operations aren't expected to inherit from this class;
  * this is only provided for documentation purposes.
  * Operations only need to implement methods with the same signatures for compile-time polymorphism.
@@ -22,12 +22,15 @@ namespace tatami {
 class DelayedUnaryIsometricMockBasic {
 public:
     /**
-     * This method should apply the operation to values in `buffer`,
-     * This buffer represents an element of the target dimension from the underlying matrix,
-     * and contains values from a contiguous block of the non-target dimension.
+     * This method accepts a contiguous block of an element of the target dimension from the underlying matrix (`input`),
+     * applies the operation to each value, and stores the result in another array of a potentially different type (`output`).
      *
-     * @tparam Value_ Type of matrix value.
+     * Implementions of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     *
      * @tparam Index_ Type of index value.
+     * @tparam InputValue_ Type of matrix value to use in the operation.
+     * @tparam OutputValue_ Type of matrix value returned by the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -35,51 +38,55 @@ public:
      * Unlike `DelayedUnaryIsometricMockAdvanced::dense()`, this is always guaranteed to be available.
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
-     * @param[in,out] buffer Contents of the row/column extracted from the matrix.
-     * This has `length` addressable elements, and the result of the operation should be stored here.
-     *
-     * Note that implementions of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * @param[in] input Pointer to an array containing a contiguous block of a row/column extracted from the matrix.
+     * This has `length` addressable elements.
+     * @param[out] output Pointer to an array to store the results of the operation applied to elements of `input`. 
+     * This has `length` addressable elements. 
+     * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `input`.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         [[maybe_unused]] Index_ start, 
         Index_ length, 
-        Value_* buffer)
+        [[maybe_unused]] const InputValue_* input,
+        OutputValue_* output)
     const {
-        // Just filling it with something as a mock.
-        std::fill_n(buffer, length, 0);
+        std::fill_n(output, length, 0);
     }
 
     /**
-     * This method should apply the operation to values in `buffer`.
-     * This buffer represents an element of the target dimension from the underlying matrix,
-     * and contains values from an indexed subset of the non-target dimension.
+     * This method accepts an indexed subset of an element of the target dimension from the underlying matrix (`input`),
+     * applies the operation to each value, and stores the result in another array of different type (`output`).
      *
-     * @tparam Value_ Type of matrix value.
+     * Implementions of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     *
+     * @tparam InputValue_ Type of matrix value to use in the operation.
      * @tparam Index_ Type of index value.
+     * @tparam OutputValue_ Type of matrix value returned by the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * Unlike `DelayedUnaryIsometricMockAdvanced::dense()`, this is always guaranteed to be available.
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
-     * @param[in,out] buffer Contents of the row/column extracted from the matrix.
-     * This has `length` addressable elements, and the result of the operation should be stored here.
-     *
-     * Note that implementions of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * @param[in] input Pointer to an array containing an indexed subset of a row/column extracted from the matrix.
+     * This has `length` addressable elements.
+     * @param[out] output Pointer to an array to store the results of the operation applied to elements of `input`. 
+     * This has `length` addressable elements. 
+     * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `input`.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         const std::vector<Index_>& indices, 
-        Value_* buffer)
+        [[maybe_unused]] const InputValue_* input,
+        OutputValue_* output)
     const {
-        std::fill_n(buffer, indices.size(), 0);
+        std::fill_n(output, indices.size(), 0);
     }
 
     /**
@@ -104,12 +111,15 @@ public:
 class DelayedUnaryIsometricMockAdvanced {
 public:
     /**
-     * This method should apply the operation to values in `buffer`.
-     * This buffer represents an element of the target dimension from the underlying matrix,
-     * and contains values from a contiguous block of the non-target dimension.
+     * This method accepts a contiguous block of an element of the target dimension from the underlying matrix (`input`),
+     * applies the operation to each value, and stores the result in another array of different type (`output`).
      *
-     * @tparam Value_ Type of matrix value.
+     * Implementions of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     *
      * @tparam Index_ Type of index value.
+     * @tparam InputValue_ Type of matrix value to use in the operation.
+     * @tparam OutputValue_ Type of matrix value returned by the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -118,31 +128,34 @@ public:
      * in which case an arbitrary placeholder may be supplied. 
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
-     * @param[in,out] buffer Contents of the row/column extracted from the matrix.
-     * This has `length` addressable elements, and the result of the operation should be stored here.
-     *
-     * Note that implementions of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * @param[in] input Pointer to an array containing a contiguous block of a row/column extracted from the matrix.
+     * This has `length` addressable elements.
+     * @param[out] output Pointer to an array to store the results of the operation applied to elements of `input`. 
+     * This has `length` addressable elements. 
+     * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `input`.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         [[maybe_unused]] Index_ start, 
         Index_ length, 
-        Value_* buffer)
+        [[maybe_unused]] const InputValue_* input,
+        OutputValue_* output)
     const {
-        // Just filling it with something as a mock.
-        std::fill_n(buffer, length, 0);
+        std::fill_n(output, length, 0);
     }
 
     /**
-     * This method should apply the operation to values in `buffer`.
-     * This buffer represents an element of the target dimension from the underlying matrix,
-     * and contains values from an indexed subset of the non-target dimension.
+     * This method accepts an indexed subset of an element of the target dimension from the underlying matrix (`input`),
+     * applies the operation to each value, and stores the result in another array of different type (`output`).
      *
-     * @tparam Value_ Type of matrix value.
+     * Implementions of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     *
+     * @tparam InputValue_ Type of matrix value to use in the operation.
      * @tparam Index_ Type of index value.
+     * @tparam OutputValue_ Type of matrix value returned by the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -150,30 +163,39 @@ public:
      * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
      * in which case an arbitrary placeholder may be supplied. 
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
-     * @param[in,out] buffer Contents of the row/column extracted from the matrix.
-     * This has `length` addressable elements, and the result of the operation should be stored here.
-     *
-     * Note that implementions of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * @param[in] input Pointer to an array containing an indexed subset of a row/column extracted from the matrix.
+     * This has `length` addressable elements.
+     * @param[out] output Pointer to an array to store the results of the operation applied to elements of `input`. 
+     * This has `length` addressable elements. 
+     * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `input`.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         const std::vector<Index_>& indices, 
-        Value_* buffer)
+        [[maybe_unused]] const InputValue_* input,
+        OutputValue_* output)
     const {
-        std::fill_n(buffer, indices.size(), 0);
+        std::fill_n(output, indices.size(), 0);
     }
 
     /**
-     * This method applies the operation to a sparse range representing an element of the target dimension from the underlying matrix.
-     * Specifically, the operation only needs to be applied to the structural non-zeros;
+     * This method is expected to iterate over `input_value`, apply the operation to each value, and store the result in `output_value`.
+     * We assume that the operation only needs to be applied to the structural non-zeros;
      * structural zeros are either ignored for sparsity-preserving operations,
      * or the result of the operation on zeros will be populated by `fill()`.
      *
-     * @tparam Value_ Type of matrix value.
+     * If `non_zero_depends_on_row() && !row` or `non_zero_depends_on_column() && row`, `index` is guaranteed to be non-NULL.
+     * Otherwise, it may be NULL and should be ignored.
+     * Even if non-NULL, indices are not guaranteed to be sorted.
+     *
+     * Implementations of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     *
      * @tparam Index_ Type of index value.
+     * @tparam InputValue_ Type of matrix value to use in the operation.
+     * @tparam OutputValue_ Type of matrix value returned by the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `buffer` contains row `i`, otherwise it contains column `i`.
@@ -181,34 +203,28 @@ public:
      * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
      * in which case an arbitrary placeholder may be supplied. 
      * @param num Number of non-zero elements for row/column `i`.
-     * @param[in,out] value Pointer to an array of values of the non-zero elements.
+     * @param[in] input_value Pointer to an array of values of the structural non-zero elements from the row/column of the matrix.
      * This is guaranteed to have `num` addressable elements.
      * @param[in] index Pointer to an array of column (if `row = true`) or row indices (otherwise) of the non-zero elements.
      * Alternatively NULL.
-     *
-     * This method is expected to iterate over `value` and modify it in place,
-     * i.e., replace each value with the result of the operation on that value.
-     *
-     * If `non_zero_depends_on_row() && !row` or `non_zero_depends_on_column() && row`, `index` is guaranteed to be non-NULL.
-     * Otherwise, it may be NULL and should be ignored.
-     * Even if non-NULL, indices are not guaranteed to be sorted.
-     *
-     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * @param[out] output_value Pointer to an array in which to store the result of the operation on each element of `input_value`.
+     * This is guaranteed to have `num` addressable elements.
+     * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `input`.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void sparse(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         Index_ num,
-        Value_* value,
-        [[maybe_unused]] const Index_* index)
+        [[maybe_unused]] const InputValue_* input_value,
+        [[maybe_unused]] const Index_* index,
+        OutputValue_* output_value)
     const {
-        std::fill_n(value, num, 0);
+        std::fill_n(output_value, num, 0);
     }
 
     /**
-     * @tparam Value_ Type of matrix value.
+     * @tparam OutputValue_ Type of matrix value returned by the operation.
      * @tparam Index_ Type of index value.
      *
      * @param row Whether `i` refers to the row or column index.
@@ -218,11 +234,11 @@ public:
      *
      * @return The result of the operation being applied on zeros from the `i`-th row/column of the matrix.
      *
-     * This method will be called with an explicit `Value_` template parameter.
+     * This method will be called with an explicit `OutputValue_` template parameter.
      * Implementations of this method should either ensure that `Index_` is deducible or use a fixed integer type in the method signature.
      */
-    template<typename Value_, typename Index_>
-    Value_ fill([[maybe_unused]] bool row, [[maybe_unused]] Index_ i) const { 
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill([[maybe_unused]] bool row, [[maybe_unused]] Index_ i) const { 
         return 0;
     }
 

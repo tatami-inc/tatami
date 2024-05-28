@@ -14,11 +14,13 @@ namespace tatami {
 /**
  * @brief Take the absolute value of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class takes the absolute value of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  *
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricAbs {
 public:
     /**
@@ -35,10 +37,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::abs(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::abs(val);
+            } else {
+                output[i] = std::abs(input[i]);
+            }
         }
     }
 
@@ -46,23 +53,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core<Index_>(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core<Index_>(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -73,11 +80,15 @@ public:
 /**
  * @brief Take the sign of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class takes the sign of each element of a `Matrix`, returning -1, 0 or 1 for negative, zero or positive values, respectively.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  *
- * @tparam Value_ Type of the data value.
+ * This operation will report NaNs in the input as NaNs in the output if supported by the `OutputValue_` type, otherwise they are set to 0.
+ *
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricSign {
 public:
     /**
@@ -93,11 +104,23 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            if (!std::isnan(buffer[i])) {
-                buffer[i] = (static_cast<Value_>(0) < buffer[i]) - (buffer[i] < static_cast<Value_>(0));
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                if (!std::isnan(val)) {
+                    val = (static_cast<InputValue_>(0) < val) - (val < static_cast<InputValue_>(0));
+                }
+            } else {
+                auto val = input[i];
+                if (!std::isnan(val)) {
+                    output[i] = (static_cast<InputValue_>(0) < val) - (val < static_cast<InputValue_>(0));
+                } else if constexpr(std::numeric_limits<OutputValue_>::has_quiet_NaN) {
+                    output[i] = std::numeric_limits<OutputValue_>::quiet_NaN();
+                } else {
+                    output[i] = 0;
+                }
             }
         }
     }
@@ -106,23 +129,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core<Index_>(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core<Index_>(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -133,12 +156,14 @@ public:
 /**
  * @brief Take the logarithm of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class takes the logarithm of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Base_ Numeric type for the log base.
  */
-template<typename Value_ = double, typename Base_ = Value_>
+template<typename InputValue_ = double, typename Base_ = InputValue_>
 class DelayedUnaryIsometricLog {
 public:
     /**
@@ -165,12 +190,17 @@ public:
      */
 
 private:
-    const Base_ my_base;
+    Base_ my_base;
 
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::log(buffer[i]) / my_base;
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::log(val) / my_base;
+            } else {
+                output[i] = std::log(input[i]) / my_base;
+            }
         }
     }
 
@@ -178,25 +208,25 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core<Index_>(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core<Index_>(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         // Use the implementation-defined value.
-        return std::log(static_cast<Value_>(0));
+        return std::log(static_cast<OutputValue_>(0));
     }
     /**
      * @endcond
@@ -206,11 +236,13 @@ public:
 /**
  * @brief Take the square root of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class takes the square root of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricSqrt {
 public:
     /**
@@ -226,10 +258,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::sqrt(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::sqrt(val);
+            } else {
+                output[i] = std::sqrt(input[i]);
+            }
         }
     }
 
@@ -237,23 +274,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -264,11 +301,13 @@ public:
 /**
  * @brief Take the ceiling of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class takes the ceiling of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricCeiling {
 public:
     /**
@@ -284,10 +323,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::ceil(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::ceil(val);
+            } else {
+                output[i] = std::ceil(input[i]);
+            }
         }
     }
 
@@ -295,23 +339,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core<Index_>(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core<Index_>(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -322,11 +366,13 @@ public:
 /**
  * @brief Take the floor of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class takes the floor of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricFloor {
 public:
     /**
@@ -342,10 +388,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::floor(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::floor(val);
+            } else {
+                output[i] = std::floor(input[i]);
+            }
         }
     }
 
@@ -353,23 +404,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -378,13 +429,15 @@ public:
 };
 
 /**
- * @brief Take the trunc of a matrix entry.
+ * @brief Integer truncation of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class performs an integer truncation of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricTrunc {
 public:
     /**
@@ -400,10 +453,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::trunc(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::trunc(val);
+            } else {
+                output[i] = std::trunc(input[i]);
+            }
         }
     }
 
@@ -411,23 +469,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -438,12 +496,14 @@ public:
 /**
  * @brief Take the logarithm of a matrix entry plus 1.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the `log1p` of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Base_ Numeric type for the log base.
  */
-template<typename Value_ = double, typename Base_ = Value_>
+template<typename InputValue_ = double, typename Base_ = InputValue_>
 class DelayedUnaryIsometricLog1p {
 public:
     /**
@@ -470,36 +530,41 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::log1p(buffer[i]) / my_base;
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::log1p(val) / my_base;
+            } else {
+                output[i] = std::log1p(input[i]) / my_base;
+            }
         }
     }
 
-    const Base_ my_base;
+    Base_ my_base;
 
 public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -510,11 +575,13 @@ public:
 /**
  * @brief Round a matrix entry to the nearest integer.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class rounds each element of a `Matrix` to the nearest integer.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricRound {
 public:
     /**
@@ -530,10 +597,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::round(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::round(val);
+            } else {
+                output[i] = std::round(input[i]);
+            }
         }
     }
 
@@ -541,23 +613,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -568,11 +640,13 @@ public:
 /**
  * @brief Use a matrix entry as an exponent.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes `exp()` on each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricExp {
 public:
     /**
@@ -588,10 +662,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::exp(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::exp(val);
+            } else {
+                output[i] = std::exp(input[i]);
+            }
         }
     }
 
@@ -599,24 +678,24 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
-        return 1.0;
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
+        return 1;
     }
     /**
      * @endcond
@@ -626,11 +705,13 @@ public:
 /**
  * @brief Use a matrix entry as an exponent minus 1.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes `expm1()` on each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricExpm1 {
 public:
     /**
@@ -646,10 +727,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::expm1(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::expm1(val);
+            } else {
+                output[i] = std::expm1(input[i]);
+            }
         }
     }
 
@@ -657,23 +743,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -682,13 +768,15 @@ public:
 };
 
 /**
- * @brief Take the arc cosine of a matrix entry.
+ * @brief Take the inverse cosine of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the inverse cosine of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricAcos {
 public:
     /**
@@ -704,10 +792,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::acos(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::acos(val);
+            } else {
+                output[i] = std::acos(input[i]);
+            }
         }
     }
 
@@ -715,23 +808,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
         return std::acos(0);
     }
@@ -743,11 +836,13 @@ public:
 /**
  * @brief Take the inverse hyperbolic cosine of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the inverse hyperbolic cosine of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricAcosh {
 public:
     /**
@@ -763,10 +858,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::acosh(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::acosh(val);
+            } else {
+                output[i] = std::acosh(input[i]);
+            }
         }
     }
 
@@ -774,25 +874,25 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
-        return std::acosh(static_cast<Value_>(0));
+        return std::acosh(static_cast<InputValue_>(0));
     }
     /**
      * @endcond
@@ -800,13 +900,15 @@ public:
 };
 
 /**
- * @brief Take the arc sine of a matrix entry.
+ * @brief Take the inverse sine of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the inverse sine of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricAsin {
 public:
     /**
@@ -822,10 +924,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::asin(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::asin(val);
+            } else {
+                output[i] = std::asin(input[i]);
+            }
         }
     }
 
@@ -833,23 +940,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -860,11 +967,13 @@ public:
 /**
  * @brief Take the inverse hyperbolic sine of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the inverse hyperbolic sine of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricAsinh {
 public:
     /**
@@ -880,10 +989,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::asinh(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::asinh(val);
+            } else {
+                output[i] = std::asinh(input[i]);
+            }
         }
     }
 
@@ -891,23 +1005,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -916,13 +1030,15 @@ public:
 };
 
 /**
- * @brief Take the arc tangent of a matrix entry.
+ * @brief Take the inverse tangent of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the inverse tangent of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricAtan {
 public:
     /**
@@ -938,10 +1054,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::atan(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::atan(val);
+            } else {
+                output[i] = std::atan(input[i]);
+            }
         }
     }
 
@@ -949,23 +1070,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -976,11 +1097,13 @@ public:
 /**
  * @brief Take the inverse hyperbolic tangent of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the inverse hyperbolic tangent of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricAtanh {
 public:
     /**
@@ -996,10 +1119,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::atanh(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::atanh(val);
+            } else {
+                output[i] = std::atanh(input[i]);
+            }
         }
     }
 
@@ -1007,23 +1135,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1034,11 +1162,13 @@ public:
 /**
  * @brief Take the cosine of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the cosine of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricCos {
 public:
     /**
@@ -1054,10 +1184,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::cos(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::cos(val);
+            } else {
+                output[i] = std::cos(input[i]);
+            }
         }
     }
 
@@ -1065,23 +1200,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 1.0;
     }
     /**
@@ -1092,11 +1227,13 @@ public:
 /**
  * @brief Take the hyperbolic cosine of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the hyperbolic cosine of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricCosh {
 public:
     /**
@@ -1112,10 +1249,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::cosh(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::cosh(val);
+            } else {
+                output[i] = std::cosh(input[i]);
+            }
         }
     }
 
@@ -1123,23 +1265,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 1.0;
     }
     /**
@@ -1150,11 +1292,13 @@ public:
 /**
  * @brief Take the sine of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the sine of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricSin {
 public:
     /**
@@ -1170,10 +1314,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::sin(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::sin(val);
+            } else {
+                output[i] = std::sin(input[i]);
+            }
         }
     }
 
@@ -1181,23 +1330,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1208,11 +1357,13 @@ public:
 /**
  * @brief Take the hyperbolic sine of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the hyperbolic sine of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricSinh {
 public:
     /**
@@ -1228,10 +1379,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::sinh(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::sinh(val);
+            } else {
+                output[i] = std::sinh(input[i]);
+            }
         }
     }
 
@@ -1239,23 +1395,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1266,11 +1422,13 @@ public:
 /**
  * @brief Take the tangent of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the tangent of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricTan {
 public:
     /**
@@ -1286,10 +1444,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::tan(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::tan(val);
+            } else {
+                output[i] = std::tan(input[i]);
+            }
         }
     }
 
@@ -1297,23 +1460,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1324,11 +1487,13 @@ public:
 /**
  * @brief Take the hyperbolic tangent of a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class computes the hyperbolic tangent of each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricTanh {
 public:
     /**
@@ -1344,10 +1509,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::tanh(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::tanh(val);
+            } else {
+                output[i] = std::tanh(input[i]);
+            }
         }
     }
 
@@ -1355,23 +1525,23 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         return 0;
     }
     /**
@@ -1380,13 +1550,15 @@ public:
 };
 
 /**
- * @brief Take the gamma of a matrix entry.
+ * @brief Apply the gamma function to a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class applies the gamma function to each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricGamma {
 public:
     /**
@@ -1402,10 +1574,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::tgamma(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::tgamma(val);
+            } else {
+                output[i] = std::tgamma(input[i]);
+            }
         }
     }
 
@@ -1413,25 +1590,25 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
-        return std::tgamma(static_cast<Value_>(0));
+        return std::tgamma(static_cast<InputValue_>(0));
     }
     /**
      * @endcond
@@ -1439,13 +1616,15 @@ public:
 };
 
 /**
- * @brief Take the logarithm of the gamma of a matrix entry.
+ * @brief Apply the log-gamma function to a matrix entry.
  *
- * This can be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class applies the log-gamma function to each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  * 
- * @tparam Value_ Type of the data value.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename Value_ = double>
+template<typename InputValue_ = double>
 class DelayedUnaryIsometricLgamma {
 public:
     /**
@@ -1461,10 +1640,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(Index_ length, Value_* buffer) const {
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = std::lgamma(buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = std::lgamma(val);
+            } else {
+                output[i] = std::lgamma(input[i]);
+            }
         }
     }
 
@@ -1472,25 +1656,25 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        core(length, buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        core(indices.size(), buffer);
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, indices.size(), output);
     }
 
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        core(number, buffer);
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
+        core(input, number, output);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         // Use the implementation-defined special value.
-        return std::lgamma(static_cast<Value_>(0));
+        return std::lgamma(static_cast<InputValue_>(0));
     }
     /**
      * @endcond

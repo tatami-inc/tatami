@@ -264,6 +264,44 @@ INSTANTIATE_TEST_SUITE_P(
     DelayedUnaryIsometricAddVectorUtils::simulation_parameter_combinations()
 );
 
+class DelayedUnaryIsometricAddVectorNewTypeTest : 
+    public ::testing::TestWithParam<typename DelayedUnaryIsometricAddVectorUtils::SimulationParameters>, 
+    public DelayedUnaryIsometricArithmeticVectorUtils 
+{
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
+
+TEST_P(DelayedUnaryIsometricAddVectorNewTypeTest, Basic) {
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
+
+    auto vec = create_vector(row ? nrow : ncol, 5, 0.5);
+    auto op = tatami::make_DelayedUnaryIsometricAddVector(vec, row);
+    auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
+    auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+
+    std::vector<float> frefvec(nrow * ncol);
+    for (size_t r = 0; r < nrow; ++r) {
+        for (size_t c = 0; c < ncol; ++c) {
+            auto offset = r * ncol + c;
+            frefvec[offset] = simulated[offset] + vec[row ? r : c];
+        }
+    }
+    tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+
+    quick_test_all(dense_fmod.get(), &fref);
+    quick_test_all(sparse_fmod.get(), &fref);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedUnaryIsometricArithmeticVector, 
+    DelayedUnaryIsometricAddVectorNewTypeTest, 
+    DelayedUnaryIsometricAddVectorUtils::simulation_parameter_combinations()
+);
+
 /*******************************
  ********* SUBTRACTION *********
  *******************************/
@@ -1078,6 +1116,58 @@ TEST_P(DelayedUnaryIsometricModuloVectorZeroedTest, AllZero) {
 INSTANTIATE_TEST_SUITE_P(
     DelayedUnaryIsometricArithmeticVector, 
     DelayedUnaryIsometricModuloVectorZeroedTest, 
+    DelayedUnaryIsometricModuloVectorUtils::simulation_parameter_combinations()
+);
+
+class DelayedUnaryIsometricModuloVectorNewTypeTest : 
+    public ::testing::TestWithParam<typename DelayedUnaryIsometricModuloVectorUtils::SimulationParameters>, 
+    public DelayedUnaryIsometricArithmeticVectorUtils 
+{
+protected:
+    static void SetUpTestSuite() {
+        assemble();
+    }
+};
+
+TEST_P(DelayedUnaryIsometricModuloVectorNewTypeTest, Basic) {
+    auto sim_params = GetParam();
+    auto row = std::get<0>(sim_params);
+    auto right = std::get<1>(sim_params);
+
+    auto vec = create_vector(row ? nrow : ncol, 5, 0.5);
+    std::shared_ptr<tatami::Matrix<float, int> > dense_fmod, sparse_fmod;
+    if (right) {
+        auto op = tatami::make_DelayedUnaryIsometricModuloVector<true>(vec, row);
+        dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
+        sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+    } else {
+        auto op = tatami::make_DelayedUnaryIsometricModuloVector<false>(vec, row);
+        dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
+        sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+    }
+
+    std::vector<float> frefvec(nrow * ncol);
+    for (size_t r = 0; r < nrow; ++r) {
+        for (size_t c = 0; c < ncol; ++c) {
+            auto offset = r * ncol + c;
+            auto val = vec[row ? r : c];
+            if (right) {
+                frefvec[offset] = std::fmod(simulated[offset], val);
+            } else {
+                frefvec[offset] = std::fmod(val, simulated[offset]);
+            }
+
+        }
+    }
+    tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+
+    quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
+    quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+}
+
+INSTANTIATE_TEST_SUITE_P(
+    DelayedUnaryIsometricArithmeticVector, 
+    DelayedUnaryIsometricModuloVectorNewTypeTest, 
     DelayedUnaryIsometricModuloVectorUtils::simulation_parameter_combinations()
 );
 

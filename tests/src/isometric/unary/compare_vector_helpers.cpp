@@ -308,6 +308,50 @@ TEST_P(DelayedUnaryIsometricCompareVectorTest, NotEqual) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
+TEST_P(DelayedUnaryIsometricCompareVectorTest, NewType) {
+    auto param = GetParam();
+    bool row = std::get<0>(param);
+    bool is_sparse = std::get<1>(param);
+
+    std::vector<double> vec(row ? nrow : ncol);
+    if (is_sparse) {
+        int val = 1;
+        for (auto& x : vec) {
+            // i.e., no zero equality here.
+            x = (val % 2 ? 1 : -1);
+            ++val;
+        }
+    } else {
+        fill_default_vector(vec);
+    }
+
+    auto op = tatami::make_DelayedUnaryIsometricEqualVector(vec, row);
+    auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<uint8_t>(dense, op);
+    auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<uint8_t>(sparse, op);
+
+    EXPECT_FALSE(dense_fmod->is_sparse());
+    if (is_sparse) {
+        EXPECT_TRUE(sparse_fmod->is_sparse());
+    } else {
+        EXPECT_FALSE(sparse_fmod->is_sparse());
+    }
+
+    // Toughest tests are handled by 'arith_vector.hpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
+    std::vector<uint8_t> frefvec(simulated.size());
+    for (size_t r = 0; r < nrow; ++r) {
+        for (size_t c = 0; c < ncol; ++c) {
+            size_t offset = r * ncol + c;
+            frefvec[offset] = (simulated[offset] == vec[row ? r : c]);
+        }
+    }
+
+    tatami::DenseRowMatrix<uint8_t, int> fref(nrow, ncol, std::move(frefvec));
+    quick_test_all(dense_fmod.get(), &fref);
+    quick_test_all(sparse_fmod.get(), &fref);
+}
+
 INSTANTIATE_TEST_SUITE_P(
     DelayedUnaryIsometricCompareVector,
     DelayedUnaryIsometricCompareVectorTest,

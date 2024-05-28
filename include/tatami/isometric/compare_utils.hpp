@@ -73,11 +73,6 @@ bool delayed_special_compare(Value_ val) {
         return pass_ == std::isfinite(val);
     }
 }
-
-template<SpecialCompareOperation op_, bool pass_, typename Value_>
-void delayed_special_compare_run(Value_& val) {
-    val = delayed_special_compare<op_, pass_, Value_>(val);
-}
 /**
  * @endcond
  */

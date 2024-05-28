@@ -90,6 +90,23 @@ TEST_P(DelayedUnaryIsometricArithmeticCommutativeScalarTest, Multiply) {
     quick_test_all(sparse_mod.get(), &ref);
 }
 
+TEST_P(DelayedUnaryIsometricArithmeticCommutativeScalarTest, NewType) {
+    double val = GetParam();
+    auto op = tatami::make_DelayedUnaryIsometricAddScalar(val);
+    auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
+    auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+
+    size_t nsize = simulated.size();
+    auto frefvec = std::vector<float>(nsize);
+    for (size_t i = 0; i < nsize; ++i) {
+        frefvec[i] = simulated[i] + val;
+    }
+
+    tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+    quick_test_all(dense_fmod.get(), &fref);
+    quick_test_all(sparse_fmod.get(), &fref);
+}
+
 INSTANTIATE_TEST_SUITE_P(
     DelayedUnaryIsometricArithmeticScalar,
     DelayedUnaryIsometricArithmeticCommutativeScalarTest,
@@ -312,6 +329,38 @@ TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, IntegerDivide) {
     quick_test_all(dense_mod.get(), &ref, /* has_nan = */ !(on_right && val));
     quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ !(on_right && val));
 }
+
+TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, NewType) {
+    auto my_param = GetParam();
+    double val = std::get<0>(my_param);
+    bool on_right = std::get<1>(my_param);
+
+    std::shared_ptr<tatami::Matrix<float, int> > dense_fmod, sparse_fmod;
+    if (on_right) {
+        auto op = tatami::make_DelayedUnaryIsometricSubtractScalar<true>(val);
+        dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
+        sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+    } else {
+        auto op = tatami::make_DelayedUnaryIsometricSubtractScalar<false>(val);
+        dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
+        sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+    }
+
+    size_t nsize = simulated.size();
+    auto frefvec = std::vector<float>(nsize);
+    for (size_t i = 0; i < nsize; ++i) {
+        if (on_right) {
+            frefvec[i] = simulated[i] - val;
+        } else {
+            frefvec[i] = val - simulated[i];
+        }
+    }
+
+    tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+    quick_test_all(dense_fmod.get(), &fref);
+    quick_test_all(sparse_fmod.get(), &fref);
+}
+
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedUnaryIsometricArithmeticScalar,
