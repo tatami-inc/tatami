@@ -69,15 +69,15 @@ decorate_executable(subset_test)
 add_executable(
     isometric_unary_test
     src/isometric/unary/DelayedUnaryIsometricOperation.cpp
-#    src/isometric/unary/arithmetic_vector_helpers.cpp
-#    src/isometric/unary/arithmetic_scalar_helpers.cpp
-#    src/isometric/unary/math_helpers.cpp
-#    src/isometric/unary/compare_scalar_helpers.cpp
-#    src/isometric/unary/compare_vector_helpers.cpp
-#    src/isometric/unary/boolean_scalar_helpers.cpp
-#    src/isometric/unary/boolean_vector_helpers.cpp
-#    src/isometric/unary/substitute_scalar_helpers.cpp
-#    src/isometric/unary/substitute_vector_helpers.cpp
+    src/isometric/unary/arithmetic_vector_helpers.cpp
+    src/isometric/unary/arithmetic_scalar_helpers.cpp
+    src/isometric/unary/math_helpers.cpp
+    src/isometric/unary/compare_scalar_helpers.cpp
+    src/isometric/unary/compare_vector_helpers.cpp
+    src/isometric/unary/boolean_scalar_helpers.cpp
+    src/isometric/unary/boolean_vector_helpers.cpp
+    src/isometric/unary/substitute_scalar_helpers.cpp
+    src/isometric/unary/substitute_vector_helpers.cpp
 )
 decorate_executable(isometric_unary_test)
 

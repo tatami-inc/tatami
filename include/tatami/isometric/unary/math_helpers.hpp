@@ -80,9 +80,11 @@ public:
 /**
  * @brief Take the sign of a matrix entry.
  *
- * This class takes the sign of each element of a `Matrix`.
+ * This class takes the sign of each element of a `Matrix`, returning -1, 0 or 1 for negative, zero or positive values, respectively.
  * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
  * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
+ *
+ * This operation will report NaNs in the input as NaNs in the output if supported by the `OutputValue_` type, otherwise they are set to 0.
  *
  * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
@@ -111,7 +113,7 @@ private:
                     val = (static_cast<InputValue_>(0) < val) - (val < static_cast<InputValue_>(0));
                 }
             } else {
-                auto& val = input[i];
+                auto val = input[i];
                 if (!std::isnan(val)) {
                     output[i] = (static_cast<InputValue_>(0) < val) - (val < static_cast<InputValue_>(0));
                 } else if constexpr(std::numeric_limits<OutputValue_>::has_quiet_NaN) {
