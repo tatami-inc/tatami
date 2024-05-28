@@ -71,7 +71,7 @@ public:
         if constexpr(same_value) {
             auto ptr = my_ext->fetch(i, buffer);
             copy_n(ptr, my_extent, buffer);
-            my_operation.dense(my_row, my_oracle.get(i), static_cast<Index_>(0), my_extent, buffer);
+            my_operation.dense(my_row, my_oracle.get(i), static_cast<Index_>(0), my_extent, buffer, buffer);
         } else {
             auto ptr = my_ext->fetch(i, my_holding_buffer.data());
             my_operation.dense(my_row, my_oracle.get(i), static_cast<Index_>(0), my_extent, ptr, buffer);
@@ -120,7 +120,7 @@ public:
         if constexpr(same_value) {
             auto ptr = my_ext->fetch(i, buffer);
             copy_n(ptr, my_block_length, buffer);
-            my_operation.dense(my_row, my_oracle.get(i), my_block_start, my_block_length, buffer);
+            my_operation.dense(my_row, my_oracle.get(i), my_block_start, my_block_length, buffer, buffer);
         } else {
             auto ptr = my_ext->fetch(i, my_holding_buffer.data());
             my_operation.dense(my_row, my_oracle.get(i), my_block_start, my_block_length, ptr, buffer);
@@ -168,7 +168,7 @@ public:
         if constexpr(same_value) {
             auto ptr = my_ext->fetch(i, buffer);
             copy_n(ptr, indices.size(), buffer);
-            my_operation.dense(my_row, my_oracle.get(i), indices, buffer);
+            my_operation.dense(my_row, my_oracle.get(i), indices, buffer, buffer);
         } else {
             auto ptr = my_ext->fetch(i, my_holding_buffer.data());
             my_operation.dense(my_row, my_oracle.get(i), indices, ptr, buffer);
@@ -235,7 +235,7 @@ public:
         i = my_oracle.get(i);
         if constexpr(same_value) {
             copy_n(range.value, range.number, vbuffer);
-            my_operation.sparse(my_row, i, range.number, vbuffer, range.index);
+            my_operation.sparse(my_row, i, range.number, vbuffer, range.index, vbuffer);
         } else {
             my_operation.sparse(my_row, i, range.number, range.value, range.index, my_result_vbuffer.data());
         }
@@ -309,7 +309,7 @@ public:
         i = my_oracle.get(i);
         if constexpr(same_value) {
             copy_n(range.value, range.number, vbuffer);
-            my_operation.sparse(my_row, i, range.number, vbuffer, range.index);
+            my_operation.sparse(my_row, i, range.number, vbuffer, range.index, vbuffer);
         } else {
             my_operation.sparse(my_row, i, range.number, range.value, range.index, my_result_vbuffer.data());
         }
@@ -398,7 +398,7 @@ public:
         i = my_oracle.get(i);
         if constexpr(same_value) {
             copy_n(range.value, range.number, vbuffer);
-            my_operation.sparse(my_row, i, range.number, vbuffer, range.index);
+            my_operation.sparse(my_row, i, range.number, vbuffer, range.index, vbuffer);
         } else {
             my_operation.sparse(my_row, i, range.number, range.value, range.index, my_result_vbuffer.data());
         }
@@ -504,7 +504,7 @@ public:
             auto raw = my_ext->fetch(i, value_buffer, index_buffer);
             if (raw.value) {
                 copy_n(raw.value, raw.number, value_buffer);
-                my_operation.sparse(my_row, my_oracle.get(i), raw.number, value_buffer, raw.index);
+                my_operation.sparse(my_row, my_oracle.get(i), raw.number, value_buffer, raw.index, value_buffer);
                 raw.value = value_buffer;
             }
             return raw;
@@ -625,7 +625,7 @@ public:
             auto raw = my_ext->fetch(i, value_buffer, iptr);
             if (my_report_value) {
                 copy_n(raw.value, raw.number, value_buffer);
-                my_operation.sparse(my_row, my_oracle.get(i), raw.number, value_buffer, raw.index);
+                my_operation.sparse(my_row, my_oracle.get(i), raw.number, value_buffer, raw.index, value_buffer);
                 raw.value = value_buffer;
             }
             if (!my_report_index) {

@@ -3,6 +3,7 @@
 
 #include "../boolean_utils.hpp"
 #include <vector>
+#include <type_traits>
 
 /**
  * @file boolean_helpers.hpp
@@ -15,18 +16,15 @@ namespace tatami {
 /**
  * @cond
  */
-template<BooleanOperation op_, typename InputValue_, typename Index_>
-void delayed_boolean_run_simple(InputValue_* buffer, Index_ length, bool scalar) {
-    for (Index_ i = 0; i < length; ++i) {
-        auto& val = buffer[i];
-        val = delayed_boolean<op_>(val, scalar);
-    }
-}
-
 template<BooleanOperation op_, typename InputValue_, typename Index_, typename OutputValue_>
 void delayed_boolean_run_simple(const InputValue_* input, Index_ length, bool scalar, OutputValue_* output) {
     for (Index_ i = 0; i < length; ++i) {
-        output[i] = delayed_boolean<op_>(input[i], scalar);
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            auto& val = output[i];
+            val = delayed_boolean<op_>(val, scalar);
+        } else {
+            output[i] = delayed_boolean<op_>(input[i], scalar);
+        }
     }
 }
 
@@ -79,29 +77,14 @@ public:
     /**
      * @cond
      */
-    template<typename Index_> 
-    void dense(bool, Index_, Index_, Index_ length, InputValue_* buffer) const {
-        delayed_boolean_run_simple<op_>(buffer, length, my_scalar);
-    }
-
     template<typename Index_, typename OutputValue_> 
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
         delayed_boolean_run_simple<op_>(input, length, my_scalar, output);
     }
 
-    template<typename Index_> 
-    void dense(bool, Index_, const std::vector<Index_>& indices, InputValue_* buffer) const {
-        delayed_boolean_run_simple<op_>(buffer, static_cast<Index_>(indices.size()), my_scalar);
-    }
-
     template<typename Index_, typename OutputValue_> 
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         delayed_boolean_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_scalar, output);
-    }
-
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, InputValue_* value, const Index_*) const {
-        delayed_boolean_run_simple<op_>(value, number, my_scalar);
     }
 
     template<typename Index_, typename OutputValue_>
@@ -145,17 +128,15 @@ public:
      */
 
 private:
-    template<typename Index_>
-    void core(InputValue_* buffer, Index_ length) const {
-        for (Index_ i = 0; i < length; ++i) {
-            buffer[i] = !static_cast<bool>(buffer[i]);
-        }
-    }
-
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
         for (Index_ i = 0; i < length; ++i) {
-            output[i] = !static_cast<bool>(input[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = !static_cast<bool>(val);
+            } else {
+                output[i] = !static_cast<bool>(input[i]);
+            }
         }
     }
 
@@ -163,29 +144,14 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, InputValue_* buffer) const {
-        core(buffer, length);
-    }
-
     template<typename Index_, typename OutputValue_>
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
         core(input, length, output);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, InputValue_* buffer) const {
-        core(buffer, static_cast<Index_>(indices.size()));
-    }
-
     template<typename Index_, typename OutputValue_>
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         core(input, static_cast<Index_>(indices.size()), output);
-    }
-
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, InputValue_* value, const Index_*) const {
-        core(value, number);
     }
 
     template<typename Index_, typename OutputValue_>
@@ -270,38 +236,18 @@ public:
     /**
      * @cond
      */
-    template<typename Index_>
-    void dense(bool row, Index_ idx, Index_ start, Index_ length, InputValue_* buffer) const {
-        if (row == my_by_row) {
-            delayed_boolean_run_simple<op_>(buffer, length, my_vector[idx]);
-        } else {
-            for (Index_ i = 0; i < length; ++i) {
-                auto& val = buffer[i];
-                val = delayed_boolean<op_>(val, my_vector[i + start]);
-            }
-        }
-    }
-
     template<typename Index_, typename OutputValue_>
     void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const {
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input, length, my_vector[idx], output);
         } else {
             for (Index_ i = 0; i < length; ++i) {
-                output[i] = delayed_boolean<op_>(input[i], my_vector[i + start]);
-            }
-        }
-    }
-
-
-    template<typename Index_>
-    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, InputValue_* buffer) const {
-        if (row == my_by_row) {
-            delayed_boolean_run_simple<op_>(buffer, static_cast<Index_>(indices.size()), my_vector[idx]);
-        } else {
-            for (Index_ i = 0, length = indices.size(); i < length; ++i) {
-                auto& val = buffer[i];
-                val = delayed_boolean<op_>(val, my_vector[indices[i]]);
+                if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                    auto& val = output[i];
+                    val = delayed_boolean<op_>(val, my_vector[i + start]);
+                } else {
+                    output[i] = delayed_boolean<op_>(input[i], my_vector[i + start]);
+                }
             }
         }
     }
@@ -312,19 +258,12 @@ public:
             delayed_boolean_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
         } else {
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
-                output[i] = delayed_boolean<op_>(input[i], my_vector[indices[i]]);
-            }
-        }
-    }
-
-    template<typename Index_>
-    void sparse(bool row, Index_ idx, Index_ number, InputValue_* value, const Index_* index) const {
-        if (row == my_by_row) {
-            delayed_boolean_run_simple<op_>(value, number, my_vector[idx]);
-        } else {
-            for (Index_ i = 0; i < number; ++i) {
-                auto& val = value[i];
-                val = delayed_boolean<op_>(val, my_vector[index[i]]);
+                if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                    auto& val = output[i];
+                    val = delayed_boolean<op_>(val, my_vector[indices[i]]);
+                } else {
+                    output[i] = delayed_boolean<op_>(input[i], my_vector[indices[i]]);
+                }
             }
         }
     }
@@ -335,7 +274,12 @@ public:
             delayed_boolean_run_simple<op_>(input_value, number, my_vector[idx], output_value);
         } else {
             for (Index_ i = 0; i < number; ++i) {
-                output_value[i] = delayed_boolean<op_>(input_value[i], my_vector[index[i]]);
+                if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                    auto& val = output_value[i];
+                    val = delayed_boolean<op_>(val, my_vector[index[i]]);
+                } else {
+                    output_value[i] = delayed_boolean<op_>(input_value[i], my_vector[index[i]]);
+                }
             }
         }
     }

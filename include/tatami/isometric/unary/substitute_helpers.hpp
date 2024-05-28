@@ -47,7 +47,7 @@ void delayed_substitute_run_simple(Value_* buffer, Index_ length, Value_ compare
  * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class, and only when `InputValue_ == OutputValue_`.
  *
  * @tparam op_ The comparison operation.
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  */
 template<CompareOperation op_, typename Value_>
 class DelayedUnaryIsometricSubstituteScalar {
@@ -83,22 +83,22 @@ public:
      * @cond
      */
     template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        delayed_substitute_run_simple<op_, Value_>(buffer, length, my_compared, my_substitute);
+    void dense(bool, Index_, Index_, Index_ length, const Value_*, Value_* output) const {
+        delayed_substitute_run_simple<op_, Value_>(output, length, my_compared, my_substitute);
     }
 
     template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        delayed_substitute_run_simple<op_, Value_>(buffer, static_cast<Index_>(indices.size()), my_compared, my_substitute);
+    void dense(bool, Index_, const std::vector<Index_>& indices, const Value_*, Value_* output) const {
+        delayed_substitute_run_simple<op_, Value_>(output, static_cast<Index_>(indices.size()), my_compared, my_substitute);
     }
 
     template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        delayed_substitute_run_simple<op_, Value_>(buffer, number, my_compared, my_substitute);
+    void sparse(bool, Index_, Index_ number, const Value_*, const Index_*, Value_* output_value) const {
+        delayed_substitute_run_simple<op_, Value_>(output_value, number, my_compared, my_substitute);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         if (my_sparse) {
             return 0;
         } else {
@@ -118,10 +118,10 @@ public:
  * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class, and only when `InputValue_ == OutputValue_`.
  *
  * @tparam op_ The comparison operation.
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value. 
  * @tparam Vector_ Type of the vector.
  */
-template<CompareOperation op_, typename Value_ = double, typename Vector_ = std::vector<Value_> >
+template<CompareOperation op_, typename Value_, typename Vector_>
 class DelayedUnaryIsometricSubstituteVector {
 public:
     /**
@@ -184,43 +184,43 @@ public:
      * @cond
      */
     template<typename Index_>
-    void dense(bool row, Index_ idx, Index_ start, Index_ length, Value_* buffer) const {
+    void dense(bool row, Index_ idx, Index_ start, Index_ length, const Value_*, Value_* output) const {
         if (row == my_by_row) {
-            delayed_substitute_run_simple<op_, Value_>(buffer, length, my_compared[idx], my_substitute[idx]);
+            delayed_substitute_run_simple<op_, Value_>(output, length, my_compared[idx], my_substitute[idx]);
         } else {
             for (Index_ i = 0; i < length; ++i) {
                 Index_ is = i + start;
-                delayed_substitute_run<op_, Value_>(buffer[i], my_compared[is], my_substitute[is]);
+                delayed_substitute_run<op_, Value_>(output[i], my_compared[is], my_substitute[is]);
             }
         }
     }
 
     template<typename Index_>
-    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, Value_* buffer) const {
+    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const Value_*, Value_* output) const {
         if (row == my_by_row) {
-            delayed_substitute_run_simple<op_, Value_>(buffer, static_cast<Index_>(indices.size()), my_compared[idx], my_substitute[idx]);
+            delayed_substitute_run_simple<op_, Value_>(output, static_cast<Index_>(indices.size()), my_compared[idx], my_substitute[idx]);
         } else {
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
                 auto ii = indices[i];
-                delayed_substitute_run<op_, Value_>(buffer[i], my_compared[ii], my_substitute[ii]);
+                delayed_substitute_run<op_, Value_>(output[i], my_compared[ii], my_substitute[ii]);
             }
         }
     }
 
     template<typename Index_>
-    void sparse(bool row, Index_ idx, Index_ number, Value_* buffer, const Index_* indices) const {
+    void sparse(bool row, Index_ idx, Index_ number, const Value_*, const Index_* indices, Value_* output_value) const {
         if (row == my_by_row) {
-            delayed_substitute_run_simple<op_, Value_>(buffer, number, my_compared[idx], my_substitute[idx]);
+            delayed_substitute_run_simple<op_, Value_>(output_value, number, my_compared[idx], my_substitute[idx]);
         } else {
             for (Index_ i = 0; i < number; ++i) {
                 auto ii = indices[i];
-                delayed_substitute_run<op_, Value_>(buffer[i], my_compared[ii], my_substitute[ii]);
+                delayed_substitute_run<op_, Value_>(output_value[i], my_compared[ii], my_substitute[ii]);
             }
         }
     }
 
-    template<typename Index_>
-    Value_ fill(bool row, Index_ idx) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
             auto sub = my_substitute[idx];
             if (!delayed_compare<op_, Value_>(0, my_compared[idx])) {
@@ -240,7 +240,7 @@ public:
 };
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed equality comparison to a scalar,
@@ -254,7 +254,7 @@ DelayedUnaryIsometricSubstituteScalar<CompareOperation::EQUAL, Value_>
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar value to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed greater-than comparison to a scalar,
@@ -268,7 +268,7 @@ DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN, Value_>
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar value to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed less-than comparison to a scalar,
@@ -282,7 +282,7 @@ DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN, Value_>
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar value to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed greater-than-or-equal comparison to a scalar,
@@ -296,7 +296,7 @@ DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN_OR_EQUAL, V
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed less-than-or-equal comparison to a scalar,
@@ -310,7 +310,7 @@ DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN_OR_EQUAL, Valu
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @param compared Scalar to be compared to the matrix values.
  * @param substitute Scalar value to substitute into the matrix when the comparison is true.
  * @return A helper class for a delayed non-equality comparison to a scalar,
@@ -324,7 +324,7 @@ DelayedUnaryIsometricSubstituteScalar<CompareOperation::NOT_EQUAL, Value_>
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @tparam Vector_ Type of the vector.
  * @param compared Vector to be compared to the matrix values.
  * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
@@ -340,7 +340,7 @@ DelayedUnaryIsometricSubstituteVector<CompareOperation::EQUAL, Value_, Vector_>
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @tparam Vector_ Type of the vector.
  * @param compared Vector to be compared to the matrix values.
  * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
@@ -356,7 +356,7 @@ DelayedUnaryIsometricSubstituteVector<CompareOperation::GREATER_THAN, Value_, Ve
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @tparam Vector_ Type of the vector.
  * @param compared Vector to be compared to the matrix values.
  * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
@@ -372,7 +372,7 @@ DelayedUnaryIsometricSubstituteVector<CompareOperation::LESS_THAN, Value_, Vecto
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @tparam Vector_ Type of the vector.
  * @param compared Vector to be compared to the matrix values.
  * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
@@ -388,7 +388,7 @@ DelayedUnaryIsometricSubstituteVector<CompareOperation::GREATER_THAN_OR_EQUAL, V
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @tparam Vector_ Type of the vector.
  * @param compared Vector to be compared to the matrix values.
  * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
@@ -404,7 +404,7 @@ DelayedUnaryIsometricSubstituteVector<CompareOperation::LESS_THAN_OR_EQUAL, Valu
 }
 
 /**
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @tparam Vector_ Type of the vector.
  * @param compared Vector to be compared to the matrix values.
  * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
@@ -453,7 +453,7 @@ void delayed_special_substitute_run_simple(Value_* buffer, Index_ length, Value_
  * @tparam op_ The special comparison operation.
  * @tparam pass_ Whether to perform the substitution if the special comparison is true.
  * Otherwise the substitution is only performed if the comparison is false.
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  */
 template<SpecialCompareOperation op_, bool pass_, typename Value_>
 class DelayedUnaryIsometricSpecialSubstitute {
@@ -487,22 +487,22 @@ public:
      * @cond
      */
     template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* buffer) const {
-        delayed_special_substitute_run_simple<op_, pass_, Value_>(buffer, length, my_substitute);
+    void dense(bool, Index_, Index_, Index_ length, const Value_*, Value_* output) const {
+        delayed_special_substitute_run_simple<op_, pass_, Value_>(output, length, my_substitute);
     }
 
     template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* buffer) const {
-        delayed_special_substitute_run_simple<op_, pass_, Value_>(buffer, static_cast<Index_>(indices.size()), my_substitute);
+    void dense(bool, Index_, const std::vector<Index_>& indices, const Value_*, Value_* output) const {
+        delayed_special_substitute_run_simple<op_, pass_, Value_>(output, static_cast<Index_>(indices.size()), my_substitute);
     }
 
     template<typename Index_>
-    void sparse(bool, Index_, Index_ number, Value_* buffer, const Index_*) const {
-        delayed_special_substitute_run_simple<op_, pass_, Value_>(buffer, number, my_substitute);
+    void sparse(bool, Index_, Index_ number, const Value_*, const Index_*, Value_* output_value) const {
+        delayed_special_substitute_run_simple<op_, pass_, Value_>(output_value, number, my_substitute);
     }
 
-    template<typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         if (my_sparse) {
             return 0;
         } else {
@@ -517,7 +517,7 @@ public:
 /**
  * @tparam pass_ Whether to perform the substitution if the matrix value is NaN.
  * If false, the substitution is performed if the matrix value is not NaN.
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @return A helper class for a delayed NaN check,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
@@ -529,7 +529,7 @@ DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISNAN, pass_, Va
 /**
  * @tparam pass_ Whether to return truthy if the matrix value is infinite.
  * If false, the substitution is performed if the matrix value is not infinite.
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @return A helper class for a delayed check for infinity (positive or negative),
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
@@ -541,7 +541,7 @@ DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISINF, pass_, Va
 /**
  * @tparam pass_ Whether to return truthy if the matrix value is finite.
  * If false, the substitution is performed if the matrix value is not finite.
- * @tparam Value_ Type of the data value.
+ * @tparam Value_ Type of the matrix value.
  * @return A helper class for a delayed check for finite values,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
