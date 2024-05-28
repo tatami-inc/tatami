@@ -27,8 +27,10 @@ enum class ArithmeticOperation : char {
 /**
  * @cond
  */
+// We deliberately use an auto type so as to defer a decision on what the output
+// type should be; an appropriate coercion is left to the caller classes. 
 template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
-Value_ delayed_arithmetic(Value_ val, Scalar_ scalar) {
+auto delayed_arithmetic(Value_ val, Scalar_ scalar) { 
     if constexpr(op_ == ArithmeticOperation::ADD) {
         return val + scalar;
     } else if constexpr(op_ == ArithmeticOperation::MULTIPLY) {

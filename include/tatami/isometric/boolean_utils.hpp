@@ -22,16 +22,16 @@ enum class BooleanOperation : char {
 /**
  * @cond
  */
-template<BooleanOperation op_, typename Value_>
-bool delayed_boolean(Value_ val, bool scalar) {
+template<BooleanOperation op_>
+bool delayed_boolean(bool val, bool scalar) {
     if constexpr(op_ == BooleanOperation::AND) {
         return val && scalar;
     } else if constexpr(op_ == BooleanOperation::OR) {
         return val || scalar;
     } else if constexpr(op_ == BooleanOperation::XOR) {
-        return static_cast<bool>(val) != scalar;
+        return val != scalar;
     } else { // EQUAL.
-        return static_cast<bool>(val) == scalar;
+        return val == scalar;
     }
 }
 

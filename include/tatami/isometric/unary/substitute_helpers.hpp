@@ -42,12 +42,14 @@ void delayed_substitute_run_simple(Value_* buffer, Index_ length, Value_ compare
 /**
  * @brief Delayed scalar substitution.
  *
- * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class compares each element of a `Matrix` to a scalar;
+ * when this comparison is true, it replaces the matrix element with another scalar value.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class, and only when `InputValue_ == OutputValue_`.
  *
  * @tparam op_ The comparison operation.
  * @tparam Value_ Type of the data value.
  */
-template<CompareOperation op_, typename Value_ = double>
+template<CompareOperation op_, typename Value_>
 class DelayedUnaryIsometricSubstituteScalar {
 public:
     /**
@@ -111,7 +113,9 @@ public:
 /**
  * @brief Delayed vector comparisons.
  *
- * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class compares each element of a `Matrix` to a row/column-specific value;
+ * when this comparison is true, it replaces the matrix element with another row/column-specific value.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class, and only when `InputValue_ == OutputValue_`.
  *
  * @tparam op_ The comparison operation.
  * @tparam Value_ Type of the data value.
@@ -443,14 +447,15 @@ void delayed_special_substitute_run_simple(Value_* buffer, Index_ length, Value_
 /**
  * @brief Delayed special value substitution.
  *
- * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class checks whether each element of a `Matrix` is an IEEE special value, and if so, replaces it with another scalar value.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class, and only when `InputValue_ == OutputValue_`.
  *
  * @tparam op_ The special comparison operation.
  * @tparam pass_ Whether to perform the substitution if the special comparison is true.
  * Otherwise the substitution is only performed if the comparison is false.
  * @tparam Value_ Type of the data value.
  */
-template<SpecialCompareOperation op_, bool pass_, typename Value_ = double>
+template<SpecialCompareOperation op_, bool pass_, typename Value_>
 class DelayedUnaryIsometricSpecialSubstitute {
 public:
     /**

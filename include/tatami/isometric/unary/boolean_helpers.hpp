@@ -15,8 +15,8 @@ namespace tatami {
 /**
  * @cond
  */
-template<BooleanOperation op_, typename Value_, typename Index_>
-void delayed_boolean_run_simple(Value_* buffer, Index_ length, bool scalar) {
+template<BooleanOperation op_, typename InputValue_, typename Index_>
+void delayed_boolean_run_simple(InputValue_* buffer, Index_ length, bool scalar) {
     for (Index_ i = 0; i < length; ++i) {
         auto& val = buffer[i];
         val = delayed_boolean<op_>(val, scalar);
@@ -30,7 +30,7 @@ void delayed_boolean_run_simple(const InputValue_* input, Index_ length, bool sc
     }
 }
 
-template<BooleanOperation op_, typename Value_>
+template<BooleanOperation op_, typename InputValue_>
 bool delayed_boolean_actual_sparse(bool scalar) {
     return delayed_boolean<op_>(0, scalar) == static_cast<bool>(0);
 }
@@ -41,10 +41,12 @@ bool delayed_boolean_actual_sparse(bool scalar) {
 /**
  * @brief Delayed unary isometric scalar boolean operation.
  *
- * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class applies a boolean operation to each element of a `Matrix` where the other operand is a scalar.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  *
  * @tparam op_ The boolean operation.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
 template<BooleanOperation op_, typename InputValue_>
 class DelayedUnaryIsometricBooleanScalar {
@@ -110,8 +112,8 @@ public:
     template<typename OutputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         // Remember, the operation needs to be performed on the InputValue_
-        // before casting it to the OutputValue_.
-        return delayed_boolean<op_, InputValue_>(0, my_scalar);
+        // to use in casting it to the OutputValue_.
+        return delayed_boolean<op_>(0, my_scalar);
     }
     /**
      * @endcond
@@ -121,9 +123,11 @@ public:
 /**
  * @brief Delayed unary isometric boolean NOT operation.
  *
- * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class applies a boolean NOT operation to each element of a `Matrix`.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  *
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
 template<typename InputValue_ = double>
 class DelayedUnaryIsometricBooleanNot {
@@ -201,10 +205,12 @@ public:
 /**
  * @brief Delayed unary isometric vector boolean operations.
  *
+ * This class applies the specified boolean operation to each element of a `Matrix` where the other operand is a row/column-specific value.
  * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  *
  * @tparam op_ The boolean operation.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  */
 template<BooleanOperation op_, typename InputValue_, typename Vector_>
@@ -337,7 +343,7 @@ public:
     template<typename OutputValue_, typename Index_>
     OutputValue_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
-            return delayed_boolean<op_, InputValue_>(0, my_vector[idx]);
+            return delayed_boolean<op_>(0, my_vector[idx]);
         } else {
             // We should only get to this point if it's sparse, otherwise no
             // single fill value would work across the length of my_vector.
@@ -350,7 +356,7 @@ public:
 };
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @return A helper class for a delayed NOT operation,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
@@ -360,7 +366,7 @@ DelayedUnaryIsometricBooleanNot<InputValue_> make_DelayedUnaryIsometricBooleanNo
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @param scalar Scalar value to use in the operation.
  * @return A helper class for a delayed AND operation with a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
@@ -371,7 +377,7 @@ DelayedUnaryIsometricBooleanScalar<BooleanOperation::AND, InputValue_> make_Dela
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @param scalar Scalar value to use in the operation.
  * @return A helper class for a delayed OR operation with a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
@@ -382,7 +388,7 @@ DelayedUnaryIsometricBooleanScalar<BooleanOperation::OR, InputValue_> make_Delay
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @param scalar Scalar value to be used in the operation.
  * @return A helper class for a delayed XOR operation with a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
@@ -393,7 +399,7 @@ DelayedUnaryIsometricBooleanScalar<BooleanOperation::XOR, InputValue_> make_Dela
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @param scalar Scalar value to be used in the operation.
  * @return A helper class for a delayed boolean equality operation with a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
@@ -404,7 +410,7 @@ DelayedUnaryIsometricBooleanScalar<BooleanOperation::EQUAL, InputValue_> make_De
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be used in the operation.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
@@ -417,7 +423,7 @@ DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, InputValue_, Vector_> 
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be used in the operation.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
@@ -430,7 +436,7 @@ DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, InputValue_, Vector_> m
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be used in the operation.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
@@ -443,7 +449,7 @@ DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, InputValue_, Vector_> 
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be used in the operation.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.

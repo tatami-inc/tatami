@@ -16,8 +16,8 @@ namespace tatami {
 /**
  * @cond
  */
-template<ArithmeticOperation op_, bool right_, typename Scalar_, typename Value_, typename Index_>
-void delayed_arithmetic_run_simple(Value_* buffer, Index_ length, Scalar_ scalar) {
+template<ArithmeticOperation op_, bool right_, typename Scalar_, typename InputValue_, typename Index_>
+void delayed_arithmetic_run_simple(InputValue_* buffer, Index_ length, Scalar_ scalar) {
     for (Index_ i = 0; i < length; ++i) {
         auto& val = buffer[i];
         val = delayed_arithmetic<op_, right_>(val, scalar);
@@ -31,34 +31,39 @@ void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scal
     }
 }
 
-template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
 constexpr bool delayed_arithmetic_unsupported_division_by_zero() {
-    return !std::numeric_limits<Value_>::is_iec559 && op_ == ArithmeticOperation::DIVIDE && !right_;
+    return !std::numeric_limits<InputValue_>::is_iec559 && op_ == ArithmeticOperation::DIVIDE && !right_;
 }
 
-template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
 bool delayed_arithmetic_actual_sparse(Scalar_ scalar) {
-    if constexpr(delayed_arithmetic_unsupported_division_by_zero<op_, right_, Value_, Scalar_>()) {
+    if constexpr(delayed_arithmetic_unsupported_division_by_zero<op_, right_, InputValue_, Scalar_>()) {
         // If we didn't catch this case, the else() condition would be dividing
-        // by zero in a Value_ that doesn't support it, and that would be visible
-        // at compile time - possibly resulting in compiler warnings. So we
-        // declare that this is always non-sparse, and hope that the equivalent
-        // zero() method doesn't get called.
+        // by zero in a InputValue_ that doesn't support it, and that would be
+        // visible at compile time - possibly resulting in compiler warnings.
+        // So we declare that this is always non-sparse, and hope that the
+        // equivalent zero() method doesn't get called.
         return false;
     } else {
         // Empirically testing this, to accommodate special values (e.g., NaN, Inf) for scalars.
-        return delayed_arithmetic<op_, right_, Value_>(0, scalar) == 0;
+        return delayed_arithmetic<op_, right_, InputValue_>(0, scalar) == 0;
     }
 }
 
-template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
-Value_ delayed_arithmetic_zero(Scalar_ scalar) {
-    if constexpr(delayed_arithmetic_unsupported_division_by_zero<op_, right_, Value_, Scalar_>()) {
+// We set the return type to auto to avoid making any conclusions about the return type.
+// We don't want to coerce it to the InputValue_ if this might lose information, e.g., 
+// if Scalar_ is a float, the return type would also be a float, even if InputValue_
+// is an integer; we let the caller decide what cast is necessary to the OutputValue_.
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
+auto delayed_arithmetic_zero(Scalar_ scalar) {
+    if constexpr(delayed_arithmetic_unsupported_division_by_zero<op_, right_, InputValue_, Scalar_>()) {
         // Avoid potential problems with division by zero that can be detected
         // at compile time (e.g., resulting in unnecessary compiler warnings).
         throw std::runtime_error("division by zero is not supported with IEEE-754 floats");
+        return 0;
     } else {
-        return delayed_arithmetic<op_, right_, Value_>(0, scalar);
+        return delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
     }
 }
 /**
@@ -68,12 +73,14 @@ Value_ delayed_arithmetic_zero(Scalar_ scalar) {
 /**
  * @brief Delayed unary isometric scalar arithmetic.
  *
- * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class applies the specified arithmetic operation to each element of a `Matrix` where the other operand is a scalar.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  *
  * @tparam op_ The arithmetic operation.
  * @tparam right_ Whether the scalar should be on the right hand side of the arithmetic operation.
  * Ignored for commutative operations, e.g., `ADD` and `MULTIPLY`.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Scalar_ Type of the scalar value.
  */
 template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
@@ -139,7 +146,7 @@ public:
 
     template<typename OutputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
-        // We perform the operation with the InputValue_ before casting it to
+        // We perform the operation with the InputValue_ to use in casting it to
         // the OutputValue_, which is consistent with the behavior of all other
         // methods. This has some interesting implications if only one or the
         // other supports, e.g., division by zero, but that's not my problem.
@@ -153,12 +160,14 @@ public:
 /**
  * @brief Delayed unary isometric vector arithmetic.
  *
- * This should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * This class applies the specified arithmetic operation to each element of a `Matrix` where the other operand is row/column-specific value.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  *
  * @tparam op_ The arithmetic operation.
  * @tparam right_ Whether the vector's values should be on the right hand side of the arithmetic operation.
  * Ignored for some `op_`.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  */
 template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Vector_>
@@ -303,7 +312,7 @@ public:
 };
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be added.
  * @return A helper class for delayed scalar addition,
@@ -316,7 +325,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::ADD, true, InputValue
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the subtraction.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be subtracted.
  * @return A helper class for delayed scalar subtraction,
@@ -328,7 +337,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::SUBTRACT, right_, Inp
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be multiplied.
  * @return A helper class for delayed scalar multiplication,
@@ -341,7 +350,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MULTIPLY, true, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the division.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be divided.
  * @return A helper class for delayed scalar division,
@@ -354,7 +363,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::DIVIDE, right_, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be power transformed.
  * @return A helper class for delayed scalar power transformation,
@@ -367,7 +376,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::POWER, right_, InputV
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be modulo transformed.
  * @return A helper class for delayed scalar modulus,
@@ -380,7 +389,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::MODULO, right_, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Scalar_ Type of the scalar.
  * @param scalar Scalar value to be integer divided.
  * @return A helper class for delayed scalar integer division,
@@ -392,7 +401,7 @@ DelayedUnaryIsometricArithmeticScalar<ArithmeticOperation::INTEGER_DIVIDE, right
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to be added to the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -406,7 +415,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::ADD, true, InputValue
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the subtraction.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to subtract from (or be subtracted by) the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -419,7 +428,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::SUBTRACT, right_, Inp
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to multiply the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -433,7 +442,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MULTIPLY, true, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the division.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to divide (or be divided by) the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -447,7 +456,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::DIVIDE, right_, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the power transformation.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to use in the power transformation of the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -461,7 +470,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::POWER, right_, InputV
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the modulus.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to use in the modulus of the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
@@ -475,7 +484,7 @@ DelayedUnaryIsometricArithmeticVector<ArithmeticOperation::MODULO, right_, Input
 
 /**
  * @tparam right_ Whether the scalar should be on the right hand side of the integer division.
- * @tparam InputValue_ Type of the matrix value before the operation.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector to integer divide (or be integer divided by) the rows/columns.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricArithmeticVector`.
