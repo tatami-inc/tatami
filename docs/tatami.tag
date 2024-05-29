@@ -121,6 +121,7 @@
     <filename>unary_2boolean__helpers_8hpp.html</filename>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanScalar</class>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanNot</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanCast</class>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanVector</class>
     <namespace>tatami</namespace>
   </compound>
@@ -2332,6 +2333,11 @@
     <templarg>typename InputValue_</templarg>
   </compound>
   <compound kind="class">
+    <name>tatami::DelayedUnaryIsometricBooleanCast</name>
+    <filename>classtatami_1_1DelayedUnaryIsometricBooleanCast.html</filename>
+    <templarg>typename InputValue_</templarg>
+  </compound>
+  <compound kind="class">
     <name>tatami::DelayedUnaryIsometricBooleanNot</name>
     <filename>classtatami_1_1DelayedUnaryIsometricBooleanNot.html</filename>
     <templarg>typename InputValue_</templarg>
@@ -4384,6 +4390,7 @@
     <class kind="class">tatami::DelayedUnaryIsometricAsinh</class>
     <class kind="class">tatami::DelayedUnaryIsometricAtan</class>
     <class kind="class">tatami::DelayedUnaryIsometricAtanh</class>
+    <class kind="class">tatami::DelayedUnaryIsometricBooleanCast</class>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanNot</class>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanScalar</class>
     <class kind="class">tatami::DelayedUnaryIsometricBooleanVector</class>
