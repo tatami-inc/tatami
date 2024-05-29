@@ -87,7 +87,7 @@ public:
         );
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename InputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         if constexpr(known_sparse) {
             return 0;
