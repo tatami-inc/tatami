@@ -432,6 +432,23 @@ BINARY_ARITH_FULL_TEST_WITH_NAN(DelayedBinaryIsometricDivideFullTest, DelayedBin
 BINARY_ARITH_BLOCK_TEST_WITH_NAN(DelayedBinaryIsometricDivideBlockTest, DelayedBinaryIsometricDivideUtils)
 BINARY_ARITH_INDEX_TEST_WITH_NAN(DelayedBinaryIsometricDivideIndexTest, DelayedBinaryIsometricDivideUtils)
 
+TEST_F(DelayedBinaryIsometricDivideTest, NewType) {
+    auto op = tatami::make_DelayedBinaryIsometricDivide();
+    auto sparse_fmod = tatami::make_DelayedBinaryIsometricOperation<int>(sparse_left, sparse_right, op);
+    auto sparse_ext = sparse_fmod->dense_row();
+
+    // Attempting to perform dense extraction without IEEE floats will throw a
+    // divide-by-zero error during the fill().
+    std::string msg;
+    std::vector<int> buffer(ncol);
+    try {
+        sparse_ext->fetch(0, buffer.data());
+    } catch (std::exception& e) {
+        msg = e.what();
+    }
+    EXPECT_TRUE(msg.find("division by zero") != std::string::npos);
+}
+
 /*******************************
  ************ POWER ************
  *******************************/
