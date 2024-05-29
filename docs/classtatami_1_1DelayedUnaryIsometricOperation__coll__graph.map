@@ -1,4 +1,4 @@
-<map id="tatami::DelayedUnaryIsometricOperation&lt; OutputValue_, Index_, Operation_, InputValue_ &gt;" name="tatami::DelayedUnaryIsometricOperation&lt; OutputValue_, Index_, Operation_, InputValue_ &gt;">
+<map id="tatami::DelayedUnaryIsometricOperation&lt; OutputValue_, InputValue_, Index_, Operation_ &gt;" name="tatami::DelayedUnaryIsometricOperation&lt; OutputValue_, InputValue_, Index_, Operation_ &gt;">
 <area shape="rect" id="Node000001" title="Delayed isometric operation on a single matrix." alt="" coords="5,94,225,150"/>
 <area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="24,5,206,46"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="118,61,118,93,112,93,112,61"/>
