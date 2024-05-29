@@ -169,6 +169,71 @@ public:
 };
 
 /**
+ * @brief Delayed unary isometric boolean cast.
+ *
+ * This class casts each element of a `Matrix` to a boolean 1 or 0, equivalent to the old `!!` trick.
+ * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
+ * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
+ *
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
+ */
+template<typename InputValue_ = double>
+class DelayedUnaryIsometricBooleanCast {
+public:
+    /**
+     * @cond
+     */
+    static constexpr bool is_basic = false;
+
+    bool is_sparse() const {
+        return true;
+    }
+    /**
+     * @endcond
+     */
+
+private:
+    template<typename Index_, typename OutputValue_>
+    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        for (Index_ i = 0; i < length; ++i) {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output[i];
+                val = static_cast<bool>(val);
+            } else {
+                output[i] = static_cast<bool>(input[i]);
+            }
+        }
+    }
+
+public:
+    /**
+     * @cond
+     */
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        core(input, length, output);
+    }
+
+    template<typename Index_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        core(input, static_cast<Index_>(indices.size()), output);
+    }
+
+    template<typename Index_, typename OutputValue_>
+    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+        core(input_value, number, output_value);
+    }
+
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
+        return 0;
+    }
+    /**
+     * @endcond
+     */
+};
+
+/**
  * @brief Delayed unary isometric vector boolean operations.
  *
  * This class applies the specified boolean operation to each element of a `Matrix` where the other operand is a row/column-specific value.
