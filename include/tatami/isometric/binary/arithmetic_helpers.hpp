@@ -94,10 +94,13 @@ public:
         } else if constexpr(op_ == ArithmeticOperation::POWER) {
             return 1;
         } else {
-            // Zero divided/modulo by zero gives NaN. For unsupported types,
-            // we hope that it never reaches this point.
-            if constexpr(std::numeric_limits<OutputValue_>::has_quiet_NaN) {
-                return std::numeric_limits<OutputValue_>::quiet_NaN();
+            // The only way to guarantee that division/modulo by zero is
+            // supported is with IEEE floats, otherwise it would be undefined
+            // behavior and anything could happen. So, we fence this behind a
+            // constexpr that guarantees that the operation will work. For
+            // unsupported types, we hope that it never reaches this point.
+            if constexpr(std::numeric_limits<OutputValue_>::is_iec559) {
+                return delayed_arithmetic<op_, true, OutputValue_>(0, 0);
             } else {
                 throw std::runtime_error("division by zero is not supported");
                 return 0;
