@@ -659,12 +659,13 @@ public:
  *
  * This class is inspired by the `DelayedUnaryIsoOp` classes from the **DelayedArray** Bioconductor package.
  * 
- * @tparam OutputValue_ Type of the result of the operation, to be used as the type of the matrix value. 
+ * @tparam OutputValue_ Type of the result of the operation.
+ * This is the type of the value of the output matrix.
  * @tparam Index_ Type of index value.
  * @tparam Operation_ Helper class representing the operation of interest.
  * This should implement the same methods as `DelayedUnaryIsometricMockBasic` or `DelayedUnaryIsometricMockAdvanced`,
  * depending on whether it can take advantage of matrix sparsity.
- * @tparam InputValue_ Type of the matrix value to use in the operation.
+ * @tparam InputValue_ Type of the value of the input matrix, to use in the operation.
  * This may or may not be the same as `OutputValue_`, depending on the methods available in `Operation_`.
  */
 template<typename OutputValue_, typename Index_, class Operation_, typename InputValue_>

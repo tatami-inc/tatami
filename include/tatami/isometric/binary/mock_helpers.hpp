@@ -26,8 +26,12 @@ public:
      * These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form.
      * Each buffer holds values from a contiguous block of the non-target dimension.
      *
-     * @tparam Value_ Type of matrix value.
+     * Implementations of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     *
      * @tparam Index_ Type of index value.
+     * @tparam InputValue_ Type of matrix value to be used in the operation.
+     * @tparam OutputValue_ Type of the result of the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
@@ -36,34 +40,39 @@ public:
      * Unlike `DelayedBinaryIsometricMockAdvanced::dense()`, this is always guaranteed to be the actual index and not a placeholder.
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
-     * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
-     * This has `length` addressable elements, and the result of the operation should be stored here.
-     * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
+     * @param[in] left_buffer Pointer to an array containing the row/column extracted from the left matrix.
+     * This has `length` addressable elements. 
+     * @param[in] right_buffer Pointer to an array containing the row/column extracted from the right matrix.
      * This has `length` addressable elements.
-     *
-     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * @param[out] output_buffer Pointer to an array in which to store the result of the operation.
+     * This has `length` addressable elements.
+     * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `left_buffer`.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         [[maybe_unused]] Index_ start, 
         Index_ length, 
-        Value_* left_buffer, 
-        [[maybe_unused]] const Value_* right_buffer)
+        [[maybe_unused]] const InputValue_* left_buffer, 
+        [[maybe_unused]] const InputValue_* right_buffer,
+        OutputValue_* output_buffer)
     const {
         // Just filling it with something as a mock.
-        std::fill_n(left_buffer, length, 0);
+        std::fill_n(output_buffer, length, 0);
     }
 
     /**
      * This method should apply the operation to corresponding values of `left_buffer` and `right_buffer`.
      * These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form.
      * Each buffer holds values from an indexed subset of the non-target dimension.
+     * 
+     * Implementations of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      *
-     * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
+     * @tparam InputValue_ Type of matrix value to be used in the operation.
+     * @tparam OutputValue_ Type of the result of the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
@@ -71,23 +80,24 @@ public:
      * @param i Index of the extracted row (if `row = true`) or column (otherwise).
      * Unlike `DelayedBinaryIsometricMockAdvanced::dense()`, this is always guaranteed to be the actual index and not a placeholder.
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
-     * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
+     * @param[in] left_buffer Pointer to an array containing the row/column extracted from the left matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.
-     * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
+     * @param[in] right_buffer Pointer to an array containing the row/column extracted from the right matrix.
      * This has `length` addressable elements.
-     *
-     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * @param[out] output_buffer Pointer to an array in which to store the result of the operation.
+     * This has `length` addressable elements.
+     * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `left_buffer`.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         const std::vector<Index_>& indices, 
-        Value_* left_buffer, 
-        [[maybe_unused]] const Value_* right_buffer) 
+        [[maybe_unused]] const InputValue_* left_buffer, 
+        [[maybe_unused]] const InputValue_* right_buffer, 
+        OutputValue_* output_buffer) 
     const {
-        std::fill_n(left_buffer, indices.size(), 0);
+        std::fill_n(output_buffer, indices.size(), 0);
     }
 
     /**
@@ -112,7 +122,10 @@ public:
 class DelayedBinaryIsometricMockAdvanced {
 public:
     /**
-     * @tparam Value_ Type of matrix value.
+     * This method will be called with an explicit `OutputValue_` template parameter.
+     * Implementations of this method should either ensure that `Index_` is deducible or use a fixed integer type in the method signature.
+     *
+     * @tparam OutputValue_ Type of the result of the operation.
      * @tparam Index_ Type of index value.
      *
      * @param row Whether `i` refers to the row or column index.
@@ -123,12 +136,9 @@ public:
      * @return The result of `OP(lz, rz)` where `OP` is the operation,
      * `lz` is a structural zero from the `i`-th row/column of the left matrix,
      * and `rz` is a structural zero from the `i`-th row/column of the left matrix,
-     *
-     * This method will be called with an explicit `Value_` template parameter.
-     * Implementations of this method should either ensure that `Index_` is deducible or use a fixed integer type in the method signature.
      */
-    template<typename Value_, typename Index_>
-    Value_ fill([[maybe_unused]] bool row, [[maybe_unused]] Index_ i) const { 
+    template<typename OutputValue_, typename Index_>
+    OutputValue_ fill([[maybe_unused]] bool row, [[maybe_unused]] Index_ i) const { 
         return 0;
     }
 
@@ -191,8 +201,12 @@ public:
      * These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form.
      * Each buffer holds values from a contiguous block of the non-target dimension.
      *
-     * @tparam Value_ Type of matrix value.
+     * Implementations of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     *
      * @tparam Index_ Type of index value.
+     * @tparam InputValue_ Type of matrix value to be used in the operation.
+     * @tparam OutputValue_ Type of the result of the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
@@ -202,25 +216,26 @@ public:
      * in which case an arbitrary placeholder may be supplied. 
      * @param start Start of the contiguous block of columns (if `row = true`) or rows (otherwise) extracted from `i`.
      * @param length Length of the contiguous block.
-     * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
+     * @param[in,out] left_buffer Pointer to an array containing the row/column extracted from the left matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.
-     * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
+     * @param[in] right_buffer Pointer to an array containing the row/column extracted from the right matrix.
      * This has `length` addressable elements.
-     *
-     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * @param[out] output_buffer Pointer to an array in which to store the result of the operation.
+     * This has `length` addressable elements.
+     * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `left_buffer`.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         [[maybe_unused]] Index_ start, 
         Index_ length, 
-        Value_* left_buffer, 
-        [[maybe_unused]] const Value_* right_buffer)
+        [[maybe_unused]] const InputValue_* left_buffer, 
+        [[maybe_unused]] const InputValue_* right_buffer,
+        OutputValue_* output_buffer)
     const {
         // Just filling it with something as a mock.
-        std::fill_n(left_buffer, length, 0);
+        std::fill_n(output_buffer, length, 0);
     }
 
     /**
@@ -228,8 +243,12 @@ public:
      * These buffers represent the same element of the target dimension from the left and right matrices, respectively, in dense form.
      * Each buffer holds values from an indexed subset of the non-target dimension.
      *
-     * @tparam Value_ Type of matrix value.
+     * Implementations of this method do not necessarily need to have the same template arguments as shown here.
+     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     *
      * @tparam Index_ Type of index value.
+     * @tparam InputValue_ Type of matrix value to be used in the operation.
+     * @tparam OutputValue_ Type of the result of the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
@@ -238,23 +257,24 @@ public:
      * This argument should be ignored if the operation does not depend on the row/column (i.e., when all of `zero_depends_on_row()` and friends return false),
      * in which case an arbitrary placeholder may be supplied. 
      * @param indices Sorted and unique indices of columns (if `row = true`) or rows (otherwise) extracted from `i`.
-     * @param[in,out] left_buffer Contents of the row/column extracted from the left matrix.
+     * @param[in,out] left_buffer Pointer to an array containing the row/column extracted from the left matrix.
      * This has `length` addressable elements, and the result of the operation should be stored here.
-     * @param[in] right_buffer Contents of the row/column extracted from the right matrix.
+     * @param[in] right_buffer Pointer to an array containing the row/column extracted from the right matrix.
      * This has `length` addressable elements.
-     *
-     * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
-     * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
+     * @param[out] output_buffer Pointer to an array in which to store the result of the operation.
+     * This has `length` addressable elements.
+     * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `left_buffer`.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
         const std::vector<Index_>& indices, 
-        Value_* left_buffer, 
-        [[maybe_unused]] const Value_* right_buffer) 
+        [[maybe_unused]] const InputValue_* left_buffer, 
+        [[maybe_unused]] const InputValue_* right_buffer,
+        OutputValue_* output_buffer) 
     const {
-        std::fill_n(left_buffer, indices.size(), 0);
+        std::fill_n(output_buffer, indices.size(), 0);
     }
 
     /**
@@ -265,8 +285,9 @@ public:
      * Structural zeros are either ignored for sparsity-preserving operations,
      * or the result of the operation on zeros will be populated by `fill()`.
      *
-     * @tparam Value_ Type of matrix value.
      * @tparam Index_ Type of index value.
+     * @tparam InputValue_ Type of matrix value to be used in the operation.
+     * @tparam OutputValue_ Type of the result of the operation.
      *
      * @param row Whether the rows are the target dimension.
      * If true, `left_buffer` and `right_buffer` hold the contents of the `i`-th row from both matrices;
@@ -304,13 +325,13 @@ public:
      * Note that implementations of this method do not necessarily need to have the same template arguments as shown here.
      * It will be called without any explicit template arguments so anything can be used as long as type deduction works.
      */
-    template<typename Value_, typename Index_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     Index_ sparse(
         [[maybe_unused]] bool row, 
         [[maybe_unused]] Index_ i, 
-        [[maybe_unused]] const SparseRange<Value_, Index_>& left, 
-        [[maybe_unused]] const SparseRange<Value_, Index_>& right, 
-        [[maybe_unused]] Value_* output_value, 
+        [[maybe_unused]] const SparseRange<InputValue_, Index_>& left, 
+        [[maybe_unused]] const SparseRange<InputValue_, Index_>& right, 
+        [[maybe_unused]] OutputValue_* output_value, 
         [[maybe_unused]] Index_* output_index, 
         [[maybe_unused]] bool report_value, 
         [[maybe_unused]] bool report_index)

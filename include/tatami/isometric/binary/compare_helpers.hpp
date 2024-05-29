@@ -39,22 +39,32 @@ public:
     /**
      * @cond
      */
-    template<typename Value_, typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, Value_* left_buffer, const Value_* right_buffer) const {
+    template<typename Index_, typename InputValue_, typename OutputValue_>
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
         for (Index_ i = 0; i < length; ++i) {
-            delayed_compare_run<op_>(left_buffer[i], right_buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output_buffer[i];
+                val = delayed_compare<op_>(val, right_buffer[i]);
+            } else {
+                output_buffer[i] = delayed_compare<op_>(left_buffer[i], right_buffer[i]);
+            }
         }
     }
 
-    template<typename Value_, typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, Value_* left_buffer, const Value_* right_buffer) const {
+    template<typename Index_, typename InputValue_, typename OutputValue_>
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
         for (Index_ i = 0, length = indices.size(); i < length; ++i) {
-            delayed_compare_run<op_>(left_buffer[i], right_buffer[i]);
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                auto& val = output_buffer[i];
+                val = delayed_compare<op_>(val, right_buffer[i]);
+            } else {
+                output_buffer[i] = delayed_compare<op_>(left_buffer[i], right_buffer[i]);
+            }
         }
     }
 
-    template<typename Value_, typename Index_>
-    Index_ sparse(bool, Index_, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
+    template<typename Index_, typename InputValue_, typename OutputValue_>
+    Index_ sparse(bool, Index_, const SparseRange<InputValue_, Index_>& left, const SparseRange<InputValue_, Index_>& right, OutputValue_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
         // None of the operations will return zero if one entry is zero and the other entry is non-zero...
         // except for equality, but then, the sparse() method would never even be used.
         return delayed_binary_isometric_sparse_operation<false>(
@@ -64,7 +74,9 @@ public:
             index_buffer, 
             needs_value,
             needs_index,
-            [](Value_& l, Value_ r) { delayed_compare_run<op_>(l, r); }
+            [](InputValue_ l, InputValue_ r) -> auto { 
+                return delayed_compare<op_>(l, r); 
+            }
         );
     }
 
