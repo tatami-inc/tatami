@@ -113,3 +113,21 @@ TEST_F(DelayedBinaryIsometricBooleanTest, XOR) {
     quick_test_all(dense_mod.get(), &ref);
     quick_test_all(sparse_mod.get(), &ref);
 }
+
+TEST_F(DelayedBinaryIsometricBooleanTest, NewType) {
+    auto op = tatami::make_DelayedBinaryIsometricBooleanEqual();
+    auto dense_umod = tatami::make_DelayedBinaryIsometricOperation<uint8_t>(dense_left, dense_right, op);
+    auto sparse_umod = tatami::make_DelayedBinaryIsometricOperation<uint8_t>(sparse_left, sparse_right, op);
+
+    // Toughest tests are handled by 'arith_helpers.cpp'; they would
+    // be kind of redundant here, so we'll just do something simple
+    // to check that the operation behaves as expected. 
+    std::vector<uint8_t> urefvec(nrow * ncol);
+    for (size_t i = 0; i < urefvec.size(); ++i) {
+        urefvec[i] = static_cast<bool>(simulated_left[i]) == static_cast<bool>(simulated_right[i]);
+    }
+    tatami::DenseRowMatrix<uint8_t, int> uref(nrow, ncol, std::move(urefvec));
+
+    quick_test_all(dense_umod.get(), &uref);
+    quick_test_all(sparse_umod.get(), &uref);
+}

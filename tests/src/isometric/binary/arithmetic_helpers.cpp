@@ -192,6 +192,21 @@ BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricAddFullTest, DelayedBinaryIsometric
 BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricAddBlockTest, DelayedBinaryIsometricAddUtils)
 BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricAddIndexTest, DelayedBinaryIsometricAddUtils)
 
+TEST_F(DelayedBinaryIsometricAddTest, NewType) {
+    auto op = tatami::make_DelayedBinaryIsometricAdd();
+    auto dense_fmod = tatami::make_DelayedBinaryIsometricOperation<float>(dense_left, dense_right, op);
+    auto sparse_fmod = tatami::make_DelayedBinaryIsometricOperation<float>(sparse_left, sparse_right, op);
+
+    std::vector<float> frefvec(simulated_left.size());
+    for (size_t i = 0; i < frefvec.size(); ++i) {
+        frefvec[i] = simulated_left[i] + simulated_right[i];
+    }
+    tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+
+    quick_test_all(dense_fmod.get(), &fref);
+    quick_test_all(sparse_fmod.get(), &fref);
+}
+
 /*******************************
  ********* SUBTRACTION *********
  *******************************/
