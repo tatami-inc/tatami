@@ -294,10 +294,10 @@ class tatami::DelayedUnaryIsometricOperation&lt; OutputValue_, Index_, Operation
 <p>This class is inspired by the <code>DelayedUnaryIsoOp</code> classes from the <b>DelayedArray</b> Bioconductor package.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">OutputValue_</td><td>Type of the result of the operation, to be used as the type of the matrix value. </td></tr>
+    <tr><td class="paramname">OutputValue_</td><td>Type of the result of the operation. This is the type of the value of the output matrix. </td></tr>
     <tr><td class="paramname">Index_</td><td>Type of index value. </td></tr>
     <tr><td class="paramname">Operation_</td><td>Helper class representing the operation of interest. This should implement the same methods as <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricMockBasic.html" title="Basic mock operation for a DelayedUnaryIsometricOperation.">DelayedUnaryIsometricMockBasic</a></code> or <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricMockAdvanced.html" title="Advanced mock operation for DelayedUnaryIsometricOperation.">DelayedUnaryIsometricMockAdvanced</a></code>, depending on whether it can take advantage of matrix sparsity. </td></tr>
-    <tr><td class="paramname">InputValue_</td><td>Type of the matrix value to use in the operation. This may or may not be the same as <code>OutputValue_</code>, depending on the methods available in <code>Operation_</code>. </td></tr>
+    <tr><td class="paramname">InputValue_</td><td>Type of the value of the input matrix, to use in the operation. This may or may not be the same as <code>OutputValue_</code>, depending on the methods available in <code>Operation_</code>. </td></tr>
   </table>
   </dd>
 </dl>

@@ -15,7 +15,7 @@ var searchData=
   ['make_5fdelayedbinaryisometricmodulo_12',['make_DelayedBinaryIsometricModulo',['../namespacetatami.html#a20f8a13127f659c6362d53aa51ed33d8',1,'tatami']]],
   ['make_5fdelayedbinaryisometricmultiply_13',['make_DelayedBinaryIsometricMultiply',['../namespacetatami.html#a01370b082642ae6c745ff9bb1600a87f',1,'tatami']]],
   ['make_5fdelayedbinaryisometricnotequal_14',['make_DelayedBinaryIsometricNotEqual',['../namespacetatami.html#a9b63c28c67d2ec406da35b7db6900879',1,'tatami']]],
-  ['make_5fdelayedbinaryisometricoperation_15',['make_DelayedBinaryIsometricOperation',['../namespacetatami.html#a4e2ea2dff4cc98efb802f681c4c4674c',1,'tatami']]],
+  ['make_5fdelayedbinaryisometricoperation_15',['make_DelayedBinaryIsometricOperation',['../namespacetatami.html#ad75250f5b086a69c2d9f0edc7bc0b26b',1,'tatami']]],
   ['make_5fdelayedbinaryisometricpower_16',['make_DelayedBinaryIsometricPower',['../namespacetatami.html#a1ed3cf4520b14ba2e85cf4afb32a1fdc',1,'tatami']]],
   ['make_5fdelayedbinaryisometricsubtract_17',['make_DelayedBinaryIsometricSubtract',['../namespacetatami.html#a3647a1ae34a5e8a47b28631da1032fc9',1,'tatami']]],
   ['make_5fdelayedbind_18',['make_DelayedBind',['../namespacetatami.html#abb6a0fcec274f4ae668c695055699083',1,'tatami']]],

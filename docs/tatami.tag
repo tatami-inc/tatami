@@ -877,10 +877,10 @@
     <name>tatami::DelayedBinaryIsometricMockAdvanced</name>
     <filename>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</filename>
     <member kind="function">
-      <type>Value_</type>
+      <type>OutputValue_</type>
       <name>fill</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a0bc3ec527f1a4f00219b249c5a2eef88</anchor>
+      <anchor>a99b733c1de1b7b5e5ffa037fbd7a3426</anchor>
       <arglist>(bool row, Index_ i) const</arglist>
     </member>
     <member kind="function">
@@ -915,22 +915,22 @@
       <type>void</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a0e668bdf736a459dbfa17bd26d07380b</anchor>
-      <arglist>(bool row, Index_ i, Index_ start, Index_ length, Value_ *left_buffer, const Value_ *right_buffer) const</arglist>
+      <anchor>a08111074efd786173a8de0ea7b1681ff</anchor>
+      <arglist>(bool row, Index_ i, Index_ start, Index_ length, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a2ada69f639f7616224d85ae970d86c5e</anchor>
-      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, Value_ *left_buffer, const Value_ *right_buffer) const</arglist>
+      <anchor>a39021fb69f98fb03d9616fde8bf5c4b5</anchor>
+      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricMockAdvanced.html</anchorfile>
-      <anchor>a0a2dcdad6634fd38dc4a9a4aa3d1b611</anchor>
-      <arglist>(bool row, Index_ i, const SparseRange&lt; Value_, Index_ &gt; &amp;left, const SparseRange&lt; Value_, Index_ &gt; &amp;right, Value_ *output_value, Index_ *output_index, bool report_value, bool report_index) const</arglist>
+      <anchor>aee13c5385038d2c78afd4b1042bcdf74</anchor>
+      <arglist>(bool row, Index_ i, const SparseRange&lt; InputValue_, Index_ &gt; &amp;left, const SparseRange&lt; InputValue_, Index_ &gt; &amp;right, OutputValue_ *output_value, Index_ *output_index, bool report_value, bool report_index) const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
@@ -954,15 +954,15 @@
       <type>void</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricMockBasic.html</anchorfile>
-      <anchor>a8af00b807c6004e161076bc18e5aa54f</anchor>
-      <arglist>(bool row, Index_ i, Index_ start, Index_ length, Value_ *left_buffer, const Value_ *right_buffer) const</arglist>
+      <anchor>aa0c1bee671047c4e2146556c639af0b8</anchor>
+      <arglist>(bool row, Index_ i, Index_ start, Index_ length, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricMockBasic.html</anchorfile>
-      <anchor>aac939b6fbec69632c7b2e1936c03e31c</anchor>
-      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, Value_ *left_buffer, const Value_ *right_buffer) const</arglist>
+      <anchor>a0df00c5bbc3dceddb3d373e491d4e63e</anchor>
+      <arglist>(bool row, Index_ i, const std::vector&lt; Index_ &gt; &amp;indices, const InputValue_ *left_buffer, const InputValue_ *right_buffer, OutputValue_ *output_buffer) const</arglist>
     </member>
     <member kind="variable" static="yes">
       <type>static constexpr bool</type>
@@ -975,148 +975,149 @@
   <compound kind="class">
     <name>tatami::DelayedBinaryIsometricOperation</name>
     <filename>classtatami_1_1DelayedBinaryIsometricOperation.html</filename>
-    <templarg>typename Value_</templarg>
+    <templarg>typename OutputValue_</templarg>
+    <templarg>typename InputValue_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class Operation_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>Matrix&lt; OutputValue_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedBinaryIsometricOperation</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>ade4b717d8ca5ca98564ffae391e8469d</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; right, Operation_ operation)</arglist>
+      <anchor>acb207fd44b597d1e6f9e9a3e019fd110</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; right, Operation_ operation)</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>nrow</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a523d552d0146fa6e2bd4770afcdacacc</anchor>
+      <anchor>adc4cba94974832694ff11675f771de6d</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
       <name>ncol</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a55d4f796ec7ef5a343ed4cbc08edb650</anchor>
+      <anchor>a81b9b53c0aadc6023e299e09591f678d</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>is_sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>aaeee357606e5f5aef03d0ea601279dd4</anchor>
+      <anchor>a7e773089662d47e007f63b9f11af4372</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
       <name>is_sparse_proportion</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>ad89d48d01bed97cb58e8eec0eec4bef1</anchor>
+      <anchor>a7fc04859e03ab55201f8b4de147ebb4a</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>prefer_rows</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>aaab1fe8d90807834aac2c62a00106fcd</anchor>
+      <anchor>a033f2edb6c11f80ae4eaa5d8bf9e3108</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>double</type>
       <name>prefer_rows_proportion</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a1bd68c9b0da8a227fc0b0825a7b8ca32</anchor>
+      <anchor>ae2de6118ab5d2a9e66de2aea98763ffa</anchor>
       <arglist>() const</arglist>
     </member>
     <member kind="function">
       <type>bool</type>
       <name>uses_oracle</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a239a6310ef652126719f1ea45b87722b</anchor>
+      <anchor>a50036e88c7cb5659b7734f34ae885788</anchor>
       <arglist>(bool row) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; MyopicDenseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>ac8af82dda930072261f2003ab451646b</anchor>
+      <anchor>a333ab299ccbd272c69afcf38effb009c</anchor>
       <arglist>(bool row, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; MyopicDenseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>abb6a23494bb6def8da0a1cc19cb57d1b</anchor>
+      <anchor>abd04b221b51dfeaa313ae0f5a3837cc9</anchor>
       <arglist>(bool row, Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; MyopicDenseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>aef46d3cfa0e0f3185974b924d63e2e7d</anchor>
+      <anchor>a05c3f0a54592e772f6807cd845b33609</anchor>
       <arglist>(bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; MyopicSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; MyopicSparseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>acf0b70de07043ed0f73845ee6c03fe06</anchor>
+      <anchor>a3c6bcc3e08df756b15e6a4129dfe34e2</anchor>
       <arglist>(bool row, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; MyopicSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; MyopicSparseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a3c42fe4d98d958fe52c496912d885cd9</anchor>
+      <anchor>a8065612bad58c0c21b32a76bb64f9ef9</anchor>
       <arglist>(bool row, Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; MyopicSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; MyopicSparseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>aa5671c7371ae75038f00c7a3c20b1301</anchor>
+      <anchor>a9b9fac8d5d2d3b945511e4f206de476e</anchor>
       <arglist>(bool row, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; OracularDenseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a1ad847f1aebfe712c1230c5446f44f00</anchor>
+      <anchor>a3a96da0fa2df14f6b1625399175a436b</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; OracularDenseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a93610df34eadace7689bdafe98d581de</anchor>
+      <anchor>a9249480c72306434edce847f09c47ebc</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; OracularDenseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; OracularDenseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>dense</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a6235cd8e84786500921fb2163f241ce7</anchor>
+      <anchor>a7b3692ed33345a71c0ef5b209e7c6b1b</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; OracularSparseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a7648bcf3fc4eb772c843d8dce699b454</anchor>
+      <anchor>a30b4316b5934ddf2493d5caf6207a264</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; OracularSparseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a245fc9504a3e8467cc2a52b28eb6afdd</anchor>
+      <anchor>a9b29e37d7df15e9c10190f444f4e31c2</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, Index_ block_start, Index_ block_length, const Options &amp;opt) const</arglist>
     </member>
     <member kind="function">
-      <type>std::unique_ptr&lt; OracularSparseExtractor&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::unique_ptr&lt; OracularSparseExtractor&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>sparse</name>
       <anchorfile>classtatami_1_1DelayedBinaryIsometricOperation.html</anchorfile>
-      <anchor>a981d6d86d050581f7a39daab4f156ec7</anchor>
+      <anchor>ae8b44f5ab122512fd0e450f589a99ecc</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
     </member>
   </compound>
@@ -4700,11 +4701,11 @@
       <arglist>()</arglist>
     </member>
     <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
+      <type>std::shared_ptr&lt; Matrix&lt; OutputValue_, Index_ &gt; &gt;</type>
       <name>make_DelayedBinaryIsometricOperation</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4e2ea2dff4cc98efb802f681c4c4674c</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; right, Operation_ op)</arglist>
+      <anchor>ad75250f5b086a69c2d9f0edc7bc0b26b</anchor>
+      <arglist>(std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; left, std::shared_ptr&lt; const Matrix&lt; InputValue_, Index_ &gt; &gt; right, Operation_ op)</arglist>
     </member>
     <member kind="function">
       <type>DelayedUnaryIsometricArithmeticScalar&lt; ArithmeticOperation::ADD, true, InputValue_, Scalar_ &gt;</type>
