@@ -16,14 +16,55 @@ namespace tatami {
 /**
  * @cond
  */
-template<BooleanOperation op_, typename InputValue_, typename Index_, typename OutputValue_>
-void delayed_boolean_run_simple(const InputValue_* input, Index_ length, bool scalar, OutputValue_* output) {
+template<typename InputValue_, typename Index_, typename OutputValue_>
+void delayed_boolean_cast(const InputValue_* input, Index_ length, OutputValue_* output) {
     for (Index_ i = 0; i < length; ++i) {
         if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
             auto& val = output[i];
-            val = delayed_boolean<op_>(val, scalar);
+            val = static_cast<bool>(val);
         } else {
-            output[i] = delayed_boolean<op_>(input[i], scalar);
+            output[i] = static_cast<bool>(input[i]);
+        }
+    }
+}
+
+template<typename InputValue_, typename Index_, typename OutputValue_>
+void delayed_boolean_not(const InputValue_* input, Index_ length, OutputValue_* output) {
+    for (Index_ i = 0; i < length; ++i) {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            auto& val = output[i];
+            val = !static_cast<bool>(val);
+        } else {
+            output[i] = !static_cast<bool>(input[i]);
+        }
+    }
+}
+
+template<BooleanOperation op_, typename InputValue_, typename Index_, typename OutputValue_>
+void delayed_boolean_run_simple(const InputValue_* input, Index_ length, bool scalar, OutputValue_* output) {
+    if constexpr(op_ == BooleanOperation::AND) {
+        if (scalar) {
+            delayed_boolean_cast(input, length, output); 
+        } else {
+            std::fill_n(output, length, 0);
+        }
+    } else if constexpr(op_ == BooleanOperation::OR) {
+        if (scalar) {
+            std::fill_n(output, length, 1);
+        } else {
+            delayed_boolean_cast(input, length, output); 
+        }
+    } else if constexpr(op_ == BooleanOperation::XOR) {
+        if (scalar) {
+            delayed_boolean_not(input, length, output);
+        } else {
+            delayed_boolean_cast(input, length, output);
+        }
+    } else { // EQUAL
+        if (scalar) {
+            delayed_boolean_cast(input, length, output);
+        } else {
+            delayed_boolean_not(input, length, output);
         }
     }
 }
@@ -128,17 +169,6 @@ public:
      */
 
 private:
-    template<typename Index_, typename OutputValue_>
-    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-        for (Index_ i = 0; i < length; ++i) {
-            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-                auto& val = output[i];
-                val = !static_cast<bool>(val);
-            } else {
-                output[i] = !static_cast<bool>(input[i]);
-            }
-        }
-    }
 
 public:
     /**
@@ -146,17 +176,17 @@ public:
      */
     template<typename Index_, typename OutputValue_>
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
-        core(input, length, output);
+        delayed_boolean_not(input, length, output);
     }
 
     template<typename Index_, typename OutputValue_>
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
-        core(input, static_cast<Index_>(indices.size()), output);
+        delayed_boolean_not(input, static_cast<Index_>(indices.size()), output);
     }
 
     template<typename Index_, typename OutputValue_>
     void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
-        core(input_value, number, output_value);
+        delayed_boolean_not(input_value, number, output_value);
     }
 
     template<typename OutputValue_, typename Index_>
@@ -192,36 +222,23 @@ public:
      * @endcond
      */
 
-private:
-    template<typename Index_, typename OutputValue_>
-    void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-        for (Index_ i = 0; i < length; ++i) {
-            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-                auto& val = output[i];
-                val = static_cast<bool>(val);
-            } else {
-                output[i] = static_cast<bool>(input[i]);
-            }
-        }
-    }
-
 public:
     /**
      * @cond
      */
     template<typename Index_, typename OutputValue_>
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
-        core(input, length, output);
+        delayed_boolean_cast(input, length, output);
     }
 
     template<typename Index_, typename OutputValue_>
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
-        core(input, static_cast<Index_>(indices.size()), output);
+        delayed_boolean_cast(input, static_cast<Index_>(indices.size()), output);
     }
 
     template<typename Index_, typename OutputValue_>
     void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
-        core(input_value, number, output_value);
+        delayed_boolean_cast(input_value, number, output_value);
     }
 
     template<typename OutputValue_, typename Index_>
