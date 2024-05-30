@@ -13,68 +13,81 @@ void check_sparsity(double scalar) {
     EXPECT_EQ(res, ex);
 }
 
-TEST(DelayedUnaryIsometricArithmetic, Sparsity) {
-    // Assuming that doubles are IEEE-compatible, the various special values
-    // are well-defined and can be produced by arithmetic. We use this to
-    // empirically check the sparsity decisions.
-    static_assert(std::numeric_limits<double>::is_iec559);
+TEST(DelayedUnaryIsometricArithmetic, NonIeee754Sparsity) {
+    // Checking sparsity calculations for non-IEEE types.
+    auto res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::ADD, true, int>(2);
+    EXPECT_FALSE(res);
 
-    std::vector<double> scalars {
-        0.0,
-        1.0,
-        -1.0,
-        std::numeric_limits<double>::quiet_NaN(),
-        std::numeric_limits<double>::infinity(),
-        -std::numeric_limits<double>::infinity()
-    };
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::MULTIPLY, true, int>(2);
+    EXPECT_TRUE(res);
 
-    for (auto s : scalars) {
-        check_sparsity<tatami::ArithmeticOperation::ADD, true>(s);
-        check_sparsity<tatami::ArithmeticOperation::ADD, false>(s);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::POWER, false, int>(2);
+    EXPECT_FALSE(res);
 
-        check_sparsity<tatami::ArithmeticOperation::SUBTRACT, true>(s);
-        check_sparsity<tatami::ArithmeticOperation::SUBTRACT, false>(s);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::DIVIDE, true, int>(2);
+    EXPECT_TRUE(res);
 
-        check_sparsity<tatami::ArithmeticOperation::MULTIPLY, true>(s);
-        check_sparsity<tatami::ArithmeticOperation::MULTIPLY, false>(s);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::INTEGER_DIVIDE, true, int>(2);
+    EXPECT_TRUE(res);
 
-        check_sparsity<tatami::ArithmeticOperation::DIVIDE, true>(s);
-        check_sparsity<tatami::ArithmeticOperation::DIVIDE, false>(s);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::DIVIDE, true, int>(0);
+    EXPECT_FALSE(res);
 
-        check_sparsity<tatami::ArithmeticOperation::POWER, true>(s);
-        check_sparsity<tatami::ArithmeticOperation::POWER, false>(s);
-
-        check_sparsity<tatami::ArithmeticOperation::MODULO, true>(s);
-        check_sparsity<tatami::ArithmeticOperation::MODULO, false>(s);
-
-        check_sparsity<tatami::ArithmeticOperation::INTEGER_DIVIDE, true>(s);
-        check_sparsity<tatami::ArithmeticOperation::INTEGER_DIVIDE, false>(s);
-    }
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::INTEGER_DIVIDE, false, int>(2);
+    EXPECT_FALSE(res);
 }
 
-TEST(DelayedUnaryIsometricArithmetic, FillInt) {
-    // Checking fill calculations for non-IEEE types.
-    auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::ADD, true, int>(2);
-    EXPECT_EQ(res, 2);
+TEST(DelayedUnaryIsometricArithmetic, NonIeee754Fill) {
+    {
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::ADD, true, int>(2);
+        EXPECT_EQ(res, 2);
+    }
 
-    res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MULTIPLY, true, int>(2);
-    EXPECT_EQ(res, 0);
+    {
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MULTIPLY, true, int>(2);
+        EXPECT_EQ(res, 0);
+    }
 
-    res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::POWER, false, int>(2);
-    EXPECT_EQ(res, 1);
+    {
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::POWER, false, int>(2);
+        EXPECT_EQ(res, 1);
+    }
 
-    res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, true, int>(2);
-    EXPECT_EQ(res, 0);
+    {
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, true, int>(2);
+        EXPECT_EQ(res, 0);
+    }
 
-    res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::INTEGER_DIVIDE, true, int>(2);
-    EXPECT_EQ(res, 0);
+    {
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::INTEGER_DIVIDE, true, int>(2);
+        EXPECT_EQ(res, 0);
+    }
 
     tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, true, int>(0); }, "division by zero");
     tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, false, int>(2); }, "division by zero");
 }
 
+TEST(DelayedUnaryIsometricArithmetic, TrueIntegerDivide) {
+    auto res = tatami::delayed_arithmetic<tatami::ArithmeticOperation::INTEGER_DIVIDE, true>(5, 2);
+    EXPECT_EQ(res, 2);
+
+    res = tatami::delayed_arithmetic<tatami::ArithmeticOperation::INTEGER_DIVIDE, true>(-5, 2);
+    EXPECT_EQ(res, -3);
+
+    res = tatami::delayed_arithmetic<tatami::ArithmeticOperation::INTEGER_DIVIDE, true>(-5, -2);
+    EXPECT_EQ(res, 2);
+
+    res = tatami::delayed_arithmetic<tatami::ArithmeticOperation::INTEGER_DIVIDE, false>(5, 2);
+    EXPECT_EQ(res, 0);
+
+    res = tatami::delayed_arithmetic<tatami::ArithmeticOperation::INTEGER_DIVIDE, false>(-5, 11);
+    EXPECT_EQ(res, -3);
+
+    res = tatami::delayed_arithmetic<tatami::ArithmeticOperation::INTEGER_DIVIDE, false>(-5, -11);
+    EXPECT_EQ(res, 2);
+}
+
 TEST(DelayedUnaryIsometricArithmetic, NonIeee754Ops) {
-    // Checking that it works inside helpers.
     {
         int scalar = 5;
         auto op = tatami::make_DelayedUnaryIsometricMultiplyScalar(scalar);
@@ -89,7 +102,7 @@ TEST(DelayedUnaryIsometricArithmetic, NonIeee754Ops) {
 
     {
         auto op = tatami::make_DelayedUnaryIsometricDivideScalar<false, int>(5);
-        tatami_test::throws_error([&]() { op.template fill<int>(true, 5); }, "division by zero");
+        tatami_test::throws_error([&]() { op.template fill<int, int>(true, 5); }, "division by zero");
     }
 }
 

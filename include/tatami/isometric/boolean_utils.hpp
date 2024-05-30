@@ -34,11 +34,6 @@ bool delayed_boolean(bool val, bool scalar) {
         return val == scalar;
     }
 }
-
-template<BooleanOperation op_, typename Value_>
-void delayed_boolean_run(Value_& val, bool scalar) {
-    val = delayed_boolean<op_>(val, scalar);
-}
 /**
  * @endcond
  */

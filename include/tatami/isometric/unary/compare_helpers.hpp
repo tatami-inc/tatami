@@ -93,7 +93,7 @@ public:
         delayed_compare_run_simple<op_>(input_value, number, my_scalar, output_value);
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         return delayed_compare<op_, InputValue_>(0, my_scalar);
     }
@@ -219,7 +219,7 @@ public:
         }
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename, typename Index_>
     OutputValue_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
             return delayed_compare<op_, InputValue_>(0, my_vector[idx]);
@@ -472,7 +472,7 @@ public:
         delayed_special_compare_run_simple<op_, pass_>(input, number, output);
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         return !my_sparse;
     }

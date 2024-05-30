@@ -240,9 +240,9 @@ public:
             my_operation.sparse(my_row, i, range.number, range.value, range.index, my_result_vbuffer.data());
         }
 
-        // avoid calling fill() if possible, as this might throw zero-related errors in non-IEEE platforms.
+        // avoid calling fill() if possible, as this might throw zero-related errors with non-IEEE-float types.
         if (range.number < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_>(my_row, i));
+            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
         }
 
         if constexpr(same_value) {
@@ -314,9 +314,9 @@ public:
             my_operation.sparse(my_row, i, range.number, range.value, range.index, my_result_vbuffer.data());
         }
 
-        // avoid calling fill() if possible, as this might throw zero-related errors in non-IEEE platforms.
+        // avoid calling fill() if possible, as this might throw zero-related errors with non-IEEE-float types.
         if (range.number < my_block_length) { 
-            std::fill_n(buffer, my_block_length, my_operation.template fill<OutputValue_>(my_row, i));
+            std::fill_n(buffer, my_block_length, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
         }
 
         if constexpr(same_value) {
@@ -403,9 +403,9 @@ public:
             my_operation.sparse(my_row, i, range.number, range.value, range.index, my_result_vbuffer.data());
         }
 
-        // avoid calling zero() if possible, as this might throw zero-related errors in non-IEEE platforms.
+        // avoid calling fill() if possible, as this might throw zero-related errors with non-IEEE-float types.
         if (range.number < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_>(my_row, i));
+            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
         }
 
         if constexpr(same_value) {

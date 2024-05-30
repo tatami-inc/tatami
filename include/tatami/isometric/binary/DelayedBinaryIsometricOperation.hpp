@@ -230,9 +230,9 @@ public:
         auto num = my_operation.sparse(my_row, i, lres, rres, my_output_vbuffer.data(), my_output_ibuffer.data(), true, true);
 
         // Avoid calling my_operation.fill() if possible, as this might throw
-        // zero-related errors in non-IEEE platforms.
+        // zero-related errors with non-IEEE-float types.
         if (num < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_>(my_row, i));
+            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
         }
 
         for (Index_ j = 0; j < num; ++j) {
@@ -294,9 +294,9 @@ public:
         auto num = my_operation.sparse(my_row, i, lres, rres, my_output_vbuffer.data(), my_output_ibuffer.data(), true, true);
 
         // Avoid calling my_operation.fill() if possible, as this might throw
-        // zero-related errors in non-IEEE platforms.
+        // zero-related errors with non-IEEE-float types.
         if (num < my_block_length) { 
-            std::fill_n(buffer, my_block_length, my_operation.template fill<OutputValue_>(my_row, i));
+            std::fill_n(buffer, my_block_length, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
         }
 
         for (Index_ j = 0; j < num; ++j) {
@@ -368,9 +368,9 @@ public:
         auto num = my_operation.sparse(my_row, i, lres, rres, my_output_vbuffer.data(), my_output_ibuffer.data(), true, true);
 
         // Avoid calling my_operation.fill() if possible, as this might throw
-        // zero-related errors in non-IEEE platforms.
+        // zero-related errors with non-IEEE-float types.
         if (num < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_>(my_row, i));
+            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
         }
 
         for (Index_ j = 0; j < num; ++j) {

@@ -13,6 +13,9 @@ namespace tatami {
 
 /**
  * Type of arithmetic operation.
+ *
+ * Note that the `INTEGER_DIVIDE` refers to a floored divide, not a truncation.
+ * This is based on R's `%/%`, which in turn is based on a recommendation by Donald Knuth. 
  */
 enum class ArithmeticOperation : char { 
     ADD, 
@@ -65,10 +68,21 @@ auto delayed_arithmetic(Value_ val, Scalar_ scalar) {
             return std::fmod(scalar, val);
         }
     } else if constexpr(op_ == ArithmeticOperation::INTEGER_DIVIDE) {
+        // Using floored divide, based on what R does.
         if constexpr(right_) {
-            return std::floor(val / scalar);
+            auto out = val / scalar;
+            if constexpr(std::numeric_limits<decltype(out)>::is_integer) {
+                return out - (out < 0 ? (val % scalar != 0) : 0);
+            } else {
+                return std::floor(out);
+            }
         } else {
-            return std::floor(scalar / val);
+            auto out = scalar / val;
+            if constexpr(std::numeric_limits<decltype(out)>::is_integer) {
+                return out - (out < 0 ? (scalar % val != 0) : 0);
+            } else {
+                return std::floor(out);
+            }
         }
     }
 }
@@ -78,12 +92,10 @@ auto delayed_arithmetic(Value_ val, Scalar_ scalar) {
 // floats, otherwise it would be undefined behavior at compile time, and the
 // compiler could do anything, including refusing to compile it. So, we hide
 // any '0/0' behind a constexpr to ensure that the compiler doesn't see it.
-template<ArithmeticOperation op_, typename Value_, typename Scalar_>
+template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
 constexpr bool has_unsafe_divide_by_zero() {
-    if constexpr(std::numeric_limits<Value_>::is_iec559) {
-        return false;
-    }
-    if constexpr(std::numeric_limits<Scalar_>::is_iec559) {
+    typedef decltype(delayed_arithmetic<op_, right_>(std::declval<Value_>(), std::declval<Scalar_>())) Product;
+    if constexpr(std::numeric_limits<Product>::is_iec559) {
         return false;
     }
 

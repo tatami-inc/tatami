@@ -80,13 +80,8 @@ public:
         );
     }
 
-    template<typename Value_, typename Index_>
-    Index_ sparse(bool r, Index_ i, const SparseRange<Value_, Index_>& left, const SparseRange<Value_, Index_>& right, Value_* value_buffer, Index_* index_buffer) const {
-        return sparse<Value_, Index_>(r, i, left, right, value_buffer, index_buffer, true, true);
-    }
-
-    template<typename Value_, typename Index_>
-    Value_ fill(bool, Index_) const {
+    template<typename OutputValue_, typename InputValue_, typename Index_>
+    OutputValue_ fill(bool, Index_) const {
         if constexpr(known_sparse) {
             return 0;
         } else {

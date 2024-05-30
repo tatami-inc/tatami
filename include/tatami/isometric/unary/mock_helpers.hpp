@@ -224,7 +224,8 @@ public:
     }
 
     /**
-     * @tparam OutputValue_ Type of matrix value returned by the operation.
+     * @tparam OutputValue_ Type of the result of the operation.
+     * @tparam InputValue_ Type of the matrix value used in the operation.
      * @tparam Index_ Type of index value.
      *
      * @param row Whether `i` refers to the row or column index.
@@ -234,10 +235,10 @@ public:
      *
      * @return The result of the operation being applied on zeros from the `i`-th row/column of the matrix.
      *
-     * This method will be called with an explicit `OutputValue_` template parameter.
+     * This method will be called with the explicit `OutputValue_` and `InputValue_` template parameters.
      * Implementations of this method should either ensure that `Index_` is deducible or use a fixed integer type in the method signature.
      */
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename InputValue_, typename Index_>
     OutputValue_ fill([[maybe_unused]] bool row, [[maybe_unused]] Index_ i) const { 
         return 0;
     }
