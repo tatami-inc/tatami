@@ -76,6 +76,7 @@ OutputValue_ delayed_arithmetic_zero(Scalar_ scalar) {
  * @tparam op_ The arithmetic operation.
  * @tparam right_ Whether the scalar should be on the right hand side of the arithmetic operation.
  * Ignored for commutative operations, e.g., `ADD` and `MULTIPLY`.
+ * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Scalar_ Type of the scalar value.
  */
 template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
