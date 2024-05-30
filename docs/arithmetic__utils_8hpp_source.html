@@ -148,13 +148,46 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00073" name="l00073"></a><span class="lineno">   73</span>    }</div>
 <div class="line"><a id="l00074" name="l00074"></a><span class="lineno">   74</span>}</div>
 <div class="line"><a id="l00075" name="l00075"></a><span class="lineno">   75</span> </div>
-<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="keyword">template</span>&lt;ArithmeticOperation op_, <span class="keywordtype">bool</span> right_, <span class="keyword">typename</span> Scalar_, <span class="keyword">typename</span> Value_&gt;</div>
-<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="keywordtype">void</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">delayed_arithmetic_run</a>(<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>&amp; <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">val</a>, <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Scalar_</a> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">scalar</a>) {</div>
-<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span>    <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">val</a> = <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">delayed_arithmetic&lt;op_, right_&gt;</a>(<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">val</a>, <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">scalar</a>);</div>
-<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span>}</div>
-<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>}</div>
-<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span> </div>
-<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00076" name="l00076"></a><span class="lineno">   76</span><span class="comment">// Some of the helpers need to divide by zero to compute the fill value. The</span></div>
+<div class="line"><a id="l00077" name="l00077"></a><span class="lineno">   77</span><span class="comment">// only way to guarantee that division by zero is supported is with IEEE</span></div>
+<div class="line"><a id="l00078" name="l00078"></a><span class="lineno">   78</span><span class="comment">// floats, otherwise it would be undefined behavior at compile time, and the</span></div>
+<div class="line"><a id="l00079" name="l00079"></a><span class="lineno">   79</span><span class="comment">// compiler could do anything, including refusing to compile it. So, we hide</span></div>
+<div class="line"><a id="l00080" name="l00080"></a><span class="lineno">   80</span><span class="comment">// any &#39;0/0&#39; behind a constexpr to ensure that the compiler doesn&#39;t see it.</span></div>
+<div class="line"><a id="l00081" name="l00081"></a><span class="lineno">   81</span><span class="keyword">template</span>&lt;ArithmeticOperation op_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Scalar_&gt;</div>
+<div class="line"><a id="l00082" name="l00082"></a><span class="lineno">   82</span><span class="keyword">constexpr</span> <span class="keywordtype">bool</span> <a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">has_unsafe_divide_by_zero</a>() {</div>
+<div class="line"><a id="l00083" name="l00083"></a><span class="lineno">   83</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(std::numeric_limits&lt;Value_&gt;::is_iec559) {</div>
+<div class="line"><a id="l00084" name="l00084"></a><span class="lineno">   84</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span>    }</div>
+<div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(std::numeric_limits&lt;Scalar_&gt;::is_iec559) {</div>
+<div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>        <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>    }</div>
+<div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span> </div>
+<div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>    <span class="comment">// MODULO (and POWER, for negative powers) also involve division by zero,</span></div>
+<div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>    <span class="comment">// but they return an implementation-defined value; so they&#39;re &quot;safe&quot;.</span></div>
+<div class="line"><a id="l00092" name="l00092"></a><span class="lineno">   92</span>    <span class="comment">// - https://en.cppreference.com/w/cpp/numeric/math/pow</span></div>
+<div class="line"><a id="l00093" name="l00093"></a><span class="lineno">   93</span>    <span class="comment">// - https://en.cppreference.com/w/cpp/numeric/math/fmod</span></div>
+<div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span> </div>
+<div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">op_</a> == ArithmeticOperation::DIVIDE) {</div>
+<div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>    }</div>
+<div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>    <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(<a class="code hl_function" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">op_</a> == ArithmeticOperation::INTEGER_DIVIDE) {</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    }</div>
+<div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span> </div>
+<div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>    <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span>}</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span> </div>
+<div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="comment">// COMMENT: if the fill value is visible at a compile time, the coercion to the</span></div>
+<div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span><span class="comment">// output type is also visible. If the output type cannot hold the fill value,</span></div>
+<div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span><span class="comment">// we could potentially get more compile-time UB. (This mostly concerns NaNs or</span></div>
+<div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span><span class="comment">// Infs from divide-by-zero, but could apply to overflows or out-of-range casts</span></div>
+<div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span><span class="comment">// to integer types.) To get around this, we assume that the compiler supports</span></div>
+<div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span><span class="comment">// the IEC 559 spec, where - according to Annex F.4 of the C standard - the</span></div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span><span class="comment">// cast from float to integer is merely unspecified, not undefined.</span></div>
+<div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span> </div>
+<div class="line"><a id="l00116" name="l00116"></a><span class="lineno">  116</span>}</div>
+<div class="line"><a id="l00117" name="l00117"></a><span class="lineno">  117</span> </div>
+<div class="line"><a id="l00118" name="l00118"></a><span class="lineno">  118</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="anamespacetatami_html_a9050a4b119e027638175c38cc9bbede8"><div class="ttname"><a href="namespacetatami.html#a9050a4b119e027638175c38cc9bbede8">tatami::ArithmeticOperation</a></div><div class="ttdeci">ArithmeticOperation</div><div class="ttdef"><b>Definition</b> arithmetic_utils.hpp:17</div></div>
 <div class="ttc" id="anamespacetatami_html_af05590455e558621c8ffc1b98c4fd454"><div class="ttname"><a href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">tatami::consecutive_extractor</a></div><div class="ttdeci">auto consecutive_extractor(const Matrix&lt; Value_, Index_ &gt; *mat, bool row, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> consecutive_extractor.hpp:35</div></div>
