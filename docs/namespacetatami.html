@@ -867,7 +867,8 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </table>
 </div><div class="memdoc">
 <p>Type of arithmetic operation.</p>
-<p>Note that the <code>INTEGER_DIVIDE</code> refers to a floored divide, not a truncation. This is based on R's <code>%/%</code>, which in turn is based on a recommendation by Donald Knuth. </p>
+<p>The <code>INTEGER_DIVIDE</code> refers to a floored division, which differs from truncation for negative quotients. This choice is based on R's <code>%/%</code>, which in turn is based on a recommendation by Donald Knuth.</p>
+<p>Similarly, <code>x MODULO y</code> is defined as <code>x - floor(x / y)</code>, based on the same floored division. Note that this differs from the built-in <code>%</code> operator, which performs truncation. </p>
 
 </div>
 </div>
