@@ -71,6 +71,7 @@ add_executable(
     src/isometric/unary/DelayedUnaryIsometricOperation.cpp
     src/isometric/unary/arithmetic_vector_helpers.cpp
     src/isometric/unary/arithmetic_scalar_helpers.cpp
+    src/isometric/unary/arithmetic_other.cpp
     src/isometric/unary/math_helpers.cpp
     src/isometric/unary/compare_scalar_helpers.cpp
     src/isometric/unary/compare_vector_helpers.cpp

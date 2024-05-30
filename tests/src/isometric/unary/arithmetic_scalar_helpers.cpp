@@ -370,24 +370,3 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(true, false)
     )
 );
-
-/**********************************
- ********* SPECIAL VALUES *********
- **********************************/
-
-TEST(DelayedUnaryIsometricArithmeticScalar, NonIeee754Multiply) {
-    int scalar = 5;
-    auto op = tatami::make_DelayedUnaryIsometricMultiplyScalar(scalar);
-    EXPECT_TRUE(op.is_sparse());
-}
-
-TEST(DelayedUnaryIsometricArithmeticScalar, NonFiniteMultiply) {
-    double scalar = std::numeric_limits<double>::infinity();
-    auto op = tatami::make_DelayedUnaryIsometricMultiplyScalar(scalar);
-    EXPECT_FALSE(op.is_sparse());
-}
-
-TEST(DelayedUnaryIsometricArithmeticScalar, NonIeee754Divide) {
-    auto op = tatami::make_DelayedUnaryIsometricDivideScalar<false, int>(5.0);
-    tatami_test::throws_error([&]() { op.template fill<double>(true, 5); }, "IEEE-754");
-}
