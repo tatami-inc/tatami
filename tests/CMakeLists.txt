@@ -71,7 +71,6 @@ add_executable(
     src/isometric/unary/DelayedUnaryIsometricOperation.cpp
     src/isometric/unary/arithmetic_vector_helpers.cpp
     src/isometric/unary/arithmetic_scalar_helpers.cpp
-    src/isometric/unary/arithmetic_other.cpp
     src/isometric/unary/math_helpers.cpp
     src/isometric/unary/compare_scalar_helpers.cpp
     src/isometric/unary/compare_vector_helpers.cpp
@@ -81,6 +80,12 @@ add_executable(
     src/isometric/unary/substitute_vector_helpers.cpp
 )
 decorate_executable(isometric_unary_test)
+
+add_executable(
+    isometric_other_test
+    src/isometric/arithmetic_utils.cpp
+)
+decorate_executable(isometric_other_test)
 
 add_executable(
     isometric_binary_test

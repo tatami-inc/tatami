@@ -521,7 +521,7 @@ protected:
 
         auto refvec = simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
-            refvec[i] = std::fmod(refvec[i], simulated_right[i]);
+            refvec[i] = careful_modulo(refvec[i], simulated_right[i]);
         }
         ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
     }

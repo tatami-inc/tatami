@@ -14,8 +14,11 @@ namespace tatami {
 /**
  * Type of arithmetic operation.
  *
- * Note that the `INTEGER_DIVIDE` refers to a floored divide, not a truncation.
- * This is based on R's `%/%`, which in turn is based on a recommendation by Donald Knuth. 
+ * The `INTEGER_DIVIDE` refers to a floored division, which differs from truncation for negative quotients.
+ * This choice is based on R's `%/%`, which in turn is based on a recommendation by Donald Knuth. 
+ *
+ * Similarly, `x MODULO y` is defined as `x - floor(x / y)`, based on the same floored division.
+ * Note that this differs from the built-in `%` operator, which performs truncation.
  */
 enum class ArithmeticOperation : char { 
     ADD, 
@@ -34,55 +37,61 @@ enum class ArithmeticOperation : char {
 // type should be; an appropriate coercion is left to the caller classes. 
 template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
 auto delayed_arithmetic(Value_ val, Scalar_ scalar) { 
-    if constexpr(op_ == ArithmeticOperation::ADD) {
-        return val + scalar;
-    } else if constexpr(op_ == ArithmeticOperation::MULTIPLY) {
-        return val * scalar;
-    } else if constexpr(op_ == ArithmeticOperation::SUBTRACT) {
+    auto left = [&]() {
         if constexpr(right_) {
-            return val - scalar;
+            return val;
         } else {
-            return scalar - val;
+            return scalar;
         }
+    }();
+    auto right = [&]() {
+        if constexpr(right_) {
+            return scalar;
+        } else {
+            return val;
+        }
+    }();
+
+    if constexpr(op_ == ArithmeticOperation::ADD) {
+        return left + right;
+
+    } else if constexpr(op_ == ArithmeticOperation::MULTIPLY) {
+        return left * right;
+
+    } else if constexpr(op_ == ArithmeticOperation::SUBTRACT) {
+        return left - right;
+
     } else if constexpr(op_ == ArithmeticOperation::DIVIDE) {
         // Assume that either Value_ is an IEEE-754 float, or that division by
         // zero is impossible in this context. We don't apply manual checks
         // here to avoid performance degradation; we also don't check that the
         // other operations yield a value that doesn't overflow/underflow, so
         // it would be odd to make an exception for div-by-zero errors.
-        if constexpr(right_) {
-            return val / scalar;
-        } else {
-            return scalar / val;
-        }
+        return left / right;
+
     } else if constexpr(op_ == ArithmeticOperation::POWER) {
-        if constexpr(right_) {
-            return std::pow(val, scalar);
-        } else {
-            return std::pow(scalar, val);
-        }
+        return std::pow(left, right);
+
     } else if constexpr(op_ == ArithmeticOperation::MODULO) {
-        if constexpr(right_) {
-            return std::fmod(val, scalar);
+        // Based on a floored divide, so some work is necessary to
+        // get the right value when the sign is negative.
+        auto quo = left / right; 
+        if constexpr(std::numeric_limits<decltype(quo)>::is_integer) {
+            auto rem = left % right;
+            return rem + (quo < 0 && rem != 0 ? right : 0);
         } else {
-            return std::fmod(scalar, val);
+            auto rem = std::fmod(left, right);
+            return rem + (quo < 0 && rem != 0 ? right : 0);
         }
+
     } else if constexpr(op_ == ArithmeticOperation::INTEGER_DIVIDE) {
-        // Using floored divide, based on what R does.
-        if constexpr(right_) {
-            auto out = val / scalar;
-            if constexpr(std::numeric_limits<decltype(out)>::is_integer) {
-                return out - (out < 0 ? (val % scalar != 0) : 0);
-            } else {
-                return std::floor(out);
-            }
+        auto out = left / right;
+        if constexpr(std::numeric_limits<decltype(out)>::is_integer) {
+            // Using a floored divide. This little branch should be optimized
+            // away so don't worry too much about it.
+            return out - (out < 0 ? (left % right != 0) : 0);
         } else {
-            auto out = scalar / val;
-            if constexpr(std::numeric_limits<decltype(out)>::is_integer) {
-                return out - (out < 0 ? (scalar % val != 0) : 0);
-            } else {
-                return std::floor(out);
-            }
+            return std::floor(out);
         }
     }
 }
@@ -99,12 +108,14 @@ constexpr bool has_unsafe_divide_by_zero() {
         return false;
     }
 
-    // MODULO (and POWER, for negative powers) also involve division by zero,
-    // but they return an implementation-defined value; so they're "safe".
+    // POWER also involves division by zero for negative powers,
+    // but it returns an implementation-defined value; so it's "safe".
     // - https://en.cppreference.com/w/cpp/numeric/math/pow
-    // - https://en.cppreference.com/w/cpp/numeric/math/fmod
 
     if constexpr(op_ == ArithmeticOperation::DIVIDE) {
+        return true;
+    }
+    if constexpr(op_ == ArithmeticOperation::MODULO) {
         return true;
     }
     if constexpr(op_ == ArithmeticOperation::INTEGER_DIVIDE) {

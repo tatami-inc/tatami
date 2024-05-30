@@ -1042,9 +1042,9 @@ protected:
                 auto& x = refvec[r * ncol + c];
                 auto val = vec[row ? r : c];
                 if (right) {
-                    x = std::fmod(x, val);
+                    x = careful_modulo(x, val);
                 } else {
-                    x = std::fmod(val, x);
+                    x = careful_modulo(val, x);
                 }
             }
         }
@@ -1093,11 +1093,11 @@ TEST_P(DelayedUnaryIsometricModuloVectorZeroedTest, AllZero) {
     auto copy = simulated;
     if (right) {
         for (auto& x : copy) {
-            x = std::fmod(x, 0.0);
+            x = careful_modulo(x, 0.0);
         }
     } else {
         for (auto& x : copy) {
-            x = std::fmod(0.0, x);
+            x = careful_modulo(0.0, x);
         }
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
@@ -1152,9 +1152,9 @@ TEST_P(DelayedUnaryIsometricModuloVectorNewTypeTest, Basic) {
             auto offset = r * ncol + c;
             auto val = vec[row ? r : c];
             if (right) {
-                frefvec[offset] = std::fmod(simulated[offset], val);
+                frefvec[offset] = careful_modulo(simulated[offset], val);
             } else {
-                frefvec[offset] = std::fmod(val, simulated[offset]);
+                frefvec[offset] = careful_modulo(val, simulated[offset]);
             }
 
         }

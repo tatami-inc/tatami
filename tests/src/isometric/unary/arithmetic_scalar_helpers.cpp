@@ -278,9 +278,9 @@ TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Modulo) {
     auto refvec = simulated;
     for (auto& r : refvec) {
         if (on_right) {
-            r = std::fmod(r, val);
+            r = careful_modulo(r, val);
         } else {
-            r = std::fmod(val, r);
+            r = careful_modulo(val, r);
         }
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
@@ -370,3 +370,42 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(true, false)
     )
 );
+
+/**********************************
+ ********* SPECIAL VALUES *********
+ **********************************/
+
+TEST(DelayedUnaryIsometricArithmetic, NonIeee754Ops) {
+    {
+        int scalar = 5;
+        auto op = tatami::make_DelayedUnaryIsometricMultiplyScalar(scalar);
+        EXPECT_TRUE(op.is_sparse());
+    }
+
+    {
+        int scalar = 0;
+        auto op = tatami::make_DelayedUnaryIsometricPowerScalar<false>(scalar);
+        EXPECT_FALSE(op.is_sparse());
+    }
+
+    {
+        auto op = tatami::make_DelayedUnaryIsometricDivideScalar<false, int>(5);
+        tatami_test::throws_error([&]() { op.template fill<int, int>(true, 5); }, "division by zero");
+    }
+
+    {
+        auto op = tatami::make_DelayedUnaryIsometricIntegerDivideScalar<false, int>(5);
+        tatami_test::throws_error([&]() { op.template fill<int, int>(true, 5); }, "division by zero");
+    }
+
+    {
+        auto op = tatami::make_DelayedUnaryIsometricModuloScalar<false, int>(5);
+        tatami_test::throws_error([&]() { op.template fill<int, int>(true, 5); }, "division by zero");
+    }
+}
+
+TEST(DelayedUnaryIsometricArithmetic, NonFiniteMultiply) {
+    double scalar = std::numeric_limits<double>::infinity();
+    auto op = tatami::make_DelayedUnaryIsometricMultiplyScalar(scalar);
+    EXPECT_FALSE(op.is_sparse());
+}

@@ -1,8 +1,7 @@
 #ifndef TATAMI_TEST_ISOMETRIC_UTILS_HPP
 #define TATAMI_TEST_ISOMETRIC_UTILS_HPP
 
-template<typename T>
-T careful_division(T left, T right) {
+inline double careful_division(double left, double right) {
     if (right == 0) {
         if (left > 0) {
             return std::numeric_limits<double>::infinity();
@@ -13,6 +12,15 @@ T careful_division(T left, T right) {
         }
     } else {
         return left / right;
+    }
+}
+
+inline double careful_modulo(double left, double right) {
+    if (right == 0) {
+        return std::numeric_limits<double>::quiet_NaN();
+    } else {
+        auto out = std::fmod(left, right);
+        return out + (left/right < 0 && out != 0 ? right : 0);
     }
 }
 
