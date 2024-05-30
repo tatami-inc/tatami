@@ -29,37 +29,33 @@ void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scal
     }
 }
 
-// Previously, we applied the operation empirically and checked whether the
-// result is zero. This was not ideal as some operations may yield undefined
-// values for certain input types (e.g., division by zero involving integers),
-// which could cause compile-time errors. It also requires our helper class to
-// know the input matrix type ahead of time, which should not be necessary.
-template<ArithmeticOperation op_, bool right_, typename Scalar_>
+// These two functions should be mirrors of each other.
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
 bool delayed_arithmetic_actual_sparse(Scalar_ scalar) {
-    if constexpr(op_ == ArithmeticOperation::ADD || op_ == ArithmeticOperation::SUBTRACT) {
-        return (scalar == 0);
-    } else if constexpr(op_ == ArithmeticOperation::MULTIPLY) {
-        // Need to account for 'scalar' being Inf or NaN, in which case it is not sparse. 
-        return (0 * scalar == 0);
-    } else if constexpr(op_ == ArithmeticOperation::POWER) {
-        return (right_ && scalar > 0);
-    } else { // DIVIDE, MODULO and INTEGER_DIVIDE
-        return (right_ && (scalar > 0 || scalar < 0)); // don't use '!=' as this would be true for NaNs.
+    if constexpr(has_unsafe_divide_by_zero<op_, right_, InputValue_, Scalar_>()) {
+        if constexpr(right_) {
+            if (scalar) {
+                return delayed_arithmetic<op_, right_, InputValue_>(0, scalar) == 0;
+            }
+        }
+        return false;
+    } else {
+        return delayed_arithmetic<op_, right_, InputValue_>(0, scalar) == 0;
     }
 }
 
-template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename Scalar_>
-OutputValue_ delayed_arithmetic_zero(Scalar_ scalar) {
-    if constexpr(has_unsafe_divide_by_zero<op_, OutputValue_, Scalar_>()) {
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
+auto delayed_arithmetic_zero(Scalar_ scalar) {
+    if constexpr(has_unsafe_divide_by_zero<op_, right_, InputValue_, Scalar_>()) {
         if constexpr(right_) {
             if (scalar) {
-                return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
+                return delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
             }
         }
         throw std::runtime_error("division by zero is not supported");
-        return 0;
+        return static_cast<decltype(delayed_arithmetic<op_, right_, InputValue_>(0, scalar))>(1);
     } else {
-        return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
+        return delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
     }
 }
 /**
@@ -86,7 +82,7 @@ public:
      * @param scalar Scalar value to be used in the operation.
      */
     DelayedUnaryIsometricArithmeticScalar(Scalar_ scalar) : my_scalar(scalar) {
-        my_sparse = delayed_arithmetic_actual_sparse<op_, right_>(scalar);
+        my_sparse = delayed_arithmetic_actual_sparse<op_, right_, InputValue_>(scalar);
     }
 
 private:
@@ -125,13 +121,13 @@ public:
         delayed_arithmetic_run_simple<op_, right_>(input_value, number, my_scalar, output_value);
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename, typename Index_>
     OutputValue_ fill(bool, Index_) const {
-        // We perform the operation with the InputValue_ to use in casting it to
+        // We perform the operation with the InputValue_ before casting it to
         // the OutputValue_, which is consistent with the behavior of all other
-        // methods. This has some interesting implications if only one or the
-        // other supports, e.g., division by zero, but that's not my problem.
-        return delayed_arithmetic_zero<op_, right_, OutputValue_>(my_scalar);
+        // methods. See ../arithmetic_utils.hpp for some comments about the
+        // safety of this cast when the value is known at compile time.
+        return delayed_arithmetic_zero<op_, right_, InputValue_>(my_scalar);
     }
     /**
      * @endcond
@@ -256,10 +252,10 @@ public:
         }
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename, typename Index_>
     OutputValue_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
-            return delayed_arithmetic_zero<op_, right_, OutputValue_>(my_vector[idx]);
+            return delayed_arithmetic_zero<op_, right_, InputValue_>(my_vector[idx]);
         } else {
             // We should only get to this point if it's sparse, otherwise no
             // single fill value would work across the length of my_vector.

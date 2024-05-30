@@ -89,11 +89,11 @@ public:
 
     template<typename OutputValue_, typename InputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
-        if constexpr(has_unsafe_divide_by_zero<op_, OutputValue_, OutputValue_>()) {
+        if constexpr(has_unsafe_divide_by_zero<op_, true, InputValue_, InputValue_>()) {
             throw std::runtime_error("division by zero is not supported");
             return 0;
         } else {
-            return delayed_arithmetic<op_, true, OutputValue_>(0, 0);
+            return delayed_arithmetic<op_, true, InputValue_>(0, 0);
         }
     }
 

@@ -78,12 +78,10 @@ auto delayed_arithmetic(Value_ val, Scalar_ scalar) {
 // floats, otherwise it would be undefined behavior at compile time, and the
 // compiler could do anything, including refusing to compile it. So, we hide
 // any '0/0' behind a constexpr to ensure that the compiler doesn't see it.
-template<ArithmeticOperation op_, typename Value_, typename Scalar_>
+template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
 constexpr bool has_unsafe_divide_by_zero() {
-    if constexpr(std::numeric_limits<Value_>::is_iec559) {
-        return false;
-    }
-    if constexpr(std::numeric_limits<Scalar_>::is_iec559) {
+    typedef decltype(delayed_arithmetic<op_, right_>(std::declval<Value_>(), std::declval<Scalar_>())) Product;
+    if constexpr(std::numeric_limits<Product>::is_iec559) {
         return false;
     }
 

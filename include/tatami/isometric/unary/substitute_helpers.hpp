@@ -97,8 +97,8 @@ public:
         delayed_substitute_run_simple<op_, Value_>(output_value, number, my_compared, my_substitute);
     }
 
-    template<typename OutputValue_, typename Index_>
-    OutputValue_ fill(bool, Index_) const {
+    template<typename, typename, typename Index_>
+    Value_ fill(bool, Index_) const {
         if (my_sparse) {
             return 0;
         } else {
@@ -118,7 +118,7 @@ public:
  * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class, and only when `InputValue_ == OutputValue_`.
  *
  * @tparam op_ The comparison operation.
- * @tparam Value_ Type of the matrix value. 
+ * @tparam InputValue_ Type of the matrix value. 
  * @tparam Vector_ Type of the vector.
  */
 template<CompareOperation op_, typename Value_, typename Vector_>
@@ -219,8 +219,8 @@ public:
         }
     }
 
-    template<typename OutputValue_, typename Index_>
-    OutputValue_ fill(bool row, Index_ idx) const {
+    template<typename, typename, typename Index_>
+    Value_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
             auto sub = my_substitute[idx];
             if (!delayed_compare<op_, Value_>(0, my_compared[idx])) {
@@ -501,7 +501,7 @@ public:
         delayed_special_substitute_run_simple<op_, pass_, Value_>(output_value, number, my_substitute);
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         if (my_sparse) {
             return 0;

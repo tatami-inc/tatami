@@ -69,7 +69,7 @@ void delayed_boolean_run_simple(const InputValue_* input, Index_ length, bool sc
     }
 }
 
-template<BooleanOperation op_, typename InputValue_>
+template<BooleanOperation op_>
 bool delayed_boolean_actual_sparse(bool scalar) {
     return delayed_boolean<op_>(0, scalar) == static_cast<bool>(0);
 }
@@ -87,14 +87,14 @@ bool delayed_boolean_actual_sparse(bool scalar) {
  * @tparam op_ The boolean operation.
  * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<BooleanOperation op_, typename InputValue_>
+template<BooleanOperation op_>
 class DelayedUnaryIsometricBooleanScalar {
 public:
     /**
      * @param scalar Scalar value.
      */
     DelayedUnaryIsometricBooleanScalar(bool scalar) : my_scalar(scalar) {
-        my_sparse = delayed_boolean_actual_sparse<op_, InputValue_>(my_scalar);
+        my_sparse = delayed_boolean_actual_sparse<op_>(my_scalar);
     }
 
 private:
@@ -118,22 +118,22 @@ public:
     /**
      * @cond
      */
-    template<typename Index_, typename OutputValue_> 
+    template<typename Index_, typename InputValue_, typename OutputValue_> 
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
         delayed_boolean_run_simple<op_>(input, length, my_scalar, output);
     }
 
-    template<typename Index_, typename OutputValue_> 
+    template<typename Index_, typename InputValue_, typename OutputValue_> 
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         delayed_boolean_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_scalar, output);
     }
 
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
         delayed_boolean_run_simple<op_>(input_value, number, my_scalar, output_value);
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename InputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         // Remember, the operation needs to be performed on the InputValue_
         // to use in casting it to the OutputValue_.
@@ -150,10 +150,7 @@ public:
  * This class applies a boolean NOT operation to each element of a `Matrix`.
  * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
  * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
- *
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename InputValue_ = double>
 class DelayedUnaryIsometricBooleanNot {
 public:
     /**
@@ -174,22 +171,22 @@ public:
     /**
      * @cond
      */
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
         delayed_boolean_not(input, length, output);
     }
 
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         delayed_boolean_not(input, static_cast<Index_>(indices.size()), output);
     }
 
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
         delayed_boolean_not(input_value, number, output_value);
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename InputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         return 1;
     }
@@ -204,10 +201,7 @@ public:
  * This class casts each element of a `Matrix` to a boolean 1 or 0, equivalent to the old `!!` trick.
  * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class.
  * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
- *
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  */
-template<typename InputValue_ = double>
 class DelayedUnaryIsometricBooleanCast {
 public:
     /**
@@ -226,22 +220,22 @@ public:
     /**
      * @cond
      */
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
         delayed_boolean_cast(input, length, output);
     }
 
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         delayed_boolean_cast(input, static_cast<Index_>(indices.size()), output);
     }
 
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
         delayed_boolean_cast(input_value, number, output_value);
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename InputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         return 0;
     }
@@ -258,10 +252,9 @@ public:
  * It may be used regardless of whether `InputValue_` and `OutputValue_` are equal (or not).
  *
  * @tparam op_ The boolean operation.
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  */
-template<BooleanOperation op_, typename InputValue_, typename Vector_>
+template<BooleanOperation op_, typename Vector_>
 class DelayedUnaryIsometricBooleanVector {
 public:
     /**
@@ -273,7 +266,7 @@ public:
      */
     DelayedUnaryIsometricBooleanVector(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
         for (auto x : my_vector) {
-             if (!delayed_boolean_actual_sparse<op_, InputValue_>(x)) {
+             if (!delayed_boolean_actual_sparse<op_>(x)) {
                  my_sparse = false;
                  break;
              }
@@ -318,7 +311,7 @@ public:
     /**
      * @cond
      */
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const {
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input, length, my_vector[idx], output);
@@ -334,7 +327,7 @@ public:
         }
     }
 
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
@@ -350,7 +343,7 @@ public:
         }
     }
 
-    template<typename Index_, typename OutputValue_>
+    template<typename Index_, typename InputValue_, typename OutputValue_>
     void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_value, const Index_* index, OutputValue_* output_value) const {
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input_value, number, my_vector[idx], output_value);
@@ -366,7 +359,7 @@ public:
         }
     }
 
-    template<typename OutputValue_, typename Index_>
+    template<typename OutputValue_, typename InputValue_, typename Index_>
     OutputValue_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
             return delayed_boolean<op_>(0, my_vector[idx]);
@@ -382,109 +375,95 @@ public:
 };
 
 /**
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @return A helper class for a delayed NOT operation,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename InputValue_ = double>
-DelayedUnaryIsometricBooleanNot<InputValue_> make_DelayedUnaryIsometricBooleanNot() {
-    return DelayedUnaryIsometricBooleanNot<InputValue_>();
+inline DelayedUnaryIsometricBooleanNot make_DelayedUnaryIsometricBooleanNot() {
+    return DelayedUnaryIsometricBooleanNot();
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @param scalar Scalar value to use in the operation.
  * @return A helper class for a delayed AND operation with a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename InputValue_ = double>
-DelayedUnaryIsometricBooleanScalar<BooleanOperation::AND, InputValue_> make_DelayedUnaryIsometricBooleanAndScalar(bool scalar) {
-    return DelayedUnaryIsometricBooleanScalar<BooleanOperation::AND, InputValue_>(scalar);
+inline DelayedUnaryIsometricBooleanScalar<BooleanOperation::AND> make_DelayedUnaryIsometricBooleanAndScalar(bool scalar) {
+    return DelayedUnaryIsometricBooleanScalar<BooleanOperation::AND>(scalar);
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @param scalar Scalar value to use in the operation.
  * @return A helper class for a delayed OR operation with a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename InputValue_ = double>
-DelayedUnaryIsometricBooleanScalar<BooleanOperation::OR, InputValue_> make_DelayedUnaryIsometricBooleanOrScalar(bool scalar) {
-    return DelayedUnaryIsometricBooleanScalar<BooleanOperation::OR, InputValue_>(scalar);
+inline DelayedUnaryIsometricBooleanScalar<BooleanOperation::OR> make_DelayedUnaryIsometricBooleanOrScalar(bool scalar) {
+    return DelayedUnaryIsometricBooleanScalar<BooleanOperation::OR>(scalar);
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @param scalar Scalar value to be used in the operation.
  * @return A helper class for a delayed XOR operation with a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename InputValue_ = double>
-DelayedUnaryIsometricBooleanScalar<BooleanOperation::XOR, InputValue_> make_DelayedUnaryIsometricBooleanXorScalar(bool scalar) {
-    return DelayedUnaryIsometricBooleanScalar<BooleanOperation::XOR, InputValue_>(scalar);
+inline DelayedUnaryIsometricBooleanScalar<BooleanOperation::XOR> make_DelayedUnaryIsometricBooleanXorScalar(bool scalar) {
+    return DelayedUnaryIsometricBooleanScalar<BooleanOperation::XOR>(scalar);
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @param scalar Scalar value to be used in the operation.
  * @return A helper class for a delayed boolean equality operation with a scalar,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename InputValue_ = double>
-DelayedUnaryIsometricBooleanScalar<BooleanOperation::EQUAL, InputValue_> make_DelayedUnaryIsometricBooleanEqualScalar(bool scalar) {
-    return DelayedUnaryIsometricBooleanScalar<BooleanOperation::EQUAL, InputValue_>(scalar);
+inline DelayedUnaryIsometricBooleanScalar<BooleanOperation::EQUAL> make_DelayedUnaryIsometricBooleanEqualScalar(bool scalar) {
+    return DelayedUnaryIsometricBooleanScalar<BooleanOperation::EQUAL>(scalar);
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be used in the operation.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
  * @return A helper class for a delayed AND operation with a vector,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename InputValue_ = double, typename Vector_>
-DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, InputValue_, Vector_> make_DelayedUnaryIsometricBooleanAndVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, InputValue_, Vector_>(std::move(vector), by_row);
+template<typename Vector_>
+DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, Vector_> make_DelayedUnaryIsometricBooleanAndVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricBooleanVector<BooleanOperation::AND, Vector_>(std::move(vector), by_row);
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be used in the operation.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
  * @return A helper class for a delayed OR operation with a vector,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename InputValue_ = double, typename Vector_>
-DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, InputValue_, Vector_> make_DelayedUnaryIsometricBooleanOrVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, InputValue_, Vector_>(std::move(vector), by_row);
+template<typename Vector_>
+DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, Vector_> make_DelayedUnaryIsometricBooleanOrVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricBooleanVector<BooleanOperation::OR, Vector_>(std::move(vector), by_row);
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be used in the operation.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
  * @return A helper class for a delayed XOR operation with a vector,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename InputValue_ = double, typename Vector_>
-DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, InputValue_, Vector_> make_DelayedUnaryIsometricBooleanXorVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, InputValue_, Vector_>(std::move(vector), by_row);
+template<typename Vector_>
+DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, Vector_> make_DelayedUnaryIsometricBooleanXorVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricBooleanVector<BooleanOperation::XOR, Vector_>(std::move(vector), by_row);
 }
 
 /**
- * @tparam InputValue_ Type of the matrix value to use in the operation.
  * @tparam Vector_ Type of the vector.
  * @param vector Vector of values to be used in the operation.
  * @param by_row Whether each element of `vector` corresponds to a row, see `DelayedUnaryIsometricBooleanVector`.
  * @return A helper class for a delayed boolean equality operation with a vector,
  * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
  */
-template<typename InputValue_ = double, typename Vector_>
-DelayedUnaryIsometricBooleanVector<BooleanOperation::EQUAL, InputValue_, Vector_> make_DelayedUnaryIsometricBooleanEqualVector(Vector_ vector, bool by_row) {
-    return DelayedUnaryIsometricBooleanVector<BooleanOperation::EQUAL, InputValue_, Vector_>(std::move(vector), by_row);
+template<typename Vector_>
+DelayedUnaryIsometricBooleanVector<BooleanOperation::EQUAL, Vector_> make_DelayedUnaryIsometricBooleanEqualVector(Vector_ vector, bool by_row) {
+    return DelayedUnaryIsometricBooleanVector<BooleanOperation::EQUAL, Vector_>(std::move(vector), by_row);
 }
 
 }

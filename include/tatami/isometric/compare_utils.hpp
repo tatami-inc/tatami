@@ -42,11 +42,6 @@ bool delayed_compare(Value_ val, Value_ scalar) {
         return val != scalar;
     }
 }
-
-template<CompareOperation op_, typename Value_>
-void delayed_compare_run(Value_& val, Value_ scalar) {
-    val = delayed_compare<op_, Value_>(val, scalar);
-}
 /**
  * @endcond
  */
