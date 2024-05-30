@@ -79,7 +79,7 @@ auto delayed_arithmetic(Value_ val, Scalar_ scalar) {
         } else {
             auto out = scalar / val;
             if constexpr(std::numeric_limits<decltype(out)>::is_integer) {
-                return out - (out < 0 ? (val % scalar != 0) : 0);
+                return out - (out < 0 ? (scalar % val != 0) : 0);
             } else {
                 return std::floor(out);
             }
