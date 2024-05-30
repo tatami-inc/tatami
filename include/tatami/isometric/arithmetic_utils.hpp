@@ -73,10 +73,43 @@ auto delayed_arithmetic(Value_ val, Scalar_ scalar) {
     }
 }
 
-template<ArithmeticOperation op_, bool right_, typename Scalar_, typename Value_>
-void delayed_arithmetic_run(Value_& val, Scalar_ scalar) {
-    val = delayed_arithmetic<op_, right_>(val, scalar);
+// Some of the helpers need to divide by zero to compute the fill value. The
+// only way to guarantee that division by zero is supported is with IEEE
+// floats, otherwise it would be undefined behavior at compile time, and the
+// compiler could do anything, including refusing to compile it. So, we hide
+// any '0/0' behind a constexpr to ensure that the compiler doesn't see it.
+template<ArithmeticOperation op_, typename Value_, typename Scalar_>
+constexpr bool has_unsafe_divide_by_zero() {
+    if constexpr(std::numeric_limits<Value_>::is_iec559) {
+        return false;
+    }
+    if constexpr(std::numeric_limits<Scalar_>::is_iec559) {
+        return false;
+    }
+
+    // MODULO (and POWER, for negative powers) also involve division by zero,
+    // but they return an implementation-defined value; so they're "safe".
+    // - https://en.cppreference.com/w/cpp/numeric/math/pow
+    // - https://en.cppreference.com/w/cpp/numeric/math/fmod
+
+    if constexpr(op_ == ArithmeticOperation::DIVIDE) {
+        return true;
+    }
+    if constexpr(op_ == ArithmeticOperation::INTEGER_DIVIDE) {
+        return true;
+    }
+
+    return false;
 }
+
+// COMMENT: if the fill value is visible at a compile time, the coercion to the
+// output type is also visible. If the output type cannot hold the fill value,
+// we could potentially get more compile-time UB. (This mostly concerns NaNs or
+// Infs from divide-by-zero, but could apply to overflows or out-of-range casts
+// to integer types.) To get around this, we assume that the compiler supports
+// the IEC 559 spec, where - according to Annex F.4 of the C standard - the
+// cast from float to integer is merely unspecified, not undefined.
+
 /**
  * @endcond
  */
