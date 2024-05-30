@@ -306,9 +306,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>        <span class="keyword">auto</span> num = my_operation.sparse(my_row, i, lres, rres, my_output_vbuffer.data(), my_output_ibuffer.data(), <span class="keyword">true</span>, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span> </div>
 <div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        <span class="comment">// Avoid calling my_operation.fill() if possible, as this might throw</span></div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        <span class="comment">// zero-related errors in non-IEEE platforms.</span></div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>        <span class="comment">// zero-related errors with non-IEEE-float types.</span></div>
 <div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>        <span class="keywordflow">if</span> (num &lt; my_extent) { </div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            std::fill_n(buffer, my_extent, my_operation.template fill&lt;OutputValue_&gt;(my_row, i));</div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            std::fill_n(buffer, my_extent, my_operation.template fill&lt;OutputValue_, InputValue_&gt;(my_row, i));</div>
 <div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        }</div>
 <div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span> </div>
 <div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>        <span class="keywordflow">for</span> (Index_ j = 0; j &lt; num; ++j) {</div>
@@ -370,9 +370,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        <span class="keyword">auto</span> num = my_operation.sparse(my_row, i, lres, rres, my_output_vbuffer.data(), my_output_ibuffer.data(), <span class="keyword">true</span>, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span> </div>
 <div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>        <span class="comment">// Avoid calling my_operation.fill() if possible, as this might throw</span></div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        <span class="comment">// zero-related errors in non-IEEE platforms.</span></div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>        <span class="comment">// zero-related errors with non-IEEE-float types.</span></div>
 <div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>        <span class="keywordflow">if</span> (num &lt; my_block_length) { </div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>            std::fill_n(buffer, my_block_length, my_operation.template fill&lt;OutputValue_&gt;(my_row, i));</div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>            std::fill_n(buffer, my_block_length, my_operation.template fill&lt;OutputValue_, InputValue_&gt;(my_row, i));</div>
 <div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        }</div>
 <div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span> </div>
 <div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>        <span class="keywordflow">for</span> (Index_ j = 0; j &lt; num; ++j) {</div>
@@ -444,9 +444,9 @@ $(document).ready(function() { init_codefold(0); });
 <div class="line"><a id="l00368" name="l00368"></a><span class="lineno">  368</span>        <span class="keyword">auto</span> num = my_operation.sparse(my_row, i, lres, rres, my_output_vbuffer.data(), my_output_ibuffer.data(), <span class="keyword">true</span>, <span class="keyword">true</span>);</div>
 <div class="line"><a id="l00369" name="l00369"></a><span class="lineno">  369</span> </div>
 <div class="line"><a id="l00370" name="l00370"></a><span class="lineno">  370</span>        <span class="comment">// Avoid calling my_operation.fill() if possible, as this might throw</span></div>
-<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>        <span class="comment">// zero-related errors in non-IEEE platforms.</span></div>
+<div class="line"><a id="l00371" name="l00371"></a><span class="lineno">  371</span>        <span class="comment">// zero-related errors with non-IEEE-float types.</span></div>
 <div class="line"><a id="l00372" name="l00372"></a><span class="lineno">  372</span>        <span class="keywordflow">if</span> (num &lt; my_extent) { </div>
-<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>            std::fill_n(buffer, my_extent, my_operation.template fill&lt;OutputValue_&gt;(my_row, i));</div>
+<div class="line"><a id="l00373" name="l00373"></a><span class="lineno">  373</span>            std::fill_n(buffer, my_extent, my_operation.template fill&lt;OutputValue_, InputValue_&gt;(my_row, i));</div>
 <div class="line"><a id="l00374" name="l00374"></a><span class="lineno">  374</span>        }</div>
 <div class="line"><a id="l00375" name="l00375"></a><span class="lineno">  375</span> </div>
 <div class="line"><a id="l00376" name="l00376"></a><span class="lineno">  376</span>        <span class="keywordflow">for</span> (Index_ j = 0; j &lt; num; ++j) {</div>
