@@ -29,34 +29,47 @@ void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scal
     }
 }
 
-// These two functions should be mirrors of each other.
-template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
-bool delayed_arithmetic_actual_sparse(Scalar_ scalar) {
+// The '*_actual_sparse' and '*_zero' functions should be mirrors of each other;
+// we enforce this by putting their logic all in the same place.
+template<bool check_only_, ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
+auto delayed_arithmetic_zeroish(Scalar_ scalar) {
     if constexpr(has_unsafe_divide_by_zero<op_, right_, InputValue_, Scalar_>()) {
         if constexpr(right_) {
             if (scalar) {
-                return delayed_arithmetic<op_, right_, InputValue_>(0, scalar) == 0;
+                auto val = delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
+                if constexpr(check_only_) {
+                    return val == 0;
+                } else {
+                    return val;
+                }
             }
         }
-        return false;
+
+        if constexpr(check_only_) {
+            return false;
+        } else {
+            throw std::runtime_error("division by zero is not supported");
+            return static_cast<decltype(delayed_arithmetic<op_, right_, InputValue_>(0, scalar))>(1);
+        }
+
     } else {
-        return delayed_arithmetic<op_, right_, InputValue_>(0, scalar) == 0;
+        auto val = delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
+        if constexpr(check_only_) {
+            return val == 0;
+        } else {
+            return val;
+        }
     }
 }
 
 template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
+bool delayed_arithmetic_actual_sparse(Scalar_ scalar) {
+    return delayed_arithmetic_zeroish<true, op_, right_, InputValue_, Scalar_>(scalar);
+}
+
+template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
 auto delayed_arithmetic_zero(Scalar_ scalar) {
-    if constexpr(has_unsafe_divide_by_zero<op_, right_, InputValue_, Scalar_>()) {
-        if constexpr(right_) {
-            if (scalar) {
-                return delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
-            }
-        }
-        throw std::runtime_error("division by zero is not supported");
-        return static_cast<decltype(delayed_arithmetic<op_, right_, InputValue_>(0, scalar))>(1);
-    } else {
-        return delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
-    }
+    return delayed_arithmetic_zeroish<false, op_, right_, InputValue_, Scalar_>(scalar);
 }
 /**
  * @endcond

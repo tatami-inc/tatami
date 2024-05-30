@@ -501,8 +501,8 @@ public:
         delayed_special_substitute_run_simple<op_, pass_, Value_>(output_value, number, my_substitute);
     }
 
-    template<typename OutputValue_, typename, typename Index_>
-    OutputValue_ fill(bool, Index_) const {
+    template<typename, typename, typename Index_>
+    Value_ fill(bool, Index_) const {
         if (my_sparse) {
             return 0;
         } else {
