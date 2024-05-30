@@ -29,57 +29,32 @@ void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scal
     }
 }
 
-// Don't apply the operation empirically and check whether the result is zero,
-// as some operations may yield undefined values for certain input types (e.g.,
-// division by zero for integers).
+// Previously, we applied the operation empirically and checked whether the
+// result is zero. This was not ideal as some operations may yield undefined
+// values for certain input types (e.g., division by zero involving integers),
+// which could cause compile-time errors. It also requires our helper class to
+// know the input matrix type ahead of time, which should not be necessary.
 template<ArithmeticOperation op_, bool right_, typename Scalar_>
 bool delayed_arithmetic_actual_sparse(Scalar_ scalar) {
-    if constexpr(op_ == ArithmeticOperation::ADD) {
-        return (scalar == 0);
-    } else if constexpr(op_ == ArithmeticOperation::SUBTRACT) {
+    if constexpr(op_ == ArithmeticOperation::ADD || op_ == ArithmeticOperation::SUBTRACT) {
         return (scalar == 0);
     } else if constexpr(op_ == ArithmeticOperation::MULTIPLY) {
+        // Need to account for 'scalar' being Inf or NaN, in which case it is not sparse. 
         return (0 * scalar == 0);
-    } else if constexpr(op_ == ArithmeticOperation::DIVIDE) {
-        return (right_ && scalar != 0);
     } else if constexpr(op_ == ArithmeticOperation::POWER) {
         return (right_ && scalar > 0);
-    } else if constexpr(op_ == ArithmeticOperation::MODULO) {
-        return (right_ && scalar != 0);
-    } else if constexpr(op_ == ArithmeticOperation::INTEGER_DIVIDE) {
+    } else { // DIVIDE, MODULO and INTEGER_DIVIDE
         return (right_ && scalar != 0);
     }
 }
 
 template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename Scalar_>
-auto delayed_arithmetic_divide_by_zero(Scalar_ scalar) {
-    if constexpr(std::numeric_limits<OutputValue_>::is_iec559) {
+OutputValue_ delayed_arithmetic_zero(Scalar_ scalar) {
+    if constexpr(op_ == ArithmeticOperation::ADD || op_ == ArithmeticOperation::SUBTRACT || op_ == ArithmeticOperation::MULTIPLY) {
         return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
-    } else if constexpr(right_) {
-        if (scalar) {
-            return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
-        }
-    }
-    throw std::runtime_error("division by zero is not supported");
-    return 0;
-}
 
-// We set the return type to auto to avoid making any conclusions about the return type.
-// We don't want to coerce it to the InputValue_ if this might lose information, e.g., 
-// if Scalar_ is a float, the return type would also be a float, even if InputValue_
-// is an integer; we let the caller decide what cast is necessary to the OutputValue_.
-template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename Scalar_>
-auto delayed_arithmetic_zero(Scalar_ scalar) {
-    if constexpr(op_ == ArithmeticOperation::ADD) {
-        return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
-    } else if constexpr(op_ == ArithmeticOperation::SUBTRACT) {
-        return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
-    } else if constexpr(op_ == ArithmeticOperation::MULTIPLY) {
-        return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
-    } else if constexpr(op_ == ArithmeticOperation::DIVIDE) {
-        return delayed_arithmetic_divide_by_zero<op_, right_, OutputValue_>(scalar);
     } else if constexpr(op_ == ArithmeticOperation::POWER) {
-        if constexpr(std::numeric_limits<Value_>::is_iec559) {
+        if constexpr(std::numeric_limits<OutputValue_>::is_iec559) {
             return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
         } else if constexpr(right_) {
             if (scalar >= 0) {
@@ -88,10 +63,17 @@ auto delayed_arithmetic_zero(Scalar_ scalar) {
         }
         throw std::runtime_error("division by zero is not supported");
         return 0;
-    } else if constexpr(op_ == ArithmeticOperation::MODULO) {
-        return delayed_arithmetic_divide_by_zero<op_, right_, OutputValue_>(scalar);
-    } else if constexpr(op_ == ArithmeticOperation::INTEGER_DIVIDE) {
-        return delayed_arithmetic_divide_by_zero<op_, right_, OutputValue_>(scalar);
+
+    } else { // DIVIDE, MODULO and INTEGER_DIVIDE
+        if constexpr(std::numeric_limits<OutputValue_>::is_iec559) {
+            return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
+        } else if constexpr(right_) {
+            if (scalar) {
+                return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
+            }
+        }
+        throw std::runtime_error("division by zero is not supported");
+        return 0;
     }
 }
 /**
