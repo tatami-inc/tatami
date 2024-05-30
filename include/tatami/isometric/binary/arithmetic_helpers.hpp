@@ -89,22 +89,11 @@ public:
 
     template<typename OutputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
-        if constexpr(known_sparse) {
+        if constexpr(has_unsafe_divide_by_zero<op_, OutputValue_, OutputValue_>()) {
+            throw std::runtime_error("division by zero is not supported");
             return 0;
-        } else if constexpr(op_ == ArithmeticOperation::POWER) {
-            return 1;
         } else {
-            // The only way to guarantee that division/modulo by zero is
-            // supported is with IEEE floats, otherwise it would be undefined
-            // behavior and anything could happen. So, we fence this behind a
-            // constexpr that guarantees that the operation will work. For
-            // unsupported types, we hope that it never reaches this point.
-            if constexpr(std::numeric_limits<OutputValue_>::is_iec559) {
-                return delayed_arithmetic<op_, true, OutputValue_>(0, 0);
-            } else {
-                throw std::runtime_error("division by zero is not supported");
-                return 0;
-            }
+            return delayed_arithmetic<op_, true, OutputValue_>(0, 0);
         }
     }
 

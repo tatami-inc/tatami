@@ -44,36 +44,22 @@ bool delayed_arithmetic_actual_sparse(Scalar_ scalar) {
     } else if constexpr(op_ == ArithmeticOperation::POWER) {
         return (right_ && scalar > 0);
     } else { // DIVIDE, MODULO and INTEGER_DIVIDE
-        return (right_ && scalar != 0);
+        return (right_ && (scalar > 0 || scalar < 0)); // don't use '!=' as this would be true for NaNs.
     }
 }
 
 template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename Scalar_>
 OutputValue_ delayed_arithmetic_zero(Scalar_ scalar) {
-    if constexpr(op_ == ArithmeticOperation::ADD || op_ == ArithmeticOperation::SUBTRACT || op_ == ArithmeticOperation::MULTIPLY) {
-        return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
-
-    } else if constexpr(op_ == ArithmeticOperation::POWER) {
-        if constexpr(std::numeric_limits<OutputValue_>::is_iec559) {
-            return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
-        } else if constexpr(right_) {
-            if (scalar >= 0) {
-                return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
-            }
-        }
-        throw std::runtime_error("division by zero is not supported");
-        return 0;
-
-    } else { // DIVIDE, MODULO and INTEGER_DIVIDE
-        if constexpr(std::numeric_limits<OutputValue_>::is_iec559) {
-            return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
-        } else if constexpr(right_) {
+    if constexpr(has_unsafe_divide_by_zero<op_, OutputValue_, Scalar_>()) {
+        if constexpr(right_) {
             if (scalar) {
                 return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
             }
         }
         throw std::runtime_error("division by zero is not supported");
         return 0;
+    } else {
+        return delayed_arithmetic<op_, right_, OutputValue_>(0, scalar);
     }
 }
 /**
