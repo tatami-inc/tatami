@@ -18,6 +18,9 @@ namespace tatami {
  */
 template<CompareOperation op_, typename InputValue_, typename Index_, typename OutputValue_>
 void delayed_compare_run_simple(const InputValue_* input, Index_ length, InputValue_ scalar, OutputValue_* output) {
+#ifdef _OPENMP
+    #pragma omp simd 
+#endif
     for (Index_ i = 0; i < length; ++i) {
         if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
             auto& val = output[i];
@@ -176,6 +179,9 @@ public:
         if (row == my_by_row) {
             delayed_compare_run_simple<op_, InputValue_>(input, length, my_vector[idx], output);
         } else {
+#ifdef _OPENMP
+            #pragma omp simd 
+#endif
             for (Index_ i = 0; i < length; ++i) {
                 if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                     auto& val = output[i];
@@ -192,6 +198,9 @@ public:
         if (row == my_by_row) {
             delayed_compare_run_simple<op_, InputValue_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
         } else {
+#ifdef _OPENMP
+            #pragma omp simd 
+#endif
             for (Index_ i = 0, length = indices.size(); i < length; ++i) {
                 if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                     auto& val = output[i];
@@ -208,6 +217,9 @@ public:
         if (row == my_by_row) {
             delayed_compare_run_simple<op_, InputValue_>(input, number, my_vector[idx], output);
         } else {
+#ifdef _OPENMP
+            #pragma omp simd 
+#endif
             for (Index_ i = 0; i < number; ++i) {
                 if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                     auto& val = output[i];
