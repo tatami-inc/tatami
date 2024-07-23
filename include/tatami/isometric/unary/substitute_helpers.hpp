@@ -209,10 +209,11 @@ public:
         if (row == my_by_row) {
             delayed_substitute_run_simple<op_, Value_>(output, static_cast<Index_>(indices.size()), my_compared[idx], my_substitute[idx]);
         } else {
+            Index_ length = indices.size();
 #ifdef _OPENMP
             #pragma omp simd 
 #endif
-            for (Index_ i = 0, length = indices.size(); i < length; ++i) {
+            for (Index_ i = 0; i < length; ++i) {
                 auto ii = indices[i];
                 delayed_substitute_run<op_, Value_>(output[i], my_compared[ii], my_substitute[ii]);
             }

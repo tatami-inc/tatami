@@ -66,20 +66,23 @@ add_executable(
 )
 decorate_executable(subset_test)
 
-add_executable(
-    isometric_unary_test
-    src/isometric/unary/DelayedUnaryIsometricOperation.cpp
-    src/isometric/unary/arithmetic_vector_helpers.cpp
-    src/isometric/unary/arithmetic_scalar_helpers.cpp
-    src/isometric/unary/math_helpers.cpp
-    src/isometric/unary/compare_scalar_helpers.cpp
-    src/isometric/unary/compare_vector_helpers.cpp
-    src/isometric/unary/boolean_scalar_helpers.cpp
-    src/isometric/unary/boolean_vector_helpers.cpp
-    src/isometric/unary/substitute_scalar_helpers.cpp
-    src/isometric/unary/substitute_vector_helpers.cpp
-)
-decorate_executable(isometric_unary_test)
+macro(create_isometric_unary_test target)
+    add_executable(
+        ${target}
+        src/isometric/unary/DelayedUnaryIsometricOperation.cpp
+        src/isometric/unary/arithmetic_vector_helpers.cpp
+        src/isometric/unary/arithmetic_scalar_helpers.cpp
+        src/isometric/unary/math_helpers.cpp
+        src/isometric/unary/compare_scalar_helpers.cpp
+        src/isometric/unary/compare_vector_helpers.cpp
+        src/isometric/unary/boolean_scalar_helpers.cpp
+        src/isometric/unary/boolean_vector_helpers.cpp
+        src/isometric/unary/substitute_scalar_helpers.cpp
+        src/isometric/unary/substitute_vector_helpers.cpp
+    )
+    decorate_executable(${target})
+endmacro()
+create_isometric_unary_test(isometric_unary_test)
 
 add_executable(
     isometric_other_test
@@ -87,14 +90,17 @@ add_executable(
 )
 decorate_executable(isometric_other_test)
 
-add_executable(
-    isometric_binary_test
-    src/isometric/binary/DelayedBinaryIsometricOperation.cpp
-    src/isometric/binary/arithmetic_helpers.cpp
-    src/isometric/binary/compare_helpers.cpp
-    src/isometric/binary/boolean_helpers.cpp
-)
-decorate_executable(isometric_binary_test)
+macro(create_isometric_binary_test target)
+    add_executable(
+        ${target}
+        src/isometric/binary/DelayedBinaryIsometricOperation.cpp
+        src/isometric/binary/arithmetic_helpers.cpp
+        src/isometric/binary/compare_helpers.cpp
+        src/isometric/binary/boolean_helpers.cpp
+    )
+    decorate_executable(${target})
+endmacro()
+create_isometric_binary_test(isometric_binary_test)
 
 add_executable(
     sparse_test
@@ -150,4 +156,10 @@ find_package(OpenMP)
 if(OpenMP_FOUND)
     create_partest(omp_test)
     target_link_libraries(omp_test OpenMP::OpenMP_CXX)
+
+    create_isometric_unary_test(omp_isometric_unary_test)
+    target_link_libraries(omp_isometric_unary_test OpenMP::OpenMP_CXX)
+
+    create_isometric_binary_test(omp_isometric_binary_test)
+    target_link_libraries(omp_isometric_binary_test OpenMP::OpenMP_CXX)
 endif()

@@ -341,10 +341,11 @@ public:
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
         } else {
+            Index_ length = indices.size();
 #ifdef _OPENMP
             #pragma omp simd 
 #endif
-            for (Index_ i = 0, length = indices.size(); i < length; ++i) {
+            for (Index_ i = 0; i < length; ++i) {
                 if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                     auto& val = output[i];
                     val = delayed_boolean<op_>(val, my_vector[indices[i]]);
