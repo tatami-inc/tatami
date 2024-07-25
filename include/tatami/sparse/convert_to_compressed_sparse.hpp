@@ -247,6 +247,7 @@ void count_compressed_sparse_non_zeros(const tatami::Matrix<Value_, Index_>* mat
 /**
  * @tparam StoredValue_ Type of data values to be stored in the output.
  * @tparam StoredIndex_ Integer type for storing the indices in the output. 
+ * @tparam Pointer_ Integer type for the row/column pointers.
  * @tparam InputValue_ Type of data values in the input interface.
  * @tparam InputIndex_ Integer type for indices in the input interface.
  *
@@ -288,11 +289,12 @@ void fill_compressed_sparse_contents(
  *
  * @tparam Value_ Type of value in the matrix.
  * @tparam Index_ Type of row/column index.
+ * @tparam Pointer_ Integer type for the row/column pointers.
  *
  * The "primary" dimension is the one that is used to create the pointers for the compressed sparse format, while the other dimension is defined as the "secondary" dimension.
  * For example, the rows would be the primary dimension in a compressed sparse row matrix.
  */
-template<typename Value_, typename Index_>
+template<typename Value_, typename Index_, typename Pointer_ = size_t>
 struct CompressedSparseContents {
     /**
      * Vector containing values of the structural non-zero elements in a compressed sparse format.
@@ -307,12 +309,13 @@ struct CompressedSparseContents {
     /**
      * Vector containing the pointers for each primary dimension element in a compressed sparse format.
      */
-    std::vector<size_t> pointers;
+    std::vector<Pointer_> pointers;
 };
 
 /**
  * @tparam StoredValue_ Type of data values to be stored in the output.
- * @tparam StoredIndex_ Integer type for storing the indices in the output. 
+ * @tparam StoredIndex_ Integer type for storing the row/column indices in the output. 
+ * @tparam Pointer_ Integer type for the row/column pointers in the output.
  * @tparam InputValue_ Type of data values in the input interface.
  * @tparam InputIndex_ Integer type for indices in the input interface.
  *
@@ -327,9 +330,9 @@ struct CompressedSparseContents {
  * The behavior of this function can be replicated by manually calling `count_compressed_sparse_non_zeros()` followed by `fill_compressed_sparse_contents()`.
  * This may be desirable for users who want to put the compressed sparse contents into pre-existing memory allocations.
  */
-template<typename StoredValue_, typename StoredIndex_, typename InputValue_, typename InputIndex_>
-CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass, int threads = 1) {
-    CompressedSparseContents<StoredValue_, StoredIndex_> output;
+template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = size_t, typename InputValue_, typename InputIndex_>
+CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass, int threads = 1) {
+    CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> output;
     auto& output_v = output.value;
     auto& output_i = output.index;
     auto& output_p = output.pointers;
