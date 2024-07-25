@@ -23,7 +23,7 @@ namespace tatami {
 namespace convert_to_compressed_sparse_internal {
 
 template<typename Value_, typename Index_, typename Count_>
-void count_non_zeros_consistent(const tatami::Matrix<Value_, Index_>* matrix, Index_ primary, Index_ secondary, bool row, Count_* output, int threads) {
+void count_compressed_sparse_non_zeros_consistent(const tatami::Matrix<Value_, Index_>* matrix, Index_ primary, Index_ secondary, bool row, Count_* output, int threads) {
     if (matrix->is_sparse()) {
         Options opt;
         opt.sparse_extract_value = false;
@@ -55,7 +55,7 @@ void count_non_zeros_consistent(const tatami::Matrix<Value_, Index_>* matrix, In
 }
 
 template<typename Value_, typename Index_, typename Count_>
-void count_non_zeros_inconsistent(const tatami::Matrix<Value_, Index_>* matrix, Index_ primary, Index_ secondary, bool row, Count_* output, int threads) {
+void count_compressed_sparse_non_zeros_inconsistent(const tatami::Matrix<Value_, Index_>* matrix, Index_ primary, Index_ secondary, bool row, Count_* output, int threads) {
     std::vector<std::vector<Count_> > nz_counts(threads - 1);
     for (auto& x : nz_counts) {
         x.resize(primary);
@@ -222,7 +222,7 @@ void fill_compressed_sparse_matrix_inconsistent(
  * @param matrix Pointer to a `tatami::Matrix`. 
  * @param row Whether to count structural non-zeros by row.
  * @param[out] output Pointer to an array of length equal to the number of rows (if `row = true`) or columns (otherwise) of `matrix`.
- * On output, this stores the number of structural non-zeros in each row (if `row = true`) or column (otherwise)..
+ * On output, this stores the number of structural non-zeros in each row (if `row = true`) or column (otherwise).
  * @param threads Number of threads to use.
  *
  * For sparse `matrix`, all structural non-zero elements are reported, even if they have actual values of zero.
@@ -238,9 +238,9 @@ void count_compressed_sparse_non_zeros(const tatami::Matrix<Value_, Index_>* mat
     std::fill_n(output, primary, 0);
 
     if (row == matrix->prefer_rows()) {
-        convert_to_compressed_sparse_internal::count_non_zeros_consistent(matrix, primary, secondary, row, output, threads);
+        convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_consistent(matrix, primary, secondary, row, output, threads);
     } else {
-        convert_to_compressed_sparse_internal::count_non_zeros_inconsistent(matrix, primary, secondary, row, output, threads);
+        convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, output, threads);
     }
 }
 
@@ -254,11 +254,12 @@ void count_compressed_sparse_non_zeros(const tatami::Matrix<Value_, Index_>* mat
  * @param row Whether to fill `output_value` and `output_index` by row, i.e., the output represents a compressed sparse row matrix.
  * @param[in] pointers Pointer to an array of length greater than or equal to the number of rows (if `row = true`) or columns (otherwise) of `matrix`. 
  * Each entry contains the position of the start of each row/column in `output_value` and `output_index`.
- * This argument is equivalent to the array of pointers for the compressed sparse format (e.g., `CompressedSparseContents::pointers`).
+ * This argument is equivalent to the array of pointers for the compressed sparse format (e.g., `CompressedSparseContents::pointers`),
+ * and can be obtained by taking the cumulative sum of the per-row/column counts from `count_compressed_sparse_non_zeros()`.
  * @param[out] output_value Pointer to an array of length equal to the total number of structural non-zero elements.
- * On output, this is used to store the values of those elements in a compressed sparse format.
+ * On output, this is used to store the values of those elements in a compressed sparse format (e.g., `CompressedSparseContents::value`).
  * @param[out] output_index Pointer to an array of length equal to the total number of structural non-zero elements.
- * On output, this is used to store the row/column indices of those elements in a compressed sparse format.
+ * On output, this is used to store the row/column indices of those elements in a compressed sparse format (e.g., `CompressedSparseContents::index`).
  * @param threads Number of threads to use.
  */
 template<typename InputValue_, typename InputIndex_, typename Pointer_, typename StoredValue_, typename StoredIndex_>
@@ -322,6 +323,9 @@ struct CompressedSparseContents {
  * @param threads Number of threads to use.
  *
  * @return Contents of the sparse matrix in compressed form, see `CompressedSparseContents`.
+ *
+ * The behavior of this function can be replicated by manually calling `count_compressed_sparse_non_zeros()` followed by `fill_compressed_sparse_contents()`.
+ * This may be desirable for users who want to put the compressed sparse contents into pre-existing memory allocations.
  */
 template<typename StoredValue_, typename StoredIndex_, typename InputValue_, typename InputIndex_>
 CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass, int threads = 1) {
@@ -356,7 +360,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
     } else if (row == matrix->prefer_rows()) {
         // First pass to figure out how many non-zeros there are.
         output_p.resize(static_cast<size_t>(primary) + 1);
-        convert_to_compressed_sparse_internal::count_non_zeros_consistent(matrix, primary, secondary, row, output_p.data() + 1, threads);
+        convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_consistent(matrix, primary, secondary, row, output_p.data() + 1, threads);
         for (InputIndex_ i = 1; i <= primary; ++i) {
             output_p[i] += output_p[i - 1];
         }
@@ -378,7 +382,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_> retrieve_compressed_sparse_
     } else {
         // First pass to figure out how many non-zeros there are.
         output_p.resize(static_cast<size_t>(primary) + 1);
-        convert_to_compressed_sparse_internal::count_non_zeros_inconsistent(matrix, primary, secondary, row, output_p.data() + 1, threads);
+        convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, output_p.data() + 1, threads);
         for (InputIndex_ i = 1; i <= primary; ++i) {
             output_p[i] += output_p[i - 1];
         }
