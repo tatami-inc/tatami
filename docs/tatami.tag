@@ -495,25 +495,26 @@
     <filename>structtatami_1_1CompressedSparseContents.html</filename>
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
+    <templarg>typename Pointer_</templarg>
     <member kind="variable">
       <type>std::vector&lt; Value_ &gt;</type>
       <name>value</name>
       <anchorfile>structtatami_1_1CompressedSparseContents.html</anchorfile>
-      <anchor>a42f014b8d8da15e6c49511db087bebf7</anchor>
+      <anchor>ad406234c4c87a0b3cbdd52948d2ae1b1</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
       <type>std::vector&lt; Index_ &gt;</type>
       <name>index</name>
       <anchorfile>structtatami_1_1CompressedSparseContents.html</anchorfile>
-      <anchor>ad6aa16e860a82ebc6de6774e8b6905ea</anchor>
+      <anchor>a5b30cd6415c0e3cfd91b31590f16bc58</anchor>
       <arglist></arglist>
     </member>
     <member kind="variable">
-      <type>std::vector&lt; size_t &gt;</type>
+      <type>std::vector&lt; Pointer_ &gt;</type>
       <name>pointers</name>
       <anchorfile>structtatami_1_1CompressedSparseContents.html</anchorfile>
-      <anchor>ad56fc74d757e9dcd8ffbdc48d5adc692</anchor>
+      <anchor>ad9410e8d3b32bc97086bebf2322c0ef8</anchor>
       <arglist></arglist>
     </member>
   </compound>
@@ -5124,10 +5125,10 @@
       <arglist>(const tatami::Matrix&lt; InputValue_, InputIndex_ &gt; *matrix, bool row, const Pointer_ *pointers, StoredValue_ *output_value, StoredIndex_ *output_index, int threads)</arglist>
     </member>
     <member kind="function">
-      <type>CompressedSparseContents&lt; StoredValue_, StoredIndex_ &gt;</type>
+      <type>CompressedSparseContents&lt; StoredValue_, StoredIndex_, StoredPointer_ &gt;</type>
       <name>retrieve_compressed_sparse_contents</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ad723a47ee2e03e4213cd07fda8710e65</anchor>
+      <anchor>a6b95eab5d7370f965e4d6a9b9a9f3393</anchor>
       <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; *matrix, bool row, bool two_pass, int threads=1)</arglist>
     </member>
     <member kind="function">
