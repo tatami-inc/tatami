@@ -11,12 +11,12 @@ var searchData=
   ['compressedsparsematrix_8',['compressedsparsematrix',['../classtatami_1_1CompressedSparseMatrix.html',1,'tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;'],['../classtatami_1_1CompressedSparseMatrix.html#a83245ced768b530126c30a51849b48b5',1,'tatami::CompressedSparseMatrix::CompressedSparseMatrix()']]],
   ['compressedsparsematrix_2ehpp_9',['CompressedSparseMatrix.hpp',['../CompressedSparseMatrix_8hpp.html',1,'']]],
   ['compressedsparsematrix_3c_20value_5f_2c_20index_5f_2c_20std_3a_3avector_3c_20value_5f_20_3e_2c_20std_3a_3avector_3c_20index_5f_20_3e_2c_20std_3a_3avector_3c_20size_5ft_20_3e_20_3e_10',['CompressedSparseMatrix&lt; Value_, Index_, std::vector&lt; Value_ &gt;, std::vector&lt; Index_ &gt;, std::vector&lt; size_t &gt; &gt;',['../classtatami_1_1CompressedSparseMatrix.html',1,'tatami']]],
-  ['compressedsparserowmatrix_11',['compressedsparserowmatrix',['../classtatami_1_1CompressedSparseRowMatrix.html#ab757e111074096fb542148675c72cade',1,'tatami::CompressedSparseRowMatrix::CompressedSparseRowMatrix()'],['../classtatami_1_1CompressedSparseRowMatrix.html',1,'tatami::CompressedSparseRowMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;']]],
+  ['compressedsparserowmatrix_11',['compressedsparserowmatrix',['../classtatami_1_1CompressedSparseRowMatrix.html',1,'tatami::CompressedSparseRowMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;'],['../classtatami_1_1CompressedSparseRowMatrix.html#ab757e111074096fb542148675c72cade',1,'tatami::CompressedSparseRowMatrix::CompressedSparseRowMatrix()']]],
   ['consecutive_5fextractor_12',['consecutive_extractor',['../namespacetatami.html#af05590455e558621c8ffc1b98c4fd454',1,'tatami']]],
   ['consecutive_5fextractor_2ehpp_13',['consecutive_extractor.hpp',['../consecutive__extractor_8hpp.html',1,'']]],
-  ['consecutiveoracle_14',['consecutiveoracle',['../classtatami_1_1ConsecutiveOracle.html',1,'tatami::ConsecutiveOracle&lt; Index_ &gt;'],['../classtatami_1_1ConsecutiveOracle.html#ab6d9e6d767d2c9705d927be501abfe9d',1,'tatami::ConsecutiveOracle::ConsecutiveOracle()']]],
+  ['consecutiveoracle_14',['consecutiveoracle',['../classtatami_1_1ConsecutiveOracle.html#ab6d9e6d767d2c9705d927be501abfe9d',1,'tatami::ConsecutiveOracle::ConsecutiveOracle()'],['../classtatami_1_1ConsecutiveOracle.html',1,'tatami::ConsecutiveOracle&lt; Index_ &gt;']]],
   ['consecutiveoracle_2ehpp_15',['ConsecutiveOracle.hpp',['../ConsecutiveOracle_8hpp.html',1,'']]],
-  ['constantmatrix_16',['constantmatrix',['../classtatami_1_1ConstantMatrix.html',1,'tatami::ConstantMatrix&lt; Value_, Index_ &gt;'],['../classtatami_1_1ConstantMatrix.html#ac51afe22e54a204c0b2b8a80abde30cc',1,'tatami::ConstantMatrix::ConstantMatrix()']]],
+  ['constantmatrix_16',['constantmatrix',['../classtatami_1_1ConstantMatrix.html#ac51afe22e54a204c0b2b8a80abde30cc',1,'tatami::ConstantMatrix::ConstantMatrix()'],['../classtatami_1_1ConstantMatrix.html',1,'tatami::ConstantMatrix&lt; Value_, Index_ &gt;']]],
   ['constantmatrix_2ehpp_17',['ConstantMatrix.hpp',['../ConstantMatrix_8hpp.html',1,'']]],
   ['convert_5fto_5fcompressed_5fsparse_18',['convert_to_compressed_sparse',['../namespacetatami.html#a55a5de2537fc815c895528fea8a717f6',1,'tatami']]],
   ['convert_5fto_5fcompressed_5fsparse_2ehpp_19',['convert_to_compressed_sparse.hpp',['../convert__to__compressed__sparse_8hpp.html',1,'']]],
@@ -25,5 +25,6 @@ var searchData=
   ['convert_5fto_5ffragmented_5fsparse_22',['convert_to_fragmented_sparse',['../namespacetatami.html#a2a4c4e213ecc4225882b3cf8b21600e0',1,'tatami']]],
   ['convert_5fto_5ffragmented_5fsparse_2ehpp_23',['convert_to_fragmented_sparse.hpp',['../convert__to__fragmented__sparse_8hpp.html',1,'']]],
   ['copy_2ehpp_24',['copy.hpp',['../copy_8hpp.html',1,'']]],
-  ['copy_5fn_25',['copy_n',['../namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14',1,'tatami']]]
+  ['copy_5fn_25',['copy_n',['../namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14',1,'tatami']]],
+  ['count_5fcompressed_5fsparse_5fnon_5fzeros_26',['count_compressed_sparse_non_zeros',['../namespacetatami.html#aedacbafb3041d3f5cafb2e87dacc1b7c',1,'tatami']]]
 ];

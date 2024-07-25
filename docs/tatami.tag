@@ -5110,6 +5110,20 @@
       <arglist>(size_t nrow, size_t ncol, Values_ &amp;values, RowIndices_ &amp;row_indices, ColumnIndices_ &amp;column_indices, bool csr)</arglist>
     </member>
     <member kind="function">
+      <type>void</type>
+      <name>count_compressed_sparse_non_zeros</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>aedacbafb3041d3f5cafb2e87dacc1b7c</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; *matrix, bool row, Count_ *output, int threads)</arglist>
+    </member>
+    <member kind="function">
+      <type>void</type>
+      <name>fill_compressed_sparse_contents</name>
+      <anchorfile>namespacetatami.html</anchorfile>
+      <anchor>acba90fd39919d724ecb7ec4750e09925</anchor>
+      <arglist>(const tatami::Matrix&lt; InputValue_, InputIndex_ &gt; *matrix, bool row, const Pointer_ *pointers, StoredValue_ *output_value, StoredIndex_ *output_index, int threads)</arglist>
+    </member>
+    <member kind="function">
       <type>CompressedSparseContents&lt; StoredValue_, StoredIndex_ &gt;</type>
       <name>retrieve_compressed_sparse_contents</name>
       <anchorfile>namespacetatami.html</anchorfile>
