@@ -88,3 +88,102 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(1, 3)         // number of threads
     )
 );
+
+class ConvertToCompressedSparseManualTest : public ::testing::Test {
+protected:
+    inline static size_t NR = 120, NC = 50;
+    inline static std::shared_ptr<tatami::Matrix<double, int> > mat;
+
+    static void SetUpTestSuite() {
+        auto vec = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1);
+        mat.reset(new tatami::DenseRowMatrix<double, int>(NR, NC, std::move(vec)));
+    }
+};
+
+TEST_F(ConvertToCompressedSparseManualTest, Consistent) {
+    std::vector<size_t> pointers(NR + 1);
+    tatami::count_compressed_sparse_non_zeros(mat.get(), true, pointers.data() + 1, 1);
+
+    {
+        auto wrk = mat->dense_row();
+        for (size_t i = 0; i < NR; ++i) {
+            auto row = tatami_test::fetch(wrk.get(), static_cast<int>(i), NC);
+            size_t expected = 0;
+            for (auto x : row) {
+                expected += (x != 0);
+            }
+            EXPECT_EQ(expected, pointers[i + 1]);
+        }
+    }
+
+    for (size_t i = 1; i <= NR; ++i) {
+        pointers[i] += pointers[i - 1];
+    }
+    size_t nonzeros = pointers.back();
+    std::vector<double> values(nonzeros);
+    std::vector<int> indices(nonzeros);
+    tatami::fill_compressed_sparse_contents(mat.get(), true, pointers.data(), values.data(), indices.data(), 1);
+
+    tatami::CompressedSparseMatrix<double, int, std::vector<double>, std::vector<int>, std::vector<size_t> > spmat(
+        mat->nrow(), 
+        mat->ncol(), 
+        std::move(values), 
+        std::move(indices), 
+        std::move(pointers),
+        true 
+    );
+
+    {
+        auto wrk = mat->dense_row();
+        auto spwrk = spmat.dense_row();
+        for (size_t i = 0; i < NR; ++i) {
+            auto expected = tatami_test::fetch(wrk.get(), static_cast<int>(i), NC);
+            auto observed = tatami_test::fetch(spwrk.get(), static_cast<int>(i), NC);
+            EXPECT_EQ(expected, observed);
+        }
+    }
+}
+
+TEST_F(ConvertToCompressedSparseManualTest, Inconsistent) {
+    std::vector<size_t> pointers(NC + 1);
+    tatami::count_compressed_sparse_non_zeros(mat.get(), false, pointers.data() + 1, 1);
+
+    {
+        auto wrk = mat->dense_column();
+        for (size_t i = 0; i < NC; ++i) {
+            auto column = tatami_test::fetch(wrk.get(), static_cast<int>(i), NR);
+            size_t expected = 0;
+            for (auto x : column) {
+                expected += (x != 0);
+            }
+            EXPECT_EQ(expected, pointers[i + 1]);
+        }
+    }
+
+    for (size_t i = 1; i <= NC; ++i) {
+        pointers[i] += pointers[i - 1];
+    }
+    size_t nonzeros = pointers.back();
+    std::vector<double> values(nonzeros);
+    std::vector<int> indices(nonzeros);
+    tatami::fill_compressed_sparse_contents(mat.get(), false, pointers.data(), values.data(), indices.data(), 1);
+
+    tatami::CompressedSparseMatrix<double, int, std::vector<double>, std::vector<int>, std::vector<size_t> > spmat(
+        mat->nrow(), 
+        mat->ncol(), 
+        std::move(values), 
+        std::move(indices), 
+        std::move(pointers),
+        false 
+    );
+
+    {
+        auto wrk = mat->dense_column();
+        auto spwrk = spmat.dense_column();
+        for (size_t i = 0; i < NC; ++i) {
+            auto expected= tatami_test::fetch(wrk.get(), static_cast<int>(i), NR);
+            auto observed = tatami_test::fetch(spwrk.get(), static_cast<int>(i), NR);
+            EXPECT_EQ(expected, observed);
+        }
+    }
+}
