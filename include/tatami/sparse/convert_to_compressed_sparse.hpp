@@ -44,7 +44,11 @@ void count_compressed_sparse_non_zeros_consistent(const tatami::Matrix<Value_, I
             auto wrk = consecutive_extractor<false>(matrix, row, start, length);
             for (Index_ p = start, pe = start + length; p < pe; ++p) {
                 auto ptr = wrk->fetch(buffer_v.data());
-                size_t count = 0;
+                Count_ count = 0;
+#ifdef _OPENMP
+                // Reduction is okay as we're dealing with an integer anyway.
+                #pragma omp simd reduction(+:count)
+#endif
                 for (Index_ s = 0; s < secondary; ++s) {
                     count += (ptr[s] != 0);
                 }
@@ -73,6 +77,9 @@ void count_compressed_sparse_non_zeros_inconsistent(const tatami::Matrix<Value_,
 
             for (Index_ x = 0; x < length; ++x) {
                 auto range = wrk->fetch(NULL, buffer_i.data());
+#ifdef _OPENMP
+                #pragma omp simd
+#endif
                 for (Index_ i = 0; i < range.number; ++i) {
                     ++my_counts[range.index[i]];
                 }
@@ -87,6 +94,9 @@ void count_compressed_sparse_non_zeros_inconsistent(const tatami::Matrix<Value_,
 
             for (Index_ x = 0; x < length; ++x) {
                 auto ptr = wrk->fetch(buffer_v.data());
+#ifdef _OPENMP
+                #pragma omp simd
+#endif
                 for (Index_ p = 0; p < primary; ++p) {
                     my_counts[p] += (ptr[p] != 0);
                 }

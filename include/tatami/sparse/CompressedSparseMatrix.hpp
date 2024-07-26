@@ -44,13 +44,14 @@ public:
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         auto offset = my_pointers[i];
-        auto vIt = my_values.begin() + offset;
-        auto iIt = my_indices.begin() + offset;
         size_t delta = my_pointers[i+1] - my_pointers[i];
-
         std::fill_n(buffer, my_secondary, static_cast<Value_>(0));
-        for (size_t x = 0; x < delta; ++x, ++vIt, ++iIt) {
-            buffer[*iIt] = *vIt;
+#ifdef _OPENMP
+        #pragma omp simd
+#endif
+        for (size_t x = 0; x < delta; ++x) {
+            auto cur_offset = offset + x;
+            buffer[my_indices[cur_offset]] = my_values[cur_offset];
         }
         return buffer;
     }
@@ -116,11 +117,16 @@ public:
         auto iStart = my_indices.begin() + my_pointers[i];
         auto iEnd = my_indices.begin() + my_pointers[i + 1];
         sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
+        size_t offset = (iStart - my_indices.begin());
+        size_t number = iEnd - iStart;
 
         std::fill_n(buffer, my_block_length, static_cast<Value_>(0));
-        auto vIt = my_values.begin() + (iStart - my_indices.begin());
-        for (; iStart != iEnd; ++iStart, ++vIt) {
-            buffer[*iStart - my_block_start] = *vIt;
+#ifdef _OPENMP
+        #pragma omp simd
+#endif
+        for (size_t i = 0; i < number; ++i) {
+            auto cur_offset = offset + i;
+            buffer[my_indices[cur_offset] - my_block_start] = my_values[cur_offset];
         }
         return buffer;
     }

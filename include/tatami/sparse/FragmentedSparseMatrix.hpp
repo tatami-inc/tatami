@@ -41,7 +41,11 @@ public:
         const auto& curi = my_indices[i];
 
         std::fill_n(buffer, my_secondary, static_cast<Value_>(0));
-        for (size_t x = 0, end = curv.size(); x < end; ++x) {
+        size_t end = curv.size();
+#ifdef _OPENMP
+        #pragma omp simd
+#endif
+        for (size_t x = 0; x < end; ++x) {
             buffer[curi[x]] = curv[x];
         }
         return buffer;
@@ -91,14 +95,21 @@ public:
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         const auto& curi = my_indices[i];
+        const auto& curv = my_values[i];
+
         auto iStart = curi.begin();
         auto iEnd = curi.end();
         sparse_utils::refine_primary_block_limits(iStart, iEnd, my_secondary, my_block_start, my_block_length);
+        size_t offset = (iStart - curi.begin());
+        size_t number = iEnd - iStart;
 
         std::fill_n(buffer, my_block_length, static_cast<Value_>(0));
-        auto vIt = my_values[i].begin() + (iStart - curi.begin());
-        for (; iStart != iEnd; ++iStart, ++vIt) {
-            buffer[*iStart - my_block_start] = *vIt;
+#ifdef _OPENMP
+        #pragma omp simd
+#endif
+        for (size_t i = 0; i < number; ++i) {
+            auto cur_offset = offset + i;
+            buffer[curi[cur_offset] - my_block_start] = curv[cur_offset];
         }
         return buffer;
     }

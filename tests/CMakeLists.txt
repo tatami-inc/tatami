@@ -162,4 +162,12 @@ if(OpenMP_FOUND)
 
     create_isometric_binary_test(omp_isometric_binary_test)
     target_link_libraries(omp_isometric_binary_test OpenMP::OpenMP_CXX)
+
+    add_executable(
+        omp_sparse_test
+        src/sparse/convert_to_compressed_sparse.cpp
+        src/sparse/CompressedSparseMatrix.cpp
+        src/sparse/FragmentedSparseMatrix.cpp
+    )
+    decorate_executable(omp_sparse_test)
 endif()
