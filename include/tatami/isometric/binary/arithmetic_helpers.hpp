@@ -42,6 +42,9 @@ public:
      */
     template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
+#ifdef _OPENMP
+        #pragma omp simd 
+#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output_buffer[i];
@@ -54,7 +57,11 @@ public:
 
     template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
-        for (Index_ i = 0, length = indices.size(); i < length; ++i) {
+        Index_ length = indices.size();
+#ifdef _OPENMP
+        #pragma omp simd 
+#endif
+        for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output_buffer[i];
                 val = delayed_arithmetic<op_, true>(val, right_buffer[i]);

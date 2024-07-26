@@ -21,6 +21,9 @@ bool delayed_substitute_is_sparse(Value_ compared, Value_ substitute) {
     return !delayed_compare<op_, Value_>(0, compared) || substitute == 0;
 }
 
+#ifdef _OPENMP
+#pragma omp declare simd 
+#endif
 template<CompareOperation op_, typename Value_>
 void delayed_substitute_run(Value_& val, Value_ compared, Value_ substitute) {
     if (delayed_compare<op_, Value_>(val, compared)) {
@@ -30,6 +33,9 @@ void delayed_substitute_run(Value_& val, Value_ compared, Value_ substitute) {
 
 template<CompareOperation op_, typename Value_, typename Index_>
 void delayed_substitute_run_simple(Value_* buffer, Index_ length, Value_ compared, Value_ substitute) {
+#ifdef _OPENMP
+    #pragma omp simd 
+#endif
     for (Index_ i = 0; i < length; ++i) {
         delayed_substitute_run<op_, Value_>(buffer[i], compared, substitute);
     }
@@ -188,6 +194,9 @@ public:
         if (row == my_by_row) {
             delayed_substitute_run_simple<op_, Value_>(output, length, my_compared[idx], my_substitute[idx]);
         } else {
+#ifdef _OPENMP
+            #pragma omp simd 
+#endif
             for (Index_ i = 0; i < length; ++i) {
                 Index_ is = i + start;
                 delayed_substitute_run<op_, Value_>(output[i], my_compared[is], my_substitute[is]);
@@ -200,7 +209,11 @@ public:
         if (row == my_by_row) {
             delayed_substitute_run_simple<op_, Value_>(output, static_cast<Index_>(indices.size()), my_compared[idx], my_substitute[idx]);
         } else {
-            for (Index_ i = 0, length = indices.size(); i < length; ++i) {
+            Index_ length = indices.size();
+#ifdef _OPENMP
+            #pragma omp simd 
+#endif
+            for (Index_ i = 0; i < length; ++i) {
                 auto ii = indices[i];
                 delayed_substitute_run<op_, Value_>(output[i], my_compared[ii], my_substitute[ii]);
             }
@@ -212,6 +225,9 @@ public:
         if (row == my_by_row) {
             delayed_substitute_run_simple<op_, Value_>(output_value, number, my_compared[idx], my_substitute[idx]);
         } else {
+#ifdef _OPENMP
+            #pragma omp simd 
+#endif
             for (Index_ i = 0; i < number; ++i) {
                 auto ii = indices[i];
                 delayed_substitute_run<op_, Value_>(output_value[i], my_compared[ii], my_substitute[ii]);
@@ -427,6 +443,9 @@ bool delayed_special_substitute_is_sparse(Value_ substitute) {
     return !delayed_special_compare<op_, pass_, Value_>(0) || substitute == 0;
 }
 
+#ifdef _OPENMP
+#pragma omp declare simd 
+#endif
 template<SpecialCompareOperation op_, bool pass_, typename Value_>
 void delayed_special_substitute_run(Value_& val, Value_ substitute) {
     if (delayed_special_compare<op_, pass_, Value_>(val)) {
@@ -436,6 +455,9 @@ void delayed_special_substitute_run(Value_& val, Value_ substitute) {
 
 template<SpecialCompareOperation op_, bool pass_, typename Value_, typename Index_>
 void delayed_special_substitute_run_simple(Value_* buffer, Index_ length, Value_ substitute) {
+#ifdef _OPENMP
+    #pragma omp simd 
+#endif
     for (Index_ i = 0; i < length; ++i) {
         delayed_special_substitute_run<op_, pass_, Value_>(buffer[i], substitute);
     }
