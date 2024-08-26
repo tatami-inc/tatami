@@ -41,7 +41,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
 
     if (row_major == pref_rows) {
         constexpr bool same_type = std::is_same<InputValue_, StoredValue_>::value;
-        parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
+        parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
             std::vector<InputValue_> temp(same_type ? 0 : secondary);
             auto store_copy = store + static_cast<size_t>(start) * secondary; // cast to size_t to avoid overflow.
             auto wrk = consecutive_extractor<false>(matrix, pref_rows, start, length);
@@ -66,7 +66,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
         // reduce false sharing across threads during writes, as locations
         // for simultaneous writes in the transposed matrix will be
         // separated by around 'secondary * length' elements. 
-        parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
+        parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
             auto store_copy = store;
 
             auto wrk = consecutive_extractor<true, InputValue_, InputIndex_>(matrix, pref_rows, 0, primary, start, length);
@@ -89,7 +89,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
         // Same logic as described for the sparse case; we iterate along the
         // preferred dimension but split into threads along the non-preferred
         // dimension to reduce false sharing.
-        parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
+        parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
             auto store_copy = store + static_cast<size_t>(start) * primary; // cast to size_t to avoid overflow.
 
             auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, pref_rows, 0, primary, start, length);

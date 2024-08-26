@@ -75,7 +75,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
 
     if (row == matrix->prefer_rows()) {
         if (matrix->is_sparse()) {
-            parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
+            parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
                 std::vector<InputIndex_> buffer_i(secondary);
                 auto wrk = consecutive_extractor<true>(matrix, row, start, length);
@@ -97,7 +97,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
             }, primary, threads);
 
         } else {
-            parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
+            parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(secondary);
                 auto wrk = consecutive_extractor<false>(matrix, row, start, length);
 
@@ -125,7 +125,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
         // into the output buffers. 
 
         if (matrix->is_sparse()) {
-            parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
+            parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
                 std::vector<InputValue_> buffer_v(primary);
                 std::vector<InputIndex_> buffer_i(primary);
                 auto wrk = consecutive_extractor<true>(matrix, !row, static_cast<InputIndex_>(0), secondary, start, length);
@@ -142,7 +142,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
             }, primary, threads);
 
         } else {
-            parallelize([&](size_t, InputIndex_ start, InputIndex_ length) -> void {
+            parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
                 auto wrk = consecutive_extractor<false>(matrix, !row, static_cast<InputIndex_>(0), secondary, start, length);
                 std::vector<InputValue_> buffer_v(length);
 

@@ -2,4 +2,5 @@ build/
 *.swp
 docs/html
 docs/latex
+docs/*.tag
 _downstream

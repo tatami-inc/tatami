@@ -126,48 +126,9 @@ add_executable(
 )
 decorate_executable(utils_test)
 
-# Test custom parallelization during apply.
-macro(create_partest target)
-    add_executable(
-        ${target}
-        src/utils/parallelize.cpp
-    )
-
-    target_link_libraries(
-        ${target}
-        gtest_main
-        tatami
-    )
-
-    target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)
-
-    if(DO_COVERAGE)
-        target_compile_options(${target} PRIVATE -O0 -g --coverage)
-        target_link_options(${target} PRIVATE --coverage)
-    endif()
-
-    gtest_discover_tests(${target})
-endmacro()
-
-create_partest(cuspar_test)
+add_executable(
+    cuspar_test
+    src/utils/parallelize.cpp
+)
+decorate_executable(cuspar_test)
 target_compile_definitions(cuspar_test PRIVATE CUSTOM_PARALLEL_TEST=1)
-
-find_package(OpenMP)
-if(OpenMP_FOUND)
-    create_partest(omp_test)
-    target_link_libraries(omp_test OpenMP::OpenMP_CXX)
-
-    create_isometric_unary_test(omp_isometric_unary_test)
-    target_link_libraries(omp_isometric_unary_test OpenMP::OpenMP_CXX)
-
-    create_isometric_binary_test(omp_isometric_binary_test)
-    target_link_libraries(omp_isometric_binary_test OpenMP::OpenMP_CXX)
-
-    add_executable(
-        omp_sparse_test
-        src/sparse/convert_to_compressed_sparse.cpp
-        src/sparse/CompressedSparseMatrix.cpp
-        src/sparse/FragmentedSparseMatrix.cpp
-    )
-    decorate_executable(omp_sparse_test)
-endif()

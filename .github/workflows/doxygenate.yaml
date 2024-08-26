@@ -16,6 +16,11 @@ jobs:
       with:
         args: -O docs/doxygen-awesome.css https://raw.githubusercontent.com/jothepro/doxygen-awesome-css/main/doxygen-awesome.css
 
+    - name: Add subpar tagfile
+      uses: wei/wget@v1
+      with:
+        args: -O docs/subpar.tag https://ltla.github.io/subpar/subpar.tag
+
     - name: Doxygen Action
       uses: mattnotmitt/doxygen-action@v1
       with:
