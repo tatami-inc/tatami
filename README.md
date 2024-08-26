@@ -213,8 +213,8 @@ With OpenMP, this looks like:
 ```
 
 Users may also consider using the `tatami::parallelize()` function, which accepts a function with the range of jobs (in this case, rows) to be processed in each thread.
-By default, this uses the standard `<thread>` library and so will work in environments without OpenMP. 
-If this is not sufficient, applications can change the parallelization scheme in all `tatami::parallelize()` calls by setting the `TATAMI_CUSTOM_PARALLEL` macro.
+This automatically falls back to the standard `<thread>` library if OpenMP is not available.
+Applications can also set the `TATAMI_CUSTOM_PARALLEL` macro to override the parallelization scheme in all `tatami::parallelize()` calls.
 
 ```cpp
 tatami::parallelize([&](int thread, int start, int length) -> void {

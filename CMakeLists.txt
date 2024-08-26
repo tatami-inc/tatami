@@ -16,6 +16,16 @@ target_include_directories(tatami INTERFACE
     "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/tatami_tatami>"
 )
 
+# Dependencies
+option(KNNCOLLE_FETCH_EXTERN "Automatically fetch tatami's external dependencies." ON)
+if(KNNCOLLE_FETCH_EXTERN)
+    add_subdirectory(extern)
+else()
+    find_package(ltla_subpar 0.2.0 CONFIG REQUIRED)
+endif()
+
+target_link_libraries(tatami INTERFACE ltla::subpar)
+
 # Building the test-related machinery, if we are compiling this library directly.
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     option(TATAMI_TESTS "Build tatami's test suite." ON)
