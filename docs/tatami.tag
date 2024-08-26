@@ -5191,8 +5191,8 @@
       <type>void</type>
       <name>parallelize</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a41e252422f9959a123ba390a941ae76f</anchor>
-      <arglist>(Function_ fun, Index_ tasks, size_t threads)</arglist>
+      <anchor>a5a08e0387bc00e8045a0364d6e35d120</anchor>
+      <arglist>(Function_ fun, Index_ tasks, int threads)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5213,6 +5213,6 @@
     <name>index</name>
     <title>A C++ API for all sorts of matrices</title>
     <filename>index.html</filename>
-    <docanchor file="index.html" title="A C++ API for all sorts of matrices">md__2github_2workspace_2README</docanchor>
+    <docanchor file="index.html">md__2github_2workspace_2README</docanchor>
   </compound>
 </tagfile>
