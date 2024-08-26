@@ -340,7 +340,7 @@ struct CompressedSparseContents {
  * The behavior of this function can be replicated by manually calling `count_compressed_sparse_non_zeros()` followed by `fill_compressed_sparse_contents()`.
  * This may be desirable for users who want to put the compressed sparse contents into pre-existing memory allocations.
  */
-template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = int, typename InputValue_, typename InputIndex_>
+template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = size_t, typename InputValue_, typename InputIndex_>
 CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass, int threads = 1) {
     CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> output;
     auto& output_v = output.value;
