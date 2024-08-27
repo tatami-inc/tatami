@@ -58,7 +58,7 @@ struct FragmentedSparseContents {
  *
  * @param matrix Pointer to a `tatami::Matrix`. 
  * @param row Whether to retrieve the contents of `matrix` by row, i.e., the output is a fragmented sparse row matrix.
- * @param threads Number of threads to use.
+ * @param threads Number of threads to use, for parallelization with `parallelize()`.
  *
  * @return Contents of the sparse matrix in fragmented form, see `FragmentedSparseContents`.
  */
@@ -172,7 +172,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
  *
  * @param matrix Pointer to a `tatami::Matrix`, possibly containing delayed operations.
  * @param row Whether to return a fragmented sparse row matrix.
- * @param threads Number of threads to use.
+ * @param threads Number of threads to use, for parallelization with `parallelize()`.
  *
  * @return A pointer to a new `tatami::FragmentedSparseMatrix`, with the same dimensions and type as the matrix referenced by `matrix`.
  * If `row = true`, the matrix is in fragmented sparse row format, otherwise it is fragmented sparse column.

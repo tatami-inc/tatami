@@ -18,7 +18,8 @@ namespace tatami {
 
 /**
  * Apply a function to a set of tasks in parallel, usually for iterating over a dimension of a `Matrix`.
- * By default, this uses `subpar::parallelize()` internally but can be overridden by defining a `TATAMI_CUSTOM_PARALLEL` function-like macro. 
+ * By default, this uses `subpar::parallelize()` internally, which uses OpenMP if available and `<thread>` otherwise.
+ * Advanced users can override the default parallelization mechanism by defining a `TATAMI_CUSTOM_PARALLEL` function-like macro. 
  * The macro should accept the `fun`, `tasks` and `threads` arguments as described below.
  *
  * @tparam parallel_ Whether the tasks should be run in parallel.

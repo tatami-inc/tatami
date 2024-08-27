@@ -233,7 +233,7 @@ void fill_compressed_sparse_matrix_inconsistent(
  * @param row Whether to count structural non-zeros by row.
  * @param[out] output Pointer to an array of length equal to the number of rows (if `row = true`) or columns (otherwise) of `matrix`.
  * On output, this stores the number of structural non-zeros in each row (if `row = true`) or column (otherwise).
- * @param threads Number of threads to use.
+ * @param threads Number of threads to use, for parallelization with `parallelize()`.
  *
  * For sparse `matrix`, all structural non-zero elements are reported, even if they have actual values of zero.
  * In contrast, for dense `matrix`, only the non-zero values are counted;
@@ -271,7 +271,7 @@ void count_compressed_sparse_non_zeros(const tatami::Matrix<Value_, Index_>* mat
  * On output, this is used to store the values of those elements in a compressed sparse format (e.g., `CompressedSparseContents::value`).
  * @param[out] output_index Pointer to an array of length equal to the total number of structural non-zero elements.
  * On output, this is used to store the row/column indices of those elements in a compressed sparse format (e.g., `CompressedSparseContents::index`).
- * @param threads Number of threads to use.
+ * @param threads Number of threads to use, for parallelization with `parallelize()`.
  */
 template<typename InputValue_, typename InputIndex_, typename Pointer_, typename StoredValue_, typename StoredIndex_>
 void fill_compressed_sparse_contents(
@@ -333,7 +333,7 @@ struct CompressedSparseContents {
  * @param row Whether to retrieve the contents of `matrix` by row, i.e., the output is a compressed sparse row matrix.
  * @param two_pass Whether to perform the retrieval in two passes.
  * This requires another pass through `matrix` but is more memory-efficient.
- * @param threads Number of threads to use.
+ * @param threads Number of threads to use, for parallelization with `parallelize()`.
  *
  * @return Contents of the sparse matrix in compressed form, see `CompressedSparseContents`.
  *
@@ -429,7 +429,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
  * @param matrix Pointer to a `tatami::Matrix`, possibly containing delayed operations.
  * @param row Whether to return a compressed sparse row matrix.
  * @param two_pass Whether to use a two-pass strategy that reduces peak memory usage at the cost of speed.
- * @param threads Number of threads to use.
+ * @param threads Number of threads to use, for parallelization with `parallelize()`.
  *
  * @return A pointer to a new `tatami::CompressedSparseMatrix`, with the same dimensions and type as the matrix referenced by `matrix`.
  * If `row = true`, the matrix is in compressed sparse row format, otherwise it is compressed sparse column.

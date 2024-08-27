@@ -29,7 +29,7 @@ namespace tatami {
  * @param row_major Whether to store the output as a row-major matrix.
  * @param[out] store Pointer to an array of length equal to the product of the dimensions of `matrix`.
  * On output, this is filled with values from `matrix` in row- or column-major format depending on `row_major`.
- * @param threads Number of threads to use.
+ * @param threads Number of threads to use, for parallelization with `parallelize()`.
  */
 template <typename StoredValue_, typename InputValue_, typename InputIndex_>
 void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_major, StoredValue_* store, int threads = 1) {
@@ -149,7 +149,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
  *
  * @param matrix Pointer to a `tatami::Matrix`.
  * @param row_major Whether to return a row-major matrix.
- * @param threads Number of threads to use.
+ * @param threads Number of threads to use, for parallelization with `parallelize()`.
  *
  * @return A pointer to a new `tatami::DenseMatrix` with the same dimensions and type as the matrix referenced by `matrix`.
  * If `row_major = true`, the matrix is row-major, otherwise it is column-major.
