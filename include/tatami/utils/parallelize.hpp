@@ -18,7 +18,7 @@ namespace tatami {
 
 /**
  * Apply a function to a set of tasks in parallel, usually for iterating over a dimension of a `Matrix`.
- * By default, this uses `subpar::parallelize()` internally, which uses OpenMP if available and `<thread>` otherwise.
+ * By default, this uses `subpar::parallelize_range()` internally, which uses OpenMP if available and `<thread>` otherwise.
  * Advanced users can override the default parallelization mechanism by defining a `TATAMI_CUSTOM_PARALLEL` function-like macro. 
  * The macro should accept the `fun`, `tasks` and `threads` arguments as described below.
  *
@@ -42,9 +42,9 @@ template<bool parallel_ = true, class Function_, typename Index_>
 void parallelize(Function_ fun, Index_ tasks, int threads) {
     if constexpr(parallel_) {
 #ifdef TATAMI_CUSTOM_PARALLEL
-        TATAMI_CUSTOM_PARALLEL(std::move(fun), tasks, threads);
+        TATAMI_CUSTOM_PARALLEL(fun, tasks, threads);
 #else
-        subpar::parallelize(threads, tasks, std::move(fun));
+        subpar::parallelize_range(threads, tasks, std::move(fun));
 #endif
     } else {
         fun(0, 0, tasks);
