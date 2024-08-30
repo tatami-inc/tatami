@@ -267,8 +267,9 @@ $(function() {
 </div><!-- fragment --><p>Then you can use <code>find_package()</code> as usual:</p>
 <div class="fragment"><div class="line">find_package(tatami_tatami CONFIG REQUIRED)</div>
 <div class="line">target_link_libraries(mylib INTERFACE tatami::tatami)</div>
-</div><!-- fragment --><h2>Manual</h2>
-<p>If you're not using CMake, the simple approach is to just copy the files the <code>include/</code> subdirectory - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>.</p>
+</div><!-- fragment --><p>By default, this will use <code>FetchContent</code> to fetch all external dependencies. If you want to install them manually, use <code>-DTATAMI_FETCH_EXTERN=OFF</code>. See <a href="extern/CMakeLists.txt"><code>extern/CMakeLists.txt</code></a> to find compatible versions of each dependency.</p>
+<h2>Manual</h2>
+<p>If you're not using CMake, the simple approach is to just copy the files the <code>include/</code> subdirectory - either directly or with Git submodules - and include their path during compilation with, e.g., GCC's <code>-I</code>. The external dependencies listed in <a href="extern/CMakeLists.txt"><code>extern/CMakeLists.txt</code></a> also need to be made available during compilation.</p>
 <h1>Links</h1>
 <p>Check out the <a href="https://tatami-inc.github.io/tatami">reference documentation</a> for more details on each function and class.</p>
 <p>The <a href="gallery/">gallery</a> also contains worked examples for common operations based on row/column traversals.</p>

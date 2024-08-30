@@ -5202,11 +5202,11 @@
       <arglist>(const Index_ *indices, Index_ length, Function_ fun)</arglist>
     </member>
     <member kind="function">
-      <type>std::shared_ptr&lt; const Matrix&lt; T, IDX &gt; &gt;</type>
+      <type>std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>wrap_shared_ptr</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a7518f5e8e09a6f6d7d3955b8ea286689</anchor>
-      <arglist>(const Matrix&lt; T, IDX &gt; *ptr)</arglist>
+      <anchor>ab008bae4e33a408de29e9fc49d0f902c</anchor>
+      <arglist>(const Matrix&lt; Value_, Index_ &gt; *ptr)</arglist>
     </member>
   </compound>
   <compound kind="page">
