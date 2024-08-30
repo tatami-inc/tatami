@@ -319,10 +319,15 @@ find_package(tatami_tatami CONFIG REQUIRED)
 target_link_libraries(mylib INTERFACE tatami::tatami)
 ```
 
+By default, this will use `FetchContent` to fetch all external dependencies.
+If you want to install them manually, use `-DTATAMI_FETCH_EXTERN=OFF`.
+See [`extern/CMakeLists.txt`](extern/CMakeLists.txt) to find compatible versions of each dependency.
+
 ### Manual
 
 If you're not using CMake, the simple approach is to just copy the files the `include/` subdirectory - 
 either directly or with Git submodules - and include their path during compilation with, e.g., GCC's `-I`.
+The external dependencies listed in [`extern/CMakeLists.txt`](extern/CMakeLists.txt) also need to be made available during compilation.
 
 ## Links
 

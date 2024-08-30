@@ -17,8 +17,8 @@ target_include_directories(tatami INTERFACE
 )
 
 # Dependencies
-option(KNNCOLLE_FETCH_EXTERN "Automatically fetch tatami's external dependencies." ON)
-if(KNNCOLLE_FETCH_EXTERN)
+option(TATAMI_FETCH_EXTERN "Automatically fetch tatami's external dependencies." ON)
+if(TATAMI_FETCH_EXTERN)
     add_subdirectory(extern)
 else()
     find_package(ltla_subpar 0.3.0 CONFIG REQUIRED)
