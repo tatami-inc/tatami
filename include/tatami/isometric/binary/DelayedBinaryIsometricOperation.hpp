@@ -235,9 +235,6 @@ public:
             std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
         }
 
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ j = 0; j < num; ++j) {
             buffer[my_output_ibuffer[j]] = my_output_vbuffer[j];
         }
@@ -302,9 +299,6 @@ public:
             std::fill_n(buffer, my_block_length, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
         }
 
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ j = 0; j < num; ++j) {
             buffer[my_output_ibuffer[j] - my_block_start] = my_output_vbuffer[j];
         }
@@ -348,9 +342,6 @@ public:
             my_remapping_offset = indices.front();
             my_remapping.resize(indices.back() - my_remapping_offset + 1);
 
-#ifdef _OPENMP
-            #pragma omp simd 
-#endif
             for (Index_ i = 0; i < my_extent; ++i) {
                 my_remapping[indices[i] - my_remapping_offset] = i;
             }
@@ -383,9 +374,6 @@ public:
             std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
         }
 
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ j = 0; j < num; ++j) {
             buffer[my_remapping[my_output_ibuffer[j] - my_remapping_offset]] = my_output_vbuffer[j];
         }

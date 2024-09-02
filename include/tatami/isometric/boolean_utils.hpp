@@ -22,9 +22,6 @@ enum class BooleanOperation : char {
 /**
  * @cond
  */
-#ifdef _OPENMP
-#pragma omp declare simd 
-#endif
 template<BooleanOperation op_>
 bool delayed_boolean(bool val, bool scalar) {
     if constexpr(op_ == BooleanOperation::AND) {

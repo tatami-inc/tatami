@@ -39,9 +39,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -109,9 +106,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -200,9 +194,6 @@ private:
 
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -269,9 +260,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -337,9 +325,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -405,9 +390,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -473,9 +455,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -553,9 +532,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -623,9 +599,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -691,9 +664,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -759,9 +729,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -827,9 +794,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -896,9 +860,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -965,9 +926,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1033,9 +991,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1101,9 +1056,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1169,9 +1121,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1237,9 +1186,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1305,9 +1251,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1373,9 +1316,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1441,9 +1381,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1509,9 +1446,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1577,9 +1511,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1645,9 +1576,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];
@@ -1714,9 +1642,6 @@ public:
 private:
     template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
-#ifdef _OPENMP
-        #pragma omp simd 
-#endif
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
                 auto& val = output[i];

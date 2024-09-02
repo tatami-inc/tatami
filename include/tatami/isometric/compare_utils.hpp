@@ -26,9 +26,6 @@ enum class CompareOperation : char {
 /**
  * @cond
  */
-#ifdef _OPENMP
-#pragma omp declare simd 
-#endif
 template<CompareOperation op_, typename Value_>
 bool delayed_compare(Value_ val, Value_ scalar) {
     if constexpr(op_ == CompareOperation::EQUAL) {
@@ -61,9 +58,6 @@ enum class SpecialCompareOperation : char {
 /**
  * @cond
  */
-#ifdef _OPENMP
-#pragma omp declare simd 
-#endif
 template<SpecialCompareOperation op_, bool pass_, typename Value_>
 bool delayed_special_compare(Value_ val) {
     if constexpr(op_ == SpecialCompareOperation::ISNAN) {

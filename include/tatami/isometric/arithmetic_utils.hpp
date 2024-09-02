@@ -33,9 +33,6 @@ enum class ArithmeticOperation : char {
 /**
  * @cond
  */
-#ifdef _OPENMP
-#pragma omp declare simd 
-#endif
 // We deliberately use an auto type so as to defer a decision on what the output
 // type should be; an appropriate coercion is left to the caller classes. 
 template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>

@@ -46,9 +46,6 @@ public:
         auto offset = my_pointers[i];
         size_t delta = my_pointers[i+1] - my_pointers[i];
         std::fill_n(buffer, my_secondary, static_cast<Value_>(0));
-#ifdef _OPENMP
-        #pragma omp simd
-#endif
         for (size_t x = 0; x < delta; ++x) {
             auto cur_offset = offset + x;
             buffer[my_indices[cur_offset]] = my_values[cur_offset];
@@ -121,9 +118,6 @@ public:
         size_t number = iEnd - iStart;
 
         std::fill_n(buffer, my_block_length, static_cast<Value_>(0));
-#ifdef _OPENMP
-        #pragma omp simd
-#endif
         for (size_t i = 0; i < number; ++i) {
             auto cur_offset = offset + i;
             buffer[my_indices[cur_offset] - my_block_start] = my_values[cur_offset];

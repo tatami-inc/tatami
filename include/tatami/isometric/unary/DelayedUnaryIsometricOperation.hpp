@@ -246,16 +246,10 @@ public:
         }
 
         if constexpr(same_value) {
-#ifdef _OPENMP
-            #pragma omp simd 
-#endif
             for (Index_ i = 0; i < range.number; ++i) {
                 buffer[range.index[i]] = vbuffer[i];
             }
         } else {
-#ifdef _OPENMP
-            #pragma omp simd 
-#endif
             for (Index_ i = 0; i < range.number; ++i) {
                 buffer[range.index[i]] = my_result_vbuffer[i];
             }
@@ -326,16 +320,10 @@ public:
         }
 
         if constexpr(same_value) {
-#ifdef _OPENMP
-            #pragma omp simd 
-#endif
             for (Index_ i = 0; i < range.number; ++i) {
                 buffer[range.index[i] - my_block_start] = vbuffer[i];
             }
         } else {
-#ifdef _OPENMP
-            #pragma omp simd 
-#endif
             for (Index_ i = 0; i < range.number; ++i) {
                 buffer[range.index[i] - my_block_start] = my_result_vbuffer[i];
             }
@@ -373,9 +361,6 @@ public:
         if (my_extent) {
             my_remapping_offset = indices.front();
             my_remapping.resize(indices.back() - my_remapping_offset + 1);
-#ifdef _OPENMP
-            #pragma omp simd 
-#endif
             for (Index_ i = 0; i < my_extent; ++i) {
                 my_remapping[indices[i] - my_remapping_offset] = i;
             }
@@ -424,16 +409,10 @@ public:
         }
 
         if constexpr(same_value) {
-#ifdef _OPENMP
-            #pragma omp simd 
-#endif
             for (Index_ i = 0; i < range.number; ++i) {
                 buffer[my_remapping[range.index[i] - my_remapping_offset]] = vbuffer[i];
             }
         } else {
-#ifdef _OPENMP
-            #pragma omp simd 
-#endif
             for (Index_ i = 0; i < range.number; ++i) {
                 buffer[my_remapping[range.index[i] - my_remapping_offset]] = my_result_vbuffer[i];
             }
