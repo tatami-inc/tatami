@@ -75,25 +75,6 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
-    <name>DelayedBinaryIsometricOperation.hpp</name>
-    <path>tatami/isometric/binary/</path>
-    <filename>DelayedBinaryIsometricOperation_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>boolean_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>boolean__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>compare_utils.hpp</name>
-    <path>tatami/isometric/</path>
-    <filename>compare__utils_8hpp.html</filename>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
     <name>arithmetic_helpers.hpp</name>
     <path>tatami/isometric/binary/</path>
     <filename>binary_2arithmetic__helpers_8hpp.html</filename>
@@ -142,6 +123,41 @@
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
+    <name>DelayedBinaryIsometricOperation.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>DelayedBinaryIsometricOperation_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricOperation</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>mock_helpers.hpp</name>
+    <path>tatami/isometric/binary/</path>
+    <filename>binary_2mock__helpers_8hpp.html</filename>
+    <class kind="class">tatami::DelayedBinaryIsometricMockBasic</class>
+    <class kind="class">tatami::DelayedBinaryIsometricMockAdvanced</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>mock_helpers.hpp</name>
+    <path>tatami/isometric/unary/</path>
+    <filename>unary_2mock__helpers_8hpp.html</filename>
+    <class kind="class">tatami::DelayedUnaryIsometricMockBasic</class>
+    <class kind="class">tatami::DelayedUnaryIsometricMockAdvanced</class>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>boolean_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>boolean__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
+    <name>compare_utils.hpp</name>
+    <path>tatami/isometric/</path>
+    <filename>compare__utils_8hpp.html</filename>
+    <namespace>tatami</namespace>
+  </compound>
+  <compound kind="file">
     <name>DelayedUnaryIsometricOperation.hpp</name>
     <path>tatami/isometric/unary/</path>
     <filename>DelayedUnaryIsometricOperation_8hpp.html</filename>
@@ -177,22 +193,6 @@
     <class kind="class">tatami::DelayedUnaryIsometricTanh</class>
     <class kind="class">tatami::DelayedUnaryIsometricGamma</class>
     <class kind="class">tatami::DelayedUnaryIsometricLgamma</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>mock_helpers.hpp</name>
-    <path>tatami/isometric/binary/</path>
-    <filename>binary_2mock__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedBinaryIsometricMockBasic</class>
-    <class kind="class">tatami::DelayedBinaryIsometricMockAdvanced</class>
-    <namespace>tatami</namespace>
-  </compound>
-  <compound kind="file">
-    <name>mock_helpers.hpp</name>
-    <path>tatami/isometric/unary/</path>
-    <filename>unary_2mock__helpers_8hpp.html</filename>
-    <class kind="class">tatami::DelayedUnaryIsometricMockBasic</class>
-    <class kind="class">tatami::DelayedUnaryIsometricMockAdvanced</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
