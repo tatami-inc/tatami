@@ -37,6 +37,7 @@
 #include "utils/ArrayView.hpp"
 #include "utils/SomeNumericArray.hpp"
 #include "utils/ConsecutiveOracle.hpp"
+#include "utils/parallelize.hpp"
 #include "utils/FixedOracle.hpp"
 #include "utils/process_consecutive_indices.hpp"
 
