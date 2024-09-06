@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include "../custom_parallel.h"
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"

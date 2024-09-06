@@ -123,6 +123,9 @@ decorate_executable(utils_test)
 add_executable(
     cuspar_test
     src/utils/parallelize.cpp
+    src/dense/convert_to_dense.cpp
+    src/sparse/convert_to_compressed_sparse.cpp
+    src/sparse/convert_to_fragmented_sparse.cpp
 )
 decorate_executable(cuspar_test)
 target_compile_definitions(cuspar_test PRIVATE CUSTOM_PARALLEL_TEST=1)
