@@ -495,16 +495,18 @@ public:
         my_nrow(nrow), my_ncols(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_pointers(std::move(pointers)), my_csr(csr)
     {
         if (check) {
-            if (my_values.size() != my_indices.size()) {
+            size_t nnzero = my_values.size();
+            if (nnzero != my_indices.size()) {
                 throw std::runtime_error("'my_values' and 'my_indices' should be of the same length");
             }
 
+            size_t npointers = my_pointers.size(); 
             if (my_csr) {
-                if (my_pointers.size() != static_cast<size_t>(my_nrow) + 1){
+                if (npointers != static_cast<size_t>(my_nrow) + 1){
                     throw std::runtime_error("length of 'pointers' should be equal to 'nrow + 1'");
                 }
             } else {
-                if (my_pointers.size() != static_cast<size_t>(my_ncols) + 1){
+                if (npointers != static_cast<size_t>(my_ncols) + 1){
                     throw std::runtime_error("length of 'pointers' should be equal to 'ncols + 1'");
                 }
             }
@@ -513,13 +515,13 @@ public:
                 throw std::runtime_error("first element of 'pointers' should be zero");
             }
 
-            auto last = my_pointers[my_pointers.size() - 1]; // don't use back() as this is not guaranteed to be available for arbitrary PointerStorage_.
-            if (static_cast<size_t>(last) != my_indices.size()) {
+            auto last = my_pointers[npointers - 1]; // don't use back() as this is not guaranteed to be available for arbitrary PointerStorage_.
+            if (static_cast<size_t>(last) != nnzero) {
                 throw std::runtime_error("last element of 'pointers' should be equal to length of 'indices'");
             }
 
             ElementType<IndexStorage_> max_index = (my_csr ? my_ncols : my_nrow);
-            for (size_t i = 1; i < my_pointers.size(); ++i) {
+            for (size_t i = 1; i < npointers; ++i) {
                 auto start = my_pointers[i- 1], end = my_pointers[i];
                 if (end < start || end > last) {
                     throw std::runtime_error("'pointers' should be in non-decreasing order");
@@ -531,7 +533,7 @@ public:
                     }
                 }
 
-                for (size_t j = start + 1; j < end; ++j) {
+                for (decltype(start) j = start + 1; j < end; ++j) {
                     if (my_indices[j] <= my_indices[j - 1]) {
                         throw std::runtime_error("'indices' should be strictly increasing within each " + (my_csr ? std::string("row") : std::string("column")));
                     }
