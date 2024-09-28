@@ -81,6 +81,15 @@ void transpose(const Input_* input, size_t nrow, size_t ncol, Output_* output) {
     transpose(input, nrow, ncol, ncol, output, nrow);
 }
 
+// COMMENT:
+// I tried really hard to make an in-place version, but it's too frigging complicated for non-square matrices.
+// It can be done, but I can't see a way to do it efficiently as you end up hopping all over the matrix (a la in-place reordering).
+// There doesn't seem to be any opportunity to do it in blocks for cache-friendliness;
+// the displaced values from the original matrix don't form a corrresponding block in the transposed matrix.
+// Perhaps this is a skill issue but at least Eigen agrees with my assessment, as they just make a new copy when the matrix is not square.
+// (See https://gitlab.com/libeigen/eigen/-/blob/master/Eigen/src/Core/Transpose.h#L293 for the relevant code.)
+// I'm not going to optimize the square case because tatami rarely, if ever, deals in situations with square matrices.
+
 }
 
 #endif
