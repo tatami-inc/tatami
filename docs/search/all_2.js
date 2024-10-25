@@ -1,7 +1,7 @@
 var searchData=
 [
   ['c_20api_20for_20all_20sorts_20of_20matrices_0',['A C++ API for all sorts of matrices',['../index.html',1,'']]],
-  ['compare_5fhelpers_2ehpp_1',['compare_helpers.hpp',['../binary_2compare__helpers_8hpp.html',1,'(Global Namespace)'],['../unary_2compare__helpers_8hpp.html',1,'(Global Namespace)']]],
+  ['compare_5fhelpers_2ehpp_1',['compare_helpers.hpp',['../unary_2compare__helpers_8hpp.html',1,'(Global Namespace)'],['../binary_2compare__helpers_8hpp.html',1,'(Global Namespace)']]],
   ['compare_5futils_2ehpp_2',['compare_utils.hpp',['../compare__utils_8hpp.html',1,'']]],
   ['compareoperation_3',['CompareOperation',['../namespacetatami.html#a89475b46f681dd39b9926ced507240cc',1,'tatami']]],
   ['compress_5fsparse_5ftriplets_4',['compress_sparse_triplets',['../namespacetatami.html#a3b2756af73514cbf89b42f5abd7997cc',1,'tatami']]],
