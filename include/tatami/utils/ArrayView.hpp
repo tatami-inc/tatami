@@ -28,6 +28,11 @@ public:
     ArrayView(const T* ptr, size_t number) : my_ptr(ptr), my_number(number) {}
 
     /**
+     * Default constructor to create a zero-length view.
+     */
+    ArrayView() : ArrayView(NULL, 0) {}
+
+    /**
      * @return Number of array elements.
      */
     size_t size() const { return my_number; }

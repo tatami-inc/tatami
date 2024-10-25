@@ -36,3 +36,9 @@ TEST(ArrayView, SparseMatrix) {
     tatami_test::test_simple_row_access(&alt, &ref);
     tatami_test::test_simple_column_access(&alt, &ref);
 }
+
+TEST(ArrayView, Other) {
+    tatami::ArrayView<int> x;
+    EXPECT_EQ(x.size(), 0);
+    EXPECT_EQ(x.data(), static_cast<const int*>(NULL));
+}
