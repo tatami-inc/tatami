@@ -1145,16 +1145,17 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Pointer to an array containing a row-major matrix with <code>nrow</code> rows and <code>ncol</code> columns. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Pointer to an array containing a row-major matrix with <code>nrow</code> rows and <code>ncol</code> columns. Elements within each row should be contiguous but consecutive rows can be separated by a constant stride, see <code>input_stride</code>. The array should have at least <code>(nrow - 1) * input_stride + ncol</code> addressable elements. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">nrow</td><td>Number of rows in the matrix stored at <code>input</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">ncol</td><td>Number of columns in the matrix stored at <code>input</code>. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">input_stride</td><td>Distance between corresponding entries on consecutive rows of the <code>input</code> matrix. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Pointer to an array of length <code>nrow * ncol</code>. On output, this will hold the transpose of the matrix represented by <code>input</code>. </td></tr>
-    <tr><td class="paramdir"></td><td class="paramname">output_stride</td><td>Distance between corresponding entries on consecutive columns of the <code>output</code> matrix.</td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">input_stride</td><td>Distance between corresponding entries on consecutive rows of the <code>input</code> matrix. This should be greater than or equal to <code>ncol</code>. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Pointer to an array in which to store the transpose of the matrix in <code>input</code>. On output, this stores a row-major matrix with <code>ncol</code> rows and <code>nrow</code> columns. Elements within each row should be contiguous but consecutive rows can be separated by a constant stride, see <code>output_stride</code>. The array should have at least <code>(ncol - 1) * output_stride + nrow</code> addressable elements. </td></tr>
+    <tr><td class="paramdir"></td><td class="paramname">output_stride</td><td>Distance between corresponding entries on consecutive rows of the <code>output</code> matrix. This should be greater than or equal to <code>nrow</code>.</td></tr>
   </table>
   </dd>
 </dl>
-<p>This function is intended for developers of <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclasses who need to do some transposition, e.g., for dense chunks during caching. The <code>*_stride</code> arguments allow <code>input</code> and <code>output</code> to refer to submatrices of larger arrays. </p>
+<p>This function is intended for developers of <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclasses who need to do some transposition, e.g., for dense chunks during caching. The <code>*_stride</code> arguments allow <code>input</code> and <code>output</code> to refer to submatrices of larger arrays.</p>
+<p>The argument descriptions refer to row-major matrices only for the sake of convenience. This function is equally applicable to column-major matrices, just replace all instances of "row" with "column" and vice versa. </p>
 
 </div>
 </div>
@@ -1206,14 +1207,15 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Pointer to an array containing a row-major matrix with <code>nrow</code> rows and <code>ncol</code> columns. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Pointer to an array containing a row-major matrix with <code>nrow</code> rows and <code>ncol</code> columns. The array should have at least <code>nrow * ncol</code> addressable elements, and all elements should be stored contiguously in the array. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">nrow</td><td>Number of rows in the matrix stored at <code>input</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">ncol</td><td>Number of columns in the matrix stored at <code>input</code>. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Pointer to an array of length <code>nrow * ncol</code>. On output, this will hold the transpose of the matrix represented by <code>input</code>.</td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Pointer to an array of length <code>nrow * ncol</code>. On output, this will hold the transpose of the matrix represented by <code>input</code>, i.e., a row-major matrix with <code>ncol</code> rows and <code>nrow</code> columns.</td></tr>
   </table>
   </dd>
 </dl>
-<p>This function is intended for developers of <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclasses who need to do some transposition, e.g., for dense chunks during caching. Users should instead construct a <code><a class="el" href="classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix.">DelayedTranspose</a></code> object to perform a memory-efficient delayed transposition, or use <code><a class="el" href="namespacetatami.html#aab32e148c90b65402f17c7d835649a4b">convert_to_dense()</a></code> to convert their dense data into the desired storage layout. </p>
+<p>This function is intended for developers of <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">Matrix</a></code> subclasses who need to do some transposition, e.g., for dense chunks during caching. Users should instead construct a <code><a class="el" href="classtatami_1_1DelayedTranspose.html" title="Delayed transposition of a matrix.">DelayedTranspose</a></code> object to perform a memory-efficient delayed transposition, or use <code><a class="el" href="namespacetatami.html#aab32e148c90b65402f17c7d835649a4b">convert_to_dense()</a></code> to convert their dense data into the desired storage layout.</p>
+<p>The argument descriptions refer to row-major matrices only for the sake of convenience. This function is equally applicable to column-major matrices, just replace all instances of "row" with "column" and vice versa. </p>
 
 </div>
 </div>
