@@ -14,15 +14,25 @@ namespace tatami {
  * @tparam Input_ Input type.
  * @tparam Output_ Output type.
  * @param[in] input Pointer to an array containing a row-major matrix with `nrow` rows and `ncol` columns.
+ * Elements within each row should be contiguous but consecutive rows can be separated by a constant stride, see `input_stride`.
+ * The array should have at least `(nrow - 1) * input_stride + ncol` addressable elements.
  * @param nrow Number of rows in the matrix stored at `input`.
  * @param ncol Number of columns in the matrix stored at `input`.
  * @param input_stride Distance between corresponding entries on consecutive rows of the `input` matrix.
- * @param[out] output Pointer to an array of length `nrow * ncol`.
- * On output, this will hold the transpose of the matrix represented by `input`.
- * @param output_stride Distance between corresponding entries on consecutive columns of the `output` matrix.
+ * This should be greater than or equal to `ncol`.
+ * @param[out] output Pointer to an array in which to store the transpose of the matrix in `input`.
+ * On output, this stores a row-major matrix with `ncol` rows and `nrow` columns.
+ * Elements within each row should be contiguous but consecutive rows can be separated by a constant stride, see `output_stride`.
+ * The array should have at least `(ncol - 1) * output_stride + nrow` addressable elements.
+ * It is assumed that `output` does not alias `input`.
+ * @param output_stride Distance between corresponding entries on consecutive rows of the `output` matrix.
+ * This should be greater than or equal to `nrow`.
  *
  * This function is intended for developers of `Matrix` subclasses who need to do some transposition, e.g., for dense chunks during caching.
  * The `*_stride` arguments allow `input` and `output` to refer to submatrices of larger arrays.
+ *
+ * The argument descriptions refer to row-major matrices only for the sake of convenience.
+ * This function is equally applicable to column-major matrices, just replace all instances of "row" with "column" and vice versa. 
  */
 template<typename Input_, typename Output_>
 void transpose(const Input_* input, size_t nrow, size_t ncol, size_t input_stride, Output_* output, size_t output_stride) {
@@ -57,14 +67,20 @@ void transpose(const Input_* input, size_t nrow, size_t ncol, size_t input_strid
  * @tparam Input_ Input type.
  * @tparam Output_ Output type.
  * @param[in] input Pointer to an array containing a row-major matrix with `nrow` rows and `ncol` columns.
+ * The array should have at least `nrow * ncol` addressable elements, and all elements should be stored contiguously in the array.
  * @param nrow Number of rows in the matrix stored at `input`.
  * @param ncol Number of columns in the matrix stored at `input`.
  * @param[out] output Pointer to an array of length `nrow * ncol`.
- * On output, this will hold the transpose of the matrix represented by `input`.
+ * On output, this will hold the transpose of the matrix represented by `input`,
+ * i.e., a row-major matrix with `ncol` rows and `nrow` columns.
+ * It is assumed that `output` does not alias `input`.
  *
  * This function is intended for developers of `Matrix` subclasses who need to do some transposition, e.g., for dense chunks during caching.
  * Users should instead construct a `DelayedTranspose` object to perform a memory-efficient delayed transposition,
  * or use `convert_to_dense()` to convert their dense data into the desired storage layout.
+ *
+ * The argument descriptions refer to row-major matrices only for the sake of convenience.
+ * This function is equally applicable to column-major matrices, just replace all instances of "row" with "column" and vice versa. 
  */
 template<typename Input_, typename Output_>
 void transpose(const Input_* input, size_t nrow, size_t ncol, Output_* output) {
