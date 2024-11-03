@@ -1149,7 +1149,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
     <tr><td class="paramdir"></td><td class="paramname">nrow</td><td>Number of rows in the matrix stored at <code>input</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">ncol</td><td>Number of columns in the matrix stored at <code>input</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">input_stride</td><td>Distance between corresponding entries on consecutive rows of the <code>input</code> matrix. This should be greater than or equal to <code>ncol</code>. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Pointer to an array in which to store the transpose of the matrix in <code>input</code>. On output, this stores a row-major matrix with <code>ncol</code> rows and <code>nrow</code> columns. Elements within each row should be contiguous but consecutive rows can be separated by a constant stride, see <code>output_stride</code>. The array should have at least <code>(ncol - 1) * output_stride + nrow</code> addressable elements. </td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Pointer to an array in which to store the transpose of the matrix in <code>input</code>. On output, this stores a row-major matrix with <code>ncol</code> rows and <code>nrow</code> columns. Elements within each row should be contiguous but consecutive rows can be separated by a constant stride, see <code>output_stride</code>. The array should have at least <code>(ncol - 1) * output_stride + nrow</code> addressable elements. It is assumed that <code>output</code> does not alias <code>input</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">output_stride</td><td>Distance between corresponding entries on consecutive rows of the <code>output</code> matrix. This should be greater than or equal to <code>nrow</code>.</td></tr>
   </table>
   </dd>
@@ -1210,7 +1210,7 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
     <tr><td class="paramdir">[in]</td><td class="paramname">input</td><td>Pointer to an array containing a row-major matrix with <code>nrow</code> rows and <code>ncol</code> columns. The array should have at least <code>nrow * ncol</code> addressable elements, and all elements should be stored contiguously in the array. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">nrow</td><td>Number of rows in the matrix stored at <code>input</code>. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">ncol</td><td>Number of columns in the matrix stored at <code>input</code>. </td></tr>
-    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Pointer to an array of length <code>nrow * ncol</code>. On output, this will hold the transpose of the matrix represented by <code>input</code>, i.e., a row-major matrix with <code>ncol</code> rows and <code>nrow</code> columns.</td></tr>
+    <tr><td class="paramdir">[out]</td><td class="paramname">output</td><td>Pointer to an array of length <code>nrow * ncol</code>. On output, this will hold the transpose of the matrix represented by <code>input</code>, i.e., a row-major matrix with <code>ncol</code> rows and <code>nrow</code> columns. It is assumed that <code>output</code> does not alias <code>input</code>.</td></tr>
   </table>
   </dd>
 </dl>
