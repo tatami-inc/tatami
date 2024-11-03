@@ -25,7 +25,7 @@ jobs:
           }
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - name: Get latest CMake
       uses: lukka/get-cmake@latest
@@ -39,7 +39,7 @@ jobs:
       run: cmake -S . -B build -DCODE_COVERAGE=ON 
 
     - name: Run the build
-      run: cmake --build build
+      run: cmake --build build -j 2
 
     - name: Run the tests
       run: |
@@ -62,6 +62,8 @@ jobs:
 
     - name: Upload to Codecov
       if: ${{ matrix.config.cov }}
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         directory: build/tests/CMakeFiles/
+      env:
+        CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
