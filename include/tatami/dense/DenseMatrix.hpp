@@ -31,7 +31,7 @@ public:
     PrimaryMyopicFullDense(const Storage_& storage, size_t secondary) : my_storage(storage), my_secondary(secondary) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        size_t offset = static_cast<size_t>(i) * my_secondary; // cast to size_t to avoid overflow of 'Index_'.
+        size_t offset = static_cast<size_t>(i) * my_secondary; // cast to size_t to avoid overflow.
         if constexpr(has_data<Value_, Storage_>::value) {
             return my_storage.data() + offset;
         } else {
@@ -74,11 +74,10 @@ public:
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto copy = buffer;
-        size_t offset = static_cast<size_t>(i) * my_secondary; // cast to size_t avoid overflow.
-        for (auto x : *my_indices_ptr) {
-            *copy = my_storage[offset + static_cast<size_t>(x)]; // more casting for overflow protection.
-            ++copy;
+        size_t offset = static_cast<size_t>(i) * my_secondary; // cast to size_t to avoid overflow.
+        const auto& indices = *my_indices_ptr;
+        for (size_t x = 0, end = indices.size(); x < end; ++x) {
+            buffer[x] = my_storage[offset + static_cast<size_t>(indices[x])]; // more casting for overflow protection.
         }
         return buffer;
     }
@@ -96,10 +95,8 @@ public:
         my_storage(storage), my_secondary(secondary), my_primary(primary) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        size_t offset = i; // use size_t to avoid overflow.
-        auto copy = buffer;
-        for (Index_ x = 0; x < my_primary; ++x, ++copy, offset += my_secondary) {
-            *copy = my_storage[offset];
+        for (size_t x = 0; x < my_primary; ++x) {
+            buffer[x] = my_storage[x * my_secondary + static_cast<size_t>(i)]; // cast to size_t to avoid overflow.
         }
         return buffer;
     }
@@ -107,7 +104,7 @@ public:
 private:
     const Storage_& my_storage;
     size_t my_secondary;
-    Index_ my_primary;
+    size_t my_primary;
 };
 
 template<typename Value_, typename Index_, class Storage_>
@@ -118,9 +115,8 @@ public:
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         size_t offset = my_block_start * my_secondary + static_cast<size_t>(i); // cast to avoid overflow.
-        auto copy = buffer;
-        for (Index_ x = 0; x < my_block_length; ++x, ++copy, offset += my_secondary) {
-            *copy = my_storage[offset];
+        for (size_t x = 0; x < my_block_length; ++x) {
+            buffer[x] = my_storage[x * my_secondary + offset];
         }
         return buffer;
     }
@@ -129,7 +125,7 @@ private:
     const Storage_& my_storage;
     size_t my_secondary;
     size_t my_block_start;
-    Index_ my_block_length;
+    size_t my_block_length;
 };
 
 template<typename Value_, typename Index_, class Storage_>
@@ -139,11 +135,10 @@ public:
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
 
     const Value_* fetch(Index_ i, Value_* buffer) {
-        auto copy = buffer;
-        size_t offset = static_cast<size_t>(i); // cast to avoid overflow.
-        for (auto x : *my_indices_ptr) {
-            *copy = my_storage[static_cast<size_t>(x) * my_secondary + offset]; // more casting to avoid overflow.
-            ++copy;
+        size_t offset = i;
+        const auto& indices = *my_indices_ptr;
+        for (size_t x = 0, end = indices.size(); x < end; ++x) {
+            buffer[x] = my_storage[static_cast<size_t>(indices[x]) * my_secondary + offset]; // casting to avoid overflow.
         }
         return buffer;
     }

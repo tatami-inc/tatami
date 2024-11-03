@@ -43,10 +43,10 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
         constexpr bool same_type = std::is_same<InputValue_, StoredValue_>::value;
         parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
             std::vector<InputValue_> temp(same_type ? 0 : secondary);
-            auto store_copy = store + static_cast<size_t>(start) * secondary; // cast to size_t to avoid overflow.
             auto wrk = consecutive_extractor<false>(matrix, pref_rows, start, length);
 
             for (InputIndex_ x = 0; x < length; ++x) {
+                auto store_copy = store + static_cast<size_t>(start + x) * secondary; // cast to avoid overflow.
                 if constexpr(same_type) {
                     auto ptr = wrk->fetch(store_copy);
                     copy_n(ptr, secondary, store_copy);
@@ -54,7 +54,6 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
                     auto ptr = wrk->fetch(temp.data());
                     std::copy_n(ptr, secondary, store_copy);
                 }
-                store_copy += secondary;
             }
         }, primary, threads);
 
@@ -67,8 +66,6 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
         // for simultaneous writes in the transposed matrix will be
         // separated by around 'secondary * length' elements. 
         parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
-            auto store_copy = store;
-
             auto wrk = consecutive_extractor<true, InputValue_, InputIndex_>(matrix, pref_rows, 0, primary, start, length);
             std::vector<InputValue_> vtemp(length);
             std::vector<InputIndex_> itemp(length);
@@ -79,9 +76,8 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
             for (size_t x = 0; x < primary; ++x) {
                 auto range = wrk->fetch(vtemp.data(), itemp.data());
                 for (InputIndex_ i = 0; i < range.number; ++i) {
-                    store_copy[static_cast<size_t>(range.index[i]) * primary] = range.value[i]; // again, casting here.
+                    store[static_cast<size_t>(range.index[i]) * primary + x] = range.value[i]; // cast to size_t to avoid overflow.
                 }
-                ++store_copy;
             }
         }, secondary, threads);
 
@@ -90,10 +86,9 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
         // preferred dimension but split into threads along the non-preferred
         // dimension to reduce false sharing.
         parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
-            auto store_copy = store + static_cast<size_t>(start) * primary; // cast to size_t to avoid overflow.
-
             auto wrk = consecutive_extractor<false, InputValue_, InputIndex_>(matrix, pref_rows, 0, primary, start, length);
             const size_t length_as_size_t = length;
+            const size_t start_as_size_t = start;
 
             // Performing a blocked transposition to be more
             // cache-friendly. This involves collecting several
@@ -119,20 +114,18 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
 
                 size_t sec_i = 0;
                 while (sec_i < length_as_size_t) {
-                    size_t sec_to_process = std::min(block_size, length_as_size_t - sec_i);
-                    auto output = store_copy + sec_i * primary;
-                    for (size_t c = 0; c < prim_to_process; ++c, ++output) {
-                        auto input = ptrs[c] + sec_i;
-                        auto output2 = output;
-                        for (size_t r = 0; r < sec_to_process; ++r, ++input, output2 += primary) {
-                            *output2 = *input;
+                    size_t sec_end = sec_i + std::min(block_size, length_as_size_t - sec_i);
+                    for (size_t c = 0; c < prim_to_process; ++c) {
+                        auto input = ptrs[c];
+                        size_t offset = start_as_size_t * primary + (c + prim_i); // already all size_t's, to avoid overflow.
+                        for (size_t r = sec_i; r < sec_end; ++r) {
+                            store[r * primary + offset] = input[r];
                         }
                     }
-                    sec_i += sec_to_process;
-                }
 
+                    sec_i = sec_end;
+                }
                 prim_i += prim_to_process;
-                store_copy += prim_to_process;
             }
         }, secondary, threads);
     }

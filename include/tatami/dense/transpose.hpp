@@ -41,19 +41,9 @@ void transpose(const Input_* input, size_t nrow, size_t ncol, size_t input_strid
         size_t row_start = 0;
         while (row_start < nrow) {
             size_t row_end = row_start + std::min(block, nrow - row_start);
-
-            // We use offsets instead of directly performing pointer
-            // arithmetic, to avoid creating an invalid pointer address (which
-            // is UB, even if unused) after the last inner loop iteration. 
-            size_t input_offset = col_start + row_start * input_stride;
-            size_t output_offset = col_start * output_stride + row_start;
-
-            for (size_t c = col_start; c < col_end; ++c, ++input_offset, output_offset += output_stride) {
-                auto input_offset_copy = input_offset;
-                auto output_offset_copy = output_offset;
-
-                for (size_t r = row_start; r < row_end; ++r, input_offset_copy += input_stride, ++output_offset_copy) {
-                    output[output_offset_copy] = input[input_offset_copy];
+            for (size_t c = col_start; c < col_end; ++c) {
+                for (size_t r = row_start; r < row_end; ++r) {
+                    output[c * output_stride + r] = input[r * input_stride + c];
                 }
             }
 
