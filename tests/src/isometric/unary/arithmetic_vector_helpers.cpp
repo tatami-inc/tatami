@@ -23,7 +23,14 @@ protected:
         if (dense) {
             return;
         }
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
+
+        simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.1;
+            opt.seed = 42428481111;
+            return opt;
+        }());
+
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
         return;
@@ -36,20 +43,6 @@ protected:
         }
         return output;
     }
-
-    static void test_simple_row_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
-        tatami_test::TestAccessParameters params;
-        params.has_nan = true;
-        params.use_row = true;
-        tatami_test::test_full_access(params, test, ref);
-    }
-
-    static void test_simple_column_access_wt_nan(const tatami::NumericMatrix* test, const tatami::NumericMatrix* ref) {
-        tatami_test::TestAccessParameters params;
-        params.has_nan = true;
-        params.use_row = false;
-        tatami_test::test_full_access(params, test, ref);
-    }
 };
 
 #define ARITH_VECTOR_CONFIGURE(y) \
@@ -60,7 +53,7 @@ protected:
 
 #define ARITH_VECTOR_BASIC_SETUP(name, base) \
     class name : \
-        public ::testing::TestWithParam<typename base::SimulationParameters>, \
+        public ::testing::TestWithParam<typename base::SimulationOptions>, \
         public base { \
     protected: \
         void SetUp() { \
@@ -76,7 +69,7 @@ protected:
 
 #define ARITH_VECTOR_FULL_TEST(name, base) \
     class name : \
-        public ::testing::TestWithParam<std::tuple<typename base::SimulationParameters, tatami_test::StandardTestAccessParameters> >, \
+        public ::testing::TestWithParam<std::tuple<typename base::SimulationOptions, tatami_test::StandardTestAccessOptions> >, \
         public base { \
     protected: \
         void SetUp() { \
@@ -85,9 +78,9 @@ protected:
     }; \
     \
     TEST_P(name, Basic) { \
-        auto params = tatami_test::convert_access_parameters(std::get<1>(GetParam())); \
-        tatami_test::test_full_access(params, dense_mod.get(), ref.get()); \
-        tatami_test::test_full_access(params, sparse_mod.get(), ref.get()); \
+        auto opts = tatami_test::convert_test_access_options(std::get<1>(GetParam())); \
+        tatami_test::test_full_access<double, int>(*dense_mod, *ref, opts); \
+        tatami_test::test_full_access<double, int>(*sparse_mod, *ref, opts); \
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
@@ -95,13 +88,13 @@ protected:
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
-            tatami_test::standard_test_access_parameter_combinations() \
+            tatami_test::standard_test_access_options_combinations() \
         ) \
     );
 
 #define ARITH_VECTOR_BLOCK_TEST(name, base) \
     class name : \
-        public ::testing::TestWithParam<std::tuple<typename base::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, \
+        public ::testing::TestWithParam<std::tuple<typename base::SimulationOptions, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, \
         public base { \
     protected: \
         void SetUp() { \
@@ -111,12 +104,10 @@ protected:
     \
     TEST_P(name, Basic) { \
         auto tparam = GetParam(); \
-        auto params = tatami_test::convert_access_parameters(std::get<1>(tparam)); \
+        auto opts = tatami_test::convert_test_access_options(std::get<1>(tparam)); \
         auto interval_info = std::get<2>(tparam); \
-        auto len = (params.use_row ? ref->ncol() : ref->nrow()); \
-        size_t FIRST = interval_info.first * len, LAST = interval_info.second * len; \
-        tatami_test::test_block_access(params, dense_mod.get(), ref.get(), FIRST, LAST); \
-        tatami_test::test_block_access(params, sparse_mod.get(), ref.get(), FIRST, LAST); \
+        tatami_test::test_block_access<double, int>(*dense_mod, *ref, interval_info.first, interval_info.second, opts); \
+        tatami_test::test_block_access<double, int>(*sparse_mod, *ref, interval_info.first, interval_info.second, opts); \
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
@@ -124,18 +115,18 @@ protected:
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
-            tatami_test::standard_test_access_parameter_combinations(), \
+            tatami_test::standard_test_access_options_combinations(), \
             ::testing::Values( \
                 std::make_pair(0.0, 0.35), \
-                std::make_pair(0.38, 0.61), \
-                std::make_pair(0.777, 1.0) \
+                std::make_pair(0.38, 0.23), \
+                std::make_pair(0.777, 0.223) \
             ) \
         ) \
     );
 
 #define ARITH_VECTOR_INDEX_TEST(name, base) \
     class name : \
-        public ::testing::TestWithParam<std::tuple<typename base::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, \
+        public ::testing::TestWithParam<std::tuple<typename base::SimulationOptions, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, \
         public base { \
     protected: \
         void SetUp() { \
@@ -145,12 +136,10 @@ protected:
     \
     TEST_P(name, Basic) { \
         auto tparam = GetParam(); \
-        auto params = tatami_test::convert_access_parameters(std::get<1>(tparam)); \
+        auto opts = tatami_test::convert_test_access_options(std::get<1>(tparam)); \
         auto interval_info = std::get<2>(tparam); \
-        auto len = (params.use_row ? ref->ncol() : ref->nrow()); \
-        size_t FIRST = interval_info.first * len, STEP = interval_info.second; \
-        tatami_test::test_indexed_access(params, dense_mod.get(), ref.get(), FIRST, STEP); \
-        tatami_test::test_indexed_access(params, sparse_mod.get(), ref.get(), FIRST, STEP); \
+        tatami_test::test_indexed_access<double, int>(*dense_mod, *ref, interval_info.first, interval_info.second, opts); \
+        tatami_test::test_indexed_access<double, int>(*sparse_mod, *ref, interval_info.first, interval_info.second, opts); \
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
@@ -158,11 +147,11 @@ protected:
         name, \
         ::testing::Combine( \
             name::simulation_parameter_combinations(), \
-            tatami_test::standard_test_access_parameter_combinations(), \
+            tatami_test::standard_test_access_options_combinations(), \
             ::testing::Values( \
-                std::make_pair(0.0, 7), \
-                std::make_pair(0.21, 5), \
-                std::make_pair(0.56, 3) \
+                std::make_pair(0.0, 0.15), \
+                std::make_pair(0.21, 0.2), \
+                std::make_pair(0.56, 0.3) \
             ) \
         ) \
     );
@@ -173,7 +162,7 @@ protected:
 
 class DelayedUnaryIsometricAddVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
-    typedef std::tuple<bool> SimulationParameters;
+    typedef std::tuple<bool> SimulationOptions;
 
     static auto simulation_parameter_combinations() {
         return ::testing::Combine(
@@ -194,9 +183,9 @@ public:
 
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters last_params;
+    inline static SimulationOptions last_params;
 
-    static void assemble(SimulationParameters sim_params) {
+    static void assemble(SimulationOptions sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
         DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
@@ -233,7 +222,10 @@ ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricAddVectorFullTest, DelayedUnaryIsome
 ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricAddVectorBlockTest, DelayedUnaryIsometricAddVectorUtils)
 ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricAddVectorIndexTest, DelayedUnaryIsometricAddVectorUtils)
 
-class DelayedUnaryIsometricAddVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricAddVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
+class DelayedUnaryIsometricAddVectorZeroedTest : 
+    public ::testing::TestWithParam<typename DelayedUnaryIsometricAddVectorUtils::SimulationOptions>,
+    public DelayedUnaryIsometricArithmeticVectorUtils
+{
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -251,11 +243,11 @@ TEST_P(DelayedUnaryIsometricAddVectorZeroedTest, Basic) {
     EXPECT_FALSE(dense_z->is_sparse());
     EXPECT_TRUE(sparse_z->is_sparse());
 
-    tatami_test::test_simple_column_access(dense_z.get(), dense.get());
-    tatami_test::test_simple_column_access(sparse_z.get(), sparse.get()); 
+    tatami_test::test_simple_column_access<double, int>(*dense_z, *dense);
+    tatami_test::test_simple_column_access<double, int>(*sparse_z, *sparse); 
 
-    tatami_test::test_simple_row_access(dense_z.get(), dense.get());
-    tatami_test::test_simple_row_access(sparse_z.get(), sparse.get());
+    tatami_test::test_simple_row_access<double, int>(*dense_z, *dense);
+    tatami_test::test_simple_row_access<double, int>(*sparse_z, *sparse);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -265,7 +257,7 @@ INSTANTIATE_TEST_SUITE_P(
 );
 
 class DelayedUnaryIsometricAddVectorNewTypeTest : 
-    public ::testing::TestWithParam<typename DelayedUnaryIsometricAddVectorUtils::SimulationParameters>, 
+    public ::testing::TestWithParam<typename DelayedUnaryIsometricAddVectorUtils::SimulationOptions>, 
     public DelayedUnaryIsometricArithmeticVectorUtils 
 {
 protected:
@@ -292,8 +284,8 @@ TEST_P(DelayedUnaryIsometricAddVectorNewTypeTest, Basic) {
     }
     tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-    quick_test_all(dense_fmod.get(), &fref);
-    quick_test_all(sparse_fmod.get(), &fref);
+    quick_test_all<float, int>(*dense_fmod, fref);
+    quick_test_all<float, int>(*sparse_fmod, fref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -308,7 +300,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 class DelayedUnaryIsometricSubtractVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
-    typedef std::tuple<bool, bool> SimulationParameters;
+    typedef std::tuple<bool, bool> SimulationOptions;
 
     static auto simulation_parameter_combinations() {
         return ::testing::Combine(
@@ -337,9 +329,9 @@ public:
 
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters last_params;
+    inline static SimulationOptions last_params;
 
-    static void assemble(SimulationParameters sim_params) {
+    static void assemble(SimulationOptions sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
         DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
@@ -378,7 +370,10 @@ ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricSubtractVectorFullTest, DelayedUnary
 ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricSubtractVectorBlockTest, DelayedUnaryIsometricSubtractVectorUtils)
 ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricSubtractVectorIndexTest, DelayedUnaryIsometricSubtractVectorUtils)
 
-class DelayedUnaryIsometricSubtractVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricSubtractVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
+class DelayedUnaryIsometricSubtractVectorZeroedTest : 
+    public ::testing::TestWithParam<typename DelayedUnaryIsometricSubtractVectorUtils::SimulationOptions>,
+    public DelayedUnaryIsometricArithmeticVectorUtils 
+{
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -398,11 +393,11 @@ TEST_P(DelayedUnaryIsometricSubtractVectorZeroedTest, Basic) {
     EXPECT_TRUE(sparse_z->is_sparse());
 
     if (right) {
-        tatami_test::test_simple_column_access(dense_z.get(), dense.get());
-        tatami_test::test_simple_column_access(sparse_z.get(), sparse.get()); 
+        tatami_test::test_simple_column_access<double, int>(*dense_z, *dense);
+        tatami_test::test_simple_column_access<double, int>(*sparse_z, *sparse); 
 
-        tatami_test::test_simple_row_access(dense_z.get(), dense.get());
-        tatami_test::test_simple_row_access(sparse_z.get(), sparse.get());
+        tatami_test::test_simple_row_access<double, int>(*dense_z, *dense);
+        tatami_test::test_simple_row_access<double, int>(*sparse_z, *sparse);
     } else {
         auto copy = simulated;
         for (auto& x : copy) {
@@ -410,11 +405,11 @@ TEST_P(DelayedUnaryIsometricSubtractVectorZeroedTest, Basic) {
         }
         tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(copy));
 
-        tatami_test::test_simple_column_access(dense_z.get(), &ref);
-        tatami_test::test_simple_column_access(sparse_z.get(), &ref);
+        tatami_test::test_simple_column_access<double, int>(*dense_z, ref);
+        tatami_test::test_simple_column_access<double, int>(*sparse_z, ref);
 
-        tatami_test::test_simple_row_access(dense_z.get(), &ref);
-        tatami_test::test_simple_row_access(sparse_z.get(), &ref);
+        tatami_test::test_simple_row_access<double, int>(*dense_z, ref);
+        tatami_test::test_simple_row_access<double, int>(*sparse_z, ref);
     }
 }
 
@@ -430,7 +425,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 class DelayedUnaryIsometricMultiplyVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
-    typedef std::tuple<bool> SimulationParameters;
+    typedef std::tuple<bool> SimulationOptions;
 
     static auto simulation_parameter_combinations() {
         return ::testing::Combine(
@@ -451,9 +446,9 @@ public:
 
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters last_params;
+    inline static SimulationOptions last_params;
 
-    static void assemble(SimulationParameters sim_params) {
+    static void assemble(SimulationOptions sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
         DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
@@ -488,7 +483,7 @@ ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricMultiplyVectorFullTest, DelayedUnary
 ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricMultiplyVectorBlockTest, DelayedUnaryIsometricMultiplyVectorUtils)
 ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricMultiplyVectorIndexTest, DelayedUnaryIsometricMultiplyVectorUtils)
 
-class DelayedUnaryIsometricMultiplyVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricMultiplyVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
+class DelayedUnaryIsometricMultiplyVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricMultiplyVectorUtils::SimulationOptions>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -505,11 +500,11 @@ TEST_P(DelayedUnaryIsometricMultiplyVectorZeroedTest, Basic) {
 
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::vector<double>(nrow * ncol));
 
-    tatami_test::test_simple_column_access(dense_z.get(), &ref);
-    tatami_test::test_simple_column_access(sparse_z.get(), &ref);
+    tatami_test::test_simple_column_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_column_access<double, int>(*sparse_z, ref);
 
-    tatami_test::test_simple_row_access(dense_z.get(), &ref);
-    tatami_test::test_simple_row_access(sparse_z.get(), &ref);
+    tatami_test::test_simple_row_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_row_access<double, int>(*sparse_z, ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -524,7 +519,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 class DelayedUnaryIsometricDivideVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
-    typedef std::tuple<bool, bool> SimulationParameters;
+    typedef std::tuple<bool, bool> SimulationOptions;
 
     static auto simulation_parameter_combinations() {
         return ::testing::Combine(
@@ -553,9 +548,9 @@ public:
 
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters last_params;
+    inline static SimulationOptions last_params;
 
-    static void assemble(SimulationParameters sim_params) {
+    static void assemble(SimulationOptions sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
         DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
@@ -608,7 +603,7 @@ ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricDivideVectorFullTest, DelayedUnaryIs
 ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricDivideVectorBlockTest, DelayedUnaryIsometricDivideVectorUtils);
 ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricDivideVectorIndexTest, DelayedUnaryIsometricDivideVectorUtils);
 
-class DelayedUnaryIsometricDivideVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricDivideVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
+class DelayedUnaryIsometricDivideVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricDivideVectorUtils::SimulationOptions>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -639,12 +634,11 @@ TEST_P(DelayedUnaryIsometricDivideVectorZeroedTest, AllZero) {
     EXPECT_FALSE(dense_z->is_sparse());
     EXPECT_FALSE(sparse_z->is_sparse());
 
-    // Turning on NaN protection.
-    test_simple_column_access_wt_nan(dense_z.get(), &ref);
-    test_simple_column_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_column_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_column_access<double, int>(*sparse_z, ref);
 
-    test_simple_row_access_wt_nan(dense_z.get(), &ref);
-    test_simple_row_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_row_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_row_access<double, int>(*sparse_z, ref);
 }
 
 TEST_P(DelayedUnaryIsometricDivideVectorZeroedTest, OneZero) {
@@ -691,12 +685,11 @@ TEST_P(DelayedUnaryIsometricDivideVectorZeroedTest, OneZero) {
     EXPECT_FALSE(dense_z->is_sparse());
     EXPECT_FALSE(sparse_z->is_sparse());
 
-    // Turning on NaN protection.
-    test_simple_column_access_wt_nan(dense_z.get(), &ref);
-    test_simple_column_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_column_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_column_access<double, int>(*sparse_z, ref);
 
-    test_simple_row_access_wt_nan(dense_z.get(), &ref);
-    test_simple_row_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_row_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_row_access<double, int>(*sparse_z, ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -711,7 +704,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 class DelayedUnaryIsometricPowerVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
-    typedef std::tuple<bool, bool> SimulationParameters;
+    typedef std::tuple<bool, bool> SimulationOptions;
 
     static auto simulation_parameter_combinations() {
         return ::testing::Combine(
@@ -744,9 +737,9 @@ public:
 
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters last_params;
+    inline static SimulationOptions last_params;
 
-    static void assemble(SimulationParameters sim_params) {
+    static void assemble(SimulationOptions sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
         DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
@@ -793,7 +786,7 @@ ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricPowerVectorFullTest, DelayedUnaryIso
 ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricPowerVectorBlockTest, DelayedUnaryIsometricPowerVectorUtils);
 ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricPowerVectorIndexTest, DelayedUnaryIsometricPowerVectorUtils);
 
-class DelayedUnaryIsometricPowerVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricPowerVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
+class DelayedUnaryIsometricPowerVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricPowerVectorUtils::SimulationOptions>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -824,12 +817,11 @@ TEST_P(DelayedUnaryIsometricPowerVectorZeroedTest, AllZero) {
     EXPECT_FALSE(dense_z->is_sparse());
     EXPECT_FALSE(sparse_z->is_sparse());
 
-    // Turning on NaN protection.
-    test_simple_column_access_wt_nan(dense_z.get(), &ref);
-    test_simple_column_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_column_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_column_access<double, int>(*sparse_z, ref);
 
-    test_simple_row_access_wt_nan(dense_z.get(), &ref);
-    test_simple_row_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_row_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_row_access<double, int>(*sparse_z, ref);
 }
 
 TEST_P(DelayedUnaryIsometricPowerVectorZeroedTest, OneZero) {
@@ -879,12 +871,11 @@ TEST_P(DelayedUnaryIsometricPowerVectorZeroedTest, OneZero) {
     EXPECT_FALSE(dense_z->is_sparse());
     EXPECT_FALSE(sparse_z->is_sparse());
 
-    // Turning on NaN protection.
-    test_simple_column_access_wt_nan(dense_z.get(), &ref);
-    test_simple_column_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_column_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_column_access<double, int>(*sparse_z, ref);
 
-    test_simple_row_access_wt_nan(dense_z.get(), &ref);
-    test_simple_row_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_row_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_row_access<double, int>(*sparse_z, ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -897,106 +888,9 @@ INSTANTIATE_TEST_SUITE_P(
  ********** MODULO **********
  ****************************/
 
-#define ARITH_VECTOR_FULL_TEST_WITH_NAN(name, base) \
-    class name : \
-        public ::testing::TestWithParam<std::tuple<typename base::SimulationParameters, tatami_test::StandardTestAccessParameters> >, \
-        public base { \
-    protected: \
-        void SetUp() { \
-            assemble(std::get<0>(GetParam())); \
-        } \
-    }; \
-    \
-    TEST_P(name, Basic) { \
-        auto params = tatami_test::convert_access_parameters(std::get<1>(GetParam())); \
-        params.has_nan = true; \
-        tatami_test::test_full_access(params, dense_mod.get(), ref.get()); \
-        tatami_test::test_full_access(params, sparse_mod.get(), ref.get()); \
-    } \
-    \
-    INSTANTIATE_TEST_SUITE_P( \
-        DelayedUnaryIsometricArithmeticVector, \
-        name, \
-        ::testing::Combine( \
-            name::simulation_parameter_combinations(), \
-            tatami_test::standard_test_access_parameter_combinations() \
-        ) \
-    ); \
-
-#define ARITH_VECTOR_BLOCK_TEST_WITH_NAN(name, base) \
-    class name : \
-        public ::testing::TestWithParam<std::tuple<typename base::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, \
-        public base { \
-    protected: \
-        void SetUp() { \
-            assemble(std::get<0>(GetParam())); \
-        } \
-    }; \
-    \
-    TEST_P(name, Basic) { \
-        auto tparam = GetParam(); \
-        auto params = tatami_test::convert_access_parameters(std::get<1>(tparam)); \
-        params.has_nan = true; \
-        auto interval_info = std::get<2>(tparam); \
-        auto len = (params.use_row ? ref->ncol() : ref->nrow()); \
-        size_t FIRST = interval_info.first * len, LAST = interval_info.second * len; \
-        tatami_test::test_block_access(params, dense_mod.get(), ref.get(), FIRST, LAST); \
-        tatami_test::test_block_access(params, sparse_mod.get(), ref.get(), FIRST, LAST); \
-    } \
-    \
-    INSTANTIATE_TEST_SUITE_P( \
-        DelayedUnaryIsometricArithmeticVector, \
-        name, \
-        ::testing::Combine( \
-            name::simulation_parameter_combinations(), \
-            tatami_test::standard_test_access_parameter_combinations(), \
-            ::testing::Values( \
-                std::make_pair(0.0, 0.35), \
-                std::make_pair(0.38, 0.61), \
-                std::make_pair(0.777, 1.0) \
-            ) \
-        ) \
-    );
-
-#define ARITH_VECTOR_INDEX_TEST_WITH_NAN(name, base) \
-    class name : \
-        public ::testing::TestWithParam<std::tuple<typename base::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, \
-        public base { \
-    protected: \
-        void SetUp() { \
-            assemble(std::get<0>(GetParam())); \
-        } \
-    }; \
-    \
-    TEST_P(name, Basic) { \
-        auto tparam = GetParam(); \
-        auto params = tatami_test::convert_access_parameters(std::get<1>(tparam)); \
-        params.has_nan = true; \
-        auto interval_info = std::get<2>(tparam); \
-        auto len = (params.use_row ? ref->ncol() : ref->nrow()); \
-        size_t FIRST = interval_info.first * len, STEP = interval_info.second; \
-        tatami_test::test_indexed_access(params, dense_mod.get(), ref.get(), FIRST, STEP); \
-        tatami_test::test_indexed_access(params, sparse_mod.get(), ref.get(), FIRST, STEP); \
-    } \
-    \
-    INSTANTIATE_TEST_SUITE_P( \
-        DelayedUnaryIsometricArithmeticVector, \
-        name, \
-        ::testing::Combine( \
-            name::simulation_parameter_combinations(), \
-            tatami_test::standard_test_access_parameter_combinations(), \
-            ::testing::Values( \
-                std::make_pair(0.0, 7), \
-                std::make_pair(0.21, 5), \
-                std::make_pair(0.56, 3) \
-            ) \
-        ) \
-    );
-
-
 class DelayedUnaryIsometricModuloVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
-    typedef std::tuple<bool, bool> SimulationParameters;
+    typedef std::tuple<bool, bool> SimulationOptions;
 
     static auto simulation_parameter_combinations() {
         return ::testing::Combine(
@@ -1025,9 +919,9 @@ public:
 
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters last_params;
+    inline static SimulationOptions last_params;
 
-    static void assemble(SimulationParameters sim_params) {
+    static void assemble(SimulationOptions sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
         DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
@@ -1070,11 +964,11 @@ TEST_P(DelayedUnaryIsometricModuloVectorTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-ARITH_VECTOR_FULL_TEST_WITH_NAN(DelayedUnaryIsometricModuloVectorFullTest, DelayedUnaryIsometricModuloVectorUtils);
-ARITH_VECTOR_BLOCK_TEST_WITH_NAN(DelayedUnaryIsometricModuloVectorBlockTest, DelayedUnaryIsometricModuloVectorUtils);
-ARITH_VECTOR_INDEX_TEST_WITH_NAN(DelayedUnaryIsometricModuloVectorIndexTest, DelayedUnaryIsometricModuloVectorUtils);
+ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricModuloVectorFullTest, DelayedUnaryIsometricModuloVectorUtils);
+ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricModuloVectorBlockTest, DelayedUnaryIsometricModuloVectorUtils);
+ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricModuloVectorIndexTest, DelayedUnaryIsometricModuloVectorUtils);
 
-class DelayedUnaryIsometricModuloVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricModuloVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
+class DelayedUnaryIsometricModuloVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricModuloVectorUtils::SimulationOptions>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -1105,12 +999,11 @@ TEST_P(DelayedUnaryIsometricModuloVectorZeroedTest, AllZero) {
     EXPECT_FALSE(dense_z->is_sparse());
     EXPECT_FALSE(sparse_z->is_sparse());
 
-    // Turning on NaN protection.
-    test_simple_column_access_wt_nan(dense_z.get(), &ref);
-    test_simple_column_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_column_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_column_access<double, int>(*sparse_z, ref);
 
-    test_simple_row_access_wt_nan(dense_z.get(), &ref);
-    test_simple_row_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_row_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_row_access<double, int>(*sparse_z, ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -1120,7 +1013,7 @@ INSTANTIATE_TEST_SUITE_P(
 );
 
 class DelayedUnaryIsometricModuloVectorNewTypeTest : 
-    public ::testing::TestWithParam<typename DelayedUnaryIsometricModuloVectorUtils::SimulationParameters>, 
+    public ::testing::TestWithParam<typename DelayedUnaryIsometricModuloVectorUtils::SimulationOptions>, 
     public DelayedUnaryIsometricArithmeticVectorUtils 
 {
 protected:
@@ -1161,8 +1054,8 @@ TEST_P(DelayedUnaryIsometricModuloVectorNewTypeTest, Basic) {
     }
     tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-    quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-    quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+    quick_test_all<float, int>(*dense_fmod, fref);
+    quick_test_all<float, int>(*sparse_fmod, fref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -1177,7 +1070,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 class DelayedUnaryIsometricIntegerDivideVectorUtils : public DelayedUnaryIsometricArithmeticVectorUtils {
 public:
-    typedef std::tuple<bool, bool> SimulationParameters;
+    typedef std::tuple<bool, bool> SimulationOptions;
 
     static auto simulation_parameter_combinations() {
         return ::testing::Combine(
@@ -1206,9 +1099,9 @@ public:
 
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, ref;
-    inline static SimulationParameters last_params;
+    inline static SimulationOptions last_params;
 
-    void assemble(SimulationParameters sim_params) {
+    void assemble(SimulationOptions sim_params) {
         ARITH_VECTOR_CONFIGURE(sim_params);
         DelayedUnaryIsometricArithmeticVectorUtils::assemble();
 
@@ -1252,11 +1145,11 @@ TEST_P(DelayedUnaryIsometricIntegerDivideVectorTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-ARITH_VECTOR_FULL_TEST_WITH_NAN(DelayedUnaryIsometricIntegerDivideVectorFullTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
-ARITH_VECTOR_BLOCK_TEST_WITH_NAN(DelayedUnaryIsometricIntegerDivideVectorBlockTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
-ARITH_VECTOR_INDEX_TEST_WITH_NAN(DelayedUnaryIsometricIntegerDivideVectorIndexTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
+ARITH_VECTOR_FULL_TEST(DelayedUnaryIsometricIntegerDivideVectorFullTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
+ARITH_VECTOR_BLOCK_TEST(DelayedUnaryIsometricIntegerDivideVectorBlockTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
+ARITH_VECTOR_INDEX_TEST(DelayedUnaryIsometricIntegerDivideVectorIndexTest, DelayedUnaryIsometricIntegerDivideVectorUtils);
 
-class DelayedUnaryIsometricIntegerDivideVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricIntegerDivideVectorUtils::SimulationParameters>, public DelayedUnaryIsometricArithmeticVectorUtils {
+class DelayedUnaryIsometricIntegerDivideVectorZeroedTest : public ::testing::TestWithParam<typename DelayedUnaryIsometricIntegerDivideVectorUtils::SimulationOptions>, public DelayedUnaryIsometricArithmeticVectorUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -1288,12 +1181,11 @@ TEST_P(DelayedUnaryIsometricIntegerDivideVectorZeroedTest, AllZero) {
     EXPECT_FALSE(dense_z->is_sparse());
     EXPECT_FALSE(sparse_z->is_sparse());
 
-    // Turning on NaN protection.
-    test_simple_column_access_wt_nan(dense_z.get(), &ref);
-    test_simple_column_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_column_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_column_access<double, int>(*sparse_z, ref);
 
-    test_simple_row_access_wt_nan(dense_z.get(), &ref);
-    test_simple_row_access_wt_nan(sparse_z.get(), &ref);
+    tatami_test::test_simple_row_access<double, int>(*dense_z, ref);
+    tatami_test::test_simple_row_access<double, int>(*sparse_z, ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(

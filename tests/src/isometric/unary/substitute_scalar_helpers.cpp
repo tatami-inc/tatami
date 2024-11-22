@@ -19,7 +19,15 @@ protected:
     inline static std::vector<double> simulated;
 
     static void SetUpTestSuite() {
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -2, 2);
+        simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.1;
+            opt.lower = -2;
+            opt.upper = 2;
+            opt.seed = 128736123;
+            return opt;
+        }());
+
         for (auto& x : simulated) {
             if (x) {
                 // Rounding for easier tests of exact equality.
@@ -63,8 +71,8 @@ TEST_P(DelayedUnaryIsometricSubstituteScalarTest, Equal) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteScalarTest, GreaterThan) {
@@ -95,8 +103,8 @@ TEST_P(DelayedUnaryIsometricSubstituteScalarTest, GreaterThan) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteScalarTest, LessThan) {
@@ -127,8 +135,8 @@ TEST_P(DelayedUnaryIsometricSubstituteScalarTest, LessThan) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteScalarTest, GreaterThanOrEqual) {
@@ -159,8 +167,8 @@ TEST_P(DelayedUnaryIsometricSubstituteScalarTest, GreaterThanOrEqual) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteScalarTest, LessThanOrEqual) {
@@ -191,8 +199,8 @@ TEST_P(DelayedUnaryIsometricSubstituteScalarTest, LessThanOrEqual) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteScalarTest, NotEqual) {
@@ -223,8 +231,8 @@ TEST_P(DelayedUnaryIsometricSubstituteScalarTest, NotEqual) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -302,8 +310,8 @@ TEST_P(DelayedUnaryIsometricSpecialSubstituteTest, NaN) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref, /* has_na = */ !pass);
-    quick_test_all(sparse_mod.get(), &ref, /* has_na = */ !pass);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSpecialSubstituteTest, Infinity) {
@@ -340,8 +348,8 @@ TEST_P(DelayedUnaryIsometricSpecialSubstituteTest, Infinity) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref, /* has_na = */ true);
-    quick_test_all(sparse_mod.get(), &ref, /* has_na = */ true);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSpecialSubstituteTest, Finite) {
@@ -378,8 +386,8 @@ TEST_P(DelayedUnaryIsometricSpecialSubstituteTest, Finite) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref, /* has_na = */ pass);
-    quick_test_all(sparse_mod.get(), &ref, /* has_na = */ pass);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(

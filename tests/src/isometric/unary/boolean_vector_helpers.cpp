@@ -18,7 +18,15 @@ protected:
     inline static std::vector<double> simulated;
 
     static void SetUpTestSuite() {
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -3, 3);
+        simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.1;
+            opt.lower = -3;
+            opt.upper = 3;
+            opt.seed = 817236584;
+            return opt;
+        }());
+
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
     }
@@ -65,8 +73,8 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, AND) {
     }
     
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricBooleanVectorTest, OR) {
@@ -104,8 +112,8 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, OR) {
     }
     
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricBooleanVectorTest, XOR) {
@@ -141,10 +149,10 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, XOR) {
             x = (static_cast<bool>(x) != static_cast<bool>(vec[row ? r : c]));
         }
     }
-    
+
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricBooleanVectorTest, EQUAL) {
@@ -182,10 +190,10 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, EQUAL) {
             x = (static_cast<bool>(x) == static_cast<bool>(vec[row ? r : c]));
         }
     }
-    
+
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricBooleanVectorTest, NewType) {
@@ -219,8 +227,8 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, NewType) {
     }
     
     tatami::DenseRowMatrix<uint8_t, int> uref(nrow, ncol, std::move(urefvec));
-    quick_test_all(dense_umod.get(), &uref);
-    quick_test_all(sparse_umod.get(), &uref);
+    quick_test_all<uint8_t, int>(*dense_umod, uref);
+    quick_test_all<uint8_t, int>(*sparse_umod, uref);
 }
 
 INSTANTIATE_TEST_SUITE_P(

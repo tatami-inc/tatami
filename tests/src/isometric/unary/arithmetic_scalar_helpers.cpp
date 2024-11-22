@@ -24,7 +24,14 @@ protected:
         if (dense) {
             return;
         }
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
+
+        simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.1;
+            opt.seed = 511498129;
+            return opt;
+        }());
+
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
     }
@@ -66,8 +73,8 @@ TEST_P(DelayedUnaryIsometricArithmeticCommutativeScalarTest, Add) {
         r += val;
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricArithmeticCommutativeScalarTest, Multiply) {
@@ -86,8 +93,8 @@ TEST_P(DelayedUnaryIsometricArithmeticCommutativeScalarTest, Multiply) {
         r *= val;
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricArithmeticCommutativeScalarTest, NewType) {
@@ -103,8 +110,8 @@ TEST_P(DelayedUnaryIsometricArithmeticCommutativeScalarTest, NewType) {
     }
 
     tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
-    quick_test_all(dense_fmod.get(), &fref);
-    quick_test_all(sparse_fmod.get(), &fref);
+    quick_test_all<float, int>(*dense_fmod, fref);
+    quick_test_all<float, int>(*sparse_fmod, fref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -161,8 +168,8 @@ TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Subtract) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Divide) {
@@ -200,8 +207,8 @@ TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Divide) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ (val == 0));
-    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ (val == 0));
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Power) {
@@ -245,8 +252,8 @@ TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Power) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Modulo) {
@@ -285,8 +292,8 @@ TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, Modulo) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ !(on_right && val));
-    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ !(on_right && val));
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, IntegerDivide) {
@@ -326,8 +333,8 @@ TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, IntegerDivide) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
 
-    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ !(on_right && val));
-    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ !(on_right && val));
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, NewType) {
@@ -357,8 +364,8 @@ TEST_P(DelayedUnaryIsometricArithmeticNonCommutativeScalarTest, NewType) {
     }
 
     tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
-    quick_test_all(dense_fmod.get(), &fref);
-    quick_test_all(sparse_fmod.get(), &fref);
+    quick_test_all<float, int>(*dense_fmod, fref);
+    quick_test_all<float, int>(*sparse_fmod, fref);
 }
 
 

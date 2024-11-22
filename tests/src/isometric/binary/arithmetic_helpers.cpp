@@ -117,7 +117,7 @@ protected:
 
 #define BINARY_ARITH_INDEX_TEST(name, base) \
     class name : \
-        public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessOptions, std::pair<double, int> > >, \
+        public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, \
         public base { \
     protected: \
         static void SetUpTestSuite() { \
