@@ -23,13 +23,7 @@ if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
 endif()
 
 macro(decorate_executable target)
-    target_link_libraries(
-        ${target}
-        gtest_main
-        gmock_main
-        tatami
-        tatami_test
-    )
+    target_link_libraries(${target} tatami tatami_test)
 
     target_compile_definitions(${target} PRIVATE DEBUG=1)
     target_compile_options(${target} PRIVATE -Wall -Wextra -Wpedantic -Werror)

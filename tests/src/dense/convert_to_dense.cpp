@@ -60,6 +60,7 @@ TEST_P(ConvertToDenseTest, FromSparse) {
     auto vec = tatami_test::simulate_compressed_sparse<double, int>((from_row ? NR : NC), (from_row ? NC : NR), [&]{
         tatami_test::SimulateCompressedSparseOptions opt;
         opt.density = 0.2;
+        opt.seed = 3498761;
         return opt;
     }());
     tatami::CompressedSparseMatrix<double, int> smat(NR, NC, std::move(vec.data), std::move(vec.index), std::move(vec.indptr), from_row);

@@ -245,6 +245,7 @@ TEST(CompressedSparseMatrix, SecondarySkip) {
     auto simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
         tatami_test::SimulateVectorOptions opt;
         opt.density = 0.05;
+        opt.seed = 18181818;
         return opt;
     }());
 
