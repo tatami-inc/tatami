@@ -21,8 +21,8 @@ TEST(FragmentedSparseMatrix, ConstructionEmpty) {
 
     // Comparing access for an empty matrix.
     tatami::DenseColumnMatrix<double, int> dense(10, 20, std::vector<double>(200));
-    tatami_test::test_simple_column_access(&mat, &dense);
-    tatami_test::test_simple_row_access(&mat, &dense);
+    tatami_test::test_simple_column_access(mat, dense);
+    tatami_test::test_simple_row_access(mat, dense);
 
     // Same for row-major.
     values.resize(10);
@@ -31,8 +31,8 @@ TEST(FragmentedSparseMatrix, ConstructionEmpty) {
     EXPECT_TRUE(rmat.is_sparse());
     EXPECT_EQ(rmat.nrow(), 10);
     EXPECT_EQ(rmat.ncol(), 20);
-    tatami_test::test_simple_column_access(&rmat, &dense);
-    tatami_test::test_simple_row_access(&rmat, &dense);
+    tatami_test::test_simple_column_access(rmat, dense);
+    tatami_test::test_simple_row_access(rmat, dense);
 }
 
 TEST(FragmentedSparseMatrix, ConstructionFail) {
@@ -73,7 +73,13 @@ protected:
             return;
         }
 
-        dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.05)));
+        auto vec = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.08;
+            opt.seed = 608528035;
+            return opt;
+        }());
+        dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(vec)));
 
         {
             std::vector<std::vector<double> > values(nrow);
@@ -117,7 +123,9 @@ protected:
     }
 };
 
-class FragmentedSparseTest : public ::testing::Test, public FragmentedSparseUtils {
+class FragmentedSparseTest : 
+    public ::testing::Test,
+    public FragmentedSparseUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -148,7 +156,9 @@ TEST_F(FragmentedSparseTest, Basic) {
 /*************************************
  *************************************/
 
-class FragmentedSparseFullAccessTest : public ::testing::TestWithParam<tatami_test::StandardTestAccessParameters>, public FragmentedSparseUtils {
+class FragmentedSparseFullAccessTest : 
+    public ::testing::TestWithParam<tatami_test::StandardTestAccessOptions>, 
+    public FragmentedSparseUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -157,9 +167,9 @@ protected:
 
 TEST_P(FragmentedSparseFullAccessTest, Full) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(tparam);
-    tatami_test::test_full_access(params, sparse_column.get(), dense.get());
-    tatami_test::test_full_access(params, sparse_row.get(), dense.get());
+    auto opts = tatami_test::convert_test_access_options(tparam);
+    tatami_test::test_full_access(*sparse_column, *dense, opts);
+    tatami_test::test_full_access(*sparse_row, *dense, opts);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -168,7 +178,7 @@ INSTANTIATE_TEST_SUITE_P(
     ::testing::Combine(
         ::testing::Values(true, false), // row extraction.
         ::testing::Values(true, false), // an oracle.
-        ::testing::Values(tatami_test::FORWARD, tatami_test::REVERSE, tatami_test::RANDOM),
+        ::testing::Values(tatami_test::TestAccessOrder::FORWARD, tatami_test::TestAccessOrder::REVERSE, tatami_test::TestAccessOrder::RANDOM),
         ::testing::Values(1, 4, 10, 20) // jump, to test the workspace's memory; trying out longer jumps to test secondaries.
     )
 );
@@ -176,34 +186,32 @@ INSTANTIATE_TEST_SUITE_P(
 /*************************************
  *************************************/
 
-class FragmentedSparseSlicedAccessTest : public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, public FragmentedSparseUtils {
+class FragmentedSparseBlockAccessTest : 
+    public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, 
+    public FragmentedSparseUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
     }
 };
 
-TEST_P(FragmentedSparseSlicedAccessTest, Sliced) {
+TEST_P(FragmentedSparseBlockAccessTest, Block) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
-
+    auto opts = tatami_test::convert_test_access_options(std::get<0>(tparam));
     auto interval_info = std::get<1>(tparam);
-    auto len = (params.use_row ? ncol : nrow);
-    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
-
-    tatami_test::test_block_access(params, sparse_column.get(), dense.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, sparse_row.get(), dense.get(), FIRST, LAST);
+    tatami_test::test_block_access(*sparse_column, *dense, interval_info.first, interval_info.second, opts);
+    tatami_test::test_block_access(*sparse_row, *dense, interval_info.first, interval_info.second, opts);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     FragmentedSparseMatrix,
-    FragmentedSparseSlicedAccessTest,
+    FragmentedSparseBlockAccessTest,
     ::testing::Combine(
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
-            std::make_pair(0.0, 0.51),
-            std::make_pair(0.25, 0.9), 
-            std::make_pair(0.63, 1.0)
+            std::make_pair(0.0, 0.71),
+            std::make_pair(0.25, 0.46), 
+            std::make_pair(0.63, 0.3)
         )
     )
 );
@@ -211,7 +219,9 @@ INSTANTIATE_TEST_SUITE_P(
 /*************************************
  *************************************/
 
-class FragmentedSparseIndexedAccessTest : public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, public FragmentedSparseUtils {
+class FragmentedSparseIndexedAccessTest : 
+    public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, 
+    public FragmentedSparseUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -220,25 +230,21 @@ protected:
 
 TEST_P(FragmentedSparseIndexedAccessTest, Indexed) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
-
+    auto opts = tatami_test::convert_test_access_options(std::get<0>(tparam));
     auto interval_info = std::get<1>(tparam);
-    auto len = (params.use_row ? ncol : nrow);
-    size_t FIRST = interval_info.first * len, STEP = interval_info.second;
-
-    tatami_test::test_indexed_access(params, sparse_column.get(), dense.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, sparse_row.get(), dense.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(*sparse_column, *dense, interval_info.first, interval_info.second, opts);
+    tatami_test::test_indexed_access(*sparse_row, *dense, interval_info.first, interval_info.second, opts);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     FragmentedSparseMatrix,
     FragmentedSparseIndexedAccessTest,
     ::testing::Combine(
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
-            std::make_pair(0.0, 5),
-            std::make_pair(0.2, 10), 
-            std::make_pair(0.7, 3)
+            std::make_pair(0.0, 0.25),
+            std::make_pair(0.2, 0.2), 
+            std::make_pair(0.7, 0.4)
         )
     )
 );

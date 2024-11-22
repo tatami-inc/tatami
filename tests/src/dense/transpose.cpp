@@ -47,7 +47,7 @@ TEST_P(TransposeDenseTest, Strided) {
         tatami_test::SimulateVectorOptions opt;
         opt.lower = 0;
         opt.upper = 100;
-        opt.seed = NR * 10 + NC;
+        opt.seed = NR * 20 + NC;
         return opt;
     }());
 

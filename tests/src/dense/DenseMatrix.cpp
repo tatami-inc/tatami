@@ -67,7 +67,12 @@ protected:
             return;
         }
 
-        auto simulated = tatami_test::simulate_vector<double>(nrow * ncol, tatami_test::SimulateVectorOptions());
+        auto simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.seed = 438579088;
+            return opt;
+        }());
+
         auto transposed = std::vector<double>(nrow * ncol);
         for (size_t c = 0; c < ncol; ++c) {
             for (size_t r = 0; r < nrow; ++r) {

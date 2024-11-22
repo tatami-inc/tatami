@@ -26,7 +26,11 @@ protected:
 TEST_P(ConvertToDenseTest, FromDense) {
     assemble(GetParam());
 
-    auto vec = tatami_test::simulate_vector<double>(NR * NC, tatami_test::SimulateVectorOptions());
+    auto vec = tatami_test::simulate_vector<double>(NR * NC, []{
+        tatami_test::SimulateVectorOptions opt;
+        opt.seed = 142857;
+        return opt;
+    }());
     auto mat = std::make_shared<tatami::DenseMatrix<double, int> >(NR, NC, vec, from_row);
 
     auto converted = tatami::convert_to_dense(mat.get(), to_row, threads);
