@@ -27,7 +27,7 @@ TEST(DenseMatrix, Basic) {
         for (size_t i = 0, end = mat.ncol(); i < end; ++i) {
             auto start = contents.begin() + i * mat.nrow();
             std::vector<double> expected(start, start + mat.nrow());
-            auto observed = tatami_test::fetch<double, int>(wrk.get(), i, mat.nrow());
+            auto observed = tatami_test::fetch<double, int>(*wrk, i, mat.nrow());
             EXPECT_EQ(observed, expected);
         }
     }
@@ -39,7 +39,7 @@ TEST(DenseMatrix, Basic) {
             for (size_t j = 0, jend = mat.ncol(); j < jend; ++j) {
                 expected[j] = contents[j * mat.nrow() + i];
             }
-            auto observed = tatami_test::fetch<double, int>(wrk.get(), i, mat.ncol());
+            auto observed = tatami_test::fetch<double, int>(*wrk, i, mat.ncol());
             EXPECT_EQ(observed, expected);
         }
     }
@@ -67,7 +67,7 @@ protected:
             return;
         }
 
-        auto simulated = tatami_test::simulate_dense_vector<double>(nrow * ncol, 0.05);
+        auto simulated = tatami_test::simulate_vector<double>(nrow * ncol, tatami_test::SimulateVectorOptions());
         auto transposed = std::vector<double>(nrow * ncol);
         for (size_t c = 0; c < ncol; ++c) {
             for (size_t r = 0; r < nrow; ++r) {
@@ -103,7 +103,7 @@ TEST_F(DenseUtilsTest, Basic) {
  *************************************/
 
 class DenseFullAccessTest : 
-    public ::testing::TestWithParam<typename tatami_test::StandardTestAccessParameters>,
+    public ::testing::TestWithParam<tatami_test::StandardTestAccessOptions>,
     public DenseTestMethods {
 protected:
     static void SetUpTestSuite() {
@@ -113,22 +113,22 @@ protected:
 
 TEST_P(DenseFullAccessTest, Full) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(tparam);
-    tatami_test::test_full_access(params, dense_row.get(), dense_column.get());
-    tatami_test::test_full_access(params, dense_column.get(), dense_row.get());
+    auto opt = tatami_test::convert_test_access_options(tparam);
+    tatami_test::test_full_access(*dense_row, *dense_column, opt);
+    tatami_test::test_full_access(*dense_column, *dense_row, opt);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseFullAccessTest,
-    tatami_test::standard_test_access_parameter_combinations()
+    tatami_test::standard_test_access_options_combinations()
 );
 
 /*************************************
  *************************************/
 
-class DenseSlicedAccessTest : 
-    public ::testing::TestWithParam<std::tuple<typename tatami_test::StandardTestAccessParameters, std::pair<double, double> > >,
+class DenseBlockAccessTest : 
+    public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessOptions, std::pair<double, double> > >,
     public DenseTestMethods {
 protected:
     static void SetUpTestSuite() {
@@ -136,27 +136,23 @@ protected:
     }
 };
 
-TEST_P(DenseSlicedAccessTest, Sliced) {
+TEST_P(DenseBlockAccessTest, Block) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
-
+    auto opts = tatami_test::convert_test_access_options(std::get<0>(tparam));
     auto interval_info = std::get<1>(tparam);
-    auto len = (params.use_row ? ncol : nrow);
-    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
-
-    tatami_test::test_block_access(params, dense_column.get(), dense_row.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, dense_row.get(), dense_column.get(), FIRST, LAST);
+    tatami_test::test_block_access(*dense_column, *dense_row, interval_info.first, interval_info.second, opts);
+    tatami_test::test_block_access(*dense_row, *dense_column, interval_info.first, interval_info.second, opts);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
-    DenseSlicedAccessTest,
+    DenseBlockAccessTest,
     ::testing::Combine(
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
             std::make_pair(0.0, 0.45),
-            std::make_pair(0.2, 0.8), 
-            std::make_pair(0.7, 1.0)
+            std::make_pair(0.2, 0.6), 
+            std::make_pair(0.7, 0.3)
         )
     )
 );
@@ -165,7 +161,7 @@ INSTANTIATE_TEST_SUITE_P(
  *************************************/
 
 class DenseIndexedAccessTest :
-    public ::testing::TestWithParam<std::tuple<typename tatami_test::StandardTestAccessParameters, std::pair<double, int> > >,
+    public ::testing::TestWithParam<std::tuple<typename tatami_test::StandardTestAccessOptions, std::pair<double, double> > >,
     public DenseTestMethods {
 protected:
     static void SetUpTestSuite() {
@@ -175,25 +171,21 @@ protected:
 
 TEST_P(DenseIndexedAccessTest, Indexed) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
-
+    auto opts = tatami_test::convert_test_access_options(std::get<0>(tparam));
     auto interval_info = std::get<1>(tparam);
-    auto len = (params.use_row ? ncol : nrow);
-    size_t FIRST = interval_info.first * len, STEP = interval_info.second;
-
-    tatami_test::test_indexed_access(params, dense_column.get(), dense_row.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, dense_row.get(), dense_column.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(*dense_column, *dense_row, interval_info.first, interval_info.second, opts);
+    tatami_test::test_indexed_access(*dense_row, *dense_column, interval_info.first, interval_info.second, opts);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DenseMatrix,
     DenseIndexedAccessTest,
     ::testing::Combine(
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
-            std::make_pair(0.0, 5),
-            std::make_pair(0.2, 10), 
-            std::make_pair(0.7, 3)
+            std::make_pair(0.0, 0.15),
+            std::make_pair(0.2, 0.25), 
+            std::make_pair(0.7, 0.3)
         )
     )
 );
@@ -218,8 +210,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
         auto rwrk = ref.dense_column();
         auto lwrk = limited.dense_column();
         for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.nrow());
-            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i, limited.nrow());
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.nrow());
+            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.nrow());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -228,8 +220,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
         auto rwrk = ref.dense_row();
         auto lwrk = limited.dense_row();
         for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.ncol());
-            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i, limited.ncol());
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.ncol());
+            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.ncol());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -238,8 +230,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
         auto rwrk = ref.dense_column(59, 189);
         auto lwrk = limited.dense_column(59, 189);
         for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.nrow());
-            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i, limited.nrow());
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.nrow());
+            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.nrow());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -248,8 +240,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
         auto rwrk = ref.dense_row(59, 89);
         auto lwrk = limited.dense_row(59, 89);
         for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.ncol());
-            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i, limited.ncol());
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.ncol());
+            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.ncol());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -261,8 +253,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
         auto rwrk = ref.dense_column(std::move(indices));
         auto lwrk = limited.dense_column(std::move(uindices));
         for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.nrow());
-            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i, limited.nrow());
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.nrow());
+            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.nrow());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -274,8 +266,8 @@ TEST(DenseMatrix, IndexTypeOverflow) {
         auto rwrk = ref.dense_row(std::move(indices));
         auto lwrk = limited.dense_row(std::move(uindices));
         for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.ncol());
-            auto observed = tatami_test::fetch<double, unsigned char>(lwrk.get(), i, limited.ncol());
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.ncol());
+            auto observed = tatami_test::fetch<double, unsigned char>(*lwrk, i, limited.ncol());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -297,8 +289,8 @@ TEST(DenseMatrix, DifferentValueType) {
         auto rwrk = ref.dense_column();
         auto lwrk = vstore.dense_column();
         for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.nrow());
-            auto observed = tatami_test::fetch<double, int>(lwrk.get(), i, vstore.nrow());
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.nrow());
+            auto observed = tatami_test::fetch<double, int>(*lwrk, i, vstore.nrow());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -307,8 +299,8 @@ TEST(DenseMatrix, DifferentValueType) {
         auto rwrk = ref.dense_row();
         auto lwrk = vstore.dense_row();
         for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, ref.ncol());
-            auto observed = tatami_test::fetch<double, int>(lwrk.get(), i, vstore.ncol());
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, ref.ncol());
+            auto observed = tatami_test::fetch<double, int>(*lwrk, i, vstore.ncol());
             EXPECT_EQ(expected, observed);
         }
     }
@@ -318,8 +310,8 @@ TEST(DenseMatrix, DifferentValueType) {
         auto rwrk = ref.dense_column(55, 45);
         auto lwrk = vstore.dense_column(55, 45);
         for (int i = 0; i < ref.ncol(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, 45);
-            auto observed = tatami_test::fetch<double, int>(lwrk.get(), i, 45);
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, 45);
+            auto observed = tatami_test::fetch<double, int>(*lwrk, i, 45);
             EXPECT_EQ(expected, observed);
         }
     }
@@ -328,8 +320,8 @@ TEST(DenseMatrix, DifferentValueType) {
         auto rwrk = ref.dense_row(10, 70);
         auto lwrk = vstore.dense_row(10, 70);
         for (int i = 0; i < ref.nrow(); ++i) {
-            auto expected = tatami_test::fetch<double, int>(rwrk.get(), i, 70);
-            auto observed = tatami_test::fetch<double, int>(lwrk.get(), i, 70);
+            auto expected = tatami_test::fetch<double, int>(*rwrk, i, 70);
+            auto observed = tatami_test::fetch<double, int>(*lwrk, i, 70);
             EXPECT_EQ(expected, observed);
         }
     }
