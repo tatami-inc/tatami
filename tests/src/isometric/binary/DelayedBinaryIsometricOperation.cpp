@@ -15,8 +15,7 @@
 
 TEST(DelayedBinaryIsometricOperation, ConstOverload) {
     int nrow = 23, ncol = 42;
-    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(simulated)));
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
 
     auto op = tatami::make_DelayedBinaryIsometricAdd();
     auto mat = tatami::make_DelayedBinaryIsometricOperation(dense, dense, std::move(op));
@@ -184,7 +183,13 @@ protected:
     inline static std::shared_ptr<tatami::Matrix<float, int> > fbdense, fbsparse, fref;
 
     static void SetUpTestSuite() {
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
+        simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.2;
+            opt.seed = 918273;
+            return opt;
+        }());
+
         dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(simulated)));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); 
 
@@ -205,33 +210,33 @@ TEST_P(DelayedBinaryIsometricOperationTest, Mock) {
     EXPECT_EQ(bsparse->is_sparse_proportion(), 1);
 
     // Spamming a whole stack of tests.
-    tatami_test::TestAccessParameters params;
+    tatami_test::TestAccessOptions opts;
     auto tparam = GetParam();
-    params.use_row = std::get<0>(tparam);
-    params.use_oracle = std::get<1>(tparam);
+    opts.use_row = std::get<0>(tparam);
+    opts.use_oracle = std::get<1>(tparam);
 
-    tatami_test::test_full_access(params, bdense.get(), ref.get());
-    tatami_test::test_block_access(params, bdense.get(), ref.get(), 5, 20);
-    tatami_test::test_indexed_access(params, bdense.get(), ref.get(), 3, 5);
+    tatami_test::test_full_access(*bdense, *ref, opts);
+    tatami_test::test_block_access(*bdense, *ref, 0.1, 0.7, opts);
+    tatami_test::test_indexed_access(*bdense, *ref, 0.23, 0.5, opts);
 
-    tatami_test::test_full_access(params, bsparse.get(), ref.get());
-    tatami_test::test_block_access(params, bsparse.get(), ref.get(), 5, 20);
-    tatami_test::test_indexed_access(params, bsparse.get(), ref.get(), 2, 4);
+    tatami_test::test_full_access(*bsparse, *ref, opts);
+    tatami_test::test_block_access(*bsparse, *ref, 0.13, 0.5, opts);
+    tatami_test::test_indexed_access(*bsparse, *ref, 0.23, 0.4, opts);
 }
 
 TEST_P(DelayedBinaryIsometricOperationTest, NewType) {
-    tatami_test::TestAccessParameters params;
+    tatami_test::TestAccessOptions opts;
     auto tparam = GetParam();
-    params.use_row = std::get<0>(tparam);
-    params.use_oracle = std::get<1>(tparam);
+    opts.use_row = std::get<0>(tparam);
+    opts.use_oracle = std::get<1>(tparam);
 
-    tatami_test::test_full_access(params, fbdense.get(), fref.get());
-    tatami_test::test_block_access(params, fbdense.get(), fref.get(), 5, 20);
-    tatami_test::test_indexed_access(params, fbdense.get(), fref.get(), 3, 5);
+    tatami_test::test_full_access(*fbdense, *fref, opts);
+    tatami_test::test_block_access(*fbdense, *fref, 0.5, 0.5, opts);
+    tatami_test::test_indexed_access(*fbdense, *fref, 0.3, 0.5, opts);
 
-    tatami_test::test_full_access(params, fbsparse.get(), fref.get());
-    tatami_test::test_block_access(params, fbsparse.get(), fref.get(), 5, 20);
-    tatami_test::test_indexed_access(params, fbsparse.get(), fref.get(), 2, 4);
+    tatami_test::test_full_access(*fbsparse, *fref, opts);
+    tatami_test::test_block_access(*fbsparse, *fref, 0.2, 0.6, opts);
+    tatami_test::test_indexed_access(*fbsparse, *fref, 0.2, 0.4, opts);
 }
 
 INSTANTIATE_TEST_SUITE_P(

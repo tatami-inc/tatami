@@ -1,6 +1,9 @@
 #ifndef TATAMI_TEST_ISOMETRIC_UTILS_HPP
 #define TATAMI_TEST_ISOMETRIC_UTILS_HPP
 
+#include "tatami/base/Matrix.hpp"
+#include "tatami_test/tatami_test.hpp"
+
 inline double careful_division(double left, double right) {
     if (right == 0) {
         if (left > 0) {
@@ -24,22 +27,19 @@ inline double careful_modulo(double left, double right) {
     }
 }
 
-template<class Matrix1, class Matrix2>
-void quick_test_all(const Matrix1* mat, const Matrix2* ref, bool has_nan = false) {
-    tatami_test::TestAccessParameters params;
-    params.has_nan = has_nan;
-    int nrow = mat->nrow();
-    int ncol = mat->ncol();
+template<typename Value_, typename Index_>
+void quick_test_all(const tatami::Matrix<Value_, Index_>& mat, const tatami::Matrix<Value_, Index_>& ref) {
+    tatami_test::TestAccessOptions opts;
 
-    params.use_row = true;
-    tatami_test::test_full_access(params, mat, ref);
-    tatami_test::test_block_access(params, mat, ref, ncol * 0.25, ncol * 0.9);
-    tatami_test::test_indexed_access(params, mat, ref, ncol * 0.4, 11);
+    opts.use_row = true;
+    tatami_test::test_full_access(mat, ref, opts);
+    tatami_test::test_block_access(mat, ref, 0.25, 0.6, opts);
+    tatami_test::test_indexed_access(mat, ref, 0.4, 0.2, opts);
 
-    params.use_row = false;
-    tatami_test::test_full_access(params, mat, ref);
-    tatami_test::test_block_access(params, mat, ref, nrow * 0.4, nrow * 0.9);
-    tatami_test::test_indexed_access(params, mat, ref, nrow * 0.25, 10);
+    opts.use_row = false;
+    tatami_test::test_full_access(mat, ref, opts);
+    tatami_test::test_block_access(mat, ref, 0.4, 0.5, opts);
+    tatami_test::test_indexed_access(mat, ref, 0.25, 0.1, opts);
 }
 
 #endif

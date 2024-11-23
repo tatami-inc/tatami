@@ -21,13 +21,27 @@ protected:
     inline static std::vector<double> simulated_unit;
 
     static void SetUpTestSuite() {
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -10, /* upper = */ 10);
+        simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.1;
+            opt.lower = -10;
+            opt.upper = 10;
+            opt.seed = 4239867123;
+            return opt;
+        }());
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
 
         // Use a tighter range to get most values inside the domain of [-1, 1]
         // (but not all; we still leave a few outside for NaN testing purposes).
-        simulated_unit = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -1.1, /* upper = */ 1.1);
+        simulated_unit = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.1;
+            opt.lower = -1.1;
+            opt.upper = 1.1;
+            opt.seed = 9234723;
+            return opt;
+        }());
         dense_unit = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_unit));
         sparse_unit = tatami::convert_to_compressed_sparse<false, double, int>(dense_unit.get()); // column major.
     }
@@ -52,8 +66,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Abs) {
     // Toughest tests are handled by the Vector case; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -63,8 +77,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Abs) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -89,8 +103,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sign) {
         }
         tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-        quick_test_all(dense_mod.get(), &ref);
-        quick_test_all(sparse_mod.get(), &ref);
+        quick_test_all<double, int>(*dense_mod, ref);
+        quick_test_all<double, int>(*sparse_mod, ref);
 
         // Checking that it works for a different output type.
         {
@@ -101,8 +115,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sign) {
             std::vector<float> frefvec(refvec.begin(), refvec.end());
             tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-            quick_test_all(dense_fmod.get(), &fref);
-            quick_test_all(sparse_fmod.get(), &fref);
+            quick_test_all<float, int>(*dense_fmod, fref);
+            quick_test_all<float, int>(*sparse_fmod, fref);
         }
     }
 
@@ -127,8 +141,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sign) {
         }
         tatami::DenseRowMatrix<double, int> ref_nan(nrow, ncol, refvec);
 
-        quick_test_all(dense_fmod.get(), &ref_nan, /* has_nan = */ true);
-        quick_test_all(sparse_fmod.get(), &ref_nan, /* has_nan = */ true);
+        quick_test_all<double, int>(*dense_fmod, ref_nan);
+        quick_test_all<double, int>(*sparse_fmod, ref_nan);
 
         // Checking that it works for a different output type that supports NaNs.
         {
@@ -138,23 +152,23 @@ TEST_F(DelayedUnaryIsometricMathTest, Sign) {
             std::vector<float> frefvec(refvec.begin(), refvec.end());
             tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-            quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-            quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+            quick_test_all<float, int>(*dense_fmod, fref);
+            quick_test_all<float, int>(*sparse_fmod, fref);
         }
 
         // Checking that it works for a different output type that doesn't support NaNs.
         {
-            auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<int>(dense_nan, op);
-            auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<int>(sparse_nan, op);
+            auto dense_imod = tatami::make_DelayedUnaryIsometricOperation<int>(dense_nan, op);
+            auto sparse_imod = tatami::make_DelayedUnaryIsometricOperation<int>(sparse_nan, op);
 
-            std::vector<int> frefvec(refvec.size());
+            std::vector<int> irefvec(refvec.size());
             for (size_t i = 0; i < refvec.size(); ++i) {
-                frefvec[i] = std::isnan(refvec[i]) ? 0 : refvec[i];
+                irefvec[i] = std::isnan(refvec[i]) ? 0 : refvec[i];
             }
-            tatami::DenseRowMatrix<int, int> fref(nrow, ncol, std::move(frefvec));
+            tatami::DenseRowMatrix<int, int> iref(nrow, ncol, std::move(irefvec));
 
-            quick_test_all(dense_fmod.get(), &fref);
-            quick_test_all(sparse_fmod.get(), &fref);
+            quick_test_all<int, int>(*dense_imod, iref);
+            quick_test_all<int, int>(*sparse_imod, iref);
         }
     }
 }
@@ -176,8 +190,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sqrt) {
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
     // Again, doing some light tests; we assume that we have IEEE floats so sqrt(<negative value>) => NaN.
-    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -187,8 +201,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sqrt) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-        quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -211,8 +225,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Log) {
         tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
         // Doing some light tests, assuming that log(<negative value>) => NaN and log(0) => Inf.
-        quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-        quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+        quick_test_all<double, int>(*dense_mod, ref); 
+        quick_test_all<double, int>(*sparse_mod, ref);
     }
 
     // Trying with another base.
@@ -232,8 +246,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Log) {
         }
         tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-        quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-        quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+        quick_test_all<double, int>(*dense_mod, ref);
+        quick_test_all<double, int>(*sparse_mod, ref);
     }
 
     // Checking that it works for a different output type.
@@ -248,8 +262,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Log) {
         }
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-        quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -272,8 +286,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Log1p) {
         tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
         // Doing some light tests, assuming that log1p(<less than 1>) => NaN and log1p(-1) => Inf.
-        quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-        quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+        quick_test_all<double, int>(*dense_mod, ref);
+        quick_test_all<double, int>(*sparse_mod, ref);
     }
 
     // Trying with another base.
@@ -293,8 +307,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Log1p) {
         }
         tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-        quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-        quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+        quick_test_all<double, int>(*dense_mod, ref);
+        quick_test_all<double, int>(*sparse_mod, ref);
     }
 
     // Checking that it works for a different output type.
@@ -309,8 +323,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Log1p) {
         }
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-        quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -330,8 +344,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Exp) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -341,8 +355,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Exp) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -362,8 +376,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Expm1) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -373,8 +387,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Expm1) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -394,8 +408,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Round) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -405,8 +419,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Round) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -426,8 +440,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Ceiling) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -437,8 +451,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Ceiling) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -458,8 +472,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Floor) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -469,8 +483,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Floor) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -490,8 +504,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Trunc) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -501,8 +515,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Trunc) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -522,8 +536,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sin) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -533,8 +547,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sin) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -554,8 +568,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Cos) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -565,8 +579,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Cos) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -586,8 +600,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Tan) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -597,8 +611,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Tan) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -620,8 +634,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Asin) {
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
     // Assume assume that asin(<below -1 or above 1>) => NaN.
-    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -631,8 +645,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Asin) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-        quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -654,8 +668,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Acos) {
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
     // We assume that acos(<below -1 or above 1>) => NaN.
-    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -665,8 +679,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Acos) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-        quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -686,8 +700,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Atan) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -697,8 +711,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Atan) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -718,8 +732,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sinh) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -729,8 +743,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Sinh) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -750,8 +764,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Cosh) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -761,8 +775,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Cosh) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -782,8 +796,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Tanh) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -793,8 +807,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Tanh) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -814,8 +828,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Asinh) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -825,8 +839,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Asinh) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -847,8 +861,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Acosh) {
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
     // We assume that acosh(<less than 1>) => NaN.
-    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -858,8 +872,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Acosh) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-        quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -880,8 +894,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Atanh) {
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
     // Again, doing some light tests. We assume that atanh(<below -1 or above 1>) => NaN.
-    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -891,8 +905,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Atanh) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-        quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -913,8 +927,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Gamma) {
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
     // We assume that gamma(<less than or equal to zero>) => NaN.
-    quick_test_all(dense_mod.get(), &ref, /* has_nan = */ true);
-    quick_test_all(sparse_mod.get(), &ref, /* has_nan = */ true);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -924,8 +938,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Gamma) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-        quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }
 
@@ -945,8 +959,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Lgamma) {
     }
     tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
 
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
@@ -956,7 +970,7 @@ TEST_F(DelayedUnaryIsometricMathTest, Lgamma) {
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-        quick_test_all(dense_fmod.get(), &fref);
-        quick_test_all(sparse_fmod.get(), &fref);
+        quick_test_all<float, int>(*dense_fmod, fref);
+        quick_test_all<float, int>(*sparse_fmod, fref);
     }
 }

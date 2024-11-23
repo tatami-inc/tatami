@@ -29,7 +29,13 @@ protected:
             return;
         }
 
-        auto sparse_matrix = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.08);
+        auto sparse_matrix = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.08;
+            opt.seed = 8764823;
+            return opt;
+        }());
+
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, sparse_matrix));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
 
@@ -113,7 +119,9 @@ TEST(DelayedCastMisc, CastOracle) {
 /****************************************************
  ****************************************************/
 
-class DelayedCastFullAccessTest : public ::testing::TestWithParam<tatami_test::StandardTestAccessParameters>, public CastUtils {
+class DelayedCastFullAccessTest : 
+    public ::testing::TestWithParam<tatami_test::StandardTestAccessOptions>,
+    public CastUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -122,30 +130,32 @@ protected:
 
 TEST_P(DelayedCastFullAccessTest, Dense) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(tparam);
-    tatami_test::test_full_access(params, cast_dense.get(), dense.get());
-    tatami_test::test_full_access(params, cast_fdense.get(), fdense_ref.get());
+    auto options = tatami_test::convert_test_access_options(tparam);
+    tatami_test::test_full_access(*cast_dense, *dense, options);
+    tatami_test::test_full_access(*cast_fdense, *fdense_ref, options);
 }
 
 TEST_P(DelayedCastFullAccessTest, Sparse) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(tparam);
-    tatami_test::test_full_access(params, cast_sparse.get(), sparse.get());
-    tatami_test::test_full_access(params, cast_fsparse.get(), fsparse_ref.get());
-    tatami_test::test_full_access(params, cast_fsparse_value.get(), fsparse_ref.get());
-    tatami_test::test_full_access(params, cast_sparse_index.get(), sparse.get());
+    auto options = tatami_test::convert_test_access_options(tparam);
+    tatami_test::test_full_access(*cast_sparse, *sparse, options);
+    tatami_test::test_full_access(*cast_fsparse, *fsparse_ref, options);
+    tatami_test::test_full_access(*cast_fsparse_value, *fsparse_ref, options);
+    tatami_test::test_full_access(*cast_sparse_index, *sparse, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastFullAccessTest,
-    tatami_test::standard_test_access_parameter_combinations()
+    tatami_test::standard_test_access_options_combinations()
 );
 
 /****************************************************
  ****************************************************/
 
-class DelayedCastBlockAccessTest : public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, public CastUtils {
+class DelayedCastBlockAccessTest : 
+    public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, 
+    public CastUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -154,39 +164,31 @@ protected:
 
 TEST_P(DelayedCastBlockAccessTest, Dense) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<0>(tparam));
     auto interval_info = std::get<1>(tparam);
-    auto len = (params.use_row ? ncol : nrow);
-    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
-
-    tatami_test::test_block_access(params, cast_dense.get(), dense.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, cast_fdense.get(), fdense_ref.get(), FIRST, LAST);
+    tatami_test::test_block_access(*cast_dense, *dense, interval_info.first, interval_info.second, options);
+    tatami_test::test_block_access(*cast_fdense, *fdense_ref, interval_info.first, interval_info.second, options);
 }
 
 TEST_P(DelayedCastBlockAccessTest, Sparse) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<0>(tparam));
     auto interval_info = std::get<1>(tparam);
-    auto len = (params.use_row ? ncol : nrow);
-    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
-
-    tatami_test::test_block_access(params, cast_sparse.get(), sparse.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, cast_fsparse.get(), fsparse_ref.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, cast_fsparse_value.get(), fsparse_ref.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, cast_sparse_index.get(), sparse.get(), FIRST, LAST);
+    tatami_test::test_block_access(*cast_sparse, *sparse, interval_info.first, interval_info.second, options);
+    tatami_test::test_block_access(*cast_fsparse, *fsparse_ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_block_access(*cast_fsparse_value, *fsparse_ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_block_access(*cast_sparse_index, *sparse, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastBlockAccessTest,
     ::testing::Combine(
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
-            std::make_pair(0, 0.6), 
-            std::make_pair(0.5, 0.75),
-            std::make_pair(0.24, 1)
+            std::make_pair(0.0, 0.6), 
+            std::make_pair(0.5, 0.25),
+            std::make_pair(0.24, 0.76)
         )
     )
 );
@@ -194,7 +196,9 @@ INSTANTIATE_TEST_SUITE_P(
 /****************************************************
  ****************************************************/
 
-class DelayedCastIndexAccessTest : public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, public CastUtils {
+class DelayedCastIndexAccessTest : 
+    public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, 
+    public CastUtils {
 protected:
     static void SetUpTestSuite() {
         assemble();
@@ -203,39 +207,31 @@ protected:
 
 TEST_P(DelayedCastIndexAccessTest, Dense) {
     auto tparam = GetParam(); 
-    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<0>(tparam));
     auto interval_info = std::get<1>(tparam);
-    auto len = (params.use_row ? ncol : nrow);
-    size_t FIRST = interval_info.first * len, STEP = interval_info.second;
-
-    tatami_test::test_indexed_access(params, cast_dense.get(), dense.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, cast_fdense.get(), fdense_ref.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(*cast_dense, *dense, interval_info.first, interval_info.second, options);
+    tatami_test::test_indexed_access(*cast_fdense, *fdense_ref, interval_info.first, interval_info.second, options);
 }
 
 TEST_P(DelayedCastIndexAccessTest, Sparse) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<0>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<0>(tparam));
     auto interval_info = std::get<1>(tparam);
-    auto len = (params.use_row ? ncol : nrow);
-    size_t FIRST = interval_info.first * len, STEP = interval_info.second;
-
-    tatami_test::test_indexed_access(params, cast_sparse.get(), sparse.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, cast_fsparse.get(), fsparse_ref.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, cast_fsparse_value.get(), fsparse_ref.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, cast_sparse_index.get(), sparse.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(*cast_sparse, *sparse, interval_info.first, interval_info.second, options);
+    tatami_test::test_indexed_access(*cast_fsparse, *fsparse_ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_indexed_access(*cast_fsparse_value, *fsparse_ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_indexed_access(*cast_sparse_index, *sparse, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedCast,
     DelayedCastIndexAccessTest,
     ::testing::Combine(
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
-            std::make_pair(0, 3), 
-            std::make_pair(0.5, 8),
-            std::make_pair(0.666, 5)
+            std::make_pair(0.0, 0.3), 
+            std::make_pair(0.5, 0.15),
+            std::make_pair(0.666, 0.2)
         )
     )
 );

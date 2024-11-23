@@ -48,7 +48,15 @@ protected:
         std::vector<std::shared_ptr<tatami::NumericMatrix> > forced_collected_dense, forced_collected_sparse;
 
         for (size_t i = 0; i < lengths.size(); ++i) {
-            auto to_add = tatami_test::simulate_sparse_vector<double>(lengths[i] * otherdim, 0.2, /* lower = */ -10, /* upper = */ 10, /* seed = */ i * 1000 + lengths[i]);
+            auto to_add = tatami_test::simulate_vector<double>(lengths[i] * otherdim, [&]{
+                tatami_test::SimulateVectorOptions opt;
+                opt.density = 0.2;
+                opt.lower = -10;
+                opt.upper = 10;
+                opt.seed = i * 17 + 59 * lengths[i];
+                return opt;
+            }());
+
             concat.insert(concat.end(), to_add.begin(), to_add.end());
             n_total += lengths[i];
 
@@ -188,7 +196,9 @@ TEST(DelayedBindMisc, AllEmpty) {
 /****************************
  ****************************/
 
-class DelayedBindEmptyAccessTest : public ::testing::TestWithParam<std::tuple<bool, bool, bool> >, public DelayedBindUtils {};
+class DelayedBindEmptyAccessTest : 
+    public ::testing::TestWithParam<std::tuple<bool, bool, bool> >,
+    public DelayedBindUtils {};
 
 TEST_P(DelayedBindEmptyAccessTest, Empty) {
     auto tparam = GetParam();
@@ -203,27 +213,27 @@ TEST_P(DelayedBindEmptyAccessTest, Empty) {
         EXPECT_EQ(bound_dense->ncol(), 0);
     }
 
-    tatami_test::TestAccessParameters params;
-    params.use_row = std::get<1>(tparam);
-    params.use_oracle = std::get<2>(tparam);
+    tatami_test::TestAccessOptions options;
+    options.use_row = std::get<1>(tparam);
+    options.use_oracle = std::get<2>(tparam);
 
     // Check that we can perform all of the accesses.
-    tatami_test::test_full_access(params, bound_dense.get(), manual.get());
-    tatami_test::test_block_access(params, bound_dense.get(), manual.get(), 0, 0);
-    tatami_test::test_indexed_access(params, bound_dense.get(), manual.get(), 0, 1);
+    tatami_test::test_full_access(*bound_dense, *manual, options);
+    tatami_test::test_block_access(*bound_dense, *manual, 0, 0, options);
+    tatami_test::test_indexed_access(*bound_dense, *manual, 0, 1, options);
 
-    tatami_test::test_full_access(params, bound_sparse.get(), manual.get());
-    tatami_test::test_block_access(params, bound_sparse.get(), manual.get(), 0, 0);
-    tatami_test::test_indexed_access(params, bound_sparse.get(), manual.get(), 0, 1);
+    tatami_test::test_full_access(*bound_sparse, *manual, options);
+    tatami_test::test_block_access(*bound_sparse, *manual, 0, 0, options);
+    tatami_test::test_indexed_access(*bound_sparse, *manual, 0, 1, options);
 
-    if (params.use_oracle) {
-        tatami_test::test_full_access(params, forced_bound_dense.get(), manual.get());
-        tatami_test::test_block_access(params, forced_bound_dense.get(), manual.get(), 0, 0);
-        tatami_test::test_indexed_access(params, forced_bound_dense.get(), manual.get(), 0, 1);
+    if (options.use_oracle) {
+        tatami_test::test_full_access(*forced_bound_dense, *manual, options);
+        tatami_test::test_block_access(*forced_bound_dense, *manual, 0, 0, options);
+        tatami_test::test_indexed_access(*forced_bound_dense, *manual, 0, 1, options);
 
-        tatami_test::test_full_access(params, forced_bound_sparse.get(), manual.get());
-        tatami_test::test_block_access(params, forced_bound_sparse.get(), manual.get(), 0, 0);
-        tatami_test::test_indexed_access(params, forced_bound_sparse.get(), manual.get(), 0, 1);
+        tatami_test::test_full_access(*forced_bound_sparse, *manual, options);
+        tatami_test::test_block_access(*forced_bound_sparse, *manual, 0, 0, options);
+        tatami_test::test_indexed_access(*forced_bound_sparse, *manual, 0, 1, options);
     }
 }
 
@@ -240,7 +250,9 @@ INSTANTIATE_TEST_SUITE_P(
 /****************************
  ****************************/
 
-class DelayedBindFullAccessTest : public ::testing::TestWithParam<std::tuple<typename DelayedBindUtils::SimulationParameters, tatami_test::StandardTestAccessParameters> >, public DelayedBindUtils {
+class DelayedBindFullAccessTest : 
+    public ::testing::TestWithParam<std::tuple<typename DelayedBindUtils::SimulationParameters, tatami_test::StandardTestAccessOptions> >,
+    public DelayedBindUtils {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
@@ -249,14 +261,14 @@ protected:
 
 TEST_P(DelayedBindFullAccessTest, Basic) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
+    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
 
-    tatami_test::test_full_access(params, bound_sparse.get(), manual.get());
-    tatami_test::test_full_access(params, bound_dense.get(), manual.get());
+    tatami_test::test_full_access(*bound_sparse, *manual, options);
+    tatami_test::test_full_access(*bound_dense, *manual, options);
 
-    if (params.use_oracle) {
-        tatami_test::test_full_access(params, forced_bound_dense.get(), manual.get());
-        tatami_test::test_full_access(params, forced_bound_sparse.get(), manual.get());
+    if (options.use_oracle) {
+        tatami_test::test_full_access(*forced_bound_dense, *manual, options);
+        tatami_test::test_full_access(*forced_bound_sparse, *manual, options);
     }
 }
 
@@ -265,47 +277,46 @@ INSTANTIATE_TEST_SUITE_P(
     DelayedBindFullAccessTest,
     ::testing::Combine(
         DelayedBindUtils::spawn_bind_scenarios(),
-        tatami_test::standard_test_access_parameter_combinations()
+        tatami_test::standard_test_access_options_combinations()
     )
 );
 
 /****************************
  ****************************/
 
-class DelayedBindSlicedAccessTest : public ::testing::TestWithParam<std::tuple<typename DelayedBindUtils::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, public DelayedBindUtils {
+class DelayedBindBlockAccessTest : 
+    public ::testing::TestWithParam<std::tuple<typename DelayedBindUtils::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >,
+    public DelayedBindUtils {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
 };
 
-TEST_P(DelayedBindSlicedAccessTest, Basic) {
+TEST_P(DelayedBindBlockAccessTest, Basic) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto interval_info = std::get<2>(tparam);
-    auto len = (params.use_row ?  manual->ncol() : manual->nrow());
-    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
 
-    tatami_test::test_block_access(params, bound_sparse.get(), manual.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, bound_dense.get(), manual.get(), FIRST, LAST);
+    tatami_test::test_block_access(*bound_sparse, *manual, interval_info.first, interval_info.second, options);
+    tatami_test::test_block_access(*bound_dense, *manual, interval_info.first, interval_info.second, options);
 
-    if (params.use_oracle) {
-        tatami_test::test_block_access(params, forced_bound_sparse.get(), manual.get(), FIRST, LAST);
-        tatami_test::test_block_access(params, forced_bound_dense.get(), manual.get(), FIRST, LAST);
+    if (options.use_oracle) {
+        tatami_test::test_block_access(*forced_bound_sparse, *manual, interval_info.first, interval_info.second, options);
+        tatami_test::test_block_access(*forced_bound_dense, *manual, interval_info.first, interval_info.second, options);
     }
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedBind,
-    DelayedBindSlicedAccessTest,
+    DelayedBindBlockAccessTest,
     ::testing::Combine(
         DelayedBindUtils::spawn_bind_scenarios(),
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
-            std::make_pair(0, 0.6), 
-            std::make_pair(0.25, 0.75), 
-            std::make_pair(0.55, 1)
+            std::make_pair(0.0, 0.6), 
+            std::make_pair(0.25, 0.51), 
+            std::make_pair(0.55, 0.45)
         )
     )
 );
@@ -313,7 +324,9 @@ INSTANTIATE_TEST_SUITE_P(
 /****************************
  ****************************/
 
-class DelayedBindIndexedAccessTest : public ::testing::TestWithParam<std::tuple<typename DelayedBindUtils::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, public DelayedBindUtils {
+class DelayedBindIndexedAccessTest : 
+    public ::testing::TestWithParam<std::tuple<typename DelayedBindUtils::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >,
+    public DelayedBindUtils {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
@@ -322,18 +335,15 @@ protected:
 
 TEST_P(DelayedBindIndexedAccessTest, Basic) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto interval_info = std::get<2>(tparam);
-    size_t len = (params.use_row ? manual->ncol() : manual->nrow());
-    size_t FIRST = interval_info.first * len, STEP = interval_info.second;
 
-    tatami_test::test_indexed_access(params, bound_sparse.get(), manual.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, bound_dense.get(), manual.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(*bound_sparse, *manual, interval_info.first, interval_info.second, options);
+    tatami_test::test_indexed_access(*bound_dense, *manual, interval_info.first, interval_info.second, options);
 
-    if (params.use_oracle) {
-        tatami_test::test_indexed_access(params, forced_bound_sparse.get(), manual.get(), FIRST, STEP);
-        tatami_test::test_indexed_access(params, forced_bound_dense.get(), manual.get(), FIRST, STEP);
+    if (options.use_oracle) {
+        tatami_test::test_indexed_access(*forced_bound_sparse, *manual, interval_info.first, interval_info.second, options);
+        tatami_test::test_indexed_access(*forced_bound_dense, *manual, interval_info.first, interval_info.second, options);
     }
 }
 
@@ -342,11 +352,11 @@ INSTANTIATE_TEST_SUITE_P(
     DelayedBindIndexedAccessTest,
     ::testing::Combine(
         DelayedBindUtils::spawn_bind_scenarios(),
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
-            std::pair<double, int>(0, 5), 
-            std::pair<double, int>(0.33, 3),
-            std::pair<double, int>(0.5, 4)
+            std::make_pair(0.0, 0.2), 
+            std::make_pair(0.33, 0.3),
+            std::make_pair(0.5, 0.5)
         )
     )
 );

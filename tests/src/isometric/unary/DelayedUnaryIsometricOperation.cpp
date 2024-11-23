@@ -15,8 +15,7 @@
 
 TEST(DelayedUnaryIsometricOperation, ConstOverload) {
     int nrow = 23, ncol = 42;
-    auto simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
 
     auto vec = std::vector<double>(nrow);
     auto op = tatami::make_DelayedUnaryIsometricAddVector(vec, true);
@@ -134,7 +133,13 @@ protected:
     inline static std::shared_ptr<const tatami::Matrix<uint8_t, int> > i_udense, i_usparse, i_ref;
 
     static void SetUpTestSuite() {
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1);
+        simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.1;
+            opt.seed = 777222777;
+            return opt;
+        }());
+
         dense.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(simulated)));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); 
 
@@ -156,33 +161,33 @@ TEST_P(DelayedUnaryIsometricOperationTest, Mock) {
     EXPECT_EQ(usparse->is_sparse_proportion(), 1);
 
     // Spamming a whole stack of tests.
-    tatami_test::TestAccessParameters params;
+    tatami_test::TestAccessOptions opts;
     auto tparam = GetParam();
-    params.use_row = std::get<0>(tparam);
-    params.use_oracle = std::get<1>(tparam);
+    opts.use_row = std::get<0>(tparam);
+    opts.use_oracle = std::get<1>(tparam);
 
-    tatami_test::test_full_access(params, udense.get(), ref.get());
-    tatami_test::test_block_access(params, udense.get(), ref.get(), 5, 30);
-    tatami_test::test_indexed_access(params, udense.get(), ref.get(), 3, 5);
+    tatami_test::test_full_access(*udense, *ref, opts);
+    tatami_test::test_block_access(*udense, *ref, 0.25, 0.34, opts);
+    tatami_test::test_indexed_access(*udense, *ref, 0.3, 0.5, opts);
 
-    tatami_test::test_full_access(params, usparse.get(), ref.get());
-    tatami_test::test_block_access(params, usparse.get(), ref.get(), 5, 30);
-    tatami_test::test_indexed_access(params, usparse.get(), ref.get(), 2, 4);
+    tatami_test::test_full_access(*usparse, *ref, opts);
+    tatami_test::test_block_access(*usparse, *ref, 0.5, 0.35, opts);
+    tatami_test::test_indexed_access(*usparse, *ref, 0.2, 0.4, opts);
 }
 
 TEST_P(DelayedUnaryIsometricOperationTest, NewType) {
-    tatami_test::TestAccessParameters params;
     auto tparam = GetParam();
-    params.use_row = std::get<0>(tparam);
-    params.use_oracle = std::get<1>(tparam);
+    tatami_test::TestAccessOptions opts;
+    opts.use_row = std::get<0>(tparam);
+    opts.use_oracle = std::get<1>(tparam);
 
-    tatami_test::test_full_access(params, i_udense.get(), i_ref.get());
-    tatami_test::test_block_access(params, i_udense.get(), i_ref.get(), 5, 30);
-    tatami_test::test_indexed_access(params, i_udense.get(), i_ref.get(), 3, 5);
+    tatami_test::test_full_access(*i_udense, *i_ref, opts);
+    tatami_test::test_block_access(*i_udense, *i_ref, 0.3, 0.55, opts);
+    tatami_test::test_indexed_access(*i_udense, *i_ref, 0.3, 0.55, opts);
 
-    tatami_test::test_full_access(params, i_usparse.get(), i_ref.get());
-    tatami_test::test_block_access(params, i_usparse.get(), i_ref.get(), 5, 30);
-    tatami_test::test_indexed_access(params, i_usparse.get(), i_ref.get(), 2, 4);
+    tatami_test::test_full_access(*i_usparse, *i_ref, opts);
+    tatami_test::test_block_access(*i_usparse, *i_ref, 0.25, 0.3, opts);
+    tatami_test::test_indexed_access(*i_usparse, *i_ref, 0.2, 0.3, opts);
 }
 
 INSTANTIATE_TEST_SUITE_P(

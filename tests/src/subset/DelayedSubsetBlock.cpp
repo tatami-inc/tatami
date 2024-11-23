@@ -20,7 +20,14 @@ protected:
         if (dense) {
             return;
         }
-        simulated = tatami_test::simulate_sparse_vector<double>(NR * NC, 0.2);
+
+        simulated = tatami_test::simulate_vector<double>(NR * NC, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.2;
+            opt.seed = 12946;
+            return opt;
+        }());
+
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, simulated));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
     }
@@ -81,7 +88,9 @@ protected:
 /*****************************
  *****************************/
 
-class SubsetBlockTest : public ::testing::TestWithParam<typename SubsetBlockUtils::SimulationParameters>, public SubsetBlockUtils {
+class SubsetBlockTest : 
+    public ::testing::TestWithParam<typename SubsetBlockUtils::SimulationParameters>, 
+    public SubsetBlockUtils {
 protected:
     void SetUp() {
         assemble(GetParam());
@@ -129,7 +138,9 @@ TEST(SubsetBlockMisc, SubsetOracle) {
 /*****************************
  *****************************/
 
-class SubsetBlockFullAccessTest : public ::testing::TestWithParam<std::tuple<SubsetBlockUtils::SimulationParameters, tatami_test::StandardTestAccessParameters> >, public SubsetBlockUtils {
+class SubsetBlockFullAccessTest : 
+    public ::testing::TestWithParam<std::tuple<SubsetBlockUtils::SimulationParameters, tatami_test::StandardTestAccessOptions> >, 
+    public SubsetBlockUtils {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
@@ -138,9 +149,9 @@ protected:
 
 TEST_P(SubsetBlockFullAccessTest, Basic) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
-    tatami_test::test_full_access(params, dense_block.get(), ref.get());
-    tatami_test::test_full_access(params, sparse_block.get(), ref.get());
+    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
+    tatami_test::test_full_access(*dense_block, *ref, options);
+    tatami_test::test_full_access(*sparse_block, *ref, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -148,42 +159,40 @@ INSTANTIATE_TEST_SUITE_P(
     SubsetBlockFullAccessTest,
     ::testing::Combine(
         SubsetBlockUtils::simulation_parameter_combinations(),
-        tatami_test::standard_test_access_parameter_combinations()
+        tatami_test::standard_test_access_options_combinations()
     )
 );
 
 /*****************************
  *****************************/
 
-class SubsetBlockSlicedAccessTest : public ::testing::TestWithParam<std::tuple<SubsetBlockUtils::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, public SubsetBlockUtils {
+class SubsetBlockBlockAccessTest : 
+    public ::testing::TestWithParam<std::tuple<SubsetBlockUtils::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >,
+    public SubsetBlockUtils {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
 };
 
-TEST_P(SubsetBlockSlicedAccessTest, Sliced) {
+TEST_P(SubsetBlockBlockAccessTest, Block) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto interval_info = std::get<2>(tparam);
-    auto len = (params.use_row ? ref->ncol() : ref->nrow());
-    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
-
-    tatami_test::test_block_access(params, dense_block.get(), ref.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, sparse_block.get(), ref.get(), FIRST, LAST);
+    tatami_test::test_block_access(*dense_block, *ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_block_access(*sparse_block, *ref, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedSubsetBlock,
-    SubsetBlockSlicedAccessTest,
+    SubsetBlockBlockAccessTest,
     ::testing::Combine(
         SubsetBlockUtils::simulation_parameter_combinations(),
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
             std::make_pair(0.0, 0.45), 
-            std::make_pair(0.33, 0.66),
-            std::make_pair(0.56, 1.0)
+            std::make_pair(0.33, 0.37),
+            std::make_pair(0.56, 0.44)
         )
     )
 );
@@ -191,7 +200,9 @@ INSTANTIATE_TEST_SUITE_P(
 /*****************************
  *****************************/
 
-class SubsetBlockIndexedAccessTest : public ::testing::TestWithParam<std::tuple<SubsetBlockUtils::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, public SubsetBlockUtils {
+class SubsetBlockIndexedAccessTest : 
+    public ::testing::TestWithParam<std::tuple<SubsetBlockUtils::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, 
+    public SubsetBlockUtils {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
@@ -200,14 +211,10 @@ protected:
 
 TEST_P(SubsetBlockIndexedAccessTest, Indexed) {
     auto tparam = GetParam();
-    auto params = tatami_test::convert_access_parameters(std::get<1>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto interval_info = std::get<2>(tparam);
-    auto len = (params.use_row ? ref->ncol() : ref->nrow());
-    size_t FIRST = interval_info.first * len, STEP = interval_info.second;
-
-    tatami_test::test_indexed_access(params, dense_block.get(), ref.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, sparse_block.get(), ref.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(*dense_block, *ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_indexed_access(*sparse_block, *ref, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -215,11 +222,11 @@ INSTANTIATE_TEST_SUITE_P(
     SubsetBlockIndexedAccessTest,
     ::testing::Combine(
         SubsetBlockUtils::simulation_parameter_combinations(),
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
-            std::make_pair(0.0, 12), 
-            std::make_pair(0.33, 6),
-            std::make_pair(0.56, 9)
+            std::make_pair(0.0, 0.15), 
+            std::make_pair(0.33, 0.2),
+            std::make_pair(0.56, 0.3)
         )
     )
 );
@@ -229,7 +236,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 TEST(DelayedSubsetBlock, ConstOverload) {
     int NR = 9, NC = 7;
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, std::vector<double>(NR * NC)));
     auto sub = tatami::make_DelayedSubsetBlock<1>(dense, static_cast<int>(5), static_cast<int>(3));
     EXPECT_EQ(sub->ncol(), 3);
     EXPECT_EQ(sub->nrow(), NR);
@@ -237,7 +244,13 @@ TEST(DelayedSubsetBlock, ConstOverload) {
 
 TEST(DelayedSubsetBlock, CorrectMaker) {
     int NR = 90, NC = 50;
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_dense_vector<double>(NR * NC)));
+    auto vec = tatami_test::simulate_vector<double>(NR * NC, []{
+        tatami_test::SimulateVectorOptions opt;
+        opt.seed = 938247;
+        return opt;
+    }());
+
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, std::move(vec)));
 
     // Checking that the make function dispatches correctly to the block subset class.
     {
@@ -247,8 +260,8 @@ TEST(DelayedSubsetBlock, CorrectMaker) {
         EXPECT_EQ(sub->nrow(), NR);
 
         auto ref = tatami::make_DelayedSubsetBlock<1>(dense, static_cast<int>(5), static_cast<int>(6));
-        tatami_test::test_simple_row_access(sub.get(), ref.get());
-        tatami_test::test_simple_column_access(sub.get(), ref.get());
+        tatami_test::test_simple_row_access(*sub, *ref);
+        tatami_test::test_simple_column_access(*sub, *ref);
     }
 
     // Checking that it behaves correctly with an empty index vector.

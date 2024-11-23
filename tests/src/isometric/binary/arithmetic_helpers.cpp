@@ -25,11 +25,25 @@ protected:
             return;
         }
 
-        simulated_left = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -5, /* upper = */ 5, /* seed */ 12345);
+        simulated_left = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.12;
+            opt.lower = -5;
+            opt.upper = 5;
+            opt.seed = 12345;
+            return opt;
+        }());
         dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_left));
         sparse_left = tatami::convert_to_compressed_sparse<false, double, int>(dense_left.get()); // column major.
 
-        simulated_right = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, /* lower = */ -5, /* upper = */ 5, /* seed */ 67890);
+        simulated_right = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.15;
+            opt.lower = -5;
+            opt.upper = 5;
+            opt.seed = 67890;
+            return opt;
+        }());
         dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_right));
         sparse_right = tatami::convert_to_compressed_sparse<false, double, int>(dense_right.get()); // column major.
         return;
@@ -48,7 +62,7 @@ protected:
 
 #define BINARY_ARITH_FULL_TEST(name, base) \
     class name : \
-        public ::testing::TestWithParam<tatami_test::StandardTestAccessParameters>, \
+        public ::testing::TestWithParam<tatami_test::StandardTestAccessOptions>, \
         public base { \
     protected: \
         static void SetUpTestSuite() { \
@@ -57,21 +71,21 @@ protected:
     }; \
     \
     TEST_P(name, Basic) { \
-        auto params = tatami_test::convert_access_parameters(GetParam()); \
-        tatami_test::test_full_access(params, dense_mod.get(), ref.get()); \
-        tatami_test::test_full_access(params, sparse_mod.get(), ref.get()); \
-        tatami_test::test_full_access(params, sparse_uns.get(), ref.get()); \
+        auto opts = tatami_test::convert_test_access_options(GetParam()); \
+        tatami_test::test_full_access(*dense_mod, *ref, opts); \
+        tatami_test::test_full_access(*sparse_mod, *ref, opts); \
+        tatami_test::test_unsorted_full_access(*sparse_uns, opts); \
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
         DelayedBinaryIsometricArithmetic, \
         name, \
-        tatami_test::standard_test_access_parameter_combinations() \
+        tatami_test::standard_test_access_options_combinations() \
     );
 
 #define BINARY_ARITH_BLOCK_TEST(name, base) \
     class name : \
-        public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, \
+        public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, \
         public base { \
     protected: \
         static void SetUpTestSuite() { \
@@ -81,31 +95,29 @@ protected:
     \
     TEST_P(name, Basic) { \
         auto tparam = GetParam(); \
-        auto params = tatami_test::convert_access_parameters(std::get<0>(tparam)); \
+        auto opts = tatami_test::convert_test_access_options(std::get<0>(tparam)); \
         auto interval_info = std::get<1>(tparam); \
-        auto len = (params.use_row ? ref->ncol() : ref->nrow()); \
-        size_t FIRST = interval_info.first * len, LAST = interval_info.second * len; \
-        tatami_test::test_block_access(params, dense_mod.get(), ref.get(), FIRST, LAST); \
-        tatami_test::test_block_access(params, sparse_mod.get(), ref.get(), FIRST, LAST); \
-        tatami_test::test_block_access(params, sparse_uns.get(), ref.get(), FIRST, LAST); \
+        tatami_test::test_block_access(*dense_mod, *ref, interval_info.first, interval_info.second, opts); \
+        tatami_test::test_block_access(*sparse_mod, *ref, interval_info.first, interval_info.second, opts); \
+        tatami_test::test_unsorted_block_access(*sparse_uns, interval_info.first, interval_info.second, opts); \
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
         DelayedBinaryIsometricArithmetic, \
         name, \
         ::testing::Combine( \
-            tatami_test::standard_test_access_parameter_combinations(), \
+            tatami_test::standard_test_access_options_combinations(), \
             ::testing::Values( \
-                std::make_pair(0, 0.35), \
-                std::make_pair(0.27, 0.87), \
-                std::make_pair(0.67, 1.0) \
+                std::make_pair(0.0, 0.35), \
+                std::make_pair(0.27, 0.6), \
+                std::make_pair(0.67, 0.33) \
             ) \
         ) \
     );
 
 #define BINARY_ARITH_INDEX_TEST(name, base) \
     class name : \
-        public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, \
+        public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, \
         public base { \
     protected: \
         static void SetUpTestSuite() { \
@@ -115,24 +127,22 @@ protected:
     \
     TEST_P(name, Basic) { \
         auto tparam = GetParam(); \
-        auto params = tatami_test::convert_access_parameters(std::get<0>(tparam)); \
+        auto opts = tatami_test::convert_test_access_options(std::get<0>(tparam)); \
         auto interval_info = std::get<1>(tparam); \
-        auto len = (params.use_row ? ref->ncol() : ref->nrow()); \
-        size_t FIRST = interval_info.first * len, STEP = interval_info.second; \
-        tatami_test::test_indexed_access(params, dense_mod.get(), ref.get(), FIRST, STEP); \
-        tatami_test::test_indexed_access(params, sparse_mod.get(), ref.get(), FIRST, STEP); \
-        tatami_test::test_indexed_access(params, sparse_uns.get(), ref.get(), FIRST, STEP); \
+        tatami_test::test_indexed_access(*dense_mod, *ref, interval_info.first, interval_info.second, opts); \
+        tatami_test::test_indexed_access(*sparse_mod, *ref, interval_info.first, interval_info.second, opts); \
+        tatami_test::test_unsorted_indexed_access(*sparse_uns, interval_info.first, interval_info.second, opts); \
     } \
     \
     INSTANTIATE_TEST_SUITE_P( \
         DelayedBinaryIsometricArithmetic, \
         name, \
         ::testing::Combine( \
-            tatami_test::standard_test_access_parameter_combinations(), \
+            tatami_test::standard_test_access_options_combinations(), \
             ::testing::Values( \
-                std::make_pair(0.0, 4), \
-                std::make_pair(0.21, 9), \
-                std::make_pair(0.56, 10) \
+                std::make_pair(0.0, 0.4), \
+                std::make_pair(0.21, 0.15), \
+                std::make_pair(0.56, 0.2) \
             ) \
         ) \
     );
@@ -155,8 +165,8 @@ protected:
         dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
         sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
         sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)),
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)),
             op
         );
 
@@ -203,8 +213,8 @@ TEST_F(DelayedBinaryIsometricAddTest, NewType) {
     }
     tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-    quick_test_all(dense_fmod.get(), &fref);
-    quick_test_all(sparse_fmod.get(), &fref);
+    quick_test_all<float, int>(*dense_fmod, fref);
+    quick_test_all<float, int>(*sparse_fmod, fref);
 }
 
 /*******************************
@@ -225,8 +235,8 @@ protected:
         dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
         sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
         sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
         );
 
@@ -270,8 +280,8 @@ protected:
         dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
         sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
         sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
         );
 
@@ -297,101 +307,6 @@ BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricMultiplyIndexTest, DelayedBinaryIs
  ********* DIVISION *********
  ****************************/
 
-#define BINARY_ARITH_FULL_TEST_WITH_NAN(name, base) \
-    class name : \
-        public ::testing::TestWithParam<tatami_test::StandardTestAccessParameters>, \
-        public base { \
-    protected: \
-        static void SetUpTestSuite() { \
-            assemble(); \
-        } \
-    }; \
-    \
-    TEST_P(name, Basic) { \
-        auto params = tatami_test::convert_access_parameters(GetParam()); \
-        params.has_nan = true; \
-        tatami_test::test_full_access(params, dense_mod.get(), ref.get()); \
-        tatami_test::test_full_access(params, sparse_mod.get(), ref.get()); \
-        tatami_test::test_full_access(params, sparse_uns.get(), ref.get()); \
-    } \
-    \
-    INSTANTIATE_TEST_SUITE_P( \
-        DelayedBinaryIsometricArithmetic, \
-        name, \
-        tatami_test::standard_test_access_parameter_combinations() \
-    );
-
-#define BINARY_ARITH_BLOCK_TEST_WITH_NAN(name, base) \
-    class name : \
-        public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, \
-        public base { \
-    protected: \
-        static void SetUpTestSuite() { \
-            assemble(); \
-        } \
-    }; \
-    \
-    TEST_P(name, Basic) { \
-        auto tparam = GetParam(); \
-        auto params = tatami_test::convert_access_parameters(std::get<0>(tparam)); \
-        params.has_nan = true; \
-        auto interval_info = std::get<1>(tparam); \
-        auto len = (params.use_row ? ref->ncol() : ref->nrow()); \
-        size_t FIRST = interval_info.first * len, LAST = interval_info.second * len; \
-        tatami_test::test_block_access(params, dense_mod.get(), ref.get(), FIRST, LAST); \
-        tatami_test::test_block_access(params, sparse_mod.get(), ref.get(), FIRST, LAST); \
-        tatami_test::test_block_access(params, sparse_uns.get(), ref.get(), FIRST, LAST); \
-    } \
-    \
-    INSTANTIATE_TEST_SUITE_P( \
-        DelayedBinaryIsometricArithmetic, \
-        name, \
-        ::testing::Combine( \
-            tatami_test::standard_test_access_parameter_combinations(), \
-            ::testing::Values( \
-                std::make_pair(0, 0.35), \
-                std::make_pair(0.27, 0.87), \
-                std::make_pair(0.67, 1.0) \
-            ) \
-        ) \
-    );
-
-#define BINARY_ARITH_INDEX_TEST_WITH_NAN(name, base) \
-    class name : \
-        public ::testing::TestWithParam<std::tuple<tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, \
-        public base { \
-    protected: \
-        static void SetUpTestSuite() { \
-            assemble(); \
-        } \
-    }; \
-    \
-    TEST_P(name, Basic) { \
-        auto tparam = GetParam(); \
-        auto params = tatami_test::convert_access_parameters(std::get<0>(tparam)); \
-        params.has_nan = true; \
-        auto interval_info = std::get<1>(tparam); \
-        auto len = (params.use_row ? ref->ncol() : ref->nrow()); \
-        size_t FIRST = interval_info.first * len, STEP = interval_info.second; \
-        tatami_test::test_indexed_access(params, dense_mod.get(), ref.get(), FIRST, STEP); \
-        tatami_test::test_indexed_access(params, sparse_mod.get(), ref.get(), FIRST, STEP); \
-        tatami_test::test_indexed_access(params, sparse_uns.get(), ref.get(), FIRST, STEP); \
-    } \
-    \
-    INSTANTIATE_TEST_SUITE_P( \
-        DelayedBinaryIsometricArithmetic, \
-        name, \
-        ::testing::Combine( \
-            tatami_test::standard_test_access_parameter_combinations(), \
-            ::testing::Values( \
-                std::make_pair(0.0, 4), \
-                std::make_pair(0.21, 9), \
-                std::make_pair(0.56, 10) \
-            ) \
-        ) \
-    );
-
-
 class DelayedBinaryIsometricDivideUtils : public DelayedBinaryIsometricArithmeticUtils {
 protected:
     inline static std::shared_ptr<tatami::NumericMatrix> dense_mod, sparse_mod, sparse_uns, ref;
@@ -407,8 +322,8 @@ protected:
         dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
         sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
         sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
         );
 
@@ -428,9 +343,9 @@ TEST_F(DelayedBinaryIsometricDivideTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-BINARY_ARITH_FULL_TEST_WITH_NAN(DelayedBinaryIsometricDivideFullTest, DelayedBinaryIsometricDivideUtils)
-BINARY_ARITH_BLOCK_TEST_WITH_NAN(DelayedBinaryIsometricDivideBlockTest, DelayedBinaryIsometricDivideUtils)
-BINARY_ARITH_INDEX_TEST_WITH_NAN(DelayedBinaryIsometricDivideIndexTest, DelayedBinaryIsometricDivideUtils)
+BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricDivideFullTest, DelayedBinaryIsometricDivideUtils)
+BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricDivideBlockTest, DelayedBinaryIsometricDivideUtils)
+BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricDivideIndexTest, DelayedBinaryIsometricDivideUtils)
 
 TEST_F(DelayedBinaryIsometricDivideTest, NewType) {
     auto op = tatami::make_DelayedBinaryIsometricDivide();
@@ -443,8 +358,8 @@ TEST_F(DelayedBinaryIsometricDivideTest, NewType) {
     }
     tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
 
-    quick_test_all(dense_fmod.get(), &fref, /* has_nan = */ true);
-    quick_test_all(sparse_fmod.get(), &fref, /* has_nan = */ true);
+    quick_test_all<float, int>(*dense_fmod.get(), fref);
+    quick_test_all<float, int>(*sparse_fmod.get(), fref);
 }
 
 /*******************************
@@ -472,8 +387,8 @@ protected:
         dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left0, dense_right0, op);
         sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left0, sparse_right0, op);
         sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left0)),
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right0)), 
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left0)),
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right0)), 
             op
         );
 
@@ -514,8 +429,8 @@ protected:
         dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
         sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
         sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
         );
 
@@ -535,9 +450,9 @@ TEST_F(DelayedBinaryIsometricModuloTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-BINARY_ARITH_FULL_TEST_WITH_NAN(DelayedBinaryIsometricModuloFullTest, DelayedBinaryIsometricModuloUtils)
-BINARY_ARITH_BLOCK_TEST_WITH_NAN(DelayedBinaryIsometricModuloBlockTest, DelayedBinaryIsometricModuloUtils)
-BINARY_ARITH_INDEX_TEST_WITH_NAN(DelayedBinaryIsometricModuloIndexTest, DelayedBinaryIsometricModuloUtils)
+BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricModuloFullTest, DelayedBinaryIsometricModuloUtils)
+BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricModuloBlockTest, DelayedBinaryIsometricModuloUtils)
+BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricModuloIndexTest, DelayedBinaryIsometricModuloUtils)
 
 /****************************
  ***** INTEGER DIVISION *****
@@ -558,8 +473,8 @@ protected:
         dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
         sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
         sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_left)),
-            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::UnsortedWrapper<double, int>(sparse_right)), 
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
+            std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
         );
 
@@ -580,6 +495,6 @@ TEST_F(DelayedBinaryIsometricIntegerDivideTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
 }
 
-BINARY_ARITH_FULL_TEST_WITH_NAN(DelayedBinaryIsometricIntegerDivideFullTest, DelayedBinaryIsometricIntegerDivideUtils)
-BINARY_ARITH_BLOCK_TEST_WITH_NAN(DelayedBinaryIsometricIntegerDivideBlockTest, DelayedBinaryIsometricIntegerDivideUtils)
-BINARY_ARITH_INDEX_TEST_WITH_NAN(DelayedBinaryIsometricIntegerDivideIndexTest, DelayedBinaryIsometricIntegerDivideUtils)
+BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricIntegerDivideFullTest, DelayedBinaryIsometricIntegerDivideUtils)
+BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricIntegerDivideBlockTest, DelayedBinaryIsometricIntegerDivideUtils)
+BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricIntegerDivideIndexTest, DelayedBinaryIsometricIntegerDivideUtils)

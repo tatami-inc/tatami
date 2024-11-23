@@ -17,8 +17,8 @@ TEST(WrapSharedPtrTest, Simple) {
         EXPECT_EQ(wrap->nrow(), 10);
         EXPECT_EQ(wrap->ncol(), 20);
 
-        tatami_test::test_simple_row_access(wrap.get(), &mat);
-        tatami_test::test_simple_column_access(wrap.get(), &mat);
+        tatami_test::test_simple_row_access(*wrap, mat);
+        tatami_test::test_simple_column_access(*wrap, mat);
     }
 
     // Still runs properly as wrapped pointer deletion is a no-op.

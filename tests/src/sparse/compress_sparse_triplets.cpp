@@ -32,13 +32,19 @@ void permuter(const U& values, const V& rows, const V& cols, U& values2, V& rows
 
 TEST(compress_sparse_triplets, CompressionByColumn) {
     size_t NR = 100, NC = 50;
-    auto simulated = tatami_test::simulate_sparse_compressed<double>(NC, NR, 0.1);
+    auto simulated = tatami_test::simulate_compressed_sparse<double, int>(NC, NR, []{
+        tatami_test::SimulateCompressedSparseOptions opt;
+        opt.density = 0.1;
+        opt.seed = 65537;
+        return opt;
+    }());
+
     const auto& rows = simulated.index;
-    const auto& values = simulated.value;
+    const auto& values = simulated.data;
 
     std::vector<int> cols;
     for (size_t c = 0; c < NC; ++c) {
-        size_t n = simulated.ptr[c + 1] - simulated.ptr[c];
+        size_t n = simulated.indptr[c + 1] - simulated.indptr[c];
         cols.insert(cols.end(), n, c);
     }
 
@@ -56,18 +62,24 @@ TEST(compress_sparse_triplets, CompressionByColumn) {
     EXPECT_EQ(rows2, rows);
     EXPECT_EQ(cols2, cols);
     EXPECT_EQ(values2, values);
-    EXPECT_EQ(output, simulated.ptr);
+    EXPECT_EQ(output, simulated.indptr);
 }
 
 TEST(compress_sparse_triplets, CompressionByRow) {
     size_t NR = 80, NC = 60;
-    auto simulated = tatami_test::simulate_sparse_compressed<double>(NR, NC, 0.1);
+    auto simulated = tatami_test::simulate_compressed_sparse<double, int>(NR, NC, []{
+        tatami_test::SimulateCompressedSparseOptions opt;
+        opt.density = 0.1;
+        opt.seed = 5040;
+        return opt;
+    }());
+
     const auto& cols = simulated.index;
-    const auto& values = simulated.value;
+    const auto& values = simulated.data;
 
     std::vector<int> rows;
     for (size_t r = 0; r < NR; ++r) {
-        size_t n = simulated.ptr[r + 1] - simulated.ptr[r];
+        size_t n = simulated.indptr[r + 1] - simulated.indptr[r];
         rows.insert(rows.end(), n, r);
     }
 
@@ -85,5 +97,5 @@ TEST(compress_sparse_triplets, CompressionByRow) {
     EXPECT_EQ(rows2, rows);
     EXPECT_EQ(cols2, cols);
     EXPECT_EQ(values2, values);
-    EXPECT_EQ(output, simulated.ptr);
+    EXPECT_EQ(output, simulated.indptr);
 }

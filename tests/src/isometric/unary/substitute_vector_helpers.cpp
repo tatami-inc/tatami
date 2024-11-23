@@ -18,7 +18,15 @@ protected:
     inline static std::vector<double> simulated;
 
     static void SetUpTestSuite() {
-        simulated = tatami_test::simulate_sparse_vector<double>(nrow * ncol, 0.1, -3, 3);
+        simulated = tatami_test::simulate_vector<double>(nrow * ncol, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.1;
+            opt.lower = -3;
+            opt.upper = 3;
+            opt.seed = 1237961238;
+            return opt;
+        }());
+
         for (auto& x : simulated) {
             if (x) {
                 // Rounding for easier tests of exact equality.
@@ -42,6 +50,16 @@ protected:
         }
         return vec;
     }
+
+    static std::vector<double> create_replacement_vector(size_t len, uint64_t seed) {
+        return tatami_test::simulate_vector<double>(len, [&]{
+            tatami_test::SimulateVectorOptions opt;
+            opt.lower = -10;
+            opt.upper = 10;
+            opt.seed = seed;
+            return opt;
+        }());
+    }
 };
 
 TEST_P(DelayedUnaryIsometricSubstituteVectorTest, Equal) {
@@ -50,7 +68,7 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, Equal) {
     bool is_sparse = std::get<1>(param);
 
     auto comp = create_comparison_vector(row ? nrow : ncol);
-    std::vector<double> sub = tatami_test::simulate_dense_vector<double>(comp.size(), -10, 10);
+    auto sub = create_replacement_vector(comp.size(), static_cast<int>(row) * 1000 + static_cast<int>(is_sparse) * 13);
     if (is_sparse) {
         for (size_t i = 0, end = comp.size(); i < end; ++i){
             if (comp[i] == 0) {
@@ -81,8 +99,8 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, Equal) {
     }
     
     tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteVectorTest, GreaterThan) {
@@ -91,7 +109,7 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, GreaterThan) {
     bool is_sparse = std::get<1>(param);
 
     auto comp = create_comparison_vector(row ? nrow : ncol);
-    std::vector<double> sub = tatami_test::simulate_dense_vector<double>(comp.size(), -10, 10);
+    auto sub = create_replacement_vector(comp.size(), static_cast<int>(row) * 1000 + static_cast<int>(is_sparse) * 17);
     if (is_sparse) {
         for (size_t i = 0, end = comp.size(); i < end; ++i){
             if (comp[i] < 0) {
@@ -122,8 +140,8 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, GreaterThan) {
     }
     
     tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteVectorTest, LessThan) {
@@ -132,7 +150,7 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, LessThan) {
     bool is_sparse = std::get<1>(param);
 
     auto comp = create_comparison_vector(row ? nrow : ncol);
-    std::vector<double> sub = tatami_test::simulate_dense_vector<double>(comp.size(), -10, 10);
+    auto sub = create_replacement_vector(comp.size(), static_cast<int>(row) * 1000 + static_cast<int>(is_sparse) * 31);
     if (is_sparse) {
         for (size_t i = 0, end = comp.size(); i < end; ++i){
             if (comp[i] > 0) {
@@ -163,8 +181,8 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, LessThan) {
     }
 
     tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteVectorTest, GreaterThanOrEqual) {
@@ -173,7 +191,7 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, GreaterThanOrEqual) {
     bool is_sparse = std::get<1>(param);
 
     auto comp = create_comparison_vector(row ? nrow : ncol);
-    std::vector<double> sub = tatami_test::simulate_dense_vector<double>(comp.size(), -10, 10);
+    auto sub = create_replacement_vector(comp.size(), static_cast<int>(row) * 1000 + static_cast<int>(is_sparse) * 19);
     if (is_sparse) {
         for (size_t i = 0, end = comp.size(); i < end; ++i){
             if (comp[i] <= 0) {
@@ -204,8 +222,8 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, GreaterThanOrEqual) {
     }
 
     tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteVectorTest, LessThanOrEqual) {
@@ -214,7 +232,7 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, LessThanOrEqual) {
     bool is_sparse = std::get<1>(param);
 
     auto comp = create_comparison_vector(row ? nrow : ncol);
-    std::vector<double> sub = tatami_test::simulate_dense_vector<double>(comp.size(), -10, 10);
+    auto sub = create_replacement_vector(comp.size(), static_cast<int>(row) * 1000 + static_cast<int>(is_sparse) * 23);
     if (is_sparse) {
         for (size_t i = 0, end = comp.size(); i < end; ++i){
             if (comp[i] >= 0) {
@@ -245,8 +263,8 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, LessThanOrEqual) {
     }
 
     tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricSubstituteVectorTest, NotEqual) {
@@ -255,7 +273,7 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, NotEqual) {
     bool is_sparse = std::get<1>(param);
 
     auto comp = create_comparison_vector(row ? nrow : ncol);
-    std::vector<double> sub = tatami_test::simulate_dense_vector<double>(comp.size(), -10, 10);
+    auto sub = create_replacement_vector(comp.size(), static_cast<int>(row) * 1000 + static_cast<int>(is_sparse) * 29);
     if (is_sparse) {
         for (size_t i = 0, end = comp.size(); i < end; ++i){
             if (comp[i] != 0) {
@@ -286,8 +304,8 @@ TEST_P(DelayedUnaryIsometricSubstituteVectorTest, NotEqual) {
     }
 
     tatami::DenseRowMatrix<double, int> ref(this->nrow, this->ncol, std::move(refvec));
-    quick_test_all(dense_mod.get(), &ref);
-    quick_test_all(sparse_mod.get(), &ref);
+    quick_test_all<double, int>(*dense_mod, ref);
+    quick_test_all<double, int>(*sparse_mod, ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
