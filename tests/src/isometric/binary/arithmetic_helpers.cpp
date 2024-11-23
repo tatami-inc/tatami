@@ -108,7 +108,7 @@ protected:
         ::testing::Combine( \
             tatami_test::standard_test_access_options_combinations(), \
             ::testing::Values( \
-                std::make_pair(0, 0.35), \
+                std::make_pair(0.0, 0.35), \
                 std::make_pair(0.27, 0.6), \
                 std::make_pair(0.67, 0.33) \
             ) \
