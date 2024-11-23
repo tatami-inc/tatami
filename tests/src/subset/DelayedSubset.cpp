@@ -20,7 +20,15 @@ protected:
         if (dense) {
             return;
         }
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
+
+        auto simulated = tatami_test::simulate_vector<double>(NR * NC, []{
+            tatami_test::SimulateVectorOptions opt;
+            opt.density = 0.1;
+            opt.seed = 120983712;
+            return opt;
+        }());
+
+        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, std::move(simulated)));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
     }
 
@@ -167,7 +175,9 @@ INSTANTIATE_TEST_SUITE_P(
 /****************************************************
  ****************************************************/
 
-class SubsetFullAccessTest : public ::testing::TestWithParam<std::tuple<typename SubsetUtils::SimulationParameters, tatami_test::StandardTestAccessParameters> >, public SubsetUtils {
+class SubsetFullAccessTest : 
+    public ::testing::TestWithParam<std::tuple<typename SubsetUtils::SimulationParameters, tatami_test::StandardTestAccessOptions> >, 
+    public SubsetUtils {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
@@ -176,10 +186,10 @@ protected:
 
 TEST_P(SubsetFullAccessTest, Basic) {
     auto tparam = GetParam();
-    auto params = convert_access_parameters(std::get<1>(tparam));
-    tatami_test::test_full_access(params, dense_subbed.get(), ref.get());
-    tatami_test::test_full_access(params, sparse_subbed.get(), ref.get());
-    tatami_test::test_unsorted_full_access(params, sparse_subbed.get());
+    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
+    tatami_test::test_full_access(*dense_subbed, *ref, options);
+    tatami_test::test_full_access(*sparse_subbed, *ref, options);
+    tatami_test::test_unsorted_full_access(*sparse_subbed, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -187,43 +197,41 @@ INSTANTIATE_TEST_SUITE_P(
     SubsetFullAccessTest,
     ::testing::Combine(
         SubsetUtils::simulation_parameter_combinations(),
-        tatami_test::standard_test_access_parameter_combinations()
+        tatami_test::standard_test_access_options_combinations()
     )
 );
 
 /****************************************************
  ****************************************************/
 
-class SubsetSlicedAccessTest : public ::testing::TestWithParam<std::tuple<typename SubsetUtils::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, double> > >, public SubsetUtils {
+class SubsetBlockAccessTest : 
+    public ::testing::TestWithParam<std::tuple<typename SubsetUtils::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >, 
+    public SubsetUtils {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
     }
 };
 
-TEST_P(SubsetSlicedAccessTest, Sliced) {
+TEST_P(SubsetBlockAccessTest, Block) {
     auto tparam = GetParam();
-    auto params = convert_access_parameters(std::get<1>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto interval_info = std::get<2>(tparam);
-    auto len = (params.use_row ? ref->ncol() : ref->nrow());
-    size_t FIRST = interval_info.first * len, LAST = interval_info.second * len;
-
-    tatami_test::test_block_access(params, dense_subbed.get(), ref.get(), FIRST, LAST);
-    tatami_test::test_block_access(params, sparse_subbed.get(), ref.get(), FIRST, LAST);
-    tatami_test::test_unsorted_block_access(params, sparse_subbed.get(), FIRST, LAST);
+    tatami_test::test_block_access(*dense_subbed, *ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_block_access(*sparse_subbed, *ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_block_access(*sparse_subbed, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
     DelayedSubset,
-    SubsetSlicedAccessTest,
+    SubsetBlockAccessTest,
     ::testing::Combine(
         SubsetUtils::simulation_parameter_combinations(),
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
             std::make_pair(0.0, 0.66), 
-            std::make_pair(0.33, 0.787),
-            std::make_pair(0.5, 1.0)
+            std::make_pair(0.33, 0.457),
+            std::make_pair(0.5, 0.5)
         )
     )
 );
@@ -231,7 +239,9 @@ INSTANTIATE_TEST_SUITE_P(
 /****************************************************
  ****************************************************/
 
-class SubsetIndexedAccessTest : public ::testing::TestWithParam<std::tuple<typename SubsetUtils::SimulationParameters, tatami_test::StandardTestAccessParameters, std::pair<double, int> > >, public SubsetUtils {
+class SubsetIndexedAccessTest : 
+    public ::testing::TestWithParam<std::tuple<typename SubsetUtils::SimulationParameters, tatami_test::StandardTestAccessOptions, std::pair<double, double> > >,
+    public SubsetUtils {
 protected:
     void SetUp() {
         assemble(std::get<0>(GetParam()));
@@ -240,15 +250,11 @@ protected:
 
 TEST_P(SubsetIndexedAccessTest, Indexed) {
     auto tparam = GetParam();
-    auto params = convert_access_parameters(std::get<1>(tparam));
-
+    auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto interval_info = std::get<2>(tparam);
-    auto len = (params.use_row ? ref->ncol() : ref->nrow());
-    size_t FIRST = interval_info.first * len, STEP = interval_info.second;
-
-    tatami_test::test_indexed_access(params, dense_subbed.get(), ref.get(), FIRST, STEP);
-    tatami_test::test_indexed_access(params, sparse_subbed.get(), ref.get(), FIRST, STEP);
-    tatami_test::test_unsorted_indexed_access(params, sparse_subbed.get(), FIRST, STEP);
+    tatami_test::test_indexed_access(*dense_subbed, *ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_indexed_access(*sparse_subbed, *ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_indexed_access(*sparse_subbed, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -256,11 +262,11 @@ INSTANTIATE_TEST_SUITE_P(
     SubsetIndexedAccessTest,
     ::testing::Combine(
         SubsetUtils::simulation_parameter_combinations(),
-        tatami_test::standard_test_access_parameter_combinations(),
+        tatami_test::standard_test_access_options_combinations(),
         ::testing::Values(
-            std::pair<double, int>(0, 5), 
-            std::pair<double, int>(0.33, 3),
-            std::pair<double, int>(0.5, 12)
+            std::make_pair(0.0, 0.2), 
+            std::make_pair(0.33, 0.3),
+            std::make_pair(0.5, 0.4)
         )
     )
 );
@@ -268,7 +274,9 @@ INSTANTIATE_TEST_SUITE_P(
 /****************************************************
  ****************************************************/
 
-class SubsetConstructorTest : public ::testing::TestWithParam<std::tuple<bool, bool> >, public SubsetCoreUtils {};
+class SubsetConstructorTest : 
+    public ::testing::TestWithParam<std::tuple<bool, bool> >, 
+    public SubsetCoreUtils {};
 
 TEST_P(SubsetConstructorTest, SortedUnique) {
     auto param = GetParam();
@@ -279,8 +287,8 @@ TEST_P(SubsetConstructorTest, SortedUnique) {
     if (sorted && !duplicate) {
         tatami::DelayedSubsetSortedUnique<double, int, decltype(sub)> manual(dense, sub, true);
         auto ref = SubsetCoreUtils::reference_on_rows(dense.get(), sub);
-        tatami_test::test_simple_row_access(&manual, ref.get());
-        tatami_test::test_simple_column_access(&manual, ref.get());
+        tatami_test::test_simple_row_access(manual, *ref);
+        tatami_test::test_simple_column_access(manual, *ref);
     } else {
         tatami_test::throws_error([&]() {
             tatami::DelayedSubsetSortedUnique<double, int, decltype(sub)> manual(dense, sub, true);
@@ -297,8 +305,8 @@ TEST_P(SubsetConstructorTest, Sorted) {
     if (sorted) {
         tatami::DelayedSubsetSorted<double, int, decltype(sub)> manual(dense, sub, true);
         auto ref = SubsetCoreUtils::reference_on_rows(dense.get(), sub);
-        tatami_test::test_simple_row_access(&manual, ref.get());
-        tatami_test::test_simple_column_access(&manual, ref.get());
+        tatami_test::test_simple_row_access(manual, *ref);
+        tatami_test::test_simple_column_access(manual, *ref);
     } else {
         tatami_test::throws_error([&]() {
             tatami::DelayedSubsetSorted<double, int, decltype(sub)> manual(dense, sub, true); 
@@ -315,8 +323,8 @@ TEST_P(SubsetConstructorTest, Unique) {
     if (!duplicate) {
         tatami::DelayedSubsetUnique<double, int, decltype(sub)> manual(dense, sub, true);
         auto ref = SubsetCoreUtils::reference_on_rows(dense.get(), sub);
-        tatami_test::test_simple_row_access(&manual, ref.get());
-        tatami_test::test_simple_column_access(&manual, ref.get());
+        tatami_test::test_simple_row_access(manual, *ref);
+        tatami_test::test_simple_column_access(manual, *ref);
     } else {
         tatami_test::throws_error([&]() {
             tatami::DelayedSubsetUnique<double, int, decltype(sub)> manual(dense, sub, true);
@@ -332,8 +340,8 @@ TEST_P(SubsetConstructorTest, Any) {
 
     tatami::DelayedSubset<double, int, decltype(sub)> manual(dense, sub, true);
     auto ref = reference_on_rows(dense.get(), sub);
-    tatami_test::test_simple_row_access(&manual, ref.get());
-    tatami_test::test_simple_column_access(&manual, ref.get());
+    tatami_test::test_simple_row_access(manual, *ref);
+    tatami_test::test_simple_column_access(manual, *ref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -350,7 +358,7 @@ INSTANTIATE_TEST_SUITE_P(
 
 TEST(DelayedSubset, ConstOverload) {
     int NR = 9, NC = 7;
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
+    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, std::vector<double>(NR * NC)));
     std::vector<int> subset{ 1, 3, 5 };
 
     auto sub = tatami::make_DelayedSubset<0>(dense, subset);
@@ -360,7 +368,7 @@ TEST(DelayedSubset, ConstOverload) {
 
 TEST(DelayedSubset, ArrayView) {
     int NR = 9, NC = 7;
-    auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, tatami_test::simulate_sparse_vector<double>(NR * NC, 0.1)));
+    auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(NR, NC, std::vector<double>(NR * NC)));
 
     std::vector<int> subset{ 1, 3, 5 };
     tatami::ArrayView<int> aview(subset.data(), subset.size());
