@@ -1,7 +1,6 @@
 # A C++ API for all sorts of matrices 
 
 ![Unit tests](https://github.com/tatami-inc/tatami/actions/workflows/run-tests.yaml/badge.svg)
-![Gallery](https://github.com/tatami-inc/tatami/actions/workflows/run-gallery.yaml/badge.svg)
 ![Documentation](https://github.com/tatami-inc/tatami/actions/workflows/doxygenate.yaml/badge.svg)
 [![Codecov](https://codecov.io/gh/tatami-inc/tatami/branch/master/graph/badge.svg?token=Z189ORCLLR)](https://codecov.io/gh/tatami-inc/tatami)
 
@@ -165,7 +164,8 @@ This is supported with the following methods:
 Users can then write dedicated code paths to take advantage of these properties.
 For example, we might use different algorithms for dense data, where we don't have to look up indices; and for sparse data, if we can avoid the uninteresting zero values.
 Similarly, if we want to compute a row-wise statistic, but the matrix is more efficiently accessed by column according to `prefer_rows()`,
-we could iterate on the columns and attempt to compute the statistic in a "running" manner (see [`colsums.cpp`](gallery/src/colsums.cpp) for an example).
+we could iterate on the columns and attempt to compute the statistic in a "running" manner 
+(see [`colsums.cpp`](https://github.com/tatami-inc/gallery/tree/master/src/colsums.cpp) for an example).
 In the most complex cases, this leads to code like:
 
 ```cpp
@@ -333,7 +333,7 @@ The external dependencies listed in [`extern/CMakeLists.txt`](extern/CMakeLists.
 
 Check out the [reference documentation](https://tatami-inc.github.io/tatami) for more details on each function and class.
 
-The [gallery](gallery/) also contains worked examples for common operations based on row/column traversals.
+The [gallery](https://github.com/tatami-inc/gallery) contains worked examples for common operations based on row/column traversals.
 
 The [**tatami_stats**](https://github.com/tatami-inc/tatami_stats) repository computes some common statistics on **tatami** matrices.
 

@@ -32,13 +32,7 @@ if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
 else()
     option(TATAMI_TESTS "Build tatami's test suite." OFF)
 endif()
-
-option(BUILD_TATAMI_GALLERY "Compiling the tatami gallery." OFF)
 if(TATAMI_TESTS)
-    if (BUILD_TATAMI_GALLERY)
-        add_subdirectory(gallery)
-    endif()
-
     include(CTest)
     if(BUILD_TESTING)
         add_subdirectory(tests)
