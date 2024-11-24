@@ -105,7 +105,7 @@ public:
     }
 
 protected:
-    inline static std::shared_ptr<tatami::NumericMatrix> dense_subbed, sparse_subbed, ref;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense_subbed, sparse_subbed, uns_sparse_subbed, ref;
     inline static SimulationParameters last_params;
     inline static std::vector<size_t> sub;
 
@@ -124,14 +124,17 @@ protected:
 
         if (byrow) {
             sub = spawn_indices<size_t>(step_size, NR, duplicates, sorted);
+            ref = SubsetCoreUtils::reference_on_rows(dense.get(), sub);
             dense_subbed = tatami::make_DelayedSubset<0>(dense, sub);
             sparse_subbed = tatami::make_DelayedSubset<0>(sparse, sub);
-            ref = SubsetCoreUtils::reference_on_rows(dense.get(), sub);
+            uns_sparse_subbed = tatami::make_DelayedSubset<0, double, int>(std::make_shared<const tatami_test::ReversedIndicesWrapper<double, int> >(sparse), sub);
+
         } else {
             sub = spawn_indices<size_t>(step_size, NC, duplicates, sorted);
+            ref = SubsetCoreUtils::reference_on_columns(dense.get(), sub);
             dense_subbed = tatami::make_DelayedSubset<1>(dense, sub);
             sparse_subbed = tatami::make_DelayedSubset<1>(sparse, sub);
-            ref = SubsetCoreUtils::reference_on_columns(dense.get(), sub);
+            uns_sparse_subbed = tatami::make_DelayedSubset<1, double, int>(std::make_shared<const tatami_test::ReversedIndicesWrapper<double, int> >(sparse), sub);
         }
     }
 };
@@ -189,7 +192,7 @@ TEST_P(SubsetFullAccessTest, Basic) {
     auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
     tatami_test::test_full_access(*dense_subbed, *ref, options);
     tatami_test::test_full_access(*sparse_subbed, *ref, options);
-    tatami_test::test_unsorted_full_access(*sparse_subbed, options);
+    tatami_test::test_unsorted_full_access(*uns_sparse_subbed, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -219,7 +222,7 @@ TEST_P(SubsetBlockAccessTest, Block) {
     auto interval_info = std::get<2>(tparam);
     tatami_test::test_block_access(*dense_subbed, *ref, interval_info.first, interval_info.second, options);
     tatami_test::test_block_access(*sparse_subbed, *ref, interval_info.first, interval_info.second, options);
-    tatami_test::test_unsorted_block_access(*sparse_subbed, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_block_access(*uns_sparse_subbed, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -254,7 +257,7 @@ TEST_P(SubsetIndexedAccessTest, Indexed) {
     auto interval_info = std::get<2>(tparam);
     tatami_test::test_indexed_access(*dense_subbed, *ref, interval_info.first, interval_info.second, options);
     tatami_test::test_indexed_access(*sparse_subbed, *ref, interval_info.first, interval_info.second, options);
-    tatami_test::test_unsorted_indexed_access(*sparse_subbed, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_indexed_access(*uns_sparse_subbed, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
