@@ -30,7 +30,9 @@ public:
 
 protected:
     inline static size_t otherdim = 97;
-    inline static std::shared_ptr<tatami::NumericMatrix> bound_dense, bound_sparse, manual, forced_bound_dense, forced_bound_sparse;
+    inline static std::shared_ptr<tatami::NumericMatrix> bound_dense, bound_sparse, manual;
+    inline static std::shared_ptr<tatami::NumericMatrix> forced_bound_dense, forced_bound_sparse;
+    inline static std::shared_ptr<tatami::NumericMatrix> uns_bound_dense, uns_bound_sparse;
     inline static SimulationParameters last_params;
 
     static void assemble(SimulationParameters sim_params) {
@@ -46,6 +48,7 @@ protected:
         size_t n_total = 0;
         std::vector<std::shared_ptr<tatami::NumericMatrix> > collected_dense, collected_sparse;
         std::vector<std::shared_ptr<tatami::NumericMatrix> > forced_collected_dense, forced_collected_sparse;
+        std::vector<std::shared_ptr<tatami::NumericMatrix> > uns_collected_sparse;
 
         for (size_t i = 0; i < lengths.size(); ++i) {
             auto to_add = tatami_test::simulate_vector<double>(lengths[i] * otherdim, [&]{
@@ -69,6 +72,7 @@ protected:
 
             forced_collected_dense.emplace_back(std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(collected_dense.back()));
             forced_collected_sparse.emplace_back(std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(collected_sparse.back()));
+            uns_collected_sparse.emplace_back(std::make_shared<tatami_test::ReversedIndicesWrapper<double, int> >(collected_sparse.back()));
         }
 
         if (row) {
@@ -77,12 +81,14 @@ protected:
             manual.reset(new tatami::DenseRowMatrix<double, int>(n_total, otherdim, std::move(concat)));
             forced_bound_dense = tatami::make_DelayedBind<0>(std::move(forced_collected_dense));
             forced_bound_sparse = tatami::make_DelayedBind<0>(std::move(forced_collected_sparse));
+            uns_bound_sparse = tatami::make_DelayedBind<0>(std::move(uns_collected_sparse));
         } else {
             bound_dense = tatami::make_DelayedBind<1>(std::move(collected_dense));
             bound_sparse = tatami::make_DelayedBind<1>(std::move(collected_sparse));
             manual.reset(new tatami::DenseColumnMatrix<double, int>(otherdim, n_total, std::move(concat)));
             forced_bound_dense = tatami::make_DelayedBind<1>(std::move(forced_collected_dense));
             forced_bound_sparse = tatami::make_DelayedBind<1>(std::move(forced_collected_sparse));
+            uns_bound_sparse = tatami::make_DelayedBind<1>(std::move(uns_collected_sparse));
         }
     }
 };
@@ -235,6 +241,10 @@ TEST_P(DelayedBindEmptyAccessTest, Empty) {
         tatami_test::test_block_access(*forced_bound_sparse, *manual, 0, 0, options);
         tatami_test::test_indexed_access(*forced_bound_sparse, *manual, 0, 1, options);
     }
+
+    tatami_test::test_unsorted_full_access(*uns_bound_sparse, options);
+    tatami_test::test_unsorted_block_access(*uns_bound_sparse, 0, 0, options);
+    tatami_test::test_unsorted_indexed_access(*uns_bound_sparse, 0, 1, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -263,13 +273,15 @@ TEST_P(DelayedBindFullAccessTest, Basic) {
     auto tparam = GetParam();
     auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
 
-    tatami_test::test_full_access(*bound_sparse, *manual, options);
     tatami_test::test_full_access(*bound_dense, *manual, options);
+    tatami_test::test_full_access(*bound_sparse, *manual, options);
 
     if (options.use_oracle) {
         tatami_test::test_full_access(*forced_bound_dense, *manual, options);
         tatami_test::test_full_access(*forced_bound_sparse, *manual, options);
     }
+
+    tatami_test::test_unsorted_full_access(*uns_bound_sparse, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -298,13 +310,15 @@ TEST_P(DelayedBindBlockAccessTest, Basic) {
     auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto interval_info = std::get<2>(tparam);
 
-    tatami_test::test_block_access(*bound_sparse, *manual, interval_info.first, interval_info.second, options);
     tatami_test::test_block_access(*bound_dense, *manual, interval_info.first, interval_info.second, options);
+    tatami_test::test_block_access(*bound_sparse, *manual, interval_info.first, interval_info.second, options);
 
     if (options.use_oracle) {
         tatami_test::test_block_access(*forced_bound_sparse, *manual, interval_info.first, interval_info.second, options);
         tatami_test::test_block_access(*forced_bound_dense, *manual, interval_info.first, interval_info.second, options);
     }
+
+    tatami_test::test_unsorted_block_access(*uns_bound_sparse, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -338,13 +352,15 @@ TEST_P(DelayedBindIndexedAccessTest, Basic) {
     auto options = tatami_test::convert_test_access_options(std::get<1>(tparam));
     auto interval_info = std::get<2>(tparam);
 
-    tatami_test::test_indexed_access(*bound_sparse, *manual, interval_info.first, interval_info.second, options);
     tatami_test::test_indexed_access(*bound_dense, *manual, interval_info.first, interval_info.second, options);
+    tatami_test::test_indexed_access(*bound_sparse, *manual, interval_info.first, interval_info.second, options);
 
     if (options.use_oracle) {
         tatami_test::test_indexed_access(*forced_bound_sparse, *manual, interval_info.first, interval_info.second, options);
         tatami_test::test_indexed_access(*forced_bound_dense, *manual, interval_info.first, interval_info.second, options);
     }
+
+    tatami_test::test_unsorted_indexed_access(*uns_bound_sparse, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
