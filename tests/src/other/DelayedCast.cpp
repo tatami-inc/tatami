@@ -24,6 +24,8 @@ protected:
     inline static std::shared_ptr<tatami::NumericMatrix> cast_dense, cast_fdense;
     inline static std::shared_ptr<tatami::NumericMatrix> cast_sparse, cast_fsparse, cast_fsparse_value, cast_sparse_index;
 
+    inline static std::shared_ptr<tatami::NumericMatrix> uns_cast_fsparse;
+
     static void assemble() {
         if (dense) {
             return;
@@ -69,6 +71,13 @@ protected:
         cast_fsparse = tatami::make_DelayedCast<double, int>(fsparse);
         cast_fsparse_value = tatami::make_DelayedCast<double, int>(fsparse_value);
         cast_sparse_index = tatami::make_DelayedCast<double, int>(sparse_index);
+
+        // Testing unsorted access.
+        uns_cast_fsparse = tatami::make_DelayedCast<double, int>(
+            std::shared_ptr<tatami::Matrix<float, size_t> >(
+                new tatami_test::ReversedIndicesWrapper<float, size_t>(fsparse)
+            )
+        );
     }
 };
 
@@ -142,6 +151,7 @@ TEST_P(DelayedCastFullAccessTest, Sparse) {
     tatami_test::test_full_access(*cast_fsparse, *fsparse_ref, options);
     tatami_test::test_full_access(*cast_fsparse_value, *fsparse_ref, options);
     tatami_test::test_full_access(*cast_sparse_index, *sparse, options);
+    tatami_test::test_unsorted_full_access(*uns_cast_fsparse, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -178,6 +188,7 @@ TEST_P(DelayedCastBlockAccessTest, Sparse) {
     tatami_test::test_block_access(*cast_fsparse, *fsparse_ref, interval_info.first, interval_info.second, options);
     tatami_test::test_block_access(*cast_fsparse_value, *fsparse_ref, interval_info.first, interval_info.second, options);
     tatami_test::test_block_access(*cast_sparse_index, *sparse, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_block_access(*uns_cast_fsparse, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -221,6 +232,7 @@ TEST_P(DelayedCastIndexAccessTest, Sparse) {
     tatami_test::test_indexed_access(*cast_fsparse, *fsparse_ref, interval_info.first, interval_info.second, options);
     tatami_test::test_indexed_access(*cast_fsparse_value, *fsparse_ref, interval_info.first, interval_info.second, options);
     tatami_test::test_indexed_access(*cast_sparse_index, *sparse, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_indexed_access(*uns_cast_fsparse, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(

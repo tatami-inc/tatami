@@ -12,7 +12,7 @@
 class TransposeUtils {
 protected:
     inline static size_t nrow = 199, ncol = 201;
-    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse, tdense, tsparse, ref;
+    inline static std::shared_ptr<tatami::NumericMatrix> dense, sparse, tdense, tsparse, uns_tsparse, ref;
 
     static void assemble() {
         if (ref) {
@@ -30,6 +30,7 @@ protected:
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
         tdense = tatami::make_DelayedTranspose(dense);
         tsparse = tatami::make_DelayedTranspose(sparse);
+        uns_tsparse = tatami::make_DelayedTranspose<double, int>(std::make_shared<const tatami_test::ReversedIndicesWrapper<double, int> >(sparse));
 
         std::vector<double> refvec(nrow * ncol);
         for (size_t r = 0; r < nrow; ++r) {
@@ -89,6 +90,7 @@ TEST_P(TransposeFullTest, Basic) {
     auto options = tatami_test::convert_test_access_options(tparam);
     tatami_test::test_full_access(*tdense, *ref, options);
     tatami_test::test_full_access(*tsparse, *ref, options);
+    tatami_test::test_unsorted_full_access(*uns_tsparse, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -112,6 +114,7 @@ TEST_P(TransposeBlockTest, Basic) {
     auto interval_info = std::get<1>(tparam);
     tatami_test::test_block_access(*tdense, *ref, interval_info.first, interval_info.second, options);
     tatami_test::test_block_access(*tsparse, *ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_block_access(*uns_tsparse, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -142,6 +145,7 @@ TEST_P(TransposeIndexTest, Basic) {
     auto interval_info = std::get<1>(tparam);
     tatami_test::test_indexed_access(*tdense, *ref, interval_info.first, interval_info.second, options);
     tatami_test::test_indexed_access(*tsparse, *ref, interval_info.first, interval_info.second, options);
+    tatami_test::test_unsorted_indexed_access(*uns_tsparse, interval_info.first, interval_info.second, options);
 }
 
 INSTANTIATE_TEST_SUITE_P(
