@@ -4,18 +4,9 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/tatami-inc/tatami_test
   GIT_TAG master
 )
-
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
-# Avoid installing GoogleTest when installing this project.
-option(INSTALL_GTEST "Enable installation of googletest." OFF)
-
 FetchContent_MakeAvailable(tatami_test)
 
-enable_testing()
 include(GoogleTest)
-
 set(CODE_COVERAGE OFF CACHE BOOL "Enable coverage testing")
 set(DO_CODE_COVERAGE OFF)
 if(CODE_COVERAGE AND CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
