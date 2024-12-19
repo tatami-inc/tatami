@@ -138,23 +138,14 @@ public:
 };
 
 /**
- * A `make_*` helper function to enable partial template deduction of supplied types during delayed transposition.
- *
- * @tparam Value_ Type of matrix value.
- * @tparam Index_ Type of index value.
- *
- * @param matrix Pointer to a (possibly `const`) `Matrix` instance.
- *
- * @return A pointer to a `DelayedTranspose` instance.
+ * @cond
  */
+// Soft-deprecated, kept around for back-compatibility only.
 template<typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedTranspose(std::shared_ptr<const Matrix<Value_, Index_> > matrix) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedTranspose<Value_, Index_>(std::move(matrix)));
 }
 
-/**
- * @cond
- */
 template<typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedTranspose(std::shared_ptr<Matrix<Value_, Index_> > matrix) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedTranspose<Value_, Index_>(std::move(matrix)));

@@ -76,19 +76,19 @@ protected:
         }
 
         if (row) {
-            bound_dense = tatami::make_DelayedBind<0>(std::move(collected_dense));
-            bound_sparse = tatami::make_DelayedBind<0>(std::move(collected_sparse));
+            bound_dense.reset(new tatami::DelayedBind(std::move(collected_dense), true));
+            bound_sparse.reset(new tatami::DelayedBind(std::move(collected_sparse), true));
             manual.reset(new tatami::DenseRowMatrix<double, int>(n_total, otherdim, std::move(concat)));
-            forced_bound_dense = tatami::make_DelayedBind<0>(std::move(forced_collected_dense));
-            forced_bound_sparse = tatami::make_DelayedBind<0>(std::move(forced_collected_sparse));
-            uns_bound_sparse = tatami::make_DelayedBind<0>(std::move(uns_collected_sparse));
+            forced_bound_dense.reset(new tatami::DelayedBind(std::move(forced_collected_dense), true));
+            forced_bound_sparse.reset(new tatami::DelayedBind(std::move(forced_collected_sparse), true));
+            uns_bound_sparse.reset(new tatami::DelayedBind(std::move(uns_collected_sparse), true));
         } else {
-            bound_dense = tatami::make_DelayedBind<1>(std::move(collected_dense));
-            bound_sparse = tatami::make_DelayedBind<1>(std::move(collected_sparse));
+            bound_dense.reset(new tatami::DelayedBind(std::move(collected_dense), false));
+            bound_sparse.reset(new tatami::DelayedBind(std::move(collected_sparse), false));
             manual.reset(new tatami::DenseColumnMatrix<double, int>(otherdim, n_total, std::move(concat)));
-            forced_bound_dense = tatami::make_DelayedBind<1>(std::move(forced_collected_dense));
-            forced_bound_sparse = tatami::make_DelayedBind<1>(std::move(forced_collected_sparse));
-            uns_bound_sparse = tatami::make_DelayedBind<1>(std::move(uns_collected_sparse));
+            forced_bound_dense.reset(new tatami::DelayedBind(std::move(forced_collected_dense), false));
+            forced_bound_sparse.reset(new tatami::DelayedBind(std::move(forced_collected_sparse), false));
+            uns_bound_sparse.reset(new tatami::DelayedBind(std::move(uns_collected_sparse), false));
         }
     }
 };
@@ -137,32 +137,54 @@ TEST_F(DelayedBindUtilsTest, InconsistentBinds) {
     assemble(SimulationParameters({ 10, 20, 5 }, true));
 
     // Bound_sparse is CSC, bound_dense is row-major.
-    auto combined = tatami::make_DelayedBind<1>(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ bound_sparse, bound_dense });
+    tatami::DelayedBind combined(std::vector<std::shared_ptr<tatami::NumericMatrix> >{ bound_sparse, bound_dense }, false);
 
-    EXPECT_FLOAT_EQ(combined->is_sparse_proportion(), 0.5);
-    EXPECT_FALSE(combined->is_sparse());
+    EXPECT_FLOAT_EQ(combined.is_sparse_proportion(), 0.5);
+    EXPECT_FALSE(combined.is_sparse());
 
-    EXPECT_FLOAT_EQ(combined->prefer_rows_proportion(), 0.5);
-    EXPECT_FALSE(combined->prefer_rows());
+    EXPECT_FLOAT_EQ(combined.prefer_rows_proportion(), 0.5);
+    EXPECT_FALSE(combined.prefer_rows());
 }
 
 TEST_F(DelayedBindUtilsTest, ConstOverloads) {
     assemble(SimulationParameters({ 10, 50 }, true));
 
     std::vector<std::shared_ptr<const tatami::NumericMatrix> > const_collected({ bound_dense, bound_sparse });
-    auto const_combined = tatami::make_DelayedBind<0>(std::move(const_collected));
+    tatami::DelayedBind const_combined(std::move(const_collected), true);
 
     // Some cursory checks.
-    EXPECT_EQ(const_combined->nrow(), 120); // i.e., (10 + 50) * 2 
-    EXPECT_EQ(const_combined->ncol(), otherdim);
+    EXPECT_EQ(const_combined.nrow(), 120); // i.e., (10 + 50) * 2 
+    EXPECT_EQ(const_combined.ncol(), otherdim);
+}
+
+TEST_F(DelayedBindUtilsTest, MakeHelpers) {
+    assemble(SimulationParameters({ 10, 50 }, true));
+
+    std::vector<std::shared_ptr<tatami::NumericMatrix> > collected({ bound_dense, bound_sparse });
+    auto tdense1a = tatami::make_DelayedBind(collected, true);
+    EXPECT_EQ(tdense1a->nrow(), 120);
+    EXPECT_EQ(tdense1a->ncol(), otherdim);
+
+    auto tdense1b = tatami::make_DelayedBind<0>(collected);
+    EXPECT_EQ(tdense1b->nrow(), 120);
+    EXPECT_EQ(tdense1b->ncol(), otherdim);
+
+    std::vector<std::shared_ptr<const tatami::NumericMatrix> > const_collected({ bound_dense, bound_sparse });
+    auto tdense2a = tatami::make_DelayedBind(const_collected, false);
+    EXPECT_EQ(tdense2a->nrow(), 60);
+    EXPECT_EQ(tdense2a->ncol(), otherdim * 2);
+
+    auto tdense2b = tatami::make_DelayedBind<1>(const_collected);
+    EXPECT_EQ(tdense2b->nrow(), 60);
+    EXPECT_EQ(tdense2b->ncol(), otherdim * 2);
 }
 
 TEST(DelayedBindMisc, ErrorCheck) {
     std::vector<std::shared_ptr<tatami::NumericMatrix> > collected;
     collected.emplace_back(new tatami::DenseRowMatrix<double, int>(10, 20, std::vector<double>(200)));
     collected.emplace_back(new tatami::DenseRowMatrix<double, int>(20, 10, std::vector<double>(200)));
-    tatami_test::throws_error([&]() { tatami::make_DelayedBind<0>(collected); }, "same number of columns");
-    tatami_test::throws_error([&]() { tatami::make_DelayedBind<1>(collected); }, "same number of rows");
+    tatami_test::throws_error([&]() { tatami::DelayedBind(collected, true); }, "same number of columns");
+    tatami_test::throws_error([&]() { tatami::DelayedBind(collected, false); }, "same number of rows");
 }
 
 TEST(DelayedBindMisc, PartialOracleUsage) {
@@ -171,32 +193,32 @@ TEST(DelayedBindMisc, PartialOracleUsage) {
     collected.emplace_back(new tatami::DenseRowMatrix<double, int>(10, 20, std::vector<double>(200)));
 
     {
-        auto combined = tatami::make_DelayedBind<0>(collected); 
-        EXPECT_FALSE(combined->uses_oracle(true));
-        EXPECT_FALSE(combined->uses_oracle(false));
+        tatami::DelayedBind combined(collected, true); 
+        EXPECT_FALSE(combined.uses_oracle(true));
+        EXPECT_FALSE(combined.uses_oracle(false));
     }
 
     {
         auto p = std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(std::move(collected.back()));
         collected.back() = std::move(p);
-        auto combined = tatami::make_DelayedBind<0>(collected); 
-        EXPECT_TRUE(combined->uses_oracle(true));
-        EXPECT_TRUE(combined->uses_oracle(false));
+        tatami::DelayedBind combined(collected, true); 
+        EXPECT_TRUE(combined.uses_oracle(true));
+        EXPECT_TRUE(combined.uses_oracle(false));
     }
 
     {
         auto p = std::make_shared<tatami_test::ForcedOracleWrapper<double, int> >(std::move(collected.front()));
         collected.front() = std::move(p);
-        auto combined = tatami::make_DelayedBind<0>(collected); 
-        EXPECT_TRUE(combined->uses_oracle(true));
-        EXPECT_TRUE(combined->uses_oracle(false));
+        tatami::DelayedBind combined(collected, true); 
+        EXPECT_TRUE(combined.uses_oracle(true));
+        EXPECT_TRUE(combined.uses_oracle(false));
     }
 }
 
 TEST(DelayedBindMisc, AllEmpty) {
-    auto empty = tatami::make_DelayedBind<0>(std::vector<std::shared_ptr<tatami::Matrix<double, int> > >{});
-    EXPECT_EQ(empty->nrow(), 0);
-    EXPECT_EQ(empty->ncol(), 0);
+    tatami::DelayedBind empty(std::vector<std::shared_ptr<tatami::Matrix<double, int> > >{}, true);
+    EXPECT_EQ(empty.nrow(), 0);
+    EXPECT_EQ(empty.ncol(), 0);
 }
 
 /****************************

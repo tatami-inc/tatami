@@ -844,37 +844,19 @@ private:
 };
 
 /**
- * A `make_*` helper function to enable partial template deduction of supplied types.
- *
- * @tparam Value_ Type of matrix value.
- * @tparam Index_ Type of index value.
- *
- * @param matrices Pointers to `Matrix` objects.
- * @param row Whether to combine matrices by the rows (i.e., the output matrix has number of rows equal to the sum of the number of rows in `matrices`).
- * If false, combining is applied by the columns.
- *
- * @return A pointer to a `DelayedBind` instance.
+ * @cond
  */
+// These methods are soft-deprecated: kept around for back-compatibility only.
 template<typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices, bool row) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<Value_, Index_>(std::move(matrices), row));
 }
 
-/**
- * @cond
- */
 template<typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<Matrix<Value_, Index_> > > matrices, bool row) {
     return std::shared_ptr<Matrix<Value_, Index_> >(new DelayedBind<Value_, Index_>(std::move(matrices), row));
 }
-/**
- * @endcond
- */
 
-/**
- * @cond
- */
-// Back-compatibility.
 template<int margin_, typename Value_, typename Index_>
 std::shared_ptr<Matrix<Value_, Index_> > make_DelayedBind(std::vector<std::shared_ptr<const Matrix<Value_, Index_> > > matrices) {
     return make_DelayedBind(std::move(matrices), margin_ == 0);

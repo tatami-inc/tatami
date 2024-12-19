@@ -28,9 +28,9 @@ protected:
 
         dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column-major.
-        tdense = tatami::make_DelayedTranspose(dense);
-        tsparse = tatami::make_DelayedTranspose(sparse);
-        uns_tsparse = tatami::make_DelayedTranspose<double, int>(std::make_shared<const tatami_test::ReversedIndicesWrapper<double, int> >(sparse));
+        tdense.reset(new tatami::DelayedTranspose(dense));
+        tsparse.reset(new tatami::DelayedTranspose(sparse));
+        uns_tsparse.reset(new tatami::DelayedTranspose<double, int>(std::make_shared<const tatami_test::ReversedIndicesWrapper<double, int> >(sparse)));
 
         std::vector<double> refvec(nrow * ncol);
         for (size_t r = 0; r < nrow; ++r) {
@@ -69,11 +69,23 @@ TEST_F(TransposeTest, Basic) {
 
 TEST_F(TransposeTest, ConstOverload) {
     std::shared_ptr<const tatami::NumericMatrix> const_dense(dense);
-    auto tdense = tatami::make_DelayedTranspose(const_dense);
+    tatami::DelayedTranspose tdense(const_dense);
 
     // Cursory checks.
-    EXPECT_EQ(dense->nrow(), tdense->ncol());
-    EXPECT_EQ(dense->ncol(), tdense->nrow());
+    EXPECT_EQ(dense->nrow(), tdense.ncol());
+    EXPECT_EQ(dense->ncol(), tdense.nrow());
+}
+
+TEST_F(TransposeTest, MakeHelpers) {
+    // Testing here for back-compatibility only.
+    auto tdense1 = tatami::make_DelayedTranspose(dense);
+    EXPECT_EQ(dense->nrow(), tdense1->ncol());
+    EXPECT_EQ(dense->ncol(), tdense1->nrow());
+
+    std::shared_ptr<const tatami::NumericMatrix> const_dense(dense);
+    auto tdense2 = tatami::make_DelayedTranspose(const_dense);
+    EXPECT_EQ(dense->nrow(), tdense2->ncol());
+    EXPECT_EQ(dense->ncol(), tdense2->nrow());
 }
 
 class TransposeFullTest : 
