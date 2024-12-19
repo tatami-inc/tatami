@@ -111,6 +111,8 @@ Collaboration diagram for tatami::DelayedTranspose&lt; Value_, Index_ &gt;:</div
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a153de5beb4caa3c1639dac39464abcde" id="r_a153de5beb4caa3c1639dac39464abcde"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedTranspose.html#a153de5beb4caa3c1639dac39464abcde">DelayedTranspose</a> (std::shared_ptr&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">const</a> <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a> &gt; &gt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">matrix</a>)</td></tr>
 <tr class="separator:a153de5beb4caa3c1639dac39464abcde"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf538ed309584dff263f38805df2dd1a" id="r_aaf538ed309584dff263f38805df2dd1a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedTranspose.html#aaf538ed309584dff263f38805df2dd1a">DelayedTranspose</a> (std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a> &gt; &gt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">matrix</a>)</td></tr>
+<tr class="separator:aaf538ed309584dff263f38805df2dd1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae861c999ade80dfaab4e00ea0a3c9f89" id="r_ae861c999ade80dfaab4e00ea0a3c9f89"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedTranspose.html#ae861c999ade80dfaab4e00ea0a3c9f89">nrow</a> () <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">const</a></td></tr>
 <tr class="separator:ae861c999ade80dfaab4e00ea0a3c9f89"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a495080ac6d15551d6816adf85ab2d481" id="r_a495080ac6d15551d6816adf85ab2d481"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classtatami_1_1DelayedTranspose.html#a495080ac6d15551d6816adf85ab2d481">ncol</a> () <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">const</a></td></tr>
@@ -300,7 +302,7 @@ class tatami::DelayedTranspose&lt; Value_, Index_ &gt;</div><p>Delayed transposi
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a153de5beb4caa3c1639dac39464abcde" name="a153de5beb4caa3c1639dac39464abcde"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a153de5beb4caa3c1639dac39464abcde">&#9670;&#160;</a></span>DelayedTranspose()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a153de5beb4caa3c1639dac39464abcde">&#9670;&#160;</a></span>DelayedTranspose() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -326,7 +328,41 @@ template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c
 </div><div class="memdoc">
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">matrix</td><td>Pointer to the underlying (pre-transpose) matrix. </td></tr>
+    <tr><td class="paramname">matrix</td><td>Pointer to the matrix to be transposed. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aaf538ed309584dff263f38805df2dd1a" name="aaf538ed309584dff263f38805df2dd1a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf538ed309584dff263f38805df2dd1a">&#9670;&#160;</a></span>DelayedTranspose() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a> , <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">typename</a> <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a> &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classtatami_1_1DelayedTranspose.html">tatami::DelayedTranspose</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a> &gt;::DelayedTranspose </td>
+          <td>(</td>
+          <td class="paramtype">std::shared_ptr&lt; <a class="el" href="classtatami_1_1Matrix.html">Matrix</a>&lt; <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Value_</a>, <a class="el" href="namespacetatami.html#af05590455e558621c8ffc1b98c4fd454">Index_</a> &gt; &gt;&#160;</td>
+          <td class="paramname"><em>matrix</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">matrix</td><td>Pointer to the matrix to be transposed. </td></tr>
   </table>
   </dd>
 </dl>

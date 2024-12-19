@@ -2143,6 +2143,13 @@
       <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; matrix)</arglist>
     </member>
     <member kind="function">
+      <type></type>
+      <name>DelayedTranspose</name>
+      <anchorfile>classtatami_1_1DelayedTranspose.html</anchorfile>
+      <anchor>aaf538ed309584dff263f38805df2dd1a</anchor>
+      <arglist>(std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; matrix)</arglist>
+    </member>
+    <member kind="function">
       <type>Index_</type>
       <name>nrow</name>
       <anchorfile>classtatami_1_1DelayedTranspose.html</anchorfile>
