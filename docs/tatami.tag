@@ -5097,25 +5097,11 @@
       <arglist>(Value_ substitute)</arglist>
     </member>
     <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedBind</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abb6a0fcec274f4ae668c695055699083</anchor>
-      <arglist>(std::vector&lt; std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; &gt; matrices, bool row)</arglist>
-    </member>
-    <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; ValueOut_, IndexOut_ &gt; &gt;</type>
       <name>make_DelayedCast</name>
       <anchorfile>namespacetatami.html</anchorfile>
       <anchor>ab4c8b88eeaa5fcbb1e5d47d020eb98ea</anchor>
       <arglist>(std::shared_ptr&lt; const Matrix&lt; ValueIn_, IndexIn_ &gt; &gt; p)</arglist>
-    </member>
-    <member kind="function">
-      <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
-      <name>make_DelayedTranspose</name>
-      <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae0ca9ac34f7581c2d0654d8e6104a82b</anchor>
-      <arglist>(std::shared_ptr&lt; const Matrix&lt; Value_, Index_ &gt; &gt; matrix)</arglist>
     </member>
     <member kind="function">
       <type>std::vector&lt; size_t &gt;</type>
