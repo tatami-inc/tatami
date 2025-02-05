@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes' ?>
-<tagfile doxygen_version="1.9.8">
+<tagfile doxygen_version="1.12.0">
   <compound kind="file">
     <name>Extractor.hpp</name>
     <path>tatami/base/</path>
@@ -488,7 +488,7 @@
     <templarg>class ValueStorage_</templarg>
     <templarg>class IndexStorage_</templarg>
     <templarg>class PointerStorage_</templarg>
-    <base>tatami::CompressedSparseMatrix</base>
+    <base>tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>CompressedSparseColumnMatrix</name>
@@ -533,7 +533,7 @@
     <templarg>class ValueStorage_</templarg>
     <templarg>class IndexStorage_</templarg>
     <templarg>class PointerStorage_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>CompressedSparseMatrix</name>
@@ -683,7 +683,7 @@
     <templarg>class ValueStorage_</templarg>
     <templarg>class IndexStorage_</templarg>
     <templarg>class PointerStorage_</templarg>
-    <base>tatami::CompressedSparseMatrix</base>
+    <base>tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>CompressedSparseRowMatrix</name>
@@ -696,7 +696,7 @@
     <name>tatami::ConsecutiveOracle</name>
     <filename>classtatami_1_1ConsecutiveOracle.html</filename>
     <templarg>typename Index_</templarg>
-    <base>tatami::Oracle</base>
+    <base>tatami::Oracle&lt; Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>ConsecutiveOracle</name>
@@ -724,7 +724,7 @@
     <filename>classtatami_1_1ConstantMatrix.html</filename>
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>ConstantMatrix</name>
@@ -987,7 +987,7 @@
     <templarg>typename InputValue_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class Operation_</templarg>
-    <base>Matrix&lt; OutputValue_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; OutputValue_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedBinaryIsometricOperation</name>
@@ -1134,7 +1134,7 @@
     <filename>classtatami_1_1DelayedBind.html</filename>
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedBind</name>
@@ -1248,7 +1248,7 @@
     <templarg>typename IndexOut_</templarg>
     <templarg>typename ValueIn_</templarg>
     <templarg>typename IndexIn_</templarg>
-    <base>Matrix&lt; ValueOut_, IndexOut_ &gt;</base>
+    <base>tatami::Matrix&lt; ValueOut_, IndexOut_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedCast</name>
@@ -1396,7 +1396,7 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class SubsetStorage_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedSubset</name>
@@ -1543,7 +1543,7 @@
     <filename>classtatami_1_1DelayedSubsetBlock.html</filename>
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedSubsetBlock</name>
@@ -1691,7 +1691,7 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class SubsetStorage_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedSubsetSorted</name>
@@ -1839,7 +1839,7 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class SubsetStorage_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedSubsetSortedUnique</name>
@@ -1987,7 +1987,7 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class SubsetStorage_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedSubsetUnique</name>
@@ -2134,7 +2134,7 @@
     <filename>classtatami_1_1DelayedTranspose.html</filename>
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedTranspose</name>
@@ -2594,7 +2594,7 @@
     <templarg>typename InputValue_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class Operation_</templarg>
-    <base>Matrix&lt; OutputValue_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; OutputValue_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DelayedUnaryIsometricOperation</name>
@@ -2830,7 +2830,7 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class Storage_</templarg>
-    <base>tatami::DenseMatrix</base>
+    <base>tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DenseColumnMatrix</name>
@@ -2845,7 +2845,7 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class Storage_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DenseMatrix</name>
@@ -2993,7 +2993,7 @@
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
     <templarg>class Storage_</templarg>
-    <base>tatami::DenseMatrix</base>
+    <base>tatami::DenseMatrix&lt; Value_, Index_, Storage_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>DenseRowMatrix</name>
@@ -3006,7 +3006,7 @@
     <name>tatami::FixedVectorOracle</name>
     <filename>classtatami_1_1FixedVectorOracle.html</filename>
     <templarg>typename Index_</templarg>
-    <base>tatami::Oracle</base>
+    <base>tatami::Oracle&lt; Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>FixedVectorOracle</name>
@@ -3033,7 +3033,7 @@
     <name>tatami::FixedViewOracle</name>
     <filename>classtatami_1_1FixedViewOracle.html</filename>
     <templarg>typename Index_</templarg>
-    <base>tatami::Oracle</base>
+    <base>tatami::Oracle&lt; Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>FixedViewOracle</name>
@@ -3063,7 +3063,7 @@
     <templarg>typename Index_</templarg>
     <templarg>class ValueVectorStorage_</templarg>
     <templarg>class IndexVectorStorage_</templarg>
-    <base>tatami::FragmentedSparseMatrix</base>
+    <base>tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>FragmentedSparseColumnMatrix</name>
@@ -3099,7 +3099,7 @@
     <templarg>typename Index_</templarg>
     <templarg>class ValueVectorStorage_</templarg>
     <templarg>class IndexVectorStorage_</templarg>
-    <base>Matrix&lt; Value_, Index_ &gt;</base>
+    <base>tatami::Matrix&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>FragmentedSparseMatrix</name>
@@ -3206,7 +3206,7 @@
     <templarg>typename Index_</templarg>
     <templarg>class ValueVectorStorage_</templarg>
     <templarg>class IndexVectorStorage_</templarg>
-    <base>tatami::FragmentedSparseMatrix</base>
+    <base>tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>FragmentedSparseRowMatrix</name>
@@ -3472,14 +3472,14 @@
       <type>Value_</type>
       <name>value_type</name>
       <anchorfile>classtatami_1_1Matrix.html</anchorfile>
-      <anchor>a5b783d3ab440b7696c635a4b16516ba8</anchor>
+      <anchor>a3154ad89a70ee70e4f12784f2461fa2d</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>Index_</type>
       <name>index_type</name>
       <anchorfile>classtatami_1_1Matrix.html</anchorfile>
-      <anchor>adebf536caf3a3c1751eefc6e10f0b16e</anchor>
+      <anchor>a7575110444f4b58efcf0fb1a1060541c</anchor>
       <arglist></arglist>
     </member>
     <member kind="function" virtualness="pure">
@@ -4179,7 +4179,7 @@
     <filename>structtatami_1_1PseudoOracularDenseExtractor.html</filename>
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
-    <base>tatami::OracularDenseExtractor</base>
+    <base>tatami::OracularDenseExtractor&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>PseudoOracularDenseExtractor</name>
@@ -4200,7 +4200,7 @@
     <filename>structtatami_1_1PseudoOracularSparseExtractor.html</filename>
     <templarg>typename Value_</templarg>
     <templarg>typename Index_</templarg>
-    <base>tatami::OracularSparseExtractor</base>
+    <base>tatami::OracularSparseExtractor&lt; Value_, Index_ &gt;</base>
     <member kind="function">
       <type></type>
       <name>PseudoOracularSparseExtractor</name>
@@ -4461,42 +4461,42 @@
       <type>typename std::conditional&lt; oracle_, OracularDenseExtractor&lt; Value_, Index_ &gt;, MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;::type</type>
       <name>DenseExtractor</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a4e0374ed6401df3d6ae262ad379a4743</anchor>
+      <anchor>a92f2deb44e0a3cb1c569a379c6facbf0</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>typename std::conditional&lt; oracle_, OracularSparseExtractor&lt; Value_, Index_ &gt;, MyopicSparseExtractor&lt; Value_, Index_ &gt; &gt;::type</type>
       <name>SparseExtractor</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9a542a16a6a2c2c1efdc7b6e9eae9040</anchor>
+      <anchor>a213ab58ba31e5b5cee3b66ab54d86055</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt;</type>
       <name>VectorPtr</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>abbb0bdf0b79fe19e504b49b43984f634</anchor>
+      <anchor>a1a9c70ebcfa94bba3fea89202868f22f</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>Matrix&lt; double, int &gt;</type>
       <name>NumericMatrix</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a35c670894994f1d620abb55953f98441</anchor>
+      <anchor>ae0438743ada096f37f307404851849ff</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>typename std::remove_cv&lt; typename std::remove_reference&lt; decltype(std::declval&lt; Array_ &gt;()[0])&gt;::type &gt;::type</type>
       <name>ElementType</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a58a028d23a7be58854b2e60dfae1b04b</anchor>
+      <anchor>a83f5bea1c12d21f81732d6abd0665554</anchor>
       <arglist></arglist>
     </member>
     <member kind="typedef">
       <type>typename std::conditional&lt; oracle_, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt;, bool &gt;::type</type>
       <name>MaybeOracle</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>aab9d426a238a93d02635b4172c725808</anchor>
+      <anchor>a812af1bfb04773bf28da8549c3e6e5ee</anchor>
       <arglist></arglist>
     </member>
     <member kind="enumeration">
