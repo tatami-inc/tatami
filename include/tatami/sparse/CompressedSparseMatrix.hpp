@@ -194,7 +194,7 @@ public:
         my_retriever.populate(
             my_indices.begin() + my_pointers[i], 
             my_indices.begin() + my_pointers[i+1],
-            [&](size_t s, size_t offset) {
+            [&](size_t s, size_t offset) -> void {
                 buffer[s] = *(vIt + offset);
             }
         );
@@ -229,7 +229,7 @@ public:
         my_retriever.populate(
             my_indices.begin() + my_pointers[i], 
             my_indices.begin() + my_pointers[i+1],
-            [&](size_t offset, Index_ ix) {
+            [&](size_t offset, Index_ ix) -> void {
                 ++count;
                 if (my_needs_value) {
                     *vcopy = *(vIt + offset);
@@ -297,9 +297,12 @@ public:
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill_n(buffer, my_cache.size(), static_cast<Value_>(0));
-        my_cache.search(i, [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) {
-            buffer[index_primary] = my_values[ptr];
-        });
+        my_cache.search(
+            i,
+            [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) -> void {
+                buffer[index_primary] = my_values[ptr];
+            }
+        );
         return buffer;
     }
 
@@ -320,7 +323,7 @@ public:
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
         Index_ count = 0;
-        my_cache.search(i, [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) {
+        my_cache.search(i, [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) -> void {
             if (my_needs_value) {
                 value_buffer[count] = my_values[ptr];
             }
@@ -352,9 +355,12 @@ public:
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill_n(buffer, my_cache.size(), static_cast<Value_>(0));
-        my_cache.search(i, [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) {
-            buffer[index_primary] = my_values[ptr];
-        });
+        my_cache.search(
+            i,
+            [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) -> void {
+                buffer[index_primary] = my_values[ptr];
+            }
+        );
         return buffer;
     }
 
@@ -375,15 +381,18 @@ public:
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
         Index_ count = 0;
-        my_cache.search(i, [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) {
-            if (my_needs_value) {
-                value_buffer[count] = my_values[ptr];
+        my_cache.search(
+            i, 
+            [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) -> void {
+                if (my_needs_value) {
+                    value_buffer[count] = my_values[ptr];
+                }
+                if (my_needs_index) {
+                    index_buffer[count] = primary;
+                }
+                ++count;
             }
-            if (my_needs_index) {
-                index_buffer[count] = primary;
-            }
-            ++count;
-        });
+        );
         return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
     }
 
@@ -405,9 +414,12 @@ public:
 
     const Value_* fetch(Index_ i, Value_* buffer) {
         std::fill_n(buffer, my_cache.size(), static_cast<Value_>(0));
-        my_cache.search(i, [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) {
-            buffer[index_primary] = my_values[ptr];
-        });
+        my_cache.search(
+            i, 
+            [&](Index_, Index_ index_primary, ElementType<PointerStorage_> ptr) -> void {
+                buffer[index_primary] = my_values[ptr];
+            }
+        );
         return buffer;
     }
 
@@ -428,15 +440,18 @@ public:
 
     SparseRange<Value_, Index_> fetch(Index_ i, Value_* value_buffer, Index_* index_buffer) {
         Index_ count = 0;
-        my_cache.search(i, [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) {
-            if (my_needs_value) {
-                value_buffer[count] = my_values[ptr];
+        my_cache.search(
+            i,
+            [&](Index_ primary, Index_, ElementType<PointerStorage_> ptr) -> void {
+                if (my_needs_value) {
+                    value_buffer[count] = my_values[ptr];
+                }
+                if (my_needs_index) {
+                    index_buffer[count] = primary;
+                }
+                ++count;
             }
-            if (my_needs_index) {
-                index_buffer[count] = primary;
-            }
-            ++count;
-        });
+        );
         return SparseRange<Value_, Index_>(count, my_needs_value ? value_buffer : NULL, my_needs_index ? index_buffer : NULL);
     }
 

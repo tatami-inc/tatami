@@ -96,7 +96,7 @@ public:
         if constexpr(oracle_) {
             if constexpr(Operation_::is_basic) {
                 my_oracle = oracle;
-            } else if ([&]() {
+            } else if ([&]{
                 // Only storing if the oracle if we need the row/column index
                 // on the target dimension to apply the operation.
                 if (row) {

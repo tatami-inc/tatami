@@ -126,7 +126,7 @@ public:
             mapping,
             block_start, 
             block_length,
-            [&](Index_ i, Index_ sub_block_start, Index_ sub_block_length) {
+            [&](Index_ i, Index_ sub_block_start, Index_ sub_block_length) -> void {
                 my_count.emplace_back(sub_block_length);
                 my_exts.emplace_back(new_extractor<false, oracle_>(matrices[i].get(), row, oracle, sub_block_start, sub_block_length, opt));
             }
@@ -148,7 +148,7 @@ public:
             cumulative, 
             mapping,
             *indices_ptr,
-            [&](Index_ i, VectorPtr<Index_> sub_indices_ptr) {
+            [&](Index_ i, VectorPtr<Index_> sub_indices_ptr) -> void {
                 my_count.emplace_back(sub_indices_ptr->size());
                 my_exts.emplace_back(new_extractor<false, oracle_>(matrices[i].get(), row, oracle, std::move(sub_indices_ptr), opt));
             }
@@ -248,7 +248,7 @@ public:
             mapping,
             block_start, 
             block_length,
-            [&](Index_ i, Index_ sub_block_start, Index_ sub_block_length) {
+            [&](Index_ i, Index_ sub_block_start, Index_ sub_block_length) -> void {
                 my_exts.emplace_back(new_extractor<true, oracle_>(matrices[i].get(), row, oracle, sub_block_start, sub_block_length, opt));
             }
         );
@@ -306,7 +306,7 @@ public:
             my_cumulative, 
             mapping,
             *indices_ptr,
-            [&](Index_ i, VectorPtr<Index_> sub_indices_ptr) {
+            [&](Index_ i, VectorPtr<Index_> sub_indices_ptr) -> void {
                 my_which_matrix.emplace_back(i);
                 my_exts.emplace_back(new_extractor<true, oracle_>(matrices[i].get(), row, oracle, std::move(sub_indices_ptr), opt));
             }
@@ -487,7 +487,7 @@ public:
             mapping,
             ora.get(),
             segments,
-            [&](Index_ x, std::shared_ptr<const Oracle<Index_> > subora) {
+            [&](Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->dense(row, std::move(subora), args...);
             }
         );
@@ -524,7 +524,7 @@ public:
             mapping,
             ora.get(),
             segments,
-            [&](Index_ x, std::shared_ptr<const Oracle<Index_> > subora) {
+            [&](Index_ x, std::shared_ptr<const Oracle<Index_> > subora) -> void {
                 my_exts[x] = matrices[x]->sparse(row, std::move(subora), args...);
             }
         );

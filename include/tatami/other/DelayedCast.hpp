@@ -134,7 +134,7 @@ private:
 
 public:
     SparseRange<ValueOut_, IndexOut_> fetch(IndexOut_ i, ValueOut_* value_buffer, IndexOut_* index_buffer) {
-        IndexIn_* iptr = [&]() {
+        IndexIn_* iptr = [&]{
             if constexpr(no_op_index) {
                 return index_buffer;
             } else {
@@ -142,7 +142,7 @@ public:
             }
         }();
 
-        ValueIn_* vptr = [&]() {
+        ValueIn_* vptr = [&]{
             if constexpr(no_op_value) {
                 return value_buffer;
             } else {

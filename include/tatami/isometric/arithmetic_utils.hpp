@@ -37,14 +37,15 @@ enum class ArithmeticOperation : char {
 // type should be; an appropriate coercion is left to the caller classes. 
 template<ArithmeticOperation op_, bool right_, typename Value_, typename Scalar_>
 auto delayed_arithmetic(Value_ val, Scalar_ scalar) { 
-    auto left = [&]() {
+    auto left = [&]{
         if constexpr(right_) {
             return val;
         } else {
             return scalar;
         }
     }();
-    auto right = [&]() {
+
+    auto right = [&]{
         if constexpr(right_) {
             return scalar;
         } else {
