@@ -107,7 +107,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00020" name="l00020"></a><span class="lineno">   20</span><span class="keyword">namespace </span>ConstantMatrix_internal {</div>
 <div class="line"><a id="l00021" name="l00021"></a><span class="lineno">   21</span> </div>
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_&gt;</div>
-<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">class </span>DenseFiller : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, Value_, Index_&gt; {</div>
+<div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span><span class="keyword">class </span>DenseFiller final : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, Value_, Index_&gt; {</div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span>    DenseFiller(Index_ length, Value_ value) : my_length(length), my_value(value) {}</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span> </div>
@@ -121,7 +121,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00034" name="l00034"></a><span class="lineno">   34</span>};</div>
 <div class="line"><a id="l00035" name="l00035"></a><span class="lineno">   35</span> </div>
 <div class="line"><a id="l00036" name="l00036"></a><span class="lineno">   36</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_&gt;</div>
-<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">class </span>SparseFiller : <span class="keyword">public</span> SparseExtractor&lt;oracle_, Value_, Index_&gt; {</div>
+<div class="line"><a id="l00037" name="l00037"></a><span class="lineno">   37</span><span class="keyword">class </span>SparseFiller final : <span class="keyword">public</span> SparseExtractor&lt;oracle_, Value_, Index_&gt; {</div>
 <div class="line"><a id="l00038" name="l00038"></a><span class="lineno">   38</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span>    SparseFiller(<span class="keyword">const</span> Options&amp; opt) : my_needs_value(opt.sparse_extract_value), my_needs_index(opt.sparse_extract_index) {}</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span> </div>
@@ -136,7 +136,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>}</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_&gt;</div>
 <div class="foldopen" id="foldopen00064" data-start="{" data-end="};">
-<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classtatami_1_1ConstantMatrix.html">   64</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1ConstantMatrix.html">ConstantMatrix</a> : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;Value_, Index_&gt; {</div>
+<div class="line"><a id="l00064" name="l00064"></a><span class="lineno"><a class="line" href="classtatami_1_1ConstantMatrix.html">   64</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1ConstantMatrix.html">ConstantMatrix</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;Value_, Index_&gt; {</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00071" name="l00071"></a><span class="lineno"><a class="line" href="classtatami_1_1ConstantMatrix.html#ac51afe22e54a204c0b2b8a80abde30cc">   71</a></span>    <a class="code hl_function" href="classtatami_1_1ConstantMatrix.html#ac51afe22e54a204c0b2b8a80abde30cc">ConstantMatrix</a>(Index_ <a class="code hl_function" href="classtatami_1_1ConstantMatrix.html#a4b4ffa7d614555b1da63d8fc94ec0a48">nrow</a>, Index_ <a class="code hl_function" href="classtatami_1_1ConstantMatrix.html#a84184cb5ad5ee58f0ab3cf28d541ebc6">ncol</a>, Value_ value) : my_nrow(<a class="code hl_function" href="classtatami_1_1ConstantMatrix.html#a4b4ffa7d614555b1da63d8fc94ec0a48">nrow</a>), my_ncol(<a class="code hl_function" href="classtatami_1_1ConstantMatrix.html#a84184cb5ad5ee58f0ab3cf28d541ebc6">ncol</a>), my_value(value) {}</div>
 <div class="line"><a id="l00072" name="l00072"></a><span class="lineno">   72</span> </div>

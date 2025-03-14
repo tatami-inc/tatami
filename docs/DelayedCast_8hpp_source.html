@@ -108,7 +108,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00022" name="l00022"></a><span class="lineno">   22</span><span class="keyword">namespace </span>DelayedCast_internal {</div>
 <div class="line"><a id="l00023" name="l00023"></a><span class="lineno">   23</span> </div>
 <div class="line"><a id="l00024" name="l00024"></a><span class="lineno">   24</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> IndexIn_, <span class="keyword">typename</span> IndexOut_&gt;</div>
-<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">class </span>CastOracle : <span class="keyword">public</span> Oracle&lt;IndexIn_&gt; {</div>
+<div class="line"><a id="l00025" name="l00025"></a><span class="lineno">   25</span><span class="keyword">class </span>CastOracle final : <span class="keyword">public</span> Oracle&lt;IndexIn_&gt; {</div>
 <div class="line"><a id="l00026" name="l00026"></a><span class="lineno">   26</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00027" name="l00027"></a><span class="lineno">   27</span>    CastOracle(std::shared_ptr&lt;<span class="keyword">const</span> Oracle&lt;IndexOut_&gt; &gt; oracle) : my_oracle(std::move(oracle)) {}</div>
 <div class="line"><a id="l00028" name="l00028"></a><span class="lineno">   28</span> </div>
@@ -145,7 +145,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00059" name="l00059"></a><span class="lineno">   59</span>}</div>
 <div class="line"><a id="l00060" name="l00060"></a><span class="lineno">   60</span> </div>
 <div class="line"><a id="l00061" name="l00061"></a><span class="lineno">   61</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_, <span class="keyword">typename</span> ValueOut_, <span class="keyword">typename</span> IndexOut_, <span class="keyword">typename</span> ValueIn_, <span class="keyword">typename</span> IndexIn_&gt;</div>
-<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="keyword">class </span>Dense : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, ValueOut_, IndexOut_&gt; {</div>
+<div class="line"><a id="l00062" name="l00062"></a><span class="lineno">   62</span><span class="keyword">class </span>Dense final : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, ValueOut_, IndexOut_&gt; {</div>
 <div class="line"><a id="l00063" name="l00063"></a><span class="lineno">   63</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00064" name="l00064"></a><span class="lineno">   64</span>    Dense(<span class="keyword">const</span> Matrix&lt;ValueIn_, IndexIn_&gt;* matrix, <span class="keywordtype">bool</span> row, MaybeOracle&lt;oracle_, IndexOut_&gt; oracle, <span class="keyword">const</span> Options&amp; opt) {</div>
 <div class="line"><a id="l00065" name="l00065"></a><span class="lineno">   65</span>        allocate(row ? matrix-&gt;ncol() : matrix-&gt;nrow());</div>
@@ -187,7 +187,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>};</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span> </div>
 <div class="line"><a id="l00103" name="l00103"></a><span class="lineno">  103</span><span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_, <span class="keyword">typename</span> ValueOut_, <span class="keyword">typename</span> IndexOut_, <span class="keyword">typename</span> ValueIn_, <span class="keyword">typename</span> IndexIn_&gt;</div>
-<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="keyword">class </span>Sparse : <span class="keyword">public</span> SparseExtractor&lt;oracle_, ValueOut_, IndexOut_&gt; {</div>
+<div class="line"><a id="l00104" name="l00104"></a><span class="lineno">  104</span><span class="keyword">class </span>Sparse final : <span class="keyword">public</span> SparseExtractor&lt;oracle_, ValueOut_, IndexOut_&gt; {</div>
 <div class="line"><a id="l00105" name="l00105"></a><span class="lineno">  105</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00106" name="l00106"></a><span class="lineno">  106</span>    Sparse(<span class="keyword">const</span> Matrix&lt;ValueIn_, IndexIn_&gt;* matrix, <span class="keywordtype">bool</span> row, MaybeOracle&lt;oracle_, IndexOut_&gt; oracle, <span class="keyword">const</span> Options&amp; opt) {</div>
 <div class="line"><a id="l00107" name="l00107"></a><span class="lineno">  107</span>        allocate(row ? matrix-&gt;ncol() : matrix-&gt;nrow(), opt);</div>
@@ -267,7 +267,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00181" name="l00181"></a><span class="lineno">  181</span>}</div>
 <div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> ValueOut_, <span class="keyword">typename</span> IndexOut_, <span class="keyword">typename</span> ValueIn_, <span class="keyword">typename</span> IndexIn_&gt;</div>
 <div class="foldopen" id="foldopen00200" data-start="{" data-end="};">
-<div class="line"><a id="l00200" name="l00200"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedCast.html">  200</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1DelayedCast.html">DelayedCast</a> : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;ValueOut_, IndexOut_&gt; {</div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedCast.html">  200</a></span><span class="keyword">class </span><a class="code hl_class" href="classtatami_1_1DelayedCast.html">DelayedCast</a> final : <span class="keyword">public</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix</a>&lt;ValueOut_, IndexOut_&gt; {</div>
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno"><a class="line" href="classtatami_1_1DelayedCast.html#a1fc5fdee58e8f23353c8fd73ef87001e">  205</a></span>    <a class="code hl_function" href="classtatami_1_1DelayedCast.html#a1fc5fdee58e8f23353c8fd73ef87001e">DelayedCast</a>(std::shared_ptr&lt;<span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;ValueIn_, IndexIn_&gt;</a> &gt; matrix) : my_matrix(std::move(matrix)) {}</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span> </div>
