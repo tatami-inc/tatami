@@ -91,7 +91,7 @@ void initialize_parallel_index(
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-class  ParallelDense : public DenseExtractor<oracle_, Value_, Index_> {
+class  ParallelDense final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     ParallelDense(
         const std::vector<Index_>&, // Not used, just provided for consistency with other constructors.
@@ -177,7 +177,7 @@ private:
  ***********************/
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelFullSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class ParallelFullSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     ParallelFullSparse(
         const std::vector<Index_>& cumulative, 
@@ -227,7 +227,7 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelBlockSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class ParallelBlockSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     ParallelBlockSparse(
         const std::vector<Index_>& cumulative, 
@@ -286,7 +286,7 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelIndexSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class ParallelIndexSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     ParallelIndexSparse(
         const std::vector<Index_>& cumulative, 
@@ -350,7 +350,7 @@ private:
  *********************/
 
 template<typename Value_, typename Index_>
-class MyopicPerpendicularDense : public MyopicDenseExtractor<Value_, Index_> {
+class MyopicPerpendicularDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     template<typename ... Args_>
     MyopicPerpendicularDense(
@@ -380,7 +380,7 @@ private:
 };
 
 template<typename Value_, typename Index_>
-class MyopicPerpendicularSparse : public MyopicSparseExtractor<Value_, Index_> {
+class MyopicPerpendicularSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     template<typename ... Args_>
     MyopicPerpendicularSparse(
@@ -470,7 +470,7 @@ void initialize_perp_oracular(
 }
 
 template<typename Value_, typename Index_>
-class OracularPerpendicularDense : public OracularDenseExtractor<Value_, Index_> {
+class OracularPerpendicularDense final : public OracularDenseExtractor<Value_, Index_> {
 public:
     template<typename ... Args_>
     OracularPerpendicularDense(
@@ -507,7 +507,7 @@ private:
 };
 
 template<typename Value_, typename Index_>
-class OracularPerpendicularSparse : public OracularSparseExtractor<Value_, Index_> {
+class OracularPerpendicularSparse final : public OracularSparseExtractor<Value_, Index_> {
 public:
     template<typename ... Args_>
     OracularPerpendicularSparse(
@@ -558,7 +558,7 @@ private:
  * @tparam Index_ Type of index value.
  */
 template<typename Value_, typename Index_>
-class DelayedBind : public Matrix<Value_, Index_> {
+class DelayedBind final : public Matrix<Value_, Index_> {
 public:
     /**
      * @param matrices Pointers to the matrices to be combined.

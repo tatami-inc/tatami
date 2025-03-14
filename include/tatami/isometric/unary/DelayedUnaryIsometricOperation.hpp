@@ -35,7 +35,7 @@ namespace DelayedUnaryIsometricOperation_internal {
  * - the operation discards sparsity in a variable manner.
  */
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseBasicFull : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseBasicFull final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseBasicFull(
         const Matrix<InputValue_, Index_>* matrix, 
@@ -81,7 +81,7 @@ public:
 };
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseBasicBlock : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseBasicBlock final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseBasicBlock(
         const Matrix<InputValue_, Index_>* matrix, 
@@ -130,7 +130,7 @@ public:
 };
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseBasicIndex : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseBasicIndex final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseBasicIndex(
         const Matrix<InputValue_, Index_>* matrix, 
@@ -189,7 +189,7 @@ public:
  * - the operation discards sparsity in a constant manner.
  */
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseExpandedFull : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseExpandedFull final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseExpandedFull(
         const Matrix<InputValue_, Index_>* matrix, 
@@ -260,7 +260,7 @@ public:
 };
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_> 
-class DenseExpandedBlock : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseExpandedBlock final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseExpandedBlock(
         const Matrix<InputValue_, Index_>* matrix, 
@@ -334,7 +334,7 @@ public:
 };
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_> 
-class DenseExpandedIndex : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseExpandedIndex final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseExpandedIndex(
         const Matrix<InputValue_, Index_>* matrix, 
@@ -430,7 +430,7 @@ public:
  * - indices are not necessary to perform the operation 
  */
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class SparseSimple : public SparseExtractor<oracle_, OutputValue_, Index_> {
+class SparseSimple final : public SparseExtractor<oracle_, OutputValue_, Index_> {
 public:
     SparseSimple(
         const Matrix<InputValue_, Index_>* matrix, 
@@ -531,7 +531,7 @@ public:
  * - indices are necessary to perform the operation 
  */
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class SparseNeedsIndices : public SparseExtractor<oracle_, OutputValue_, Index_> {
+class SparseNeedsIndices final : public SparseExtractor<oracle_, OutputValue_, Index_> {
 public:
     SparseNeedsIndices(
         const Matrix<InputValue_, Index_>* matrix,
@@ -669,7 +669,7 @@ public:
  * depending on whether it can take advantage of matrix sparsity.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DelayedUnaryIsometricOperation : public Matrix<OutputValue_, Index_> {
+class DelayedUnaryIsometricOperation final : public Matrix<OutputValue_, Index_> {
 public:
     /**
      * @param matrix Pointer to the underlying matrix.

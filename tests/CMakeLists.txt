@@ -24,7 +24,7 @@ macro(decorate_executable target)
         target_link_options(${target} PRIVATE --coverage)
     endif()
 
-    gtest_discover_tests(${target})
+    gtest_discover_tests(${target} DISCOVERY_MODE PRE_TEST)
 endmacro()
 
 # Main test executable.

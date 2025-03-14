@@ -18,7 +18,7 @@ namespace tatami {
  * @brief Predict future accesses from a view on a fixed sequence.
  */
 template<typename Index_>
-class FixedViewOracle : public Oracle<Index_> {
+class FixedViewOracle final : public Oracle<Index_> {
 public:
     /**
      * @param ptr Pointer to a constant array of indices on the target dimension.
@@ -46,7 +46,7 @@ private:
  * @brief Predict future accesses from a vector containing a fixed sequence.
  */
 template<typename Index_>
-class FixedVectorOracle : public Oracle<Index_> {
+class FixedVectorOracle final : public Oracle<Index_> {
 public:
     /**
      * @param vector Vector containing a fixed sequence of indices on the target dimension.

@@ -33,7 +33,7 @@ namespace CompressedSparseMatrix_internal {
  ********************/
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class PrimaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
+class PrimaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicFullDense(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary) :
         my_values(values),
@@ -61,7 +61,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class PrimaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
+class PrimaryMyopicFullSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicFullSparse(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, const Options& opt) :
         my_values(values),
@@ -99,7 +99,7 @@ private:
  *********************/
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class PrimaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
+class PrimaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicBlockDense(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, Index_ block_start, Index_ block_length) :
         my_values(values), 
@@ -134,7 +134,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class PrimaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
+class PrimaryMyopicBlockSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicBlockSparse(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, Index_ block_start, Index_ block_length, const Options& opt) :
         my_values(values),
@@ -178,7 +178,7 @@ private:
  ***********************/
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
+class PrimaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicIndexDense(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, const VectorPtr<Index_>& indices_ptr) :
         my_values(values),
@@ -210,7 +210,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
+class PrimaryMyopicIndexSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicIndexSparse(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, const VectorPtr<Index_>& indices_ptr, const Options& opt) :
         my_values(values),
@@ -288,7 +288,7 @@ auto make_ServeIndices(const IndexStorage_& i, const PointerStorage_& p) {
 }
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
+class SecondaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicFullDense(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary) :
         my_values(values),
@@ -312,7 +312,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class SecondaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
+class SecondaryMyopicFullSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicFullSparse(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, const Options& opt) :
         my_values(values),
@@ -346,7 +346,7 @@ private:
  ***********************/
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
+class SecondaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicBlockDense(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, Index_ block_start, Index_ block_length) :
         my_values(values),
@@ -370,7 +370,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class SecondaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
+class SecondaryMyopicBlockSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicBlockSparse(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, Index_ block_start, Index_ block_length, const Options& opt) :
         my_values(values),
@@ -407,7 +407,7 @@ private:
  ***********************/
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
+class SecondaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicIndexDense(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, VectorPtr<Index_> sub_ptr) :
         my_values(values), my_cache(make_ServeIndices<Index_>(indices, pointers), secondary, std::move(sub_ptr)) {}
@@ -429,7 +429,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
-class SecondaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
+class SecondaryMyopicIndexSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicIndexSparse(const ValueStorage_& values, const IndexStorage_& indices, const PointerStorage_& pointers, Index_ secondary, VectorPtr<Index_> sub_ptr, const Options& opt) :
         my_values(values),
@@ -715,7 +715,7 @@ public:
  * See `tatami::CompressedSparseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class ValueStorage_ = std::vector<Value_>, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >
-class CompressedSparseColumnMatrix : public CompressedSparseMatrix<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> {
+class CompressedSparseColumnMatrix final : public CompressedSparseMatrix<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> {
 public:
     /**
      * @param nrow Number of rows.
@@ -735,7 +735,7 @@ public:
  * See `tatami::CompressedSparseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class ValueStorage_ = std::vector<Value_>, class IndexStorage_ = std::vector<Index_>, class PointerStorage_ = std::vector<size_t> >
-class CompressedSparseRowMatrix : public CompressedSparseMatrix<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> {
+class CompressedSparseRowMatrix final : public CompressedSparseMatrix<Value_, Index_, ValueStorage_, IndexStorage_, PointerStorage_> {
 public:
     /**
      * @param nrow Number of rows.

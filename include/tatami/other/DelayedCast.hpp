@@ -22,7 +22,7 @@ namespace tatami {
 namespace DelayedCast_internal {
 
 template<typename IndexIn_, typename IndexOut_>
-class CastOracle : public Oracle<IndexIn_> {
+class CastOracle final : public Oracle<IndexIn_> {
 public:
     CastOracle(std::shared_ptr<const Oracle<IndexOut_> > oracle) : my_oracle(std::move(oracle)) {}
 
@@ -59,7 +59,7 @@ VectorPtr<IndexIn_> convert(VectorPtr<IndexOut_> indices_ptr) {
 }
 
 template<bool oracle_, typename ValueOut_, typename IndexOut_, typename ValueIn_, typename IndexIn_>
-class Dense : public DenseExtractor<oracle_, ValueOut_, IndexOut_> {
+class Dense final : public DenseExtractor<oracle_, ValueOut_, IndexOut_> {
 public:
     Dense(const Matrix<ValueIn_, IndexIn_>* matrix, bool row, MaybeOracle<oracle_, IndexOut_> oracle, const Options& opt) {
         allocate(row ? matrix->ncol() : matrix->nrow());
@@ -101,7 +101,7 @@ private:
 };
 
 template<bool oracle_, typename ValueOut_, typename IndexOut_, typename ValueIn_, typename IndexIn_>
-class Sparse : public SparseExtractor<oracle_, ValueOut_, IndexOut_> {
+class Sparse final : public SparseExtractor<oracle_, ValueOut_, IndexOut_> {
 public:
     Sparse(const Matrix<ValueIn_, IndexIn_>* matrix, bool row, MaybeOracle<oracle_, IndexOut_> oracle, const Options& opt) {
         allocate(row ? matrix->ncol() : matrix->nrow(), opt);
@@ -197,7 +197,7 @@ private:
  * @tparam IndexIn_ Index type to cast from.
  */
 template<typename ValueOut_, typename IndexOut_, typename ValueIn_, typename IndexIn_>
-class DelayedCast : public Matrix<ValueOut_, IndexOut_> {
+class DelayedCast final : public Matrix<ValueOut_, IndexOut_> {
 public:
     /**
      * @param matrix Pointer to the `Matrix` instance to cast from.

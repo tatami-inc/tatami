@@ -20,7 +20,7 @@ namespace tatami {
 namespace ConstantMatrix_internal {
 
 template<bool oracle_, typename Value_, typename Index_>
-class DenseFiller : public DenseExtractor<oracle_, Value_, Index_> {
+class DenseFiller final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     DenseFiller(Index_ length, Value_ value) : my_length(length), my_value(value) {}
 
@@ -34,7 +34,7 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-class SparseFiller : public SparseExtractor<oracle_, Value_, Index_> {
+class SparseFiller final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     SparseFiller(const Options& opt) : my_needs_value(opt.sparse_extract_value), my_needs_index(opt.sparse_extract_index) {}
 
@@ -61,7 +61,7 @@ private:
  * @tparam Index_ Type of the row/column indices.
  */
 template<typename Value_, typename Index_>
-class ConstantMatrix : public Matrix<Value_, Index_> {
+class ConstantMatrix final : public Matrix<Value_, Index_> {
 public:
     /**
      * @param nrow Number of rows.

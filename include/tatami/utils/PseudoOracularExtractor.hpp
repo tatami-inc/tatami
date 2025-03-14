@@ -21,7 +21,7 @@ namespace tatami {
  * This allows `Matrix` subclasses to satisfy the dense oracle-aware extraction interface.
  */
 template<typename Value_, typename Index_> 
-struct PseudoOracularDenseExtractor : public OracularDenseExtractor<Value_, Index_> {
+struct PseudoOracularDenseExtractor final : public OracularDenseExtractor<Value_, Index_> {
     /**
      * @param oracle The oracle.
      * @param ext A dense extractor to extract dimension elements according to `ora`.
@@ -50,7 +50,7 @@ private:
  * This allows `Matrix` subclasses to satisfy the sparse oracle-aware extraction interface without much effort.
  */
 template<typename Value_, typename Index_> 
-struct PseudoOracularSparseExtractor : public OracularSparseExtractor<Value_, Index_> {
+struct PseudoOracularSparseExtractor final : public OracularSparseExtractor<Value_, Index_> {
     /**
      * @param oracle The oracle.
      * @param ext A sparse extractor to extract dimension elements according to `ora`.

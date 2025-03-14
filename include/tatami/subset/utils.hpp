@@ -13,7 +13,7 @@ namespace tatami {
 namespace subset_utils {
 
 template<typename Index_, class SubsetStorage_>
-class SubsetOracle : public Oracle<Index_> {
+class SubsetOracle final : public Oracle<Index_> {
 public:
     SubsetOracle(std::shared_ptr<const Oracle<Index_> > oracle, const SubsetStorage_& subset) : my_oracle(std::move(oracle)), my_subset(subset) {}
 
@@ -31,7 +31,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class SubsetStorage_>
-class MyopicPerpendicularDense : public MyopicDenseExtractor<Value_, Index_> {
+class MyopicPerpendicularDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     template<typename ... Args_>
     MyopicPerpendicularDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, Args_&& ... args) : 
@@ -47,7 +47,7 @@ protected:
 };
 
 template<typename Value_, typename Index_, class SubsetStorage_>
-class MyopicPerpendicularSparse : public MyopicSparseExtractor<Value_, Index_> {
+class MyopicPerpendicularSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     template<typename ... Args_>
     MyopicPerpendicularSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, Args_&& ... args) : 
@@ -63,7 +63,7 @@ protected:
 };
 
 template<typename Value_, typename Index_>
-class OracularPerpendicularDense : public OracularDenseExtractor<Value_, Index_> {
+class OracularPerpendicularDense final : public OracularDenseExtractor<Value_, Index_> {
 public:
     template<class SubsetStorage_, typename ... Args_>
     OracularPerpendicularDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, std::shared_ptr<const Oracle<Index_> > oracle, Args_&& ... args) :
@@ -78,7 +78,7 @@ protected:
 };
 
 template<typename Value_, typename Index_>
-class OracularPerpendicularSparse : public OracularSparseExtractor<Value_, Index_> {
+class OracularPerpendicularSparse final : public OracularSparseExtractor<Value_, Index_> {
 public:
     template<class SubsetStorage_, typename ... Args_>
     OracularPerpendicularSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, std::shared_ptr<const Oracle<Index_> > oracle, Args_&& ... args) :

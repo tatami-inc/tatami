@@ -27,7 +27,7 @@ namespace tatami {
  * @tparam Index_ Type of the row/column indices.
  */
 template<bool oracle_, typename Value_, typename Index_>
-class FullSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
+class FullSparsifiedWrapper final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     /**
      * @param dense Instance of a dense extractor that retrieves the full extent of the non-target dimension.
@@ -80,7 +80,7 @@ private:
  * @tparam Index_ Type of the row/column indices.
  */
 template<bool oracle_, typename Value_, typename Index_>
-class BlockSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
+class BlockSparsifiedWrapper final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     /**
      * @param dense Instance of a dense extractor for a contiguous block of the non-target dimension.
@@ -137,7 +137,7 @@ private:
  * @tparam Index_ Type of the row/column indices.
  */
 template<bool oracle_, typename Value_, typename Index_>
-class IndexSparsifiedWrapper : public SparseExtractor<oracle_, Value_, Index_> {
+class IndexSparsifiedWrapper final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     /**
      * @param dense Instance of a dense extractor for an indexed subset of the non-target dimension.

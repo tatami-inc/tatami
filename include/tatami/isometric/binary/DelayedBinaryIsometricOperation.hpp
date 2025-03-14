@@ -29,7 +29,7 @@ namespace DelayedBinaryIsometricOperation_internal {
  ********************/
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseSimpleFull : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseSimpleFull final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseSimpleFull(
         const Matrix<InputValue_, Index_>* left,
@@ -81,7 +81,7 @@ private:
 };
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseSimpleBlock : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseSimpleBlock final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseSimpleBlock(
         const Matrix<InputValue_, Index_>* left,
@@ -136,7 +136,7 @@ private:
 };
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseSimpleIndex : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseSimpleIndex final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseSimpleIndex(
         const Matrix<InputValue_, Index_>* left,
@@ -194,7 +194,7 @@ private:
  **********************/
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseExpandedFull : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseExpandedFull final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseExpandedFull(
         const Matrix<InputValue_, Index_>* left,
@@ -255,7 +255,7 @@ private:
 };
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseExpandedBlock : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseExpandedBlock final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseExpandedBlock(
         const Matrix<InputValue_, Index_>* left,
@@ -319,7 +319,7 @@ private:
 };
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class DenseExpandedIndex : public DenseExtractor<oracle_, OutputValue_, Index_> {
+class DenseExpandedIndex final : public DenseExtractor<oracle_, OutputValue_, Index_> {
 public:
     DenseExpandedIndex(
         const Matrix<InputValue_, Index_>* left,
@@ -401,7 +401,7 @@ private:
  **************/
 
 template<bool oracle_, typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
-class Sparse : public SparseExtractor<oracle_, OutputValue_, Index_> {
+class Sparse final : public SparseExtractor<oracle_, OutputValue_, Index_> {
 public:
     Sparse(
         const Matrix<InputValue_, Index_>* left,

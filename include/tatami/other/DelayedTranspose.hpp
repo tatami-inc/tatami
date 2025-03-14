@@ -24,7 +24,7 @@ namespace tatami {
  * @tparam Index_ Type of index value.
  */
 template<typename Value_, typename Index_>
-class DelayedTranspose : public Matrix<Value_, Index_> {
+class DelayedTranspose final : public Matrix<Value_, Index_> {
 public:
     /**
      * @param matrix Pointer to the matrix to be transposed.

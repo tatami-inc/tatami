@@ -18,7 +18,7 @@ namespace tatami {
  * @brief Predict future accesses along a consecutive sequence. 
  */
 template<typename Index_>
-class ConsecutiveOracle : public Oracle<Index_> {
+class ConsecutiveOracle final : public Oracle<Index_> {
 public:
     /**
      * @param start Start index of the consecutive sequence on the target dimension.

@@ -35,7 +35,7 @@ void bump_indices(VectorPtr<Index_>& indices_ptr, Index_ subset_start) {
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-class AlongDense : public DenseExtractor<oracle_, Value_, Index_> {
+class AlongDense final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     AlongDense(const Matrix<Value_, Index_>* matrix, Index_ subset_start, Index_ subset_length, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) :
         my_ext(new_extractor<false, oracle_>(matrix, row, std::move(oracle), subset_start, subset_length, opt)) {}
@@ -57,7 +57,7 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-class AlongSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class AlongSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     AlongSparse(const Matrix<Value_, Index_>* matrix, Index_ subset_start, Index_ subset_length, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) :
         my_ext(new_extractor<true, oracle_>(matrix, row, std::move(oracle), subset_start, subset_length, opt)), my_shift(subset_start) {}
@@ -89,7 +89,7 @@ private:
 };
 
 template<typename Index_>
-class SubsetOracle : public Oracle<Index_> {
+class SubsetOracle final : public Oracle<Index_> {
 public:
     SubsetOracle(std::shared_ptr<const Oracle<Index_> > oracle, Index_ shift) : my_oracle(std::move(oracle)), my_shift(shift) {}
 
@@ -107,7 +107,7 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-class AcrossDense : public DenseExtractor<oracle_, Value_, Index_> {
+class AcrossDense final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     template<typename ... Args_>
     AcrossDense(const Matrix<Value_, Index_>* matrix, Index_ subset_start, bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) : my_shift(subset_start) {
@@ -128,7 +128,7 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-class AcrossSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class AcrossSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     template<typename ... Args_>
     AcrossSparse(const Matrix<Value_, Index_>* matrix, Index_ subset_start, bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) : my_shift(subset_start) {
@@ -164,7 +164,7 @@ private:
  * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename Value_, typename Index_>
-class DelayedSubsetBlock : public Matrix<Value_, Index_> {
+class DelayedSubsetBlock final : public Matrix<Value_, Index_> {
 public:
     /**
      * @param matrix Pointer to the underlying (pre-subset) matrix.

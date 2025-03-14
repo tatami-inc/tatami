@@ -31,7 +31,7 @@ namespace FragmentedSparseMatrix_internal {
  ********************/
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class PrimaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
+class PrimaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicFullDense(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary) :
         my_values(values), my_indices(indices), my_secondary(secondary) {} 
@@ -55,7 +55,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class PrimaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
+class PrimaryMyopicFullSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicFullSparse(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, [[maybe_unused]] Index_ secondary /* for consistency only */, const Options& opt) :
         my_values(values), my_indices(indices), my_needs_value(opt.sparse_extract_value), my_needs_index(opt.sparse_extract_index) {} 
@@ -85,7 +85,7 @@ private:
  *********************/
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class PrimaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
+class PrimaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicBlockDense(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary, Index_ block_start, Index_ block_length) :
         my_values(values), my_indices(indices), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {} 
@@ -116,7 +116,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class PrimaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
+class PrimaryMyopicBlockSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicBlockSparse(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary, Index_ block_start, Index_ block_length, const Options& opt) :
         my_values(values),
@@ -159,7 +159,7 @@ private:
  ***********************/
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
+class PrimaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicIndexDense(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary, VectorPtr<Index_> indices_ptr) :
         my_values(values), my_indices(indices), my_retriever(*indices_ptr, secondary), my_num_indices(indices_ptr->size()) {} 
@@ -186,7 +186,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class PrimaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
+class PrimaryMyopicIndexSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicIndexSparse(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary, VectorPtr<Index_> indices_ptr, const Options& opt) :
         my_values(values), my_indices(indices), my_retriever(*indices_ptr, secondary), my_needs_value(opt.sparse_extract_value), my_needs_index(opt.sparse_extract_index) {} 
@@ -258,7 +258,7 @@ auto make_ServeIndices(const IndexVectorStorage_& i) {
 }
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_> 
-class SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
+class SecondaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicFullDense(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary) :
         my_values(values), my_cache(make_ServeIndices<Index_>(indices), secondary, indices.size()) {} 
@@ -280,7 +280,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class SecondaryMyopicFullSparse : public MyopicSparseExtractor<Value_, Index_> {
+class SecondaryMyopicFullSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicFullSparse(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary, const Options& opt) :
         my_values(values), my_cache(make_ServeIndices<Index_>(indices), secondary, indices.size()), my_needs_value(opt.sparse_extract_value), my_needs_index(opt.sparse_extract_index) {} 
@@ -313,7 +313,7 @@ private:
  ***********************/
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
+class SecondaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicBlockDense(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary, Index_ block_start, Index_ block_length) :
         my_values(values), my_cache(make_ServeIndices<Index_>(indices), secondary, block_start, block_length) {}
@@ -335,7 +335,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class SecondaryMyopicBlockSparse : public MyopicSparseExtractor<Value_, Index_> {
+class SecondaryMyopicBlockSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicBlockSparse(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary, Index_ block_start, Index_ block_length, const Options& opt) :
         my_values(values), my_cache(make_ServeIndices<Index_>(indices), secondary, block_start, block_length), my_needs_value(opt.sparse_extract_value), my_needs_index(opt.sparse_extract_index) {} 
@@ -368,7 +368,7 @@ private:
  ***********************/
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
+class SecondaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicIndexDense(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary, VectorPtr<Index_> indices_ptr) :
         my_values(values), my_cache(make_ServeIndices<Index_>(indices), secondary, std::move(indices_ptr)) {}
@@ -390,7 +390,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
-class SecondaryMyopicIndexSparse : public MyopicSparseExtractor<Value_, Index_> {
+class SecondaryMyopicIndexSparse final : public MyopicSparseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicIndexSparse(const ValueVectorStorage_& values, const IndexVectorStorage_& indices, Index_ secondary, VectorPtr<Index_> indices_ptr, const Options& opt) :
         my_values(values), my_cache(make_ServeIndices<Index_>(indices), secondary, std::move(indices_ptr)), my_needs_value(opt.sparse_extract_value), my_needs_index(opt.sparse_extract_index) {} 
@@ -659,7 +659,7 @@ public:
  * See `tatami::FragmentedSparseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class ValueVectorStorage_ = std::vector<std::vector<Value_> >, class IndexVectorStorage_ = std::vector<std::vector<Index_> > >
-class FragmentedSparseColumnMatrix : public FragmentedSparseMatrix<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> {
+class FragmentedSparseColumnMatrix final : public FragmentedSparseMatrix<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> {
 public:
     /**
      * @param nrow Number of rows.
@@ -678,7 +678,7 @@ public:
  * See `tatami::FragmentedSparseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class ValueVectorStorage_ = std::vector<std::vector<Value_> >, class IndexVectorStorage_ = std::vector<std::vector<Index_> > >
-class FragmentedSparseRowMatrix : public FragmentedSparseMatrix<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> {
+class FragmentedSparseRowMatrix final : public FragmentedSparseMatrix<Value_, Index_, ValueVectorStorage_, IndexVectorStorage_> {
 public:
     /**
      * @param nrow Number of rows.

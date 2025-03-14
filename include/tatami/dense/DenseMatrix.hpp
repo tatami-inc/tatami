@@ -26,7 +26,7 @@ namespace tatami {
 namespace DenseMatrix_internals {
 
 template<typename Value_, typename Index_, class Storage_>
-class PrimaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
+class PrimaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicFullDense(const Storage_& storage, size_t secondary) : my_storage(storage), my_secondary(secondary) {}
 
@@ -46,7 +46,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class Storage_>
-class PrimaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
+class PrimaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicBlockDense(const Storage_& storage, size_t secondary, Index_ block_start, Index_ block_length) : 
         my_storage(storage), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {}
@@ -68,7 +68,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class Storage_>
-class PrimaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
+class PrimaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     PrimaryMyopicIndexDense(const Storage_& storage, size_t secondary, VectorPtr<Index_> indices_ptr) : 
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
@@ -89,7 +89,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class Storage_>
-class SecondaryMyopicFullDense : public MyopicDenseExtractor<Value_, Index_> {
+class SecondaryMyopicFullDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicFullDense(const Storage_& storage, Index_ secondary, Index_ primary) : 
         my_storage(storage), my_secondary(secondary), my_primary(primary) {}
@@ -108,7 +108,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class Storage_>
-class SecondaryMyopicBlockDense : public MyopicDenseExtractor<Value_, Index_> {
+class SecondaryMyopicBlockDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicBlockDense(const Storage_& storage, Index_ secondary, Index_ block_start, Index_ block_length) : 
         my_storage(storage), my_secondary(secondary), my_block_start(block_start), my_block_length(block_length) {}
@@ -129,7 +129,7 @@ private:
 };
 
 template<typename Value_, typename Index_, class Storage_>
-class SecondaryMyopicIndexDense : public MyopicDenseExtractor<Value_, Index_> {
+class SecondaryMyopicIndexDense final : public MyopicDenseExtractor<Value_, Index_> {
 public:
     SecondaryMyopicIndexDense(const Storage_& storage, Index_ secondary, VectorPtr<Index_> indices_ptr) : 
         my_storage(storage), my_secondary(secondary), my_indices_ptr(std::move(indices_ptr)) {}
@@ -305,7 +305,7 @@ public:
  * See `tatami::DenseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
-class DenseColumnMatrix : public DenseMatrix<Value_, Index_, Storage_> {
+class DenseColumnMatrix final : public DenseMatrix<Value_, Index_, Storage_> {
 public:
     /**
      * @param nrow Number of rows.
@@ -321,7 +321,7 @@ public:
  * See `tatami::DenseMatrix` for details on the template parameters.
  */
 template<typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
-class DenseRowMatrix : public DenseMatrix<Value_, Index_, Storage_> {
+class DenseRowMatrix final : public DenseMatrix<Value_, Index_, Storage_> {
 public:
     /**
      * @param nrow Number of rows.

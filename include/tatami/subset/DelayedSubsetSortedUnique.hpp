@@ -83,7 +83,7 @@ std::unique_ptr<DenseExtractor<oracle_, Value_, Index_> > create_parallel_dense(
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class ParallelSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     template<class SubsetStorage_>
     ParallelSparse(
@@ -159,7 +159,7 @@ private:
  * @tparam SubsetStorage_ Vector containing the subset indices.
  */
 template<typename Value_, typename Index_, class SubsetStorage_>
-class DelayedSubsetSortedUnique : public Matrix<Value_, Index_> {
+class DelayedSubsetSortedUnique final : public Matrix<Value_, Index_> {
 public:
     /**
      * @param matrix Pointer to the underlying (pre-subset) matrix.

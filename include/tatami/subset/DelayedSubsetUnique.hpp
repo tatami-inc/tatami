@@ -49,7 +49,7 @@ DenseParallelResults<Index_> format_dense_parallel(const SubsetStorage_& subset,
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelDense : public DenseExtractor<oracle_, Value_, Index_> {
+class ParallelDense final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     template<class SubsetStorage_>
     ParallelDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
@@ -111,7 +111,7 @@ std::vector<Index_> format_sparse_parallel(const SubsetStorage_& subset, Index_ 
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class ParallelSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     template<class SubsetStorage_>
     ParallelSparse(
@@ -267,7 +267,7 @@ private:
  * Any class implementing `[`, `size()`, `begin()` and `end()` can be used here.
  */
 template<typename Value_, typename Index_, class SubsetStorage_>
-class DelayedSubsetUnique : public Matrix<Value_, Index_> {
+class DelayedSubsetUnique final : public Matrix<Value_, Index_> {
 public:
     /**
      * @param matrix Pointer to the underlying (pre-subset) matrix.

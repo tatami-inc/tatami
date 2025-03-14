@@ -56,7 +56,7 @@ DenseParallelResults<Index_> format_dense_parallel(const SubsetStorage_& indices
 }
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelDense : public DenseExtractor<oracle_, Value_, Index_> {
+class ParallelDense final : public DenseExtractor<oracle_, Value_, Index_> {
 public:
     template<class SubsetStorage_>
     ParallelDense(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) {
@@ -263,7 +263,7 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelFullSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class ParallelFullSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     template<class SubsetStorage_>
     ParallelFullSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) :
@@ -278,7 +278,7 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelBlockSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class ParallelBlockSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     template<class SubsetStorage_>
     ParallelBlockSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) : 
@@ -296,7 +296,7 @@ private:
 };
 
 template<bool oracle_, typename Value_, typename Index_>
-class ParallelIndexSparse : public SparseExtractor<oracle_, Value_, Index_> {
+class ParallelIndexSparse final : public SparseExtractor<oracle_, Value_, Index_> {
 public:
     template<class SubsetStorage_>
     ParallelIndexSparse(const Matrix<Value_, Index_>* matrix, const SubsetStorage_& subset, bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) : 
@@ -331,7 +331,7 @@ private:
  * Any class implementing `[`, `size()`, `begin()` and `end()` can be used here.
  */
 template<typename Value_, typename Index_, class SubsetStorage_>
-class DelayedSubsetSorted : public Matrix<Value_, Index_> {
+class DelayedSubsetSorted final : public Matrix<Value_, Index_> {
 public:
     /**
      * @param matrix Pointer to the underlying (pre-subset) matrix.
