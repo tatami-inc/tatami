@@ -180,7 +180,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00094" name="l00094"></a><span class="lineno">   94</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
 <div class="line"><a id="l00095" name="l00095"></a><span class="lineno">   95</span>        <span class="keyword">const</span> Options&amp; opt</div>
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>    ) : </div>
-<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), create&lt;Index_&gt;(subset), opt)),</div>
+<div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), create&lt;Index_&gt;(subset), opt)),</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        my_remapping(remap)</div>
 <div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>    {}</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span> </div>
@@ -194,7 +194,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00108" name="l00108"></a><span class="lineno">  108</span>        Index_ block_length, </div>
 <div class="line"><a id="l00109" name="l00109"></a><span class="lineno">  109</span>        <span class="keyword">const</span> Options&amp; opt</div>
 <div class="line"><a id="l00110" name="l00110"></a><span class="lineno">  110</span>    ) : </div>
-<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), create&lt;Index_&gt;(subset, block_start, block_length), opt)),</div>
+<div class="line"><a id="l00111" name="l00111"></a><span class="lineno">  111</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), create&lt;Index_&gt;(subset, block_start, block_length), opt)),</div>
 <div class="line"><a id="l00112" name="l00112"></a><span class="lineno">  112</span>        my_remapping(remap)</div>
 <div class="line"><a id="l00113" name="l00113"></a><span class="lineno">  113</span>    {}</div>
 <div class="line"><a id="l00114" name="l00114"></a><span class="lineno">  114</span> </div>
@@ -208,7 +208,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00122" name="l00122"></a><span class="lineno">  122</span>        VectorPtr&lt;Index_&gt; indices_ptr,</div>
 <div class="line"><a id="l00123" name="l00123"></a><span class="lineno">  123</span>        <span class="keyword">const</span> Options&amp; opt</div>
 <div class="line"><a id="l00124" name="l00124"></a><span class="lineno">  124</span>    ) : </div>
-<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), create&lt;Index_&gt;(subset, indices_ptr), opt)),</div>
+<div class="line"><a id="l00125" name="l00125"></a><span class="lineno">  125</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), create&lt;Index_&gt;(subset, indices_ptr), opt)),</div>
 <div class="line"><a id="l00126" name="l00126"></a><span class="lineno">  126</span>        my_remapping(remap)</div>
 <div class="line"><a id="l00127" name="l00127"></a><span class="lineno">  127</span>    {}</div>
 <div class="line"><a id="l00128" name="l00128"></a><span class="lineno">  128</span> </div>
@@ -474,7 +474,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="aclasstatami_1_1Oracle_html"><div class="ttname"><a href="classtatami_1_1Oracle.html">tatami::Oracle</a></div><div class="ttdoc">Predict future access requests on the target dimension.</div><div class="ttdef"><b>Definition</b> Oracle.hpp:21</div></div>
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="anamespacetatami_html_a1a9c70ebcfa94bba3fea89202868f22f"><div class="ttname"><a href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">tatami::VectorPtr</a></div><div class="ttdeci">std::shared_ptr&lt; const std::vector&lt; Index_ &gt; &gt; VectorPtr</div><div class="ttdef"><b>Definition</b> Matrix.hpp:26</div></div>
-<div class="ttc" id="anamespacetatami_html_ae5e845574f229ff8308121456fac3d47"><div class="ttname"><a href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">tatami::new_extractor</a></div><div class="ttdeci">auto new_extractor(const Matrix&lt; Value_, Index_ &gt; *ptr, bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> new_extractor.hpp:42</div></div>
+<div class="ttc" id="anamespacetatami_html_ac1514cda61f96e93a9cbc656f742a044"><div class="ttname"><a href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">tatami::new_extractor</a></div><div class="ttdeci">auto new_extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> new_extractor.hpp:42</div></div>
 <div class="ttc" id="astructtatami_1_1Options_html"><div class="ttname"><a href="structtatami_1_1Options.html">tatami::Options</a></div><div class="ttdoc">Options for accessing data from a Matrix instance.</div><div class="ttdef"><b>Definition</b> Options.hpp:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

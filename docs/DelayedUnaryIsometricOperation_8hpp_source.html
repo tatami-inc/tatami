@@ -123,7 +123,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        my_row(row),</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        my_oracle(oracle, my_operation, row),</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        my_extent(row ? matrix-&gt;ncol() : matrix-&gt;nrow()),</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor</a>&lt;false, oracle_&gt;(matrix, row, std::move(oracle), opt))</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;false, oracle_&gt;(matrix, row, std::move(oracle), opt))</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>    {</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(!same_value) {</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>            my_holding_buffer.resize(my_extent);</div>
@@ -172,7 +172,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00096" name="l00096"></a><span class="lineno">   96</span>        my_oracle(oracle, my_operation, row),</div>
 <div class="line"><a id="l00097" name="l00097"></a><span class="lineno">   97</span>        my_block_start(block_start),</div>
 <div class="line"><a id="l00098" name="l00098"></a><span class="lineno">   98</span>        my_block_length(block_length),</div>
-<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor</a>&lt;false, oracle_&gt;(matrix, row, std::move(oracle), block_start, block_length, opt))</div>
+<div class="line"><a id="l00099" name="l00099"></a><span class="lineno">   99</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;false, oracle_&gt;(matrix, row, std::move(oracle), block_start, block_length, opt))</div>
 <div class="line"><a id="l00100" name="l00100"></a><span class="lineno">  100</span>    {</div>
 <div class="line"><a id="l00101" name="l00101"></a><span class="lineno">  101</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(!same_value) {</div>
 <div class="line"><a id="l00102" name="l00102"></a><span class="lineno">  102</span>            my_holding_buffer.resize(my_block_length);</div>
@@ -219,7 +219,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00143" name="l00143"></a><span class="lineno">  143</span>        my_row(row),</div>
 <div class="line"><a id="l00144" name="l00144"></a><span class="lineno">  144</span>        my_oracle(oracle, my_operation, row),</div>
 <div class="line"><a id="l00145" name="l00145"></a><span class="lineno">  145</span>        my_indices_ptr(indices_ptr),</div>
-<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor</a>&lt;false, oracle_&gt;(matrix, row, std::move(oracle), std::move(indices_ptr), opt))</div>
+<div class="line"><a id="l00146" name="l00146"></a><span class="lineno">  146</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;false, oracle_&gt;(matrix, row, std::move(oracle), std::move(indices_ptr), opt))</div>
 <div class="line"><a id="l00147" name="l00147"></a><span class="lineno">  147</span>    {</div>
 <div class="line"><a id="l00148" name="l00148"></a><span class="lineno">  148</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(!same_value) {</div>
 <div class="line"><a id="l00149" name="l00149"></a><span class="lineno">  149</span>            my_holding_buffer.resize(my_indices_ptr-&gt;size());</div>
@@ -499,7 +499,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00441" name="l00441"></a><span class="lineno">  441</span>        my_operation(operation),</div>
 <div class="line"><a id="l00442" name="l00442"></a><span class="lineno">  442</span>        my_row(row),</div>
 <div class="line"><a id="l00443" name="l00443"></a><span class="lineno">  443</span>        my_oracle(oracle, my_operation, row),</div>
-<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), opt)) </div>
+<div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), opt)) </div>
 <div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>    {</div>
 <div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>        initialize(opt, row ? matrix-&gt;ncol() : matrix-&gt;nrow());</div>
 <div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>    }</div>
@@ -515,7 +515,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00457" name="l00457"></a><span class="lineno">  457</span>        my_operation(operation),</div>
 <div class="line"><a id="l00458" name="l00458"></a><span class="lineno">  458</span>        my_row(row),</div>
 <div class="line"><a id="l00459" name="l00459"></a><span class="lineno">  459</span>        my_oracle(oracle, my_operation, row),</div>
-<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), block_start, block_length, opt)) </div>
+<div class="line"><a id="l00460" name="l00460"></a><span class="lineno">  460</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), block_start, block_length, opt)) </div>
 <div class="line"><a id="l00461" name="l00461"></a><span class="lineno">  461</span>    {</div>
 <div class="line"><a id="l00462" name="l00462"></a><span class="lineno">  462</span>        initialize(opt, block_length);</div>
 <div class="line"><a id="l00463" name="l00463"></a><span class="lineno">  463</span>    }</div>
@@ -1027,7 +1027,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="anamespacetatami_html_a812af1bfb04773bf28da8549c3e6e5ee"><div class="ttname"><a href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">tatami::MaybeOracle</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt;, bool &gt;::type MaybeOracle</div><div class="ttdef"><b>Definition</b> new_extractor.hpp:20</div></div>
 <div class="ttc" id="anamespacetatami_html_a92f2deb44e0a3cb1c569a379c6facbf0"><div class="ttname"><a href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">tatami::DenseExtractor</a></div><div class="ttdeci">typename std::conditional&lt; oracle_, OracularDenseExtractor&lt; Value_, Index_ &gt;, MyopicDenseExtractor&lt; Value_, Index_ &gt; &gt;::type DenseExtractor</div><div class="ttdef"><b>Definition</b> Extractor.hpp:273</div></div>
 <div class="ttc" id="anamespacetatami_html_ab52a806e3f13a68741a9e1f77dccab14"><div class="ttname"><a href="namespacetatami.html#ab52a806e3f13a68741a9e1f77dccab14">tatami::copy_n</a></div><div class="ttdeci">Value_ * copy_n(const Value_ *input, Size_ n, Value_ *output)</div><div class="ttdef"><b>Definition</b> copy.hpp:25</div></div>
-<div class="ttc" id="anamespacetatami_html_ae5e845574f229ff8308121456fac3d47"><div class="ttname"><a href="namespacetatami.html#ae5e845574f229ff8308121456fac3d47">tatami::new_extractor</a></div><div class="ttdeci">auto new_extractor(const Matrix&lt; Value_, Index_ &gt; *ptr, bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> new_extractor.hpp:42</div></div>
+<div class="ttc" id="anamespacetatami_html_ac1514cda61f96e93a9cbc656f742a044"><div class="ttname"><a href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">tatami::new_extractor</a></div><div class="ttdeci">auto new_extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, MaybeOracle&lt; oracle_, Index_ &gt; oracle, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> new_extractor.hpp:42</div></div>
 <div class="ttc" id="anew__extractor_8hpp_html"><div class="ttname"><a href="new__extractor_8hpp.html">new_extractor.hpp</a></div><div class="ttdoc">Templated construction of a new extractor.</div></div>
 <div class="ttc" id="astructtatami_1_1Options_html"><div class="ttname"><a href="structtatami_1_1Options.html">tatami::Options</a></div><div class="ttdoc">Options for accessing data from a Matrix instance.</div><div class="ttdef"><b>Definition</b> Options.hpp:30</div></div>
 </div><!-- fragment --></div><!-- contents -->
