@@ -29,7 +29,7 @@ using MaybeOracle = typename std::conditional<oracle_, std::shared_ptr<const Ora
  * @tparam Index_ Row/column index type, should be integer.
  * @tparam Args_ Further arguments.
  *
- * @param[in] ptr Pointer to a `Matrix` object to iterate over.
+ * @param[in] ptr A `tatami::Matrix` object to iterate over.
  * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension.
  * @param oracle Pointer to an oracle if `oracle_ = true`, otherwise a placeholder boolean that is ignored.
  * @param args Zero or more additional arguments to pass to methods like `Matrix::dense_row()`.
@@ -39,7 +39,7 @@ using MaybeOracle = typename std::conditional<oracle_, std::shared_ptr<const Ora
  * depending on `sparse_` and `oracle_`.
  */
 template<bool sparse_, bool oracle_, typename Value_, typename Index_, typename ... Args_>
-auto new_extractor(const Matrix<Value_, Index_>* ptr, bool row, MaybeOracle<oracle_, Index_> oracle, Args_&&... args) {
+auto new_extractor(const Matrix<Value_, Index_>& matrix, bool row, MaybeOracle<oracle_, Index_> oracle, Args_&&... args) {
     // We could use 'sparse()' and 'dense()' directly here, but that assumes
     // that 'opt' is always supplied at the end of 'args', which might not be
     // the case... so we just spell it out and save ourselves the trouble
@@ -47,29 +47,29 @@ auto new_extractor(const Matrix<Value_, Index_>* ptr, bool row, MaybeOracle<orac
     if constexpr(sparse_) {
         if constexpr(oracle_) {
             if (row) {
-                return ptr->sparse_row(std::move(oracle), std::forward<Args_>(args)...);
+                return matrix.sparse_row(std::move(oracle), std::forward<Args_>(args)...);
             } else {
-                return ptr->sparse_column(std::move(oracle), std::forward<Args_>(args)...);
+                return matrix.sparse_column(std::move(oracle), std::forward<Args_>(args)...);
             }
         } else {
             if (row) {
-                return ptr->sparse_row(std::forward<Args_>(args)...);
+                return matrix.sparse_row(std::forward<Args_>(args)...);
             } else {
-                return ptr->sparse_column(std::forward<Args_>(args)...);
+                return matrix.sparse_column(std::forward<Args_>(args)...);
             }
         }
     } else {
         if constexpr(oracle_) {
             if (row) {
-                return ptr->dense_row(std::move(oracle), std::forward<Args_>(args)...);
+                return matrix.dense_row(std::move(oracle), std::forward<Args_>(args)...);
             } else {
-                return ptr->dense_column(std::move(oracle), std::forward<Args_>(args)...);
+                return matrix.dense_column(std::move(oracle), std::forward<Args_>(args)...);
             }
         } else {
             if (row) {
-                return ptr->dense_row(std::forward<Args_>(args)...);
+                return matrix.dense_row(std::forward<Args_>(args)...);
             } else {
-                return ptr->dense_column(std::forward<Args_>(args)...);
+                return matrix.dense_column(std::forward<Args_>(args)...);
             }
         }
     }
@@ -79,6 +79,11 @@ auto new_extractor(const Matrix<Value_, Index_>* ptr, bool row, MaybeOracle<orac
  * @cond
  */
 // Provided for back-compatibility only.
+template<bool sparse_, bool oracle_, typename Value_, typename Index_, typename ... Args_>
+auto new_extractor(const Matrix<Value_, Index_>* ptr, bool row, tatami::MaybeOracle<oracle_, Index_> oracle, Args_&&... args) {
+    return new_extractor<sparse_, oracle_, Value_, Index_>(*ptr, row, std::move(oracle), std::forward<Args_>(args)...);
+}
+
 template<bool row_, bool sparse_, typename Value_, typename Index_>
 auto new_extractor(const Matrix<Value_, Index_>* ptr) {
     return new_extractor<sparse_, false, Value_, Index_>(ptr, row_, false);

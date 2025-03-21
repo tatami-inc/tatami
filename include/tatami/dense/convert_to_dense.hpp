@@ -25,17 +25,17 @@ namespace tatami {
  * @tparam InputValue_ Type of data values in the input.
  * @tparam InputIndex_ Integer type for the indices in the input.
  *
- * @param matrix Pointer to a `tatami::Matrix`.
+ * @param matrix A `tatami::Matrix`.
  * @param row_major Whether to store the output as a row-major matrix.
  * @param[out] store Pointer to an array of length equal to the product of the dimensions of `matrix`.
  * On output, this is filled with values from `matrix` in row- or column-major format depending on `row_major`.
  * @param threads Number of threads to use, for parallelization with `parallelize()`.
  */
 template <typename StoredValue_, typename InputValue_, typename InputIndex_>
-void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_major, StoredValue_* store, int threads = 1) {
-    InputIndex_ NR = matrix->nrow();
-    InputIndex_ NC = matrix->ncol();
-    bool pref_rows = matrix->prefer_rows();
+void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_major, StoredValue_* store, int threads = 1) {
+    InputIndex_ NR = matrix.nrow();
+    InputIndex_ NC = matrix.ncol();
+    bool pref_rows = matrix.prefer_rows();
     size_t primary = (pref_rows ? NR : NC);
     size_t secondary = (pref_rows ? NC : NR);
 
@@ -57,7 +57,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
             }
         }, primary, threads);
 
-    } else if (matrix->is_sparse()) {
+    } else if (matrix.is_sparse()) {
         std::fill_n(store, primary * secondary, 0); // already cast to size_t to avoid overflow.
 
         // We iterate over the input matrix's preferred dimension but split
@@ -140,7 +140,7 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_m
  * @tparam InputValue_ Type of data values in the input.
  * @tparam InputIndex_ Integer type for the indices in the input.
  *
- * @param matrix Pointer to a `tatami::Matrix`.
+ * @param matrix A `tatami::Matrix`.
  * @param row_major Whether to return a row-major matrix.
  * @param threads Number of threads to use, for parallelization with `parallelize()`.
  *
@@ -154,9 +154,9 @@ template <
     typename InputValue_,
     typename InputIndex_
 >
-inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_major, int threads = 1) {
-    auto NR = matrix->nrow();
-    auto NC = matrix->ncol();
+inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_major, int threads = 1) {
+    auto NR = matrix.nrow();
+    auto NC = matrix.ncol();
     std::vector<StoredValue_> buffer(static_cast<size_t>(NR) * static_cast<size_t>(NC));
     convert_to_dense(matrix, row_major, buffer.data(), threads);
     return std::shared_ptr<Matrix<Value_, Index_> >(new DenseMatrix<Value_, Index_, decltype(buffer)>(NR, NC, std::move(buffer), row_major));
@@ -166,6 +166,16 @@ inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<In
  * @cond
  */
 // Backwards compatbility.
+template <typename StoredValue_, typename InputValue_, typename InputIndex_>
+void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_major, StoredValue_* store, int threads = 1) {
+    convert_to_dense(*matrix, row_major, store, threads);
+}
+
+template <typename Value_ = double, typename Index_ = int, typename StoredValue_ = Value_, typename InputValue_, typename InputIndex_>
+inline std::shared_ptr<Matrix<Value_, Index_> > convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, bool row_major, int threads = 1) {
+    return convert_to_dense<Value_, Index_>(*matrix, row_major, threads);
+}
+
 template<bool row_, typename StoredValue_, typename InputValue_, typename InputIndex_>
 void convert_to_dense(const Matrix<InputValue_, InputIndex_>* matrix, StoredValue_* store, int threads = 1) {
     convert_to_dense(matrix, row_, store, threads);

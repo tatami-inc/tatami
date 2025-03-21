@@ -23,8 +23,8 @@ namespace tatami {
 namespace convert_to_compressed_sparse_internal {
 
 template<typename Value_, typename Index_, typename Count_>
-void count_compressed_sparse_non_zeros_consistent(const tatami::Matrix<Value_, Index_>* matrix, Index_ primary, Index_ secondary, bool row, Count_* output, int threads) {
-    if (matrix->is_sparse()) {
+void count_compressed_sparse_non_zeros_consistent(const tatami::Matrix<Value_, Index_>& matrix, Index_ primary, Index_ secondary, bool row, Count_* output, int threads) {
+    if (matrix.is_sparse()) {
         Options opt;
         opt.sparse_extract_value = false;
         opt.sparse_extract_index = false;
@@ -55,13 +55,13 @@ void count_compressed_sparse_non_zeros_consistent(const tatami::Matrix<Value_, I
 }
 
 template<typename Value_, typename Index_, typename Count_>
-void count_compressed_sparse_non_zeros_inconsistent(const tatami::Matrix<Value_, Index_>* matrix, Index_ primary, Index_ secondary, bool row, Count_* output, int threads) {
+void count_compressed_sparse_non_zeros_inconsistent(const tatami::Matrix<Value_, Index_>& matrix, Index_ primary, Index_ secondary, bool row, Count_* output, int threads) {
     std::vector<std::vector<Count_> > nz_counts(threads - 1);
     for (auto& x : nz_counts) {
         x.resize(primary);
     }
 
-    if (matrix->is_sparse()) {
+    if (matrix.is_sparse()) {
         Options opt;
         opt.sparse_extract_value = false;
         opt.sparse_ordered_index = false;
@@ -103,7 +103,7 @@ void count_compressed_sparse_non_zeros_inconsistent(const tatami::Matrix<Value_,
 
 template<typename InputValue_, typename InputIndex_, typename Pointer_, typename StoredValue_, typename StoredIndex_>
 void fill_compressed_sparse_matrix_consistent(
-    const tatami::Matrix<InputValue_, InputIndex_>* matrix,
+    const tatami::Matrix<InputValue_, InputIndex_>& matrix,
     InputIndex_ primary,
     InputIndex_ secondary,
     bool row,
@@ -112,7 +112,7 @@ void fill_compressed_sparse_matrix_consistent(
     StoredIndex_* output_index,
     int threads)
 {
-    if (matrix->is_sparse()) {
+    if (matrix.is_sparse()) {
         Options opt;
         opt.sparse_ordered_index = false;
 
@@ -157,7 +157,7 @@ void fill_compressed_sparse_matrix_consistent(
 
 template<typename InputValue_, typename InputIndex_, typename Pointer_, typename StoredValue_, typename StoredIndex_>
 void fill_compressed_sparse_matrix_inconsistent(
-    const tatami::Matrix<InputValue_, InputIndex_>* matrix,
+    const tatami::Matrix<InputValue_, InputIndex_>& matrix,
     InputIndex_ primary,
     InputIndex_ secondary,
     bool row,
@@ -166,7 +166,7 @@ void fill_compressed_sparse_matrix_inconsistent(
     StoredIndex_* output_index,
     int threads)
 {
-    if (matrix->is_sparse()) {
+    if (matrix.is_sparse()) {
         Options opt;
         opt.sparse_ordered_index = false;
 
@@ -219,7 +219,7 @@ void fill_compressed_sparse_matrix_inconsistent(
  * @tparam Index_ Integer type of row/column index.
  * @tparam Count_ Integer type for the non-zero count.
  *
- * @param matrix Pointer to a `tatami::Matrix`. 
+ * @param matrix A `tatami::Matrix`. 
  * @param row Whether to count structural non-zeros by row.
  * @param[out] output Pointer to an array of length equal to the number of rows (if `row = true`) or columns (otherwise) of `matrix`.
  * On output, this stores the number of structural non-zeros in each row (if `row = true`) or column (otherwise).
@@ -230,14 +230,14 @@ void fill_compressed_sparse_matrix_inconsistent(
  * these are considered to be structural non-zeros upon conversion to a sparse matrix (e.g., in `fill_compressed_sparse_contents()`).
  */
 template<typename Value_, typename Index_, typename Count_>
-void count_compressed_sparse_non_zeros(const tatami::Matrix<Value_, Index_>* matrix, bool row, Count_* output, int threads) {
-    Index_ NR = matrix->nrow();
-    Index_ NC = matrix->ncol();
+void count_compressed_sparse_non_zeros(const tatami::Matrix<Value_, Index_>& matrix, bool row, Count_* output, int threads) {
+    Index_ NR = matrix.nrow();
+    Index_ NC = matrix.ncol();
     Index_ primary = (row ? NR : NC);
     Index_ secondary = (row ? NC : NR);
     std::fill_n(output, primary, 0);
 
-    if (row == matrix->prefer_rows()) {
+    if (row == matrix.prefer_rows()) {
         convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_consistent(matrix, primary, secondary, row, output, threads);
     } else {
         convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_inconsistent(matrix, primary, secondary, row, output, threads);
@@ -251,7 +251,7 @@ void count_compressed_sparse_non_zeros(const tatami::Matrix<Value_, Index_>* mat
  * @tparam InputValue_ Type of data values in the input interface.
  * @tparam InputIndex_ Integer type for indices in the input interface.
  *
- * @param matrix Pointer to a `tatami::Matrix`. 
+ * @param matrix A `tatami::Matrix`. 
  * @param row Whether to fill `output_value` and `output_index` by row, i.e., the output represents a compressed sparse row matrix.
  * @param[in] pointers Pointer to an array of length greater than or equal to the number of rows (if `row = true`) or columns (otherwise) of `matrix`. 
  * Each entry contains the position of the start of each row/column in `output_value` and `output_index`.
@@ -265,19 +265,19 @@ void count_compressed_sparse_non_zeros(const tatami::Matrix<Value_, Index_>* mat
  */
 template<typename InputValue_, typename InputIndex_, typename Pointer_, typename StoredValue_, typename StoredIndex_>
 void fill_compressed_sparse_contents(
-    const tatami::Matrix<InputValue_, InputIndex_>* matrix,
+    const tatami::Matrix<InputValue_, InputIndex_>& matrix,
     bool row,
     const Pointer_* pointers,
     StoredValue_* output_value,
     StoredIndex_* output_index,
     int threads)
 {
-    InputIndex_ NR = matrix->nrow();
-    InputIndex_ NC = matrix->ncol();
+    InputIndex_ NR = matrix.nrow();
+    InputIndex_ NC = matrix.ncol();
     InputIndex_ primary = (row ? NR : NC);
     InputIndex_ secondary = (row ? NC : NR);
 
-    if (row == matrix->prefer_rows()) {
+    if (row == matrix.prefer_rows()) {
         convert_to_compressed_sparse_internal::fill_compressed_sparse_matrix_consistent(matrix, primary, secondary, row, pointers, output_value, output_index, threads);
     } else {
         convert_to_compressed_sparse_internal::fill_compressed_sparse_matrix_inconsistent(matrix, primary, secondary, row, pointers, output_value, output_index, threads);
@@ -319,7 +319,7 @@ struct CompressedSparseContents {
  * @tparam InputValue_ Type of data values in the input interface.
  * @tparam InputIndex_ Integer type for indices in the input interface.
  *
- * @param matrix Pointer to a `tatami::Matrix`. 
+ * @param matrix A `tatami::Matrix`. 
  * @param row Whether to retrieve the contents of `matrix` by row, i.e., the output is a compressed sparse row matrix.
  * @param two_pass Whether to perform the retrieval in two passes.
  * This requires another pass through `matrix` but is more memory-efficient.
@@ -331,14 +331,14 @@ struct CompressedSparseContents {
  * This may be desirable for users who want to put the compressed sparse contents into pre-existing memory allocations.
  */
 template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = size_t, typename InputValue_, typename InputIndex_>
-CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass, int threads = 1) {
+CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>& matrix, bool row, bool two_pass, int threads = 1) {
     CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> output;
     auto& output_v = output.value;
     auto& output_i = output.index;
     auto& output_p = output.pointers;
 
-    InputIndex_ NR = matrix->nrow();
-    InputIndex_ NC = matrix->ncol();
+    InputIndex_ NR = matrix.nrow();
+    InputIndex_ NC = matrix.ncol();
     InputIndex_ primary = (row ? NR : NC);
     InputIndex_ secondary = (row ? NC : NR);
 
@@ -360,7 +360,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
             output_i.insert(output_i.end(), store_i[p].begin(), store_i[p].end());
         }
 
-    } else if (row == matrix->prefer_rows()) {
+    } else if (row == matrix.prefer_rows()) {
         // First pass to figure out how many non-zeros there are.
         output_p.resize(static_cast<size_t>(primary) + 1);
         convert_to_compressed_sparse_internal::count_compressed_sparse_non_zeros_consistent(matrix, primary, secondary, row, output_p.data() + 1, threads);
@@ -416,7 +416,7 @@ CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_co
  * @tparam InputValue_ Type of data values in the input interface.
  * @tparam InputIndex_ Integer type for indices in the input interface.
  *
- * @param matrix Pointer to a `tatami::Matrix`, possibly containing delayed operations.
+ * @param matrix A `tatami::Matrix`. 
  * @param row Whether to return a compressed sparse row matrix.
  * @param two_pass Whether to use a two-pass strategy that reduces peak memory usage at the cost of speed.
  * @param threads Number of threads to use, for parallelization with `parallelize()`.
@@ -432,7 +432,7 @@ template<
     typename InputValue_,
     typename InputIndex_
 >
-std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass = false, int threads = 1) {
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>& matrix, bool row, bool two_pass = false, int threads = 1) {
     auto comp = retrieve_compressed_sparse_contents<StoredValue_, StoredIndex_>(matrix, row, two_pass, threads);
     return std::shared_ptr<Matrix<Value_, Index_> >(
         new CompressedSparseMatrix<
@@ -442,8 +442,8 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matr
             std::vector<StoredIndex_>,
             std::vector<size_t>
         >(
-            matrix->nrow(), 
-            matrix->ncol(), 
+            matrix.nrow(), 
+            matrix.ncol(), 
             std::move(comp.value), 
             std::move(comp.index), 
             std::move(comp.pointers),
@@ -457,6 +457,32 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matr
  * @cond
  */
 // Backwards compatbility.
+template<typename Value_, typename Index_, typename Count_>
+void count_compressed_sparse_non_zeros(const tatami::Matrix<Value_, Index_>* matrix, bool row, Count_* output, int threads) {
+    return count_compressed_sparse_non_zeros(*matrix, row, output, threads);
+}
+
+template<typename InputValue_, typename InputIndex_, typename Pointer_, typename StoredValue_, typename StoredIndex_>
+void fill_compressed_sparse_contents(const tatami::Matrix<InputValue_, InputIndex_>* matrix,
+    bool row,
+    const Pointer_* pointers,
+    StoredValue_* output_value,
+    StoredIndex_* output_index,
+    int threads)
+{
+    fill_compressed_sparse_contents(*matrix, row, pointers, output_value, output_index, threads);
+}
+
+template<typename StoredValue_, typename StoredIndex_, typename StoredPointer_ = size_t, typename InputValue_, typename InputIndex_>
+CompressedSparseContents<StoredValue_, StoredIndex_, StoredPointer_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass, int threads = 1) {
+    return retrieve_compressed_sparse_contents(*matrix, row, two_pass, threads);
+}
+
+template<typename Value_ = double, typename Index_ = int, typename StoredValue_ = Value_, typename StoredIndex_ = Index_, typename InputValue_, typename InputIndex_>
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>* matrix, bool row, bool two_pass = false, int threads = 1) {
+    return convert_to_compressed_sparse<Value_, Index_>(*matrix, row, two_pass, threads);
+}
+
 template <bool row_, typename Value_, typename Index_, typename InputValue_, typename InputIndex_>
 CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool two_pass, int threads = 1) {
     return retrieve_compressed_sparse_contents<Value_, Index_>(matrix, row_, two_pass, threads);

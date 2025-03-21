@@ -22,7 +22,7 @@ namespace tatami {
  * @tparam Index_ Type of the row/column index.
  * @tparam Args_ Types of further arguments to pass to `Matrix::dense_row` or `Matrix::dense_column`.
  *
- * @param mat Matrix to iterate over.
+ * @param mat A `tatami::Matrix` to iterate over.
  * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension. 
  * @param iter_start Index of the first row (if `row = true`) or column (otherwise) of the iteration range.
  * @param iter_length Number of rows (if `row = true`) or columns (otherwise) in the iteration range.
@@ -32,9 +32,9 @@ namespace tatami {
  * This may be either an `OracularDenseExtractor` or `OracularSparseExtractor` depending on `sparse_`.
  */
 template<bool sparse_, typename Value_, typename Index_, typename ... Args_>
-auto consecutive_extractor(const Matrix<Value_, Index_>* mat, bool row, Index_ iter_start, Index_ iter_length, Args_&&... args) {
+auto consecutive_extractor(const Matrix<Value_, Index_>& matrix, bool row, Index_ iter_start, Index_ iter_length, Args_&&... args) {
     return new_extractor<sparse_, true>(
-        mat,
+        matrix,
         row,
         std::make_shared<ConsecutiveOracle<Index_> >(iter_start, iter_length),
         std::forward<Args_>(args)...
@@ -45,6 +45,11 @@ auto consecutive_extractor(const Matrix<Value_, Index_>* mat, bool row, Index_ i
  * @cond
  */
 // Provided for back-compatibility only.
+template<bool sparse_, typename Value_, typename Index_, typename ... Args_>
+auto consecutive_extractor(const Matrix<Value_, Index_>* matrix, bool row, Index_ iter_start, Index_ iter_length, Args_&&... args) {
+    return consecutive_extractor<sparse_>(*matrix, row, iter_start, iter_length, std::forward<Args_>(args)...);
+}
+
 template<bool row_, bool sparse_, typename Value_, typename Index_, typename ... Args_>
 auto consecutive_extractor(const Matrix<Value_, Index_>* ptr, Args_&&... args) {
     return consecutive_extractor<sparse_, Value_, Index_>(ptr, row_, std::forward<Args_>(args)...);
