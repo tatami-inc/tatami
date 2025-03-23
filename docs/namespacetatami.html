@@ -4173,7 +4173,7 @@ template&lt;bool sparse_, typename Value_ , typename Index_ , typename ... Args_
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">mat</td><td>A <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> to iterate over. </td></tr>
+    <tr><td class="paramname">matrix</td><td>A <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> to iterate over. </td></tr>
     <tr><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramname">iter_start</td><td>Index of the first row (if <code>row = true</code>) or column (otherwise) of the iteration range. </td></tr>
     <tr><td class="paramname">iter_length</td><td>Number of rows (if <code>row = true</code>) or columns (otherwise) in the iteration range. </td></tr>
@@ -4272,7 +4272,7 @@ template&lt;bool sparse_, bool oracle_, typename Value_ , typename Index_ , type
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramdir">[in]</td><td class="paramname">ptr</td><td>A <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> object to iterate over. </td></tr>
+    <tr><td class="paramdir">[in]</td><td class="paramname">matrix</td><td>A <code><a class="el" href="classtatami_1_1Matrix.html" title="Virtual class for a matrix.">tatami::Matrix</a></code> object to iterate over. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">row</td><td>Whether to create a row-wise extractor, i.e., the rows are the target dimension. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">oracle</td><td>Pointer to an oracle if <code>oracle_ = true</code>, otherwise a placeholder boolean that is ignored. </td></tr>
     <tr><td class="paramdir"></td><td class="paramname">args</td><td>Zero or more additional arguments to pass to methods like <code><a class="el" href="classtatami_1_1Matrix.html#a168f0e932b5503c9bfc5dbd42754a7a5">Matrix::dense_row()</a></code>.</td></tr>
