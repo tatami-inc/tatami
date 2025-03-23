@@ -201,7 +201,14 @@ struct ConvertToFragmentedSparseOptions {
  * @return A pointer to a new `tatami::FragmentedSparseMatrix`, with the same dimensions and type as the matrix referenced by `matrix`.
  * If `row = true`, the matrix is in fragmented sparse row format, otherwise it is fragmented sparse column.
  */
-template<typename Value_, typename Index_, typename StoredValue_ = Value_, typename StoredIndex_ = Index_, typename InputValue_, typename InputIndex_>
+template<
+    typename Value_,
+    typename Index_,
+    typename StoredValue_ = Value_,
+    typename StoredIndex_ = Index_,
+    typename InputValue_,
+    typename InputIndex_
+>
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(
     const Matrix<InputValue_, InputIndex_>& matrix,
     bool row,

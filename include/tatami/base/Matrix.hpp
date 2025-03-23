@@ -55,7 +55,7 @@ using VectorPtr = std::shared_ptr<const std::vector<Index_> >;
  * `Matrix` subclasses should describe whether they are dense/sparse and if they prefer row or column access.
  * This allows users to choose the best method of extracting data from the matrix.
  */
-template <typename Value_, typename Index_ = int>
+template <typename Value_, typename Index_>
 class Matrix {
 public:
     /**

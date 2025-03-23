@@ -33,7 +33,7 @@ enum SomeNumericType { I8, U8, I16, U16, I32, U32, I64, U64, F32, F64 };
  * @tparam Value_ Type to return when values are extracted.
  * This is allowed to differ from the internal storage type. 
  */
-template<typename Value_ = double>
+template<typename Value_>
 class SomeNumericArray {
 public:
     /**

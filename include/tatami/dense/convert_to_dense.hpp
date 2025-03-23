@@ -158,8 +158,8 @@ void convert_to_dense(const Matrix<InputValue_, InputIndex_>& matrix, bool row_m
  * If `row_major = true`, the matrix is row-major, otherwise it is column-major.
  */
 template <
-    typename Value_ = double, 
-    typename Index_ = int, 
+    typename Value_,
+    typename Index_,
     typename StoredValue_ = Value_, 
     typename InputValue_,
     typename InputIndex_

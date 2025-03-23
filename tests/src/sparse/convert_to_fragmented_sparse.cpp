@@ -34,21 +34,21 @@ TEST_P(ConvertToFragmentedSparseTest, FromDense) {
         return opt;
     }());
 
-    auto mat = std::make_shared<tatami::DenseMatrix<double, int> >(NR, NC, vec, from_row);
-    auto converted = tatami::convert_to_fragmented_sparse<double, int>(mat.get(), to_row, nthreads);
+    tatami::DenseMatrix<double, int, decltype(vec)> mat(NR, NC, std::move(vec), from_row);
+    auto converted = tatami::convert_to_fragmented_sparse<double, int>(&mat, to_row, nthreads);
 
     EXPECT_EQ(converted->nrow(), NR);
     EXPECT_EQ(converted->ncol(), NC);
     EXPECT_TRUE(converted->is_sparse());
     EXPECT_EQ(converted->prefer_rows(), to_row);
-    tatami_test::test_simple_row_access(*converted, *mat);
-    tatami_test::test_simple_column_access(*converted, *mat);
+    tatami_test::test_simple_row_access(*converted, mat);
+    tatami_test::test_simple_column_access(*converted, mat);
 
-    auto converted2 = tatami::convert_to_fragmented_sparse<int, size_t>(mat.get(), to_row, nthreads); // works for a different type.
+    auto converted2 = tatami::convert_to_fragmented_sparse<int, size_t>(&mat, to_row, nthreads); // works for a different type.
     EXPECT_TRUE(converted2->is_sparse());
     EXPECT_EQ(converted2->prefer_rows(), to_row);
 
-    auto old = mat->dense_row();
+    auto old = mat.dense_row();
     std::vector<double> buffer(NC);
     auto wrk2 = converted2->dense_row();
     for (size_t i = 0; i < NR; ++i) {
@@ -69,21 +69,34 @@ TEST_P(ConvertToFragmentedSparseTest, ColumnToColumn) {
         return opt;
     }());
 
-    auto mat = std::make_shared<tatami::CompressedSparseMatrix<double, int> >(NR, NC, std::move(trip.data), std::move(trip.index), std::move(trip.indptr), from_row);
-    auto converted = tatami::convert_to_fragmented_sparse<double, int>(mat.get(), to_row, nthreads);
+    tatami::CompressedSparseMatrix<
+        double,
+        int,
+        decltype(decltype(trip)::data),
+        decltype(decltype(trip)::index),
+        decltype(decltype(trip)::indptr)
+    > spmat(
+        NR,
+        NC,
+        std::move(trip.data),
+        std::move(trip.index),
+        std::move(trip.indptr),
+        from_row
+    );
+    auto converted = tatami::convert_to_fragmented_sparse<double, int>(&spmat, to_row, nthreads);
 
     EXPECT_EQ(converted->nrow(), NR);
     EXPECT_EQ(converted->ncol(), NC);
     EXPECT_TRUE(converted->is_sparse());
     EXPECT_EQ(converted->prefer_rows(), to_row);
-    tatami_test::test_simple_row_access(*converted, *mat);
-    tatami_test::test_simple_column_access(*converted, *mat);
+    tatami_test::test_simple_row_access(*converted, spmat);
+    tatami_test::test_simple_column_access(*converted, spmat);
 
-    auto converted2 = tatami::convert_to_fragmented_sparse<int, size_t>(mat.get(), to_row, nthreads); // works for a different type.
+    auto converted2 = tatami::convert_to_fragmented_sparse<int, size_t>(&spmat, to_row, nthreads); // works for a different type.
     EXPECT_TRUE(converted2->is_sparse());
     EXPECT_EQ(converted2->prefer_rows(), to_row);
 
-    auto wrk = mat->dense_column();
+    auto wrk = spmat.dense_column();
     auto wrk2 = converted2->dense_column();
     for (size_t i = 0; i < NC; ++i) {
         auto expected = tatami_test::fetch(*wrk, static_cast<int>(i), NR);

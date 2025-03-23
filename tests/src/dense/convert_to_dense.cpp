@@ -31,20 +31,20 @@ TEST_P(ConvertToDenseTest, FromDense) {
         opt.seed = 142857;
         return opt;
     }());
-    auto mat = std::make_shared<tatami::DenseMatrix<double, int> >(NR, NC, vec, from_row);
+    tatami::DenseMatrix<double, int, decltype(vec)> mat(NR, NC, std::move(vec), from_row);
 
-    auto converted = tatami::convert_to_dense(mat.get(), to_row, threads);
+    auto converted = tatami::convert_to_dense(&mat, to_row, threads);
     EXPECT_EQ(converted->prefer_rows(), to_row);
     EXPECT_FALSE(converted->is_sparse());
 
-    tatami_test::test_simple_row_access(*converted, *mat);
-    tatami_test::test_simple_column_access(*converted, *mat);
+    tatami_test::test_simple_row_access(*converted, mat);
+    tatami_test::test_simple_column_access(*converted, mat);
 
-    auto converted2 = tatami::convert_to_dense<int, size_t>(mat.get(), to_row, threads); // works for a different type.
+    auto converted2 = tatami::convert_to_dense<int, size_t>(&mat, to_row, threads); // works for a different type.
     EXPECT_EQ(converted2->prefer_rows(), to_row);
     EXPECT_FALSE(converted2->is_sparse());
 
-    auto old = mat->dense_row();
+    auto old = mat.dense_row();
     std::vector<double> buffer(NC);
     auto wrk2 = converted2->dense_row();
     for (size_t i = 0; i < NR; ++i) {
@@ -57,13 +57,26 @@ TEST_P(ConvertToDenseTest, FromDense) {
 TEST_P(ConvertToDenseTest, FromSparse) {
     assemble(GetParam());
 
-    auto vec = tatami_test::simulate_compressed_sparse<double, int>((from_row ? NR : NC), (from_row ? NC : NR), [&]{
+    auto sim = tatami_test::simulate_compressed_sparse<double, int>((from_row ? NR : NC), (from_row ? NC : NR), [&]{
         tatami_test::SimulateCompressedSparseOptions opt;
         opt.density = 0.2;
         opt.seed = 3498761;
         return opt;
     }());
-    tatami::CompressedSparseMatrix<double, int> smat(NR, NC, std::move(vec.data), std::move(vec.index), std::move(vec.indptr), from_row);
+    tatami::CompressedSparseMatrix<
+        double,
+        int,
+        decltype(decltype(sim)::data),
+        decltype(decltype(sim)::index),
+        decltype(decltype(sim)::indptr)
+    > smat(
+        NR,
+        NC,
+        std::move(sim.data),
+        std::move(sim.index),
+        std::move(sim.indptr),
+        from_row
+    );
 
     auto converted = tatami::convert_to_dense(&smat, to_row, threads);
     EXPECT_EQ(converted->prefer_rows(), to_row);

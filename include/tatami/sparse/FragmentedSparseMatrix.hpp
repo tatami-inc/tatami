@@ -461,12 +461,7 @@ struct FragmentedSparseMatrixOptions {
  * If a method is available for `data()` that returns a `const Index*`, it will also be used.
  * The inner vector does not necessarily have to contain `Index_`, as long as the type is convertible to `Index_`.
  */
-template<
-    typename Value_, 
-    typename Index_,
-    class ValueVectorStorage_ = std::vector<std::vector<Value_> >,
-    class IndexVectorStorage_ = std::vector<std::vector<Index_> >
->
+template<typename Value_, typename Index_, class ValueVectorStorage_, class IndexVectorStorage_>
 class FragmentedSparseMatrix : public Matrix<Value_, Index_> {
 public:
     /**

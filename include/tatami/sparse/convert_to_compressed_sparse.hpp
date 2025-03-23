@@ -314,7 +314,7 @@ void fill_compressed_sparse_contents(
  * The "primary" dimension is the one that is used to create the pointers for the compressed sparse format, while the other dimension is defined as the "secondary" dimension.
  * For example, the rows would be the primary dimension in a compressed sparse row matrix.
  */
-template<typename Value_, typename Index_, typename Pointer_ = size_t>
+template<typename Value_, typename Index_, typename Pointer_>
 struct CompressedSparseContents {
     /**
      * Vector containing values of the structural non-zero elements in a compressed sparse format.
@@ -348,11 +348,11 @@ struct RetrieveCompressedSparseContentsOptions {
     int num_threads = 1;
 };
 
-
 /**
  * @tparam StoredValue_ Type of data values to be stored in the output.
  * @tparam StoredIndex_ Integer type for storing the row/column indices in the output. 
- * @tparam Pointer_ Integer type for the row/column pointers in the output.
+ * @tparam StoredPointer_ Integer type for the row/column pointers in the output.
+ * This should be large enough to hold the number of non-zero elements in `matrix`.
  * @tparam InputValue_ Type of data values in the input interface.
  * @tparam InputIndex_ Integer type for indices in the input interface.
  *
@@ -476,6 +476,8 @@ struct ConvertToCompressedSparseOptions {
  * @tparam Index_ Integer type for the indices in the output interface.
  * @tparam StoredValue_ Type of data values to be stored in the output.
  * @tparam StoredIndex_ Integer type for storing the indices in the output. 
+ * @tparam StoredPointer_ Integer type for the row/column pointers in the output.
+ * This should be large enough to hold the number of non-zero elements in `matrix`.
  * @tparam InputValue_ Type of data values in the input interface.
  * @tparam InputIndex_ Integer type for indices in the input interface.
  *
@@ -487,15 +489,16 @@ struct ConvertToCompressedSparseOptions {
  * If `row = true`, the matrix is in compressed sparse row format, otherwise it is compressed sparse column.
  */
 template<
-    typename Value_ = double,
-    typename Index_ = int,
+    typename Value_,
+    typename Index_,
     typename StoredValue_ = Value_,
     typename StoredIndex_ = Index_,
+    typename StoredPointer_ = size_t,
     typename InputValue_,
     typename InputIndex_
 >
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matrix<InputValue_, InputIndex_>& matrix, bool row, const ConvertToCompressedSparseOptions& options) {
-    auto comp = retrieve_compressed_sparse_contents<StoredValue_, StoredIndex_>(
+    auto comp = retrieve_compressed_sparse_contents<StoredValue_, StoredIndex_, StoredPointer_>(
         matrix,
         row, 
         [&]{
@@ -511,7 +514,7 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matr
             Index_,
             std::vector<StoredValue_>,
             std::vector<StoredIndex_>,
-            std::vector<size_t>
+            std::vector<StoredPointer_>
         >(
             matrix.nrow(), 
             matrix.ncol(), 
@@ -597,7 +600,7 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_compressed_sparse(const Matr
 }
 
 template <bool row_, typename Value_, typename Index_, typename InputValue_, typename InputIndex_>
-CompressedSparseContents<Value_, Index_> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool two_pass, int threads = 1) {
+CompressedSparseContents<Value_, Index_, size_t> retrieve_compressed_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool two_pass, int threads = 1) {
     return retrieve_compressed_sparse_contents<Value_, Index_>(matrix, row_, two_pass, threads);
 }
 

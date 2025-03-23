@@ -501,13 +501,7 @@ struct CompressedSparseMatrixOptions {
  * @tparam PointerStorage_ Vector class used to store the column/row index pointers.
  * Methods should be available for `size()`, `begin()`, `end()` and `[]`.
  */
-template<
-    typename Value_, 
-    typename Index_,
-    class ValueStorage_ = std::vector<Value_>, 
-    class IndexStorage_ = std::vector<Index_>, 
-    class PointerStorage_ = std::vector<size_t> 
->
+template<typename Value_, typename Index_, class ValueStorage_, class IndexStorage_, class PointerStorage_>
 class CompressedSparseMatrix : public Matrix<Value_, Index_> {
 public:
     /**

@@ -35,21 +35,21 @@ TEST_P(ConvertToCompressedSparseTest, FromDense) {
         return opt;
     }());
 
-    auto mat = std::make_shared<tatami::DenseMatrix<double, int> >(NR, NC, vec, from_row);
-    auto converted = tatami::convert_to_compressed_sparse<double, int>(mat.get(), to_row, two_pass, nthreads);
+    tatami::DenseMatrix<double, int, decltype(vec)> mat(NR, NC, std::move(vec), from_row);
+    auto converted = tatami::convert_to_compressed_sparse<double, int>(&mat, to_row, two_pass, nthreads);
 
     EXPECT_EQ(converted->nrow(), NR);
     EXPECT_EQ(converted->ncol(), NC);
     EXPECT_TRUE(converted->is_sparse());
     EXPECT_EQ(converted->prefer_rows(), to_row);
-    tatami_test::test_simple_row_access(*converted, *mat);
-    tatami_test::test_simple_column_access(*converted.get(), *mat);
+    tatami_test::test_simple_row_access(*converted, mat);
+    tatami_test::test_simple_column_access(*converted.get(), mat);
 
-    auto converted2 = tatami::convert_to_compressed_sparse<int, size_t>(mat.get(), to_row, two_pass, nthreads); // works for a different type.
+    auto converted2 = tatami::convert_to_compressed_sparse<int, size_t>(&mat, to_row, two_pass, nthreads); // works for a different type.
     EXPECT_TRUE(converted2->is_sparse());
     EXPECT_EQ(converted2->prefer_rows(), to_row);
 
-    auto old = mat->dense_row();
+    auto old = mat.dense_row();
     std::vector<double> buffer(NC);
     auto wrk2 = converted2->dense_row();
     for (size_t i = 0; i < NR; ++i) {
@@ -70,21 +70,34 @@ TEST_P(ConvertToCompressedSparseTest, FromSparse) {
         return opt;
     }());
 
-    auto mat = std::make_shared<tatami::CompressedSparseMatrix<double, int> >(NR, NC, std::move(trip.data), std::move(trip.index), std::move(trip.indptr), from_row);
-    auto converted = tatami::convert_to_compressed_sparse<double, int>(mat.get(), to_row, two_pass, nthreads);
+    tatami::CompressedSparseMatrix<
+        double,
+        int,
+        decltype(decltype(trip)::data),
+        decltype(decltype(trip)::index),
+        decltype(decltype(trip)::indptr)
+    > mat(
+        NR,
+        NC,
+        std::move(trip.data),
+        std::move(trip.index),
+        std::move(trip.indptr),
+        from_row
+    );
+    auto converted = tatami::convert_to_compressed_sparse<double, int>(&mat, to_row, two_pass, nthreads);
 
     EXPECT_EQ(converted->nrow(), NR);
     EXPECT_EQ(converted->ncol(), NC);
     EXPECT_TRUE(converted->is_sparse());
     EXPECT_EQ(converted->prefer_rows(), to_row);
-    tatami_test::test_simple_row_access(*converted, *mat);
-    tatami_test::test_simple_column_access(*converted, *mat);
+    tatami_test::test_simple_row_access(*converted, mat);
+    tatami_test::test_simple_column_access(*converted, mat);
 
-    auto converted2 = tatami::convert_to_compressed_sparse<int, size_t>(mat.get(), to_row, two_pass, nthreads); // works for a different type.
+    auto converted2 = tatami::convert_to_compressed_sparse<int, size_t>(&mat, to_row, two_pass, nthreads); // works for a different type.
     EXPECT_TRUE(converted2->is_sparse());
     EXPECT_EQ(converted2->prefer_rows(), to_row);
 
-    auto wrk = mat->dense_column();
+    auto wrk = mat.dense_column();
     auto wrk2 = converted2->dense_column();
     for (size_t i = 0; i < NC; ++i) {
         auto expected = tatami_test::fetch(*wrk, static_cast<int>(i), NR);
@@ -146,7 +159,13 @@ TEST_F(ConvertToCompressedSparseManualTest, Consistent) {
     std::vector<int> indices(nonzeros);
     tatami::fill_compressed_sparse_contents(mat.get(), true, pointers.data(), values.data(), indices.data(), 1);
 
-    tatami::CompressedSparseMatrix<double, int, std::vector<double>, std::vector<int>, std::vector<size_t> > spmat(
+    tatami::CompressedSparseMatrix<
+        double,
+        int,
+        decltype(values),
+        decltype(indices),
+        decltype(pointers)
+    > spmat(
         mat->nrow(), 
         mat->ncol(), 
         std::move(values), 
@@ -190,7 +209,13 @@ TEST_F(ConvertToCompressedSparseManualTest, Inconsistent) {
     std::vector<int> indices(nonzeros);
     tatami::fill_compressed_sparse_contents(mat.get(), false, pointers.data(), values.data(), indices.data(), 1);
 
-    tatami::CompressedSparseMatrix<double, int, std::vector<double>, std::vector<int>, std::vector<size_t> > spmat(
+    tatami::CompressedSparseMatrix<
+        double,
+        int,
+        decltype(values),
+        decltype(indices),
+        decltype(pointers)
+    > spmat( 
         mat->nrow(), 
         mat->ncol(), 
         std::move(values), 

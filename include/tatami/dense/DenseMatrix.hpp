@@ -164,7 +164,7 @@ private:
  * Methods should be available for `size()`, `begin()`, `end()` and `[]`.
  * If a method is available for `data()` that returns a `const Value_*`, it will also be used.
  */
-template<typename Value_, typename Index_, class Storage_ = std::vector<Value_> >
+template<typename Value_, typename Index_, class Storage_>
 class DenseMatrix : public Matrix<Value_, Index_> {
 public: 
     /**
