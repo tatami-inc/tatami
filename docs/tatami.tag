@@ -42,6 +42,7 @@
     <name>convert_to_dense.hpp</name>
     <path>tatami/dense/</path>
     <filename>convert__to__dense_8hpp.html</filename>
+    <class kind="struct">tatami::ConvertToDenseOptions</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -242,6 +243,7 @@
     <name>CompressedSparseMatrix.hpp</name>
     <path>tatami/sparse/</path>
     <filename>CompressedSparseMatrix_8hpp.html</filename>
+    <class kind="struct">tatami::CompressedSparseMatrixOptions</class>
     <class kind="class">tatami::CompressedSparseMatrix</class>
     <class kind="class">tatami::CompressedSparseColumnMatrix</class>
     <class kind="class">tatami::CompressedSparseRowMatrix</class>
@@ -251,7 +253,11 @@
     <name>convert_to_compressed_sparse.hpp</name>
     <path>tatami/sparse/</path>
     <filename>convert__to__compressed__sparse_8hpp.html</filename>
+    <class kind="struct">tatami::CountCompressedSparseNonZerosOptions</class>
+    <class kind="struct">tatami::FillCompressedSparseContentsOptions</class>
     <class kind="struct">tatami::CompressedSparseContents</class>
+    <class kind="struct">tatami::RetrieveCompressedSparseContentsOptions</class>
+    <class kind="struct">tatami::ConvertToCompressedSparseOptions</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
@@ -259,12 +265,15 @@
     <path>tatami/sparse/</path>
     <filename>convert__to__fragmented__sparse_8hpp.html</filename>
     <class kind="struct">tatami::FragmentedSparseContents</class>
+    <class kind="struct">tatami::RetrieveFragmentedSparseContentsOptions</class>
+    <class kind="struct">tatami::ConvertToFragmentedSparseOptions</class>
     <namespace>tatami</namespace>
   </compound>
   <compound kind="file">
     <name>FragmentedSparseMatrix.hpp</name>
     <path>tatami/sparse/</path>
     <filename>FragmentedSparseMatrix_8hpp.html</filename>
+    <class kind="struct">tatami::FragmentedSparseMatrixOptions</class>
     <class kind="class">tatami::FragmentedSparseMatrix</class>
     <class kind="class">tatami::FragmentedSparseColumnMatrix</class>
     <class kind="class">tatami::FragmentedSparseRowMatrix</class>
@@ -538,8 +547,8 @@
       <type></type>
       <name>CompressedSparseMatrix</name>
       <anchorfile>classtatami_1_1CompressedSparseMatrix.html</anchorfile>
-      <anchor>a83245ced768b530126c30a51849b48b5</anchor>
-      <arglist>(Index_ nrow, Index_ ncol, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool csr, bool check=true)</arglist>
+      <anchor>a01256bb540937246cfc78dd2a30ff2e0</anchor>
+      <arglist>(Index_ nrow, Index_ ncol, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool csr, const CompressedSparseMatrixOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
@@ -673,6 +682,17 @@
       <anchorfile>classtatami_1_1CompressedSparseMatrix.html</anchorfile>
       <anchor>a77c699398156e97d9a972c9b8412399e</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; my_indices_ptr, const Options &amp;opt) const</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::CompressedSparseMatrixOptions</name>
+    <filename>structtatami_1_1CompressedSparseMatrixOptions.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>check</name>
+      <anchorfile>structtatami_1_1CompressedSparseMatrixOptions.html</anchorfile>
+      <anchor>a88f4bdb918e8ce35bf07e6a16c464bfc</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -864,6 +884,57 @@
       <anchorfile>classtatami_1_1ConstantMatrix.html</anchorfile>
       <anchor>aedec8c8cece4db21e6ecbe7ca1561768</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; indices_ptr, const Options &amp;opt) const</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::ConvertToCompressedSparseOptions</name>
+    <filename>structtatami_1_1ConvertToCompressedSparseOptions.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>two_pass</name>
+      <anchorfile>structtatami_1_1ConvertToCompressedSparseOptions.html</anchorfile>
+      <anchor>a216570deaa038bcf3edfd6acd3daa9f1</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>num_threads</name>
+      <anchorfile>structtatami_1_1ConvertToCompressedSparseOptions.html</anchorfile>
+      <anchor>ae54de4828eb4a13e0b1f2801cf4053f1</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::ConvertToDenseOptions</name>
+    <filename>structtatami_1_1ConvertToDenseOptions.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>num_threads</name>
+      <anchorfile>structtatami_1_1ConvertToDenseOptions.html</anchorfile>
+      <anchor>a42274682b7c5afb05509eb386eae0905</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::ConvertToFragmentedSparseOptions</name>
+    <filename>structtatami_1_1ConvertToFragmentedSparseOptions.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>num_threads</name>
+      <anchorfile>structtatami_1_1ConvertToFragmentedSparseOptions.html</anchorfile>
+      <anchor>a98c990f0656707334f81da2b129f6cad</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::CountCompressedSparseNonZerosOptions</name>
+    <filename>structtatami_1_1CountCompressedSparseNonZerosOptions.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>num_threads</name>
+      <anchorfile>structtatami_1_1CountCompressedSparseNonZerosOptions.html</anchorfile>
+      <anchor>a1764988e0ed3731f56d68e4682c50128</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -3002,6 +3073,17 @@
       <arglist>(Index_ nrow, Index_ ncol, Storage_ values)</arglist>
     </member>
   </compound>
+  <compound kind="struct">
+    <name>tatami::FillCompressedSparseContentsOptions</name>
+    <filename>structtatami_1_1FillCompressedSparseContentsOptions.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>num_threads</name>
+      <anchorfile>structtatami_1_1FillCompressedSparseContentsOptions.html</anchorfile>
+      <anchor>ac697de3dd7e7463b69af668560741145</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
   <compound kind="class">
     <name>tatami::FixedVectorOracle</name>
     <filename>classtatami_1_1FixedVectorOracle.html</filename>
@@ -3104,8 +3186,8 @@
       <type></type>
       <name>FragmentedSparseMatrix</name>
       <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
-      <anchor>aaef4a952b010c4772119168abb505b7a</anchor>
-      <arglist>(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool row_sparse, bool check=true)</arglist>
+      <anchor>a2ef0c8c7fcd6c6ef8d1e5018d265b581</anchor>
+      <arglist>(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool row_sparse, const FragmentedSparseMatrixOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>Index_</type>
@@ -3197,6 +3279,17 @@
       <anchorfile>classtatami_1_1FragmentedSparseMatrix.html</anchorfile>
       <anchor>a26ebfcf4c5f6ea5d4d4364991be2e9ce</anchor>
       <arglist>(bool row, std::shared_ptr&lt; const Oracle&lt; Index_ &gt; &gt; oracle, VectorPtr&lt; Index_ &gt; subset_ptr, const Options &amp;opt) const</arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::FragmentedSparseMatrixOptions</name>
+    <filename>structtatami_1_1FragmentedSparseMatrixOptions.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>check</name>
+      <anchorfile>structtatami_1_1FragmentedSparseMatrixOptions.html</anchorfile>
+      <anchor>ad0bd65e9fafe7060867db6e048b1919d</anchor>
+      <arglist></arglist>
     </member>
   </compound>
   <compound kind="class">
@@ -4216,6 +4309,35 @@
       <arglist>(Index_, Value_ *value_buffer, Index_ *index_buffer)</arglist>
     </member>
   </compound>
+  <compound kind="struct">
+    <name>tatami::RetrieveCompressedSparseContentsOptions</name>
+    <filename>structtatami_1_1RetrieveCompressedSparseContentsOptions.html</filename>
+    <member kind="variable">
+      <type>bool</type>
+      <name>two_pass</name>
+      <anchorfile>structtatami_1_1RetrieveCompressedSparseContentsOptions.html</anchorfile>
+      <anchor>a6e8d3d669e760e0b640f085b519a49f3</anchor>
+      <arglist></arglist>
+    </member>
+    <member kind="variable">
+      <type>int</type>
+      <name>num_threads</name>
+      <anchorfile>structtatami_1_1RetrieveCompressedSparseContentsOptions.html</anchorfile>
+      <anchor>a63e19a4a990891427f82f3a433fa2044</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
+  <compound kind="struct">
+    <name>tatami::RetrieveFragmentedSparseContentsOptions</name>
+    <filename>structtatami_1_1RetrieveFragmentedSparseContentsOptions.html</filename>
+    <member kind="variable">
+      <type>int</type>
+      <name>num_threads</name>
+      <anchorfile>structtatami_1_1RetrieveFragmentedSparseContentsOptions.html</anchorfile>
+      <anchor>a5ea750f1ca226bb85790f2406eb36db8</anchor>
+      <arglist></arglist>
+    </member>
+  </compound>
   <compound kind="class">
     <name>tatami::SomeNumericArray</name>
     <filename>classtatami_1_1SomeNumericArray.html</filename>
@@ -4376,9 +4498,14 @@
     <class kind="class">tatami::CompressedSparseColumnMatrix</class>
     <class kind="struct">tatami::CompressedSparseContents</class>
     <class kind="class">tatami::CompressedSparseMatrix</class>
+    <class kind="struct">tatami::CompressedSparseMatrixOptions</class>
     <class kind="class">tatami::CompressedSparseRowMatrix</class>
     <class kind="class">tatami::ConsecutiveOracle</class>
     <class kind="class">tatami::ConstantMatrix</class>
+    <class kind="struct">tatami::ConvertToCompressedSparseOptions</class>
+    <class kind="struct">tatami::ConvertToDenseOptions</class>
+    <class kind="struct">tatami::ConvertToFragmentedSparseOptions</class>
+    <class kind="struct">tatami::CountCompressedSparseNonZerosOptions</class>
     <class kind="class">tatami::DelayedBinaryIsometricArithmetic</class>
     <class kind="struct">tatami::DelayedBinaryIsometricBoolean</class>
     <class kind="struct">tatami::DelayedBinaryIsometricCompare</class>
@@ -4436,11 +4563,13 @@
     <class kind="class">tatami::DenseColumnMatrix</class>
     <class kind="class">tatami::DenseMatrix</class>
     <class kind="class">tatami::DenseRowMatrix</class>
+    <class kind="struct">tatami::FillCompressedSparseContentsOptions</class>
     <class kind="class">tatami::FixedVectorOracle</class>
     <class kind="class">tatami::FixedViewOracle</class>
     <class kind="class">tatami::FragmentedSparseColumnMatrix</class>
     <class kind="struct">tatami::FragmentedSparseContents</class>
     <class kind="class">tatami::FragmentedSparseMatrix</class>
+    <class kind="struct">tatami::FragmentedSparseMatrixOptions</class>
     <class kind="class">tatami::FragmentedSparseRowMatrix</class>
     <class kind="class">tatami::FullSparsifiedWrapper</class>
     <class kind="struct">tatami::has_data</class>
@@ -4455,6 +4584,8 @@
     <class kind="class">tatami::OracularSparseExtractor</class>
     <class kind="struct">tatami::PseudoOracularDenseExtractor</class>
     <class kind="struct">tatami::PseudoOracularSparseExtractor</class>
+    <class kind="struct">tatami::RetrieveCompressedSparseContentsOptions</class>
+    <class kind="struct">tatami::RetrieveFragmentedSparseContentsOptions</class>
     <class kind="class">tatami::SomeNumericArray</class>
     <class kind="struct">tatami::SparseRange</class>
     <member kind="typedef">
@@ -4568,15 +4699,15 @@
       <type>void</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a505b19695bbc19aa5da30cbc131dd669</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row_major, StoredValue_ *store, int threads=1)</arglist>
+      <anchor>ad06cf62ba0b58e240aed427379c2ac38</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row_major, StoredValue_ *store, const ConvertToDenseOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>convert_to_dense</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a048d6d8caac2af077860c89c1f0ea1ab</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row_major, int threads=1)</arglist>
+      <anchor>ad18e5d06e9adc78acdf0924e7e3d8fbd</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row_major, const ConvertToDenseOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
@@ -5114,43 +5245,43 @@
       <type>void</type>
       <name>count_compressed_sparse_non_zeros</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a6d50a06c529b9b27a3dfc8decda4508b</anchor>
-      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, Count_ *output, int threads)</arglist>
+      <anchor>ac004bfb30ee5623bec14d3783c2cc21e</anchor>
+      <arglist>(const tatami::Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, Count_ *output, const CountCompressedSparseNonZerosOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>void</type>
       <name>fill_compressed_sparse_contents</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>ae9714858670f5790344254b39ae03432</anchor>
-      <arglist>(const tatami::Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const Pointer_ *pointers, StoredValue_ *output_value, StoredIndex_ *output_index, int threads)</arglist>
+      <anchor>aaadd3c0f36b8cbde2d360a8babba163f</anchor>
+      <arglist>(const tatami::Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const Pointer_ *pointers, StoredValue_ *output_value, StoredIndex_ *output_index, const FillCompressedSparseContentsOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>CompressedSparseContents&lt; StoredValue_, StoredIndex_, StoredPointer_ &gt;</type>
       <name>retrieve_compressed_sparse_contents</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a790f3529e90b31ad012ed2a329aa4c15</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, bool two_pass, int threads=1)</arglist>
+      <anchor>a05dc21541e6db5a8896049a0647c4230</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const RetrieveCompressedSparseContentsOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>convert_to_compressed_sparse</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a769860846b5d541571894f932bb70bec</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, bool two_pass=false, int threads=1)</arglist>
+      <anchor>a2eaf90f62fd2ccfcd1c35ef291f7f489</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const ConvertToCompressedSparseOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>FragmentedSparseContents&lt; StoredValue_, StoredIndex_ &gt;</type>
       <name>retrieve_fragmented_sparse_contents</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a9fc69bcb87cf956e1d896b7937e548d6</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, int threads=1)</arglist>
+      <anchor>a5c71daf9bdb1ea8d3e16f35c5b15facc</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const RetrieveFragmentedSparseContentsOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>convert_to_fragmented_sparse</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a8aa3c415e3a3f6d224e9b671e865b5ab</anchor>
-      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, int threads=1)</arglist>
+      <anchor>add29754647077a82209dfe6ba78cd2b5</anchor>
+      <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const ConvertToFragmentedSparseOptions &amp;options)</arglist>
     </member>
     <member kind="function">
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>

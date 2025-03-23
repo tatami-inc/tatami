@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['somenumericarray_0',['SomeNumericArray',['../classtatami_1_1SomeNumericArray.html',1,'tatami']]],
-  ['sparserange_1',['SparseRange',['../structtatami_1_1SparseRange.html',1,'tatami']]]
+  ['retrievecompressedsparsecontentsoptions_0',['RetrieveCompressedSparseContentsOptions',['../structtatami_1_1RetrieveCompressedSparseContentsOptions.html',1,'tatami']]],
+  ['retrievefragmentedsparsecontentsoptions_1',['RetrieveFragmentedSparseContentsOptions',['../structtatami_1_1RetrieveFragmentedSparseContentsOptions.html',1,'tatami']]]
 ];

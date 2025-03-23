@@ -128,8 +128,8 @@ Collaboration diagram for tatami::FragmentedSparseMatrix&lt; Value_, Index_, Val
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aaef4a952b010c4772119168abb505b7a" id="r_aaef4a952b010c4772119168abb505b7a"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#aaef4a952b010c4772119168abb505b7a">FragmentedSparseMatrix</a> (Index_ <a class="el" href="#a9632369fd9488210695dbd05b13a8ab5">nrow</a>, Index_ <a class="el" href="#a427e1a6ab4a1eded1374b30c3d6f05ae">ncol</a>, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool row_sparse, bool check=true)</td></tr>
-<tr class="separator:aaef4a952b010c4772119168abb505b7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2ef0c8c7fcd6c6ef8d1e5018d265b581" id="r_a2ef0c8c7fcd6c6ef8d1e5018d265b581"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a2ef0c8c7fcd6c6ef8d1e5018d265b581">FragmentedSparseMatrix</a> (Index_ <a class="el" href="#a9632369fd9488210695dbd05b13a8ab5">nrow</a>, Index_ <a class="el" href="#a427e1a6ab4a1eded1374b30c3d6f05ae">ncol</a>, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool row_sparse, const <a class="el" href="structtatami_1_1FragmentedSparseMatrixOptions.html">FragmentedSparseMatrixOptions</a> &amp;options)</td></tr>
+<tr class="separator:a2ef0c8c7fcd6c6ef8d1e5018d265b581"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9632369fd9488210695dbd05b13a8ab5" id="r_a9632369fd9488210695dbd05b13a8ab5"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a9632369fd9488210695dbd05b13a8ab5">nrow</a> () const</td></tr>
 <tr class="separator:a9632369fd9488210695dbd05b13a8ab5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a427e1a6ab4a1eded1374b30c3d6f05ae" id="r_a427e1a6ab4a1eded1374b30c3d6f05ae"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a427e1a6ab4a1eded1374b30c3d6f05ae">ncol</a> () const</td></tr>
@@ -308,8 +308,8 @@ class tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, In
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="aaef4a952b010c4772119168abb505b7a" name="aaef4a952b010c4772119168abb505b7a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaef4a952b010c4772119168abb505b7a">&#9670;&#160;</a></span>FragmentedSparseMatrix()</h2>
+<a id="a2ef0c8c7fcd6c6ef8d1e5018d265b581" name="a2ef0c8c7fcd6c6ef8d1e5018d265b581"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2ef0c8c7fcd6c6ef8d1e5018d265b581">&#9670;&#160;</a></span>FragmentedSparseMatrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -347,7 +347,7 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_  = std
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>check</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1FragmentedSparseMatrixOptions.html">FragmentedSparseMatrixOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>options</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -363,11 +363,10 @@ template&lt;typename Value_ , typename Index_ , class ValueVectorStorage_  = std
     <tr><td class="paramname">values</td><td>Vector of vectors of non-zero elements. </td></tr>
     <tr><td class="paramname">indices</td><td>Vector of vectors of row indices (if <code>row_sparse = false</code>) or column indices (if <code>row_sparse = true</code>) for the non-zero elements. </td></tr>
     <tr><td class="paramname">row_sparse</td><td>Whether this is a row sparse representation. If <code>false</code>, a column sparse representation is assumed instead. </td></tr>
-    <tr><td class="paramname">check</td><td>Should the input vectors be checked for validity?</td></tr>
+    <tr><td class="paramname">options</td><td>Further options. </td></tr>
   </table>
   </dd>
 </dl>
-<p>If <code>check=true</code>, the constructor will check that <code>values</code> and <code>indices</code> have the same length that is equal to the number of rows (for <code>row_sparse = true</code>) or columns (otherwise); that corresponding elements of <code>values</code> and <code>indices</code> also have the same length; and that each element of <code>indices</code> is ordered and contains non-negative values less than <code>ncol</code> (for <code>row_sparse = true</code>) or <code>nrow</code> (otherwise). </p>
 
 </div>
 </div>

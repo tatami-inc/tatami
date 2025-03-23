@@ -128,8 +128,8 @@ Collaboration diagram for tatami::CompressedSparseMatrix&lt; Value_, Index_, Val
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a83245ced768b530126c30a51849b48b5" id="r_a83245ced768b530126c30a51849b48b5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a83245ced768b530126c30a51849b48b5">CompressedSparseMatrix</a> (Index_ <a class="el" href="#a3365d94d7ad16f89d780ba27deffa45a">nrow</a>, Index_ <a class="el" href="#ae7a25c967b851a667885a2052ad6a45f">ncol</a>, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool csr, bool check=true)</td></tr>
-<tr class="separator:a83245ced768b530126c30a51849b48b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01256bb540937246cfc78dd2a30ff2e0" id="r_a01256bb540937246cfc78dd2a30ff2e0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01256bb540937246cfc78dd2a30ff2e0">CompressedSparseMatrix</a> (Index_ <a class="el" href="#a3365d94d7ad16f89d780ba27deffa45a">nrow</a>, Index_ <a class="el" href="#ae7a25c967b851a667885a2052ad6a45f">ncol</a>, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool csr, const <a class="el" href="structtatami_1_1CompressedSparseMatrixOptions.html">CompressedSparseMatrixOptions</a> &amp;options)</td></tr>
+<tr class="separator:a01256bb540937246cfc78dd2a30ff2e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3365d94d7ad16f89d780ba27deffa45a" id="r_a3365d94d7ad16f89d780ba27deffa45a"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3365d94d7ad16f89d780ba27deffa45a">nrow</a> () const</td></tr>
 <tr class="separator:a3365d94d7ad16f89d780ba27deffa45a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae7a25c967b851a667885a2052ad6a45f" id="r_ae7a25c967b851a667885a2052ad6a45f"><td class="memItemLeft" align="right" valign="top">Index_&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#ae7a25c967b851a667885a2052ad6a45f">ncol</a> () const</td></tr>
@@ -320,8 +320,8 @@ class tatami::CompressedSparseMatrix&lt; Value_, Index_, ValueStorage_, IndexSto
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a83245ced768b530126c30a51849b48b5" name="a83245ced768b530126c30a51849b48b5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a83245ced768b530126c30a51849b48b5">&#9670;&#160;</a></span>CompressedSparseMatrix()</h2>
+<a id="a01256bb540937246cfc78dd2a30ff2e0" name="a01256bb540937246cfc78dd2a30ff2e0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01256bb540937246cfc78dd2a30ff2e0">&#9670;&#160;</a></span>CompressedSparseMatrix()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -364,7 +364,7 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_  = std::vect
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">bool</td>          <td class="paramname"><span class="paramname"><em>check</em></span><span class="paramdefsep"> = </span><span class="paramdefval">true</span>&#160;)</td>
+          <td class="paramtype">const <a class="el" href="structtatami_1_1CompressedSparseMatrixOptions.html">CompressedSparseMatrixOptions</a> &amp;</td>          <td class="paramname"><span class="paramname"><em>options</em></span>&#160;)</td>
         </tr>
       </table>
   </td>
@@ -381,11 +381,10 @@ template&lt;typename Value_ , typename Index_ , class ValueStorage_  = std::vect
     <tr><td class="paramname">indices</td><td>Vector of row indices (if <code>csr = false</code>) or column indices (if <code>csr = true</code>) for the non-zero elements. </td></tr>
     <tr><td class="paramname">pointers</td><td>Vector of index pointers. </td></tr>
     <tr><td class="paramname">csr</td><td>Whether this is a compressed sparse row representation. </td></tr>
-    <tr><td class="paramname">check</td><td>Should the input vectors be checked for validity?</td></tr>
+    <tr><td class="paramname">options</td><td>Further options. </td></tr>
   </table>
   </dd>
 </dl>
-<p>If <code>check=true</code>, the constructor will check that <code>values</code> and <code>indices</code> have the same length, equal to the number of structural non-zero elements; <code>pointers</code> has length equal to the number of rows (if <code>csr = true</code>) or columns (otherwise) plus one; <code>pointers</code> is non-decreasing with first and last values set to 0 and the number of structural non-zeroes, respectively; <code>indices</code> is strictly increasing within each interval defined by successive elements of <code>pointers</code>; and all values of <code>indices</code> are non-negative and less than the number of columns (if <code>csr = true</code>) or rows (otherwise). </p>
 
 </div>
 </div>
