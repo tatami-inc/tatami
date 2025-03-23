@@ -424,6 +424,23 @@ private:
  */
 
 /**
+ * @brief Options for `FragmentedSparseMatrix()`.
+ */
+struct FragmentedSparseMatrixOptions {
+    /**
+     * Should the input vectors be checked for validity in the `FragmentedSparseMatrix` constructor?
+     * If true, the constructor will check that:
+     *
+     * - `values` and `indices` have the same length that is equal to the number of rows (for `row_sparse = true`) or columns (otherwise).
+     * - corresponding elements of `values` and `indices` have the same length.
+     * - each element of `indices` is ordered and contains non-negative values less than `ncol` (for `row_sparse = true`) or `nrow` (otherwise).
+     *
+     * This can be disabled for faster construction if the caller knows that the input vectors are valid.
+     */
+    bool check = true;
+};
+
+/**
  * @brief Fragmented sparse matrix representation.
  *
  * In a fragmented sparse matrix, each element of the primary dimension has its own vector of indices and data values.
@@ -459,16 +476,12 @@ public:
      * @param indices Vector of vectors of row indices (if `row_sparse = false`) or column indices (if `row_sparse = true`) for the non-zero elements.
      * @param row_sparse Whether this is a row sparse representation.
      * If `false`, a column sparse representation is assumed instead.
-     * @param check Should the input vectors be checked for validity?
-     *
-     * If `check=true`, the constructor will check that `values` and `indices` have the same length that is equal to the number of rows (for `row_sparse = true`) or columns (otherwise);
-     * that corresponding elements of `values` and `indices` also have the same length;
-     * and that each element of `indices` is ordered and contains non-negative values less than `ncol` (for `row_sparse = true`) or `nrow` (otherwise).
+     * @param options Further options.
      */
-    FragmentedSparseMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool row_sparse, bool check = true) : 
+    FragmentedSparseMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool row_sparse, const FragmentedSparseMatrixOptions& options) : 
         my_nrow(nrow), my_ncol(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_row_sparse(row_sparse)
     {
-        if (check) {
+        if (options.check) {
             if (my_values.size() != my_indices.size()) {
                 throw std::runtime_error("'values' and 'indices' should be of the same length");
             }
@@ -505,6 +518,28 @@ public:
             }
         }
     }
+
+    /**
+     * @cond
+     */
+    // Back-compatibility only.
+    FragmentedSparseMatrix(Index_ nrow, Index_ ncol, ValueVectorStorage_ values, IndexVectorStorage_ indices, bool row_sparse, bool check = true) :
+        FragmentedSparseMatrix(
+            nrow,
+            ncol,
+            std::move(values),
+            std::move(indices),
+            row_sparse,
+            [&]{
+                FragmentedSparseMatrixOptions fopt;
+                fopt.check = check;
+                return fopt;
+            }()
+        )
+    {}
+    /**
+     * @endcond
+     */
 
 private:
     Index_ my_nrow, my_ncol;

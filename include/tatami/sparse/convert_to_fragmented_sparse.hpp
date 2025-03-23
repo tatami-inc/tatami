@@ -51,6 +51,16 @@ struct FragmentedSparseContents {
 };
 
 /**
+ * @brief Options for `retrieve_fragmented_sparse_contents()`.
+ */
+struct RetrieveFragmentedSparseContentsOptions {
+    /**
+     * Number of threads to use, for parallelization with `parallelize()`.
+     */
+    int num_threads = 1;
+};
+
+/**
  * @tparam StoredValue_ Type of data values to be stored in the output.
  * @tparam StoredIndex_ Integer type for storing the indices in the output. 
  * @tparam InputValue_ Type of data values in the input interface.
@@ -58,12 +68,16 @@ struct FragmentedSparseContents {
  *
  * @param matrix Pointer to a `tatami::Matrix`. 
  * @param row Whether to retrieve the contents of `matrix` by row, i.e., the output is a fragmented sparse row matrix.
- * @param threads Number of threads to use, for parallelization with `parallelize()`.
+ * @param options Further options.
  *
  * @return Contents of the sparse matrix in fragmented form, see `FragmentedSparseContents`.
  */
 template<typename StoredValue_, typename StoredIndex_, typename InputValue_, typename InputIndex_>
-FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_contents(const Matrix<InputValue_, InputIndex_>& matrix, bool row, int threads = 1) {
+FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_contents(
+    const Matrix<InputValue_, InputIndex_>& matrix,
+    bool row,
+    const RetrieveFragmentedSparseContentsOptions& options)
+{
     InputIndex_ NR = matrix.nrow();
     InputIndex_ NC = matrix.ncol();
     InputIndex_ primary = (row ? NR : NC);
@@ -94,7 +108,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
                         }
                     }
                 }
-            }, primary, threads);
+            }, primary, options.num_threads);
 
         } else {
             parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
@@ -115,7 +129,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
                         }
                     }
                 }
-            }, primary, threads);
+            }, primary, options.num_threads);
         }
 
     } else {
@@ -139,7 +153,7 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
                         }
                     }
                 }
-            }, primary, threads);
+            }, primary, options.num_threads);
 
         } else {
             parallelize([&](int, InputIndex_ start, InputIndex_ length) -> void {
@@ -155,12 +169,22 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
                         }
                     }
                 }
-            }, primary, threads);
+            }, primary, options.num_threads);
         }
     }
 
     return output;
 }
+
+/**
+ * @brief Options for `convert_to_fragmented_sparse()`.
+ */
+struct ConvertToFragmentedSparseOptions {
+    /**
+     * Number of threads to use, for parallelization with `parallelize()`.
+     */
+    int num_threads = 1;
+};
 
 /**
  * @tparam Value_ Type of data values in the output interface.
@@ -172,14 +196,26 @@ FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_
  *
  * @param matrix A `tatami::Matrix`. 
  * @param row Whether to return a fragmented sparse row matrix.
- * @param threads Number of threads to use, for parallelization with `parallelize()`.
+ * @param options Further options.
  *
  * @return A pointer to a new `tatami::FragmentedSparseMatrix`, with the same dimensions and type as the matrix referenced by `matrix`.
  * If `row = true`, the matrix is in fragmented sparse row format, otherwise it is fragmented sparse column.
  */
 template<typename Value_, typename Index_, typename StoredValue_ = Value_, typename StoredIndex_ = Index_, typename InputValue_, typename InputIndex_>
-std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matrix<InputValue_, InputIndex_>& matrix, bool row, int threads = 1) {
-    auto frag = retrieve_fragmented_sparse_contents<StoredValue_, StoredIndex_>(matrix, row, threads);
+std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(
+    const Matrix<InputValue_, InputIndex_>& matrix,
+    bool row,
+    const ConvertToFragmentedSparseOptions& options)
+{
+    auto frag = retrieve_fragmented_sparse_contents<StoredValue_, StoredIndex_>(
+        matrix,
+        row,
+        [&]{
+            RetrieveFragmentedSparseContentsOptions ropt;
+            ropt.num_threads = options.num_threads;
+            return ropt;
+        }()
+    );
     return std::shared_ptr<Matrix<Value_, Index_> >(
         new FragmentedSparseMatrix<
             Value_, 
@@ -192,7 +228,11 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matr
             std::move(frag.value), 
             std::move(frag.index),
             row, 
-            false // no need for checks, as we guarantee correctness.
+            []{
+                FragmentedSparseMatrixOptions fopt;
+                fopt.check = false; // no need for checks, as we guarantee correctness.
+                return fopt;
+            }()
         )
     );
 }
@@ -203,12 +243,28 @@ std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matr
 // Backwards compatbility.
 template<typename Value_, typename Index_, typename StoredValue_ = Value_, typename StoredIndex_ = Index_, typename InputValue_, typename InputIndex_>
 std::shared_ptr<Matrix<Value_, Index_> > convert_to_fragmented_sparse(const Matrix<InputValue_, InputIndex_>* matrix, bool row, int threads = 1) {
-    return convert_to_fragmented_sparse<Value_, Index_, StoredValue_, StoredIndex_>(*matrix, row, threads);
+    return convert_to_fragmented_sparse<Value_, Index_, StoredValue_, StoredIndex_>(
+        *matrix,
+        row,
+        [&]{
+            ConvertToFragmentedSparseOptions opt;
+            opt.num_threads = threads;
+            return opt;
+        }()
+    );
 }
 
 template<typename StoredValue_, typename StoredIndex_, typename InputValue_, typename InputIndex_>
 FragmentedSparseContents<StoredValue_, StoredIndex_> retrieve_fragmented_sparse_contents(const Matrix<InputValue_, InputIndex_>* matrix, bool row, int threads = 1) {
-    return retrieve_fragmented_sparse_contents<StoredValue_, StoredIndex_>(*matrix, row, threads);
+    return retrieve_fragmented_sparse_contents<StoredValue_, StoredIndex_>(
+        *matrix,
+        row,
+        [&]{
+            RetrieveFragmentedSparseContentsOptions opt;
+            opt.num_threads = threads;
+            return opt;
+        }()
+    );
 }
 
 template <bool row_, typename StoredValue_, typename StoredIndex_, typename InputValue_, typename InputIndex_>

@@ -467,6 +467,25 @@ private:
  */
 
 /**
+ * @brief Options for the `CompressedSparseMatrix`.
+ */
+struct CompressedSparseMatrixOptions {
+    /**
+     * Should the input vectors of indices and pointers be checked for validity in the `CompressedSparseMatrix` constructor?
+     * If `true`, the constructor will check that:
+     *
+     * - `values` and `indices` have the same length, equal to the number of structural non-zero elements.
+     * - `pointers` has length equal to the number of rows (if `csr = true`) or columns (otherwise) plus one.
+     * - `pointers` is non-decreasing with first and last values set to 0 and the number of structural non-zeroes, respectively.
+     * - `indices` is strictly increasing within each interval defined by successive elements of `pointers`.
+     * - all values of `indices` are non-negative and less than the number of columns (if `csr = true`) or rows (otherwise).
+     *
+     * This can be disabled for faster construction if the caller is certain that the input is valid.
+     */
+    bool check = true;
+};
+
+/**
  * @brief Compressed sparse matrix representation.
  *
  * @tparam Value_ Type of the matrix values.
@@ -498,18 +517,12 @@ public:
      * @param indices Vector of row indices (if `csr = false`) or column indices (if `csr = true`) for the non-zero elements.
      * @param pointers Vector of index pointers.
      * @param csr Whether this is a compressed sparse row representation.
-     * @param check Should the input vectors be checked for validity?
-     *
-     * If `check=true`, the constructor will check that `values` and `indices` have the same length, equal to the number of structural non-zero elements;
-     * `pointers` has length equal to the number of rows (if `csr = true`) or columns (otherwise) plus one;
-     * `pointers` is non-decreasing with first and last values set to 0 and the number of structural non-zeroes, respectively;
-     * `indices` is strictly increasing within each interval defined by successive elements of `pointers`;
-     * and all values of `indices` are non-negative and less than the number of columns (if `csr = true`) or rows (otherwise).
+     * @param options Further options.
      */
-    CompressedSparseMatrix(Index_ nrow, Index_ ncol, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool csr, bool check = true) : 
+    CompressedSparseMatrix(Index_ nrow, Index_ ncol, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool csr, const CompressedSparseMatrixOptions& options) : 
         my_nrow(nrow), my_ncols(ncol), my_values(std::move(values)), my_indices(std::move(indices)), my_pointers(std::move(pointers)), my_csr(csr)
     {
-        if (check) {
+        if (options.check) {
             size_t nnzero = my_values.size();
             if (nnzero != my_indices.size()) {
                 throw std::runtime_error("'my_values' and 'my_indices' should be of the same length");
@@ -556,6 +569,29 @@ public:
             }
         }
     }
+
+    /**
+     * @cond
+     */
+    // For back-compatibility only
+    CompressedSparseMatrix(Index_ nrow, Index_ ncol, ValueStorage_ values, IndexStorage_ indices, PointerStorage_ pointers, bool csr, bool check = true) :
+        CompressedSparseMatrix(
+            nrow,
+            ncol,
+            std::move(values),
+            std::move(indices),
+            std::move(pointers),
+            csr,
+            [&]{ 
+                CompressedSparseMatrixOptions options;
+                options.check = check;
+                return options;
+            }()
+        ) 
+    {}
+    /**
+     * @endcond
+     */
 
 private:
     Index_ my_nrow, my_ncols;
