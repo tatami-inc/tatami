@@ -22,7 +22,7 @@ namespace tatami {
  * @tparam Index_ Type of the row/column index.
  * @tparam Args_ Types of further arguments to pass to `Matrix::dense_row` or `Matrix::dense_column`.
  *
- * @param mat A `tatami::Matrix` to iterate over.
+ * @param matrix A `tatami::Matrix` to iterate over.
  * @param row Whether to create a row-wise extractor, i.e., the rows are the target dimension. 
  * @param iter_start Index of the first row (if `row = true`) or column (otherwise) of the iteration range.
  * @param iter_length Number of rows (if `row = true`) or columns (otherwise) in the iteration range.
