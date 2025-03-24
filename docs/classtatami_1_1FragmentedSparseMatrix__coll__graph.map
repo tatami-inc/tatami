@@ -1,5 +1,5 @@
 <map id="tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;" name="tatami::FragmentedSparseMatrix&lt; Value_, Index_, ValueVectorStorage_, IndexVectorStorage_ &gt;">
 <area shape="rect" id="Node000001" title="Fragmented sparse matrix representation." alt="" coords="5,94,179,165"/>
-<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title=" " alt="" coords="21,5,163,46"/>
+<area shape="rect" id="Node000002" href="$classtatami_1_1Matrix.html" title="Virtual class for a matrix." alt="" coords="21,5,163,46"/>
 <area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="95,62,95,93,89,93,89,62"/>
 </map>

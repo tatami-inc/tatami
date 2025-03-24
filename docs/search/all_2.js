@@ -20,7 +20,7 @@ var searchData=
   ['consecutiveoracle_2ehpp_17',['ConsecutiveOracle.hpp',['../ConsecutiveOracle_8hpp.html',1,'']]],
   ['constantmatrix_18',['ConstantMatrix',['../classtatami_1_1ConstantMatrix.html',1,'tatami::ConstantMatrix&lt; Value_, Index_ &gt;'],['../classtatami_1_1ConstantMatrix.html#ac51afe22e54a204c0b2b8a80abde30cc',1,'tatami::ConstantMatrix::ConstantMatrix()']]],
   ['constantmatrix_2ehpp_19',['ConstantMatrix.hpp',['../ConstantMatrix_8hpp.html',1,'']]],
-  ['convert_5fto_5fcompressed_5fsparse_20',['convert_to_compressed_sparse',['../namespacetatami.html#a2eaf90f62fd2ccfcd1c35ef291f7f489',1,'tatami']]],
+  ['convert_5fto_5fcompressed_5fsparse_20',['convert_to_compressed_sparse',['../namespacetatami.html#a415036bb92741de0ca2a4824cf2adfd3',1,'tatami']]],
   ['convert_5fto_5fcompressed_5fsparse_2ehpp_21',['convert_to_compressed_sparse.hpp',['../convert__to__compressed__sparse_8hpp.html',1,'']]],
   ['convert_5fto_5fdense_22',['convert_to_dense',['../namespacetatami.html#ad06cf62ba0b58e240aed427379c2ac38',1,'tatami::convert_to_dense(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row_major, StoredValue_ *store, const ConvertToDenseOptions &amp;options)'],['../namespacetatami.html#ad18e5d06e9adc78acdf0924e7e3d8fbd',1,'tatami::convert_to_dense(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row_major, const ConvertToDenseOptions &amp;options)']]],
   ['convert_5fto_5fdense_2ehpp_23',['convert_to_dense.hpp',['../convert__to__dense_8hpp.html',1,'']]],

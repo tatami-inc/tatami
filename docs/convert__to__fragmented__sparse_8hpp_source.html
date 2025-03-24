@@ -233,85 +233,92 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00187" name="l00187"></a><span class="lineno">  187</span>};</div>
 </div>
 <div class="line"><a id="l00188" name="l00188"></a><span class="lineno">  188</span> </div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> StoredValue_ = Value_, <span class="keyword">typename</span> StoredIndex_ = Index_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="foldopen" id="foldopen00205" data-start="{" data-end="}">
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno"><a class="line" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">  205</a></span>std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse</a>(</div>
-<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;InputValue_, InputIndex_&gt;</a>&amp; matrix,</div>
-<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    <span class="keywordtype">bool</span> row,</div>
-<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1ConvertToFragmentedSparseOptions.html">ConvertToFragmentedSparseOptions</a>&amp; options)</div>
-<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>{</div>
-<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    <span class="keyword">auto</span> frag = <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents&lt;StoredValue_, StoredIndex_&gt;</a>(</div>
-<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>        matrix,</div>
-<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>        row,</div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>        [&amp;]{</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>            <a class="code hl_struct" href="structtatami_1_1RetrieveFragmentedSparseContentsOptions.html">RetrieveFragmentedSparseContentsOptions</a> ropt;</div>
-<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>            ropt.<a class="code hl_variable" href="structtatami_1_1RetrieveFragmentedSparseContentsOptions.html#a5ea750f1ca226bb85790f2406eb36db8">num_threads</a> = options.<a class="code hl_variable" href="structtatami_1_1ConvertToFragmentedSparseOptions.html#a98c990f0656707334f81da2b129f6cad">num_threads</a>;</div>
-<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>            <span class="keywordflow">return</span> ropt;</div>
-<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>        }()</div>
-<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>    );</div>
-<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>    <span class="keywordflow">return</span> std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt;(</div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>            Value_, </div>
-<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            Index_,</div>
-<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            std::vector&lt;std::vector&lt;StoredValue_&gt; &gt;,</div>
-<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>            std::vector&lt;std::vector&lt;StoredIndex_&gt; &gt;</div>
-<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>        &gt;(</div>
-<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>            matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), </div>
-<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>            matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>(), </div>
-<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            std::move(frag.value), </div>
-<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            std::move(frag.index),</div>
-<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            row, </div>
-<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>            []{</div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>                FragmentedSparseMatrixOptions fopt;</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>                fopt.check = false; <span class="comment">// no need for checks, as we guarantee correctness.</span></div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>                return fopt;</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            }()</div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>        )</div>
-<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>    );</div>
-<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>}</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span><span class="keyword">template</span>&lt;</div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    <span class="keyword">typename</span> Value_,</div>
+<div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>    <span class="keyword">typename</span> Index_,</div>
+<div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    <span class="keyword">typename</span> StoredValue_ = Value_,</div>
+<div class="line"><a id="l00208" name="l00208"></a><span class="lineno">  208</span>    <span class="keyword">typename</span> StoredIndex_ = Index_,</div>
+<div class="line"><a id="l00209" name="l00209"></a><span class="lineno">  209</span>    <span class="keyword">typename</span> InputValue_,</div>
+<div class="line"><a id="l00210" name="l00210"></a><span class="lineno">  210</span>    <span class="keyword">typename</span> InputIndex_</div>
+<div class="line"><a id="l00211" name="l00211"></a><span class="lineno">  211</span>&gt;</div>
+<div class="foldopen" id="foldopen00212" data-start="{" data-end="}">
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno"><a class="line" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">  212</a></span>std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse</a>(</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    <span class="keyword">const</span> <a class="code hl_class" href="classtatami_1_1Matrix.html">Matrix&lt;InputValue_, InputIndex_&gt;</a>&amp; matrix,</div>
+<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span>    <span class="keywordtype">bool</span> row,</div>
+<div class="line"><a id="l00215" name="l00215"></a><span class="lineno">  215</span>    <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1ConvertToFragmentedSparseOptions.html">ConvertToFragmentedSparseOptions</a>&amp; options)</div>
+<div class="line"><a id="l00216" name="l00216"></a><span class="lineno">  216</span>{</div>
+<div class="line"><a id="l00217" name="l00217"></a><span class="lineno">  217</span>    <span class="keyword">auto</span> frag = <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents&lt;StoredValue_, StoredIndex_&gt;</a>(</div>
+<div class="line"><a id="l00218" name="l00218"></a><span class="lineno">  218</span>        matrix,</div>
+<div class="line"><a id="l00219" name="l00219"></a><span class="lineno">  219</span>        row,</div>
+<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>        [&amp;]{</div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>            <a class="code hl_struct" href="structtatami_1_1RetrieveFragmentedSparseContentsOptions.html">RetrieveFragmentedSparseContentsOptions</a> ropt;</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span>            ropt.<a class="code hl_variable" href="structtatami_1_1RetrieveFragmentedSparseContentsOptions.html#a5ea750f1ca226bb85790f2406eb36db8">num_threads</a> = options.<a class="code hl_variable" href="structtatami_1_1ConvertToFragmentedSparseOptions.html#a98c990f0656707334f81da2b129f6cad">num_threads</a>;</div>
+<div class="line"><a id="l00223" name="l00223"></a><span class="lineno">  223</span>            <span class="keywordflow">return</span> ropt;</div>
+<div class="line"><a id="l00224" name="l00224"></a><span class="lineno">  224</span>        }()</div>
+<div class="line"><a id="l00225" name="l00225"></a><span class="lineno">  225</span>    );</div>
+<div class="line"><a id="l00226" name="l00226"></a><span class="lineno">  226</span>    <span class="keywordflow">return</span> std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt;(</div>
+<div class="line"><a id="l00227" name="l00227"></a><span class="lineno">  227</span>        <span class="keyword">new</span> <a class="code hl_class" href="classtatami_1_1FragmentedSparseMatrix.html">FragmentedSparseMatrix</a>&lt;</div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>            Value_, </div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span>            Index_,</div>
+<div class="line"><a id="l00230" name="l00230"></a><span class="lineno">  230</span>            std::vector&lt;std::vector&lt;StoredValue_&gt; &gt;,</div>
+<div class="line"><a id="l00231" name="l00231"></a><span class="lineno">  231</span>            std::vector&lt;std::vector&lt;StoredIndex_&gt; &gt;</div>
+<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>        &gt;(</div>
+<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span>            matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">nrow</a>(), </div>
+<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>            matrix.<a class="code hl_function" href="classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">ncol</a>(), </div>
+<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span>            std::move(frag.value), </div>
+<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span>            std::move(frag.index),</div>
+<div class="line"><a id="l00237" name="l00237"></a><span class="lineno">  237</span>            row, </div>
+<div class="line"><a id="l00238" name="l00238"></a><span class="lineno">  238</span>            []{</div>
+<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span>                FragmentedSparseMatrixOptions fopt;</div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>                fopt.check = false; <span class="comment">// no need for checks, as we guarantee correctness.</span></div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>                return fopt;</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span>            }()</div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span>        )</div>
+<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span>    );</div>
+<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>}</div>
 </div>
-<div class="line"><a id="l00239" name="l00239"></a><span class="lineno">  239</span> </div>
-<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span><span class="comment">// Backwards compatbility.</span></div>
-<div class="line"><a id="l00244" name="l00244"></a><span class="lineno">  244</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> StoredValue_ = Value_, <span class="keyword">typename</span> StoredIndex_ = Index_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="line"><a id="l00245" name="l00245"></a><span class="lineno">  245</span>std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">bool</span> row, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse&lt;Value_, Index_, StoredValue_, StoredIndex_&gt;</a>(</div>
-<div class="line"><a id="l00247" name="l00247"></a><span class="lineno">  247</span>        *matrix,</div>
-<div class="line"><a id="l00248" name="l00248"></a><span class="lineno">  248</span>        row,</div>
-<div class="line"><a id="l00249" name="l00249"></a><span class="lineno">  249</span>        [&amp;]{</div>
-<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span>            ConvertToFragmentedSparseOptions opt;</div>
-<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span>            opt.num_threads = threads;</div>
-<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>            <span class="keywordflow">return</span> opt;</div>
-<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>        }()</div>
-<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>    );</div>
-<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>}</div>
-<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span> </div>
-<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> StoredIndex_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>FragmentedSparseContents&lt;StoredValue_, StoredIndex_&gt; <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">bool</span> row, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents&lt;StoredValue_, StoredIndex_&gt;</a>(</div>
-<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        *matrix,</div>
-<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>        row,</div>
-<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>        [&amp;]{</div>
-<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span>            RetrieveFragmentedSparseContentsOptions opt;</div>
-<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span>            opt.num_threads = threads;</div>
-<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>            <span class="keywordflow">return</span> opt;</div>
-<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>        }()</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>    );</div>
-<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>}</div>
-<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span> </div>
-<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span><span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> row_, <span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> StoredIndex_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>FragmentedSparseContents&lt;StoredValue_, StoredIndex_&gt; <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents&lt;StoredValue_, StoredIndex_&gt;</a>(matrix, row_, threads);</div>
-<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>}</div>
-<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span> </div>
-<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span><span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> row_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> StoredValue_ = Value_, <span class="keyword">typename</span> StoredIndex_ = Index_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
-<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">int</span> threads = 1) {</div>
-<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse&lt;Value_, Index_, StoredValue_, StoredIndex_&gt;</a>(matrix, row_, threads);</div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>}</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>}</div>
-<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span><span class="preprocessor">#endif</span></div>
+<div class="line"><a id="l00246" name="l00246"></a><span class="lineno">  246</span> </div>
+<div class="line"><a id="l00250" name="l00250"></a><span class="lineno">  250</span><span class="comment">// Backwards compatbility.</span></div>
+<div class="line"><a id="l00251" name="l00251"></a><span class="lineno">  251</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> StoredValue_ = Value_, <span class="keyword">typename</span> StoredIndex_ = Index_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
+<div class="line"><a id="l00252" name="l00252"></a><span class="lineno">  252</span>std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">bool</span> row, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00253" name="l00253"></a><span class="lineno">  253</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse&lt;Value_, Index_, StoredValue_, StoredIndex_&gt;</a>(</div>
+<div class="line"><a id="l00254" name="l00254"></a><span class="lineno">  254</span>        *matrix,</div>
+<div class="line"><a id="l00255" name="l00255"></a><span class="lineno">  255</span>        row,</div>
+<div class="line"><a id="l00256" name="l00256"></a><span class="lineno">  256</span>        [&amp;]{</div>
+<div class="line"><a id="l00257" name="l00257"></a><span class="lineno">  257</span>            ConvertToFragmentedSparseOptions opt;</div>
+<div class="line"><a id="l00258" name="l00258"></a><span class="lineno">  258</span>            opt.num_threads = threads;</div>
+<div class="line"><a id="l00259" name="l00259"></a><span class="lineno">  259</span>            <span class="keywordflow">return</span> opt;</div>
+<div class="line"><a id="l00260" name="l00260"></a><span class="lineno">  260</span>        }()</div>
+<div class="line"><a id="l00261" name="l00261"></a><span class="lineno">  261</span>    );</div>
+<div class="line"><a id="l00262" name="l00262"></a><span class="lineno">  262</span>}</div>
+<div class="line"><a id="l00263" name="l00263"></a><span class="lineno">  263</span> </div>
+<div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> StoredIndex_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
+<div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span>FragmentedSparseContents&lt;StoredValue_, StoredIndex_&gt; <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">bool</span> row, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents&lt;StoredValue_, StoredIndex_&gt;</a>(</div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        *matrix,</div>
+<div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>        row,</div>
+<div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        [&amp;]{</div>
+<div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>            RetrieveFragmentedSparseContentsOptions opt;</div>
+<div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span>            opt.num_threads = threads;</div>
+<div class="line"><a id="l00272" name="l00272"></a><span class="lineno">  272</span>            <span class="keywordflow">return</span> opt;</div>
+<div class="line"><a id="l00273" name="l00273"></a><span class="lineno">  273</span>        }()</div>
+<div class="line"><a id="l00274" name="l00274"></a><span class="lineno">  274</span>    );</div>
+<div class="line"><a id="l00275" name="l00275"></a><span class="lineno">  275</span>}</div>
+<div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span> </div>
+<div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span><span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> row_, <span class="keyword">typename</span> StoredValue_, <span class="keyword">typename</span> StoredIndex_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
+<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>FragmentedSparseContents&lt;StoredValue_, StoredIndex_&gt; <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">retrieve_fragmented_sparse_contents&lt;StoredValue_, StoredIndex_&gt;</a>(matrix, row_, threads);</div>
+<div class="line"><a id="l00280" name="l00280"></a><span class="lineno">  280</span>}</div>
+<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
+<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span><span class="keyword">template</span> &lt;<span class="keywordtype">bool</span> row_, <span class="keyword">typename</span> Value_, <span class="keyword">typename</span> Index_, <span class="keyword">typename</span> StoredValue_ = Value_, <span class="keyword">typename</span> StoredIndex_ = Index_, <span class="keyword">typename</span> InputValue_, <span class="keyword">typename</span> InputIndex_&gt;</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>std::shared_ptr&lt;Matrix&lt;Value_, Index_&gt; &gt; <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse</a>(<span class="keyword">const</span> Matrix&lt;InputValue_, InputIndex_&gt;* matrix, <span class="keywordtype">int</span> threads = 1) {</div>
+<div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span>    <span class="keywordflow">return</span> <a class="code hl_function" href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">convert_to_fragmented_sparse&lt;Value_, Index_, StoredValue_, StoredIndex_&gt;</a>(matrix, row_, threads);</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>}</div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>}</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span> </div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span><span class="preprocessor">#endif</span></div>
 <div class="ttc" id="aFragmentedSparseMatrix_8hpp_html"><div class="ttname"><a href="FragmentedSparseMatrix_8hpp.html">FragmentedSparseMatrix.hpp</a></div><div class="ttdoc">Fragmented sparse matrix representation.</div></div>
-<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a></div><div class="ttdoc">Fragmented sparse matrix representation.</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:470</div></div>
+<div class="ttc" id="aclasstatami_1_1FragmentedSparseMatrix_html"><div class="ttname"><a href="classtatami_1_1FragmentedSparseMatrix.html">tatami::FragmentedSparseMatrix</a></div><div class="ttdoc">Fragmented sparse matrix representation.</div><div class="ttdef"><b>Definition</b> FragmentedSparseMatrix.hpp:465</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html"><div class="ttname"><a href="classtatami_1_1Matrix.html">tatami::Matrix</a></div><div class="ttdoc">Virtual class for a matrix.</div><div class="ttdef"><b>Definition</b> Matrix.hpp:59</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a1f6fec43d5bae3f831841646bc02377b"><div class="ttname"><a href="classtatami_1_1Matrix.html#a1f6fec43d5bae3f831841646bc02377b">tatami::Matrix::ncol</a></div><div class="ttdeci">virtual Index_ ncol() const =0</div></div>
 <div class="ttc" id="aclasstatami_1_1Matrix_html_a54fe7b4baf78069d35ff00357a1b6cc6"><div class="ttname"><a href="classtatami_1_1Matrix.html#a54fe7b4baf78069d35ff00357a1b6cc6">tatami::Matrix::nrow</a></div><div class="ttdeci">virtual Index_ nrow() const =0</div></div>
@@ -321,7 +328,7 @@ $(function(){ initResizable(false); });
 <div class="ttc" id="anamespacetatami_html"><div class="ttname"><a href="namespacetatami.html">tatami</a></div><div class="ttdoc">Flexible representations for matrix data.</div><div class="ttdef"><b>Definition</b> Extractor.hpp:15</div></div>
 <div class="ttc" id="anamespacetatami_html_a5a08e0387bc00e8045a0364d6e35d120"><div class="ttname"><a href="namespacetatami.html#a5a08e0387bc00e8045a0364d6e35d120">tatami::parallelize</a></div><div class="ttdeci">void parallelize(Function_ fun, Index_ tasks, int threads)</div><div class="ttdef"><b>Definition</b> parallelize.hpp:42</div></div>
 <div class="ttc" id="anamespacetatami_html_a5c71daf9bdb1ea8d3e16f35c5b15facc"><div class="ttname"><a href="namespacetatami.html#a5c71daf9bdb1ea8d3e16f35c5b15facc">tatami::retrieve_fragmented_sparse_contents</a></div><div class="ttdeci">FragmentedSparseContents&lt; StoredValue_, StoredIndex_ &gt; retrieve_fragmented_sparse_contents(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const RetrieveFragmentedSparseContentsOptions &amp;options)</div><div class="ttdef"><b>Definition</b> convert_to_fragmented_sparse.hpp:76</div></div>
-<div class="ttc" id="anamespacetatami_html_add29754647077a82209dfe6ba78cd2b5"><div class="ttname"><a href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">tatami::convert_to_fragmented_sparse</a></div><div class="ttdeci">std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; convert_to_fragmented_sparse(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const ConvertToFragmentedSparseOptions &amp;options)</div><div class="ttdef"><b>Definition</b> convert_to_fragmented_sparse.hpp:205</div></div>
+<div class="ttc" id="anamespacetatami_html_add29754647077a82209dfe6ba78cd2b5"><div class="ttname"><a href="namespacetatami.html#add29754647077a82209dfe6ba78cd2b5">tatami::convert_to_fragmented_sparse</a></div><div class="ttdeci">std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt; convert_to_fragmented_sparse(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const ConvertToFragmentedSparseOptions &amp;options)</div><div class="ttdef"><b>Definition</b> convert_to_fragmented_sparse.hpp:212</div></div>
 <div class="ttc" id="anamespacetatami_html_aedb635e5ca22b18c04980c08643f2875"><div class="ttname"><a href="namespacetatami.html#aedb635e5ca22b18c04980c08643f2875">tatami::consecutive_extractor</a></div><div class="ttdeci">auto consecutive_extractor(const Matrix&lt; Value_, Index_ &gt; &amp;matrix, bool row, Index_ iter_start, Index_ iter_length, Args_ &amp;&amp;... args)</div><div class="ttdef"><b>Definition</b> consecutive_extractor.hpp:35</div></div>
 <div class="ttc" id="aparallelize_8hpp_html"><div class="ttname"><a href="parallelize_8hpp.html">parallelize.hpp</a></div><div class="ttdoc">Parallelized iteration over a tatami::Matrix.</div></div>
 <div class="ttc" id="astructtatami_1_1ConvertToFragmentedSparseOptions_html"><div class="ttname"><a href="structtatami_1_1ConvertToFragmentedSparseOptions.html">tatami::ConvertToFragmentedSparseOptions</a></div><div class="ttdoc">Options for convert_to_fragmented_sparse().</div><div class="ttdef"><b>Definition</b> convert_to_fragmented_sparse.hpp:182</div></div>

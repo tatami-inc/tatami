@@ -5266,7 +5266,7 @@
       <type>std::shared_ptr&lt; Matrix&lt; Value_, Index_ &gt; &gt;</type>
       <name>convert_to_compressed_sparse</name>
       <anchorfile>namespacetatami.html</anchorfile>
-      <anchor>a2eaf90f62fd2ccfcd1c35ef291f7f489</anchor>
+      <anchor>a415036bb92741de0ca2a4824cf2adfd3</anchor>
       <arglist>(const Matrix&lt; InputValue_, InputIndex_ &gt; &amp;matrix, bool row, const ConvertToCompressedSparseOptions &amp;options)</arglist>
     </member>
     <member kind="function">
