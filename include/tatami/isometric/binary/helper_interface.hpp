@@ -1,11 +1,11 @@
-#ifndef TATAMI_ISOMETRIC_BINARY_MOCK_HELPERS_H
-#define TATAMI_ISOMETRIC_BINARY_MOCK_HELPERS_H
+#ifndef TATAMI_ISOMETRIC_BINARY_HELPER_H
+#define TATAMI_ISOMETRIC_BINARY_HELPER_H
 
 #include <vector>
 #include "../../base/SparseRange.hpp"
 
 /** 
- * @file Helper.hpp
+ * @file helper_interface.hpp
  * @brief Interface for `tatami::DelayedBinaryIsometricOperation` helpers.
  */
 

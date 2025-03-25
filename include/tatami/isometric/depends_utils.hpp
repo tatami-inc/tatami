@@ -94,9 +94,7 @@ class MaybeOracleDepends {
 public:
     MaybeOracleDepends(const MaybeOracle<oracle_, Index_>& oracle, const Operation_& op, bool row) {
         if constexpr(oracle_) {
-            if constexpr(Operation_::is_basic) {
-                my_oracle = oracle;
-            } else if ([&]{
+            if ([&]{
                 // Only storing if the oracle if we need the row/column index
                 // on the target dimension to apply the operation.
                 if (row) {
@@ -122,9 +120,7 @@ public:
 
     Index_ get(Index_ i) {
         if constexpr(oracle_) {
-            if constexpr(Operation_::is_basic) {
-                return my_oracle->get(my_used++);
-            } else if constexpr(
+            if constexpr(
                 // If none of these are present, we can assume that they're all
                 // false, allowing us to elide the my_oracle=NULL check.
                 has_zero_depends_on_row<Operation_>::value || 

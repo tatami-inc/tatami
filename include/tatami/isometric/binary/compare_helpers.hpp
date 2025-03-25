@@ -3,7 +3,7 @@
 
 #include "../compare_utils.hpp"
 #include "utils.hpp"
-#include "Helper.hpp"
+#include "helper_interface.hpp"
 
 /**
  * @file compare_helpers.hpp
@@ -23,7 +23,7 @@ namespace tatami {
  * @tparam InputValue_ Type of the matrix value used in the operation.
  * @tparam Index_ Type of index value.
  */
-template<CompareOperation op_, , typename OutputValue_, typename InputValue_, typename Index_>
+template<CompareOperation op_, typename OutputValue_, typename InputValue_, typename Index_>
 struct DelayedBinaryIsometricCompare final : public DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
     bool zero_depends_on_row() const { return false; }
@@ -92,7 +92,6 @@ public:
      * @endcond
      */
 
-    template<typename OutputValue_, typename InputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         if constexpr(known_sparse) {
             return 0;

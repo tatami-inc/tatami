@@ -3,7 +3,7 @@
 
 #include "../arithmetic_utils.hpp"
 #include "utils.hpp"
-#include "Helper.hpp"
+#include "helper_interface.hpp"
 
 #include <limits>
 #include <vector>
@@ -90,7 +90,6 @@ public:
     }
 
 public:
-    template<typename OutputValue_, typename InputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         if constexpr(has_unsafe_divide_by_zero<op_, true, InputValue_, InputValue_>()) {
             throw std::runtime_error("division by zero is not supported");
@@ -110,42 +109,112 @@ public:
 };
 
 /**
+ * Convenient alias for the addition helper.
+ *
+ * @tparam OutputValue_ Type of the result of the addition.
+ * @tparam InputValue_ Type of the matrix value used in the addition.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricAddHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::ADD, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the subtraction helper.
+ *
+ * @tparam OutputValue_ Type of the result of the subtraction.
+ * @tparam InputValue_ Type of the matrix value used in the subtraction.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricSubtractHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::SUBTRACT, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the multiplication helper.
+ *
+ * @tparam OutputValue_ Type of the result of the multiplication.
+ * @tparam InputValue_ Type of the matrix value used in the multiplication.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricMultiplyHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::MULTIPLY, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the division helper.
+ *
+ * @tparam OutputValue_ Type of the result of the division.
+ * @tparam InputValue_ Type of the matrix value used in the division.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricDivideHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::DIVIDE, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the power operation helper.
+ *
+ * @tparam OutputValue_ Type of the result of the power operation.
+ * @tparam InputValue_ Type of the matrix value used in the power operation.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricPowerHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::POWER, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the modulo operation helper.
+ *
+ * @tparam OutputValue_ Type of the result of the modulo operation.
+ * @tparam InputValue_ Type of the matrix value used in the modulo operation.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricModuloHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::MODULO, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the integer division helper.
+ *
+ * @tparam OutputValue_ Type of the result of the integer division.
+ * @tparam InputValue_ Type of the matrix value used in the integer division.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricIntegerDivideHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::INTEGER_DIVIDE, OutputValue_, InputValue_, Index_>;
+
+/**
  * @cond
  */
 // Provided for back-compatibility only.
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricArithmetic<ArithmeticOperation::ADD, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricAdd() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::ADD, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricAddHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricAdd() {
+    return DelayedBinaryIsometricAddHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricArithmetic<ArithmeticOperation::SUBTRACT, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricSubtract() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::SUBTRACT, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricSubtractHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricSubtract() {
+    return DelayedBinaryIsometricSubtractHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricArithmetic<ArithmeticOperation::MULTIPLY, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricMultiply() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::MULTIPLY, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricMultiplyHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricMultiply() {
+    return DelayedBinaryIsometricMultiplyHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricArithmetic<ArithmeticOperation::DIVIDE, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricDivide() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::DIVIDE, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricDivideHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricDivide() {
+    return DelayedBinaryIsometricDivideHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricArithmetic<ArithmeticOperation::POWER, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricPower() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::POWER, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricPowerHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricPower() {
+    return DelayedBinaryIsometricPowerHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricArithmetic<ArithmeticOperation::MODULO, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricModulo() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::MODULO, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricModuloHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricModulo() {
+    return DelayedBinaryIsometricModuloHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricArithmetic<ArithmeticOperation::INTEGER_DIVIDE, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricIntegerDivide() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::INTEGER_DIVIDE, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricIntegerDivideHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricIntegerDivide() {
+    return DelayedBinaryIsometricIntegerDivideHelper<OutputValue_, InputValue_, Index_>();
 }
 /**
  * @endcond

@@ -3,7 +3,7 @@
 
 #include "../boolean_utils.hpp"
 #include "utils.hpp"
-#include "Helper.hpp"
+#include "helper_interface.hpp"
 
 /**
  * @file boolean_helpers.hpp
