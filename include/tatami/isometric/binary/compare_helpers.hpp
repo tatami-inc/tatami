@@ -24,7 +24,7 @@ namespace tatami {
  * @tparam Index_ Type of index value.
  */
 template<CompareOperation op_, typename OutputValue_, typename InputValue_, typename Index_>
-struct DelayedBinaryIsometricCompare final : public DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+struct DelayedBinaryIsometricCompareHelper final : public DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
     bool zero_depends_on_row() const { return false; }
     bool zero_depends_on_column() const { return false; }
@@ -106,36 +106,106 @@ public:
 };
 
 /**
+ * Convenient alias for the equality comparison helper.
+ *
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricEqualHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::EQUAL, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the "greater than" comparison helper.
+ *
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricGreaterThanHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the "greater than" comparison helper.
+ *
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricGreaterThanHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the "less than" comparison helper.
+ *
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricLessThanHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the "greater than or equal" comparison helper.
+ *
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricGreaterThanOrEqualHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the "less than or equal" comparison helper.
+ *
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricLessThanOrEqualHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_>;
+
+/**
+ * Convenient alias for the non-equality comparison helper.
+ *
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Type of index value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricNotEqualHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_>;
+
+/**
  * @cond
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricCompare<CompareOperation::EQUAL, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricEqual() {
-    return DelayedBinaryIsometricCompare<CompareOperation::EQUAL, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricEqualHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricEqual() {
+    return DelayedBinaryIsometricEqualHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricGreaterThan() {
-    return DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricGreaterThanHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricGreaterThan() {
+    return DelayedBinaryIsometricGreaterThanHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricLessThan() {
-    return DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricLessThanHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricLessThan() {
+    return DelayedBinaryIsometricLessThanHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricGreaterThanOrEqual() {
-    return DelayedBinaryIsometricCompare<CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricGreaterThanOrEqualHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricGreaterThanOrEqual() {
+    return DelayedBinaryIsometricGreaterThanOrEqualHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricLessThanOrEqual() {
-    return DelayedBinaryIsometricCompare<CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricLessThanOrEqualHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricLessThanOrEqual() {
+    return DelayedBinaryIsometricLessThanOrEqualHelper<OutputValue_, InputValue_, Index_>();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricCompare<CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricNotEqual() {
-    return DelayedBinaryIsometricCompare<CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_>();
+DelayedBinaryIsometricNotEqualHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricNotEqual() {
+    return DelayedBinaryIsometricNotEqualHelper<OutputValue_, InputValue_, Index_>();
 }
 /**
  * @endcond
