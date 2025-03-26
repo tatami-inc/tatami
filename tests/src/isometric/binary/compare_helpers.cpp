@@ -189,3 +189,18 @@ TEST_F(DelayedBinaryIsometricCompareTest, NewType) {
     quick_test_all<uint8_t, int>(dense_umod, uref);
     quick_test_all<uint8_t, int>(sparse_umod, uref);
 }
+
+TEST(DelayedBinaryIsometricCompare, BackCompatibility) {
+    auto eq = tatami::make_DelayedBinaryIsometricEqual();
+    EXPECT_FALSE(eq->is_sparse());
+    auto gt = tatami::make_DelayedBinaryIsometricGreaterThan();
+    EXPECT_TRUE(gt->is_sparse());
+    auto lt = tatami::make_DelayedBinaryIsometricLessThan();
+    EXPECT_TRUE(lt->is_sparse());
+    auto gte = tatami::make_DelayedBinaryIsometricGreaterThanOrEqual();
+    EXPECT_FALSE(gte->is_sparse());
+    auto lte = tatami::make_DelayedBinaryIsometricLessThanOrEqual();
+    EXPECT_FALSE(lte->is_sparse());
+    auto neq = tatami::make_DelayedBinaryIsometricNotEqual();
+    EXPECT_TRUE(neq->is_sparse());
+}

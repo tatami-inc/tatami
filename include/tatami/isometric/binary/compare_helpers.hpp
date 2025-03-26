@@ -179,33 +179,33 @@ using DelayedBinaryIsometricNotEqualHelper = DelayedBinaryIsometricCompareHelper
  * @cond
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricEqualHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricEqual() {
-    return DelayedBinaryIsometricEqualHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricEqual() {
+    return std::make_shared<DelayedBinaryIsometricEqualHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricGreaterThanHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricGreaterThan() {
-    return DelayedBinaryIsometricGreaterThanHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricGreaterThan() {
+    return std::make_shared<DelayedBinaryIsometricGreaterThanHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricLessThanHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricLessThan() {
-    return DelayedBinaryIsometricLessThanHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricLessThan() {
+    return std::make_shared<DelayedBinaryIsometricLessThanHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricGreaterThanOrEqualHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricGreaterThanOrEqual() {
-    return DelayedBinaryIsometricGreaterThanOrEqualHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricGreaterThanOrEqual() {
+    return std::make_shared<DelayedBinaryIsometricGreaterThanOrEqualHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricLessThanOrEqualHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricLessThanOrEqual() {
-    return DelayedBinaryIsometricLessThanOrEqualHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricLessThanOrEqual() {
+    return std::make_shared<DelayedBinaryIsometricLessThanOrEqualHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricNotEqualHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricNotEqual() {
-    return DelayedBinaryIsometricNotEqualHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricNotEqual() {
+    return std::make_shared<DelayedBinaryIsometricNotEqualHelper<OutputValue_, InputValue_, Index_> >();
 }
 /**
  * @endcond

@@ -513,3 +513,20 @@ TEST_F(DelayedBinaryIsometricIntegerDivideTest, Basic) {
 BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricIntegerDivideFullTest, DelayedBinaryIsometricIntegerDivideUtils)
 BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricIntegerDivideBlockTest, DelayedBinaryIsometricIntegerDivideUtils)
 BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricIntegerDivideIndexTest, DelayedBinaryIsometricIntegerDivideUtils)
+
+TEST(DelayedBinaryIsometricArithmetic, BackCompatibility) {
+    auto add = tatami::make_DelayedBinaryIsometricAdd();
+    EXPECT_TRUE(add->is_sparse());
+    auto sub = tatami::make_DelayedBinaryIsometricSubtract();
+    EXPECT_TRUE(sub->is_sparse());
+    auto mult = tatami::make_DelayedBinaryIsometricMultiply();
+    EXPECT_TRUE(mult->is_sparse());
+    auto div = tatami::make_DelayedBinaryIsometricDivide();
+    EXPECT_FALSE(div->is_sparse());
+    auto pow = tatami::make_DelayedBinaryIsometricPower();
+    EXPECT_FALSE(pow->is_sparse());
+    auto mod = tatami::make_DelayedBinaryIsometricModulo();
+    EXPECT_FALSE(mod->is_sparse());
+    auto intdiv = tatami::make_DelayedBinaryIsometricIntegerDivide();
+    EXPECT_FALSE(intdiv->is_sparse());
+}

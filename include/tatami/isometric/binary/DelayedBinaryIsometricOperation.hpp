@@ -822,6 +822,31 @@ public:
     }
 };
 
+/**
+ * @cond
+ */
+// Back-compatibility only.
+template<typename OutputValue_ = double, typename InputValue_, typename Index_, class Operation_>
+std::shared_ptr<Matrix<OutputValue_, Index_> > make_DelayedBinaryIsometricOperation(
+    std::shared_ptr<const Matrix<InputValue_, Index_> > left,
+    std::shared_ptr<const Matrix<InputValue_, Index_> > right,
+    std::shared_ptr<const Operation_> op)
+{
+    return std::make_shared<DelayedBinaryIsometricOperation<OutputValue_, InputValue_, Index_, Operation_> >(std::move(left), std::move(right), std::move(op));
+}
+
+template<typename OutputValue_ = double, typename InputValue_, typename Index_, class Operation_>
+std::shared_ptr<Matrix<OutputValue_, Index_> > make_DelayedBinaryIsometricOperation(
+    std::shared_ptr<Matrix<InputValue_, Index_> > left,
+    std::shared_ptr<Matrix<InputValue_, Index_> > right,
+    std::shared_ptr<Operation_> op)
+{
+    return std::make_shared<DelayedBinaryIsometricOperation<OutputValue_, InputValue_, Index_, Operation_> >(std::move(left), std::move(right), std::move(op));
+}
+/**
+ * @endcond
+ */
+
 }
 
 #endif

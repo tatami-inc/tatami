@@ -13,14 +13,18 @@
 #include "tatami_test/tatami_test.hpp"
 #include "../utils.h"
 
-TEST(DelayedBinaryIsometricOperation, ConstOverload) {
+TEST(DelayedBinaryIsometricOperation, BackCompatibility) {
     int nrow = 23, ncol = 42;
-    auto dense = std::shared_ptr<const tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
-    tatami::DelayedBinaryIsometricOperation<double, double, int> mat(dense, dense, std::make_shared<tatami::DelayedBinaryIsometricAddHelper<double, double, int> >());
 
-    // cursory checks.
-    EXPECT_EQ(mat.nrow(), nrow);
-    EXPECT_EQ(mat.ncol(), ncol);
+    auto dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::vector<double>(nrow * ncol)));
+    auto mat = tatami::make_DelayedBinaryIsometricOperation(dense, dense, std::make_shared<tatami::DelayedBinaryIsometricAddHelper<double, double, int> >());
+    EXPECT_EQ(mat->nrow(), nrow);
+    EXPECT_EQ(mat->ncol(), ncol);
+
+    std::shared_ptr<const tatami::NumericMatrix> cdense(dense);
+    auto cmat = tatami::make_DelayedBinaryIsometricOperation(cdense, cdense, std::make_shared<const tatami::DelayedBinaryIsometricAddHelper<double, double, int> >());
+    EXPECT_EQ(cmat->nrow(), nrow);
+    EXPECT_EQ(cmat->ncol(), ncol);
 }
 
 TEST(DelayedBinaryIsometricOperation, Misshappen) {

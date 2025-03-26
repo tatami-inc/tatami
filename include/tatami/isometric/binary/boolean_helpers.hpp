@@ -149,22 +149,22 @@ using DelayedBinaryIsometricBooleanXorHelper = DelayedBinaryIsometricBooleanHelp
  * @cond
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-auto make_DelayedBinaryIsometricBooleanEqual() {
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricBooleanEqual() {
     return std::make_shared<DelayedBinaryIsometricBooleanEqualHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-auto make_DelayedBinaryIsometricBooleanAnd() {
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricBooleanAnd() {
     return std::make_shared<DelayedBinaryIsometricBooleanAndHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-auto make_DelayedBinaryIsometricBooleanOr() {
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricBooleanOr() {
     return std::make_shared<DelayedBinaryIsometricBooleanOrHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-auto make_DelayedBinaryIsometricBooleanXor() {
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricBooleanXor() {
     return std::make_shared<DelayedBinaryIsometricBooleanXorHelper<OutputValue_, InputValue_, Index_> >();
 }
 /**

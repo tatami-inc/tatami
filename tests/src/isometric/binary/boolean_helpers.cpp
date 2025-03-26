@@ -146,3 +146,14 @@ TEST_F(DelayedBinaryIsometricBooleanTest, NewType) {
     quick_test_all<uint8_t, int>(dense_umod, uref);
     quick_test_all<uint8_t, int>(sparse_umod, uref);
 }
+
+TEST(DelayedBinaryIsometricBoolean, BackCompatibility) {
+    auto eq = tatami::make_DelayedBinaryIsometricBooleanEqual();
+    EXPECT_FALSE(eq->is_sparse());
+    auto andop = tatami::make_DelayedBinaryIsometricBooleanAnd();
+    EXPECT_TRUE(andop->is_sparse());
+    auto orop = tatami::make_DelayedBinaryIsometricBooleanOr();
+    EXPECT_TRUE(orop->is_sparse());
+    auto xorop = tatami::make_DelayedBinaryIsometricBooleanXor();
+    EXPECT_TRUE(xorop->is_sparse());
+}

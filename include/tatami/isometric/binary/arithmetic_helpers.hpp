@@ -183,38 +183,38 @@ using DelayedBinaryIsometricIntegerDivideHelper = DelayedBinaryIsometricArithmet
  */
 // Provided for back-compatibility only.
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricAddHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricAdd() {
-    return DelayedBinaryIsometricAddHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricAdd() {
+    return std::make_shared<DelayedBinaryIsometricAddHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricSubtractHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricSubtract() {
-    return DelayedBinaryIsometricSubtractHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricSubtract() {
+    return std::make_shared<DelayedBinaryIsometricSubtractHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricMultiplyHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricMultiply() {
-    return DelayedBinaryIsometricMultiplyHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricMultiply() {
+    return std::make_shared<DelayedBinaryIsometricMultiplyHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricDivideHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricDivide() {
-    return DelayedBinaryIsometricDivideHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricDivide() {
+    return std::make_shared<DelayedBinaryIsometricDivideHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricPowerHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricPower() {
-    return DelayedBinaryIsometricPowerHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricPower() {
+    return std::make_shared<DelayedBinaryIsometricPowerHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricModuloHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricModulo() {
-    return DelayedBinaryIsometricModuloHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricModulo() {
+    return std::make_shared<DelayedBinaryIsometricModuloHelper<OutputValue_, InputValue_, Index_> >();
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-DelayedBinaryIsometricIntegerDivideHelper<OutputValue_, InputValue_, Index_> make_DelayedBinaryIsometricIntegerDivide() {
-    return DelayedBinaryIsometricIntegerDivideHelper<OutputValue_, InputValue_, Index_>();
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricIntegerDivide() {
+    return std::make_shared<DelayedBinaryIsometricIntegerDivideHelper<OutputValue_, InputValue_, Index_> >();
 }
 /**
  * @endcond
