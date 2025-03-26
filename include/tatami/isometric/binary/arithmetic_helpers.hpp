@@ -24,7 +24,7 @@ namespace tatami {
  * @tparam op_ The arithmetic operation.
  * @tparam OutputValue_ Type of the result of the operation.
  * @tparam InputValue_ Type of the matrix value used in the operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<ArithmeticOperation op_, typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedBinaryIsometricArithmeticHelper final : public DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
@@ -113,7 +113,7 @@ public:
  *
  * @tparam OutputValue_ Type of the result of the addition.
  * @tparam InputValue_ Type of the matrix value used in the addition.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 using DelayedBinaryIsometricAddHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::ADD, OutputValue_, InputValue_, Index_>;
@@ -123,7 +123,7 @@ using DelayedBinaryIsometricAddHelper = DelayedBinaryIsometricArithmeticHelper<A
  *
  * @tparam OutputValue_ Type of the result of the subtraction.
  * @tparam InputValue_ Type of the matrix value used in the subtraction.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 using DelayedBinaryIsometricSubtractHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::SUBTRACT, OutputValue_, InputValue_, Index_>;
@@ -133,7 +133,7 @@ using DelayedBinaryIsometricSubtractHelper = DelayedBinaryIsometricArithmeticHel
  *
  * @tparam OutputValue_ Type of the result of the multiplication.
  * @tparam InputValue_ Type of the matrix value used in the multiplication.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 using DelayedBinaryIsometricMultiplyHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::MULTIPLY, OutputValue_, InputValue_, Index_>;
@@ -143,7 +143,7 @@ using DelayedBinaryIsometricMultiplyHelper = DelayedBinaryIsometricArithmeticHel
  *
  * @tparam OutputValue_ Type of the result of the division.
  * @tparam InputValue_ Type of the matrix value used in the division.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 using DelayedBinaryIsometricDivideHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::DIVIDE, OutputValue_, InputValue_, Index_>;
@@ -153,7 +153,7 @@ using DelayedBinaryIsometricDivideHelper = DelayedBinaryIsometricArithmeticHelpe
  *
  * @tparam OutputValue_ Type of the result of the power operation.
  * @tparam InputValue_ Type of the matrix value used in the power operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 using DelayedBinaryIsometricPowerHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::POWER, OutputValue_, InputValue_, Index_>;
@@ -163,7 +163,7 @@ using DelayedBinaryIsometricPowerHelper = DelayedBinaryIsometricArithmeticHelper
  *
  * @tparam OutputValue_ Type of the result of the modulo operation.
  * @tparam InputValue_ Type of the matrix value used in the modulo operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 using DelayedBinaryIsometricModuloHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::MODULO, OutputValue_, InputValue_, Index_>;
@@ -173,7 +173,7 @@ using DelayedBinaryIsometricModuloHelper = DelayedBinaryIsometricArithmeticHelpe
  *
  * @tparam OutputValue_ Type of the result of the integer division.
  * @tparam InputValue_ Type of the matrix value used in the integer division.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 using DelayedBinaryIsometricIntegerDivideHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::INTEGER_DIVIDE, OutputValue_, InputValue_, Index_>;

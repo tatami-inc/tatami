@@ -21,7 +21,7 @@ namespace tatami {
  * @tparam op_ The comparison operation.
  * @tparam OutputValue_ Type of the result of the operation.
  * @tparam InputValue_ Type of the matrix value used in the operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<CompareOperation op_, typename OutputValue_, typename InputValue_, typename Index_>
 struct DelayedBinaryIsometricCompareHelper final : public DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
@@ -110,7 +110,7 @@ public:
  *
  * @tparam OutputValue_ Type of the result of the comparison.
  * @tparam InputValue_ Type of the matrix value used in the comparison.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricEqualHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::EQUAL, OutputValue_, InputValue_, Index_>;
@@ -120,7 +120,7 @@ using DelayedBinaryIsometricEqualHelper = DelayedBinaryIsometricCompareHelper<Co
  *
  * @tparam OutputValue_ Type of the result of the comparison.
  * @tparam InputValue_ Type of the matrix value used in the comparison.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricGreaterThanHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_>;
@@ -130,7 +130,7 @@ using DelayedBinaryIsometricGreaterThanHelper = DelayedBinaryIsometricCompareHel
  *
  * @tparam OutputValue_ Type of the result of the comparison.
  * @tparam InputValue_ Type of the matrix value used in the comparison.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricGreaterThanHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_>;
@@ -140,7 +140,7 @@ using DelayedBinaryIsometricGreaterThanHelper = DelayedBinaryIsometricCompareHel
  *
  * @tparam OutputValue_ Type of the result of the comparison.
  * @tparam InputValue_ Type of the matrix value used in the comparison.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricLessThanHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_>;
@@ -150,7 +150,7 @@ using DelayedBinaryIsometricLessThanHelper = DelayedBinaryIsometricCompareHelper
  *
  * @tparam OutputValue_ Type of the result of the comparison.
  * @tparam InputValue_ Type of the matrix value used in the comparison.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricGreaterThanOrEqualHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_>;
@@ -160,7 +160,7 @@ using DelayedBinaryIsometricGreaterThanOrEqualHelper = DelayedBinaryIsometricCom
  *
  * @tparam OutputValue_ Type of the result of the comparison.
  * @tparam InputValue_ Type of the matrix value used in the comparison.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricLessThanOrEqualHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_>;
@@ -170,7 +170,7 @@ using DelayedBinaryIsometricLessThanOrEqualHelper = DelayedBinaryIsometricCompar
  *
  * @tparam OutputValue_ Type of the result of the comparison.
  * @tparam InputValue_ Type of the matrix value used in the comparison.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricNotEqualHelper = DelayedBinaryIsometricCompareHelper<CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_>;

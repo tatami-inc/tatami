@@ -660,27 +660,28 @@ public:
  * This class is inspired by the `DelayedUnaryIsoOp` classes from the **DelayedArray** Bioconductor package.
  * 
  * @tparam OutputValue_ Type of the result of the operation.
- * This is the type of the value of the output matrix.
- * @tparam InputValue_ Type of the value of the input matrix, to use in the operation.
- * This may or may not be the same as `OutputValue_`, depending on the methods available in `Operation_`.
- * @tparam Index_ Type of index value.
+ * @tparam InputValue_ Type of the value of the input matrix.
+ * @tparam Index_ Integer type for the row/column indices.
  * @tparam Operation_ Helper class representing the operation of interest.
- * This should implement the same methods as `DelayedUnaryIsometricMockBasic` or `DelayedUnaryIsometricMockAdvanced`,
- * depending on whether it can take advantage of matrix sparsity.
  */
-template<typename OutputValue_, typename InputValue_, typename Index_, class Operation_>
+template<typename OutputValue_, typename InputValue_, typename Index_, class Operation_ = DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> >
 class DelayedUnaryIsometricOperation final : public Matrix<OutputValue_, Index_> {
 public:
     /**
      * @param matrix Pointer to the underlying matrix.
-     * @param operation Instance of the functor class.
+     * @param operation Pointer to an instance of the operation helper.
      */
-    DelayedUnaryIsometricOperation(std::shared_ptr<const Matrix<InputValue_, Index_> > matrix, Operation_ operation) : 
-        my_matrix(std::move(matrix)), my_operation(std::move(operation)) {}
+    DelayedUnaryIsometricOperation(
+        std::shared_ptr<const Matrix<InputValue_, Index_> > matrix,
+        std::shared_ptr<const Operation_> operation
+    ) : 
+        my_matrix(std::move(matrix)),
+        my_operation(std::move(operation)) 
+    {}
 
 private:
     std::shared_ptr<const Matrix<InputValue_, Index_> > my_matrix;
-    Operation_ my_operation;
+    std::shared_ptr<const Operation_> my_operation;
 
 public:
     Index_ nrow() const {
@@ -692,19 +693,15 @@ public:
     }
 
     bool is_sparse() const {
-        if constexpr(!Operation_::is_basic) {
-            if (my_operation.is_sparse()) {
-                return my_matrix->is_sparse();
-            }
+        if (my_operation.is_sparse()) {
+            return my_matrix->is_sparse();
         }
         return false;
     }
 
     double is_sparse_proportion() const {
-        if constexpr(!Operation_::is_basic) {
-            if (my_operation.is_sparse()) {
-                return my_matrix->is_sparse_proportion();
-            }
+        if (my_operation.is_sparse()) {
+            return my_matrix->is_sparse_proportion();
         }
         return 0;
     }
@@ -773,14 +770,11 @@ private:
 
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_internal(bool row, Args_&& ... args) const {
-        if constexpr(!Operation_::is_basic) {
-            if (my_matrix->is_sparse()) {
-                if (DelayedIsometricOperation_internal::can_dense_expand(my_operation, row)) {
-                    return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
-                }
+        if (my_matrix->is_sparse()) {
+            if (DelayedIsometricOperation_internal::can_dense_expand(my_operation, row)) {
+                return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
             }
         }
-
         return dense_basic_internal<oracle_>(row, std::forward<Args_>(args)...);
     }
 
@@ -831,29 +825,26 @@ private:
 
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<SparseExtractor<oracle_, OutputValue_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) const {
-        if constexpr(!Operation_::is_basic) {
-            if (my_operation.is_sparse() && my_matrix->is_sparse()) { 
-                if (DelayedIsometricOperation_internal::needs_sparse_indices(my_operation, row)) {
-                    return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseNeedsIndices<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
-                        my_matrix.get(),
-                        my_operation,
-                        row, 
-                        std::move(oracle),
-                        std::forward<Args_>(args)...
-                    );
+        if (my_operation.is_sparse() && my_matrix->is_sparse()) { 
+            if (DelayedIsometricOperation_internal::needs_sparse_indices(my_operation, row)) {
+                return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseNeedsIndices<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
+                    my_matrix.get(),
+                    my_operation,
+                    row, 
+                    std::move(oracle),
+                    std::forward<Args_>(args)...
+                );
 
-                } else {
-                    return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseSimple<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
-                        my_matrix.get(),
-                        my_operation, 
-                        row, 
-                        std::move(oracle), 
-                        std::forward<Args_>(args)...
-                    );
-                }
+            } else {
+                return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseSimple<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
+                    my_matrix.get(),
+                    my_operation, 
+                    row, 
+                    std::move(oracle), 
+                    std::forward<Args_>(args)...
+                );
             }
         }
-
         return sparse_to_dense_internal<oracle_>(row, std::move(oracle), std::forward<Args_>(args)...);
     }
 
@@ -908,7 +899,7 @@ public:
  *
  * @tparam OutputValue_ Type of matrix value after the operation.
  * @tparam InputValue_ Type of matrix value before the operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  * @tparam Operation_ Helper class implementing the operation.
  *
  * @param matrix Pointer to a (possibly `const`) `Matrix`.

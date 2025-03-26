@@ -21,7 +21,7 @@ namespace tatami {
  * @tparam op_ The boolean operation.
  * @tparam OutputValue_ Type of the result of the operation.
  * @tparam InputValue_ Type of the matrix value used in the operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<BooleanOperation op_, typename OutputValue_, typename InputValue_, typename Index_>
 struct DelayedBinaryIsometricBooleanHelper final : public DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
@@ -110,7 +110,7 @@ public:
  *
  * @tparam OutputValue_ Type of the result of the boolean operation.
  * @tparam InputValue_ Type of the matrix value used in the boolean operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricBooleanEqualHelper = DelayedBinaryIsometricBooleanHelper<BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_>;
@@ -120,7 +120,7 @@ using DelayedBinaryIsometricBooleanEqualHelper = DelayedBinaryIsometricBooleanHe
  *
  * @tparam OutputValue_ Type of the result of the boolean operation.
  * @tparam InputValue_ Type of the matrix value used in the boolean operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricBooleanAndHelper = DelayedBinaryIsometricBooleanHelper<BooleanOperation::AND, OutputValue_, InputValue_, Index_>;
@@ -130,7 +130,7 @@ using DelayedBinaryIsometricBooleanAndHelper = DelayedBinaryIsometricBooleanHelp
  *
  * @tparam OutputValue_ Type of the result of the boolean operation.
  * @tparam InputValue_ Type of the matrix value used in the boolean operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricBooleanOrHelper = DelayedBinaryIsometricBooleanHelper<BooleanOperation::OR, OutputValue_, InputValue_, Index_>;
@@ -140,7 +140,7 @@ using DelayedBinaryIsometricBooleanOrHelper = DelayedBinaryIsometricBooleanHelpe
  *
  * @tparam OutputValue_ Type of the result of the boolean operation.
  * @tparam InputValue_ Type of the matrix value used in the boolean operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 using DelayedBinaryIsometricBooleanXorHelper = DelayedBinaryIsometricBooleanHelper<BooleanOperation::XOR, OutputValue_, InputValue_, Index_>;

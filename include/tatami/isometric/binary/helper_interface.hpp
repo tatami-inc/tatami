@@ -1,5 +1,5 @@
-#ifndef TATAMI_ISOMETRIC_BINARY_HELPER_H
-#define TATAMI_ISOMETRIC_BINARY_HELPER_H
+#ifndef TATAMI_DELAYED_BINARY_ISOMETRIC_OPERATION_HELPER_INTERFACE_H
+#define TATAMI_DELAYED_BINARY_ISOMETRIC_OPERATION_HELPER_INTERFACE_H
 
 #include <vector>
 #include "../../base/SparseRange.hpp"
@@ -12,14 +12,14 @@
 namespace tatami {
 
 /**
- * @brief Virtual helper class for operations in `DelayedBinaryIsometricOperation`.
+ * @brief Helper operation interface for `DelayedBinaryIsometricOperation`.
  *
  * This class defines the interface for an operation helper in `DelayedBinaryIsometricOperation`.
  * Operations should generally inherit from this class, though it is possible for developers to define their own classes with the same signatures for compile-time polymorphism.
  *
  * @tparam OutputValue_ Type of the result of the operation.
  * @tparam InputValue_ Type of the matrix value used in the operation.
- * @tparam Index_ Type of index value.
+ * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedBinaryIsometricOperationHelper {

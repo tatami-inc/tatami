@@ -538,7 +538,7 @@ public:
     /**
      * @param left Pointer to the left matrix.
      * @param right Pointer to the right matrix.
-     * @param operation Instance of the functor class.
+     * @param operation Pointer to an instance of the helper class.
      */
     DelayedBinaryIsometricOperation(
         std::shared_ptr<const Matrix<InputValue_, Index_> > left,
