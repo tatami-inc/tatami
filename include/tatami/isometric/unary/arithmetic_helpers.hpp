@@ -34,7 +34,7 @@ auto delayed_arithmetic_zeroish(Scalar_ scalar) {
     if constexpr(has_unsafe_divide_by_zero<op_, right_, InputValue_, Scalar_>()) {
         if constexpr(right_) {
             if (scalar) {
-                OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
+                OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_, Scalar_>(0, scalar);
                 if constexpr(check_only_) {
                     return val == 0;
                 } else {
@@ -51,7 +51,7 @@ auto delayed_arithmetic_zeroish(Scalar_ scalar) {
         }
 
     } else {
-        OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
+        OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_, Scalar_>(0, scalar);
         if constexpr(check_only_) {
             return val == 0;
         } else {
@@ -62,12 +62,12 @@ auto delayed_arithmetic_zeroish(Scalar_ scalar) {
 
 template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename InputValue_, typename Scalar_>
 bool delayed_arithmetic_actual_sparse(Scalar_ scalar) {
-    return static_cast<OutputValue_>(delayed_arithmetic_zeroish<true, op_, right_, InputValue_, Scalar_>(scalar)) == 0;
+    return delayed_arithmetic_zeroish<true, op_, right_, OutputValue_, InputValue_, Scalar_>(scalar);
 }
 
 template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename InputValue_, typename Scalar_>
 OutputValue_ delayed_arithmetic_zero(Scalar_ scalar) {
-    return delayed_arithmetic_zeroish<false, op_, right_, InputValue_, Scalar_>(scalar);
+    return delayed_arithmetic_zeroish<false, op_, right_, OutputValue_, InputValue_, Scalar_>(scalar);
 }
 /**
  * @endcond
@@ -142,7 +142,7 @@ public:
         // the OutputValue_, which is consistent with the behavior of all other
         // methods. See ../arithmetic_utils.hpp for some comments about the
         // safety of this cast when the value is known at compile time.
-        return delayed_arithmetic_zero<op_, right_, InputValue_>(my_scalar);
+        return delayed_arithmetic_zero<op_, right_, OutputValue_, InputValue_>(my_scalar);
     }
 };
 
@@ -297,7 +297,7 @@ public:
      */
     DelayedUnaryIsometricArithmeticVectorHelper(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
         for (auto x : my_vector) {
-            if (!delayed_arithmetic_actual_sparse<op_, right_, InputValue_>(x)) {
+            if (!delayed_arithmetic_actual_sparse<op_, right_, OutputValue_, InputValue_>(x)) {
                 my_sparse = false;
                 break;
             }
@@ -374,7 +374,7 @@ public:
 
     OutputValue_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
-            return delayed_arithmetic_zero<op_, right_, InputValue_>(my_vector[idx]);
+            return delayed_arithmetic_zero<op_, right_, OutputValue_, InputValue_>(my_vector[idx]);
         } else {
             // We should only get to this point if it's sparse, otherwise no
             // single fill value would work across the length of my_vector.

@@ -95,7 +95,7 @@ public:
             throw std::runtime_error("division by zero is not supported");
             return 0;
         } else {
-            return delayed_arithmetic<op_, true, InputValue_>(0, 0);
+            return delayed_arithmetic<op_, true, InputValue_, InputValue_>(0, 0);
         }
     }
 

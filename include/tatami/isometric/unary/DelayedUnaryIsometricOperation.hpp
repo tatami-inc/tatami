@@ -243,7 +243,7 @@ public:
 
         // avoid calling fill() if possible, as this might throw zero-related errors with non-IEEE-float types.
         if (range.number < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
+            std::fill_n(buffer, my_extent, my_operation.fill(my_row, i));
         }
 
         if constexpr(same_value) {
@@ -317,7 +317,7 @@ public:
 
         // avoid calling fill() if possible, as this might throw zero-related errors with non-IEEE-float types.
         if (range.number < my_block_length) { 
-            std::fill_n(buffer, my_block_length, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
+            std::fill_n(buffer, my_block_length, my_operation.fill(my_row, i));
         }
 
         if constexpr(same_value) {
@@ -406,7 +406,7 @@ public:
 
         // avoid calling fill() if possible, as this might throw zero-related errors with non-IEEE-float types.
         if (range.number < my_extent) { 
-            std::fill_n(buffer, my_extent, my_operation.template fill<OutputValue_, InputValue_>(my_row, i));
+            std::fill_n(buffer, my_extent, my_operation.fill(my_row, i));
         }
 
         if constexpr(same_value) {
@@ -694,14 +694,14 @@ public:
     }
 
     bool is_sparse() const {
-        if (my_operation.is_sparse()) {
+        if (my_operation->is_sparse()) {
             return my_matrix->is_sparse();
         }
         return false;
     }
 
     double is_sparse_proportion() const {
-        if (my_operation.is_sparse()) {
+        if (my_operation->is_sparse()) {
             return my_matrix->is_sparse_proportion();
         }
         return 0;
@@ -730,49 +730,79 @@ private:
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_basic_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
         return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseBasicFull<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
-            my_matrix.get(), my_operation, row, std::move(oracle), opt
+            my_matrix.get(),
+            *my_operation,
+            row,
+            std::move(oracle),
+            opt
         );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_basic_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseBasicBlock<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
-            my_matrix.get(), my_operation, row, std::move(oracle), block_start, block_length, opt
+            my_matrix.get(),
+            *my_operation,
+            row,
+            std::move(oracle),
+            block_start,
+            block_length,
+            opt
         );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_basic_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseBasicIndex<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
-            my_matrix.get(), my_operation, row, std::move(oracle), std::move(indices_ptr), opt
+            my_matrix.get(),
+            *my_operation,
+            row,
+            std::move(oracle),
+            std::move(indices_ptr),
+            opt
         );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_expanded_internal(bool row, MaybeOracle<oracle_, Index_> oracle, const Options& opt) const {
         return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseExpandedFull<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
-            my_matrix.get(), my_operation, row, std::move(oracle), opt
+            my_matrix.get(),
+            *my_operation,
+            row,
+            std::move(oracle),
+            opt
         );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_expanded_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Index_ block_start, Index_ block_length, const Options& opt) const {
         return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseExpandedBlock<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
-            my_matrix.get(), my_operation, row, std::move(oracle), block_start, block_length, opt
+            my_matrix.get(),
+            *my_operation,
+            row,
+            std::move(oracle),
+            block_start,
+            block_length,
+            opt
         );
     }
 
     template<bool oracle_>
     std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_expanded_internal(bool row, MaybeOracle<oracle_, Index_> oracle, VectorPtr<Index_> indices_ptr, const Options& opt) const {
         return std::make_unique<DelayedUnaryIsometricOperation_internal::DenseExpandedIndex<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
-            my_matrix.get(), my_operation, row, std::move(oracle), std::move(indices_ptr), opt
+            my_matrix.get(),
+            *my_operation,
+            row,
+            std::move(oracle),
+            std::move(indices_ptr),
+            opt
         );
     }
 
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<DenseExtractor<oracle_, OutputValue_, Index_> > dense_internal(bool row, Args_&& ... args) const {
         if (my_matrix->is_sparse()) {
-            if (DelayedIsometricOperation_internal::can_dense_expand(my_operation, row)) {
+            if (DelayedIsometricOperation_internal::can_dense_expand(*my_operation, row)) {
                 return dense_expanded_internal<oracle_>(row, std::forward<Args_>(args)...);
             }
         }
@@ -826,11 +856,11 @@ private:
 
     template<bool oracle_, typename ... Args_>
     std::unique_ptr<SparseExtractor<oracle_, OutputValue_, Index_> > sparse_internal(bool row, MaybeOracle<oracle_, Index_> oracle, Args_&& ... args) const {
-        if (my_operation.is_sparse() && my_matrix->is_sparse()) { 
-            if (DelayedIsometricOperation_internal::needs_sparse_indices(my_operation, row)) {
+        if (my_operation->is_sparse() && my_matrix->is_sparse()) { 
+            if (DelayedIsometricOperation_internal::needs_sparse_indices(*my_operation, row)) {
                 return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseNeedsIndices<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
                     my_matrix.get(),
-                    my_operation,
+                    *my_operation,
                     row, 
                     std::move(oracle),
                     std::forward<Args_>(args)...
@@ -839,7 +869,7 @@ private:
             } else {
                 return std::make_unique<DelayedUnaryIsometricOperation_internal::SparseSimple<oracle_, OutputValue_, InputValue_, Index_, Operation_> >(
                     my_matrix.get(),
-                    my_operation, 
+                    *my_operation, 
                     row, 
                     std::move(oracle), 
                     std::forward<Args_>(args)...
@@ -896,35 +926,19 @@ public:
 };
 
 /**
- * A `make_*` helper function to enable partial template deduction of supplied types.
- *
- * @tparam OutputValue_ Type of matrix value after the operation.
- * @tparam InputValue_ Type of matrix value before the operation.
- * @tparam Index_ Integer type for the row/column indices.
- * @tparam Operation_ Helper class implementing the operation.
- *
- * @param matrix Pointer to a (possibly `const`) `Matrix`.
- * @param operation Instance of the operation helper class.
- *
- * @return Instance of a `DelayedUnaryIsometricOperation` class.
- */
-template<typename OutputValue_ = double, typename InputValue_, typename Index_, class Operation_>
-std::shared_ptr<Matrix<OutputValue_, Index_> > make_DelayedUnaryIsometricOperation(std::shared_ptr<const Matrix<InputValue_, Index_> > matrix, Operation_ operation) {
-    typedef typename std::remove_reference<Operation_>::type Operation2_;
-    return std::shared_ptr<Matrix<OutputValue_, Index_> >(new DelayedUnaryIsometricOperation<OutputValue_, InputValue_, Index_, Operation2_>(std::move(matrix), std::move(operation)));
-}
-
-/**
  * @cond
  */
-// For automatic template deduction with non-const pointers.
-template<typename OutputValue_ = double, typename InputValue_, typename Index_, class Operation_> 
-std::shared_ptr<Matrix<OutputValue_, Index_> > make_DelayedUnaryIsometricOperation(std::shared_ptr<Matrix<InputValue_, Index_> > matrix, Operation_ operation) {
-    typedef typename std::remove_reference<Operation_>::type Operation2_;
-    return std::shared_ptr<Matrix<OutputValue_, Index_> >(new DelayedUnaryIsometricOperation<OutputValue_, InputValue_, Index_, Operation2_>(std::move(matrix), std::move(operation)));
+// For back-compatibility.
+template<typename OutputValue_ = double, typename InputValue_, typename Index_, class Operation_>
+std::shared_ptr<Matrix<OutputValue_, Index_> > make_DelayedUnaryIsometricOperation(std::shared_ptr<const Matrix<InputValue_, Index_> > matrix, std::shared_ptr<const Operation_> operation) {
+    return std::shared_ptr<Matrix<OutputValue_, Index_> >(new DelayedUnaryIsometricOperation<OutputValue_, InputValue_, Index_, Operation_>(std::move(matrix), std::move(operation)));
 }
 
-// For back-compatibility.
+template<typename OutputValue_ = double, typename InputValue_, typename Index_, class Operation_> 
+std::shared_ptr<Matrix<OutputValue_, Index_> > make_DelayedUnaryIsometricOperation(std::shared_ptr<Matrix<InputValue_, Index_> > matrix, std::shared_ptr<Operation_> operation) {
+    return std::shared_ptr<Matrix<OutputValue_, Index_> >(new DelayedUnaryIsometricOperation<OutputValue_, InputValue_, Index_, Operation_>(std::move(matrix), std::move(operation)));
+}
+
 template<typename ... Args_>
 auto make_DelayedIsometricOperation(Args_&&... args) {
     return make_DelayedUnaryIsometricOperation(std::forward<Args_>(args)...);

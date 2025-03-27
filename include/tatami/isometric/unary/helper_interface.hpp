@@ -42,7 +42,7 @@ public:
      * This has `length` addressable elements. 
      * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `input`.
      */
-    void dense(bool row, Index_ i, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const = 0;
+    virtual void dense(bool row, Index_ i, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const = 0;
 
     /**
      * This method accepts an indexed subset of an element of the target dimension from the underlying matrix (`input`),
@@ -60,7 +60,7 @@ public:
      * This has `length` addressable elements. 
      * If `InputValue_ == OutputValue_`, this is guaranteed to be the same as `input`.
      */
-    void dense(bool row, Index_ i, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const = 0;
+    virtual void dense(bool row, Index_ i, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const = 0;
 
     /**
      * This method is expected to iterate over `input_value`, apply the operation to each value, and store the result in `output_value`.
