@@ -29,8 +29,8 @@ protected:
             opt.seed = 4239867123;
             return opt;
         }());
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
+        dense.reset(new tatami::DenseMatrix<double, int, decltype(simulated)>(nrow, ncol, simulated, true)); // row major.
+        sparse = tatami::convert_to_compressed_sparse<double, int>(*dense, false, {}); // column major.
 
         // Use a tighter range to get most values inside the domain of [-1, 1]
         // (but not all; we still leave a few outside for NaN testing purposes).
@@ -42,56 +42,57 @@ protected:
             opt.seed = 9234723;
             return opt;
         }());
-        dense_unit = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_unit));
-        sparse_unit = tatami::convert_to_compressed_sparse<false, double, int>(dense_unit.get()); // column major.
+        dense_unit.reset(new tatami::DenseMatrix<double, int, decltype(simulated_unit)>(nrow, ncol, simulated_unit, true)); // row major.
+        sparse_unit = tatami::convert_to_compressed_sparse<double, int>(*dense_unit, false, {}); // column major.
     }
 };
 
 TEST_F(DelayedUnaryIsometricMathTest, Abs) {
-    tatami::DelayedUnaryIsometricAbs op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricAbsHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::abs(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
     // Toughest tests are handled by the Vector case; they would
     // be kind of redundant here, so we'll just do something simple
     // to check that the scalar operation behaves as expected. 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricAbsHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Sign) {
     {
-        tatami::DelayedUnaryIsometricSign op;
-        auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricSignHelper<double, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-        EXPECT_FALSE(dense_mod->is_sparse());
-        EXPECT_TRUE(sparse_mod->is_sparse());
-        EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-        EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+        EXPECT_FALSE(dense_mod.is_sparse());
+        EXPECT_TRUE(sparse_mod.is_sparse());
+        EXPECT_EQ(nrow, dense_mod.nrow());
+        EXPECT_EQ(ncol, dense_mod.ncol());
 
         auto refvec = simulated;
         for (auto& r : refvec) {
@@ -101,22 +102,22 @@ TEST_F(DelayedUnaryIsometricMathTest, Sign) {
                 r = 1;
             }
         }
-        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+        tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-        quick_test_all<double, int>(*dense_mod, ref);
-        quick_test_all<double, int>(*sparse_mod, ref);
+        quick_test_all<double, int>(dense_mod, ref);
+        quick_test_all<double, int>(sparse_mod, ref);
 
         // Checking that it works for a different output type.
         {
-            tatami::DelayedUnaryIsometricSign op;
-            auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-            auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+            auto fop = std::make_shared<tatami::DelayedUnaryIsometricSign<float, double, int> >();
+            tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+            tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
             std::vector<float> frefvec(refvec.begin(), refvec.end());
-            tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+            tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-            quick_test_all<float, int>(*dense_fmod, fref);
-            quick_test_all<float, int>(*sparse_fmod, fref);
+            quick_test_all<float, int>(dense_fmod, fref);
+            quick_test_all<float, int>(sparse_fmod, fref);
         }
     }
 
@@ -124,12 +125,12 @@ TEST_F(DelayedUnaryIsometricMathTest, Sign) {
     {
         auto simulated_nan = simulated;
         simulated_nan[0] = std::numeric_limits<double>::quiet_NaN();
-        auto dense_nan = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_nan));
-        auto sparse_nan = tatami::convert_to_compressed_sparse<false, double, int>(dense_nan.get()); // column major.
+        auto dense_nan = std::make_shared<tatami::DenseMatrix<double, int, decltype(simulated_nan)> >(nrow, ncol, simulated_nan, true); // row major.
+        auto sparse_nan = tatami::convert_to_compressed_sparse<double, int>(*dense_nan, false, {}); // column major.
 
-        tatami::DelayedUnaryIsometricSign op;
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation(dense_nan, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation(sparse_nan, op);
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricSignHelper<double, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense_nan, op);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse_nan, op);
 
         auto refvec = simulated_nan;
         for (auto& r : refvec) {
@@ -139,838 +140,862 @@ TEST_F(DelayedUnaryIsometricMathTest, Sign) {
                 r = 1;
             }
         }
-        tatami::DenseRowMatrix<double, int> ref_nan(nrow, ncol, refvec);
+        tatami::DenseMatrix<double, int, decltype(refvec)> ref_nan(nrow, ncol, refvec, true);
 
-        quick_test_all<double, int>(*dense_fmod, ref_nan);
-        quick_test_all<double, int>(*sparse_fmod, ref_nan);
+        quick_test_all<double, int>(dense_mod, ref_nan);
+        quick_test_all<double, int>(sparse_mod, ref_nan);
 
         // Checking that it works for a different output type that supports NaNs.
         {
-            auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense_nan, op);
-            auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse_nan, op);
+            auto fop = std::make_shared<tatami::DelayedUnaryIsometricSignHelper<float, double, int> >();
+            tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense_nan, fop);
+            tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse_nan, fop);
 
             std::vector<float> frefvec(refvec.begin(), refvec.end());
-            tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+            tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-            quick_test_all<float, int>(*dense_fmod, fref);
-            quick_test_all<float, int>(*sparse_fmod, fref);
+            quick_test_all<float, int>(dense_fmod, fref);
+            quick_test_all<float, int>(sparse_fmod, fref);
         }
 
         // Checking that it works for a different output type that doesn't support NaNs.
         {
-            auto dense_imod = tatami::make_DelayedUnaryIsometricOperation<int>(dense_nan, op);
-            auto sparse_imod = tatami::make_DelayedUnaryIsometricOperation<int>(sparse_nan, op);
+            auto iop = std::make_shared<tatami::DelayedUnaryIsometricSignHelper<int, double, int> >();
+            tatami::DelayedUnaryIsometricOperation<int, double, int> dense_imod(dense_nan, iop);
+            tatami::DelayedUnaryIsometricOperation<int, double, int> sparse_imod(sparse_nan, iop);
 
             std::vector<int> irefvec(refvec.size());
             for (size_t i = 0; i < refvec.size(); ++i) {
                 irefvec[i] = std::isnan(refvec[i]) ? 0 : refvec[i];
             }
-            tatami::DenseRowMatrix<int, int> iref(nrow, ncol, std::move(irefvec));
+            tatami::DenseMatrix<int, int, decltype(irefvec)> iref(nrow, ncol, std::move(irefvec), true);
 
-            quick_test_all<int, int>(*dense_imod, iref);
-            quick_test_all<int, int>(*sparse_imod, iref);
+            quick_test_all<int, int>(dense_imod, iref);
+            quick_test_all<int, int>(sparse_imod, iref);
         }
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Sqrt) {
-    tatami::DelayedUnaryIsometricSqrt op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricSqrtHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::sqrt(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
     // Again, doing some light tests; we assume that we have IEEE floats so sqrt(<negative value>) => NaN.
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricSqrtHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Log) {
     // Trying with the natural base.
     {
-        tatami::DelayedUnaryIsometricLog op;
-        auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricLogHelper<double, double, int, double> >();
+        tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-        EXPECT_FALSE(dense_mod->is_sparse());
-        EXPECT_FALSE(sparse_mod->is_sparse());
-        EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-        EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+        EXPECT_FALSE(dense_mod.is_sparse());
+        EXPECT_FALSE(sparse_mod.is_sparse());
+        EXPECT_EQ(nrow, dense_mod.nrow());
+        EXPECT_EQ(ncol, dense_mod.ncol());
 
         auto refvec = simulated;
         for (auto& r : refvec) {
             r = std::log(r);
         }
-        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+        tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
         // Doing some light tests, assuming that log(<negative value>) => NaN and log(0) => Inf.
-        quick_test_all<double, int>(*dense_mod, ref); 
-        quick_test_all<double, int>(*sparse_mod, ref);
+        quick_test_all<double, int>(dense_mod, ref); 
+        quick_test_all<double, int>(sparse_mod, ref);
     }
 
     // Trying with another base.
     {
-        tatami::DelayedUnaryIsometricLog op(2.0);
-        auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricLogHelper<double, double, int, double> >(2);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-        EXPECT_FALSE(dense_mod->is_sparse());
-        EXPECT_FALSE(sparse_mod->is_sparse());
-        EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-        EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+        EXPECT_FALSE(dense_mod.is_sparse());
+        EXPECT_FALSE(sparse_mod.is_sparse());
+        EXPECT_EQ(nrow, dense_mod.nrow());
+        EXPECT_EQ(ncol, dense_mod.ncol());
 
         auto refvec = simulated;
         for (auto& r : refvec) {
             r = std::log(r) / std::log(2);
         }
-        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+        tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-        quick_test_all<double, int>(*dense_mod, ref);
-        quick_test_all<double, int>(*sparse_mod, ref);
+        quick_test_all<double, int>(dense_mod, ref);
+        quick_test_all<double, int>(sparse_mod, ref);
     }
 
     // Checking that it works for a different output type.
     {
-        tatami::DelayedUnaryIsometricLog op;
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricLogHelper<float, double, int, double> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(simulated.size());
         for (size_t i = 0; i < simulated.size(); ++i) {
             frefvec[i] = std::log(simulated[i]);
         }
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Log1p) {
     // Trying with the natural base.
     {
-        tatami::DelayedUnaryIsometricLog1p op;
-        auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricLog1pHelper<double, double, int, double> >();
+        tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-        EXPECT_FALSE(dense_mod->is_sparse());
-        EXPECT_TRUE(sparse_mod->is_sparse());
-        EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-        EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+        EXPECT_FALSE(dense_mod.is_sparse());
+        EXPECT_TRUE(sparse_mod.is_sparse());
+        EXPECT_EQ(nrow, dense_mod.nrow());
+        EXPECT_EQ(ncol, dense_mod.ncol());
 
         auto refvec = simulated;
         for (auto& r : refvec) {
             r = std::log1p(r);
         }
-        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+        tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
 
         // Doing some light tests, assuming that log1p(<less than 1>) => NaN and log1p(-1) => Inf.
-        quick_test_all<double, int>(*dense_mod, ref);
-        quick_test_all<double, int>(*sparse_mod, ref);
+        quick_test_all<double, int>(dense_mod, ref);
+        quick_test_all<double, int>(sparse_mod, ref);
     }
 
     // Trying with another base.
     {
-        tatami::DelayedUnaryIsometricLog1p op(2.0);
-        auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-        auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricLog1pHelper<double, double, int, double> >(2.0);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+        tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-        EXPECT_FALSE(dense_mod->is_sparse());
-        EXPECT_TRUE(sparse_mod->is_sparse());
-        EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-        EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+        EXPECT_FALSE(dense_mod.is_sparse());
+        EXPECT_TRUE(sparse_mod.is_sparse());
+        EXPECT_EQ(nrow, dense_mod.nrow());
+        EXPECT_EQ(ncol, dense_mod.ncol());
 
         auto refvec = simulated;
         for (auto& r : refvec) {
             r = std::log1p(r) / std::log(2);
         }
-        tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+        tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
 
-        quick_test_all<double, int>(*dense_mod, ref);
-        quick_test_all<double, int>(*sparse_mod, ref);
+        quick_test_all<double, int>(dense_mod, ref);
+        quick_test_all<double, int>(sparse_mod, ref);
     }
 
     // Checking that it works for a different output type.
     {
-        tatami::DelayedUnaryIsometricLog1p op;
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricLog1pHelper<float, double, int, double> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(simulated.size());
         for (size_t i = 0; i < simulated.size(); ++i) {
             frefvec[i] = std::log1p(simulated[i]);
         }
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Exp) {
-    tatami::DelayedUnaryIsometricExp op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricExpHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_FALSE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_FALSE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::exp(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricExpHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Expm1) {
-    tatami::DelayedUnaryIsometricExpm1 op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricExpm1Helper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::expm1(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricExpm1Helper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Round) {
-    tatami::DelayedUnaryIsometricRound op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricRoundHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::round(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricRoundHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Ceiling) {
-    tatami::DelayedUnaryIsometricCeiling op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricCeilingHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::ceil(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricCeilingHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Floor) {
-    tatami::DelayedUnaryIsometricFloor op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricFloorHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::floor(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricFloorHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Trunc) {
-    tatami::DelayedUnaryIsometricTrunc op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricTruncHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::trunc(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricTruncHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Sin) {
-    tatami::DelayedUnaryIsometricSin op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricSinHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::sin(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricSinHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Cos) {
-    tatami::DelayedUnaryIsometricCos op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricCosHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_FALSE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_FALSE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::cos(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricCosHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Tan) {
-    tatami::DelayedUnaryIsometricTan op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricTanHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_FALSE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::tan(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricTanHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Asin) {
     // Use a tighter range to get most values inside the domain of [-1, 1].
-    tatami::DelayedUnaryIsometricAsin op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense_unit, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse_unit, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricAsinHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense_unit, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse_unit, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated_unit;
     for (auto& r : refvec) {
         r = std::asin(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
     // Assume assume that asin(<below -1 or above 1>) => NaN.
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense_unit, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse_unit, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricAsinHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Acos) {
     // Use a tighter range to get most values inside the domain of [-1, 1].
-    tatami::DelayedUnaryIsometricAcos op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense_unit, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse_unit, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricAcosHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense_unit, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse_unit, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_FALSE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated_unit;
     for (auto& r : refvec) {
         r = std::acos(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
     // We assume that acos(<below -1 or above 1>) => NaN.
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense_unit, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse_unit, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricAcosHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Atan) {
-    tatami::DelayedUnaryIsometricAtan op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricAtanHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::atan(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricAtanHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Sinh) {
-    tatami::DelayedUnaryIsometricSinh op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricSinhHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::sinh(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricSinhHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Cosh) {
-    tatami::DelayedUnaryIsometricCosh op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricCoshHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_FALSE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::cosh(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricCoshHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Tanh) {
-    tatami::DelayedUnaryIsometricTanh op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricTanhHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::tanh(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricTanhHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Asinh) {
-    tatami::DelayedUnaryIsometricAsinh op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricAsinhHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::asinh(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricAsinhHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Acosh) {
-    tatami::DelayedUnaryIsometricAcosh op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricAcoshHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_FALSE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::acosh(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
     // We assume that acosh(<less than 1>) => NaN.
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricAcoshHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Atanh) {
-    tatami::DelayedUnaryIsometricAtanh op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense_unit, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse_unit, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricAtanhHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
-    auto refvec = simulated_unit;
+    auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::atanh(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
     // Again, doing some light tests. We assume that atanh(<below -1 or above 1>) => NaN.
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense_unit, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse_unit, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricAtanhHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Gamma) {
-    tatami::DelayedUnaryIsometricGamma op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricGammaHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_FALSE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::tgamma(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
     // We assume that gamma(<less than or equal to zero>) => NaN.
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricGammaHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }
 
 TEST_F(DelayedUnaryIsometricMathTest, Lgamma) {
-    tatami::DelayedUnaryIsometricLgamma op;
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricLgammaHelper<double, double, int> >();
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_FALSE(sparse_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
 
     auto refvec = simulated;
     for (auto& r : refvec) {
         r = std::lgamma(r);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, refvec);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, refvec, true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    // We assume that gamma(<less than or equal to zero>) => NaN.
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 
     // Checking that it works for a different output type.
     {
-        auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        auto fop = std::make_shared<tatami::DelayedUnaryIsometricLgammaHelper<float, double, int> >();
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
-        tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+        tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-        quick_test_all<float, int>(*dense_fmod, fref);
-        quick_test_all<float, int>(*sparse_fmod, fref);
+        quick_test_all<float, int>(dense_fmod, fref);
+        quick_test_all<float, int>(sparse_fmod, fref);
     }
 }

@@ -286,7 +286,7 @@ std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, 
  * @tparam Vector_ Type of the vector.
  */
 template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename InputValue_, typename Index_, typename Vector_>
-class DelayedUnaryIsometricArithmeticVectorHelper {
+class DelayedUnaryIsometricArithmeticVectorHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
     /**
      * @param vector Vector of values to use in the operation. 

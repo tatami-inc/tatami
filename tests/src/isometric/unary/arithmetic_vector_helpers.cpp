@@ -31,8 +31,8 @@ protected:
             return opt;
         }());
 
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
-        sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
+        dense.reset(new tatami::DenseMatrix<double, int, decltype(simulated)>(nrow, ncol, simulated, true)); // row major
+        sparse = tatami::convert_to_compressed_sparse<double, int>(*dense, false, {}); // column major.
         return;
     }
 
@@ -173,9 +173,9 @@ public:
         );
     }
 
-    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, const std::vector<double>& vec, std::shared_ptr<tatami::NumericMatrix> source) {
-        auto op = tatami::make_DelayedUnaryIsometricAddVector(vec, row);
-        return tatami::make_DelayedUnaryIsometricOperation(std::move(source), std::move(op));
+    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, std::vector<double> vec, std::shared_ptr<tatami::NumericMatrix> source) {
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricAddVectorHelper<double, double, int, decltype(vec)> >(std::move(vec), row);
+        return std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(std::move(source), std::move(op));
     }
 
 protected:
@@ -199,7 +199,7 @@ protected:
                 refvec[r * ncol + c] += vec[row ? r : c];
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -271,9 +271,9 @@ TEST_P(DelayedUnaryIsometricAddVectorNewTypeTest, Basic) {
     auto row = std::get<0>(sim_params);
 
     auto vec = create_vector(row ? nrow : ncol, 5, 0.5);
-    auto op = tatami::make_DelayedUnaryIsometricAddVector(vec, row);
-    auto dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-    auto sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricAddVectorHelper<float, double, int, decltype(vec)> >(vec, row);
+    tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, op);
 
     std::vector<float> frefvec(nrow * ncol);
     for (size_t r = 0; r < nrow; ++r) {
@@ -282,10 +282,10 @@ TEST_P(DelayedUnaryIsometricAddVectorNewTypeTest, Basic) {
             frefvec[offset] = simulated[offset] + vec[row ? r : c];
         }
     }
-    tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+    tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-    quick_test_all<float, int>(*dense_fmod, fref);
-    quick_test_all<float, int>(*sparse_fmod, fref);
+    quick_test_all<float, int>(dense_fmod, fref);
+    quick_test_all<float, int>(sparse_fmod, fref);
 }
 
 INSTANTIATE_TEST_SUITE_P(
@@ -309,14 +309,14 @@ public:
         );
     }
 
-    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, bool right, const std::vector<double>& vec, std::shared_ptr<tatami::NumericMatrix> source) {
+    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, bool right, std::vector<double> vec, std::shared_ptr<tatami::NumericMatrix> source) {
+        std::shared_ptr<tatami::DelayedUnaryIsometricOperationHelper<double, double, int> > op;
         if (right) {
-            auto op = tatami::make_DelayedUnaryIsometricSubtractVector<true>(vec, row);
-            return tatami::make_DelayedUnaryIsometricOperation(std::move(source), std::move(op));
+            op.reset(new tatami::DelayedUnaryIsometricSubtractVectorHelper<true, double, double, int, decltype(vec)>(std::move(vec), row));
         } else {
-            auto op = tatami::make_DelayedUnaryIsometricSubtractVector<false>(vec, row);
-            return tatami::make_DelayedUnaryIsometricOperation(std::move(source), std::move(op));
+            op.reset(new tatami::DelayedUnaryIsometricSubtractVectorHelper<false, double, double, int, decltype(vec)>(std::move(vec), row));
         }
+        return std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(std::move(source), std::move(op));
     }
 
 protected:
@@ -346,7 +346,7 @@ protected:
                 }
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -428,9 +428,9 @@ public:
         );
     }
 
-    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, const std::vector<double>& vec, std::shared_ptr<tatami::NumericMatrix> source) {
-        auto op = tatami::make_DelayedUnaryIsometricMultiplyVector(vec, row);
-        return tatami::make_DelayedUnaryIsometricOperation(std::move(source), std::move(op));
+    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, std::vector<double> vec, std::shared_ptr<tatami::NumericMatrix> source) {
+        auto op = std::make_shared<tatami::DelayedUnaryIsometricMultiplyVectorHelper<double, double, int, decltype(vec)> >(std::move(vec), row);
+        return std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(std::move(source), std::move(op));
     }
 
 protected:
@@ -454,7 +454,7 @@ protected:
                 refvec[r * ncol + c] *= vec[row ? r : c];
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -522,14 +522,14 @@ public:
         );
     }
 
-    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, bool right, const std::vector<double>& vec, std::shared_ptr<tatami::NumericMatrix> source) {
+    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, bool right, std::vector<double> vec, std::shared_ptr<tatami::NumericMatrix> source) {
+        std::shared_ptr<tatami::DelayedUnaryIsometricOperationHelper<double, double, int> > op;
         if (right) {
-            auto op = tatami::make_DelayedUnaryIsometricDivideVector<true>(vec, row);
-            return tatami::make_DelayedUnaryIsometricOperation(std::move(source), std::move(op));
+            op.reset(new tatami::DelayedUnaryIsometricDivideVectorHelper<true, double, double, int, decltype(vec)>(std::move(vec), row));
         } else {
-            auto op = tatami::make_DelayedUnaryIsometricDivideVector<false>(vec, row);
-            return tatami::make_DelayedUnaryIsometricOperation(std::move(source), std::move(op));
+            op.reset(new tatami::DelayedUnaryIsometricDivideVectorHelper<false, double, double, int, decltype(vec)>(std::move(vec), row));
         }
+        return std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(std::move(source), std::move(op));
     }
 
 protected:
@@ -704,16 +704,14 @@ public:
         );
     }
 
-    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, bool right, const std::vector<double>& vec, std::shared_ptr<tatami::NumericMatrix> source) {
-        tatami::DelayedUnaryIsometricAbs op0;
-        auto tmp = tatami::make_DelayedUnaryIsometricOperation(std::move(source), std::move(op0));
+    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, bool right, std::vector<double> vec, std::shared_ptr<tatami::NumericMatrix> source) {
+        std::shared_ptr<tatami::DelayedUnaryIsometricOperationHelper<double, double, int> > op;
         if (right) {
-            auto op = tatami::make_DelayedUnaryIsometricPowerVector<true>(vec, row);
-            return tatami::make_DelayedUnaryIsometricOperation(std::move(tmp), std::move(op));
+            op.reset(new tatami::DelayedUnaryIsometricPowerVectorHelper<true, double, double, int, decltype(vec)>(std::move(vec), row));
         } else {
-            auto op = tatami::make_DelayedUnaryIsometricPowerVector<false>(vec, row);
-            return tatami::make_DelayedUnaryIsometricOperation(std::move(tmp), std::move(op));
+            op.reset(new tatami::DelayedUnaryIsometricPowerVectorHelper<false, double, double, int, decltype(vec)>(std::move(vec), row));
         }
+        return std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(std::move(source), std::move(op));
     }
 
 protected:
@@ -728,23 +726,30 @@ protected:
         auto right = std::get<1>(sim_params);
         auto vec = create_vector(row ? nrow : ncol, 0.01, 2.11);
 
-        dense_mod = apply_operation(row, right, vec, dense);
-        sparse_mod = apply_operation(row, right, vec, sparse);
-        sparse_uns = apply_operation(row, right, vec, std::make_shared<tatami_test::ReversedIndicesWrapper<double, int> >(sparse));
+        auto asimulated = simulated; 
+        for (auto& a : asimulated) {
+            a = std::abs(a);
+        }
+        auto adense = std::make_shared<tatami::DenseMatrix<double, int, decltype(asimulated)> >(nrow, ncol, asimulated, true);
+        auto asparse = tatami::convert_to_compressed_sparse<double, int>(*adense, false, {});
 
-        auto refvec = simulated;
+        dense_mod = apply_operation(row, right, vec, adense);
+        sparse_mod = apply_operation(row, right, vec, asparse);
+        sparse_uns = apply_operation(row, right, vec, std::make_shared<tatami_test::ReversedIndicesWrapper<double, int> >(asparse));
+
+        auto refvec = asimulated;
         for (size_t r = 0; r < nrow; ++r) {
             for (size_t c = 0; c < ncol; ++c) {
                 auto& x = refvec[r * ncol + c];
                 auto val = vec[row ? r : c];
                 if (right) {
-                    x = std::pow(std::abs(x), val);
+                    x = std::pow(x, val);
                 } else {
-                    x = std::pow(val, std::abs(x));
+                    x = std::pow(val, x);
                 }
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -885,14 +890,14 @@ public:
         );
     }
 
-    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, bool right, const std::vector<double>& vec, std::shared_ptr<tatami::NumericMatrix> source) {
+    static std::shared_ptr<tatami::NumericMatrix> apply_operation(bool row, bool right, std::vector<double> vec, std::shared_ptr<tatami::NumericMatrix> source) {
+        std::shared_ptr<tatami::DelayedUnaryIsometricOperationHelper<double, double, int> > op;
         if (right) {
-            auto op = tatami::make_DelayedUnaryIsometricModuloVector<true>(vec, row);
-            return tatami::make_DelayedUnaryIsometricOperation(std::move(source), std::move(op));
+            op.reset(new tatami::DelayedUnaryIsometricModuloVectorHelper<true, double, double, int, decltype(vec)>(std::move(vec), row));
         } else {
-            auto op = tatami::make_DelayedUnaryIsometricModuloVector<false>(vec, row);
-            return tatami::make_DelayedUnaryIsometricOperation(std::move(source), std::move(op));
+            op.reset(new tatami::DelayedUnaryIsometricModuloVectorHelper<false, double, double, int, decltype(vec)>(std::move(vec), row));
         }
+        return std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(std::move(source), std::move(op));
     }
 
 protected:
@@ -923,7 +928,7 @@ protected:
                 }
             }
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -1011,16 +1016,14 @@ TEST_P(DelayedUnaryIsometricModuloVectorNewTypeTest, Basic) {
     auto right = std::get<1>(sim_params);
 
     auto vec = create_vector(row ? nrow : ncol, 5, 0.5);
-    std::shared_ptr<tatami::Matrix<float, int> > dense_fmod, sparse_fmod;
+    std::shared_ptr<tatami::DelayedUnaryIsometricOperationHelper<float, double, int> > op;
     if (right) {
-        auto op = tatami::make_DelayedUnaryIsometricModuloVector<true>(vec, row);
-        dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        op.reset(new tatami::DelayedUnaryIsometricModuloVectorHelper<true, float, double, int, decltype(vec)>(std::move(vec), row));
     } else {
-        auto op = tatami::make_DelayedUnaryIsometricModuloVector<false>(vec, row);
-        dense_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(dense, op);
-        sparse_fmod = tatami::make_DelayedUnaryIsometricOperation<float>(sparse, op);
+        op.reset(new tatami::DelayedUnaryIsometricModuloVectorHelper<false, float, double, int, decltype(vec)>(std::move(vec), row));
     }
+    tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, op);
 
     std::vector<float> frefvec(nrow * ncol);
     for (size_t r = 0; r < nrow; ++r) {
@@ -1035,10 +1038,10 @@ TEST_P(DelayedUnaryIsometricModuloVectorNewTypeTest, Basic) {
 
         }
     }
-    tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+    tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-    quick_test_all<float, int>(*dense_fmod, fref);
-    quick_test_all<float, int>(*sparse_fmod, fref);
+    quick_test_all<float, int>(dense_fmod, fref);
+    quick_test_all<float, int>(sparse_fmod, fref);
 }
 
 INSTANTIATE_TEST_SUITE_P(

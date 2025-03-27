@@ -541,17 +541,17 @@ using DelayedUnaryIsometricIsfiniteHelper = DelayedUnaryIsometricSpecialCompareH
  * @cond
  */
 // Back-compatibility only.
-template<bool pass_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+template<bool pass_ = true, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricIsnan() {
     return std::make_shared<DelayedUnaryIsometricIsnanHelper<pass_, OutputValue_, InputValue_, Index_> >();
 }
 
-template<bool pass_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+template<bool pass_ = true, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricIsinf() {
     return std::make_shared<DelayedUnaryIsometricIsinfHelper<pass_, OutputValue_, InputValue_, Index_> >();
 }
 
-template<bool pass_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+template<bool pass_ = true, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricIsfinite() {
     return std::make_shared<DelayedUnaryIsometricIsfiniteHelper<pass_, OutputValue_, InputValue_, Index_> >();
 }
