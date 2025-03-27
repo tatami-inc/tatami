@@ -19,24 +19,22 @@ namespace tatami {
  */
 template<ArithmeticOperation op_, bool right_, typename InputValue_, typename Index_, typename Scalar_, typename OutputValue_>
 void delayed_arithmetic_run_simple(const InputValue_* input, Index_ length, Scalar_ scalar, OutputValue_* output) {
+    if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+        input = output; // basically an assertion to the compiler to skip aliasing protection.
+    }
     for (Index_ i = 0; i < length; ++i) {
-        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-            auto& val = output[i];
-            val = delayed_arithmetic<op_, right_>(val, scalar);
-        } else {
-            output[i] = delayed_arithmetic<op_, right_>(input[i], scalar);
-        }
+        output[i] = delayed_arithmetic<op_, right_>(input[i], scalar);
     }
 }
 
 // The '*_actual_sparse' and '*_zero' functions should be mirrors of each other;
 // we enforce this by putting their logic all in the same place.
-template<bool check_only_, ArithmeticOperation op_, bool right_, typename InputValue_, typename Scalar_>
+template<bool check_only_, ArithmeticOperation op_, bool right_, typename OutputValue_, typename InputValue_, typename Scalar_>
 auto delayed_arithmetic_zeroish(Scalar_ scalar) {
     if constexpr(has_unsafe_divide_by_zero<op_, right_, InputValue_, Scalar_>()) {
         if constexpr(right_) {
             if (scalar) {
-                auto val = delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
+                OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
                 if constexpr(check_only_) {
                     return val == 0;
                 } else {
@@ -49,11 +47,11 @@ auto delayed_arithmetic_zeroish(Scalar_ scalar) {
             return false;
         } else {
             throw std::runtime_error("division by zero is not supported");
-            return static_cast<decltype(delayed_arithmetic<op_, right_, InputValue_>(0, scalar))>(1);
+            return 0;
         }
 
     } else {
-        auto val = delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
+        OutputValue_ val = delayed_arithmetic<op_, right_, InputValue_>(0, scalar);
         if constexpr(check_only_) {
             return val == 0;
         } else {
@@ -96,7 +94,7 @@ public:
     /**
      * @param scalar Scalar value to be used in the operation.
      */
-    DelayedUnaryIsometricArithmeticScalar(Scalar_ scalar) : my_scalar(scalar) {
+    DelayedUnaryIsometricArithmeticScalarHelper(Scalar_ scalar) : my_scalar(scalar) {
         my_sparse = delayed_arithmetic_actual_sparse<op_, right_, OutputValue_, InputValue_>(my_scalar);
     }
 
@@ -180,7 +178,7 @@ using DelayedUnaryIsometricSubtractScalarHelper = DelayedUnaryIsometricArithmeti
  * @tparam Scalar_ Type of the scalar value.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
-using DelayedUnaryIsometricMultiplyScalarHelper = DelayedUnaryIsometricArithmeticScalarHelper<ArithmeticOperation::MULTIPLY, right_, OutputValue_, InputValue_, Index_, Scalar_>;
+using DelayedUnaryIsometricMultiplyScalarHelper = DelayedUnaryIsometricArithmeticScalarHelper<ArithmeticOperation::MULTIPLY, true, OutputValue_, InputValue_, Index_, Scalar_>;
 
 /**
  * Convenient alias for the scalar division helper.
@@ -192,7 +190,7 @@ using DelayedUnaryIsometricMultiplyScalarHelper = DelayedUnaryIsometricArithmeti
  * @tparam Scalar_ Type of the scalar value.
  */
 template<bool right_, typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
-using DelayedUnaryIsometricMultiplyScalarHelper = DelayedUnaryIsometricArithmeticScalarHelper<ArithmeticOperation::DIVIDE, right_, OutputValue_, InputValue_, Index_, Scalar_>;
+using DelayedUnaryIsometricDivideScalarHelper = DelayedUnaryIsometricArithmeticScalarHelper<ArithmeticOperation::DIVIDE, right_, OutputValue_, InputValue_, Index_, Scalar_>;
 
 /**
  * Convenient alias for the scalar power helper.
@@ -288,7 +286,7 @@ std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, 
  * @tparam Vector_ Type of the vector.
  */
 template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename InputValue_, typename Index_, typename Vector_>
-class DelayedUnaryIsometricArithmeticVector {
+class DelayedUnaryIsometricArithmeticVectorHelper {
 public:
     /**
      * @param vector Vector of values to use in the operation. 
@@ -297,7 +295,7 @@ public:
      * If true, each element of the vector is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix.
      * If false, each element of the vector is assumed to correspond to a column instead.
      */
-    DelayedUnaryIsometricArithmeticVector(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
+    DelayedUnaryIsometricArithmeticVectorHelper(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
         for (auto x : my_vector) {
             if (!delayed_arithmetic_actual_sparse<op_, right_, InputValue_>(x)) {
                 my_sparse = false;
@@ -333,13 +331,11 @@ public:
         if (row == my_by_row) {
             delayed_arithmetic_run_simple<op_, right_>(input, length, my_vector[idx], output);
         } else {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                input = output; // basically an assertion to the compiler to skip aliasing protection.
+            }
             for (Index_ i = 0; i < length; ++i) {
-                if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-                    auto& val = output[i];
-                    val = delayed_arithmetic<op_, right_>(val, my_vector[i + start]);
-                } else {
-                    output[i] = delayed_arithmetic<op_, right_>(input[i], my_vector[i + start]);
-                }
+                output[i] = delayed_arithmetic<op_, right_>(input[i], my_vector[i + start]);
             }
         }
     }
@@ -348,14 +344,12 @@ public:
         if (row == my_by_row) {
             delayed_arithmetic_run_simple<op_, right_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
         } else {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                input = output; // basically an assertion to the compiler to skip aliasing protection.
+            }
             Index_ length = indices.size();
             for (Index_ i = 0; i < length; ++i) {
-                if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-                    auto& val = output[i];
-                    val = delayed_arithmetic<op_, right_>(val, my_vector[indices[i]]);
-                } else {
-                    output[i] = delayed_arithmetic<op_, right_>(input[i], my_vector[indices[i]]);
-                }
+                output[i] = delayed_arithmetic<op_, right_>(input[i], my_vector[indices[i]]);
             }
         }
     }
@@ -365,17 +359,15 @@ public:
         return my_sparse;
     }
 
-    void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_value, const Index_* indices, OutputValue_* output_value) const {
+    void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_value, const Index_* index, OutputValue_* output_value) const {
         if (row == my_by_row) {
             delayed_arithmetic_run_simple<op_, right_>(input_value, number, my_vector[idx], output_value);
         } else {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                input_value = output_value; // basically an assertion to the compiler to skip aliasing protection.
+            }
             for (Index_ i = 0; i < number; ++i) {
-                if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-                    auto& val = output_value[i];
-                    val = delayed_arithmetic<op_, right_>(val, my_vector[indices[i]]);
-                } else {
-                    output_value[i] = delayed_arithmetic<op_, right_>(input_value[i], my_vector[indices[i]]);
-                }
+                output_value[i] = delayed_arithmetic<op_, right_>(input_value[i], my_vector[index[i]]);
             }
         }
     }
@@ -423,7 +415,7 @@ using DelayedUnaryIsometricSubtractVectorHelper = DelayedUnaryIsometricArithmeti
  * @tparam Vector_ Type of the vector.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_, typename Vector_>
-using DelayedUnaryIsometricMultiplyVectorHelper = DelayedUnaryIsometricArithmeticVectorHelper<ArithmeticOperation::MULTIPLY, right_, OutputValue_, InputValue_, Index_, Vector_>;
+using DelayedUnaryIsometricMultiplyVectorHelper = DelayedUnaryIsometricArithmeticVectorHelper<ArithmeticOperation::MULTIPLY, true, OutputValue_, InputValue_, Index_, Vector_>;
 
 /**
  * Convenient alias for the vector division helper.
@@ -435,7 +427,7 @@ using DelayedUnaryIsometricMultiplyVectorHelper = DelayedUnaryIsometricArithmeti
  * @tparam Vector_ Type of the vector.
  */
 template<bool right_, typename OutputValue_, typename InputValue_, typename Index_, typename Vector_>
-using DelayedUnaryIsometricMultiplyVectorHelper = DelayedUnaryIsometricArithmeticVectorHelper<ArithmeticOperation::DIVIDE, right_, OutputValue_, InputValue_, Index_, Vector_>;
+using DelayedUnaryIsometricDivideVectorHelper = DelayedUnaryIsometricArithmeticVectorHelper<ArithmeticOperation::DIVIDE, right_, OutputValue_, InputValue_, Index_, Vector_>;
 
 /**
  * Convenient alias for the vector power helper.
@@ -478,38 +470,38 @@ using DelayedUnaryIsometricIntegerDivideVectorHelper = DelayedUnaryIsometricArit
  */
 // Back-compatibility only.
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricAddVector(Vector_ vector) {
-    return std::make_shared<DelayedUnaryIsometricAddVectorHelper<OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector));
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricAddVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricAddVectorHelper<OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 
 template<bool right_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubtractVector(Vector_ vector) {
-    return std::make_shared<DelayedUnaryIsometricSubtractVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector));
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubtractVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricSubtractVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricMultiplyVector(Vector_ vector) {
-    return std::make_shared<DelayedUnaryIsometricMultiplyVectorHelper<OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector));
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricMultiplyVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricMultiplyVectorHelper<OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 
 template<bool right_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricDivideVector(Vector_ vector) {
-    return std::make_shared<DelayedUnaryIsometricDivideVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector));
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricDivideVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricDivideVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 
 template<bool right_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricModuloVector(Vector_ vector) {
-    return std::make_shared<DelayedUnaryIsometricModuloVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector));
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricModuloVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricModuloVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 
 template<bool right_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricPowerVector(Vector_ vector) {
-    return std::make_shared<DelayedUnaryIsometricPowerVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector));
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricPowerVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricPowerVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 
 template<bool right_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricIntegerDivideVector(Vector_ vector) {
-    return std::make_shared<DelayedUnaryIsometricIntegerDivideVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector));
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricIntegerDivideVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricIntegerDivideVectorHelper<right_, OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 /**
  * @endcond

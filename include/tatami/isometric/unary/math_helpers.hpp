@@ -42,6 +42,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::abs(input[i]);
         }
@@ -53,7 +56,7 @@ public:
     }
 
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
-        core<Index_>(input, indices.size(), output);
+        core(input, indices.size(), output);
     }
 
 public:
@@ -102,11 +105,13 @@ public:
     }
 
 private:
-    template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             auto val = input[i];
-            if ([]{
+            if ([&]{
                 if constexpr(std::numeric_limits<InputValue_>::has_quiet_NaN) {
                     return !std::isnan(val);
                 } else {
@@ -128,7 +133,7 @@ public:
     }
 
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
-        core<Index_>(input, indices.size(), output);
+        core(input, indices.size(), output);
     }
 
 public:
@@ -162,12 +167,12 @@ public:
     /**
      * Defaults constructor, to compute the natural log.
      */
-    DelayedUnaryIsometricLog() : my_base(1) {}
+    DelayedUnaryIsometricLogHelper() : my_base(1) {}
 
     /**
      * @param base Base of the logarithm.
      */
-    DelayedUnaryIsometricLog(Base_ base) : my_base(std::log(base)) {}
+    DelayedUnaryIsometricLogHelper(Base_ base) : my_base(std::log(base)) {}
 
 public:
     bool zero_depends_on_row() const {
@@ -190,6 +195,9 @@ private:
     Base_ my_base;
 
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::log(input[i]) / my_base;
         }
@@ -201,7 +209,7 @@ public:
     }
 
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
-        core<Index_>(input, indices.size(), output);
+        core(input, indices.size(), output);
     }
 
 public:
@@ -250,6 +258,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::sqrt(input[i]);
         }
@@ -309,6 +320,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::ceil(input[i]);
         }
@@ -368,6 +382,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::floor(input[i]);
         }
@@ -427,6 +444,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::trunc(input[i]);
         }
@@ -472,12 +492,12 @@ public:
     /**
      * Default constructor, computes the natural log.
      */
-    DelayedUnaryIsometricLog1p() : my_base(1) {}
+    DelayedUnaryIsometricLog1pHelper() : my_base(1) {}
 
     /**
      * @param base Base of the logarithm.
      */
-    DelayedUnaryIsometricLog1p(Base_ base) : my_base(std::log(base)) {}
+    DelayedUnaryIsometricLog1pHelper(Base_ base) : my_base(std::log(base)) {}
 
 public:
     bool zero_depends_on_row() const {
@@ -498,6 +518,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::log1p(input[i]) / my_base;
         }
@@ -559,6 +582,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::round(input[i]);
         }
@@ -618,6 +644,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::exp(input[i]);
         }
@@ -637,12 +666,10 @@ public:
         return false;
     }
 
-    template<typename Index_, typename OutputValue_>
     void sparse(bool, Index_, Index_ number, const InputValue_* input, const Index_*, OutputValue_* output) const {
         core(input, number, output);
     }
 
-    template<typename OutputValue_, typename Index_>
     OutputValue_ fill(bool, Index_) const {
         return 1;
     }
@@ -678,8 +705,10 @@ public:
     }
 
 private:
-    template<typename Index_, typename OutputValue_>
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::expm1(input[i]);
         }
@@ -739,6 +768,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::acos(input[i]);
         }
@@ -799,21 +831,19 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::acosh(input[i]);
         }
     }
 
 public:
-    /**
-     * @cond
-     */
-    template<typename Index_, typename OutputValue_>
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
         core(input, length, output);
     }
 
-    template<typename Index_, typename OutputValue_>
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         core(input, indices.size(), output);
     }
@@ -864,6 +894,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::asin(input[i]);
         }
@@ -923,6 +956,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::asinh(input[i]);
         }
@@ -982,6 +1018,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::atan(input[i]);
         }
@@ -1041,6 +1080,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::atanh(input[i]);
         }
@@ -1100,6 +1142,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::cos(input[i]);
         }
@@ -1159,6 +1204,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::cosh(input[i]);
         }
@@ -1218,6 +1266,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::sin(input[i]);
         }
@@ -1277,6 +1328,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::sinh(input[i]);
         }
@@ -1336,6 +1390,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::tan(input[i]);
         }
@@ -1395,6 +1452,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::tanh(input[i]);
         }
@@ -1454,6 +1514,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::tgamma(input[i]);
         }
@@ -1514,6 +1577,9 @@ public:
 
 private:
     void core(const InputValue_* input, Index_ length, OutputValue_* output) const {
+        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+            input = output; // basically an assertion to the compiler to allow it to skip aliasing protection.
+        }
         for (Index_ i = 0; i < length; ++i) {
             output[i] = std::lgamma(input[i]);
         }
@@ -1569,7 +1635,7 @@ template<typename OutputValue_ = double, typename InputValue_ = double, typename
 using DelayedUnaryIsometricTrunc = DelayedUnaryIsometricTruncHelper<OutputValue_, InputValue_, Index_>;
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Base_ = InputValue_> 
-using DelayedUnaryIsometricLog1p = DelayedUnaryIsometricLog1pHelper<OutputValue_, InputValue_, Index_>;
+using DelayedUnaryIsometricLog1p = DelayedUnaryIsometricLog1pHelper<OutputValue_, InputValue_, Index_, Base_>;
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int> 
 using DelayedUnaryIsometricRound = DelayedUnaryIsometricRoundHelper<OutputValue_, InputValue_, Index_>;
@@ -1608,7 +1674,7 @@ template<typename OutputValue_ = double, typename InputValue_ = double, typename
 using DelayedUnaryIsometricSin = DelayedUnaryIsometricSinHelper<OutputValue_, InputValue_, Index_>;
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int> 
-using DelayedUnaryIsometricSinh = DelayedUnaryIsomtericSinhHelper<OutputValue_, InputValue_, Index_>;
+using DelayedUnaryIsometricSinh = DelayedUnaryIsometricSinhHelper<OutputValue_, InputValue_, Index_>;
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int> 
 using DelayedUnaryIsometricTan = DelayedUnaryIsometricTanHelper<OutputValue_, InputValue_, Index_>;

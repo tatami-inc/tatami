@@ -18,25 +18,21 @@ namespace tatami {
  */
 template<typename InputValue_, typename Index_, typename OutputValue_>
 void delayed_boolean_cast(const InputValue_* input, Index_ length, OutputValue_* output) {
+    if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+        input = output; // basically an assertion to the compiler to skip aliasing protection.
+    }
     for (Index_ i = 0; i < length; ++i) {
-        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-            auto& val = output[i];
-            val = static_cast<bool>(val);
-        } else {
-            output[i] = static_cast<bool>(input[i]);
-        }
+        output[i] = static_cast<bool>(input[i]);
     }
 }
 
 template<typename InputValue_, typename Index_, typename OutputValue_>
 void delayed_boolean_not(const InputValue_* input, Index_ length, OutputValue_* output) {
+    if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+        input = output; // basically an assertion to the compiler to skip aliasing protection.
+    }
     for (Index_ i = 0; i < length; ++i) {
-        if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-            auto& val = output[i];
-            val = !static_cast<bool>(val);
-        } else {
-            output[i] = !static_cast<bool>(input[i]);
-        }
+        output[i] = !static_cast<bool>(input[i]);
     }
 }
 
@@ -94,7 +90,7 @@ public:
     /**
      * @param scalar Scalar value.
      */
-    DelayedUnaryIsometricBooleanScalar(bool scalar) : my_scalar(scalar) {
+    DelayedUnaryIsometricBooleanScalarHelper(bool scalar) : my_scalar(scalar) {
         my_sparse = delayed_boolean_actual_sparse<op_>(my_scalar);
     }
 
@@ -152,7 +148,7 @@ public:
  * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
-using DelayedUnaryIsometricBooleanEqualScalarHelper = DelayedUnaryIsometricBooleanHelper<BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_>;
+using DelayedUnaryIsometricBooleanEqualScalarHelper = DelayedUnaryIsometricBooleanScalarHelper<BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_>;
 
 /**
  * Convenient alias for the boolean AND scalar helper.
@@ -162,7 +158,7 @@ using DelayedUnaryIsometricBooleanEqualScalarHelper = DelayedUnaryIsometricBoole
  * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
-using DelayedUnaryIsometricBooleanAndScalarHelper = DelayedUnaryIsometricBooleanHelper<BooleanOperation::AND, OutputValue_, InputValue_, Index_>;
+using DelayedUnaryIsometricBooleanAndScalarHelper = DelayedUnaryIsometricBooleanScalarHelper<BooleanOperation::AND, OutputValue_, InputValue_, Index_>;
 
 /**
  * Convenient alias for the boolean OR scalar helper.
@@ -172,7 +168,7 @@ using DelayedUnaryIsometricBooleanAndScalarHelper = DelayedUnaryIsometricBoolean
  * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
-using DelayedUnaryIsometricBooleanOrScalarHelper = DelayedUnaryIsometricBooleanHelper<BooleanOperation::OR, OutputValue_, InputValue_, Index_>;
+using DelayedUnaryIsometricBooleanOrScalarHelper = DelayedUnaryIsometricBooleanScalarHelper<BooleanOperation::OR, OutputValue_, InputValue_, Index_>;
 
 /**
  * Convenient alias for the boolean XOR scalar helper.
@@ -182,7 +178,7 @@ using DelayedUnaryIsometricBooleanOrScalarHelper = DelayedUnaryIsometricBooleanH
  * @tparam Index_ Integer type for the row/column indices.
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
-using DelayedUnaryIsometricBooleanXorScalarHelper = DelayedUnaryIsometricBooleanHelper<BooleanOperation::XOR, OutputValue_, InputValue_, Index_>;
+using DelayedUnaryIsometricBooleanXorScalarHelper = DelayedUnaryIsometricBooleanScalarHelper<BooleanOperation::XOR, OutputValue_, InputValue_, Index_>;
 
 /**
  * @cond
@@ -190,22 +186,22 @@ using DelayedUnaryIsometricBooleanXorScalarHelper = DelayedUnaryIsometricBoolean
 // Back-compatibility only.
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanEqualScalar(bool scalar) {
-    return std::make_shared<DelayedUnaryIsometricBooleanEqualScalarHelper<OutputValue_, InputValue_, Index_>(scalar);
+    return std::make_shared<DelayedUnaryIsometricBooleanEqualScalarHelper<OutputValue_, InputValue_, Index_> >(scalar);
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanAndScalar(bool scalar) {
-    return std::make_shared<DelayedUnaryIsometricBooleanAndScalarHelper<OutputValue_, InputValue_, Index_>(scalar);
+    return std::make_shared<DelayedUnaryIsometricBooleanAndScalarHelper<OutputValue_, InputValue_, Index_> >(scalar);
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanOrScalar(bool scalar) {
-    return std::make_shared<DelayedUnaryIsometricBooleanOrScalarHelper<OutputValue_, InputValue_, Index_>(scalar);
+    return std::make_shared<DelayedUnaryIsometricBooleanOrScalarHelper<OutputValue_, InputValue_, Index_> >(scalar);
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanXorScalar(bool scalar) {
-    return std::make_shared<DelayedUnaryIsometricBooleanXorScalarHelper<OutputValue_, InputValue_, Index_>(scalar);
+    return std::make_shared<DelayedUnaryIsometricBooleanXorScalarHelper<OutputValue_, InputValue_, Index_> >(scalar);
 }
 /**
  * @endcond
@@ -347,7 +343,7 @@ public:
      * If true, each element of the vector is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix.
      * If false, each element of the vector is assumed to correspond to a column instead.
      */
-    DelayedUnaryIsometricBooleanVector(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
+    DelayedUnaryIsometricBooleanVectorHelper(Vector_ vector, bool by_row) : my_vector(std::move(vector)), my_by_row(by_row) {
         for (auto x : my_vector) {
              if (!delayed_boolean_actual_sparse<op_>(x)) {
                  my_sparse = false;
@@ -383,13 +379,11 @@ public:
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input, length, my_vector[idx], output);
         } else {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                input = output; // basically an assertion to the compiler to skip aliasing protection.
+            }
             for (Index_ i = 0; i < length; ++i) {
-                if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-                    auto& val = output[i];
-                    val = delayed_boolean<op_>(val, my_vector[i + start]);
-                } else {
-                    output[i] = delayed_boolean<op_>(input[i], my_vector[i + start]);
-                }
+                output[i] = delayed_boolean<op_>(input[i], my_vector[i + start]);
             }
         }
     }
@@ -398,14 +392,12 @@ public:
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_vector[idx], output);
         } else {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                input = output; // basically an assertion to the compiler to skip aliasing protection.
+            }
             Index_ length = indices.size();
             for (Index_ i = 0; i < length; ++i) {
-                if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-                    auto& val = output[i];
-                    val = delayed_boolean<op_>(val, my_vector[indices[i]]);
-                } else {
-                    output[i] = delayed_boolean<op_>(input[i], my_vector[indices[i]]);
-                }
+                output[i] = delayed_boolean<op_>(input[i], my_vector[indices[i]]);
             }
         }
     }
@@ -419,13 +411,11 @@ public:
         if (row == my_by_row) {
             delayed_boolean_run_simple<op_>(input_value, number, my_vector[idx], output_value);
         } else {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                input_value = output_value; // basically an assertion to the compiler to skip aliasing protection.
+            }
             for (Index_ i = 0; i < number; ++i) {
-                if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
-                    auto& val = output_value[i];
-                    val = delayed_boolean<op_>(val, my_vector[index[i]]);
-                } else {
-                    output_value[i] = delayed_boolean<op_>(input_value[i], my_vector[index[i]]);
-                }
+                output_value[i] = delayed_boolean<op_>(input_value[i], my_vector[index[i]]);
             }
         }
     }
@@ -448,8 +438,8 @@ public:
  * @tparam InputValue_ Type of the matrix value used in the boolean operation.
  * @tparam Index_ Integer type for the row/column indices.
  */
-template<typename OutputValue_, typename InputValue_, typename Index_>
-using DelayedUnaryIsometricBooleanEqualVectorHelper = DelayedUnaryIsometricBooleanHelper<BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_>;
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Vector_>
+using DelayedUnaryIsometricBooleanEqualVectorHelper = DelayedUnaryIsometricBooleanVectorHelper<BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_, Vector_>;
 
 /**
  * Convenient alias for the boolean AND vector helper.
@@ -458,8 +448,8 @@ using DelayedUnaryIsometricBooleanEqualVectorHelper = DelayedUnaryIsometricBoole
  * @tparam InputValue_ Type of the matrix value used in the boolean operation.
  * @tparam Index_ Integer type for the row/column indices.
  */
-template<typename OutputValue_, typename InputValue_, typename Index_>
-using DelayedUnaryIsometricBooleanAndVectorHelper = DelayedUnaryIsometricBooleanHelper<BooleanOperation::AND, OutputValue_, InputValue_, Index_>;
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Vector_>
+using DelayedUnaryIsometricBooleanAndVectorHelper = DelayedUnaryIsometricBooleanVectorHelper<BooleanOperation::AND, OutputValue_, InputValue_, Index_, Vector_>;
 
 /**
  * Convenient alias for the boolean OR vector helper.
@@ -468,8 +458,8 @@ using DelayedUnaryIsometricBooleanAndVectorHelper = DelayedUnaryIsometricBoolean
  * @tparam InputValue_ Type of the matrix value used in the boolean operation.
  * @tparam Index_ Integer type for the row/column indices.
  */
-template<typename OutputValue_, typename InputValue_, typename Index_>
-using DelayedUnaryIsometricBooleanOrVectorHelper = DelayedUnaryIsometricBooleanHelper<BooleanOperation::OR, OutputValue_, InputValue_, Index_>;
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Vector_>
+using DelayedUnaryIsometricBooleanOrVectorHelper = DelayedUnaryIsometricBooleanVectorHelper<BooleanOperation::OR, OutputValue_, InputValue_, Index_, Vector_>;
 
 /**
  * Convenient alias for the boolean XOR vector helper.
@@ -478,31 +468,31 @@ using DelayedUnaryIsometricBooleanOrVectorHelper = DelayedUnaryIsometricBooleanH
  * @tparam InputValue_ Type of the matrix value used in the boolean operation.
  * @tparam Index_ Integer type for the row/column indices.
  */
-template<typename OutputValue_, typename InputValue_, typename Index_>
-using DelayedUnaryIsometricBooleanXorVectorHelper = DelayedUnaryIsometricBooleanHelper<BooleanOperation::XOR, OutputValue_, InputValue_, Index_>;
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Vector_>
+using DelayedUnaryIsometricBooleanXorVectorHelper = DelayedUnaryIsometricBooleanVectorHelper<BooleanOperation::XOR, OutputValue_, InputValue_, Index_, Vector_>;
 
 /**
  * @cond
  */
 // Back-compatibility only.
-template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanEqualVector(bool vector) {
-    return std::make_shared<DelayedUnaryIsometricBooleanEqualVectorHelper<OutputValue_, InputValue_, Index_>(vector);
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanEqualVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricBooleanEqualVectorHelper<OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 
-template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanAndVector(bool vector) {
-    return std::make_shared<DelayedUnaryIsometricBooleanAndVectorHelper<OutputValue_, InputValue_, Index_>(vector);
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanAndVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricBooleanAndVectorHelper<OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 
-template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanOrVector(bool vector) {
-    return std::make_shared<DelayedUnaryIsometricBooleanOrVectorHelper<OutputValue_, InputValue_, Index_>(vector);
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanOrVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricBooleanOrVectorHelper<OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 
-template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanXorVector(bool vector) {
-    return std::make_shared<DelayedUnaryIsometricBooleanXorVectorHelper<OutputValue_, InputValue_, Index_>(vector);
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Vector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricBooleanXorVector(Vector_ vector, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricBooleanXorVectorHelper<OutputValue_, InputValue_, Index_, Vector_> >(std::move(vector), by_row);
 }
 /**
  * @endcond

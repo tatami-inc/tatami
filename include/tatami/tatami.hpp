@@ -17,7 +17,7 @@
 #include "isometric/unary/compare_helpers.hpp"
 #include "isometric/unary/boolean_helpers.hpp"
 #include "isometric/unary/substitute_helpers.hpp"
-#include "isometric/unary/mock_helpers.hpp"
+#include "isometric/unary/helper_interface.hpp"
 
 #include "isometric/binary/DelayedBinaryIsometricOperation.hpp"
 #include "isometric/binary/helper_interface.hpp"

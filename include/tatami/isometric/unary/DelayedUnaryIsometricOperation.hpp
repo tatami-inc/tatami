@@ -5,6 +5,7 @@
 #include "../../utils/copy.hpp"
 #include "../../utils/new_extractor.hpp"
 #include "../depends_utils.hpp"
+#include "helper_interface.hpp"
 
 #include <memory>
 #include <algorithm>
