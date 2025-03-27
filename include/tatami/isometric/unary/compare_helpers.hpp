@@ -16,8 +16,8 @@ namespace tatami {
 /**
  * @cond
  */
-template<CompareOperation op_, typename InputValue_, typename Index_, typename OutputValue_>
-void delayed_compare_run_simple(const InputValue_* input, Index_ length, InputValue_ scalar, OutputValue_* output) {
+template<CompareOperation op_, typename InputValue_, typename Index_, typename Scalar_, typename OutputValue_>
+void delayed_compare_run_simple(const InputValue_* input, Index_ length, Scalar_ scalar, OutputValue_* output) {
     if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
         input = output; // basically an assertion to the compiler to enable optimizations.
     }
@@ -26,8 +26,8 @@ void delayed_compare_run_simple(const InputValue_* input, Index_ length, InputVa
     }
 }
 
-template<CompareOperation op_, typename InputValue_>
-bool delayed_compare_actual_sparse(InputValue_ scalar) {
+template<CompareOperation op_, typename InputValue_, typename Scalar_>
+bool delayed_compare_actual_sparse(Scalar_ scalar) {
     return !delayed_compare<op_, InputValue_>(0, scalar);
 }
 /**
@@ -53,12 +53,12 @@ public:
      * @param scalar Scalar to be compared to the matrix values.
      * The matrix value is assumed to be on the left hand side of the comparison, while `scalar` is on the right.
      */
-    DelayedUnaryIsometricCompareScalarHelper(InputValue_ scalar) : my_scalar(scalar) {
-        my_sparse = delayed_compare_actual_sparse<op_>(my_scalar);
+    DelayedUnaryIsometricCompareScalarHelper(Scalar_ scalar) : my_scalar(scalar) {
+        my_sparse = delayed_compare_actual_sparse<op_, InputValue_>(my_scalar);
     }
 
 private:
-    InputValue_ my_scalar;
+    Scalar_ my_scalar;
     bool my_sparse;
 
 public:
