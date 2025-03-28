@@ -382,11 +382,11 @@ TEST(DelayedUnaryIsometricArithmetic, NonIeee754Ops) {
     {
         tatami::DelayedUnaryIsometricPowerScalarHelper<true, int, int, int, int> op(0);
         EXPECT_FALSE(op.is_sparse());
-        tatami_test::throws_error([&]() { op.fill(true, 5); }, "division by zero");
+        EXPECT_EQ(op.fill(true, 5), 1);
     }
 
     {
-        tatami::DelayedUnaryIsometricPowerScalarHelper<false, int, int, int, int> op(5);
+        tatami::DelayedUnaryIsometricDivideScalarHelper<false, int, int, int, int> op(5);
         EXPECT_FALSE(op.is_sparse());
         tatami_test::throws_error([&]() { op.fill(true, 5); }, "division by zero");
     }

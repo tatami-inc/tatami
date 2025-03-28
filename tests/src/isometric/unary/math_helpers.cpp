@@ -602,7 +602,7 @@ TEST_F(DelayedUnaryIsometricMathTest, Tan) {
     tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_FALSE(sparse_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
     EXPECT_EQ(nrow, dense_mod.nrow());
     EXPECT_EQ(ncol, dense_mod.ncol());
 
@@ -653,8 +653,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Asin) {
     // Checking that it works for a different output type.
     {
         auto fop = std::make_shared<tatami::DelayedUnaryIsometricAsinHelper<float, double, int> >();
-        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
-        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense_unit, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse_unit, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
@@ -671,7 +671,7 @@ TEST_F(DelayedUnaryIsometricMathTest, Acos) {
     tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse_unit, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_FALSE(sparse_mod.is_sparse());
     EXPECT_EQ(nrow, dense_mod.nrow());
     EXPECT_EQ(ncol, dense_mod.ncol());
 
@@ -688,8 +688,8 @@ TEST_F(DelayedUnaryIsometricMathTest, Acos) {
     // Checking that it works for a different output type.
     {
         auto fop = std::make_shared<tatami::DelayedUnaryIsometricAcosHelper<float, double, int> >();
-        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, fop);
-        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense_unit, fop);
+        tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse_unit, fop);
 
         std::vector<float> frefvec(refvec.begin(), refvec.end());
         tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
@@ -771,7 +771,7 @@ TEST_F(DelayedUnaryIsometricMathTest, Cosh) {
     tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_FALSE(sparse_mod.is_sparse());
     EXPECT_EQ(nrow, dense_mod.nrow());
     EXPECT_EQ(ncol, dense_mod.ncol());
 
@@ -870,7 +870,7 @@ TEST_F(DelayedUnaryIsometricMathTest, Acosh) {
     tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_FALSE(sparse_mod.is_sparse());
     EXPECT_EQ(nrow, dense_mod.nrow());
     EXPECT_EQ(ncol, dense_mod.ncol());
 
@@ -938,7 +938,7 @@ TEST_F(DelayedUnaryIsometricMathTest, Gamma) {
     tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_FALSE(sparse_mod.is_sparse());
     EXPECT_EQ(nrow, dense_mod.nrow());
     EXPECT_EQ(ncol, dense_mod.ncol());
 
@@ -972,7 +972,7 @@ TEST_F(DelayedUnaryIsometricMathTest, Lgamma) {
     tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
     EXPECT_FALSE(dense_mod.is_sparse());
-    EXPECT_TRUE(sparse_mod.is_sparse());
+    EXPECT_FALSE(sparse_mod.is_sparse());
     EXPECT_EQ(nrow, dense_mod.nrow());
     EXPECT_EQ(ncol, dense_mod.ncol());
 

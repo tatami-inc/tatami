@@ -57,7 +57,9 @@ public:
         std::fill_n(output_buffer, indices.size(), 0);
     }
 
-    void sparse(bool, Index_, Index_, const InputValue_*, const Index_*, OutputValue_*) const {}
+    void sparse(bool, Index_, Index_ number, const InputValue_*, const Index_*, OutputValue_* output_buffer) const {
+        std::fill_n(output_buffer, number, 0);
+    }
 };
 
 TEST(DelayedUnaryIsometricOperation, DependsChecks) {
@@ -166,11 +168,11 @@ protected:
         sparse = tatami::convert_to_compressed_sparse<double, int>(*dense, false, {});  // column major
 
         udense.reset(new tatami::DelayedUnaryIsometricOperation<double, double, int>(dense, std::make_shared<UnaryMockDerived<> >()));
-        usparse.reset(new tatami::DelayedUnaryIsometricOperation<double, double, int>(sparse, std::make_shared<UnaryMockDerived<> >()));
+        usparse.reset(new tatami::DelayedUnaryIsometricOperation<double, double, int>(sparse, std::make_shared<UnaryMockDerived<> >(true)));
         ref.reset(new tatami::DenseMatrix<double, int, std::vector<double> >(nrow, ncol, std::vector<double>(nrow * ncol), true));
 
         i_udense.reset(new tatami::DelayedUnaryIsometricOperation<uint8_t, double, int>(dense, std::make_shared<UnaryMockDerived<uint8_t> >()));
-        i_usparse.reset(new tatami::DelayedUnaryIsometricOperation<uint8_t, double, int>(sparse, std::make_shared<UnaryMockDerived<uint8_t> >()));
+        i_usparse.reset(new tatami::DelayedUnaryIsometricOperation<uint8_t, double, int>(sparse, std::make_shared<UnaryMockDerived<uint8_t> >(true)));
         i_ref.reset(new tatami::DenseMatrix<uint8_t, int, std::vector<uint8_t> >(nrow, ncol, std::vector<uint8_t>(nrow * ncol), true));
     }
 };

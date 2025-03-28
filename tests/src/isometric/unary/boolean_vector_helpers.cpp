@@ -208,7 +208,7 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, NewType) {
         fill_default_vector(vec);
     }
 
-    auto op = std::make_shared<tatami::DelayedUnaryIsometricBooleanEqualVectorHelper<uint8_t, double, int, decltype(vec)> >(vec, row);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricBooleanAndVectorHelper<uint8_t, double, int, decltype(vec)> >(vec, row);
     tatami::DelayedUnaryIsometricOperation<uint8_t, double, int> dense_umod(dense, op);
     tatami::DelayedUnaryIsometricOperation<uint8_t, double, int> sparse_umod(sparse, op);
 

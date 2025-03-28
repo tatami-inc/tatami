@@ -1018,9 +1018,9 @@ TEST_P(DelayedUnaryIsometricModuloVectorNewTypeTest, Basic) {
     auto vec = create_vector(row ? nrow : ncol, 5, 0.5);
     std::shared_ptr<tatami::DelayedUnaryIsometricOperationHelper<float, double, int> > op;
     if (right) {
-        op.reset(new tatami::DelayedUnaryIsometricModuloVectorHelper<true, float, double, int, decltype(vec)>(std::move(vec), row));
+        op.reset(new tatami::DelayedUnaryIsometricModuloVectorHelper<true, float, double, int, decltype(vec)>(vec, row));
     } else {
-        op.reset(new tatami::DelayedUnaryIsometricModuloVectorHelper<false, float, double, int, decltype(vec)>(std::move(vec), row));
+        op.reset(new tatami::DelayedUnaryIsometricModuloVectorHelper<false, float, double, int, decltype(vec)>(vec, row));
     }
     tatami::DelayedUnaryIsometricOperation<float, double, int> dense_fmod(dense, op);
     tatami::DelayedUnaryIsometricOperation<float, double, int> sparse_fmod(sparse, op);

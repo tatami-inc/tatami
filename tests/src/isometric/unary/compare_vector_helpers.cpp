@@ -157,7 +157,7 @@ TEST_P(DelayedUnaryIsometricCompareVectorTest, LessThan) {
         fill_default_vector(vec);
     }
 
-    auto op = std::make_shared<tatami::DelayedUnaryIsometricLessThanVectorHelper<double, double, int, decltype(vec)> >(std::move(vec), row);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricLessThanVectorHelper<double, double, int, decltype(vec)> >(vec, row);
     tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
     tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
