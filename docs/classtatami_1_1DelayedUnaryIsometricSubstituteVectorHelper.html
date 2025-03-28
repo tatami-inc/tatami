@@ -156,8 +156,8 @@ class tatami::DelayedUnaryIsometricSubstituteVectorHelper&lt; op_, OutputValue_,
     <tr><td class="paramname">OutputValue_</td><td>Type of the result of the operation. </td></tr>
     <tr><td class="paramname">InputValue_</td><td>Type of the matrix value used in the operation. </td></tr>
     <tr><td class="paramname">Index_</td><td>Integer type for the row/column indices. </td></tr>
-    <tr><td class="paramname">ComparedVector_</td><td>Type of the vector containing values to compare to the input matrix. </td></tr>
-    <tr><td class="paramname">SubstituteVector_</td><td>Type of the vector containing values to substitute in the output matrix. </td></tr>
+    <tr><td class="paramname">ComparedVector_</td><td>Type of the vector containing values to compare to the input matrix. This should have a <code>[]</code> accessor method and a <code>size()</code> method. </td></tr>
+    <tr><td class="paramname">SubstituteVector_</td><td>Type of the vector containing values to substitute in the output matrix. This should have a <code>[]</code> accessor method and a <code>size()</code> method. </td></tr>
   </table>
   </dd>
 </dl>
