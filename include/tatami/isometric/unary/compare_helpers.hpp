@@ -452,7 +452,7 @@ bool delayed_special_compare_actual_sparse() {
  * @tparam Index_ Integer type for the row/column indices.
  */
 template<SpecialCompareOperation op_, bool pass_, typename OutputValue_, typename InputValue_, typename Index_>
-class DelayedUnaryIsometricSpecialCompareHelper final : DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+class DelayedUnaryIsometricSpecialCompareHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
     /**
      * Default constructor.
