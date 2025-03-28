@@ -25,6 +25,15 @@ namespace tatami {
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricAbsHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -88,6 +97,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricSignHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -176,6 +194,15 @@ public:
     DelayedUnaryIsometricLogHelper(Base_ base) : my_base(std::log(base)) {}
 
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -241,6 +268,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricSqrtHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -302,6 +338,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricCeilingHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -365,6 +410,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricFloorHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -426,6 +480,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricTruncHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -501,6 +564,15 @@ public:
     DelayedUnaryIsometricLog1pHelper(Base_ base) : my_base(std::log(base)) {}
 
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -565,6 +637,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricRoundHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -626,6 +707,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricExpHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -689,6 +779,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricExpm1Helper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -750,6 +849,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricAcosHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -814,6 +922,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricAcoshHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -877,6 +994,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricAsinHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_>  {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -938,6 +1064,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricAsinhHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -1001,6 +1136,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricAtanHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -1062,6 +1206,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricAtanhHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -1125,6 +1278,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricCosHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -1186,6 +1348,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricCoshHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -1249,6 +1420,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricSinHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -1310,6 +1490,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricSinhHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -1373,6 +1562,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricTanHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -1434,6 +1632,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricTanhHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -1497,6 +1704,15 @@ public:
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricGammaHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -1559,6 +1775,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricLgammaHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;

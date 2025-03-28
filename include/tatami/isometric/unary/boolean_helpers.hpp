@@ -100,6 +100,15 @@ private:
     bool my_sparse;
 
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -221,6 +230,15 @@ std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, 
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricBooleanNotHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -272,6 +290,15 @@ public:
  */
 template<typename OutputValue_, typename InputValue_, typename Index_>
 class DelayedUnaryIsometricBooleanCastHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
 public:
     bool zero_depends_on_row() const {
         return false;
@@ -357,6 +384,23 @@ private:
     Vector_ my_vector;
     bool my_by_row;
     bool my_sparse = true;
+
+public:
+    std::optional<Index_> nrow() const {
+        if (my_by_row) {
+            return my_vector.size();
+        } else {
+            return std::nullopt;
+        }
+    }
+
+    std::optional<Index_> ncol() const {
+        if (my_by_row) {
+            return std::nullopt;
+        } else {
+            return my_vector.size();
+        }
+    }
 
 public:
     bool zero_depends_on_row() const {

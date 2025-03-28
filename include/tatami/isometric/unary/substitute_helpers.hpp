@@ -74,6 +74,15 @@ private:
     bool my_sparse;
 
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -281,6 +290,23 @@ private:
     SubstituteVector_ my_substitute;
     bool my_by_row;
     bool my_sparse = true;
+
+public:
+    std::optional<Index_> nrow() const {
+        if (my_by_row) {
+            return my_compared.size();
+        } else {
+            return std::nullopt;
+        }
+    }
+
+    std::optional<Index_> ncol() const {
+        if (my_by_row) {
+            return std::nullopt;
+        } else {
+            return my_compared.size();
+        }
+    }
 
 public:
     bool zero_depends_on_row() const {
@@ -541,6 +567,15 @@ public:
 private:
     OutputValue_ my_substitute;
     bool my_sparse;
+
+public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
 
 public:
     bool zero_depends_on_row() const {

@@ -104,6 +104,15 @@ private:
     bool my_sparse;
 
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool zero_depends_on_row() const {
         return false;
     }
@@ -285,6 +294,7 @@ std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, 
  * @tparam InputValue_ Type of the value of the input matrix.
  * @tparam Index_ Integer type for the row/column indices.
  * @tparam Vector_ Type of the vector.
+ * This should have a `[]` accessor method and a `size()` method.
  */
 template<ArithmeticOperation op_, bool right_, typename OutputValue_, typename InputValue_, typename Index_, typename Vector_>
 class DelayedUnaryIsometricArithmeticVectorHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
@@ -309,6 +319,23 @@ private:
     Vector_ my_vector;
     bool my_by_row;
     bool my_sparse = true;
+
+public:
+    std::optional<Index_> nrow() const {
+        if (my_by_row) {
+            return my_vector.size();
+        } else {
+            return std::nullopt;
+        }
+    }
+
+    std::optional<Index_> ncol() const {
+        if (my_by_row) {
+            return std::nullopt;
+        } else {
+            return my_vector.size();
+        }
+    }
 
 public:
     bool zero_depends_on_row() const {

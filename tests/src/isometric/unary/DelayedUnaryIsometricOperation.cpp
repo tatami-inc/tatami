@@ -38,6 +38,15 @@ private:
     bool my_sparse, my_zero_row, my_zero_col, my_non_zero_row, my_non_zero_col;
 
 public:
+    std::optional<Index_> nrow() const {
+        return std::nullopt;
+    }
+
+    std::optional<Index_> ncol() const {
+        return std::nullopt;
+    }
+
+public:
     bool is_sparse() const { return my_sparse; }
     bool zero_depends_on_row() const { return my_zero_row; }
     bool zero_depends_on_column() const { return my_zero_col; }
@@ -222,3 +231,19 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(true, false)  // oracle usage
     )
 );
+
+TEST(DelayedUnaryIsometricOperation, DimMismatch) {
+    auto dense = std::make_shared<tatami::DenseMatrix<double, int, std::vector<double> > >(10, 20, std::vector<double>(200), true);
+    tatami_test::throws_error([&]{
+        std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(
+            dense,
+            std::make_shared<tatami::DelayedUnaryIsometricAddVectorHelper<double, double, int, std::vector<double> > >(std::vector<double>(10), false)
+        );
+    }, "number of columns");
+    tatami_test::throws_error([&]{
+        std::make_shared<tatami::DelayedUnaryIsometricOperation<double, double, int> >(
+            dense,
+            std::make_shared<tatami::DelayedUnaryIsometricAddVectorHelper<double, double, int, std::vector<double> > >(std::vector<double>(20), true)
+        );
+    }, "number of rows");
+}

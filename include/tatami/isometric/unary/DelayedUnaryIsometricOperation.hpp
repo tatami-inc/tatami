@@ -678,7 +678,16 @@ public:
     ) : 
         my_matrix(std::move(matrix)),
         my_operation(std::move(operation)) 
-    {}
+    {
+        auto expected_rows = my_operation->nrow();
+        if (expected_rows.has_value() && *expected_rows != my_matrix->nrow()) {
+            throw std::runtime_error("number of rows in 'matrix' is not consistent with those expected by 'operation'");
+        }
+        auto expected_cols = my_operation->ncol();
+        if (expected_cols.has_value() && *expected_cols != my_matrix->ncol()) {
+            throw std::runtime_error("number of columns in 'matrix' is not consistent with those expected by 'operation'");
+        }
+    }
 
 private:
     std::shared_ptr<const Matrix<InputValue_, Index_> > my_matrix;
