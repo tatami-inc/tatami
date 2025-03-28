@@ -26,8 +26,8 @@ enum class CompareOperation : char {
 /**
  * @cond
  */
-template<CompareOperation op_, typename Value_>
-bool delayed_compare(Value_ val, Value_ scalar) {
+template<CompareOperation op_, typename Value_, typename Scalar_>
+bool delayed_compare(Value_ val, Scalar_ scalar) {
     if constexpr(op_ == CompareOperation::EQUAL) {
         return val == scalar;
     } else if constexpr(op_ == CompareOperation::GREATER_THAN) {

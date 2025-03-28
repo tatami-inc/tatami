@@ -15,79 +15,79 @@ void check_sparsity(double scalar) {
 
 TEST(DelayedUnaryIsometricArithmetic, NonIeee754Sparsity) {
     // Checking sparsity calculations for non-IEEE types.
-    auto res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::ADD, true, int>(2);
+    auto res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::ADD, true, int, int>(2);
     EXPECT_FALSE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::MULTIPLY, true, int>(2);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::MULTIPLY, true, int, int>(2);
     EXPECT_TRUE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::POWER, false, int>(2);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::POWER, false, int, int>(2);
     EXPECT_FALSE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::DIVIDE, true, int>(2);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::DIVIDE, true, int, int>(2);
     EXPECT_TRUE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::MODULO, true, int>(2);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::MODULO, true, int, int>(2);
     EXPECT_TRUE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::INTEGER_DIVIDE, true, int>(2);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::INTEGER_DIVIDE, true, int, int>(2);
     EXPECT_TRUE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::DIVIDE, true, int>(0);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::DIVIDE, true, int, int>(0);
     EXPECT_FALSE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::MODULO, true, int>(0);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::MODULO, true, int, int>(0);
     EXPECT_FALSE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::DIVIDE, false, int>(2);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::DIVIDE, false, int, int>(2);
     EXPECT_FALSE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::MODULO, false, int>(2);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::MODULO, false, int, int>(2);
     EXPECT_FALSE(res);
 
-    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::INTEGER_DIVIDE, false, int>(2);
+    res = tatami::delayed_arithmetic_actual_sparse<tatami::ArithmeticOperation::INTEGER_DIVIDE, false, int, int>(2);
     EXPECT_FALSE(res);
 }
 
 TEST(DelayedUnaryIsometricArithmetic, NonIeee754Fill) {
     {
-        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::ADD, true, int>(2);
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::ADD, true, int, int>(2);
         EXPECT_EQ(res, 2);
     }
 
     {
-        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MULTIPLY, true, int>(2);
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MULTIPLY, true, int, int>(2);
         EXPECT_EQ(res, 0);
     }
 
     {
-        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::POWER, false, int>(2);
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::POWER, false, int, int>(2);
         EXPECT_EQ(res, 1);
     }
 
     {
-        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, true, int>(2);
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, true, int, int>(2);
         EXPECT_EQ(res, 0);
     }
 
     {
-        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MODULO, true, int>(2);
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MODULO, true, int, int>(2);
         EXPECT_EQ(res, 0);
     }
 
     {
-        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::INTEGER_DIVIDE, true, int>(2);
+        auto res = tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::INTEGER_DIVIDE, true, int, int>(2);
         EXPECT_EQ(res, 0);
     }
 
-    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, true, int>(0); }, "division by zero");
-    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, false, int>(2); }, "division by zero");
+    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, true, int, int>(0); }, "division by zero");
+    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::DIVIDE, false, int, int>(2); }, "division by zero");
 
-    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MODULO, true, int>(0); }, "division by zero");
-    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MODULO, false, int>(2); }, "division by zero");
+    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MODULO, true, int, int>(0); }, "division by zero");
+    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::MODULO, false, int, int>(2); }, "division by zero");
 
-    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::INTEGER_DIVIDE, true, int>(0); }, "division by zero");
-    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::INTEGER_DIVIDE, false, int>(2); }, "division by zero");
+    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::INTEGER_DIVIDE, true, int, int>(0); }, "division by zero");
+    tatami_test::throws_error([&]() { tatami::delayed_arithmetic_zero<tatami::ArithmeticOperation::INTEGER_DIVIDE, false, int, int>(2); }, "division by zero");
 }
 
 TEST(DelayedUnaryIsometricArithmetic, TrueIntegerDivide) {

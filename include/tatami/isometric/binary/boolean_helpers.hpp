@@ -3,41 +3,35 @@
 
 #include "../boolean_utils.hpp"
 #include "utils.hpp"
+#include "helper_interface.hpp"
 
 /**
  * @file boolean_helpers.hpp
  *
- * @brief Helper classes for binary boolean operations.
+ * @brief Helper class for binary boolean operations.
  */
 
 namespace tatami {
 
 /**
- * @brief Delayed binary isometric boolean operations.
+ * @brief Helper for delayed binary isometric boolean operations.
  *
  * This should be used as the `Operation_` in the `DelayedBinaryIsometricOperation` class.
  *
  * @tparam op_ The boolean operation.
+ * @tparam OutputValue_ Type of the result of the operation.
+ * @tparam InputValue_ Type of the matrix value used in the operation.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-template<BooleanOperation op_>
-struct DelayedBinaryIsometricBoolean {
+template<BooleanOperation op_, typename OutputValue_, typename InputValue_, typename Index_>
+struct DelayedBinaryIsometricBooleanHelper final : public DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
-    /**
-     * @cond
-     */
-    // It's sparse if f(0, 0) == 0.
-    static constexpr bool known_sparse = (op_ != BooleanOperation::EQUAL);
-
-    static constexpr bool is_basic = false;
-    /**
-     * @endcond
-     */
+    bool zero_depends_on_row() const { return false; }
+    bool zero_depends_on_column() const { return false; }
+    bool non_zero_depends_on_row() const { return false; }
+    bool non_zero_depends_on_column() const { return false; }
 
 public:
-    /**
-     * @cond
-     */
-    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
@@ -49,7 +43,6 @@ public:
         }
     }
 
-    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
         Index_ length = indices.size();
         for (Index_ i = 0; i < length; ++i) {
@@ -62,8 +55,16 @@ public:
         }
     }
 
-    template<typename Index_, typename InputValue_, typename OutputValue_>
-    Index_ sparse(bool, Index_, const SparseRange<InputValue_, Index_>& left, const SparseRange<InputValue_, Index_>& right, OutputValue_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
+    Index_ sparse(
+        bool,
+        Index_,
+        const SparseRange<InputValue_, Index_>& left,
+        const SparseRange<InputValue_, Index_>& right,
+        OutputValue_* value_buffer,
+        Index_* index_buffer,
+        bool needs_value,
+        bool needs_index)
+    const {
         // Don't bother storing an explicit zero for AND operations when either
         // entry is zero. This should be NaN-safe as NaNs are truthy, so
         // applying AND on that would just be false anyway.
@@ -81,7 +82,16 @@ public:
         );
     }
 
-    template<typename OutputValue_, typename InputValue_, typename Index_>
+public:
+    /**
+     * @cond
+     */
+    // It's sparse if f(0, 0) == 0.
+    static constexpr bool known_sparse = (op_ != BooleanOperation::EQUAL);
+    /**
+     * @endcond
+     */
+
     OutputValue_ fill(bool, Index_) const {
         if constexpr(known_sparse) {
             return 0;
@@ -93,42 +103,73 @@ public:
     bool is_sparse() const {
         return known_sparse;
     }
-    /**
-     * @endcond
-     */
 };
 
 /**
- * @return A helper class for a delayed binary boolean equivalence operation,
- * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
+ * Convenient alias for the boolean equality helper.
+ *
+ * @tparam OutputValue_ Type of the result of the boolean operation.
+ * @tparam InputValue_ Type of the matrix value used in the boolean operation.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricBoolean<BooleanOperation::EQUAL> make_DelayedBinaryIsometricBooleanEqual() {
-    return DelayedBinaryIsometricBoolean<BooleanOperation::EQUAL>();
-}
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricBooleanEqualHelper = DelayedBinaryIsometricBooleanHelper<BooleanOperation::EQUAL, OutputValue_, InputValue_, Index_>;
 
 /**
- * @return A helper class for a delayed binary AND comparison,
- * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
+ * Convenient alias for the boolean AND helper.
+ *
+ * @tparam OutputValue_ Type of the result of the boolean operation.
+ * @tparam InputValue_ Type of the matrix value used in the boolean operation.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricBoolean<BooleanOperation::AND> make_DelayedBinaryIsometricBooleanAnd() {
-    return DelayedBinaryIsometricBoolean<BooleanOperation::AND>();
-}
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricBooleanAndHelper = DelayedBinaryIsometricBooleanHelper<BooleanOperation::AND, OutputValue_, InputValue_, Index_>;
 
 /**
- * @return A helper class for a delayed binary OR comparison,
- * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
+ * Convenient alias for the boolean OR helper.
+ *
+ * @tparam OutputValue_ Type of the result of the boolean operation.
+ * @tparam InputValue_ Type of the matrix value used in the boolean operation.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricBoolean<BooleanOperation::OR> make_DelayedBinaryIsometricBooleanOr() {
-    return DelayedBinaryIsometricBoolean<BooleanOperation::OR>();
-}
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricBooleanOrHelper = DelayedBinaryIsometricBooleanHelper<BooleanOperation::OR, OutputValue_, InputValue_, Index_>;
 
 /**
- * @return A helper class for a delayed binary XOR comparison,
- * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
+ * Convenient alias for the boolean XOR helper.
+ *
+ * @tparam OutputValue_ Type of the result of the boolean operation.
+ * @tparam InputValue_ Type of the matrix value used in the boolean operation.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricBoolean<BooleanOperation::XOR> make_DelayedBinaryIsometricBooleanXor() {
-    return DelayedBinaryIsometricBoolean<BooleanOperation::XOR>();
+template<typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedBinaryIsometricBooleanXorHelper = DelayedBinaryIsometricBooleanHelper<BooleanOperation::XOR, OutputValue_, InputValue_, Index_>;
+
+/**
+ * @cond
+ */
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricBooleanEqual() {
+    return std::make_shared<DelayedBinaryIsometricBooleanEqualHelper<OutputValue_, InputValue_, Index_> >();
 }
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricBooleanAnd() {
+    return std::make_shared<DelayedBinaryIsometricBooleanAndHelper<OutputValue_, InputValue_, Index_> >();
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricBooleanOr() {
+    return std::make_shared<DelayedBinaryIsometricBooleanOrHelper<OutputValue_, InputValue_, Index_> >();
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricBooleanXor() {
+    return std::make_shared<DelayedBinaryIsometricBooleanXorHelper<OutputValue_, InputValue_, Index_> >();
+}
+/**
+ * @endcond
+ */
 
 }
 

@@ -3,6 +3,7 @@
 #include <vector>
 #include <memory>
 #include <tuple>
+#include <cstdint>
 
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/binary/DelayedBinaryIsometricOperation.hpp"
@@ -27,8 +28,8 @@ protected:
             opt.seed = 9876;
             return opt;
         }());
-        dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_left));
-        sparse_left = tatami::convert_to_compressed_sparse<false, double, int>(dense_left.get()); // column major.
+        dense_left.reset(new tatami::DenseMatrix<double, int, decltype(simulated_left)>(nrow, ncol, simulated_left, true)); // row major.
+        sparse_left = tatami::convert_to_compressed_sparse<double, int>(*dense_left, false, {}); // column major.
 
         simulated_right = tatami_test::simulate_vector<double>(nrow * ncol, []{
             tatami_test::SimulateVectorOptions opt;
@@ -38,19 +39,19 @@ protected:
             opt.seed = 54321;
             return opt;
         }());
-        dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_right));
-        sparse_right = tatami::convert_to_compressed_sparse<false, double, int>(dense_right.get()); // column major.
+        dense_right.reset(new tatami::DenseMatrix<double, int, decltype(simulated_right)>(nrow, ncol, simulated_right, true)); // row major.
+        sparse_right = tatami::convert_to_compressed_sparse<double, int>(*dense_right, false, {}); // column major.
         return;
     }
 };
 
 TEST_F(DelayedBinaryIsometricBooleanTest, EQUAL) {
-    auto op = tatami::make_DelayedBinaryIsometricBooleanEqual();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+    auto op = std::make_shared<tatami::DelayedBinaryIsometricBooleanEqualHelper<double, double, int> >();
+    tatami::DelayedBinaryIsometricOperation<double, double, int> dense_mod(dense_left, dense_right, op);
+    tatami::DelayedBinaryIsometricOperation<double, double, int> sparse_mod(sparse_left, sparse_right, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_FALSE(sparse_mod->is_sparse());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_FALSE(sparse_mod.is_sparse());
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
@@ -59,19 +60,19 @@ TEST_F(DelayedBinaryIsometricBooleanTest, EQUAL) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = static_cast<bool>(simulated_left[i]) == static_cast<bool>(simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 }
 
 TEST_F(DelayedBinaryIsometricBooleanTest, AND) {
-    auto op = tatami::make_DelayedBinaryIsometricBooleanAnd();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+    auto op = std::make_shared<tatami::DelayedBinaryIsometricBooleanAndHelper<double, double, int> >();
+    tatami::DelayedBinaryIsometricOperation<double, double, int> dense_mod(dense_left, dense_right, op);
+    tatami::DelayedBinaryIsometricOperation<double, double, int> sparse_mod(sparse_left, sparse_right, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
@@ -80,19 +81,19 @@ TEST_F(DelayedBinaryIsometricBooleanTest, AND) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = static_cast<bool>(simulated_left[i]) && static_cast<bool>(simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 }
 
 TEST_F(DelayedBinaryIsometricBooleanTest, OR) {
-    auto op = tatami::make_DelayedBinaryIsometricBooleanOr();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+    auto op = std::make_shared<tatami::DelayedBinaryIsometricBooleanOrHelper<double, double, int> >();
+    tatami::DelayedBinaryIsometricOperation<double, double, int> dense_mod(dense_left, dense_right, op);
+    tatami::DelayedBinaryIsometricOperation<double, double, int> sparse_mod(sparse_left, sparse_right, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
@@ -101,19 +102,19 @@ TEST_F(DelayedBinaryIsometricBooleanTest, OR) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = static_cast<bool>(simulated_left[i]) || static_cast<bool>(simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 }
 
 TEST_F(DelayedBinaryIsometricBooleanTest, XOR) {
-    auto op = tatami::make_DelayedBinaryIsometricBooleanXor();
-    auto dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-    auto sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
+    auto op = std::make_shared<tatami::DelayedBinaryIsometricBooleanXorHelper<double, double, int> >();
+    tatami::DelayedBinaryIsometricOperation<double, double, int> dense_mod(dense_left, dense_right, op);
+    tatami::DelayedBinaryIsometricOperation<double, double, int> sparse_mod(sparse_left, sparse_right, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_TRUE(sparse_mod->is_sparse());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_TRUE(sparse_mod.is_sparse());
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
@@ -122,16 +123,16 @@ TEST_F(DelayedBinaryIsometricBooleanTest, XOR) {
     for (size_t i = 0; i < refvec.size(); ++i) {
         refvec[i] = static_cast<bool>(simulated_left[i]) != static_cast<bool>(simulated_right[i]);
     }
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
 
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 }
 
 TEST_F(DelayedBinaryIsometricBooleanTest, NewType) {
-    auto op = tatami::make_DelayedBinaryIsometricBooleanEqual();
-    auto dense_umod = tatami::make_DelayedBinaryIsometricOperation<uint8_t>(dense_left, dense_right, op);
-    auto sparse_umod = tatami::make_DelayedBinaryIsometricOperation<uint8_t>(sparse_left, sparse_right, op);
+    auto op = std::make_shared<tatami::DelayedBinaryIsometricBooleanEqualHelper<uint8_t, double, int> >();
+    tatami::DelayedBinaryIsometricOperation<uint8_t, double, int> dense_umod(dense_left, dense_right, op);
+    tatami::DelayedBinaryIsometricOperation<uint8_t, double, int> sparse_umod(sparse_left, sparse_right, op);
 
     // Toughest tests are handled by 'arith_helpers.cpp'; they would
     // be kind of redundant here, so we'll just do something simple
@@ -140,8 +141,19 @@ TEST_F(DelayedBinaryIsometricBooleanTest, NewType) {
     for (size_t i = 0; i < urefvec.size(); ++i) {
         urefvec[i] = static_cast<bool>(simulated_left[i]) == static_cast<bool>(simulated_right[i]);
     }
-    tatami::DenseRowMatrix<uint8_t, int> uref(nrow, ncol, std::move(urefvec));
+    tatami::DenseMatrix<uint8_t, int, decltype(urefvec)> uref(nrow, ncol, std::move(urefvec), true);
 
-    quick_test_all<uint8_t, int>(*dense_umod, uref);
-    quick_test_all<uint8_t, int>(*sparse_umod, uref);
+    quick_test_all<uint8_t, int>(dense_umod, uref);
+    quick_test_all<uint8_t, int>(sparse_umod, uref);
+}
+
+TEST(DelayedBinaryIsometricBoolean, BackCompatibility) {
+    auto eq = tatami::make_DelayedBinaryIsometricBooleanEqual();
+    EXPECT_FALSE(eq->is_sparse());
+    auto andop = tatami::make_DelayedBinaryIsometricBooleanAnd();
+    EXPECT_TRUE(andop->is_sparse());
+    auto orop = tatami::make_DelayedBinaryIsometricBooleanOr();
+    EXPECT_TRUE(orop->is_sparse());
+    auto xorop = tatami::make_DelayedBinaryIsometricBooleanXor();
+    EXPECT_TRUE(xorop->is_sparse());
 }

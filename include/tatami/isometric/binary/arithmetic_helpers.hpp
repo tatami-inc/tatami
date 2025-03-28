@@ -3,44 +3,38 @@
 
 #include "../arithmetic_utils.hpp"
 #include "utils.hpp"
+#include "helper_interface.hpp"
+
 #include <limits>
 #include <vector>
 
 /**
  * @file arithmetic_helpers.hpp
  *
- * @brief Helper classes for binary arithmetic operations.
+ * @brief Helper class for binary arithmetic operations.
  */
 
 namespace tatami {
 
 /**
- * @brief Delayed binary isometric arithmetic. 
+ * @brief Helper for delayed binary isometric arithmetic. 
  *
  * This should be used as the `Operation_` in the `DelayedBinaryIsometricOperation` class.
  *
  * @tparam op_ The arithmetic operation.
+ * @tparam OutputValue_ Type of the result of the operation.
+ * @tparam InputValue_ Type of the matrix value used in the operation.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-template<ArithmeticOperation op_>
-class DelayedBinaryIsometricArithmetic {
+template<ArithmeticOperation op_, typename OutputValue_, typename InputValue_, typename Index_>
+class DelayedBinaryIsometricArithmeticHelper final : public DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
-    /**
-     * @cond
-     */
-    static constexpr bool known_sparse = (op_ == ArithmeticOperation::ADD ||
-                                          op_ == ArithmeticOperation::SUBTRACT ||
-                                          op_ == ArithmeticOperation::MULTIPLY);
-
-    static constexpr bool is_basic = false;
-    /**
-     * @endcond
-     */
+    bool zero_depends_on_row() const { return false; }
+    bool zero_depends_on_column() const { return false; }
+    bool non_zero_depends_on_row() const { return false; }
+    bool non_zero_depends_on_column() const { return false; }
 
 public:
-    /**
-     * @cond
-     */
-    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
         for (Index_ i = 0; i < length; ++i) {
             if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
@@ -52,7 +46,6 @@ public:
         }
     }
 
-    template<typename Index_, typename InputValue_, typename OutputValue_>
     void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* left_buffer, const InputValue_* right_buffer, OutputValue_* output_buffer) const {
         Index_ length = indices.size();
         for (Index_ i = 0; i < length; ++i) {
@@ -65,8 +58,16 @@ public:
         }
     }
 
-    template<typename Index_, typename InputValue_, typename OutputValue_>
-    Index_ sparse(bool, Index_, const SparseRange<InputValue_, Index_>& left, const SparseRange<InputValue_, Index_>& right, OutputValue_* value_buffer, Index_* index_buffer, bool needs_value, bool needs_index) const {
+    Index_ sparse(
+        bool,
+        Index_,
+        const SparseRange<InputValue_, Index_>& left,
+        const SparseRange<InputValue_, Index_>& right,
+        OutputValue_* value_buffer,
+        Index_* index_buffer,
+        bool needs_value,
+        bool needs_index) 
+    const {
         // Technically, MULTIPLY could skip processing if either is a zero.
         // However, this is not correct if the other value is an NaN/Inf, as
         // the product would be a NaN, not a zero; so we have to err on the
@@ -88,77 +89,136 @@ public:
         );
     }
 
-    template<typename OutputValue_, typename InputValue_, typename Index_>
+public:
     OutputValue_ fill(bool, Index_) const {
         if constexpr(has_unsafe_divide_by_zero<op_, true, InputValue_, InputValue_>()) {
             throw std::runtime_error("division by zero is not supported");
             return 0;
         } else {
-            return delayed_arithmetic<op_, true, InputValue_>(0, 0);
+            return delayed_arithmetic<op_, true, InputValue_, InputValue_>(0, 0);
         }
     }
 
     bool is_sparse() const {
-        return known_sparse;
+        return (
+            op_ == ArithmeticOperation::ADD ||
+            op_ == ArithmeticOperation::SUBTRACT ||
+            op_ == ArithmeticOperation::MULTIPLY
+        );
     }
-    /**
-     * @endcond
-     */
 };
 
 /**
- * @return A helper class for delayed binary addition,
- * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
+ * Convenient alias for the addition helper.
+ *
+ * @tparam OutputValue_ Type of the result of the addition.
+ * @tparam InputValue_ Type of the matrix value used in the addition.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::ADD> make_DelayedBinaryIsometricAdd() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::ADD>();
-}
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricAddHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::ADD, OutputValue_, InputValue_, Index_>;
 
 /**
- * @return A helper class for delayed binary subtraction,
- * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
+ * Convenient alias for the subtraction helper.
+ *
+ * @tparam OutputValue_ Type of the result of the subtraction.
+ * @tparam InputValue_ Type of the matrix value used in the subtraction.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::SUBTRACT> make_DelayedBinaryIsometricSubtract() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::SUBTRACT>();
-}
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricSubtractHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::SUBTRACT, OutputValue_, InputValue_, Index_>;
 
 /**
- * @return A helper class for delayed binary multiplication,
- * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
+ * Convenient alias for the multiplication helper.
+ *
+ * @tparam OutputValue_ Type of the result of the multiplication.
+ * @tparam InputValue_ Type of the matrix value used in the multiplication.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::MULTIPLY> make_DelayedBinaryIsometricMultiply() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::MULTIPLY>();
-}
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricMultiplyHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::MULTIPLY, OutputValue_, InputValue_, Index_>;
 
 /**
- * @return A helper class for delayed binary division,
- * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
+ * Convenient alias for the division helper.
+ *
+ * @tparam OutputValue_ Type of the result of the division.
+ * @tparam InputValue_ Type of the matrix value used in the division.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::DIVIDE> make_DelayedBinaryIsometricDivide() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::DIVIDE>();
-}
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricDivideHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::DIVIDE, OutputValue_, InputValue_, Index_>;
 
 /**
- * @return A helper class for delayed binary power,
- * to be used as the `operation` in a `DelayedBinaryIsometricOperation`.
+ * Convenient alias for the power operation helper.
+ *
+ * @tparam OutputValue_ Type of the result of the power operation.
+ * @tparam InputValue_ Type of the matrix value used in the power operation.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::POWER> make_DelayedBinaryIsometricPower() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::POWER>();
-}
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricPowerHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::POWER, OutputValue_, InputValue_, Index_>;
 
 /**
- * @return A helper class for delayed binary modulo.
+ * Convenient alias for the modulo operation helper.
+ *
+ * @tparam OutputValue_ Type of the result of the modulo operation.
+ * @tparam InputValue_ Type of the matrix value used in the modulo operation.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::MODULO> make_DelayedBinaryIsometricModulo() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::MODULO>();
-}
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricModuloHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::MODULO, OutputValue_, InputValue_, Index_>;
 
 /**
- * @return A helper class for delayed binary integer division.
+ * Convenient alias for the integer division helper.
+ *
+ * @tparam OutputValue_ Type of the result of the integer division.
+ * @tparam InputValue_ Type of the matrix value used in the integer division.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-inline DelayedBinaryIsometricArithmetic<ArithmeticOperation::INTEGER_DIVIDE> make_DelayedBinaryIsometricIntegerDivide() {
-    return DelayedBinaryIsometricArithmetic<ArithmeticOperation::INTEGER_DIVIDE>();
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+using DelayedBinaryIsometricIntegerDivideHelper = DelayedBinaryIsometricArithmeticHelper<ArithmeticOperation::INTEGER_DIVIDE, OutputValue_, InputValue_, Index_>;
+
+/**
+ * @cond
+ */
+// Provided for back-compatibility only.
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricAdd() {
+    return std::make_shared<DelayedBinaryIsometricAddHelper<OutputValue_, InputValue_, Index_> >();
 }
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricSubtract() {
+    return std::make_shared<DelayedBinaryIsometricSubtractHelper<OutputValue_, InputValue_, Index_> >();
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricMultiply() {
+    return std::make_shared<DelayedBinaryIsometricMultiplyHelper<OutputValue_, InputValue_, Index_> >();
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricDivide() {
+    return std::make_shared<DelayedBinaryIsometricDivideHelper<OutputValue_, InputValue_, Index_> >();
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricPower() {
+    return std::make_shared<DelayedBinaryIsometricPowerHelper<OutputValue_, InputValue_, Index_> >();
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricModulo() {
+    return std::make_shared<DelayedBinaryIsometricModuloHelper<OutputValue_, InputValue_, Index_> >();
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedBinaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedBinaryIsometricIntegerDivide() {
+    return std::make_shared<DelayedBinaryIsometricIntegerDivideHelper<OutputValue_, InputValue_, Index_> >();
+}
+/**
+ * @endcond
+ */
 
 }
 

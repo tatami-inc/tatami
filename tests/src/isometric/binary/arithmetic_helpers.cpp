@@ -7,8 +7,6 @@
 #include "tatami/dense/DenseMatrix.hpp"
 #include "tatami/isometric/binary/DelayedBinaryIsometricOperation.hpp"
 #include "tatami/isometric/binary/arithmetic_helpers.hpp"
-#include "tatami/isometric/unary/DelayedUnaryIsometricOperation.hpp"
-#include "tatami/isometric/unary/math_helpers.hpp"
 #include "tatami/sparse/convert_to_compressed_sparse.hpp"
 
 #include "tatami_test/tatami_test.hpp"
@@ -33,8 +31,8 @@ protected:
             opt.seed = 12345;
             return opt;
         }());
-        dense_left = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_left));
-        sparse_left = tatami::convert_to_compressed_sparse<false, double, int>(dense_left.get()); // column major.
+        dense_left.reset(new tatami::DenseMatrix<double, int, decltype(simulated_left)>(nrow, ncol, simulated_left, true)); // row major.
+        sparse_left = tatami::convert_to_compressed_sparse<double, int>(*dense_left, false, {}); // column major.
 
         simulated_right = tatami_test::simulate_vector<double>(nrow * ncol, []{
             tatami_test::SimulateVectorOptions opt;
@@ -44,8 +42,8 @@ protected:
             opt.seed = 67890;
             return opt;
         }());
-        dense_right = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated_right));
-        sparse_right = tatami::convert_to_compressed_sparse<false, double, int>(dense_right.get()); // column major.
+        dense_right.reset(new tatami::DenseMatrix<double, int, decltype(simulated_right)>(nrow, ncol, simulated_right, true)); // row major.
+        sparse_right = tatami::convert_to_compressed_sparse<double, int>(*dense_right, false, {}); // column major.
         return;
     }
 };
@@ -161,20 +159,21 @@ protected:
         }
 
         DelayedBinaryIsometricArithmeticUtils::assemble();
-        auto op = tatami::make_DelayedBinaryIsometricAdd();
-        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
+
+        auto op = std::make_shared<tatami::DelayedBinaryIsometricAddHelper<double, double, int> >();
+        dense_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(dense_left, dense_right, op));
+        sparse_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(sparse_left, sparse_right, op));
+        sparse_uns.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)),
             op
-        );
+        ));
 
         auto refvec = simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] += simulated_right[i];
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -192,10 +191,14 @@ TEST_F(DelayedBinaryIsometricAddTest, Basic) {
     EXPECT_FALSE(sparse_mod->prefer_rows());
     EXPECT_EQ(sparse_mod->prefer_rows_proportion(), 0);
 
-    auto mixed_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, dense_right, tatami::make_DelayedBinaryIsometricAdd());
-    EXPECT_FALSE(mixed_mod->is_sparse());
-    EXPECT_EQ(mixed_mod->prefer_rows_proportion(), 0.5);
-    EXPECT_EQ(mixed_mod->is_sparse_proportion(), 0.5);
+    tatami::DelayedBinaryIsometricOperation<double, double, int> mixed_mod(
+        sparse_left,
+        dense_right,
+        std::make_shared<tatami::DelayedBinaryIsometricAddHelper<double, double, int> >()
+    );
+    EXPECT_FALSE(mixed_mod.is_sparse());
+    EXPECT_EQ(mixed_mod.prefer_rows_proportion(), 0.5);
+    EXPECT_EQ(mixed_mod.is_sparse_proportion(), 0.5);
 }
 
 BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricAddFullTest, DelayedBinaryIsometricAddUtils)
@@ -203,18 +206,18 @@ BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricAddBlockTest, DelayedBinaryIsometr
 BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricAddIndexTest, DelayedBinaryIsometricAddUtils)
 
 TEST_F(DelayedBinaryIsometricAddTest, NewType) {
-    auto op = tatami::make_DelayedBinaryIsometricAdd();
-    auto dense_fmod = tatami::make_DelayedBinaryIsometricOperation<float>(dense_left, dense_right, op);
-    auto sparse_fmod = tatami::make_DelayedBinaryIsometricOperation<float>(sparse_left, sparse_right, op);
+    auto op = std::make_shared<tatami::DelayedBinaryIsometricAddHelper<float, double, int> >();
+    tatami::DelayedBinaryIsometricOperation<float, double, int> dense_fmod(dense_left, dense_right, op);
+    tatami::DelayedBinaryIsometricOperation<float, double, int> sparse_fmod(sparse_left, sparse_right, op);
 
     std::vector<float> frefvec(simulated_left.size());
     for (size_t i = 0; i < frefvec.size(); ++i) {
         frefvec[i] = simulated_left[i] + simulated_right[i];
     }
-    tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+    tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-    quick_test_all<float, int>(*dense_fmod, fref);
-    quick_test_all<float, int>(*sparse_fmod, fref);
+    quick_test_all<float, int>(dense_fmod, fref);
+    quick_test_all<float, int>(sparse_fmod, fref);
 }
 
 /*******************************
@@ -231,20 +234,21 @@ protected:
         }
 
         DelayedBinaryIsometricArithmeticUtils::assemble();
-        auto op = tatami::make_DelayedBinaryIsometricSubtract();
-        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
+
+        auto op = std::make_shared<tatami::DelayedBinaryIsometricSubtractHelper<double, double, int> >();
+        dense_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(dense_left, dense_right, op));
+        sparse_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(sparse_left, sparse_right, op));
+        sparse_uns.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
-        );
+        ));
 
         auto refvec = simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] -= simulated_right[i];
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -253,8 +257,9 @@ TEST_F(DelayedBinaryIsometricSubtractTest, Basic) {
     EXPECT_FALSE(dense_mod->is_sparse());
     EXPECT_TRUE(sparse_mod->is_sparse());
 
-    auto mixed_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, dense_right, tatami::make_DelayedBinaryIsometricSubtract());
-    EXPECT_FALSE(mixed_mod->is_sparse());
+    auto op = std::make_shared<tatami::DelayedBinaryIsometricSubtractHelper<double, double, int> >();
+    tatami::DelayedBinaryIsometricOperation<double, double, int> mixed_mod(sparse_left, dense_right, std::move(op));
+    EXPECT_FALSE(mixed_mod.is_sparse());
 }
 
 BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricSubtractFullTest, DelayedBinaryIsometricSubtractUtils)
@@ -276,20 +281,20 @@ protected:
 
         DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        auto op = tatami::make_DelayedBinaryIsometricMultiply();
-        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
+        auto op = std::make_shared<tatami::DelayedBinaryIsometricMultiplyHelper<double, double, int> >();
+        dense_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(dense_left, dense_right, op));
+        sparse_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(sparse_left, sparse_right, op));
+        sparse_uns.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
-        );
+        ));
 
         auto refvec = simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] *= simulated_right[i];
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -318,20 +323,20 @@ protected:
 
         DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        auto op = tatami::make_DelayedBinaryIsometricDivide();
-        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
+        auto op = std::make_shared<tatami::DelayedBinaryIsometricDivideHelper<double, double, int> >();
+        dense_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(dense_left, dense_right, op));
+        sparse_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(sparse_left, sparse_right, op));
+        sparse_uns.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
-        );
+        ));
 
         auto refvec = simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] = careful_division(refvec[i], simulated_right[i]);
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -348,18 +353,18 @@ BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricDivideBlockTest, DelayedBinaryIsom
 BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricDivideIndexTest, DelayedBinaryIsometricDivideUtils)
 
 TEST_F(DelayedBinaryIsometricDivideTest, NewType) {
-    auto op = tatami::make_DelayedBinaryIsometricDivide();
-    auto dense_fmod = tatami::make_DelayedBinaryIsometricOperation<float>(dense_left, dense_right, op);
-    auto sparse_fmod = tatami::make_DelayedBinaryIsometricOperation<float>(sparse_left, sparse_right, op);
+    auto op = std::make_shared<tatami::DelayedBinaryIsometricDivideHelper<float, double, int> >();
+    tatami::DelayedBinaryIsometricOperation<float, double, int> dense_fmod(dense_left, dense_right, op);
+    tatami::DelayedBinaryIsometricOperation<float, double, int> sparse_fmod(sparse_left, sparse_right, op);
 
     std::vector<float> frefvec(simulated_left.size());
     for (size_t i = 0; i < frefvec.size(); ++i) {
         frefvec[i] = simulated_left[i] / simulated_right[i];
     }
-    tatami::DenseRowMatrix<float, int> fref(nrow, ncol, std::move(frefvec));
+    tatami::DenseMatrix<float, int, decltype(frefvec)> fref(nrow, ncol, std::move(frefvec), true);
 
-    quick_test_all<float, int>(*dense_fmod.get(), fref);
-    quick_test_all<float, int>(*sparse_fmod.get(), fref);
+    quick_test_all<float, int>(dense_fmod, fref);
+    quick_test_all<float, int>(sparse_fmod, fref);
 }
 
 /*******************************
@@ -377,26 +382,34 @@ protected:
 
         DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        tatami::DelayedUnaryIsometricAbs op0;
-        auto dense_left0 = tatami::make_DelayedUnaryIsometricOperation(dense_left, op0);
-        auto sparse_left0 = tatami::make_DelayedUnaryIsometricOperation(sparse_left, op0);
-        auto dense_right0 = tatami::make_DelayedUnaryIsometricOperation(dense_right, op0);
-        auto sparse_right0 = tatami::make_DelayedUnaryIsometricOperation(sparse_right, op0);
+        auto abs_left = simulated_left;
+        for (auto& x : abs_left) {
+            x = std::abs(x);
+        }
+        auto dense_left0 = std::make_shared<tatami::DenseMatrix<double, int, decltype(abs_left)> >(nrow, ncol, std::move(abs_left), true); // row major.
+        auto sparse_left0 = tatami::convert_to_compressed_sparse<double, int>(*dense_left0, false, {}); // column major.
 
-        auto op = tatami::make_DelayedBinaryIsometricPower();
-        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left0, dense_right0, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left0, sparse_right0, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
+        auto abs_right = simulated_right;
+        for (auto& x : abs_right) {
+            x = std::abs(x);
+        }
+        auto dense_right0 = std::make_shared<tatami::DenseMatrix<double, int, decltype(abs_right)> >(nrow, ncol, std::move(abs_right), true); // row major.
+        auto sparse_right0 = tatami::convert_to_compressed_sparse<double, int>(*dense_right0, false, {}); // column major.
+
+        auto op = std::make_shared<tatami::DelayedBinaryIsometricPowerHelper<double, double, int> >();
+        dense_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(dense_left0, dense_right0, op));
+        sparse_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(sparse_left0, sparse_right0, op));
+        sparse_uns.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left0)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right0)), 
             op
-        );
+        ));
 
         auto refvec = simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] = std::pow(std::abs(refvec[i]), std::abs(simulated_right[i]));
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -425,20 +438,20 @@ protected:
 
         DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        auto op = tatami::make_DelayedBinaryIsometricModulo();
-        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
+        auto op = std::make_shared<tatami::DelayedBinaryIsometricModuloHelper<double, double, int> >();
+        dense_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(dense_left, dense_right, op));
+        sparse_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(sparse_left, sparse_right, op));
+        sparse_uns.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
-        );
+        ));
 
         auto refvec = simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
             refvec[i] = careful_modulo(refvec[i], simulated_right[i]);
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -469,21 +482,21 @@ protected:
 
         DelayedBinaryIsometricArithmeticUtils::assemble();
 
-        auto op = tatami::make_DelayedBinaryIsometricIntegerDivide();
-        dense_mod = tatami::make_DelayedBinaryIsometricOperation(dense_left, dense_right, op);
-        sparse_mod = tatami::make_DelayedBinaryIsometricOperation(sparse_left, sparse_right, op);
-        sparse_uns = tatami::make_DelayedBinaryIsometricOperation(
+        auto op = std::make_shared<tatami::DelayedBinaryIsometricIntegerDivideHelper<double, double, int> >();
+        dense_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(dense_left, dense_right, op));
+        sparse_mod.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(sparse_left, sparse_right, op));
+        sparse_uns.reset(new tatami::DelayedBinaryIsometricOperation<double, double, int>(
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_left)),
             std::shared_ptr<tatami::NumericMatrix>(new tatami_test::ReversedIndicesWrapper<double, int>(sparse_right)), 
             op
-        );
+        ));
 
         auto refvec = simulated_left;
         for (size_t i = 0; i < refvec.size(); ++i) {
             // x == (x %% y) + y * (x %/% y)
             refvec[i] = std::floor(refvec[i] / simulated_right[i]);
         }
-        ref.reset(new tatami::DenseRowMatrix<double, int>(nrow, ncol, std::move(refvec)));
+        ref.reset(new tatami::DenseMatrix<double, int, decltype(refvec)>(nrow, ncol, std::move(refvec), true));
     }
 };
 
@@ -498,3 +511,20 @@ TEST_F(DelayedBinaryIsometricIntegerDivideTest, Basic) {
 BINARY_ARITH_FULL_TEST(DelayedBinaryIsometricIntegerDivideFullTest, DelayedBinaryIsometricIntegerDivideUtils)
 BINARY_ARITH_BLOCK_TEST(DelayedBinaryIsometricIntegerDivideBlockTest, DelayedBinaryIsometricIntegerDivideUtils)
 BINARY_ARITH_INDEX_TEST(DelayedBinaryIsometricIntegerDivideIndexTest, DelayedBinaryIsometricIntegerDivideUtils)
+
+TEST(DelayedBinaryIsometricArithmetic, BackCompatibility) {
+    auto add = tatami::make_DelayedBinaryIsometricAdd();
+    EXPECT_TRUE(add->is_sparse());
+    auto sub = tatami::make_DelayedBinaryIsometricSubtract();
+    EXPECT_TRUE(sub->is_sparse());
+    auto mult = tatami::make_DelayedBinaryIsometricMultiply();
+    EXPECT_TRUE(mult->is_sparse());
+    auto div = tatami::make_DelayedBinaryIsometricDivide();
+    EXPECT_FALSE(div->is_sparse());
+    auto pow = tatami::make_DelayedBinaryIsometricPower();
+    EXPECT_FALSE(pow->is_sparse());
+    auto mod = tatami::make_DelayedBinaryIsometricModulo();
+    EXPECT_FALSE(mod->is_sparse());
+    auto intdiv = tatami::make_DelayedBinaryIsometricIntegerDivide();
+    EXPECT_FALSE(intdiv->is_sparse());
+}

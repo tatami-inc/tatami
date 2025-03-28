@@ -2,6 +2,7 @@
 #define TATAMI_ISOMETRIC_UNARY_SUBSTITUTE_HELPERS_H
 
 #include "../compare_utils.hpp"
+#include "helper_interface.hpp"
 #include <vector>
 #include <limits>
 
@@ -16,99 +17,219 @@ namespace tatami {
 /**
  * @cond
  */
-template<CompareOperation op_, typename Value_>
-bool delayed_substitute_is_sparse(Value_ compared, Value_ substitute) {
-    return !delayed_compare<op_, Value_>(0, compared) || substitute == 0;
+template<CompareOperation op_, typename InputValue_, typename Scalar_, typename OutputValue_>
+bool delayed_substitute_is_sparse(Scalar_ compared, OutputValue_ substitute) {
+    return !delayed_compare<op_, InputValue_>(0, compared) || substitute == 0;
 }
 
-template<CompareOperation op_, typename Value_>
-void delayed_substitute_run(Value_& val, Value_ compared, Value_ substitute) {
-    if (delayed_compare<op_, Value_>(val, compared)) {
-        val = substitute;
+template<CompareOperation op_, typename InputValue_, typename Scalar_, typename OutputValue_>
+OutputValue_ delayed_substitute_run(InputValue_ val, Scalar_ compared, OutputValue_ substitute) {
+    if (delayed_compare<op_>(val, compared)) {
+        return substitute;
+    } else {
+        return val;
     }
 }
 
-template<CompareOperation op_, typename Value_, typename Index_>
-void delayed_substitute_run_simple(Value_* buffer, Index_ length, Value_ compared, Value_ substitute) {
+template<CompareOperation op_, typename InputValue_, typename Index_, typename Scalar_, typename OutputValue_>
+void delayed_substitute_run_simple(const InputValue_* input, Index_ length, Scalar_ compared, OutputValue_* output, OutputValue_ substitute) {
+    if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+        input = output; // basically an assertion to the compiler to skip aliasing protection.
+    }
     for (Index_ i = 0; i < length; ++i) {
-        delayed_substitute_run<op_, Value_>(buffer[i], compared, substitute);
+        output[i] = delayed_substitute_run<op_>(input[i], compared, substitute);
     }
 }
 /**
  * @endcond
  */
 
-
 /**
- * @brief Delayed scalar substitution.
+ * @brief Helper for delayed scalar substitution.
  *
  * This class compares each element of a `Matrix` to a scalar;
  * when this comparison is true, it replaces the matrix element with another scalar value.
- * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class, and only when `InputValue_ == OutputValue_`.
  *
  * @tparam op_ The comparison operation.
- * @tparam Value_ Type of the matrix value.
+ * @tparam OutputValue_ Type of the result of the operation.
+ * @tparam InputValue_ Type of the matrix value used in the operation.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam Scalar_ Type of the scalar value.
  */
-template<CompareOperation op_, typename Value_>
-class DelayedUnaryIsometricSubstituteScalar {
+template<CompareOperation op_, typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
+class DelayedUnaryIsometricSubstituteScalarHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
     /**
      * @param compared Scalar to be compared to the matrix values.
      * The matrix value is assumed to be on the left hand side of the comparison, while `compared` is on the right.
      * @param substitute Scalar to substitute into the matrix for every element where the comparison to `compared` is true.
      */
-    DelayedUnaryIsometricSubstituteScalar(Value_ compared, Value_ substitute) : my_compared(compared), my_substitute(substitute) {
-        my_sparse = delayed_substitute_is_sparse<op_, Value_>(my_compared, my_substitute);
+    DelayedUnaryIsometricSubstituteScalarHelper(Scalar_ compared, OutputValue_ substitute) : my_compared(compared), my_substitute(substitute) {
+        my_sparse = delayed_substitute_is_sparse<op_, InputValue_>(my_compared, my_substitute);
     }
 
 private:
-    Value_ my_compared, my_substitute;
+    Scalar_ my_compared;
+    OutputValue_ my_substitute;
     bool my_sparse;
 
 public:
-    /**
-     * @cond
-     */
-    static constexpr bool is_basic = false;
+    bool zero_depends_on_row() const {
+        return false;
+    }
 
+    bool zero_depends_on_column() const {
+        return false;
+    }
+
+    bool non_zero_depends_on_row() const {
+        return false;
+    }
+
+    bool non_zero_depends_on_column() const {
+        return false;
+    }
+
+public:
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        delayed_substitute_run_simple<op_>(input, length, my_compared, output, my_substitute);
+    }
+
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        delayed_substitute_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_compared, output, my_substitute);
+    }
+
+public:
     bool is_sparse() const {
         return my_sparse;
     }
-    /**
-     * @endcond
-     */
 
-public:
-    /**
-     * @cond
-     */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, const Value_*, Value_* output) const {
-        delayed_substitute_run_simple<op_, Value_>(output, length, my_compared, my_substitute);
+    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+        delayed_substitute_run_simple<op_>(input_value, number, my_compared, output_value, my_substitute);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, const Value_*, Value_* output) const {
-        delayed_substitute_run_simple<op_, Value_>(output, static_cast<Index_>(indices.size()), my_compared, my_substitute);
-    }
-
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, const Value_*, const Index_*, Value_* output_value) const {
-        delayed_substitute_run_simple<op_, Value_>(output_value, number, my_compared, my_substitute);
-    }
-
-    template<typename, typename, typename Index_>
-    Value_ fill(bool, Index_) const {
+    OutputValue_ fill(bool, Index_) const {
         if (my_sparse) {
             return 0;
         } else {
             return my_substitute;
         }
     }
-    /**
-     * @endcond
-     */
 };
+
+/**
+ * Convenient alias for the scalar equality substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam Scalar_ Type of the scalar value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
+using DelayedUnaryIsometricSubstituteEqualScalarHelper = DelayedUnaryIsometricSubstituteScalarHelper<CompareOperation::EQUAL, OutputValue_, InputValue_, Index_, Scalar_>;
+
+/**
+ * Convenient alias for the scalar "greater than" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam Scalar_ Type of the scalar value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
+using DelayedUnaryIsometricSubstituteGreaterThanScalarHelper = DelayedUnaryIsometricSubstituteScalarHelper<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_, Scalar_>;
+
+/**
+ * Convenient alias for the scalar "greater than" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam Scalar_ Type of the scalar value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
+using DelayedUnaryIsometricSubstituteGreaterThanScalarHelper = DelayedUnaryIsometricSubstituteScalarHelper<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_, Scalar_>;
+
+/**
+ * Convenient alias for the scalar "less than" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam Scalar_ Type of the scalar value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
+using DelayedUnaryIsometricSubstituteLessThanScalarHelper = DelayedUnaryIsometricSubstituteScalarHelper<CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_, Scalar_>;
+
+/**
+ * Convenient alias for the scalar "greater than or equal" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam Scalar_ Type of the scalar value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
+using DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalarHelper = DelayedUnaryIsometricSubstituteScalarHelper<CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, Scalar_>;
+
+/**
+ * Convenient alias for the scalar "less than or equal" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam Scalar_ Type of the scalar value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
+using DelayedUnaryIsometricSubstituteLessThanOrEqualScalarHelper = DelayedUnaryIsometricSubstituteScalarHelper<CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, Scalar_>;
+
+/**
+ * Convenient alias for the scalar non-equality substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam Scalar_ Type of the scalar value.
+ */
+template<typename OutputValue_, typename InputValue_, typename Index_, typename Scalar_>
+using DelayedUnaryIsometricSubstituteNotEqualScalarHelper = DelayedUnaryIsometricSubstituteScalarHelper<CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_, Scalar_>;
+
+/**
+ * @cond
+ */
+// Back-compatibility only.
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Scalar_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteEqualScalar(Scalar_ compared, OutputValue_ substitute) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteEqualScalarHelper<OutputValue_, InputValue_, Index_, Scalar_> >(compared, substitute);
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Scalar_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteGreaterThanScalar(Scalar_ compared, OutputValue_ substitute) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteGreaterThanScalarHelper<OutputValue_, InputValue_, Index_, Scalar_> >(compared, substitute);
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Scalar_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteLessThanScalar(Scalar_ compared, OutputValue_ substitute) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteLessThanScalarHelper<OutputValue_, InputValue_, Index_, Scalar_> >(compared, substitute);
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Scalar_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalar(Scalar_ compared, OutputValue_ substitute) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalarHelper<OutputValue_, InputValue_, Index_, Scalar_> >(compared, substitute);
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Scalar_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteLessThanOrEqualScalar(Scalar_ compared, OutputValue_ substitute) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteLessThanOrEqualScalarHelper<OutputValue_, InputValue_, Index_, Scalar_> >(compared, substitute);
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Scalar_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteNotEqualScalar(Scalar_ compared, OutputValue_ substitute) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteNotEqualScalarHelper<OutputValue_, InputValue_, Index_, Scalar_> >(compared, substitute);
+}
+/**
+ * @endcond
+ */
 
 /**
  * @brief Delayed vector comparisons.
@@ -118,11 +239,14 @@ public:
  * It should be used as the `Operation_` in the `DelayedUnaryIsometricOperation` class, and only when `InputValue_ == OutputValue_`.
  *
  * @tparam op_ The comparison operation.
- * @tparam InputValue_ Type of the matrix value. 
- * @tparam Vector_ Type of the vector.
+ * @tparam OutputValue_ Type of the result of the operation.
+ * @tparam InputValue_ Type of the matrix value used in the operation.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam ComparedVector_ Type of the vector containing values to compare to the input matrix.
+ * @tparam SubstituteVector_ Type of the vector containing values to substitute in the output matrix.
  */
-template<CompareOperation op_, typename Value_, typename Vector_>
-class DelayedUnaryIsometricSubstituteVector {
+template<CompareOperation op_, typename OutputValue_, typename InputValue_, typename Index_, typename ComparedVector_, typename SubstituteVector_>
+class DelayedUnaryIsometricSubstituteVectorHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
     /**
      * @param compared Vector to use in the comparison with the matrix values.
@@ -134,11 +258,13 @@ public:
      * If true, each element of the vectors is assumed to correspond to a row, and that element is used as an operand with all entries in the same row of the matrix.
      * If false, each element of the vectors is assumed to correspond to a column instead.
      */
-    DelayedUnaryIsometricSubstituteVector(Vector_ compared, Vector_ substitute, bool by_row) : 
-        my_compared(std::move(compared)), my_substitute(std::move(substitute)), my_by_row(by_row) 
+    DelayedUnaryIsometricSubstituteVectorHelper(ComparedVector_ compared, SubstituteVector_ substitute, bool by_row) : 
+        my_compared(std::move(compared)),
+        my_substitute(std::move(substitute)),
+        my_by_row(by_row) 
     {
         for (size_t i = 0, end = my_compared.size(); i < end; ++i) {
-            if (!delayed_substitute_is_sparse<op_, Value_>(my_compared[i], my_substitute[i])) {
+            if (!delayed_substitute_is_sparse<op_, InputValue_>(my_compared[i], my_substitute[i])) {
                  my_sparse = false;
                  break;
              }
@@ -146,16 +272,12 @@ public:
     }
 
 private:
-    Vector_ my_compared, my_substitute;
+    ComparedVector_ my_compared;
+    SubstituteVector_ my_substitute;
     bool my_by_row;
     bool my_sparse = true;
 
 public:
-    /**
-     * @cond
-     */
-    static constexpr bool is_basic = false;
-
     bool zero_depends_on_row() const {
         return my_by_row;
     }
@@ -172,59 +294,59 @@ public:
         return !my_by_row;
     }
 
-    bool is_sparse() const {
-        return my_sparse;
-    }
-    /**
-     * @endcond
-     */
-
 public:
-    /**
-     * @cond
-     */
-    template<typename Index_>
-    void dense(bool row, Index_ idx, Index_ start, Index_ length, const Value_*, Value_* output) const {
+    void dense(bool row, Index_ idx, Index_ start, Index_ length, const InputValue_* input, OutputValue_* output) const {
         if (row == my_by_row) {
-            delayed_substitute_run_simple<op_, Value_>(output, length, my_compared[idx], my_substitute[idx]);
+            delayed_substitute_run_simple<op_>(input, length, my_compared[idx], output, my_substitute[idx]);
         } else {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                input = output; // basically an assertion to the compiler to skip aliasing protection.
+            }
             for (Index_ i = 0; i < length; ++i) {
                 Index_ is = i + start;
-                delayed_substitute_run<op_, Value_>(output[i], my_compared[is], my_substitute[is]);
+                output[i] = delayed_substitute_run<op_>(input[i], my_compared[is], my_substitute[is]);
             }
         }
     }
 
-    template<typename Index_>
-    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const Value_*, Value_* output) const {
+    void dense(bool row, Index_ idx, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
         if (row == my_by_row) {
-            delayed_substitute_run_simple<op_, Value_>(output, static_cast<Index_>(indices.size()), my_compared[idx], my_substitute[idx]);
+            delayed_substitute_run_simple<op_>(input, static_cast<Index_>(indices.size()), my_compared[idx], output, my_substitute[idx]);
         } else {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                input = output; // basically an assertion to the compiler to skip aliasing protection.
+            }
             Index_ length = indices.size();
             for (Index_ i = 0; i < length; ++i) {
                 auto ii = indices[i];
-                delayed_substitute_run<op_, Value_>(output[i], my_compared[ii], my_substitute[ii]);
+                output[i] = delayed_substitute_run<op_>(input[i], my_compared[ii], my_substitute[ii]);
             }
         }
     }
 
-    template<typename Index_>
-    void sparse(bool row, Index_ idx, Index_ number, const Value_*, const Index_* indices, Value_* output_value) const {
+public:
+    bool is_sparse() const {
+        return my_sparse;
+    }
+
+    void sparse(bool row, Index_ idx, Index_ number, const InputValue_* input_value, const Index_* indices, OutputValue_* output_value) const {
         if (row == my_by_row) {
-            delayed_substitute_run_simple<op_, Value_>(output_value, number, my_compared[idx], my_substitute[idx]);
+            delayed_substitute_run_simple<op_>(input_value, number, my_compared[idx], output_value, my_substitute[idx]);
         } else {
+            if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+                input_value = output_value; // basically an assertion to the compiler to skip aliasing protection.
+            }
             for (Index_ i = 0; i < number; ++i) {
                 auto ii = indices[i];
-                delayed_substitute_run<op_, Value_>(output_value[i], my_compared[ii], my_substitute[ii]);
+                output_value[i] = delayed_substitute_run<op_>(input_value[i], my_compared[ii], my_substitute[ii]);
             }
         }
     }
 
-    template<typename, typename, typename Index_>
-    Value_ fill(bool row, Index_ idx) const {
+    OutputValue_ fill(bool row, Index_ idx) const {
         if (row == my_by_row) {
             auto sub = my_substitute[idx];
-            if (!delayed_compare<op_, Value_>(0, my_compared[idx])) {
+            if (!delayed_compare<op_, InputValue_>(0, my_compared[idx])) {
                 return 0;
             } else {
                 return sub;
@@ -235,210 +357,153 @@ public:
             return 0;
         }
     }
-    /**
-     * @endcond
-     */
 };
 
 /**
- * @tparam Value_ Type of the matrix value.
- * @param compared Scalar to be compared to the matrix values.
- * @param substitute Scalar to substitute into the matrix when the comparison is true.
- * @return A helper class for a delayed equality comparison to a scalar,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the scalar equality substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam ComparedVector_ Type of the vector containing values to compare to the input matrix.
+ * @tparam SubstituteVector_ Type of the vector containing values to substitute in the output matrix.
  */
-template<typename Value_ = double>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::EQUAL, Value_> 
-    make_DelayedUnaryIsometricSubstituteEqualScalar(Value_ compared, Value_ substitute) 
-{
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::EQUAL, Value_>(std::move(compared), std::move(substitute));
-}
+template<typename OutputValue_, typename InputValue_, typename Index_, typename ComparedVector_, typename SubstituteVector_>
+using DelayedUnaryIsometricSubstituteEqualVectorHelper = DelayedUnaryIsometricSubstituteVectorHelper<CompareOperation::EQUAL, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_>;
 
 /**
- * @tparam Value_ Type of the matrix value.
- * @param compared Scalar to be compared to the matrix values.
- * @param substitute Scalar value to substitute into the matrix when the comparison is true.
- * @return A helper class for a delayed greater-than comparison to a scalar,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the scalar "greater than" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam ComparedVector_ Type of the vector containing values to compare to the input matrix.
+ * @tparam SubstituteVector_ Type of the vector containing values to substitute in the output matrix.
  */
-template<typename Value_ = double>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN, Value_> 
-    make_DelayedUnaryIsometricSubstituteGreaterThanScalar(Value_ compared, Value_ substitute)
-{
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN, Value_>(std::move(compared), std::move(substitute));
-}
+template<typename OutputValue_, typename InputValue_, typename Index_, typename ComparedVector_, typename SubstituteVector_>
+using DelayedUnaryIsometricSubstituteGreaterThanVectorHelper = DelayedUnaryIsometricSubstituteVectorHelper<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_>;
 
 /**
- * @tparam Value_ Type of the matrix value.
- * @param compared Scalar to be compared to the matrix values.
- * @param substitute Scalar value to substitute into the matrix when the comparison is true.
- * @return A helper class for a delayed less-than comparison to a scalar,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the scalar "greater than" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam ComparedVector_ Type of the vector containing values to compare to the input matrix.
+ * @tparam SubstituteVector_ Type of the vector containing values to substitute in the output matrix.
  */
-template<typename Value_ = double>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN, Value_>
-    make_DelayedUnaryIsometricSubstituteLessThanScalar(Value_ compared, Value_ substitute)
-{
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN, Value_>(std::move(compared), std::move(substitute));
-}
+template<typename OutputValue_, typename InputValue_, typename Index_, typename ComparedVector_, typename SubstituteVector_>
+using DelayedUnaryIsometricSubstituteGreaterThanVectorHelper = DelayedUnaryIsometricSubstituteVectorHelper<CompareOperation::GREATER_THAN, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_>;
 
 /**
- * @tparam Value_ Type of the matrix value.
- * @param compared Scalar to be compared to the matrix values.
- * @param substitute Scalar value to substitute into the matrix when the comparison is true.
- * @return A helper class for a delayed greater-than-or-equal comparison to a scalar,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the scalar "less than" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam ComparedVector_ Type of the vector containing values to compare to the input matrix.
+ * @tparam SubstituteVector_ Type of the vector containing values to substitute in the output matrix.
  */
-template<typename Value_ = double>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN_OR_EQUAL, Value_> 
-    make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualScalar(Value_ compared, Value_ substitute)
-{
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::GREATER_THAN_OR_EQUAL, Value_>(std::move(compared), std::move(substitute));
-}
+template<typename OutputValue_, typename InputValue_, typename Index_, typename ComparedVector_, typename SubstituteVector_>
+using DelayedUnaryIsometricSubstituteLessThanVectorHelper = DelayedUnaryIsometricSubstituteVectorHelper<CompareOperation::LESS_THAN, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_>;
 
 /**
- * @tparam Value_ Type of the matrix value.
- * @param compared Scalar to be compared to the matrix values.
- * @param substitute Scalar to substitute into the matrix when the comparison is true.
- * @return A helper class for a delayed less-than-or-equal comparison to a scalar,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the scalar "greater than or equal" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam ComparedVector_ Type of the vector containing values to compare to the input matrix.
+ * @tparam SubstituteVector_ Type of the vector containing values to substitute in the output matrix.
  */
-template<typename Value_ = double>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN_OR_EQUAL, Value_>
-    make_DelayedUnaryIsometricSubstituteLessThanOrEqualScalar(Value_ compared, Value_ substitute)
-{
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::LESS_THAN_OR_EQUAL, Value_>(std::move(compared), std::move(substitute));
-}
+template<typename OutputValue_, typename InputValue_, typename Index_, typename ComparedVector_, typename SubstituteVector_>
+using DelayedUnaryIsometricSubstituteGreaterThanOrEqualVectorHelper = DelayedUnaryIsometricSubstituteVectorHelper<CompareOperation::GREATER_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_>;
 
 /**
- * @tparam Value_ Type of the matrix value.
- * @param compared Scalar to be compared to the matrix values.
- * @param substitute Scalar value to substitute into the matrix when the comparison is true.
- * @return A helper class for a delayed non-equality comparison to a scalar,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the scalar "less than or equal" substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam ComparedVector_ Type of the vector containing values to compare to the input matrix.
+ * @tparam SubstituteVector_ Type of the vector containing values to substitute in the output matrix.
  */
-template<typename Value_ = double>
-DelayedUnaryIsometricSubstituteScalar<CompareOperation::NOT_EQUAL, Value_>
-    make_DelayedUnaryIsometricSubstituteNotEqualScalar(Value_ compared, Value_ substitute) 
-{
-    return DelayedUnaryIsometricSubstituteScalar<CompareOperation::NOT_EQUAL, Value_>(std::move(compared), std::move(substitute));
-}
+template<typename OutputValue_, typename InputValue_, typename Index_, typename ComparedVector_, typename SubstituteVector_>
+using DelayedUnaryIsometricSubstituteLessThanOrEqualVectorHelper = DelayedUnaryIsometricSubstituteVectorHelper<CompareOperation::LESS_THAN_OR_EQUAL, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_>;
 
 /**
- * @tparam Value_ Type of the matrix value.
- * @tparam Vector_ Type of the vector.
- * @param compared Vector to be compared to the matrix values.
- * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
- * @param by_row Whether each element of `compared` and `substitute` corresponds to a row, see `DelayedUnaryIsometricSubstituteVector`.
- * @return A helper class for a delayed equality comparison to a vector,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the scalar non-equality substitution helper.
+ *
+ * @tparam OutputValue_ Type of the result of the substitution.
+ * @tparam InputValue_ Type of the matrix value used in the substitution.
+ * @tparam Index_ Integer type for the row/column indices.
+ * @tparam ComparedVector_ Type of the vector containing values to compare to the input matrix.
+ * @tparam SubstituteVector_ Type of the vector containing values to substitute in the output matrix.
  */
-template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricSubstituteVector<CompareOperation::EQUAL, Value_, Vector_> 
-    make_DelayedUnaryIsometricSubstituteEqualVector(Vector_ compared, Vector_ substitute, bool by_row) 
-{
-    return DelayedUnaryIsometricSubstituteVector<CompareOperation::EQUAL, Value_, Vector_>(std::move(compared), std::move(substitute), by_row);
-}
-
-/**
- * @tparam Value_ Type of the matrix value.
- * @tparam Vector_ Type of the vector.
- * @param compared Vector to be compared to the matrix values.
- * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
- * @param by_row Whether each element of `compared` and `substitute` corresponds to a row, see `DelayedUnaryIsometricSubstituteVector`.
- * @return A helper class for a delayed greater-than comparison to a vector,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
- */
-template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricSubstituteVector<CompareOperation::GREATER_THAN, Value_, Vector_> 
-    make_DelayedUnaryIsometricSubstituteGreaterThanVector(Vector_ compared, Vector_ substitute, bool by_row)
-{
-    return DelayedUnaryIsometricSubstituteVector<CompareOperation::GREATER_THAN, Value_, Vector_>(std::move(compared), std::move(substitute), by_row);
-}
-
-/**
- * @tparam Value_ Type of the matrix value.
- * @tparam Vector_ Type of the vector.
- * @param compared Vector to be compared to the matrix values.
- * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
- * @param by_row Whether each element of `compared` and `substitute` corresponds to a row, see `DelayedUnaryIsometricSubstituteVector`.
- * @return A helper class for a delayed less-than comparison to a vector,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
- */
-template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricSubstituteVector<CompareOperation::LESS_THAN, Value_, Vector_> 
-    make_DelayedUnaryIsometricSubstituteLessThanVector(Vector_ compared, Vector_ substitute, bool by_row) 
-{
-    return DelayedUnaryIsometricSubstituteVector<CompareOperation::LESS_THAN, Value_, Vector_>(std::move(compared), std::move(substitute), by_row);
-}
-
-/**
- * @tparam Value_ Type of the matrix value.
- * @tparam Vector_ Type of the vector.
- * @param compared Vector to be compared to the matrix values.
- * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
- * @param by_row Whether each element of `compared` and `substitute` corresponds to a row, see `DelayedUnaryIsometricSubstituteVector`.
- * @return A helper class for a delayed greater-than-or-equal comparison to a vector,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
- */
-template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricSubstituteVector<CompareOperation::GREATER_THAN_OR_EQUAL, Value_, Vector_> 
-    make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualVector(Vector_ compared, Vector_ substitute, bool by_row) 
-{
-    return DelayedUnaryIsometricSubstituteVector<CompareOperation::GREATER_THAN_OR_EQUAL, Value_, Vector_>(std::move(compared), std::move(substitute), by_row);
-}
-
-/**
- * @tparam Value_ Type of the matrix value.
- * @tparam Vector_ Type of the vector.
- * @param compared Vector to be compared to the matrix values.
- * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
- * @param by_row Whether each element of `compared` and `substitute` corresponds to a row, see `DelayedUnaryIsometricSubstituteVector`.
- * @return A helper class for a delayed less-than-or-equal comparison to a vector,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
- */
-template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricSubstituteVector<CompareOperation::LESS_THAN_OR_EQUAL, Value_, Vector_> 
-    make_DelayedUnaryIsometricSubstituteLessThanOrEqualVector(Vector_ compared, Vector_ substitute, bool by_row) 
-{
-    return DelayedUnaryIsometricSubstituteVector<CompareOperation::LESS_THAN_OR_EQUAL, Value_, Vector_>(std::move(compared), std::move(substitute), by_row);
-}
-
-/**
- * @tparam Value_ Type of the matrix value.
- * @tparam Vector_ Type of the vector.
- * @param compared Vector to be compared to the matrix values.
- * @param substitute Vector containing values to substitute into the matrix when the comparison is true.
- * @param by_row Whether each element of `compared` and `substitute` corresponds to a row, see `DelayedUnaryIsometricSubstituteVector`.
- * @return A helper class for a delayed non-equality comparison to a vector,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
- */
-template<typename Value_ = double, typename Vector_ = std::vector<Value_> >
-DelayedUnaryIsometricSubstituteVector<CompareOperation::NOT_EQUAL, Value_, Vector_> 
-    make_DelayedUnaryIsometricSubstituteNotEqualVector(Vector_ compared, Vector_ substitute, bool by_row) 
-{
-    return DelayedUnaryIsometricSubstituteVector<CompareOperation::NOT_EQUAL, Value_, Vector_>(std::move(compared), std::move(substitute), by_row);
-}
+template<typename OutputValue_, typename InputValue_, typename Index_, typename ComparedVector_, typename SubstituteVector_>
+using DelayedUnaryIsometricSubstituteNotEqualVectorHelper = DelayedUnaryIsometricSubstituteVectorHelper<CompareOperation::NOT_EQUAL, OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_>;
 
 /**
  * @cond
  */
-template<SpecialCompareOperation op_, bool pass_, typename Value_>
-bool delayed_special_substitute_is_sparse(Value_ substitute) {
-    return !delayed_special_compare<op_, pass_, Value_>(0) || substitute == 0;
+// Back-compatibility only.
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename ComparedVector_, typename SubstituteVector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteEqualVector(ComparedVector_ compared, SubstituteVector_ substitute, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteEqualVectorHelper<OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_> >(std::move(compared), std::move(substitute), by_row);
 }
 
-template<SpecialCompareOperation op_, bool pass_, typename Value_>
-void delayed_special_substitute_run(Value_& val, Value_ substitute) {
-    if (delayed_special_compare<op_, pass_, Value_>(val)) {
-        val = substitute;
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename ComparedVector_, typename SubstituteVector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteGreaterThanVector(ComparedVector_ compared, SubstituteVector_ substitute, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteGreaterThanVectorHelper<OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_> >(std::move(compared), std::move(substitute), by_row);
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename ComparedVector_, typename SubstituteVector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteLessThanVector(ComparedVector_ compared, SubstituteVector_ substitute, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteLessThanVectorHelper<OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_> >(std::move(compared), std::move(substitute), by_row);
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename ComparedVector_, typename SubstituteVector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteGreaterThanOrEqualVector(ComparedVector_ compared, SubstituteVector_ substitute, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteGreaterThanOrEqualVectorHelper<OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_> >(std::move(compared), std::move(substitute), by_row);
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename ComparedVector_, typename SubstituteVector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricLessSubstituteThanOrEqualVector(ComparedVector_ compared, SubstituteVector_ substitute, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteLessThanOrEqualVectorHelper<OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_> >(std::move(compared), std::move(substitute), by_row);
+}
+
+template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename ComparedVector_, typename SubstituteVector_>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteNotEqualVector(ComparedVector_ compared, SubstituteVector_ substitute, bool by_row) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteNotEqualVectorHelper<OutputValue_, InputValue_, Index_, ComparedVector_, SubstituteVector_> >(std::move(compared), std::move(substitute), by_row);
+}
+/**
+ * @endcond
+ */
+
+/**
+ * @cond
+ */
+template<SpecialCompareOperation op_, bool pass_, typename InputValue_, typename OutputValue_>
+bool delayed_special_substitute_is_sparse(OutputValue_ substitute) {
+    return !delayed_special_compare<op_, pass_, InputValue_>(0) || substitute == 0;
+}
+
+template<SpecialCompareOperation op_, bool pass_, typename InputValue_, typename OutputValue_>
+OutputValue_ delayed_special_substitute_run(InputValue_ val, OutputValue_ substitute) {
+    if (delayed_special_compare<op_, pass_>(val)) {
+        return substitute;
+    } else {
+        return val;
     }
 }
 
-template<SpecialCompareOperation op_, bool pass_, typename Value_, typename Index_>
-void delayed_special_substitute_run_simple(Value_* buffer, Index_ length, Value_ substitute) {
+template<SpecialCompareOperation op_, bool pass_, typename InputValue_, typename Index_, typename OutputValue_>
+void delayed_special_substitute_run_simple(const InputValue_* input, Index_ length, OutputValue_ substitute, OutputValue_* output) {
+    if constexpr(std::is_same<InputValue_, OutputValue_>::value) {
+        input = output; // basically an assertion to the compiler to skip aliasing protection.
+    }
     for (Index_ i = 0; i < length; ++i) {
-        delayed_special_substitute_run<op_, pass_, Value_>(buffer[i], substitute);
+        output[i] = delayed_special_substitute_run<op_, pass_>(input[i], substitute);
     }
 }
 /**
@@ -454,102 +519,122 @@ void delayed_special_substitute_run_simple(Value_* buffer, Index_ length, Value_
  * @tparam op_ The special comparison operation.
  * @tparam pass_ Whether to perform the substitution if the special comparison is true.
  * Otherwise the substitution is only performed if the comparison is false.
- * @tparam Value_ Type of the matrix value.
+ * @tparam OutputValue_ Type of the result of the operation.
+ * @tparam InputValue_ Type of the matrix value used in the operation.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-template<SpecialCompareOperation op_, bool pass_, typename Value_>
-class DelayedUnaryIsometricSpecialSubstitute {
+template<SpecialCompareOperation op_, bool pass_, typename OutputValue_, typename InputValue_, typename Index_>
+class DelayedUnaryIsometricSpecialSubstituteHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
 public:
     /**
      * @param substitute Scalar to substitute into the matrix for every element where the special comparison is true (if `pass_ = true`) or false (otherwise).
      */
-    DelayedUnaryIsometricSpecialSubstitute(Value_ substitute) : my_substitute(substitute) {
-        my_sparse = delayed_special_substitute_is_sparse<op_, pass_, Value_>(my_substitute);
+    DelayedUnaryIsometricSpecialSubstituteHelper(OutputValue_ substitute) : my_substitute(substitute) {
+        my_sparse = delayed_special_substitute_is_sparse<op_, pass_, InputValue_>(my_substitute);
     }
 
 private:
-    Value_ my_substitute;
+    OutputValue_ my_substitute;
     bool my_sparse;
 
 public:
-    /**
-     * @cond
-     */
-    static constexpr bool is_basic = false;
+    bool zero_depends_on_row() const {
+        return false;
+    }
 
+    bool zero_depends_on_column() const {
+        return false;
+    }
+
+    bool non_zero_depends_on_row() const {
+        return false;
+    }
+
+    bool non_zero_depends_on_column() const {
+        return false;
+    }
+
+public:
+    void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
+        delayed_special_substitute_run_simple<op_, pass_>(input, length, my_substitute, output);
+    }
+
+    void dense(bool, Index_, const std::vector<Index_>& indices, const InputValue_* input, OutputValue_* output) const {
+        delayed_special_substitute_run_simple<op_, pass_>(input, static_cast<Index_>(indices.size()), my_substitute, output);
+    }
+
+public:
     bool is_sparse() const {
         return my_sparse;
     }
-    /**
-     * @endcond
-     */
 
-public:
-    /**
-     * @cond
-     */
-    template<typename Index_>
-    void dense(bool, Index_, Index_, Index_ length, const Value_*, Value_* output) const {
-        delayed_special_substitute_run_simple<op_, pass_, Value_>(output, length, my_substitute);
+    void sparse(bool, Index_, Index_ number, const InputValue_* input_value, const Index_*, OutputValue_* output_value) const {
+        delayed_special_substitute_run_simple<op_, pass_>(input_value, number, my_substitute, output_value);
     }
 
-    template<typename Index_>
-    void dense(bool, Index_, const std::vector<Index_>& indices, const Value_*, Value_* output) const {
-        delayed_special_substitute_run_simple<op_, pass_, Value_>(output, static_cast<Index_>(indices.size()), my_substitute);
-    }
-
-    template<typename Index_>
-    void sparse(bool, Index_, Index_ number, const Value_*, const Index_*, Value_* output_value) const {
-        delayed_special_substitute_run_simple<op_, pass_, Value_>(output_value, number, my_substitute);
-    }
-
-    template<typename, typename, typename Index_>
-    Value_ fill(bool, Index_) const {
+    OutputValue_ fill(bool, Index_) const {
         if (my_sparse) {
             return 0;
         } else {
             return my_substitute;
         }
     }
-    /**
-     * @endcond
-     */
 };
 
 /**
- * @tparam pass_ Whether to perform the substitution if the matrix value is NaN.
- * If false, the substitution is performed if the matrix value is not NaN.
- * @tparam Value_ Type of the matrix value.
- * @return A helper class for a delayed NaN check,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the NaN substitution helper.
+ *
+ * @tparam pass_ Whether to substitute if the input value is NaN.
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-template<bool pass_ = true, typename Value_ = double>
-DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISNAN, pass_, Value_> make_DelayedUnaryIsometricSubstituteIsnan(Value_ substitute) {
-    return DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISNAN, pass_, Value_>(substitute);
-}
+template<bool pass_, typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedUnaryIsometricSubstituteIsnanHelper = DelayedUnaryIsometricSpecialSubstituteHelper<SpecialCompareOperation::ISNAN, pass_, OutputValue_, InputValue_, Index_>;
 
 /**
- * @tparam pass_ Whether to return truthy if the matrix value is infinite.
- * If false, the substitution is performed if the matrix value is not infinite.
- * @tparam Value_ Type of the matrix value.
- * @return A helper class for a delayed check for infinity (positive or negative),
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the infinity substitution helper.
+ *
+ * @tparam pass_ Whether to substitute if the input value is infinite.
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-template<bool pass_ = true, typename Value_ = double>
-DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISINF, pass_, Value_> make_DelayedUnaryIsometricSubstituteIsinf(Value_ substitute) {
-    return DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISINF, pass_, Value_>(substitute);
-}
+template<bool pass_, typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedUnaryIsometricSubstituteIsinfHelper = DelayedUnaryIsometricSpecialSubstituteHelper<SpecialCompareOperation::ISINF, pass_, OutputValue_, InputValue_, Index_>;
 
 /**
- * @tparam pass_ Whether to return truthy if the matrix value is finite.
- * If false, the substitution is performed if the matrix value is not finite.
- * @tparam Value_ Type of the matrix value.
- * @return A helper class for a delayed check for finite values,
- * to be used as the `operation` in a `DelayedUnaryIsometricOperation`.
+ * Convenient alias for the finite value substitution helper.
+ *
+ * @tparam pass_ Whether to substitute if the input value is finite.
+ * @tparam OutputValue_ Type of the result of the comparison.
+ * @tparam InputValue_ Type of the matrix value used in the comparison.
+ * @tparam Index_ Integer type for the row/column indices.
  */
-template<bool pass_ = true, typename Value_ = double>
-DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISFINITE, pass_, Value_> make_DelayedUnaryIsometricSubstituteIsfinite(Value_ substitute) {
-    return DelayedUnaryIsometricSpecialSubstitute<SpecialCompareOperation::ISFINITE, pass_, Value_>(substitute);
+template<bool pass_, typename OutputValue_, typename InputValue_, typename Index_>
+using DelayedUnaryIsometricSubstituteIsfiniteHelper = DelayedUnaryIsometricSpecialSubstituteHelper<SpecialCompareOperation::ISFINITE, pass_, OutputValue_, InputValue_, Index_>;
+
+/**
+ * @cond
+ */
+// Back-compatibility only.
+template<bool pass_ = true, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteIsnan(OutputValue_ substitute) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteIsnanHelper<pass_, OutputValue_, InputValue_, Index_> >(substitute);
 }
+
+template<bool pass_ = true, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteIsinf(OutputValue_ substitute) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteIsinfHelper<pass_, OutputValue_, InputValue_, Index_> >(substitute);
+}
+
+template<bool pass_ = true, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteIsfinite(OutputValue_ substitute) {
+    return std::make_shared<DelayedUnaryIsometricSubstituteIsfiniteHelper<pass_, OutputValue_, InputValue_, Index_> >(substitute);
+}
+/**
+ * @endcond
+ */
 
 }
 
