@@ -115,7 +115,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00039" name="l00039"></a><span class="lineno">   39</span><span class="keyword">class </span>DenseBasicFull final : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, OutputValue_, Index_&gt; {</div>
 <div class="line"><a id="l00040" name="l00040"></a><span class="lineno">   40</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00041" name="l00041"></a><span class="lineno">   41</span>    DenseBasicFull(</div>
-<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix, </div>
+<div class="line"><a id="l00042" name="l00042"></a><span class="lineno">   42</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix, </div>
 <div class="line"><a id="l00043" name="l00043"></a><span class="lineno">   43</span>        <span class="keyword">const</span> Operation_&amp; operation, </div>
 <div class="line"><a id="l00044" name="l00044"></a><span class="lineno">   44</span>        <span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00045" name="l00045"></a><span class="lineno">   45</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
@@ -123,7 +123,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00047" name="l00047"></a><span class="lineno">   47</span>        my_operation(operation),</div>
 <div class="line"><a id="l00048" name="l00048"></a><span class="lineno">   48</span>        my_row(row),</div>
 <div class="line"><a id="l00049" name="l00049"></a><span class="lineno">   49</span>        my_oracle(oracle, my_operation, row),</div>
-<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        my_extent(row ? matrix-&gt;ncol() : matrix-&gt;nrow()),</div>
+<div class="line"><a id="l00050" name="l00050"></a><span class="lineno">   50</span>        my_extent(row ? matrix.ncol() : matrix.nrow()),</div>
 <div class="line"><a id="l00051" name="l00051"></a><span class="lineno">   51</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;false, oracle_&gt;(matrix, row, std::move(oracle), opt))</div>
 <div class="line"><a id="l00052" name="l00052"></a><span class="lineno">   52</span>    {</div>
 <div class="line"><a id="l00053" name="l00053"></a><span class="lineno">   53</span>        <span class="keywordflow">if</span> <span class="keyword">constexpr</span>(!same_value) {</div>
@@ -161,7 +161,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00085" name="l00085"></a><span class="lineno">   85</span><span class="keyword">class </span>DenseBasicBlock final : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, OutputValue_, Index_&gt; {</div>
 <div class="line"><a id="l00086" name="l00086"></a><span class="lineno">   86</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00087" name="l00087"></a><span class="lineno">   87</span>    DenseBasicBlock(</div>
-<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix, </div>
+<div class="line"><a id="l00088" name="l00088"></a><span class="lineno">   88</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix, </div>
 <div class="line"><a id="l00089" name="l00089"></a><span class="lineno">   89</span>        <span class="keyword">const</span> Operation_&amp; operation, </div>
 <div class="line"><a id="l00090" name="l00090"></a><span class="lineno">   90</span>        <span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00091" name="l00091"></a><span class="lineno">   91</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
@@ -210,7 +210,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00134" name="l00134"></a><span class="lineno">  134</span><span class="keyword">class </span>DenseBasicIndex final : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, OutputValue_, Index_&gt; {</div>
 <div class="line"><a id="l00135" name="l00135"></a><span class="lineno">  135</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00136" name="l00136"></a><span class="lineno">  136</span>    DenseBasicIndex(</div>
-<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix, </div>
+<div class="line"><a id="l00137" name="l00137"></a><span class="lineno">  137</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix, </div>
 <div class="line"><a id="l00138" name="l00138"></a><span class="lineno">  138</span>        <span class="keyword">const</span> Operation_&amp; operation, </div>
 <div class="line"><a id="l00139" name="l00139"></a><span class="lineno">  139</span>        <span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00140" name="l00140"></a><span class="lineno">  140</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
@@ -258,7 +258,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span><span class="keyword">class </span>DenseExpandedFull final : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, OutputValue_, Index_&gt; {</div>
 <div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    DenseExpandedFull(</div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix, </div>
+<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix, </div>
 <div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>        <span class="keyword">const</span> Operation_&amp; operation,</div>
 <div class="line"><a id="l00198" name="l00198"></a><span class="lineno">  198</span>        <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00199" name="l00199"></a><span class="lineno">  199</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle,</div>
@@ -266,7 +266,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span>        my_operation(operation),</div>
 <div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span>        my_row(row),</div>
 <div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>        my_oracle(oracle, my_operation, row),</div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        my_extent(row ? matrix-&gt;ncol() : matrix-&gt;nrow()),</div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>        my_extent(row ? matrix.ncol() : matrix.nrow()),</div>
 <div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>        my_vbuffer(my_extent),</div>
 <div class="line"><a id="l00206" name="l00206"></a><span class="lineno">  206</span>        my_ibuffer(my_extent)</div>
 <div class="line"><a id="l00207" name="l00207"></a><span class="lineno">  207</span>    {</div>
@@ -329,7 +329,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00264" name="l00264"></a><span class="lineno">  264</span><span class="keyword">class </span>DenseExpandedBlock final : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, OutputValue_, Index_&gt; {</div>
 <div class="line"><a id="l00265" name="l00265"></a><span class="lineno">  265</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00266" name="l00266"></a><span class="lineno">  266</span>    DenseExpandedBlock(</div>
-<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix, </div>
+<div class="line"><a id="l00267" name="l00267"></a><span class="lineno">  267</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix, </div>
 <div class="line"><a id="l00268" name="l00268"></a><span class="lineno">  268</span>        <span class="keyword">const</span> Operation_&amp; operation,</div>
 <div class="line"><a id="l00269" name="l00269"></a><span class="lineno">  269</span>        <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00270" name="l00270"></a><span class="lineno">  270</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle,</div>
@@ -403,7 +403,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00338" name="l00338"></a><span class="lineno">  338</span><span class="keyword">class </span>DenseExpandedIndex final : <span class="keyword">public</span> <a class="code hl_typedef" href="namespacetatami.html#a92f2deb44e0a3cb1c569a379c6facbf0">DenseExtractor</a>&lt;oracle_, OutputValue_, Index_&gt; {</div>
 <div class="line"><a id="l00339" name="l00339"></a><span class="lineno">  339</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00340" name="l00340"></a><span class="lineno">  340</span>    DenseExpandedIndex(</div>
-<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix, </div>
+<div class="line"><a id="l00341" name="l00341"></a><span class="lineno">  341</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix, </div>
 <div class="line"><a id="l00342" name="l00342"></a><span class="lineno">  342</span>        <span class="keyword">const</span> Operation_&amp; operation,</div>
 <div class="line"><a id="l00343" name="l00343"></a><span class="lineno">  343</span>        <span class="keywordtype">bool</span> row,</div>
 <div class="line"><a id="l00344" name="l00344"></a><span class="lineno">  344</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle,</div>
@@ -492,7 +492,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00434" name="l00434"></a><span class="lineno">  434</span><span class="keyword">class </span>SparseSimple final : <span class="keyword">public</span> SparseExtractor&lt;oracle_, OutputValue_, Index_&gt; {</div>
 <div class="line"><a id="l00435" name="l00435"></a><span class="lineno">  435</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00436" name="l00436"></a><span class="lineno">  436</span>    SparseSimple(</div>
-<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix, </div>
+<div class="line"><a id="l00437" name="l00437"></a><span class="lineno">  437</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix, </div>
 <div class="line"><a id="l00438" name="l00438"></a><span class="lineno">  438</span>        <span class="keyword">const</span> Operation_&amp; operation, </div>
 <div class="line"><a id="l00439" name="l00439"></a><span class="lineno">  439</span>        <span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00440" name="l00440"></a><span class="lineno">  440</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
@@ -502,11 +502,11 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00444" name="l00444"></a><span class="lineno">  444</span>        my_oracle(oracle, my_operation, row),</div>
 <div class="line"><a id="l00445" name="l00445"></a><span class="lineno">  445</span>        my_ext(<a class="code hl_function" href="namespacetatami.html#ac1514cda61f96e93a9cbc656f742a044">new_extractor</a>&lt;true, oracle_&gt;(matrix, row, std::move(oracle), opt)) </div>
 <div class="line"><a id="l00446" name="l00446"></a><span class="lineno">  446</span>    {</div>
-<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>        initialize(opt, row ? matrix-&gt;ncol() : matrix-&gt;nrow());</div>
+<div class="line"><a id="l00447" name="l00447"></a><span class="lineno">  447</span>        initialize(opt, row ? matrix.ncol() : matrix.nrow());</div>
 <div class="line"><a id="l00448" name="l00448"></a><span class="lineno">  448</span>    }</div>
 <div class="line"><a id="l00449" name="l00449"></a><span class="lineno">  449</span> </div>
 <div class="line"><a id="l00450" name="l00450"></a><span class="lineno">  450</span>    SparseSimple(</div>
-<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix, </div>
+<div class="line"><a id="l00451" name="l00451"></a><span class="lineno">  451</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix, </div>
 <div class="line"><a id="l00452" name="l00452"></a><span class="lineno">  452</span>        <span class="keyword">const</span> Operation_&amp; operation, </div>
 <div class="line"><a id="l00453" name="l00453"></a><span class="lineno">  453</span>        <span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00454" name="l00454"></a><span class="lineno">  454</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
@@ -522,7 +522,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00464" name="l00464"></a><span class="lineno">  464</span>    }</div>
 <div class="line"><a id="l00465" name="l00465"></a><span class="lineno">  465</span> </div>
 <div class="line"><a id="l00466" name="l00466"></a><span class="lineno">  466</span>    SparseSimple(</div>
-<div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix, </div>
+<div class="line"><a id="l00467" name="l00467"></a><span class="lineno">  467</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix, </div>
 <div class="line"><a id="l00468" name="l00468"></a><span class="lineno">  468</span>        <span class="keyword">const</span> Operation_&amp; operation, </div>
 <div class="line"><a id="l00469" name="l00469"></a><span class="lineno">  469</span>        <span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00470" name="l00470"></a><span class="lineno">  470</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
@@ -586,7 +586,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00535" name="l00535"></a><span class="lineno">  535</span><span class="keyword">class </span>SparseNeedsIndices final : <span class="keyword">public</span> SparseExtractor&lt;oracle_, OutputValue_, Index_&gt; {</div>
 <div class="line"><a id="l00536" name="l00536"></a><span class="lineno">  536</span><span class="keyword">public</span>:</div>
 <div class="line"><a id="l00537" name="l00537"></a><span class="lineno">  537</span>    SparseNeedsIndices(</div>
-<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix,</div>
+<div class="line"><a id="l00538" name="l00538"></a><span class="lineno">  538</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix,</div>
 <div class="line"><a id="l00539" name="l00539"></a><span class="lineno">  539</span>        <span class="keyword">const</span> Operation_&amp; operation, </div>
 <div class="line"><a id="l00540" name="l00540"></a><span class="lineno">  540</span>        <span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00541" name="l00541"></a><span class="lineno">  541</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
@@ -595,12 +595,12 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00544" name="l00544"></a><span class="lineno">  544</span>        my_row(row),</div>
 <div class="line"><a id="l00545" name="l00545"></a><span class="lineno">  545</span>        my_oracle(oracle, my_operation, row)</div>
 <div class="line"><a id="l00546" name="l00546"></a><span class="lineno">  546</span>    {</div>
-<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>        initialize(opt, row ? matrix-&gt;ncol() : matrix-&gt;nrow());</div>
+<div class="line"><a id="l00547" name="l00547"></a><span class="lineno">  547</span>        initialize(opt, row ? matrix.ncol() : matrix.nrow());</div>
 <div class="line"><a id="l00548" name="l00548"></a><span class="lineno">  548</span>        my_ext = new_extractor&lt;true, oracle_&gt;(matrix, row, std::move(oracle), opt);</div>
 <div class="line"><a id="l00549" name="l00549"></a><span class="lineno">  549</span>    }</div>
 <div class="line"><a id="l00550" name="l00550"></a><span class="lineno">  550</span> </div>
 <div class="line"><a id="l00551" name="l00551"></a><span class="lineno">  551</span>    SparseNeedsIndices(</div>
-<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix,</div>
+<div class="line"><a id="l00552" name="l00552"></a><span class="lineno">  552</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix,</div>
 <div class="line"><a id="l00553" name="l00553"></a><span class="lineno">  553</span>        <span class="keyword">const</span> Operation_&amp; operation, </div>
 <div class="line"><a id="l00554" name="l00554"></a><span class="lineno">  554</span>        <span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00555" name="l00555"></a><span class="lineno">  555</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
@@ -616,7 +616,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00565" name="l00565"></a><span class="lineno">  565</span>    }</div>
 <div class="line"><a id="l00566" name="l00566"></a><span class="lineno">  566</span> </div>
 <div class="line"><a id="l00567" name="l00567"></a><span class="lineno">  567</span>    SparseNeedsIndices(</div>
-<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;* matrix,</div>
+<div class="line"><a id="l00568" name="l00568"></a><span class="lineno">  568</span>        <span class="keyword">const</span> Matrix&lt;InputValue_, Index_&gt;&amp; matrix,</div>
 <div class="line"><a id="l00569" name="l00569"></a><span class="lineno">  569</span>        <span class="keyword">const</span> Operation_&amp; operation, </div>
 <div class="line"><a id="l00570" name="l00570"></a><span class="lineno">  570</span>        <span class="keywordtype">bool</span> row, </div>
 <div class="line"><a id="l00571" name="l00571"></a><span class="lineno">  571</span>        MaybeOracle&lt;oracle_, Index_&gt; oracle, </div>
@@ -776,7 +776,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00730" name="l00730"></a><span class="lineno">  730</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_&gt;</div>
 <div class="line"><a id="l00731" name="l00731"></a><span class="lineno">  731</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; dense_basic_internal(<span class="keywordtype">bool</span> row, <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle, <span class="keyword">const</span> <a class="code hl_struct" href="structtatami_1_1Options.html">Options</a>&amp; opt)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00732" name="l00732"></a><span class="lineno">  732</span>        <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::DenseBasicFull&lt;oracle_, OutputValue_, InputValue_, Index_, Operation_&gt; &gt;(</div>
-<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>            my_matrix.get(),</div>
+<div class="line"><a id="l00733" name="l00733"></a><span class="lineno">  733</span>            *my_matrix,</div>
 <div class="line"><a id="l00734" name="l00734"></a><span class="lineno">  734</span>            *my_operation,</div>
 <div class="line"><a id="l00735" name="l00735"></a><span class="lineno">  735</span>            row,</div>
 <div class="line"><a id="l00736" name="l00736"></a><span class="lineno">  736</span>            std::move(oracle),</div>
@@ -787,7 +787,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00741" name="l00741"></a><span class="lineno">  741</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_&gt;</div>
 <div class="line"><a id="l00742" name="l00742"></a><span class="lineno">  742</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; dense_basic_internal(<span class="keywordtype">bool</span> row, <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle, Index_ block_start, Index_ block_length, <span class="keyword">const</span> Options&amp; opt)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00743" name="l00743"></a><span class="lineno">  743</span>        <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::DenseBasicBlock&lt;oracle_, OutputValue_, InputValue_, Index_, Operation_&gt; &gt;(</div>
-<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>            my_matrix.get(),</div>
+<div class="line"><a id="l00744" name="l00744"></a><span class="lineno">  744</span>            *my_matrix,</div>
 <div class="line"><a id="l00745" name="l00745"></a><span class="lineno">  745</span>            *my_operation,</div>
 <div class="line"><a id="l00746" name="l00746"></a><span class="lineno">  746</span>            row,</div>
 <div class="line"><a id="l00747" name="l00747"></a><span class="lineno">  747</span>            std::move(oracle),</div>
@@ -800,7 +800,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00754" name="l00754"></a><span class="lineno">  754</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_&gt;</div>
 <div class="line"><a id="l00755" name="l00755"></a><span class="lineno">  755</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; dense_basic_internal(<span class="keywordtype">bool</span> row, <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle, <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr, <span class="keyword">const</span> Options&amp; opt)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00756" name="l00756"></a><span class="lineno">  756</span>        <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::DenseBasicIndex&lt;oracle_, OutputValue_, InputValue_, Index_, Operation_&gt; &gt;(</div>
-<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>            my_matrix.get(),</div>
+<div class="line"><a id="l00757" name="l00757"></a><span class="lineno">  757</span>            *my_matrix,</div>
 <div class="line"><a id="l00758" name="l00758"></a><span class="lineno">  758</span>            *my_operation,</div>
 <div class="line"><a id="l00759" name="l00759"></a><span class="lineno">  759</span>            row,</div>
 <div class="line"><a id="l00760" name="l00760"></a><span class="lineno">  760</span>            std::move(oracle),</div>
@@ -812,7 +812,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00766" name="l00766"></a><span class="lineno">  766</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_&gt;</div>
 <div class="line"><a id="l00767" name="l00767"></a><span class="lineno">  767</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; dense_expanded_internal(<span class="keywordtype">bool</span> row, <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle, <span class="keyword">const</span> Options&amp; opt)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00768" name="l00768"></a><span class="lineno">  768</span>        <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::DenseExpandedFull&lt;oracle_, OutputValue_, InputValue_, Index_, Operation_&gt; &gt;(</div>
-<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>            my_matrix.get(),</div>
+<div class="line"><a id="l00769" name="l00769"></a><span class="lineno">  769</span>            *my_matrix,</div>
 <div class="line"><a id="l00770" name="l00770"></a><span class="lineno">  770</span>            *my_operation,</div>
 <div class="line"><a id="l00771" name="l00771"></a><span class="lineno">  771</span>            row,</div>
 <div class="line"><a id="l00772" name="l00772"></a><span class="lineno">  772</span>            std::move(oracle),</div>
@@ -823,7 +823,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00777" name="l00777"></a><span class="lineno">  777</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_&gt;</div>
 <div class="line"><a id="l00778" name="l00778"></a><span class="lineno">  778</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; dense_expanded_internal(<span class="keywordtype">bool</span> row, <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle, Index_ block_start, Index_ block_length, <span class="keyword">const</span> Options&amp; opt)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00779" name="l00779"></a><span class="lineno">  779</span>        <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::DenseExpandedBlock&lt;oracle_, OutputValue_, InputValue_, Index_, Operation_&gt; &gt;(</div>
-<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>            my_matrix.get(),</div>
+<div class="line"><a id="l00780" name="l00780"></a><span class="lineno">  780</span>            *my_matrix,</div>
 <div class="line"><a id="l00781" name="l00781"></a><span class="lineno">  781</span>            *my_operation,</div>
 <div class="line"><a id="l00782" name="l00782"></a><span class="lineno">  782</span>            row,</div>
 <div class="line"><a id="l00783" name="l00783"></a><span class="lineno">  783</span>            std::move(oracle),</div>
@@ -836,7 +836,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00790" name="l00790"></a><span class="lineno">  790</span>    <span class="keyword">template</span>&lt;<span class="keywordtype">bool</span> oracle_&gt;</div>
 <div class="line"><a id="l00791" name="l00791"></a><span class="lineno">  791</span>    std::unique_ptr&lt;DenseExtractor&lt;oracle_, OutputValue_, Index_&gt; &gt; dense_expanded_internal(<span class="keywordtype">bool</span> row, <a class="code hl_typedef" href="namespacetatami.html#a812af1bfb04773bf28da8549c3e6e5ee">MaybeOracle&lt;oracle_, Index_&gt;</a> oracle, <a class="code hl_typedef" href="namespacetatami.html#a1a9c70ebcfa94bba3fea89202868f22f">VectorPtr&lt;Index_&gt;</a> indices_ptr, <span class="keyword">const</span> Options&amp; opt)<span class="keyword"> const </span>{</div>
 <div class="line"><a id="l00792" name="l00792"></a><span class="lineno">  792</span>        <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::DenseExpandedIndex&lt;oracle_, OutputValue_, InputValue_, Index_, Operation_&gt; &gt;(</div>
-<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>            my_matrix.get(),</div>
+<div class="line"><a id="l00793" name="l00793"></a><span class="lineno">  793</span>            *my_matrix,</div>
 <div class="line"><a id="l00794" name="l00794"></a><span class="lineno">  794</span>            *my_operation,</div>
 <div class="line"><a id="l00795" name="l00795"></a><span class="lineno">  795</span>            row,</div>
 <div class="line"><a id="l00796" name="l00796"></a><span class="lineno">  796</span>            std::move(oracle),</div>
@@ -911,7 +911,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00859" name="l00859"></a><span class="lineno">  859</span>        <span class="keywordflow">if</span> (my_operation-&gt;is_sparse() &amp;&amp; my_matrix-&gt;is_sparse()) { </div>
 <div class="line"><a id="l00860" name="l00860"></a><span class="lineno">  860</span>            <span class="keywordflow">if</span> (DelayedIsometricOperation_internal::needs_sparse_indices(*my_operation, row)) {</div>
 <div class="line"><a id="l00861" name="l00861"></a><span class="lineno">  861</span>                <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::SparseNeedsIndices&lt;oracle_, OutputValue_, InputValue_, Index_, Operation_&gt; &gt;(</div>
-<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>                    my_matrix.get(),</div>
+<div class="line"><a id="l00862" name="l00862"></a><span class="lineno">  862</span>                    *my_matrix,</div>
 <div class="line"><a id="l00863" name="l00863"></a><span class="lineno">  863</span>                    *my_operation,</div>
 <div class="line"><a id="l00864" name="l00864"></a><span class="lineno">  864</span>                    row, </div>
 <div class="line"><a id="l00865" name="l00865"></a><span class="lineno">  865</span>                    std::move(oracle),</div>
@@ -920,7 +920,7 @@ $(function(){ initResizable(false); });
 <div class="line"><a id="l00868" name="l00868"></a><span class="lineno">  868</span> </div>
 <div class="line"><a id="l00869" name="l00869"></a><span class="lineno">  869</span>            } <span class="keywordflow">else</span> {</div>
 <div class="line"><a id="l00870" name="l00870"></a><span class="lineno">  870</span>                <span class="keywordflow">return</span> std::make_unique&lt;DelayedUnaryIsometricOperation_internal::SparseSimple&lt;oracle_, OutputValue_, InputValue_, Index_, Operation_&gt; &gt;(</div>
-<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>                    my_matrix.get(),</div>
+<div class="line"><a id="l00871" name="l00871"></a><span class="lineno">  871</span>                    *my_matrix,</div>
 <div class="line"><a id="l00872" name="l00872"></a><span class="lineno">  872</span>                    *my_operation, </div>
 <div class="line"><a id="l00873" name="l00873"></a><span class="lineno">  873</span>                    row, </div>
 <div class="line"><a id="l00874" name="l00874"></a><span class="lineno">  874</span>                    std::move(oracle), </div>
