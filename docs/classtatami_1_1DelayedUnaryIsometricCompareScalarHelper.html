@@ -126,6 +126,10 @@ Collaboration diagram for tatami::DelayedUnaryIsometricCompareScalarHelper&lt; o
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a3794b80e543e1a5e31a467bf33879ee9" id="r_a3794b80e543e1a5e31a467bf33879ee9"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a3794b80e543e1a5e31a467bf33879ee9">DelayedUnaryIsometricCompareScalarHelper</a> (Scalar_ scalar)</td></tr>
 <tr class="separator:a3794b80e543e1a5e31a467bf33879ee9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a87fbffa044e4b4dd873d017892948cc4" id="r_a87fbffa044e4b4dd873d017892948cc4"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a87fbffa044e4b4dd873d017892948cc4">nrow</a> () const</td></tr>
+<tr class="separator:a87fbffa044e4b4dd873d017892948cc4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42b49462caaede5124b8ac212ad31074" id="r_a42b49462caaede5124b8ac212ad31074"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a42b49462caaede5124b8ac212ad31074">ncol</a> () const</td></tr>
+<tr class="separator:a42b49462caaede5124b8ac212ad31074"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a01c161e62fe26d111a8a526c3ac5ca5a" id="r_a01c161e62fe26d111a8a526c3ac5ca5a"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a01c161e62fe26d111a8a526c3ac5ca5a">zero_depends_on_row</a> () const</td></tr>
 <tr class="separator:a01c161e62fe26d111a8a526c3ac5ca5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5f1f4f224adb5bbc4b2e3f8b32990074" id="r_a5f1f4f224adb5bbc4b2e3f8b32990074"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a5f1f4f224adb5bbc4b2e3f8b32990074">zero_depends_on_column</a> () const</td></tr>
@@ -195,6 +199,66 @@ template&lt;<a class="el" href="namespacetatami.html#a89475b46f681dd39b9926ced50
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
+<a id="a87fbffa044e4b4dd873d017892948cc4" name="a87fbffa044e4b4dd873d017892948cc4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a87fbffa044e4b4dd873d017892948cc4">&#9670;&#160;</a></span>nrow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="namespacetatami.html#a89475b46f681dd39b9926ced507240cc">CompareOperation</a> op_, typename OutputValue_ , typename InputValue_ , typename Index_ , typename Scalar_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Index_ &gt; <a class="el" href="classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html">tatami::DelayedUnaryIsometricCompareScalarHelper</a>&lt; op_, OutputValue_, InputValue_, Index_, Scalar_ &gt;::nrow </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Expected number of rows in the matrix to which this operation is to be applied (i.e., the underlying matrix in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> constructor). If no value is returned, the matrix may have any number of rows. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html#a8910d2540bc887faecd67c71aaff0d9f">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a42b49462caaede5124b8ac212ad31074" name="a42b49462caaede5124b8ac212ad31074"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42b49462caaede5124b8ac212ad31074">&#9670;&#160;</a></span>ncol()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;<a class="el" href="namespacetatami.html#a89475b46f681dd39b9926ced507240cc">CompareOperation</a> op_, typename OutputValue_ , typename InputValue_ , typename Index_ , typename Scalar_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Index_ &gt; <a class="el" href="classtatami_1_1DelayedUnaryIsometricCompareScalarHelper.html">tatami::DelayedUnaryIsometricCompareScalarHelper</a>&lt; op_, OutputValue_, InputValue_, Index_, Scalar_ &gt;::ncol </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Expected number of columns in the matrix to which this operation is to be applied (i.e., the underlying matrix in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> constructor). If no value is returned, the matrix may have any number of columns. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html#a5226816099e70c60e003360fb8534efd">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
 <a id="a01c161e62fe26d111a8a526c3ac5ca5a" name="a01c161e62fe26d111a8a526c3ac5ca5a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a01c161e62fe26d111a8a526c3ac5ca5a">&#9670;&#160;</a></span>zero_depends_on_row()</h2>
 

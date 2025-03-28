@@ -124,6 +124,10 @@ Collaboration diagram for tatami::DelayedUnaryIsometricBooleanNotHelper&lt; Outp
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
+<tr class="memitem:a46498ed1718a61125a2c3bb09c1cec71" id="r_a46498ed1718a61125a2c3bb09c1cec71"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a46498ed1718a61125a2c3bb09c1cec71">nrow</a> () const</td></tr>
+<tr class="separator:a46498ed1718a61125a2c3bb09c1cec71"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a55a93e4bfaaf66f23ffeda94f97af355" id="r_a55a93e4bfaaf66f23ffeda94f97af355"><td class="memItemLeft" align="right" valign="top">std::optional&lt; Index_ &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a55a93e4bfaaf66f23ffeda94f97af355">ncol</a> () const</td></tr>
+<tr class="separator:a55a93e4bfaaf66f23ffeda94f97af355"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8b0d3ac2ad1a91f76af21e1d91ab54f6" id="r_a8b0d3ac2ad1a91f76af21e1d91ab54f6"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#a8b0d3ac2ad1a91f76af21e1d91ab54f6">zero_depends_on_row</a> () const</td></tr>
 <tr class="separator:a8b0d3ac2ad1a91f76af21e1d91ab54f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf123b000b1c0b97931b5386fd46d3c3" id="r_adf123b000b1c0b97931b5386fd46d3c3"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="#adf123b000b1c0b97931b5386fd46d3c3">zero_depends_on_column</a> () const</td></tr>
@@ -157,6 +161,66 @@ class tatami::DelayedUnaryIsometricBooleanNotHelper&lt; OutputValue_, InputValue
   </dd>
 </dl>
 </div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a46498ed1718a61125a2c3bb09c1cec71" name="a46498ed1718a61125a2c3bb09c1cec71"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46498ed1718a61125a2c3bb09c1cec71">&#9670;&#160;</a></span>nrow()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Index_ &gt; <a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html">tatami::DelayedUnaryIsometricBooleanNotHelper</a>&lt; OutputValue_, InputValue_, Index_ &gt;::nrow </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Expected number of rows in the matrix to which this operation is to be applied (i.e., the underlying matrix in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> constructor). If no value is returned, the matrix may have any number of rows. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html#a8910d2540bc887faecd67c71aaff0d9f">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a55a93e4bfaaf66f23ffeda94f97af355" name="a55a93e4bfaaf66f23ffeda94f97af355"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a55a93e4bfaaf66f23ffeda94f97af355">&#9670;&#160;</a></span>ncol()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename OutputValue_ , typename InputValue_ , typename Index_ &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::optional&lt; Index_ &gt; <a class="el" href="classtatami_1_1DelayedUnaryIsometricBooleanNotHelper.html">tatami::DelayedUnaryIsometricBooleanNotHelper</a>&lt; OutputValue_, InputValue_, Index_ &gt;::ncol </td>
+          <td>(</td>
+          <td class="paramname"><span class="paramname"><em></em></span></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<dl class="section return"><dt>Returns</dt><dd>Expected number of columns in the matrix to which this operation is to be applied (i.e., the underlying matrix in the <code><a class="el" href="classtatami_1_1DelayedUnaryIsometricOperation.html" title="Delayed isometric operation on a single matrix.">DelayedUnaryIsometricOperation</a></code> constructor). If no value is returned, the matrix may have any number of columns. </dd></dl>
+
+<p>Implements <a class="el" href="classtatami_1_1DelayedUnaryIsometricOperationHelper.html#a5226816099e70c60e003360fb8534efd">tatami::DelayedUnaryIsometricOperationHelper&lt; OutputValue_, InputValue_, Index_ &gt;</a>.</p>
+
+</div>
+</div>
 <a id="a8b0d3ac2ad1a91f76af21e1d91ab54f6" name="a8b0d3ac2ad1a91f76af21e1d91ab54f6"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a8b0d3ac2ad1a91f76af21e1d91ab54f6">&#9670;&#160;</a></span>zero_depends_on_row()</h2>
 
