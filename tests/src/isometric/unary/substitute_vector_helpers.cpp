@@ -316,3 +316,10 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(true, false) // check sparse case
     )
 );
+
+TEST(DelayedUnaryIsometricSubstituteVector, Mismatch) {
+    std::vector<double> comp(10), sub(20);
+    tatami_test::throws_error([&]{
+        tatami::DelayedUnaryIsometricSubstituteEqualVectorHelper<double, double, int, decltype(comp), decltype(sub)>(std::move(comp), std::move(sub), true);
+    }, "should have the same length");
+}

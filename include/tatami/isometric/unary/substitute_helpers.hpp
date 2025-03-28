@@ -243,7 +243,9 @@ std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, 
  * @tparam InputValue_ Type of the matrix value used in the operation.
  * @tparam Index_ Integer type for the row/column indices.
  * @tparam ComparedVector_ Type of the vector containing values to compare to the input matrix.
+ * This should have a `[]` accessor method and a `size()` method.
  * @tparam SubstituteVector_ Type of the vector containing values to substitute in the output matrix.
+ * This should have a `[]` accessor method and a `size()` method.
  */
 template<CompareOperation op_, typename OutputValue_, typename InputValue_, typename Index_, typename ComparedVector_, typename SubstituteVector_>
 class DelayedUnaryIsometricSubstituteVectorHelper final : public DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> {
@@ -263,6 +265,9 @@ public:
         my_substitute(std::move(substitute)),
         my_by_row(by_row) 
     {
+        if (static_cast<size_t>(my_compared.size()) != static_cast<size_t>(my_substitute.size())) {
+            throw std::runtime_error("'compared' and 'substitute' should have the same length");
+        }
         for (size_t i = 0, end = my_compared.size(); i < end; ++i) {
             if (!delayed_substitute_is_sparse<op_, InputValue_>(my_compared[i], my_substitute[i])) {
                  my_sparse = false;
