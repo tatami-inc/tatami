@@ -27,7 +27,7 @@ protected:
             return opt;
         }());
 
-        dense = std::shared_ptr<tatami::NumericMatrix>(new tatami::DenseRowMatrix<double, int>(nrow, ncol, simulated));
+        dense.reset(new tatami::DenseMatrix<double, int, decltype(simulated)>(nrow, ncol, simulated, true)); // row major.
         sparse = tatami::convert_to_compressed_sparse<false, double, int>(dense.get()); // column major.
     }
 
@@ -52,14 +52,14 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, AND) {
         fill_default_vector(vec);
     }
 
-    auto op = tatami::make_DelayedUnaryIsometricBooleanAndVector(vec, row);
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricBooleanAndVectorHelper<double, double, int, decltype(vec)> >(vec, row);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
-    EXPECT_TRUE(sparse_mod->is_sparse());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
+    EXPECT_TRUE(sparse_mod.is_sparse());
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
@@ -71,10 +71,10 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, AND) {
             x = (x && vec[row ? r : c]);
         }
     }
-    
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricBooleanVectorTest, OR) {
@@ -87,17 +87,17 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, OR) {
         fill_default_vector(vec);
     }
 
-    auto op = tatami::make_DelayedUnaryIsometricBooleanOrVector(vec, row);
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricBooleanOrVectorHelper<double, double, int, decltype(vec)> >(vec, row);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
     if (is_sparse) {
-        EXPECT_TRUE(sparse_mod->is_sparse());
+        EXPECT_TRUE(sparse_mod.is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->is_sparse());
+        EXPECT_FALSE(sparse_mod.is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -110,10 +110,10 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, OR) {
             x = (x || vec[row ? r : c]);
         }
     }
-    
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricBooleanVectorTest, XOR) {
@@ -126,17 +126,17 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, XOR) {
         fill_default_vector(vec);
     }
 
-    auto op = tatami::make_DelayedUnaryIsometricBooleanXorVector(vec, row);
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricBooleanXorVectorHelper<double, double, int, decltype(vec)> >(vec, row);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
     if (is_sparse) {
-        EXPECT_TRUE(sparse_mod->is_sparse());
+        EXPECT_TRUE(sparse_mod.is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->is_sparse());
+        EXPECT_FALSE(sparse_mod.is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -150,9 +150,9 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, XOR) {
         }
     }
 
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricBooleanVectorTest, EQUAL) {
@@ -167,17 +167,17 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, EQUAL) {
         fill_default_vector(vec);
     }
 
-    auto op = tatami::make_DelayedUnaryIsometricBooleanEqualVector(vec, row);
-    auto dense_mod = tatami::make_DelayedUnaryIsometricOperation(dense, op);
-    auto sparse_mod = tatami::make_DelayedUnaryIsometricOperation(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricBooleanEqualVectorHelper<double, double, int, decltype(vec)> >(vec, row);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> dense_mod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<double, double, int> sparse_mod(sparse, op);
 
-    EXPECT_FALSE(dense_mod->is_sparse());
-    EXPECT_EQ(dense->nrow(), dense_mod->nrow());
-    EXPECT_EQ(dense->ncol(), dense_mod->ncol());
+    EXPECT_FALSE(dense_mod.is_sparse());
+    EXPECT_EQ(nrow, dense_mod.nrow());
+    EXPECT_EQ(ncol, dense_mod.ncol());
     if (is_sparse) {
-        EXPECT_TRUE(sparse_mod->is_sparse());
+        EXPECT_TRUE(sparse_mod.is_sparse());
     } else {
-        EXPECT_FALSE(sparse_mod->is_sparse());
+        EXPECT_FALSE(sparse_mod.is_sparse());
     }
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
@@ -191,9 +191,9 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, EQUAL) {
         }
     }
 
-    tatami::DenseRowMatrix<double, int> ref(nrow, ncol, std::move(refvec));
-    quick_test_all<double, int>(*dense_mod, ref);
-    quick_test_all<double, int>(*sparse_mod, ref);
+    tatami::DenseMatrix<double, int, decltype(refvec)> ref(nrow, ncol, std::move(refvec), true);
+    quick_test_all<double, int>(dense_mod, ref);
+    quick_test_all<double, int>(sparse_mod, ref);
 }
 
 TEST_P(DelayedUnaryIsometricBooleanVectorTest, NewType) {
@@ -208,12 +208,12 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, NewType) {
         fill_default_vector(vec);
     }
 
-    auto op = tatami::make_DelayedUnaryIsometricBooleanAndVector(vec, row);
-    auto dense_umod = tatami::make_DelayedUnaryIsometricOperation<uint8_t>(dense, op);
-    auto sparse_umod = tatami::make_DelayedUnaryIsometricOperation<uint8_t>(sparse, op);
+    auto op = std::make_shared<tatami::DelayedUnaryIsometricBooleanEqualVectorHelper<uint8_t, double, int, decltype(vec)> >(vec, row);
+    tatami::DelayedUnaryIsometricOperation<uint8_t, double, int> dense_umod(dense, op);
+    tatami::DelayedUnaryIsometricOperation<uint8_t, double, int> sparse_umod(sparse, op);
 
-    EXPECT_FALSE(dense_umod->is_sparse());
-    EXPECT_TRUE(sparse_umod->is_sparse());
+    EXPECT_FALSE(dense_umod.is_sparse());
+    EXPECT_TRUE(sparse_umod.is_sparse());
 
     // Toughest tests are handled by 'arith_vector.hpp'; they would
     // be kind of redundant here, so we'll just do something simple
@@ -226,9 +226,9 @@ TEST_P(DelayedUnaryIsometricBooleanVectorTest, NewType) {
         }
     }
     
-    tatami::DenseRowMatrix<uint8_t, int> uref(nrow, ncol, std::move(urefvec));
-    quick_test_all<uint8_t, int>(*dense_umod, uref);
-    quick_test_all<uint8_t, int>(*sparse_umod, uref);
+    tatami::DenseMatrix<uint8_t, int, decltype(urefvec)> uref(nrow, ncol, std::move(urefvec), true);
+    quick_test_all<uint8_t, int>(dense_umod, uref);
+    quick_test_all<uint8_t, int>(sparse_umod, uref);
 }
 
 INSTANTIATE_TEST_SUITE_P(

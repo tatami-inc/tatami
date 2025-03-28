@@ -64,13 +64,30 @@ public:
      * @param substitute Scalar to substitute into the matrix for every element where the comparison to `compared` is true.
      */
     DelayedUnaryIsometricSubstituteScalarHelper(Scalar_ compared, OutputValue_ substitute) : my_compared(compared), my_substitute(substitute) {
-        my_sparse = delayed_substitute_is_sparse<op_>(my_compared, my_substitute);
+        my_sparse = delayed_substitute_is_sparse<op_, InputValue_>(my_compared, my_substitute);
     }
 
 private:
     Scalar_ my_compared;
     OutputValue_ my_substitute;
     bool my_sparse;
+
+public:
+    bool zero_depends_on_row() const {
+        return false;
+    }
+
+    bool zero_depends_on_column() const {
+        return false;
+    }
+
+    bool non_zero_depends_on_row() const {
+        return false;
+    }
+
+    bool non_zero_depends_on_column() const {
+        return false;
+    }
 
 public:
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
@@ -246,7 +263,7 @@ public:
         my_by_row(by_row) 
     {
         for (size_t i = 0, end = my_compared.size(); i < end; ++i) {
-            if (!delayed_substitute_is_sparse<op_>(my_compared[i], my_substitute[i])) {
+            if (!delayed_substitute_is_sparse<op_, InputValue_>(my_compared[i], my_substitute[i])) {
                  my_sparse = false;
                  break;
              }
@@ -465,7 +482,7 @@ std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, 
 /**
  * @cond
  */
-template<SpecialCompareOperation op_, bool pass_, typename OutputValue_, typename InputValue_>
+template<SpecialCompareOperation op_, bool pass_, typename InputValue_, typename OutputValue_>
 bool delayed_special_substitute_is_sparse(OutputValue_ substitute) {
     return !delayed_special_compare<op_, pass_, InputValue_>(0) || substitute == 0;
 }
@@ -512,12 +529,29 @@ public:
      * @param substitute Scalar to substitute into the matrix for every element where the special comparison is true (if `pass_ = true`) or false (otherwise).
      */
     DelayedUnaryIsometricSpecialSubstituteHelper(OutputValue_ substitute) : my_substitute(substitute) {
-        my_sparse = delayed_special_substitute_is_sparse<op_, pass_>(my_substitute);
+        my_sparse = delayed_special_substitute_is_sparse<op_, pass_, InputValue_>(my_substitute);
     }
 
 private:
     OutputValue_ my_substitute;
     bool my_sparse;
+
+public:
+    bool zero_depends_on_row() const {
+        return false;
+    }
+
+    bool zero_depends_on_column() const {
+        return false;
+    }
+
+    bool non_zero_depends_on_row() const {
+        return false;
+    }
+
+    bool non_zero_depends_on_column() const {
+        return false;
+    }
 
 public:
     void dense(bool, Index_, Index_, Index_ length, const InputValue_* input, OutputValue_* output) const {
