@@ -2,6 +2,7 @@
 #define TATAMI_ISOMETRIC_UNARY_COMPARE_HELPERS_H
 
 #include "../compare_utils.hpp"
+#include "helper_interface.hpp"
 #include <vector>
 #include <type_traits>
 

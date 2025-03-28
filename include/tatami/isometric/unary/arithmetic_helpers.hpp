@@ -2,6 +2,7 @@
 #define TATAMI_ISOMETRIC_UNARY_ARITHMETIC_HELPERS_H
 
 #include "../arithmetic_utils.hpp"
+#include "helper_interface.hpp"
 #include <vector>
 #include <limits>
 #include <type_traits>

@@ -409,3 +409,20 @@ TEST(DelayedUnaryIsometricArithmetic, NonFiniteMultiply) {
     tatami::DelayedUnaryIsometricMultiplyScalarHelper<double, double, int, double> op(scalar);
     EXPECT_FALSE(op.is_sparse());
 }
+
+TEST(DelayedUnaryIsometricArithmeticScalar, BackCompatibility) {
+    auto add = tatami::make_DelayedUnaryIsometricAddScalar(1);
+    EXPECT_FALSE(add->is_sparse());
+    auto sub = tatami::make_DelayedUnaryIsometricSubtractScalar<true>(1);
+    EXPECT_FALSE(sub->is_sparse());
+    auto mult = tatami::make_DelayedUnaryIsometricMultiplyScalar(1);
+    EXPECT_TRUE(mult->is_sparse());
+    auto div = tatami::make_DelayedUnaryIsometricDivideScalar<true>(1);
+    EXPECT_TRUE(div->is_sparse());
+    auto mod = tatami::make_DelayedUnaryIsometricModuloScalar<true>(1);
+    EXPECT_TRUE(mod->is_sparse());
+    auto pow = tatami::make_DelayedUnaryIsometricPowerScalar<true>(1);
+    EXPECT_TRUE(pow->is_sparse());
+    auto idiv = tatami::make_DelayedUnaryIsometricIntegerDivideScalar<true>(1);
+    EXPECT_TRUE(idiv->is_sparse());
+}

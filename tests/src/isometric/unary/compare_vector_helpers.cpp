@@ -367,3 +367,19 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(true, false) // check sparse case
     )
 );
+
+TEST(DelayedUnaryIsometricCompareVector, BackCompatibility) {
+    std::vector<double> vec(10, 1);
+    auto eq = tatami::make_DelayedUnaryIsometricEqualVector(vec, false);
+    EXPECT_TRUE(eq->is_sparse());
+    auto gt = tatami::make_DelayedUnaryIsometricGreaterThanVector(vec, false);
+    EXPECT_TRUE(gt->is_sparse());
+    auto lt = tatami::make_DelayedUnaryIsometricLessThanVector(vec, false);
+    EXPECT_FALSE(lt->is_sparse());
+    auto gte = tatami::make_DelayedUnaryIsometricGreaterThanOrEqualVector(vec, false);
+    EXPECT_TRUE(gte->is_sparse());
+    auto lte = tatami::make_DelayedUnaryIsometricLessThanOrEqualVector(vec, false);
+    EXPECT_FALSE(lte->is_sparse());
+    auto neq = tatami::make_DelayedUnaryIsometricNotEqualVector(vec, false);
+    EXPECT_FALSE(neq->is_sparse());
+}

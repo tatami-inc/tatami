@@ -432,3 +432,24 @@ INSTANTIATE_TEST_SUITE_P(
     DelayedUnaryIsometricSpecialCompareTest,
     ::testing::Values(true, false)
 );
+
+TEST(DelayedUnaryIsometricCompareScalar, BackCompatibility) {
+    auto eq = tatami::make_DelayedUnaryIsometricEqualScalar(1);
+    EXPECT_TRUE(eq->is_sparse());
+    auto gt = tatami::make_DelayedUnaryIsometricGreaterThanScalar(1);
+    EXPECT_TRUE(gt->is_sparse());
+    auto lt = tatami::make_DelayedUnaryIsometricLessThanScalar(1);
+    EXPECT_FALSE(lt->is_sparse());
+    auto gte = tatami::make_DelayedUnaryIsometricGreaterThanOrEqualScalar(1);
+    EXPECT_TRUE(gte->is_sparse());
+    auto lte = tatami::make_DelayedUnaryIsometricLessThanOrEqualScalar(1);
+    EXPECT_FALSE(lte->is_sparse());
+    auto neq = tatami::make_DelayedUnaryIsometricNotEqualScalar(1);
+    EXPECT_FALSE(neq->is_sparse());
+    auto isnan = tatami::make_DelayedUnaryIsometricIsnan();
+    EXPECT_TRUE(isnan->is_sparse());
+    auto isinf = tatami::make_DelayedUnaryIsometricIsinf();
+    EXPECT_TRUE(isinf->is_sparse());
+    auto isfinite = tatami::make_DelayedUnaryIsometricIsfinite();
+    EXPECT_FALSE(isfinite->is_sparse());
+}

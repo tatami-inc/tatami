@@ -290,3 +290,18 @@ TEST_F(DelayedUnaryIsometricBooleanCastTest, NewType) {
     quick_test_all<uint8_t, int>(dense_umod, uref);
     quick_test_all<uint8_t, int>(sparse_umod, uref);
 }
+
+TEST(DelayedUnaryIsometricBooleanScalar, BackCompatibility) {
+    auto eqop = tatami::make_DelayedUnaryIsometricBooleanEqualScalar(false);
+    EXPECT_FALSE(eqop->is_sparse());
+    auto andop = tatami::make_DelayedUnaryIsometricBooleanAndScalar(false);
+    EXPECT_TRUE(andop->is_sparse());
+    auto orop = tatami::make_DelayedUnaryIsometricBooleanOrScalar(false);
+    EXPECT_TRUE(orop->is_sparse());
+    auto xorop = tatami::make_DelayedUnaryIsometricBooleanXorScalar(false);
+    EXPECT_TRUE(xorop->is_sparse());
+    tatami::DelayedUnaryIsometricBooleanNot notop;
+    EXPECT_FALSE(notop.is_sparse());
+    tatami::DelayedUnaryIsometricBooleanCast castop;
+    EXPECT_TRUE(castop.is_sparse());
+}

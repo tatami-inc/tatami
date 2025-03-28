@@ -7,6 +7,7 @@
  * @brief Helpers for unary math operations.
  */
 
+#include "helper_interface.hpp"
 #include <cmath>
 
 namespace tatami {

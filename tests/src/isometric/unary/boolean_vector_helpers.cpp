@@ -239,3 +239,15 @@ INSTANTIATE_TEST_SUITE_P(
         ::testing::Values(true, false) // check sparse case
     )
 );
+
+TEST(DelayedUnaryIsometricBooleanVector, BackCompatibility) {
+    std::vector<uint8_t> flags(10, true);
+    auto eqop = tatami::make_DelayedUnaryIsometricBooleanEqualVector(flags, true);
+    EXPECT_TRUE(eqop->is_sparse());
+    auto andop = tatami::make_DelayedUnaryIsometricBooleanAndVector(flags, true);
+    EXPECT_TRUE(andop->is_sparse());
+    auto orop = tatami::make_DelayedUnaryIsometricBooleanOrVector(flags, true);
+    EXPECT_FALSE(orop->is_sparse());
+    auto xorop = tatami::make_DelayedUnaryIsometricBooleanXorVector(flags, true);
+    EXPECT_FALSE(xorop->is_sparse());
+}

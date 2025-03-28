@@ -1176,3 +1176,21 @@ INSTANTIATE_TEST_SUITE_P(
     DelayedUnaryIsometricIntegerDivideVectorZeroedTest,
     DelayedUnaryIsometricIntegerDivideVectorUtils::simulation_parameter_combinations()
 );
+
+TEST(DelayedUnaryIsometricArithmeticVector, BackCompatibility) {
+    std::vector<double> vec(10, 1);
+    auto add = tatami::make_DelayedUnaryIsometricAddVector(vec, true);
+    EXPECT_FALSE(add->is_sparse());
+    auto sub = tatami::make_DelayedUnaryIsometricSubtractVector<true>(vec, true);
+    EXPECT_FALSE(sub->is_sparse());
+    auto mult = tatami::make_DelayedUnaryIsometricMultiplyVector(vec, true);
+    EXPECT_TRUE(mult->is_sparse());
+    auto div = tatami::make_DelayedUnaryIsometricDivideVector<true>(vec, true);
+    EXPECT_TRUE(div->is_sparse());
+    auto mod = tatami::make_DelayedUnaryIsometricModuloVector<true>(vec, true);
+    EXPECT_TRUE(mod->is_sparse());
+    auto pow = tatami::make_DelayedUnaryIsometricPowerVector<true>(vec, true);
+    EXPECT_TRUE(pow->is_sparse());
+    auto idiv = tatami::make_DelayedUnaryIsometricIntegerDivideVector<true>(vec, true);
+    EXPECT_TRUE(idiv->is_sparse());
+}

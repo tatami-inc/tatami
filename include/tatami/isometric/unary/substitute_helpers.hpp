@@ -2,6 +2,7 @@
 #define TATAMI_ISOMETRIC_UNARY_SUBSTITUTE_HELPERS_H
 
 #include "../compare_utils.hpp"
+#include "helper_interface.hpp"
 #include <vector>
 #include <limits>
 
@@ -218,7 +219,7 @@ std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, 
 }
 
 template<typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int, typename Scalar_>
-std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricLessSubstituteThanOrEqualScalar(Scalar_ compared, OutputValue_ substitute) {
+std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteLessThanOrEqualScalar(Scalar_ compared, OutputValue_ substitute) {
     return std::make_shared<DelayedUnaryIsometricSubstituteLessThanOrEqualScalarHelper<OutputValue_, InputValue_, Index_, Scalar_> >(compared, substitute);
 }
 
@@ -617,17 +618,17 @@ using DelayedUnaryIsometricSubstituteIsfiniteHelper = DelayedUnaryIsometricSpeci
  * @cond
  */
 // Back-compatibility only.
-template<bool pass_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+template<bool pass_ = true, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteIsnan(OutputValue_ substitute) {
     return std::make_shared<DelayedUnaryIsometricSubstituteIsnanHelper<pass_, OutputValue_, InputValue_, Index_> >(substitute);
 }
 
-template<bool pass_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+template<bool pass_ = true, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteIsinf(OutputValue_ substitute) {
     return std::make_shared<DelayedUnaryIsometricSubstituteIsinfHelper<pass_, OutputValue_, InputValue_, Index_> >(substitute);
 }
 
-template<bool pass_, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
+template<bool pass_ = true, typename OutputValue_ = double, typename InputValue_ = double, typename Index_ = int>
 std::shared_ptr<DelayedUnaryIsometricOperationHelper<OutputValue_, InputValue_, Index_> > make_DelayedUnaryIsometricSubstituteIsfinite(OutputValue_ substitute) {
     return std::make_shared<DelayedUnaryIsometricSubstituteIsfiniteHelper<pass_, OutputValue_, InputValue_, Index_> >(substitute);
 }

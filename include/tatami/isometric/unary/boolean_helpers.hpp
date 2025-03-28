@@ -2,6 +2,7 @@
 #define TATAMI_ISOMETRIC_UNARY_BOOLEAN_HELPERS_H
 
 #include "../boolean_utils.hpp"
+#include "helper_interface.hpp"
 #include <vector>
 #include <type_traits>
 
